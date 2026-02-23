@@ -33,7 +33,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
    * </ul>
    */
   public int damageReductionFlags_6e;
-  public int _70;
+//  public int _70;
 
   public final ElementSet monsterElementalImmunity_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
@@ -164,7 +164,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
       case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT, MONSTER_ELEMENT -> this.element.flag;
 
       case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e;
-      case _54 -> this._70;
+//      case _54 -> this._70;
       case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.pack();
       case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76;
       case MONSTER_TARGET_ARROW_POSITION_X -> Math.round(this.targetArrowPos_78.x);
@@ -179,7 +179,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
       case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value;
-      case _54 -> this._70 = value;
+//      case _54 -> this._70 = value;
       case MONSTER_ELEMENT -> this.element = Element.fromFlag(value).get();
       case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value);
       case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value;

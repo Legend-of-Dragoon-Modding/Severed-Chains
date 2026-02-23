@@ -210,15 +210,15 @@ public final class SItem {
     {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(24, 65, 2, 3, 2, 3), new LevelStuff08(48, 65, 3, 6, 3, 6), new LevelStuff08(72, 65, 5, 9, 5, 9), new LevelStuff08(96, 65, 7, 12, 6, 12), new LevelStuff08(120, 65, 8, 16, 8, 15), new LevelStuff08(144, 65, 10, 19, 9, 19), new LevelStuff08(168, 65, 12, 22, 11, 22), new LevelStuff08(192, 65, 13, 26, 12, 25), new LevelStuff08(216, 65, 15, 29, 14, 28), new LevelStuff08(240, 65, 17, 32, 15, 31), new LevelStuff08(264, 65, 19, 36, 17, 35), new LevelStuff08(330, 65, 20, 41, 18, 41), new LevelStuff08(396, 65, 21, 47, 20, 47), new LevelStuff08(463, 65, 22, 53, 22, 53), new LevelStuff08(529, 65, 23, 58, 24, 59), new LevelStuff08(596, 65, 24, 64, 25, 65), new LevelStuff08(662, 65, 26, 70, 27, 71), new LevelStuff08(728, 65, 27, 75, 29, 77), new LevelStuff08(795, 65, 28, 81, 31, 83), new LevelStuff08(861, 65, 29, 87, 33, 89), new LevelStuff08(928, 65, 30, 93, 34, 95), new LevelStuff08(1017, 65, 32, 98, 36, 101), new LevelStuff08(1107, 65, 33, 104, 37, 106), new LevelStuff08(1196, 65, 35, 109, 39, 111), new LevelStuff08(1286, 65, 36, 115, 40, 117), new LevelStuff08(1376, 65, 38, 120, 42, 122), new LevelStuff08(1465, 65, 39, 126, 43, 128), new LevelStuff08(1555, 65, 40, 131, 45, 133), new LevelStuff08(1644, 65, 42, 137, 46, 139), new LevelStuff08(1734, 65, 43, 143, 48, 144), new LevelStuff08(1824, 65, 45, 148, 50, 150), new LevelStuff08(1919, 65, 47, 153, 51, 155), new LevelStuff08(2014, 65, 48, 158, 53, 160), new LevelStuff08(2109, 65, 50, 164, 54, 165), new LevelStuff08(2204, 65, 52, 169, 56, 170), new LevelStuff08(2300, 65, 54, 174, 57, 176), new LevelStuff08(2395, 65, 56, 179, 59, 181), new LevelStuff08(2490, 65, 58, 184, 60, 186), new LevelStuff08(2585, 65, 60, 189, 62, 191), new LevelStuff08(2680, 65, 61, 194, 63, 196), new LevelStuff08(2776, 65, 63, 200, 65, 202), new LevelStuff08(2983, 65, 65, 202, 68, 204), new LevelStuff08(3190, 65, 67, 205, 72, 207), new LevelStuff08(3397, 65, 69, 208, 75, 209), new LevelStuff08(3604, 65, 71, 211, 79, 212), new LevelStuff08(3812, 65, 73, 214, 83, 215), new LevelStuff08(4019, 65, 76, 217, 86, 217), new LevelStuff08(4226, 65, 78, 220, 90, 220), new LevelStuff08(4433, 65, 80, 223, 93, 222), new LevelStuff08(4640, 65, 82, 226, 97, 225), new LevelStuff08(4848, 65, 84, 229, 101, 228), new LevelStuff08(4976, 65, 86, 232, 106, 231), new LevelStuff08(5104, 65, 88, 235, 111, 234), new LevelStuff08(5232, 65, 91, 238, 117, 237), new LevelStuff08(5360, 65, 93, 240, 122, 240), new LevelStuff08(5488, 65, 95, 243, 127, 243), new LevelStuff08(5616, 65, 97, 246, 133, 246), new LevelStuff08(5744, 65, 100, 249, 138, 249), new LevelStuff08(5872, 65, 102, 252, 143, 252), new LevelStuff08(6000, 65, 104, 255, 149, 254), },
   };
   public static final MagicStuff08[][] magicStuff_80111d20 = {
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 0, 255, 150, 150, 200, 200), new MagicStuff08(40, 1, 255, 155, 155, 210, 210), new MagicStuff08(60, 2, 255, 160, 160, 220, 220), new MagicStuff08(80, -1, 255, 165, 165, 230, 230), new MagicStuff08(100, 3, 255, 170, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 5, 255, 150, 200, 200, 200), new MagicStuff08(40, 7, 255, 155, 205, 210, 210), new MagicStuff08(60, 6, 255, 160, 210, 220, 220), new MagicStuff08(80, -1, 255, 165, 215, 230, 230), new MagicStuff08(100, 8, 255, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 11, 255, 200, 150, 200, 200), new MagicStuff08(40, 10, 255, 205, 155, 210, 210), new MagicStuff08(60, 12, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 13, 255, 220, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 15, 255, 150, 150, 200, 200), new MagicStuff08(40, 16, 255, 155, 155, 210, 210), new MagicStuff08(60, 18, 255, 160, 160, 220, 220), new MagicStuff08(80, -1, 255, 165, 165, 230, 230), new MagicStuff08(100, 19, 255, 170, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 20, 255, 150, 200, 200, 200), new MagicStuff08(40, 21, 255, 155, 205, 210, 210), new MagicStuff08(60, 22, 255, 160, 210, 220, 220), new MagicStuff08(80, -1, 255, 165, 215, 230, 230), new MagicStuff08(100, 23, 255, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 14, 255, 150, 200, 200, 200), new MagicStuff08(40, 26, 255, 155, 205, 210, 210), new MagicStuff08(60, 17, 255, 160, 210, 220, 220), new MagicStuff08(80, -1, 255, 165, 215, 230, 230), new MagicStuff08(100, 8, 255, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 24, 255, 200, 150, 200, 200), new MagicStuff08(40, 25, 255, 205, 155, 210, 210), new MagicStuff08(60, 27, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 28, 255, 220, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 29, 255, 150, 200, 200, 200), new MagicStuff08(40, -1, 255, 155, 205, 210, 210), new MagicStuff08(60, 30, 255, 160, 210, 220, 220), new MagicStuff08(80, -1, 255, 165, 215, 230, 230), new MagicStuff08(100, 31, 255, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255, 255), new MagicStuff08(20, 66, 255, 200, 150, 200, 200), new MagicStuff08(40, 65, 255, 205, 155, 210, 210), new MagicStuff08(60, 67, 255, 210, 160, 220, 220), new MagicStuff08(80, -1, 255, 215, 165, 230, 230), new MagicStuff08(100, 13, 255, 220, 170, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 0, 150, 150, 200, 200), new MagicStuff08(40, 1, 155, 155, 210, 210), new MagicStuff08(60, 2, 160, 160, 220, 220), new MagicStuff08(80, -1, 165, 165, 230, 230), new MagicStuff08(100, 3, 170, 170, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 5, 150, 200, 200, 200), new MagicStuff08(40, 7, 155, 205, 210, 210), new MagicStuff08(60, 6, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 8, 170, 220, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 11, 200, 150, 200, 200), new MagicStuff08(40, 10, 205, 155, 210, 210), new MagicStuff08(60, 12, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 13, 220, 170, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 15, 150, 150, 200, 200), new MagicStuff08(40, 16, 155, 155, 210, 210), new MagicStuff08(60, 18, 160, 160, 220, 220), new MagicStuff08(80, -1, 165, 165, 230, 230), new MagicStuff08(100, 19, 170, 170, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 20, 150, 200, 200, 200), new MagicStuff08(40, 21, 155, 205, 210, 210), new MagicStuff08(60, 22, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 23, 170, 220, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 14, 150, 200, 200, 200), new MagicStuff08(40, 26, 155, 205, 210, 210), new MagicStuff08(60, 17, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 8, 170, 220, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 24, 200, 150, 200, 200), new MagicStuff08(40, 25, 205, 155, 210, 210), new MagicStuff08(60, 27, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 28, 220, 170, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 29, 150, 200, 200, 200), new MagicStuff08(40, -1, 155, 205, 210, 210), new MagicStuff08(60, 30, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 31, 170, 220, 250, 250), },
+    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 66, 200, 150, 200, 200), new MagicStuff08(40, 65, 205, 155, 210, 210), new MagicStuff08(60, 67, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 13, 220, 170, 250, 250), },
   };
 
   public static final int[] kongolXpTable_801134f0 = new int[61];
@@ -899,7 +899,6 @@ public final class SItem {
       stats.bodyDefence_6c = 0;
       stats.bodyMagicDefence_6d = 0;
       stats.spellId_70 = 0;
-      stats._71 = 0;
       stats.dragoonAttack_72 = 0;
       stats.dragoonMagicAttack_73 = 0;
       stats.dragoonDefence_74 = 0;
@@ -924,13 +923,10 @@ public final class SItem {
     stats.equipment_02_78 = 0;
     stats.equipmentEquipableFlags_79 = 0;
     stats.equipmentAttackElements_7a.clear();
-    stats.equipment_05_7b = 0;
     stats.equipmentElementalResistance_7c.clear();
     stats.equipmentElementalImmunity_7d.clear();
     stats.equipmentStatusResist_7e = 0;
-    stats.equipment_09_7f = 0;
     stats.equipmentAttack1_80 = 0;
-    stats._83 = 0;
     stats.equipmentIcon_84 = 0;
 
     stats.equipmentSpeed_86 = 0;
@@ -943,8 +939,6 @@ public final class SItem {
     stats.equipmentAttackAvoid_94 = 0;
     stats.equipmentMagicAvoid_96 = 0;
     stats.equipmentOnHitStatusChance_98 = 0;
-    stats.equipment_19_99 = 0;
-    stats.equipment_1a_9a = 0;
     stats.equipmentOnHitStatus_9b = 0;
   }
 
@@ -2337,9 +2331,7 @@ public final class SItem {
       stats.bodyDefence_6c = statsEvent.bodyDefence;
       stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_80111d20[charId][charData.dlevel_13];
       stats.spellId_70 = statsEvent.spellId;
-      stats._71 = magicStuff._03;
       stats.dragoonAttack_72 = statsEvent.dragoonAttack;
       stats.dragoonMagicAttack_73 = statsEvent.dragoonMagicAttack;
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
@@ -2406,11 +2398,9 @@ public final class SItem {
         characterStats.equipment_02_78 |= event._02;
         characterStats.equipmentEquipableFlags_79 |= event.equipableFlags_03;
         characterStats.equipmentAttackElements_7a.addAll(event.attackElement_04);
-        characterStats.equipment_05_7b |= event._05;
         characterStats.equipmentElementalResistance_7c.addAll(event.elementalResistance_06);
         characterStats.equipmentElementalImmunity_7d.addAll(event.elementalImmunity_07);
         characterStats.equipmentStatusResist_7e |= event.statusResist_08;
-        characterStats.equipment_09_7f |= event._09;
         characterStats.equipmentAttack1_80 += event.attack1_0a;
         characterStats.equipmentIcon_84 += event.icon_0e;
         characterStats.equipmentSpeed_86 += event.speed_0f;
@@ -2423,8 +2413,6 @@ public final class SItem {
         characterStats.equipmentAttackAvoid_94 += event.attackAvoid_16;
         characterStats.equipmentMagicAvoid_96 += event.magicAvoid_17;
         characterStats.equipmentOnHitStatusChance_98 += event.onHitStatusChance_18;
-        characterStats.equipment_19_99 += event._19;
-        characterStats.equipment_1a_9a += event._1a;
         characterStats.equipmentOnHitStatus_9b |= event.onHitStatus_1b;
         characterStats.equipmentMpPerMagicalHit_54 += event.mpPerMagicalHit;
         characterStats.equipmentSpPerMagicalHit_52 += event.spPerMagicalHit;

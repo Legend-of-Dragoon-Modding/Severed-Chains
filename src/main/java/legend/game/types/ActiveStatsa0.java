@@ -75,8 +75,8 @@ public class ActiveStatsa0 {
 //  public int maxMp_6e;
   /** byte */
   public int spellId_70;
-  /** ubyte */
-  public int _71;
+//  /** ubyte */
+//  public int _71;
   /** ubyte */
   public int dragoonAttack_72;
   /** ubyte */
@@ -95,20 +95,20 @@ public class ActiveStatsa0 {
   public int equipmentEquipableFlags_79;
   /** ubyte */
   public final ElementSet equipmentAttackElements_7a = new ElementSet();
-  /** ubyte */
-  public int equipment_05_7b;
+//  /** ubyte */
+//  public int equipment_05_7b;
   /** ubyte */
   public final ElementSet equipmentElementalResistance_7c = new ElementSet();
   /** ubyte */
   public final ElementSet equipmentElementalImmunity_7d = new ElementSet();
   /** ubyte */
   public int equipmentStatusResist_7e;
-  /** ubyte */
-  public int equipment_09_7f;
+//  /** ubyte */
+//  public int equipment_09_7f;
   /** ubyte */
   public int equipmentAttack1_80;
-  /** ubyte */
-  public int _83;
+//  /** ubyte */
+//  public int _83;
   /** byte */
   public int equipmentIcon_84;
 
@@ -132,10 +132,10 @@ public class ActiveStatsa0 {
   public int equipmentMagicAvoid_96;
   /** ubyte */
   public int equipmentOnHitStatusChance_98;
-  /** ubyte */
-  public int equipment_19_99;
-  /** ubyte */
-  public int equipment_1a_9a;
+//  /** ubyte */
+//  public int equipment_19_99;
+//  /** ubyte */
+//  public int equipment_1a_9a;
   /** ubyte */
   public int equipmentOnHitStatus_9b;
   /** Integer percentage - e.g. 10 = 10% */
@@ -169,28 +169,22 @@ public class ActiveStatsa0 {
     this.equipmentMagicalResistance_60 = other.equipmentMagicalResistance_60;
     this.equipmentHpMulti_62 = other.equipmentHpMulti_62;
     this.equipmentMpMulti_64 = other.equipmentMpMulti_64;
-//    this.addition_68 = other.addition_68;
     this.bodySpeed_69 = other.bodySpeed_69;
     this.bodyAttack_6a = other.bodyAttack_6a;
     this.bodyMagicAttack_6b = other.bodyMagicAttack_6b;
     this.bodyDefence_6c = other.bodyDefence_6c;
     this.bodyMagicDefence_6d = other.bodyMagicDefence_6d;
     this.spellId_70 = other.spellId_70;
-    this._71 = other._71;
     this.dragoonAttack_72 = other.dragoonAttack_72;
     this.dragoonMagicAttack_73 = other.dragoonMagicAttack_73;
     this.dragoonDefence_74 = other.dragoonDefence_74;
     this.dragoonMagicDefence_75 = other.dragoonMagicDefence_75;
     this.specialEffectFlag_76 = other.specialEffectFlag_76;
-//    this.equipmentType_77 = other.equipmentType_77;
     this.equipment_02_78 = other.equipment_02_78;
     this.equipmentEquipableFlags_79 = other.equipmentEquipableFlags_79;
     this.equipmentAttackElements_7a.set(other.equipmentAttackElements_7a);
-    this.equipment_05_7b = other.equipment_05_7b;
     this.equipmentStatusResist_7e = other.equipmentStatusResist_7e;
-    this.equipment_09_7f = other.equipment_09_7f;
     this.equipmentAttack1_80 = other.equipmentAttack1_80;
-    this._83 = other._83;
     this.equipmentIcon_84 = other.equipmentIcon_84;
     this.equipmentSpeed_86 = other.equipmentSpeed_86;
     this.equipmentAttack_88 = other.equipmentAttack_88;
@@ -202,11 +196,8 @@ public class ActiveStatsa0 {
     this.equipmentAttackAvoid_94 = other.equipmentAttackAvoid_94;
     this.equipmentMagicAvoid_96 = other.equipmentMagicAvoid_96;
     this.equipmentOnHitStatusChance_98 = other.equipmentOnHitStatusChance_98;
-    this.equipment_19_99 = other.equipment_19_99;
-    this.equipment_1a_9a = other.equipment_1a_9a;
     this.equipmentOnHitStatus_9b = other.equipmentOnHitStatus_9b;
     this.equipmentGuardHeal = other.equipmentGuardHeal;
-//    this.addition_00_9c = other.addition_00_9c;
     this.additionSpMultiplier_9e = other.additionSpMultiplier_9e;
     this.additionDamageMultiplier_9f = other.additionDamageMultiplier_9f;
   }

@@ -21,7 +21,7 @@ public class SeveredSaveCard extends BlankSaveCard {
   private final Glyph highlight;
 
   private final SeveredSavedGame savedGame;
-  private final IntList charIds = new IntArrayList();
+  private final IntList charIndices = new IntArrayList();
 
   private int scroll;
   private int selectedCharacter;
@@ -29,11 +29,11 @@ public class SeveredSaveCard extends BlankSaveCard {
   public SeveredSaveCard(final SeveredSavedGame savedGame) {
     this.savedGame = savedGame;
 
-    this.charIds.addAll(savedGame.charIds);
+    this.charIndices.addAll(savedGame.activeParty);
 
-    for(int i = 0; i < savedGame.charStats.size(); i++) {
-      if(!this.charIds.contains(i) && savedGame.charStats.get(i).inParty()) {
-        this.charIds.add(i);
+    for(int i = 0; i < savedGame.characters.size(); i++) {
+      if(!this.charIndices.contains(i) && savedGame.characters.get(i).inParty()) {
+        this.charIndices.add(i);
       }
     }
 
@@ -46,7 +46,7 @@ public class SeveredSaveCard extends BlankSaveCard {
     for(int i = 0; i < this.portraits.length; i++) {
       this.portraits[i] = this.addControl(new CharacterPortrait());
       this.portraits[i].setPos(18 + i * 52, 8);
-      this.portraits[i].setCharId(i < this.charIds.size() ? this.charIds.getInt(i) : -1);
+      this.portraits[i].setCharId(i < this.charIndices.size() ? this.charIndices.getInt(i) : -1);
     }
   }
 
@@ -55,7 +55,7 @@ public class SeveredSaveCard extends BlankSaveCard {
     this.highlight.setX(26 + (index - this.scroll) * 52);
 
     for(int i = 0; i < this.portraits.length; i++) {
-      this.portraits[i].setCharId(this.scroll + i < this.charIds.size() ? this.charIds.getInt(this.scroll + i) : -1);
+      this.portraits[i].setCharId(this.scroll + i < this.charIndices.size() ? this.charIndices.getInt(this.scroll + i) : -1);
     }
   }
 
@@ -76,7 +76,7 @@ public class SeveredSaveCard extends BlankSaveCard {
       }
 
       if(action == CoreMod.INPUT_ACTION_MENU_RIGHT.get()) {
-        if(this.selectedCharacter < this.charIds.size() - 1) {
+        if(this.selectedCharacter < this.charIndices.size() - 1) {
           if(this.selectedCharacter - this.scroll + 1 > 2) {
             this.scroll++;
           }
@@ -100,8 +100,8 @@ public class SeveredSaveCard extends BlankSaveCard {
       //LAB_80108ba0
       renderText(this.savedGame.locationName, x + 258, y + 47, UI_TEXT_CENTERED);
 
-      final int charId = this.charIds.getInt(this.selectedCharacter);
-      this.savedGame.charStats.get(charId).render(this.savedGame, x, y);
+      final int charIndex = this.charIndices.getInt(this.selectedCharacter);
+      this.savedGame.characters.get(charIndex).render(this.savedGame, x, y);
       this.renderNumber(245, y + 17, this.savedGame.gold, 8);
       this.renderNumber(306, y + 17, getTimestampPart(this.savedGame.timestamp, 0), 3);
       this.renderCharacter(324, y + 17, 10);

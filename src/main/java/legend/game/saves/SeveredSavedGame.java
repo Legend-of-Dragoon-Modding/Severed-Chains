@@ -24,10 +24,10 @@ public class SeveredSavedGame extends SavedGame {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SeveredSavedGame.class);
 
   public String locationName;
-  public final List<SavedCharacter> charStats = new ArrayList<>();
+  public final List<SavedCharacter> characters = new ArrayList<>();
 
   public final int[] scriptData = new int[0x20];
-  public final IntList charIds = new IntArrayList();
+  public final IntList activeParty = new IntArrayList();
   public int gold;
   public int chapterIndex;
   public int stardust;
@@ -71,7 +71,7 @@ public class SeveredSavedGame extends SavedGame {
     gameState.campaign = this.campaign;
 
     System.arraycopy(this.scriptData, 0, gameState.scriptData_08, 0, this.scriptData.length);
-    gameState.charIds_88.addAll(this.charIds);
+    gameState.charIds_88.addAll(this.activeParty);
     gameState.gold_94 = this.gold;
     gameState.chapterIndex_98 = this.chapterIndex;
     gameState.stardust_9c = this.stardust;
@@ -101,8 +101,8 @@ public class SeveredSavedGame extends SavedGame {
       gameState.items_2e9.give(stack, true);
     }
 
-    for(int charId = 0; charId < this.charStats.size(); charId++) {
-      final SavedCharacter savedCharacter = this.charStats.get(charId);
+    for(int charId = 0; charId < this.characters.size(); charId++) {
+      final SavedCharacter savedCharacter = this.characters.get(charId);
       final CharacterData2c charData = savedCharacter.make(gameState);
       gameState.charData_32c.add(charData);
     }

@@ -8388,17 +8388,13 @@ public class Battle extends EngineState<Battle> {
       final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
       player.status_0e = stats.flags_0c;
       player.specialEffectFlag_14 = stats.specialEffectFlag_76;
-//      player.equipmentType_16 = stats.equipmentType_77;
       player.equipment_02_18 = stats.equipment_02_78;
       player.equipmentEquipableFlags_1a = stats.equipmentEquipableFlags_79;
       player.equipmentAttackElements_1c.set(stats.equipmentAttackElements_7a);
-      player.equipment_05_1e = stats.equipment_05_7b;
       player.equipmentElementalResistance_20.set(stats.equipmentElementalResistance_7c);
       player.equipmentElementalImmunity_22.set(stats.equipmentElementalImmunity_7d);
       player.equipmentStatusResist_24 = stats.equipmentStatusResist_7e;
-      player.equipment_09_26 = stats.equipment_09_7f;
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
-      player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
       player.stats.getStat(SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
       player.stats.getStat(ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
@@ -8411,8 +8407,6 @@ public class Battle extends EngineState<Battle> {
       player.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
       player.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10 + stats.equipmentGuardHeal);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
-      player.equipment_19_46 = stats.equipment_19_99;
-      player.equipment_1a_48 = stats.equipment_1a_9a;
       player.equipmentOnHitStatus_4a = stats.equipmentOnHitStatus_9b;
       player.spellId_4e = stats.equipmentOnHitStatus_9b; //TODO retail bug?
       player.selectedAddition_58 = character.selectedAddition_19;
@@ -8424,7 +8418,6 @@ public class Battle extends EngineState<Battle> {
       player.magicalImmunity_112 = stats.equipmentMagicalImmunity_48;
       player.physicalResistance_114 = stats.equipmentPhysicalResistance_4a;
       player.magicalResistance_116 = stats.equipmentMagicalResistance_60;
-//      player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
 
@@ -8864,12 +8857,9 @@ public class Battle extends EngineState<Battle> {
     monster.equipment_02_18 = 0;
     monster.equipmentEquipableFlags_1a = 0;
     monster.element = statsEvent.elementFlag;
-    monster.equipment_05_1e = monsterStats._0e;
     monster.equipmentElementalImmunity_22.set(statsEvent.elementalImmunityFlag);
     monster.equipmentStatusResist_24 = statsEvent.statusResistFlag;
-    monster.equipment_09_26 = 0;
     monster.equipmentAttack1_28 = 0;
-    monster._2e = 0;
     monster.equipmentIcon_30 = 0;
     monster.stats.getStat(SPEED_STAT.get()).setRaw(statsEvent.speed);
     monster.stats.getStat(ATTACK_STAT.get()).setRaw(statsEvent.attack);
@@ -8881,8 +8871,6 @@ public class Battle extends EngineState<Battle> {
     monster.stats.getStat(AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
     monster.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
-    monster.equipment_19_46 = 0;
-    monster.equipment_1a_48 = 0;
     monster.equipmentOnHitStatus_4a = 0;
     monster.targetArrowPos_78.set(monsterStats.targetArrowX_12, monsterStats.targetArrowY_13, monsterStats.targetArrowZ_14);
     monster.hitCounterFrameThreshold_7e = monsterStats.hitCounterFrameThreshold_15;
@@ -8890,11 +8878,8 @@ public class Battle extends EngineState<Battle> {
     monster._82 = monsterStats._17;
     monster.middleOffsetX_84 = monsterStats.middleOffsetX_18;
     monster.middleOffsetY_86 = monsterStats.middleOffsetY_19;
-    monster._88 = monsterStats._1a;
-    monster._8a = monsterStats._1b;
 
     monster.damageReductionFlags_6e = monster.specialEffectFlag_14;
-    monster._70 = monster.equipment_05_1e;
     monster.monsterElementalImmunity_74.set(monster.equipmentElementalImmunity_22);
     monster.monsterStatusResistFlag_76 = monster.equipmentStatusResist_24;
 

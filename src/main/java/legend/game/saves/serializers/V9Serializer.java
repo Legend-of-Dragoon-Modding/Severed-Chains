@@ -68,7 +68,7 @@ public final class V9Serializer {
     final int charSlotCount = data.readByte(offset);
 
     for(int i = 0; i < charSlotCount; i++) {
-      savedGame.charIds.add(data.readShort(offset));
+      savedGame.activeParty.add(data.readShort(offset));
     }
 
     savedGame.gold = data.readInt(offset);
@@ -162,7 +162,7 @@ public final class V9Serializer {
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
     savedGame.locationName = locationName;
-    savedGame.charStats.addAll(charStats);
+    savedGame.characters.addAll(charStats);
     savedGame.engineState = engineStateId;
     savedGame.engineStateData = engineStateData;
 

@@ -122,7 +122,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int equipment_02_18;
   public int equipmentEquipableFlags_1a;
 
-  public int equipment_05_1e;
+//  public int equipment_05_1e;
   public final ElementSet equipmentElementalResistance_20 = new ElementSet();
   public final ElementSet equipmentElementalImmunity_22 = new ElementSet();
   /**
@@ -138,10 +138,10 @@ public abstract class BattleEntity27c extends BattleObject {
    * </ul>
    */
   public int equipmentStatusResist_24;
-  public int equipment_09_26;
+//  public int equipment_09_26;
   public int equipmentAttack1_28;
 
-  public int _2e;
+//  public int _2e;
   public int equipmentIcon_30;
   public int attackHit_3c;
   public int magicHit_3e;
@@ -151,8 +151,8 @@ public abstract class BattleEntity27c extends BattleObject {
    * Also used if specialEffect has one-hit-KO enabled
    */
   public int onHitStatusChance_44;
-  public int equipment_19_46;
-  public int equipment_1a_48;
+//  public int equipment_19_46;
+//  public int equipment_1a_48;
   /**
    * Player only - if you have a weapon that inflicts a status, this will be set of statuses
    *
@@ -183,8 +183,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public int middleOffsetX_84;
   /** Y offset for archer/item throw target, status ailment effect, 1/100 scale */
   public int middleOffsetY_86;
-  public int _88;
-  public int _8a;
+//  public int _88;
+//  public int _8a;
 
   public SpellStats0c spell_94;
 
@@ -383,14 +383,14 @@ public abstract class BattleEntity27c extends BattleObject {
       case EQUIPMENT_02 -> this.equipment_02_18;
       case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a;
 
-      case EQUIPMENT_05 -> this.equipment_05_1e;
+//      case EQUIPMENT_05 -> this.equipment_05_1e;
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.pack();
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.pack();
       case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24;
-      case EQUIPMENT_09 -> this.equipment_09_26;
+//      case EQUIPMENT_09 -> this.equipment_09_26;
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28;
 
-      case _21 -> this._2e;
+//      case _21 -> this._2e;
       case EQUIPMENT_ICON -> this.equipmentIcon_30;
       case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
       case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
@@ -402,8 +402,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case ATTACK_AVOID -> this.stats.getStat(LodMod.AVOID_STAT.get()).get();
       case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44;
-      case EQUIPMENT_19 -> this.equipment_19_46;
-      case EQUIPMENT_1a -> this.equipment_1a_48;
+//      case EQUIPMENT_19 -> this.equipment_19_46;
+//      case EQUIPMENT_1a -> this.equipment_1a_48;
       case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a;
       case TURN_VALUE -> this.turnValue_4c;
       case SPELL_ID -> this.spellId_4e;
@@ -416,8 +416,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case _63 -> this._82;
       case MIDDLE_OFFSET_X -> this.middleOffsetX_84;
       case MIDDLE_OFFSET_Y -> this.middleOffsetY_86;
-      case _66 -> this._88;
-      case _67 -> this._8a;
+//      case _66 -> this._88;
+//      case _67 -> this._8a;
 
       case SPELL_TARGET_TYPE -> this.spell_94.targetType_00;
       case SPELL_FLAGS -> this.spell_94.flags_01;
@@ -482,14 +482,14 @@ public abstract class BattleEntity27c extends BattleObject {
       case EQUIPMENT_02 -> this.equipment_02_18 = value;
       case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value;
 
-      case EQUIPMENT_05 -> this.equipment_05_1e = value;
+//      case EQUIPMENT_05 -> this.equipment_05_1e = value;
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value);
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value);
       case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 = value;
-      case EQUIPMENT_09 -> this.equipment_09_26 = value;
+//      case EQUIPMENT_09 -> this.equipment_09_26 = value;
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value;
 
-      case _21 -> this._2e = value;
+//      case _21 -> this._2e = value;
       case EQUIPMENT_ICON -> this.equipmentIcon_30 = value;
       case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value);
       case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value);
@@ -500,8 +500,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case ATTACK_AVOID -> this.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(value);
       case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value);
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value;
-      case EQUIPMENT_19 -> this.equipment_19_46 = value;
-      case EQUIPMENT_1a -> this.equipment_1a_48 = value;
+//      case EQUIPMENT_19 -> this.equipment_19_46 = value;
+//      case EQUIPMENT_1a -> this.equipment_1a_48 = value;
       case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a = value;
       case TURN_VALUE -> this.turnValue_4c = value;
       case SPELL_ID -> this.spellId_4e = value;
@@ -514,8 +514,8 @@ public abstract class BattleEntity27c extends BattleObject {
       case _63 -> this._82 = value;
       case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value;
       case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value;
-      case _66 -> this._88 = value;
-      case _67 -> this._8a = value;
+//      case _66 -> this._88 = value;
+//      case _67 -> this._8a = value;
 
       case POWER_ATTACK -> {
         this.powerAttack_b4 = (byte)value;

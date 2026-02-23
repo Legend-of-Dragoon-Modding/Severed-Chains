@@ -25,7 +25,7 @@ public class RetailSaveCard extends BlankSaveCard {
       final CharacterPortrait[] portraits = new CharacterPortrait[3];
       portraits[i] = this.addControl(new CharacterPortrait());
       portraits[i].setPos(18 + i * 52, 8);
-      portraits[i].setCharId(i < savedGame.charIds.size() ? savedGame.charIds.getInt(i) : -1);
+      portraits[i].setCharId(i < savedGame.charIndices.size() ? savedGame.charIndices.getInt(i) : -1);
     }
   }
 
@@ -37,8 +37,8 @@ public class RetailSaveCard extends BlankSaveCard {
       //LAB_80108ba0
       renderText(this.savedGame.locationName, x + 258, y + 47, UI_TEXT_CENTERED);
 
-      final int firstCharId = this.savedGame.charIds.getInt(0);
-      final RetailSavedGame.SavedCharacter character = this.savedGame.charStats[firstCharId];
+      final int charindex = this.savedGame.charIndices.getInt(0);
+      final RetailSavedGame.SavedCharacter character = this.savedGame.characters[charindex];
       this.renderNumber(224, y + 6, character.level, 2); // Level
       this.renderNumber(269, y + 6, character.dlevel, 2); // Dragoon level
       renderFourDigitHp(302, y + 6, character.hp, this.savedGame.maxHp, Renderable58.FLAG_DELETE_AFTER_RENDER); // Current HP

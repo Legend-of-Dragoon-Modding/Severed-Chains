@@ -58,7 +58,7 @@ public final class RetailSerializer {
       final int charId = data.readInt(0x88 + i * 0x4);
 
       if(charId != -1) {
-        savedGame.charIds.add(charId);
+        savedGame.charIndices.add(charId);
       }
     }
 
@@ -142,7 +142,7 @@ public final class RetailSerializer {
     }
 
     for(int charSlot = 0; charSlot < 9; charSlot++) {
-      final RetailSavedGame.SavedCharacter charData = savedGame.charStats[charSlot];
+      final RetailSavedGame.SavedCharacter charData = savedGame.characters[charSlot];
       final FileData charSlice = data.slice(0x32c + charSlot * 0x2c, 0x2c);
 
       charData.xp = charSlice.readInt(0x0);
@@ -196,8 +196,8 @@ public final class RetailSerializer {
 
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
 
-    final RetailSavedGame.SavedCharacter charData = savedGame.charStats[savedGame.charIds.getInt(0)];
-    savedGame.maxHp = levelStuff_80111cfc[savedGame.charIds.getInt(0)][charData.level].hp_00;
-    savedGame.maxMp = magicStuff_80111d20[savedGame.charIds.getInt(0)][charData.dlevel].mp_00;
+    final RetailSavedGame.SavedCharacter charData = savedGame.characters[savedGame.charIndices.getInt(0)];
+    savedGame.maxHp = levelStuff_80111cfc[savedGame.charIndices.getInt(0)][charData.level].hp_00;
+    savedGame.maxMp = magicStuff_80111d20[savedGame.charIndices.getInt(0)][charData.dlevel].mp_00;
   }
 }

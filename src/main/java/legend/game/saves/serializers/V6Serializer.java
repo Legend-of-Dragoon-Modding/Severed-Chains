@@ -59,7 +59,7 @@ public final class V6Serializer {
       final int charId = data.readShort(offset);
 
       if(charId != -1) {
-        savedGame.charIds.add(charId);
+        savedGame.charIndices.add(charId);
       }
     }
 
@@ -121,8 +121,8 @@ public final class V6Serializer {
 
     final int charDataCount = data.readUShort(offset); // Not yet used
 
-    for(int charIndex = 0; charIndex < savedGame.charStats.length; charIndex++) {
-      final RetailSavedGame.SavedCharacter charData = savedGame.charStats[charIndex];
+    for(int charIndex = 0; charIndex < savedGame.characters.length; charIndex++) {
+      final RetailSavedGame.SavedCharacter charData = savedGame.characters[charIndex];
       charData.xp = data.readInt(offset);
       charData.flags = data.readInt(offset);
       charData.hp = data.readInt(offset);

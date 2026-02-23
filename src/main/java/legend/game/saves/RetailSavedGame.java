@@ -40,7 +40,7 @@ public class RetailSavedGame extends SavedGame {
   public int maxMp;
 
   public final int[] scriptData = new int[0x20];
-  public final IntList charIds = new IntArrayList();
+  public final IntList charIndices = new IntArrayList();
   public int gold;
   public int chapterIndex;
   public int stardust;
@@ -62,7 +62,7 @@ public class RetailSavedGame extends SavedGame {
   public final List<RegistryId> equipmentIds = new ArrayList<>();
   public final List<InventoryEntry> itemIds = new ArrayList<>();
 
-  public final SavedCharacter[] charStats = new SavedCharacter[9];
+  public final SavedCharacter[] characters = new SavedCharacter[9];
 
   public int pathIndex;
   public int dotIndex;
@@ -78,7 +78,7 @@ public class RetailSavedGame extends SavedGame {
 
   public RetailSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
     super(campaign, version, fileName, saveName, campaignType, config);
-    Arrays.setAll(this.charStats, i -> new SavedCharacter());
+    Arrays.setAll(this.characters, i -> new SavedCharacter());
   }
 
   @Override
@@ -92,7 +92,7 @@ public class RetailSavedGame extends SavedGame {
     gameState.campaign = this.campaign;
 
     System.arraycopy(this.scriptData, 0, gameState.scriptData_08, 0, this.scriptData.length);
-    gameState.charIds_88.addAll(this.charIds);
+    gameState.charIds_88.addAll(this.charIndices);
     gameState.gold_94 = this.gold;
     gameState.chapterIndex_98 = this.chapterIndex;
     gameState.stardust_9c = this.stardust;
@@ -124,8 +124,8 @@ public class RetailSavedGame extends SavedGame {
       gameState.items_2e9.give(stack, true);
     }
 
-    for(int charId = 0; charId < this.charStats.length; charId++) {
-      final SavedCharacter savedCharacter = this.charStats[charId];
+    for(int charId = 0; charId < this.characters.length; charId++) {
+      final SavedCharacter savedCharacter = this.characters[charId];
       final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(CHAR_IDS[charId]).get();
       final CharacterData2c character = template.make(gameState);
       gameState.charData_32c.add(character);

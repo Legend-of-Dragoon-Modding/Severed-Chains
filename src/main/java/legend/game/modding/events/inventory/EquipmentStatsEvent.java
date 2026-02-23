@@ -14,11 +14,9 @@ public class EquipmentStatsEvent extends Event {
   public int _02;
   public int equipableFlags_03;
   public ElementSet attackElement_04;
-  public int _05;
   public ElementSet elementalResistance_06;
   public ElementSet elementalImmunity_07;
   public int statusResist_08;
-  public int _09;
   public int attack1_0a;
   public int mpPerPhysicalHit;
   public int spPerPhysicalHit;
@@ -48,8 +46,6 @@ public class EquipmentStatsEvent extends Event {
   public int attackAvoid_16;
   public int magicAvoid_17;
   public int onHitStatusChance_18;
-  public int _19;
-  public int _1a;
   public int onHitStatus_1b;
 
   public EquipmentStatsEvent(final int charId, final Equipment equipment) {
@@ -61,11 +57,9 @@ public class EquipmentStatsEvent extends Event {
     this._02 = equipment._02;
     this.equipableFlags_03 = equipment.equipableFlags_03;
     this.attackElement_04 = equipment.attackElement_04;
-    this._05 = equipment._05;
     this.elementalResistance_06 = equipment.elementalResistance_06;
     this.elementalImmunity_07 = equipment.elementalImmunity_07;
     this.statusResist_08 = equipment.statusResist_08;
-    this._09 = equipment._09;
     this.attack1_0a = equipment.attack1_0a;
     this.mpPerPhysicalHit = equipment.mpPerPhysicalHit;
     this.spPerPhysicalHit = equipment.spPerPhysicalHit;
@@ -95,8 +89,6 @@ public class EquipmentStatsEvent extends Event {
     this.attackAvoid_16 = equipment.attackAvoid_16;
     this.magicAvoid_17 = equipment.magicAvoid_17;
     this.onHitStatusChance_18 = equipment.onHitStatusChance_18;
-    this._19 = equipment._19;
-    this._1a = equipment._1a;
     this.onHitStatus_1b = equipment.onHitStatus_1b;
   }
 }
