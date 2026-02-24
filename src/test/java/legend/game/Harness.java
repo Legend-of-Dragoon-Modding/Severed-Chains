@@ -103,6 +103,7 @@ public final class Harness {
       field.setAccessible(true);
       return field.getInt(battle);
     } catch(final ReflectiveOperationException e) {
+      LOGGER.warn("[E2E] Failed to read Battle.loadingStage via reflection; returning -1", e);
       return -1;
     }
   }

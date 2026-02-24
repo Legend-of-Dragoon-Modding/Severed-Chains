@@ -145,10 +145,15 @@ class EngineBootTest {
       engine.interrupt();
       try {
         engine.join(5000);
+        if(engine.isAlive()) {
+          LOGGER.warn("[E2E] Engine thread did not terminate within 5000ms and may still be running");
+        } else {
+          LOGGER.info("[E2E] Engine thread shut down");
+        }
       } catch(final InterruptedException e) {
         Thread.currentThread().interrupt();
+        LOGGER.warn("[E2E] Interrupted while waiting for engine thread to shut down", e);
       }
-      LOGGER.info("[E2E] Engine thread shut down");
     }
   }
 }
