@@ -50,7 +50,6 @@ import legend.game.textures.TextureAtlas;
 import legend.game.textures.TexturePacker;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
-import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
@@ -66,24 +65,14 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static legend.game.SItem.UI_WHITE;
-import static legend.game.SItem.albertXpTable_801138c0;
-import static legend.game.SItem.dartXpTable_801135e4;
-import static legend.game.SItem.haschelXpTable_801136d8;
-import static legend.game.SItem.kongolXpTable_801134f0;
-import static legend.game.SItem.lavitzXpTable_801138c0;
 import static legend.game.SItem.loadMenuAssets;
-import static legend.game.SItem.meruXpTable_801137cc;
-import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.renderMenuCentredText;
-import static legend.game.SItem.roseXpTable_801139b4;
-import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.bindRendererEvents;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
@@ -250,8 +239,6 @@ public final class GameEngine {
 
           statusText = "";
 
-          loadXpTables();
-
           synchronized(UPDATER_LOCK) {
             if(!UPDATE_CHECK_FINISHED) {
               statusText = I18n.translate("unpacker.checking_for_updates");
@@ -380,54 +367,6 @@ public final class GameEngine {
     TEXTURE_ATLAS = packer.pack(512, 512);
 
     LOGGER.info("Texture atlas created in %.02fs", (System.nanoTime() - t) / 1_000_000_000.0f);
-  }
-
-  private static void loadXpTables() throws IOException {
-    final FileData dart = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
-    final FileData lavitz = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
-    final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
-    final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
-    final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
-    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
-    final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
-    final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
-    final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
-
-    for(int i = 0; i < dartXpTable_801135e4.length; i++) {
-      dartXpTable_801135e4[i] = dart.readInt(i * 4);
-    }
-
-    for(int i = 0; i < lavitzXpTable_801138c0.length; i++) {
-      lavitzXpTable_801138c0[i] = lavitz.readInt(i * 4);
-    }
-
-    for(int i = 0; i < albertXpTable_801138c0.length; i++) {
-      albertXpTable_801138c0[i] = albert.readInt(i * 4);
-    }
-
-    for(int i = 0; i < shanaXpTable_80113aa8.length; i++) {
-      shanaXpTable_80113aa8[i] = shana.readInt(i * 4);
-    }
-
-    for(int i = 0; i < mirandaXpTable_80113aa8.length; i++) {
-      mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
-    }
-
-    for(int i = 0; i < roseXpTable_801139b4.length; i++) {
-      roseXpTable_801139b4[i] = rose.readInt(i * 4);
-    }
-
-    for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
-      haschelXpTable_801136d8[i] = haschel.readInt(i * 4);
-    }
-
-    for(int i = 0; i < kongolXpTable_801134f0.length; i++) {
-      kongolXpTable_801134f0[i] = kongol.readInt(i * 4);
-    }
-
-    for(int i = 0; i < meruXpTable_801137cc.length; i++) {
-      meruXpTable_801137cc[i] = meru.readInt(i * 4);
-    }
   }
 
   private static void transitionToGame() {

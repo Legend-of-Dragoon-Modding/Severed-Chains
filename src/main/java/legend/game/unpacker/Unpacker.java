@@ -89,7 +89,6 @@ public final class Unpacker {
 
     // Spells, XP, and TIMs from lod_engine
     transformers.add(new LeafTransformation("LOD engine", Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor));
-    transformers.add(new LeafTransformation("XP", Unpacker::xpDiscriminator, Unpacker::xpExtractor));
     transformers.add(new LeafTransformation("Spells", Unpacker::spellsDiscriminator, Unpacker::spellsExtractor));
 
     // Savepoint etc. from SMAP
@@ -695,25 +694,6 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     transformations.replaceNode(node, new FileData(newData));
-  }
-
-  private static boolean xpDiscriminator(final PathNode node, final Set<String> flags) {
-    return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
-  }
-
-  private static void xpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    flags.add(node.fullPath);
-
-    transformations.addNode(node);
-    transformations.addNode("characters/kongol/xp", node.data.slice(0x17d78, 61 * 4));
-    transformations.addNode("characters/dart/xp", node.data.slice(0x17e6c, 61 * 4));
-    transformations.addNode("characters/haschel/xp", node.data.slice(0x17f60, 61 * 4));
-    transformations.addNode("characters/meru/xp", node.data.slice(0x18054, 61 * 4));
-    transformations.addNode("characters/lavitz/xp", node.data.slice(0x18148, 61 * 4));
-    transformations.addNode("characters/albert/xp", node.data.slice(0x18148, 61 * 4));
-    transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
-    transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
-    transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
   }
 
   private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {

@@ -220,17 +220,6 @@ public final class SItem {
     {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 66, 200, 150, 200, 200), new MagicStuff08(40, 65, 205, 155, 210, 210), new MagicStuff08(60, 67, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 13, 220, 170, 250, 250), },
   };
 
-  public static final int[] kongolXpTable_801134f0 = new int[61];
-  public static final int[] dartXpTable_801135e4 = new int[61];
-  public static final int[] haschelXpTable_801136d8 = new int[61];
-  public static final int[] meruXpTable_801137cc = new int[61];
-  public static final int[] lavitzXpTable_801138c0 = new int[61];
-  public static final int[] albertXpTable_801138c0 = new int[61];
-  public static final int[] roseXpTable_801139b4 = new int[61];
-  public static final int[] shanaXpTable_80113aa8 = new int[61];
-  public static final int[] mirandaXpTable_80113aa8 = new int[61];
-  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
-
   public static final MenuGlyph06[] charSwapGlyphs_80114160 = {
     new MenuGlyph06(69, 0, 0),
     new MenuGlyph06(70, 192, 0),
