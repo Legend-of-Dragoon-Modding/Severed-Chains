@@ -52,7 +52,7 @@ public final class V8Serializer {
     final String locationName = data.readAscii(offset);
 
     final ConfigCollection config = new ConfigCollection();
-    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V8", filename, name, campaignTypeId, config, SAVES.retailAtlas, 512, 64);
+    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V8", filename, name, campaignTypeId, config, SAVES.getRetailAtlas(), 512, 64);
 
     for(int i = 0; i < savedGame.scriptData.length; i++) {
       savedGame.scriptData[i] = data.readInt(offset);

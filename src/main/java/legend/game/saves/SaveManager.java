@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.GameEngine;
 import legend.core.IoHelper;
+import legend.core.Latch;
 import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputBindings;
 import legend.game.EngineState;
@@ -83,11 +84,15 @@ public final class SaveManager {
   private final int serializerMagic;
   private final SaveSerializer serializer;
 
-  public final FileData retailAtlas = Loader.loadFile("retail_atlas.png");
+  private final Latch<FileData> retailAtlas = new Latch<>(() -> Loader.loadFile("retail_atlas.png"));
 
   public SaveManager(final int serializerMagic, final SaveSerializer serializer) {
     this.serializerMagic = serializerMagic;
     this.serializer = serializer;
+  }
+
+  public FileData getRetailAtlas() {
+    return this.retailAtlas.get();
   }
 
   public void registerDeserializer(final Function<FileData, FileData> matcher, final SaveDeserializer deserializer) {
