@@ -44,6 +44,10 @@ import legend.game.saves.serializers.V8Serializer;
 import legend.game.saves.serializers.V9Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
+import legend.game.textures.TextureAtlas;
+import legend.game.textures.TexturePacker;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -57,12 +61,15 @@ import org.joml.Vector3f;
 import org.legendofdragoon.modloader.ModManager;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.i18n.LangManager;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.game.SItem.UI_WHITE;
@@ -117,6 +124,7 @@ public final class GameEngine {
   public static final FontManager FONTS = new FontManager();
   public static Font DEFAULT_FONT = FONTS.get(Path.of("./gfx/fonts/default.json"));
 
+  private static TextureAtlas TEXTURE_ATLAS;
   private static Texture UI_TEXTURE;
 
   public static final Gte GTE;
@@ -293,6 +301,10 @@ public final class GameEngine {
     }
   }
 
+  public static TextureAtlas getTextureAtlas() {
+    return TEXTURE_ATLAS;
+  }
+
   public static Texture getUiTexture() {
     return UI_TEXTURE;
   }
@@ -351,6 +363,23 @@ public final class GameEngine {
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
     ItemIcon.loadIconMap();
+
+    LOGGER.info("Creating texture atlas...");
+    final long t = System.nanoTime();
+
+    if(TEXTURE_ATLAS != null) {
+      TEXTURE_ATLAS.delete();
+    }
+
+    final Map<RegistryId, Image> images = new HashMap<>();
+    EVENTS.postEvent(new RegisterAtlasTexturesEvent(images));
+
+    final TexturePacker packer = new TexturePacker();
+    images.forEach(packer::add);
+
+    TEXTURE_ATLAS = packer.pack(512, 512);
+
+    LOGGER.info("Texture atlas created in %.02fs", (System.nanoTime() - t) / 1_000_000_000.0f);
   }
 
   private static void loadXpTables() throws IOException {

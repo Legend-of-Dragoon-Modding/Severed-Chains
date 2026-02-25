@@ -1,30 +1,28 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.GameEngine;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.screens.Control;
 import legend.game.types.CharacterData2c;
 
-import static legend.game.SItem.characterNames_801142dc;
-import static legend.game.SItem.getXpToNextLevel;
+import javax.annotation.Nullable;
+
 import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderHp;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharacterCard extends Control {
-  private int charId;
+  private CharacterData2c character;
 
   private final Glyph background;
   private final Glyph overlay;
   private final Label name;
-  private final CharacterPortrait portrait;
+  private final AtlasIcon portrait;
 
-  public CharacterCard(final int charId) {
-    this.charId = charId;
-
+  public CharacterCard() {
     this.setSize(174, 64);
 
     this.overlay = this.addControl(Glyph.uiElement(74, 74));
@@ -37,47 +35,55 @@ public class CharacterCard extends Control {
     this.name = this.addControl(new Label(""));
     this.name.setPos(57, 3);
 
-    this.portrait = this.addControl(new CharacterPortrait());
+    this.portrait = this.addControl(new AtlasIcon());
     this.portrait.setPos(8, 8);
-
-    this.setCharId(charId);
+    this.portrait.setSize(48, 48);
   }
 
-  public int getCharId() {
-    return this.charId;
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+    this.background.setZ(z);
+    this.overlay.setZ(z);
+    this.name.setZ(z);
+    this.portrait.setZ(z);
   }
 
-  public void setCharId(final int charId) {
-    this.charId = charId;
+  public CharacterData2c getCharacter() {
+    return this.character;
+  }
 
-    this.portrait.setCharId(charId);
+  public void setCharacter(@Nullable final CharacterData2c character) {
+    this.character = character;
 
-    final boolean visible = charId != -1;
+    final boolean visible = character != null;
+
+    this.portrait.setIcon(visible ? GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId()) : null);
+
     this.background.setVisibility(visible);
     this.overlay.setVisibility(visible);
     this.name.setVisibility(visible);
     this.portrait.setVisibility(visible);
 
     if(visible) {
-      this.name.setText(characterNames_801142dc[this.charId]);
+      this.name.setText(this.character.getName());
     }
   }
 
   @Override
   protected void render(final int x, final int y) {
-    if(this.charId != -1) {
-      final CharacterData2c character = gameState_800babc8.charData_32c.get(this.charId);
-      final VitalsStat hp = character.stats.getStat(HP_STAT.get());
-      final VitalsStat mp = character.stats.getStat(MP_STAT.get());
-      final VitalsStat sp = character.stats.getStat(SP_STAT.get());
-      this.renderNumber(x + 162, y + 6, character.level_12, 2);
-      this.renderNumber(x + 120, y + 17, character.dlevel_13, 2);
+    if(this.character != null) {
+      final VitalsStat hp = this.character.stats.getStat(HP_STAT.get());
+      final VitalsStat mp = this.character.stats.getStat(MP_STAT.get());
+      final VitalsStat sp = this.character.stats.getStat(SP_STAT.get());
+      this.renderNumber(x + 162, y + 6, this.character.level_12, 2);
+      this.renderNumber(x + 120, y + 17, this.character.dlevel_13, 2);
       this.renderNumber(x + 156, y + 17, sp.getCurrent(), 3);
       renderHp(x + this.getWidth(), y + 28, hp.getCurrent(), hp.getMax());
       renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), mp.getMax());
-      renderFraction(x + this.getWidth(), y + 50, character.xp_00, getXpToNextLevel(this.charId));
+      renderFraction(x + this.getWidth(), y + 50, this.character.xp_00, this.character.getXpToNextLevel());
 
-      this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.charId));
+      this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.character));
     }
   }
 }

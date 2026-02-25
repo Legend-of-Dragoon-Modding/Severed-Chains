@@ -10,6 +10,17 @@ lod.config.extended_dragoon_actions.label=Extended dragoon actions
 lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
 lod.config.ui_colour.label=UI Colour
 
+# Characters
+lod.character_templates.dart.name=Dart
+lod.character_templates.lavitz.name=Lavitz
+lod.character_templates.shana.name=Shana
+lod.character_templates.rose.name=Rose
+lod.character_templates.haschel.name=Haschel
+lod.character_templates.albert.name=Albert
+lod.character_templates.meru.name=Meru
+lod.character_templates.kongol.name=Kongol
+lod.character_templates.miranda.name=Miranda
+
 # Equipment
 lod.equipment.broad_sword.name=Broad Sword
 lod.equipment.broad_sword.description=

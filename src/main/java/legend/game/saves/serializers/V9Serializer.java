@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.ReflectionAccessFilter;
+import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
 import legend.game.EngineState;
 import legend.game.characters.CharacterTemplate;
@@ -18,19 +19,20 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.InventoryEntry;
-import legend.game.saves.SavedCharacter;
 import legend.game.saves.SavedGame;
 import legend.game.saves.SeveredSavedGame;
+import legend.game.textures.PngWriter;
+import legend.game.textures.TexturePacker;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.lwjgl.BufferUtils;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
@@ -58,8 +60,14 @@ public final class V9Serializer {
     final RegistryId campaignTypeId = data.readRegistryId(offset);
     final String locationName = data.readAscii(offset);
 
+    final int atlasWidth = data.readInt(offset);
+    final int atlasHeight = data.readInt(offset);
+    final int atlasSize = data.readInt(offset);
+    final FileData atlasData = data.slice(offset.get(), atlasSize);
+    offset.add(atlasSize);
+
     final ConfigCollection config = new ConfigCollection();
-    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V9", filename, name, campaignTypeId, config);
+    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V9", filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
 
     for(int i = 0; i < savedGame.scriptData.length; i++) {
       savedGame.scriptData[i] = data.readInt(offset);
@@ -139,12 +147,12 @@ public final class V9Serializer {
     }
 
     final int charDataCount = data.readUShort(offset);
-    final List<SavedCharacter> charStats = new ArrayList<>();
 
     for(int charIndex = 0; charIndex < charDataCount; charIndex++) {
       final RegistryId templateId = data.readRegistryId(offset);
       final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(templateId).get();
-      charStats.add(template.deserialize(data, offset));
+      savedGame.characters.add(template.deserialize(data, offset));
+      savedGame.charPortraits.add(new Rect4i(data.readShort(offset), data.readShort(offset), data.readShort(offset), data.readShort(offset)));
     }
 
     savedGame.characterInitialized = data.readInt(offset);
@@ -162,7 +170,6 @@ public final class V9Serializer {
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
     savedGame.locationName = locationName;
-    savedGame.characters.addAll(charStats);
     savedGame.engineState = engineStateId;
     savedGame.engineStateData = engineStateData;
 
@@ -170,9 +177,25 @@ public final class V9Serializer {
   }
 
   public static void toV9(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) {
+    final TexturePacker packer = new TexturePacker();
+
+    for(final CharacterData2c character : gameState.charData_32c) {
+      packer.add(character.template.getRegistryId(), character.template.loadPortrait());
+    }
+
+    final byte[] atlas = packer.packToBytes(512, 512);
+    final ByteBuffer buffer = BufferUtils.createByteBuffer(atlas.length);
+    buffer.put(0, atlas);
+    final byte[] compressed = PngWriter.compress(buffer, 512, 512);
+
     data.writeAscii(offset, name);
     data.writeRegistryId(offset, campaignType.getRegistryId());
     data.writeAscii(offset, engineState.getLocation(gameState));
+
+    data.writeInt(offset, 512); // atlas width
+    data.writeInt(offset, 512); // atlas height
+    data.writeInt(offset, compressed.length);
+    data.write(0, compressed, offset, compressed.length);
 
     for(final int scriptData : gameState.scriptData_08) {
       data.writeInt(offset, scriptData);
@@ -252,6 +275,12 @@ public final class V9Serializer {
       final CharacterData2c character = gameState.charData_32c.get(i);
       data.writeRegistryId(offset, character.template.getRegistryId());
       character.template.serialize(character, data, offset);
+
+      final Rect4i rect = packer.getRect(character.template.getRegistryId());
+      data.writeShort(offset, rect.x);
+      data.writeShort(offset, rect.y);
+      data.writeShort(offset, rect.w);
+      data.writeShort(offset, rect.h);
     }
 
     data.writeInt(offset, gameState.characterInitialized_4e6);

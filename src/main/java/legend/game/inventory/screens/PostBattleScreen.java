@@ -40,7 +40,6 @@ import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
-import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.giveItems;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -454,7 +453,7 @@ public class PostBattleScreen extends MenuScreen {
           this.pendingXp_8011e180[charId] -= cappedPendingXp;
 
           //LAB_8010cd30
-          while(character.xp_00 >= getXpToNextLevel(charId) && character.level_12 < 60) {
+          while(character.xp_00 >= character.getXpToNextLevel() && character.level_12 < 60) {
             character.level_12++;
             this.levelsGained_8011e1c8[charSlot]++;
             EVENTS.postEvent(new CharacterLevelUpEvent(charId, character));
@@ -759,7 +758,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010e8e0
       this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
-      final int xp = getXpToNextLevel(charId);
+      final int xp = character.getXpToNextLevel();
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, character.xp_00);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);

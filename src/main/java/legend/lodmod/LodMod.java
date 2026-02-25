@@ -13,6 +13,7 @@ import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.additions.AdditionRegistryEvent;
+import legend.game.characters.CharacterTemplate;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.FractionalStat;
@@ -70,6 +71,8 @@ import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.scripting.ScriptState;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.Mod;
@@ -706,6 +709,15 @@ public class LodMod {
       event.addMapping(ItemIcon.GLOVE, ItemIcon.RING);
       event.addMapping(ItemIcon.HORN, ItemIcon.RING);
       event.addMapping(ItemIcon.SHIELD, ItemIcon.RING);
+    }
+  }
+
+  @EventListener
+  public static void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
+    for(final RegistryId id : REGISTRIES.characterTemplates) {
+      final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(id).get();
+      final Image icon = template.loadPortrait();
+      event.add(id, icon);
     }
   }
 }

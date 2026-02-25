@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.ReflectionAccessFilter;
+import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.Campaign;
@@ -23,9 +24,8 @@ import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
+import static legend.core.GameEngine.SAVES;
 import static legend.lodmod.Legacy.CHAR_IDS;
 
 public final class V8Serializer {
@@ -52,7 +52,7 @@ public final class V8Serializer {
     final String locationName = data.readAscii(offset);
 
     final ConfigCollection config = new ConfigCollection();
-    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V8", filename, name, campaignTypeId, config);
+    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V8", filename, name, campaignTypeId, config, SAVES.retailAtlas, 512, 64);
 
     for(int i = 0; i < savedGame.scriptData.length; i++) {
       savedGame.scriptData[i] = data.readInt(offset);
@@ -132,14 +132,14 @@ public final class V8Serializer {
     }
 
     final int charDataCount = data.readUShort(offset);
-    final List<SeveredSavedCharacterV1> charStats = new ArrayList<>();
 
     for(int charIndex = 0; charIndex < charDataCount; charIndex++) {
       final RegistryId templateId = CHAR_IDS[charIndex];
       final int maxHp = data.readInt(offset);
       final int maxMp = data.readInt(offset);
       final SeveredSavedCharacterV1 charData = new SeveredSavedCharacterV1(templateId, maxHp, maxMp);
-      charStats.add(charData);
+      savedGame.characters.add(charData);
+      savedGame.charPortraits.add(new Rect4i(charIndex * 48, 0, 48, 48));
 
       charData.xp = data.readInt(offset);
       charData.flags = data.readInt(offset);
@@ -192,7 +192,6 @@ public final class V8Serializer {
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
     savedGame.locationName = locationName;
-    savedGame.characters.addAll(charStats);
     savedGame.engineState = engineStateId;
     savedGame.engineStateData = engineStateData;
 

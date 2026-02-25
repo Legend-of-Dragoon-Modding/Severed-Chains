@@ -1,6 +1,8 @@
 package legend.lodmod.characters;
 
+import legend.core.Latch;
 import legend.core.memory.types.IntRef;
+import legend.game.textures.Image;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.additions.UnlockState;
 import legend.game.characters.CharacterTemplate;
@@ -14,6 +16,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -39,10 +42,12 @@ import static legend.lodmod.LodMod.SPEED_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
 
 public abstract class RetailCharacterTemplate extends CharacterTemplate {
+  private final Latch<Image> portrait = new Latch<>(() -> Image.load(Loader.resolve("characters/" + this.getRegistryId().entryId() + "/portrait.png")));
+
   @Override
   public CharacterData2c make(final GameState52c gameState) {
     final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
-    final CharacterData2c character = new CharacterData2c(this, stats);
+    final CharacterData2c character = new CharacterData2c(gameState, this, stats);
 
     this.applyLevelUp(gameState, character, null);
     this.applyDragoonLevelUp(gameState, character, null);
@@ -121,6 +126,11 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     }
 
     return character;
+  }
+
+  @Override
+  public Image loadPortrait() {
+    return this.portrait.get();
   }
 
   @Override

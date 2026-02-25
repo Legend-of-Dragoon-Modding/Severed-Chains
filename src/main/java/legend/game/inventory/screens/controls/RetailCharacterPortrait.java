@@ -9,10 +9,10 @@ import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
 
-public class CharacterPortrait extends Control {
+public class RetailCharacterPortrait extends Control {
   private final Renderable58 renderable;
 
-  public CharacterPortrait() {
+  public RetailCharacterPortrait() {
     this.setSize(48, 48);
 
     this.renderable = allocateManualRenderable(uiFile_800bdc3c.portraits_cfac(), null);

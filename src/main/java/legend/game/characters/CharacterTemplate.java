@@ -1,6 +1,7 @@
 package legend.game.characters;
 
 import legend.core.memory.types.IntRef;
+import legend.game.textures.Image;
 import legend.game.inventory.Equipment;
 import legend.game.saves.SavedCharacter;
 import legend.game.types.CharacterData2c;
@@ -16,6 +17,8 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract void serialize(final CharacterData2c character, final FileData data, final IntRef offset);
   public abstract SavedCharacter deserialize(final FileData data, final IntRef offset);
+
+  public abstract Image loadPortrait();
 
   public abstract void applyLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions);
   public abstract void applyDragoonLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions);

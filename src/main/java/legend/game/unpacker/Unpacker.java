@@ -110,6 +110,7 @@ public final class Unpacker {
     transformers.add(new LeafTransformation("Skip party permutations", Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer));
     transformers.add(new LeafTransformation("BTLD data extractor", Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer));
     transformers.add(new LeafTransformation("UI patcher", Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer));
+    transformers.add(new LeafTransformation("Portrait extractor", SaveCardTextureExtractor::portraitExtractorDiscriminator, SaveCardTextureExtractor::portraitExtractorTransformer));
     transformers.add(new LeafTransformation("CTMD converter", CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer));
 
     // Remove damage caps from scripts

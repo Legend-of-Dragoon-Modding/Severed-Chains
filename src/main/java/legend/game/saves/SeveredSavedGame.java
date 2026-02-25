@@ -3,6 +3,7 @@ package legend.game.saves;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
+import legend.core.gpu.Rect4i;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.Control;
@@ -10,6 +11,7 @@ import legend.game.inventory.screens.controls.SeveredSaveCard;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.GameState52c;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
@@ -23,8 +25,14 @@ import static legend.core.GameEngine.REGISTRIES;
 public class SeveredSavedGame extends SavedGame {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SeveredSavedGame.class);
 
+  /** The texture atlas used to render the icons for this save file */
+  public final FileData atlas;
+  public final int atlasWidth;
+  public final int atlasHeight;
+
   public String locationName;
   public final List<SavedCharacter> characters = new ArrayList<>();
+  public final List<Rect4i> charPortraits = new ArrayList<>();
 
   public final int[] scriptData = new int[0x20];
   public final IntList activeParty = new IntArrayList();
@@ -56,8 +64,11 @@ public class SeveredSavedGame extends SavedGame {
   /** A bitset used to set each char's MP to max the first time each one is loaded */
   public int characterInitialized;
 
-  public SeveredSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
+  public SeveredSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config, final FileData atlas, final int atlasWidth, final int atlasHeight) {
     super(campaign, version, fileName, saveName, campaignType, config);
+    this.atlas = atlas;
+    this.atlasWidth = atlasWidth;
+    this.atlasHeight = atlasHeight;
   }
 
   @Override

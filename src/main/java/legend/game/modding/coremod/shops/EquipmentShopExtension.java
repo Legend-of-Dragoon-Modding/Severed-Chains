@@ -1,5 +1,6 @@
 package legend.game.modding.coremod.shops;
 
+import legend.core.GameEngine;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
@@ -8,7 +9,7 @@ import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
-import legend.game.inventory.screens.controls.CharacterPortrait;
+import legend.game.inventory.screens.controls.AtlasIcon;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -44,7 +45,7 @@ import static legend.game.sound.Audio.playMenuSound;
 public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private static final int PORTRAIT_COUNT = 7;
 
-  private final CharacterPortrait[] portraits;
+  private final AtlasIcon[] portraits;
 
   private int selectedCharSlot;
   private int charScroll;
@@ -62,12 +63,14 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     initHighlight(this.charHighlight.getRenderable());
     this.charHighlight.hide();
 
-    this.portraits = new CharacterPortrait[characterIndices_800bdbb8.size()];
+    this.portraits = new AtlasIcon[characterIndices_800bdbb8.size()];
 
     for(int i = 0; i < this.portraits.length; i++) {
-      this.portraits[i] = new CharacterPortrait();
+      this.portraits[i] = new AtlasIcon();
       this.portraits[i].setPos(9 + i * 50, 174);
-      this.portraits[i].setCharId(characterIndices_800bdbb8.getInt(i));
+      this.portraits[i].setSize(48, 48);
+      this.portraits[i].setZ(31);
+      this.portraits[i].setIcon(GameEngine.getTextureAtlas().getIcon(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)).template.getRegistryId()));
       this.portraits[i].hide();
 
       final int finalI = i;
@@ -75,7 +78,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
         if(this.selectedCharSlot != finalI) {
           playMenuSound(1);
           this.selectedCharSlot = finalI;
-          final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+          final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
           this.charHighlight.setX(portrait.getX() + 8);
           return InputPropagation.HANDLED;
         }
@@ -86,7 +89,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       final int finalI1 = i;
       this.portraits[i].onMouseClick((x, y, button, mods) -> {
         this.selectedCharSlot = finalI1;
-        final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+        final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
         this.charHighlight.setX(portrait.getX() + 8);
         this.menuSelectChar5Select();
         return InputPropagation.HANDLED;
@@ -119,7 +122,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
       final CharacterData2c character = gameState.charData_32c.get(characterIndices_800bdbb8.getInt(i));
-      this.portraits[i].setVisibility(character.canEquip(gameState, entry.item.slot, entry.item));
+      this.portraits[i].setVisibility(character.canEquip(entry.item.slot, entry.item));
     }
 
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
@@ -246,7 +249,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     }
 
     if(this.selectedCharSlot != -1) {
-      final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+      final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
       this.charHighlight.setPos(portrait.getX() + 8, portrait.getY());
       this.charHighlight.show();
     } else {
@@ -311,7 +314,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
       final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i));
-      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && character.canEquip(gameState_800babc8, entry.item.slot, entry.item));
+      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && character.canEquip(entry.item.slot, entry.item));
       this.portraits[i].setX(9 + (i - this.charScroll) * 50);
     }
   }
@@ -326,7 +329,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     }
 
     this.scrollSelectedIntoView(entry);
-    final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+    final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
     this.charHighlight.setX(portrait.getX() + 8);
   }
 
@@ -340,7 +343,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     }
 
     this.scrollSelectedIntoView(entry);
-    final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+    final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
     this.charHighlight.setX(portrait.getX() + 8);
   }
 
@@ -356,7 +359,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result -> {
       if(result == MessageBoxResult.YES) {
         final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-        if(this.selectedCharSlot != -1 && character.canEquip(gameState_800babc8, this.entry.item.slot, this.entry.item)) {
+        if(this.selectedCharSlot != -1 && character.canEquip(this.entry.item.slot, this.entry.item)) {
           menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result1 -> {
             if(result1 == MessageBoxResult.YES) {
               final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));

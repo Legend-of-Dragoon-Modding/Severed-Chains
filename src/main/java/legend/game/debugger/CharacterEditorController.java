@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.characterNames_801142dc;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.types.CharacterData2c.CANT_REMOVE;
@@ -93,7 +92,7 @@ public class CharacterEditorController {
       this.additionList.getItems().add(addition.getId());
     }
 
-    this.name.setText(characterNames_801142dc[this.charId]);
+    this.name.setText(this.charData.getName());
 
     this.inParty.setSelected((this.charData.partyFlags_04 & IN_PARTY) != 0);
     this.canBeInParty.setSelected((this.charData.partyFlags_04 & CAN_BE_IN_PARTY) != 0);

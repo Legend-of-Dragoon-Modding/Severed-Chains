@@ -3,6 +3,7 @@ package legend.game.types;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.characters.CharacterTemplate;
 import legend.game.characters.StatCollection;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -21,6 +22,7 @@ public class CharacterData2c {
   public static final int CANT_REMOVE = 0x20;
   public static final int HAS_ULTIMATE_ADDITION = 0x40;
 
+  private final GameState52c gameState;
   public final CharacterTemplate template;
 
   public int xp_00;
@@ -60,9 +62,14 @@ public class CharacterData2c {
 //  public final int[] additionLevels_1a = new int[8];
 //  public final int[] additionXp_22 = new int[8];
 
-  public CharacterData2c(final CharacterTemplate template, final StatCollection stats) {
+  public CharacterData2c(final GameState52c gameState, final CharacterTemplate template, final StatCollection stats) {
+    this.gameState = gameState;
     this.template = template;
     this.stats = stats;
+  }
+
+  public String getName() {
+    return I18n.translate(this.template);
   }
 
   public void set(final CharacterData2c other) {
@@ -86,8 +93,8 @@ public class CharacterData2c {
 //    System.arraycopy(other.additionXp_22, 0, this.additionXp_22, 0, this.additionXp_22.length);
   }
 
-  public boolean canEquip(final GameState52c gameState, final EquipmentSlot slot, final Equipment equipment) {
-    return this.template.canEquip(gameState, this, slot, equipment);
+  public boolean canEquip(final EquipmentSlot slot, final Equipment equipment) {
+    return this.template.canEquip(this.gameState, this, slot, equipment);
   }
 
   public void equip(final EquipmentSlot slot, @Nullable final Equipment equipment) {
@@ -105,5 +112,9 @@ public class CharacterData2c {
 
   public Equipment getEquipment(final EquipmentSlot slot) {
     return this.equipment_14.get(slot);
+  }
+
+  public int getXpToNextLevel() {
+    return this.template.getXpToNextLevel(this.gameState, this);
   }
 }

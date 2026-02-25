@@ -17,7 +17,7 @@ public class Tim {
     return this.data;
   }
 
-  private int getImageDataOffset() {
+  public int getImageDataOffset() {
     if(this.hasClut()) {
       return this.data.readUShort(0x8);
     }
@@ -45,7 +45,7 @@ public class Tim {
     return this.data.readRect(0xc, new Rect4i());
   }
 
-  private int getClutOffset() {
+  public int getClutOffset() {
     if(!this.hasClut()) {
       throw new IllegalStateException("TIM has no CLUT");
     }
@@ -61,7 +61,7 @@ public class Tim {
     return this.data.readRect(this.getImageDataOffset() + 0xc, new Rect4i());
   }
 
-  private int getImageOffset() {
+  public int getImageOffset() {
     return this.getImageDataOffset() + 0x14;
   }
 

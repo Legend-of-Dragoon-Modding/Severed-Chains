@@ -34,7 +34,6 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
-import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
@@ -291,11 +290,6 @@ public final class SItem {
     "Ch.2 Platinum Shadow",
     "Ch.3 Fate & Soul",
     "Ch.4 Moon & Fate",
-  };
-
-  public static final String[] characterNames_801142dc = {
-    "Dart", "Lavitz", "Shana", "Rose", "Haschel",
-    "Albert", "Meru", "Kongol", "Miranda",
   };
 
   public static final MenuGlyph06[] glyphs_80114548 = {
@@ -942,26 +936,6 @@ public final class SItem {
     stats.equipmentOnHitStatus_9b = 0;
   }
 
-  @Method(0x800fc698L)
-  public static int getXpToNextLevel(final int charIndex) {
-    if(charIndex == -1 || charIndex > 8) {
-      //LAB_800fc6a4
-      throw new RuntimeException("Character index " + charIndex + " out of bounds");
-    }
-
-    //LAB_800fc6ac
-    final int level = gameState_800babc8.charData_32c.get(charIndex).level_12;
-
-    if(level >= 60) {
-      return 0; // Max level
-    }
-
-    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
-
-    //LAB_800fc70c
-    return event.xp;
-  }
-
   @Method(0x800fc814L)
   public static int FUN_800fc814(final int a0) {
     return 9 + a0 * 17;
@@ -1185,7 +1159,7 @@ public final class SItem {
   public static EquipItemResult equipItem(final Equipment equipment, final int charIndex) {
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-    if(!charData.canEquip(gameState_800babc8, equipment.slot, equipment)) {
+    if(!charData.canEquip(equipment.slot, equipment)) {
       return EquipItemResult.failure();
     }
 
@@ -1836,9 +1810,9 @@ public final class SItem {
   }
 
   @Method(0x80107e70L)
-  public static boolean renderCharacterStatusEffect(final int x, final int y, final int charIndex) {
+  public static boolean renderCharacterStatusEffect(final int x, final int y, final CharacterData2c character) {
     //LAB_80107e90
-    final int status = gameState_800babc8.charData_32c.get(charIndex).status_10;
+    final int status = character.status_10;
 
     if(tickCount_800bb0fc / currentEngineState_8004dd04.tickMultiplier() % 32 < 16) {
       return false;
@@ -1896,6 +1870,8 @@ public final class SItem {
   @Method(0x80107f9cL)
   public static void renderCharacterSlot(final int x, final int y, final int charId, final boolean allocate, final boolean dontSelect) {
     if(charId != -1) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+
       if(allocate) {
         allocateUiElement( 74,  74, x, y).z_3c = 33;
         allocateUiElement(153, 153, x, y);
@@ -1911,7 +1887,6 @@ public final class SItem {
         }
 
         //LAB_80108098
-        final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
         final VitalsStat hp = character.stats.getStat(HP_STAT.get());
         final VitalsStat mp = character.stats.getStat(MP_STAT.get());
         final VitalsStat sp = character.stats.getStat(SP_STAT.get());
@@ -1927,7 +1902,7 @@ public final class SItem {
         renderThreeDigitNumber(x + 148, y + 39, mp.getMax());
         renderSixDigitNumber(x + 88, y + 50, character.xp_00);
         renderCharacter(x + 124, y + 50, 11);
-        renderXp(x + 130, y + 50, getXpToNextLevel(charId));
+        renderXp(x + 130, y + 50, character.getXpToNextLevel());
 
         // Render "don't select" overlay
         if(dontSelect) {
@@ -1937,8 +1912,8 @@ public final class SItem {
       }
 
       //LAB_80108218
-      if(!renderCharacterStatusEffect(x + 46, y + 3, charId)) {
-        renderText(characterNames_801142dc[charId], x + 49, y + 3, UI_TEXT);
+      if(!renderCharacterStatusEffect(x + 46, y + 3, character)) {
+        renderText(character.getName(), x + 49, y + 3, UI_TEXT);
       }
     }
 

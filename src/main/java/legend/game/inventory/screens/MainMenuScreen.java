@@ -250,12 +250,16 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void addCharCard(final int slot) {
-    final int id = slot < gameState_800babc8.charIds_88.size() ? gameState_800babc8.charIds_88.getInt(slot) : -1;
-    this.charCards[slot] = this.addControl(new CharacterCard(id));
+    this.charCards[slot] = this.addControl(new CharacterCard());
     this.charCards[slot].setPos(186, 16 + slot * 72);
+    this.charCards[slot].setZ(34);
+
+    if(slot < gameState_800babc8.charIds_88.size()) {
+      this.charCards[slot].setCharacter(gameState_800babc8.getCharacterBySlot(slot));
+    }
 
     this.charCards[slot].onHoverIn(() -> {
-      if(this.charCards[slot].getCharId() != -1) {
+      if(this.charCards[slot].getCharacter() != null) {
         this.charCards[slot].focus();
       }
     });
@@ -318,7 +322,7 @@ public class MainMenuScreen extends MenuScreen {
     });
 
     this.charCards[slot].onMouseClick((x, y, button, mods) -> {
-      if(this.charCards[slot].getCharId() != -1) {
+      if(this.charCards[slot].getCharacter() != null) {
         this.showStatusScreenForSelectedCharacter();
       }
 
@@ -341,7 +345,7 @@ public class MainMenuScreen extends MenuScreen {
 
   private void showStatusScreenForSelectedCharacter() {
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
-      if(characterIndices_800bdbb8.getInt(i) == this.charCards[this.charIndex].getCharId()) {
+      if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)) == this.charCards[this.charIndex].getCharacter()) {
         playMenuSound(2);
         this.showStatusScreen(i);
         return;
@@ -356,12 +360,11 @@ public class MainMenuScreen extends MenuScreen {
     this.charScroll = Math.max(0, scroll);
 
     for(int slot = 0; slot < this.charCards.length; slot++) {
-      final int charId = slot < gameState_800babc8.charIds_88.size() ? gameState_800babc8.charIds_88.getInt(this.charScroll + slot) : -1;
-      this.charCards[slot].setCharId(charId);
-
-      if(charId != -1) {
+      if(this.charScroll + slot < gameState_800babc8.charIds_88.size()) {
+        this.charCards[slot].setCharacter(gameState_800babc8.getCharacterBySlot(this.charScroll + slot));
         this.charCards[slot].acceptInput();
       } else {
+        this.charCards[slot].setCharacter(null);
         this.charCards[slot].ignoreInput();
       }
     }
@@ -387,9 +390,9 @@ public class MainMenuScreen extends MenuScreen {
 
         for(int i = 0; i < this.charCards.length; i++) {
           if(this.charScroll + i < gameState_800babc8.charIds_88.size()) {
-            this.charCards[i].setCharId(gameState_800babc8.charIds_88.getInt(this.charScroll + i));
+            this.charCards[i].setCharacter(gameState_800babc8.getCharacterBySlot(this.charScroll + i));
           } else {
-            this.charCards[i].setCharId(-1);
+            this.charCards[i].setCharacter(null);
           }
         }
 

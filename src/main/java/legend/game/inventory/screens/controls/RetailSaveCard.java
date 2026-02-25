@@ -22,8 +22,8 @@ public class RetailSaveCard extends BlankSaveCard {
     dragoonSpirits.setPos(205, 27);
 
     for(int i = 0; i < 3; i++) {
-      final CharacterPortrait[] portraits = new CharacterPortrait[3];
-      portraits[i] = this.addControl(new CharacterPortrait());
+      final RetailCharacterPortrait[] portraits = new RetailCharacterPortrait[3];
+      portraits[i] = this.addControl(new RetailCharacterPortrait());
       portraits[i].setPos(18 + i * 52, 8);
       portraits[i].setCharId(i < savedGame.charIndices.size() ? savedGame.charIndices.getInt(i) : -1);
     }

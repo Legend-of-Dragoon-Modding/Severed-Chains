@@ -15,6 +15,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -81,6 +82,8 @@ public final class SaveManager {
   private final Map<Function<FileData, FileData>, SaveDeserializer> deserializers = new HashMap<>();
   private final int serializerMagic;
   private final SaveSerializer serializer;
+
+  public final FileData retailAtlas = Loader.loadFile("retail_atlas.png");
 
   public SaveManager(final int serializerMagic, final SaveSerializer serializer) {
     this.serializerMagic = serializerMagic;

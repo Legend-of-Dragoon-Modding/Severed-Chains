@@ -173,10 +173,10 @@ public class UseItemScreen extends MenuScreen {
 
   @Method(0x80108464L)
   private void renderUseItemCharacterPortrait(final int x, final int y, final int charIndex, final boolean allocate) {
-    renderCharacterStatusEffect(x - 4, y - 6, charIndex);
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+    renderCharacterStatusEffect(x - 4, y - 6, character);
 
     if(allocate) {
-      final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
       final VitalsStat hp = character.stats.getStat(HP_STAT.get());
       final VitalsStat mp = character.stats.getStat(MP_STAT.get());
 
