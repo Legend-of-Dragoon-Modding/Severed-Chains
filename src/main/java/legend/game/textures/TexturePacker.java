@@ -38,9 +38,9 @@ public class TexturePacker {
   }
 
   public byte[] packToBytes(final int width, final int height) {
-    final STBRPContext ctx = STBRPContext.create();
-    final STBRPNode.Buffer nodes = STBRPNode.create(width); // documentation says that nodes should be >= width
-    final STBRPRect.Buffer rectBuffer = STBRPRect.create(this.entryToRect.size());
+    final STBRPContext ctx = STBRPContext.malloc();
+    final STBRPNode.Buffer nodes = STBRPNode.malloc(width); // documentation says that nodes should be >= width
+    final STBRPRect.Buffer rectBuffer = STBRPRect.malloc(this.entryToRect.size());
 
     int i = 0;
     for(final Rect4i icon : this.entryToRect.values()) {
