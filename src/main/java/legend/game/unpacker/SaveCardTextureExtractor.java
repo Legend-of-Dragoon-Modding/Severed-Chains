@@ -19,6 +19,7 @@ import static legend.lodmod.LodCharacterTemplates.HASCHEL;
 import static legend.lodmod.LodCharacterTemplates.KONGOL;
 import static legend.lodmod.LodCharacterTemplates.LAVITZ;
 import static legend.lodmod.LodCharacterTemplates.MERU;
+import static legend.lodmod.LodCharacterTemplates.MIRANDA;
 import static legend.lodmod.LodCharacterTemplates.ROSE;
 import static legend.lodmod.LodCharacterTemplates.SHANA;
 
@@ -34,6 +35,7 @@ public final class SaveCardTextureExtractor {
     ALBERT.getId().entryId(),
     MERU.getId().entryId(),
     KONGOL.getId().entryId(),
+    MIRANDA.getId().entryId(),
   };
 
   private static final String[] dragoonSpiritNames = {
