@@ -107,9 +107,11 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     for(int i = 0; i < equipmentSlotCount; i++) {
       final String slotName = data.readAscii(offset);
       final RegistryId equipmentId = data.readRegistryId(offset);
-      final EquipmentSlot slot = EquipmentSlot.valueOf(slotName);
 
-      character.equipmentIds.put(slot, equipmentId);
+      if(equipmentId != null) {
+        final EquipmentSlot slot = EquipmentSlot.valueOf(slotName);
+        character.equipmentIds.put(slot, equipmentId);
+      }
     }
 
     character.selectedAddition = data.readRegistryId(offset);

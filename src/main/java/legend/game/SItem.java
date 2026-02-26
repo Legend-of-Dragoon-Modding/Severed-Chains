@@ -1,10 +1,12 @@
 package legend.game;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -43,6 +45,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
+import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
@@ -1167,7 +1170,7 @@ public final class SItem {
     characterIndices_800bdbb8.clear();
 
     //LAB_80103b48
-    for(int slot = 0; slot < 9; slot++) {
+    for(int slot = 0; slot < gameState_800babc8.charData_32c.size(); slot++) {
       if((gameState_800babc8.charData_32c.get(slot).partyFlags_04 & IN_PARTY) != 0) {
         characterIndices_800bdbb8.add(slot);
 
@@ -1331,9 +1334,9 @@ public final class SItem {
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
     Addition newlyUnlocked = null;
 
-    for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
-      final Addition addition = additionDelegate.get();
-      final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(addition.getRegistryId(), k -> new CharacterAdditionStats());
+    for(final var entry : charData.additionStats.entrySet()) {
+      final Addition addition = REGISTRIES.additions.getEntry(entry.getKey()).get();
+      final CharacterAdditionStats additionStats = entry.getValue();
 
       if(additionStats.unlockState.isUnlockable() && addition.isUnlocked(gameState_800babc8, charData, additionStats)) {
         final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
@@ -1856,26 +1859,21 @@ public final class SItem {
     return true;
   }
 
+  private static final MV portraitTransforms = new MV();
+
   @Method(0x80107f9cL)
   public static void renderCharacterSlot(final int x, final int y, final int charId, final boolean allocate, final boolean dontSelect) {
     if(charId != -1) {
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+      final TextureAtlasIcon icon = GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId());
+      portraitTransforms.transfer.set(x, y + 8.0f, 132.0f);
+      portraitTransforms.scaling(48.0f, 48.0f, 1.0f);
+      icon.render(portraitTransforms);
 
       if(allocate) {
         allocateUiElement( 74,  74, x, y).z_3c = 33;
         allocateUiElement(153, 153, x, y);
 
-        if(charId < 9) {
-          final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-          initGlyph(struct, glyph_801142d4);
-          struct.glyph_04 = charId;
-          struct.tpage_2c++;
-          struct.z_3c = 33;
-          struct.x_40 = x + 8;
-          struct.y_44 = y + 8;
-        }
-
-        //LAB_80108098
         final VitalsStat hp = character.stats.getStat(HP_STAT.get());
         final VitalsStat mp = character.stats.getStat(MP_STAT.get());
         final VitalsStat sp = character.stats.getStat(SP_STAT.get());
@@ -1895,8 +1893,7 @@ public final class SItem {
 
         // Render "don't select" overlay
         if(dontSelect) {
-          final Renderable58 struct = allocateUiElement(113, 113, x + 56, y + 24);
-          struct.z_3c = 33;
+          allocateUiElement(113, 113, x + 56, y + 24).z_3c = 33;
         }
       }
 

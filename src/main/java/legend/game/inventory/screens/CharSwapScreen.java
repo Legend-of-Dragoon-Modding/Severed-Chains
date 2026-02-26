@@ -1,11 +1,14 @@
 package legend.game.inventory.screens;
 
+import legend.core.GameEngine;
 import legend.core.MathHelper;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.characters.VitalsStat;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Renderable58;
 
@@ -13,15 +16,11 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.FullScreenEffects.startFadeEffect;
-import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.charSwapGlyphs_80114160;
-import static legend.game.SItem.glyph_801142d4;
-import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderFourDigitHp;
@@ -53,6 +52,8 @@ public class CharSwapScreen extends MenuScreen {
   private int secondaryCharSlot;
   private Renderable58 primaryCharHighlight;
   private Renderable58 secondaryCharHighlight;
+
+  private final MV transforms = new MV();
 
   public CharSwapScreen(final Runnable unload) {
     this.unload = unload;
@@ -160,20 +161,15 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void renderSecondaryChar(final int x, final int y, final int charIndex, final boolean allocate) {
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+    final TextureAtlasIcon icon = GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId());
+    this.transforms.transfer.set(x - 6.0f, y + 8.0f, 132.0f);
+    this.transforms.scaling(48.0f, 48.0f, 1.0f);
+    icon.render(this.transforms);
+
     if(allocate) {
-      final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
       final VitalsStat hp = character.stats.getStat(HP_STAT.get());
       final VitalsStat mp = character.stats.getStat(MP_STAT.get());
-
-      if(charIndex < 9) {
-        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(renderable, glyph_801142d4);
-        renderable.glyph_04 = charIndex;
-        renderable.tpage_2c++;
-        renderable.z_3c = 33;
-        renderable.x_40 = x + 2;
-        renderable.y_44 = y + 8;
-      }
 
       allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
       allocateUiElement(0x9c, 0x9c, x, y);

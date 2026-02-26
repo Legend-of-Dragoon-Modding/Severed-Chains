@@ -5,14 +5,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.additions.UnlockState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
@@ -21,7 +19,6 @@ import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.types.CharacterData2c.CANT_REMOVE;
 import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
 import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
@@ -87,9 +84,9 @@ public class CharacterEditorController {
     this.selectedAddition.getItems().clear();
     this.additionList.getItems().clear();
 
-    for(final RegistryDelegate<Addition> addition : CHARACTER_ADDITIONS[this.charId]) {
-      this.selectedAddition.getItems().add(addition.getId());
-      this.additionList.getItems().add(addition.getId());
+    for(final RegistryId id : this.charData.additionStats.keySet()) {
+      this.selectedAddition.getItems().add(id);
+      this.additionList.getItems().add(id);
     }
 
     this.name.setText(this.charData.getName());
