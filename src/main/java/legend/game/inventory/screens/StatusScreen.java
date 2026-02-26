@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
+import legend.game.types.CharacterData2c;
 
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -13,7 +14,6 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.getUnlockedSpellCount;
-import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterEquipment;
 import static legend.game.SItem.renderCharacterSlot;
@@ -118,7 +118,9 @@ public class StatusScreen extends MenuScreen {
       allocateUiElement(0x58, 0x58, 194, 101);
     }
 
-    if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+
+    if(character.hasDragoon()) {
       final IntList spellIndices = new IntArrayList();
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);

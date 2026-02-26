@@ -41,7 +41,6 @@ import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.giveItems;
-import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -750,7 +749,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawTwoDigitNumber(x + 108, y + 16, character.level_12);
 
       final int dlevel;
-      if(!hasDragoon(gameState_800babc8.goods_19c, charId)) {
+      if(!character.hasDragoon()) {
         dlevel = 0;
       } else {
         dlevel = character.dlevel_13;

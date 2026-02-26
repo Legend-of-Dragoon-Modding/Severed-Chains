@@ -20,7 +20,6 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
-import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemGroupSortMode;
@@ -128,9 +127,9 @@ import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.VIOLET_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
-import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
 import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
 import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
@@ -1375,23 +1374,6 @@ public final class SItem {
     glyph.z_3c = 35;
   }
 
-  @Method(0x80104b7cL)
-  public static boolean hasDragoon(final GoodsInventory dragoons, final int charIndex) {
-    //LAB_80104b94
-    if(charIndex == -1) {
-      return false;
-    }
-
-    //LAB_80104be0
-    if(charIndex == 0 && dragoons.has(DIVINE_DRAGOON_SPIRIT)) { // Divine
-      return true;
-    }
-
-    //LAB_80104c24
-    //LAB_80104c28
-    return dragoons.has(characterDragoonIndices_800c6e68[charIndex]);
-  }
-
   @Method(0x80104c30L)
   public static void renderTwoDigitNumber(final int x, final int y, final int value) {
     renderNumber(x, y, value, 0, 2);
@@ -1998,7 +1980,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 116, equipmentAttack, newEquipmentAttack);
       renderThreeDigitNumberComparison(122, 116, attack.getRaw() + equipmentAttack, attack.getRaw() + newEquipmentAttack);
 
-      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
+      if(character.hasDragoon()) {
         renderThreeDigitNumberComparisonWithPercent(159, 116, dragoonAttack.getRaw(), dragoonAttack.getRaw());
       }
 
@@ -2007,7 +1989,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 128, equipmentDefense, newEquipmentDefense);
       renderThreeDigitNumberComparison(122, 128, defense.getRaw() + equipmentDefense, defense.getRaw() + newEquipmentDefense);
 
-      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
+      if(character.hasDragoon()) {
         renderThreeDigitNumberComparisonWithPercent(159, 128, dragoonDefense.getRaw(), dragoonDefense.getRaw());
       }
 
@@ -2016,7 +1998,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 140, equipmentMagicAttack, newEquipmentMagicAttack);
       renderThreeDigitNumberComparison(122, 140, magicAttack.getRaw() + equipmentMagicAttack, magicAttack.getRaw() + equipmentMagicAttack);
 
-      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
+      if(character.hasDragoon()) {
         renderThreeDigitNumberComparisonWithPercent(159, 140, dragoonMagicAttack.getRaw(), dragoonMagicAttack.getRaw());
       }
 
@@ -2025,7 +2007,7 @@ public final class SItem {
       renderThreeDigitNumberComparison( 90, 152, equipmentMagicDefense, newEquipmentMagicDefense);
       renderThreeDigitNumberComparison(122, 152, magicDefense.getRaw() + equipmentMagicDefense, magicDefense.getRaw() + newEquipmentMagicDefense);
 
-      if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
+      if(character.hasDragoon()) {
         renderThreeDigitNumberComparisonWithPercent(159, 152, dragoonMagicDefense.getRaw(), dragoonMagicDefense.getRaw());
       }
 
@@ -2371,7 +2353,7 @@ public final class SItem {
       applyEquipmentStats(gameState, activeStats, charId);
 
       final int v0 = dragoonGoodsBits_800fbd08[charId];
-      if(hasDragoon(gameState.goods_19c, charId)) {
+      if(charData.hasDragoon()) {
         mp.setMaxRaw(statsEvent.maxMp);
         stats.flags_0c |= 0x2000;
 

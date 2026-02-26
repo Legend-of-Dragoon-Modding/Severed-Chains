@@ -114,6 +114,10 @@ public class CharacterData2c {
     return this.equipment_14.get(slot);
   }
 
+  public boolean hasDragoon() {
+    return this.template.hasDragoon(this.gameState, this);
+  }
+
   public int getXpToNextLevel() {
     return this.template.getXpToNextLevel(this.gameState, this);
   }
