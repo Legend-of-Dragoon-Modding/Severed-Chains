@@ -97,7 +97,6 @@ import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -1308,15 +1307,15 @@ public final class SItem {
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
     final Set<RegistryId> seen = new HashSet<>();
 
-    for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
-      final Addition addition = additionDelegate.get();
-      final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
+    for(final var entry : charData.additionStats.entrySet()) {
+      final Addition addition = REGISTRIES.additions.getEntry(entry.getKey()).get();
+      final CharacterAdditionStats additionStats = entry.getValue();
 
       if(additionStats.unlockState.isUsable()) {
         additions.add(addition);
       }
 
-      seen.add(additionDelegate.getId());
+      seen.add(addition.getRegistryId());
     }
 
     for(final var entry : charData.additionStats.entrySet()) {
