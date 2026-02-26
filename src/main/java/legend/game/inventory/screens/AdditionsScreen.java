@@ -30,7 +30,6 @@ import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
@@ -132,7 +131,7 @@ public class AdditionsScreen extends MenuScreen {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
       if(allocate) {
-        for(int i = 0; i < CHARACTER_ADDITIONS[charIndex].length; i++) {
+        for(int i = 0; i < charData.additionStats.size(); i++) {
           final int y = this.getAdditionSlotY(i);
           renderCharacter(24, y, i + 1); // Addition number
         }
