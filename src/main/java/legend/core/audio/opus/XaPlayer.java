@@ -43,7 +43,7 @@ public final class XaPlayer extends AudioSource {
     this.format = AL_FORMAT_MONO16;
     this.pcm = new short[this.samplesPerTick];
     this.pcmBuffer = BufferUtils.createShortBuffer(this.samplesPerTick);
-    this.playerVolume = CONFIG.getConfig(CoreMod.SFX_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+    this.playerVolume = 1;
   }
 
   public void setPlayerVolume(final float volume) {

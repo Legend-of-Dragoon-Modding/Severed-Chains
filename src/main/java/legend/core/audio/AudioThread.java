@@ -178,7 +178,13 @@ public final class AudioThread implements Runnable {
   }
 
   private void openDevice() {
-    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
+    String currentDevice;
+    try {
+      currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
+    } catch (Exception ex) {
+      currentDevice = "";
+    }
+
     final List<String> devices = getDevices();
 
     if(devices.contains(currentDevice)) {
