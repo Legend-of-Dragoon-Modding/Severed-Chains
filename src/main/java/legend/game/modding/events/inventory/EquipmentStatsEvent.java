@@ -35,7 +35,6 @@ public class EquipmentStatsEvent extends Event {
   public int spRegen;
   public int escapeBonus;
   public int guardHealBonus;
-  public int icon_0e;
   public int speed_0f;
   public int attack2_10;
   public int magicAttack_11;
@@ -78,7 +77,6 @@ public class EquipmentStatsEvent extends Event {
     this.spRegen = equipment.spRegen;
     this.escapeBonus = equipment.escapeBonus;
     this.guardHealBonus = equipment.getGuardHealBonus();
-    this.icon_0e = equipment.icon_0e.resolve().icon;
     this.speed_0f = equipment.speed_0f;
     this.attack2_10 = equipment.attack2_10;
     this.magicAttack_11 = equipment.magicAttack_11;

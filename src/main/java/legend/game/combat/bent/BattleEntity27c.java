@@ -142,7 +142,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int equipmentAttack1_28;
 
 //  public int _2e;
-  public int equipmentIcon_30;
+//  public int equipmentIcon_30;
   public int attackHit_3c;
   public int magicHit_3e;
   /**
@@ -391,7 +391,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28;
 
 //      case _21 -> this._2e;
-      case EQUIPMENT_ICON -> this.equipmentIcon_30;
+//      case EQUIPMENT_ICON -> this.equipmentIcon_30;
       case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
       case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
       case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
@@ -399,7 +399,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get();
       case ATTACK_HIT -> this.attackHit_3c;
       case MAGIC_HIT -> this.magicHit_3e;
-      case ATTACK_AVOID -> this.stats.getStat(LodMod.AVOID_STAT.get()).get();
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).get();
       case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44;
 //      case EQUIPMENT_19 -> this.equipment_19_46;
@@ -490,14 +490,14 @@ public abstract class BattleEntity27c extends BattleObject {
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value;
 
 //      case _21 -> this._2e = value;
-      case EQUIPMENT_ICON -> this.equipmentIcon_30 = value;
+//      case EQUIPMENT_ICON -> this.equipmentIcon_30 = value;
       case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value);
       case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value);
       case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value);
       case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value);
       case ATTACK_HIT -> this.attackHit_3c = value;
       case MAGIC_HIT -> this.magicHit_3e = value;
-      case ATTACK_AVOID -> this.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(value);
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(value);
       case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value);
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value;
 //      case EQUIPMENT_19 -> this.equipment_19_46 = value;

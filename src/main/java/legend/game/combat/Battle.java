@@ -307,7 +307,7 @@ import static legend.game.sound.Audio.victoryMusic;
 import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
-import static legend.lodmod.LodMod.AVOID_STAT;
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.DARK_ELEMENT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
 import static legend.lodmod.LodMod.DIVINE_ELEMENT;
@@ -8395,7 +8395,6 @@ public class Battle extends EngineState<Battle> {
       player.equipmentElementalImmunity_22.set(stats.equipmentElementalImmunity_7d);
       player.equipmentStatusResist_24 = stats.equipmentStatusResist_7e;
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
-      player.equipmentIcon_30 = stats.equipmentIcon_84;
       player.stats.getStat(SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
       player.stats.getStat(ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
       player.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
@@ -8403,7 +8402,7 @@ public class Battle extends EngineState<Battle> {
       player.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
       player.attackHit_3c = stats.equipmentAttackHit_90;
       player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.stats.getStat(AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
+      player.stats.getStat(ATTACK_AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
       player.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
       player.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10 + stats.equipmentGuardHeal);
       player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
@@ -8480,7 +8479,7 @@ public class Battle extends EngineState<Battle> {
 
     final int avoidChance;
     if(attackType == AttackType.PHYSICAL) {
-      avoidChance = defender.stats.getStat(AVOID_STAT.get()).get();
+      avoidChance = defender.stats.getStat(ATTACK_AVOID_STAT.get()).get();
     } else {
       //LAB_800f1c9c
       avoidChance = defender.stats.getStat(MAGIC_AVOID_STAT.get()).get();
@@ -8860,7 +8859,6 @@ public class Battle extends EngineState<Battle> {
     monster.equipmentElementalImmunity_22.set(statsEvent.elementalImmunityFlag);
     monster.equipmentStatusResist_24 = statsEvent.statusResistFlag;
     monster.equipmentAttack1_28 = 0;
-    monster.equipmentIcon_30 = 0;
     monster.stats.getStat(SPEED_STAT.get()).setRaw(statsEvent.speed);
     monster.stats.getStat(ATTACK_STAT.get()).setRaw(statsEvent.attack);
     monster.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
@@ -8868,7 +8866,7 @@ public class Battle extends EngineState<Battle> {
     monster.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.stats.getStat(AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
+    monster.stats.getStat(ATTACK_AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
     monster.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
     monster.equipmentOnHitStatus_4a = 0;

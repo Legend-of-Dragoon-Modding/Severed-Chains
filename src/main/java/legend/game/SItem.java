@@ -128,11 +128,19 @@ import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.VIOLET_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_DEFENSE_STAT;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
 import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MAGIC_HIT_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SPEED_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
@@ -912,7 +920,6 @@ public final class SItem {
     stats.equipmentElementalImmunity_7d.clear();
     stats.equipmentStatusResist_7e = 0;
     stats.equipmentAttack1_80 = 0;
-    stats.equipmentIcon_84 = 0;
 
     stats.equipmentSpeed_86 = 0;
     stats.equipmentAttack_88 = 0;
@@ -1908,85 +1915,137 @@ public final class SItem {
   @Method(0x801085e0L)
   public static void renderCharacterStats(final int charIndex, @Nullable final Equipment equipment, final boolean allocate) {
     if(charIndex != -1) {
-      final ActiveStatsa0 statsTmp;
-      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
-      final CharacterData2c backupChar = character.template.make(gameState_800babc8);
-      backupChar.set(character);
 
-      if(equipment != null) {
-        //LAB_80108638
-        equipItem(equipment, charIndex);
-        loadCharacterStats();
+      int equipmentAttack = 0;
+      int equipmentDefense = 0;
+      int equipmentMagicAttack = 0;
+      int equipmentMagicDefense = 0;
+      int equipmentAttackHit = 0;
+      int equipmentMagicHit = 0;
+      int equipmentAttackAvoid = 0;
+      int equipmentMagicAvoid = 0;
+      int equipmentSpeed = 0;
 
-        //LAB_80108694
-        statsTmp = new ActiveStatsa0(stats);
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        final Equipment equipped = character.getEquipment(slot);
 
-        //LAB_801086e8
-        character.set(backupChar);
-
-        loadCharacterStats();
-      } else {
-        //LAB_80108720
-        //LAB_80108740
-        statsTmp = new ActiveStatsa0(stats);
+        if(equipped != null) {
+          equipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+          equipmentDefense += equipped.defence_12;
+          equipmentMagicAttack += equipped.magicAttack_11;
+          equipmentMagicDefense += equipped.magicDefence_13;
+          equipmentAttackHit += equipped.attackHit_14;
+          equipmentMagicHit += equipped.magicHit_15;
+          equipmentAttackAvoid += equipped.attackAvoid_16;
+          equipmentMagicAvoid += equipped.magicAvoid_17;
+          equipmentSpeed += equipped.speed_0f;
+        }
       }
 
-      final UnaryStat newAttack = character.stats.getStat(ATTACK_STAT.get());
-      final UnaryStat newDefense = character.stats.getStat(DEFENSE_STAT.get());
-      final UnaryStat newMagicAttack = character.stats.getStat(MAGIC_ATTACK_STAT.get());
-      final UnaryStat newMagicDefense = character.stats.getStat(MAGIC_DEFENSE_STAT.get());
-      final UnaryStat newSpeed = character.stats.getStat(SPEED_STAT.get());
+      int newEquipmentAttack = equipmentAttack;
+      int newEquipmentDefense = equipmentDefense;
+      int newEquipmentMagicAttack = equipmentMagicAttack;
+      int newEquipmentMagicDefense = equipmentMagicDefense;
+      int newEquipmentAttackHit = equipmentAttackHit;
+      int newEquipmentMagicHit = equipmentMagicHit;
+      int newEquipmentAttackAvoid = equipmentAttackAvoid;
+      int newEquipmentMagicAvoid = equipmentMagicAvoid;
+      int newEquipmentSpeed = equipmentSpeed;
+
+      if(equipment != null) {
+        final Equipment equipped = character.getEquipment(equipment.slot);
+
+        if(equipped != null) {
+          newEquipmentAttack -= equipped.attack1_0a + equipped.attack2_10;
+          newEquipmentDefense -= equipped.defence_12;
+          newEquipmentMagicAttack -= equipped.magicAttack_11;
+          newEquipmentMagicDefense -= equipped.magicDefence_13;
+          newEquipmentAttackHit -= equipped.attackHit_14;
+          newEquipmentMagicHit -= equipped.magicHit_15;
+          newEquipmentAttackAvoid -= equipped.attackAvoid_16;
+          newEquipmentMagicAvoid -= equipped.magicAvoid_17;
+          newEquipmentSpeed -= equipped.speed_0f;
+        }
+
+        newEquipmentAttack += equipment.attack1_0a + equipment.attack2_10;
+        newEquipmentDefense += equipment.defence_12;
+        newEquipmentMagicAttack += equipment.magicAttack_11;
+        newEquipmentMagicDefense += equipment.magicDefence_13;
+        newEquipmentAttackHit += equipment.attackHit_14;
+        newEquipmentMagicHit += equipment.magicHit_15;
+        newEquipmentAttackAvoid += equipment.attackAvoid_16;
+        newEquipmentMagicAvoid += equipment.magicAvoid_17;
+        newEquipmentSpeed += equipment.speed_0f;
+      }
+
+      final UnaryStat attack = character.stats.getStat(ATTACK_STAT.get());
+      final UnaryStat defense = character.stats.getStat(DEFENSE_STAT.get());
+      final UnaryStat magicAttack = character.stats.getStat(MAGIC_ATTACK_STAT.get());
+      final UnaryStat magicDefense = character.stats.getStat(MAGIC_DEFENSE_STAT.get());
+      final UnaryStat attackHit = character.stats.getStat(ATTACK_HIT_STAT.get());
+      final UnaryStat magicHit = character.stats.getStat(MAGIC_HIT_STAT.get());
+      final UnaryStat attackAvoid = character.stats.getStat(ATTACK_AVOID_STAT.get());
+      final UnaryStat magicAvoid = character.stats.getStat(MAGIC_AVOID_STAT.get());
+      final UnaryStat dragoonAttack = character.stats.getStat(DRAGOON_ATTACK_STAT.get());
+      final UnaryStat dragoonDefense = character.stats.getStat(DRAGOON_DEFENSE_STAT.get());
+      final UnaryStat dragoonMagicAttack = character.stats.getStat(DRAGOON_MAGIC_ATTACK_STAT.get());
+      final UnaryStat dragoonMagicDefense = character.stats.getStat(DRAGOON_MAGIC_DEFENSE_STAT.get());
+      final UnaryStat speed = character.stats.getStat(SPEED_STAT.get());
 
       //LAB_80108770
-      renderThreeDigitNumber( 58, 116, newAttack.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 116, stats.equipmentAttack_88, statsTmp.equipmentAttack_88);
-      renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a + stats.equipmentAttack_88, statsTmp.bodyAttack_6a + statsTmp.equipmentAttack_88);
+      renderThreeDigitNumber( 58, 116, attack.getRaw(), 0x2);
+      renderThreeDigitNumberComparison( 90, 116, equipmentAttack, newEquipmentAttack);
+      renderThreeDigitNumberComparison(122, 116, attack.getRaw() + equipmentAttack, attack.getRaw() + newEquipmentAttack);
 
       if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 116, stats.dragoonAttack_72, statsTmp.dragoonAttack_72);
+        renderThreeDigitNumberComparisonWithPercent(159, 116, dragoonAttack.getRaw(), dragoonAttack.getRaw());
       }
 
       //LAB_801087fc
-      renderThreeDigitNumber( 58, 128, newDefense.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 128, stats.equipmentDefence_8c, statsTmp.equipmentDefence_8c);
-      renderThreeDigitNumberComparison(122, 128, stats.bodyDefence_6c + stats.equipmentDefence_8c, statsTmp.bodyDefence_6c + statsTmp.equipmentDefence_8c);
+      renderThreeDigitNumber( 58, 128, defense.getRaw(), 0x2);
+      renderThreeDigitNumberComparison( 90, 128, equipmentDefense, newEquipmentDefense);
+      renderThreeDigitNumberComparison(122, 128, defense.getRaw() + equipmentDefense, defense.getRaw() + newEquipmentDefense);
 
       if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 128, stats.dragoonDefence_74, statsTmp.dragoonDefence_74);
+        renderThreeDigitNumberComparisonWithPercent(159, 128, dragoonDefense.getRaw(), dragoonDefense.getRaw());
       }
 
       //LAB_8010886c
-      renderThreeDigitNumber( 58, 140, newMagicAttack.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 140, stats.equipmentMagicAttack_8a, statsTmp.equipmentMagicAttack_8a);
-      renderThreeDigitNumberComparison(122, 140, stats.bodyMagicAttack_6b + stats.equipmentMagicAttack_8a, statsTmp.bodyMagicAttack_6b + statsTmp.equipmentMagicAttack_8a);
+      renderThreeDigitNumber( 58, 140, magicAttack.getRaw(), 0x2);
+      renderThreeDigitNumberComparison( 90, 140, equipmentMagicAttack, newEquipmentMagicAttack);
+      renderThreeDigitNumberComparison(122, 140, magicAttack.getRaw() + equipmentMagicAttack, magicAttack.getRaw() + equipmentMagicAttack);
 
       if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 140, stats.dragoonMagicAttack_73, statsTmp.dragoonMagicAttack_73);
+        renderThreeDigitNumberComparisonWithPercent(159, 140, dragoonMagicAttack.getRaw(), dragoonMagicAttack.getRaw());
       }
 
       //LAB_801088dc
-      renderThreeDigitNumber( 58, 152, newMagicDefense.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 152, stats.equipmentMagicDefence_8e, statsTmp.equipmentMagicDefence_8e);
-      renderThreeDigitNumberComparison(122, 152, stats.bodyMagicDefence_6d + stats.equipmentMagicDefence_8e, statsTmp.bodyMagicDefence_6d + statsTmp.equipmentMagicDefence_8e);
+      renderThreeDigitNumber( 58, 152, magicDefense.getRaw(), 0x2);
+      renderThreeDigitNumberComparison( 90, 152, equipmentMagicDefense, newEquipmentMagicDefense);
+      renderThreeDigitNumberComparison(122, 152, magicDefense.getRaw() + equipmentMagicDefense, magicDefense.getRaw() + newEquipmentMagicDefense);
 
       if(hasDragoon(gameState_800babc8.goods_19c, charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 152, stats.dragoonMagicDefence_75, statsTmp.dragoonMagicDefence_75);
+        renderThreeDigitNumberComparisonWithPercent(159, 152, dragoonMagicDefense.getRaw(), dragoonMagicDefense.getRaw());
       }
 
       //LAB_8010894c
-      renderThreeDigitNumber( 58, 164, newSpeed.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 164, stats.equipmentSpeed_86, statsTmp.equipmentSpeed_86);
-      renderThreeDigitNumberComparison(122, 164, newSpeed.getRaw() + stats.equipmentSpeed_86, newSpeed.getRaw() + statsTmp.equipmentSpeed_86);
+      renderThreeDigitNumber( 58, 164, speed.getRaw(), 0x2);
+      renderThreeDigitNumberComparison( 90, 164, equipmentSpeed, newEquipmentSpeed);
+      renderThreeDigitNumberComparison(122, 164, speed.getRaw() + equipmentSpeed, speed.getRaw() + newEquipmentSpeed);
 
-      renderThreeDigitNumberComparisonWithPercent( 90, 176, stats.equipmentAttackHit_90, statsTmp.equipmentAttackHit_90);
-      renderThreeDigitNumberComparisonWithPercent(122, 176, stats.equipmentAttackHit_90, statsTmp.equipmentAttackHit_90);
-      renderThreeDigitNumberComparisonWithPercent( 90, 188, stats.equipmentMagicHit_92, statsTmp.equipmentMagicHit_92);
-      renderThreeDigitNumberComparisonWithPercent(122, 188, stats.equipmentMagicHit_92, statsTmp.equipmentMagicHit_92);
-      renderThreeDigitNumberComparisonWithPercent( 90, 200, stats.equipmentAttackAvoid_94, statsTmp.equipmentAttackAvoid_94);
-      renderThreeDigitNumberComparisonWithPercent(122, 200, stats.equipmentAttackAvoid_94, statsTmp.equipmentAttackAvoid_94);
-      renderThreeDigitNumberComparisonWithPercent( 90, 212, stats.equipmentMagicAvoid_96, statsTmp.equipmentMagicAvoid_96);
-      renderThreeDigitNumberComparisonWithPercent(122, 212, stats.equipmentMagicAvoid_96, statsTmp.equipmentMagicAvoid_96);
+      renderThreeDigitNumberComparisonWithPercent( 58, 176, attackHit.getRaw(), attackHit.getRaw());
+      renderThreeDigitNumberComparisonWithPercent( 90, 176, equipmentAttackHit, newEquipmentAttackHit);
+      renderThreeDigitNumberComparisonWithPercent(122, 176, attackHit.getRaw() + equipmentAttackHit, attackHit.getRaw() + newEquipmentAttackHit);
+      renderThreeDigitNumberComparisonWithPercent( 58, 188, magicHit.getRaw(), magicHit.getRaw());
+      renderThreeDigitNumberComparisonWithPercent( 90, 188, equipmentMagicHit, newEquipmentMagicHit);
+      renderThreeDigitNumberComparisonWithPercent(122, 188, magicHit.getRaw() + equipmentMagicHit, magicHit.getRaw() + newEquipmentMagicHit);
+      renderThreeDigitNumberComparisonWithPercent( 58, 200, attackAvoid.getRaw(), attackAvoid.getRaw());
+      renderThreeDigitNumberComparisonWithPercent( 90, 200, equipmentAttackAvoid, newEquipmentAttackAvoid);
+      renderThreeDigitNumberComparisonWithPercent(122, 200, attackAvoid.getRaw() + equipmentAttackAvoid, attackAvoid.getRaw() + newEquipmentAttackAvoid);
+      renderThreeDigitNumberComparisonWithPercent( 58, 212, magicAvoid.getRaw(), magicAvoid.getRaw());
+      renderThreeDigitNumberComparisonWithPercent( 90, 212, equipmentMagicAvoid, newEquipmentMagicAvoid);
+      renderThreeDigitNumberComparisonWithPercent(122, 212, magicAvoid.getRaw() + equipmentMagicAvoid, magicAvoid.getRaw() + newEquipmentMagicAvoid);
 
       if(allocate) {
         allocateUiElement(0x56, 0x56, 16, 94);
@@ -2362,7 +2421,6 @@ public final class SItem {
         characterStats.equipmentElementalImmunity_7d.addAll(event.elementalImmunity_07);
         characterStats.equipmentStatusResist_7e |= event.statusResist_08;
         characterStats.equipmentAttack1_80 += event.attack1_0a;
-        characterStats.equipmentIcon_84 += event.icon_0e;
         characterStats.equipmentSpeed_86 += event.speed_0f;
         characterStats.equipmentAttack_88 += event.attack2_10 + event.attack1_0a;
         characterStats.equipmentMagicAttack_8a += event.magicAttack_11;

@@ -109,8 +109,8 @@ public class ActiveStatsa0 {
   public int equipmentAttack1_80;
 //  /** ubyte */
 //  public int _83;
-  /** byte */
-  public int equipmentIcon_84;
+//  /** byte */
+//  public int equipmentIcon_84;
 
   /** short */
   public int equipmentSpeed_86;
@@ -185,7 +185,6 @@ public class ActiveStatsa0 {
     this.equipmentAttackElements_7a.set(other.equipmentAttackElements_7a);
     this.equipmentStatusResist_7e = other.equipmentStatusResist_7e;
     this.equipmentAttack1_80 = other.equipmentAttack1_80;
-    this.equipmentIcon_84 = other.equipmentIcon_84;
     this.equipmentSpeed_86 = other.equipmentSpeed_86;
     this.equipmentAttack_88 = other.equipmentAttack_88;
     this.equipmentMagicAttack_8a = other.equipmentMagicAttack_8a;

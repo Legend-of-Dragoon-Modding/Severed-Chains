@@ -150,7 +150,9 @@ public class LodMod {
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", UnaryStatType::new);
-  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_HIT_STAT = STAT_TYPE_REGISTRAR.register("attack_hit", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_HIT_STAT = STAT_TYPE_REGISTRAR.register("magic_hit", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_AVOID_STAT = STAT_TYPE_REGISTRAR.register("attack_avoid", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> DRAGOON_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("dragoon_attack", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> DRAGOON_MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("dragoon_magic_attack", UnaryStatType::new);
@@ -464,7 +466,7 @@ public class LodMod {
     event.addStat(MAGIC_ATTACK_STAT.get());
     event.addStat(DEFENSE_STAT.get());
     event.addStat(MAGIC_DEFENSE_STAT.get());
-    event.addStat(AVOID_STAT.get());
+    event.addStat(ATTACK_AVOID_STAT.get());
     event.addStat(MAGIC_AVOID_STAT.get());
   }
 

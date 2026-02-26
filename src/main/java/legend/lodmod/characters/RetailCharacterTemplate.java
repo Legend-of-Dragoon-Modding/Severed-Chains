@@ -25,8 +25,9 @@ import static legend.lodmod.LodLevelUpActions.DRAGOON_LEVEL_UP;
 import static legend.lodmod.LodLevelUpActions.LEVEL_UP;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_ADDITION;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_SPELL;
+import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
-import static legend.lodmod.LodMod.AVOID_STAT;
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
 import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
 import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
@@ -37,6 +38,7 @@ import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
 import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
 import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MAGIC_HIT_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SPEED_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
@@ -46,8 +48,11 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public CharacterData2c make(final GameState52c gameState) {
-    final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
+    final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
     final CharacterData2c character = new CharacterData2c(gameState, this, stats);
+
+    stats.getStat(ATTACK_HIT_STAT.get()).setRaw(100);
+    stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
 
     this.applyLevelUp(gameState, character, null);
     this.applyDragoonLevelUp(gameState, character, null);
