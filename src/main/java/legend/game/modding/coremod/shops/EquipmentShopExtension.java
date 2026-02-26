@@ -11,8 +11,8 @@ import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.controls.AtlasIcon;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
@@ -26,7 +26,6 @@ import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.initArrowRenderable;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderThreeDigitNumber;
@@ -34,7 +33,6 @@ import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.setRandomRepeatGlyph;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -161,37 +159,67 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     final int charId = this.selectedCharSlot != -1 ? characterIndices_800bdbb8.getInt(this.selectedCharSlot) : -1;
 
     if(charId != -1) {
-      final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charId]);
       final CharacterData2c character = gameState.charData_32c.get(charId);
       final CharacterData2c clone = character.template.make(gameState);
       clone.set(character);
 
+      int equipmentAttack = 0;
+      int equipmentDefense = 0;
+      int equipmentMagicAttack = 0;
+      int equipmentMagicDefense = 0;
+
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        final Equipment equipped = character.getEquipment(slot);
+
+        if(equipped != null) {
+          equipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+          equipmentDefense += equipped.defence_12;
+          equipmentMagicAttack += equipped.magicAttack_11;
+          equipmentMagicDefense += equipped.magicDefence_13;
+        }
+      }
+
       if(equipItem(entry.item, charId).success) {
+        int newEquipmentAttack = 0;
+        int newEquipmentDefense = 0;
+        int newEquipmentMagicAttack = 0;
+        int newEquipmentMagicDefense = 0;
+
+        for(final EquipmentSlot slot : EquipmentSlot.values()) {
+          final Equipment equipped = character.getEquipment(slot);
+
+          if(equipped != null) {
+            newEquipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+            newEquipmentDefense += equipped.defence_12;
+            newEquipmentMagicAttack += equipped.magicAttack_11;
+            newEquipmentMagicDefense += equipped.magicDefence_13;
+          }
+        }
+
         allocateOneFrameGlyph(0x67, 210, 127);
         allocateOneFrameGlyph(0x68, 210, 137);
         allocateOneFrameGlyph(0x69, 210, 147);
         allocateOneFrameGlyph(0x6a, 210, 157);
-        final ActiveStatsa0 newStats = stats_800be5f8[charId];
-        renderThreeDigitNumber(246, 127, newStats.equipmentAttack_88, 0x2);
-        renderThreeDigitNumber(246, 137, newStats.equipmentDefence_8c, 0x2);
-        renderThreeDigitNumber(246, 147, newStats.equipmentMagicAttack_8a, 0x2);
-        renderThreeDigitNumber(246, 157, newStats.equipmentMagicDefence_8e, 0x2);
+
         allocateOneFrameGlyph(0x6b, 274, 127);
         allocateOneFrameGlyph(0x6b, 274, 137);
         allocateOneFrameGlyph(0x6b, 274, 147);
         allocateOneFrameGlyph(0x6b, 274, 157);
-        loadCharacterStats();
-        renderThreeDigitNumberComparison(284, 127, oldStats.equipmentAttack_88, newStats.equipmentAttack_88);
-        renderThreeDigitNumberComparison(284, 137, oldStats.equipmentDefence_8c, newStats.equipmentDefence_8c);
-        renderThreeDigitNumberComparison(284, 147, oldStats.equipmentMagicAttack_8a, newStats.equipmentMagicAttack_8a);
-        renderThreeDigitNumberComparison(284, 157, oldStats.equipmentMagicDefence_8e, newStats.equipmentMagicDefence_8e);
+
+        renderThreeDigitNumber(246, 127, equipmentAttack, 0x2);
+        renderThreeDigitNumber(246, 137, equipmentDefense, 0x2);
+        renderThreeDigitNumber(246, 147, equipmentMagicAttack, 0x2);
+        renderThreeDigitNumber(246, 157, equipmentMagicDefense, 0x2);
+
+        renderThreeDigitNumberComparison(284, 127, equipmentAttack, newEquipmentAttack);
+        renderThreeDigitNumberComparison(284, 137, equipmentDefense, newEquipmentDefense);
+        renderThreeDigitNumberComparison(284, 147, equipmentMagicAttack, newEquipmentMagicAttack);
+        renderThreeDigitNumberComparison(284, 157, equipmentMagicDefense, newEquipmentMagicDefense);
       } else {
         renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
       }
 
       character.set(clone);
-
-      loadCharacterStats();
     } else {
       renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
     }
