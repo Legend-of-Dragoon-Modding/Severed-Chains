@@ -120,9 +120,9 @@ public class LinksScreen extends VerticalLayoutScreen {
   }
 
   private void execute(final String url) {
-    if (url.equals(LOD_CREDITS)) {
+    if(url.equals(LOD_CREDITS)) {
       engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.CREDITS.get();
-    } else if (url.equals(SC_CREDITS)) {
+    } else if(url.equals(SC_CREDITS)) {
       this.showScreen(CreditsScreen::new);
     } else {
       PLATFORM.openUrl(url);

@@ -59,7 +59,7 @@ public class CreditsScreen extends MenuScreen {
   private final List<CreditEntry> credits;
   private final HashMap<CreditsType, CreditFontProperties> fonts;
   private final FontOptions font;
-  private float scrollSpeed = 1f;
+  private float scrollSpeed = 1;
   private float scrollValue;
   private float pauseTime;
   private boolean scrolling;
@@ -78,11 +78,11 @@ public class CreditsScreen extends MenuScreen {
 
   private void setFonts() {
     this.fonts.clear();
-    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.DARK_GREY).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
-    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
-    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35f, 8f));
-    this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1.0f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
-    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0f, 2f));
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.DARK_GREY).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 35, 8));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35, 8));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35, 8));
+    this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1).horizontalAlign(HorizontalAlign.CENTRE), 0, 2));
+    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0, 2));
   }
 
   private void loadCredits() {
@@ -262,12 +262,12 @@ public class CreditsScreen extends MenuScreen {
     }
 
     if(action == INPUT_ACTION_MENU_DOWN.get()) {
-      this.scrollSpeed = -2f;
+      this.scrollSpeed = -2;
       return InputPropagation.HANDLED;
     }
 
     if(action == INPUT_ACTION_MENU_UP.get()) {
-      this.scrollSpeed = 2f;
+      this.scrollSpeed = 2;
       return InputPropagation.HANDLED;
     }
 
@@ -294,7 +294,7 @@ public class CreditsScreen extends MenuScreen {
     }
 
     if(action == INPUT_ACTION_MENU_DOWN.get() || action == INPUT_ACTION_MENU_UP.get()) {
-      this.scrollSpeed = 1f;
+      this.scrollSpeed = 1;
       return InputPropagation.HANDLED;
     }
 
