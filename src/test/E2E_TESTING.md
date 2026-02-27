@@ -12,12 +12,6 @@ Tests are not headless. A display is required (or a virtual framebuffer on CI).
 
 ## Running from IntelliJ
 
-### Easiest way (no config needed)
-
-1. Open `src/test/java/legend/game/RunE2ETests.java`
-2. Right click the file and choose Run
-3. Done. This uses JUnit's launcher API directly and bypasses Gradle's test exclusion
-
 ### One time project setup
 
 1. Open the `Severed-Chains/` directory in IntelliJ
@@ -54,7 +48,6 @@ Tests are ordered by method name and share a single engine instance (`@TestInsta
 
 ```
 src/test/java/legend/game/
-  RunE2ETests.java    - standalone launcher (right click to run)
   EngineBootTest.java - JUnit 5 test class (3 tests)
   ExampleTest.java    - sandbox for manual testing and experimentation
   Bootstrapper.java   - boots engine on a background thread
@@ -87,7 +80,7 @@ Both files are created in the repo root.
 ## Troubleshooting
 
 - Tests skipped: `files/` directory is missing. Unpack game ISOs first
-- Gradle skips tests: you forgot `-PrunTests` (or use `RunE2ETests.java` instead)
+- Gradle skips tests: you forgot `-PrunTests`
 - Timeout on engine loading: first run may be slow while shaders compile. Increase timeout in `Bootstrapper.java`
 - Timed out waiting for player turn: battle may not have loaded fully. Check `e2e-test.log` for the last loading stage
 - SDL window does not appear: ensure a display is available. On headless CI use `xvfb-run` on Linux
