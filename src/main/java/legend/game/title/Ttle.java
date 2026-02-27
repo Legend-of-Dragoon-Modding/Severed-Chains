@@ -31,7 +31,7 @@ import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.FullScreenInputScreen;
 import legend.game.inventory.screens.HorizontalAlign;
-import legend.game.inventory.screens.LinksScreen;
+import legend.game.inventory.screens.AboutScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
@@ -517,7 +517,7 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForLinks() {
-    this.fadeOutToMenu(() -> new LinksScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
+    this.fadeOutToMenu(() -> new AboutScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
   }
 
   private void fadeOutForCategorizeSave() {

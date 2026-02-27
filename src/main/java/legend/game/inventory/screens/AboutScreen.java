@@ -23,7 +23,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 
-public class LinksScreen extends VerticalLayoutScreen {
+public class AboutScreen extends VerticalLayoutScreen {
   private final Runnable unload;
   private int loadingStage;
 
@@ -34,7 +34,7 @@ public class LinksScreen extends VerticalLayoutScreen {
   private static final String LOD_CREDITS = "[LOD_CREDITS]";
   private static final String SC_CREDITS = "[SC_CREDITS]";
 
-  public LinksScreen(final Runnable unload) {
+  public AboutScreen(final Runnable unload) {
     this.unload = unload;
 
     this.addControl(new Background());
