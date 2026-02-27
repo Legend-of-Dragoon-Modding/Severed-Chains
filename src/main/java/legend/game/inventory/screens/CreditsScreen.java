@@ -1,12 +1,19 @@
 package legend.game.inventory.screens;
 
 import discord.DiscordRichPresence;
+import legend.core.QueuedModelStandard;
+import legend.core.gpu.Bpp;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.credits.Credits.CreditsType;
 import legend.game.i18n.I18n;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -56,12 +63,17 @@ public class CreditsScreen extends MenuScreen {
   private int loadingStage;
   private final Runnable unload;
 
+  private final Matrix4f m;
+  private final Obj quad;
+  private final Texture[] textures;
+
   private final List<CreditEntry> credits;
   private final HashMap<CreditsType, CreditFontProperties> fonts;
   private final FontOptions font;
   private float scrollSpeed = 1;
   private float scrollValue;
   private float pauseTime;
+  private float backgroundOpacity;
   private boolean scrolling;
 
   public CreditsScreen(final Runnable unload) {
@@ -71,6 +83,22 @@ public class CreditsScreen extends MenuScreen {
     this.font = new FontOptions();
     this.scrolling = true;
 
+    this.m = new Matrix4f();
+    this.m.translation(0, 0, 160);
+    this.m.scale(368, 240, 1);
+
+    this.quad = new QuadBuilder("Statistics Quad")
+      .rgb(1f, 1f, 1f)
+      .size(1.0f, 1.0f)
+      .uv(0.0f, 0.0f)
+      .uvSize(1.0f, 1.0f)
+      .bpp(Bpp.BITS_24)
+      .build();
+
+    this.textures = new Texture[] {
+      Texture.png(Path.of("gfx", "textures", "credits", "0.png")),    //0
+    };
+
     this.setFonts();
     this.loadCredits();
     this.setCredits();
@@ -78,11 +106,11 @@ public class CreditsScreen extends MenuScreen {
 
   private void setFonts() {
     this.fonts.clear();
-    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.DARK_GREY).size(1.5f).horizontalAlign(HorizontalAlign.CENTRE), 35, 8));
-    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35, 8));
-    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 35, 8));
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.DARK_GREY).size(1.4f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.DARK_GREY).size(1.4f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
     this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1).horizontalAlign(HorizontalAlign.CENTRE), 0, 2));
-    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0, 2));
+    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0, 0));
   }
 
   private void loadCredits() {
@@ -91,9 +119,7 @@ public class CreditsScreen extends MenuScreen {
     try(final BufferedReader br = new BufferedReader(new FileReader(String.valueOf(path)))) {
       for(String line; (line = br.readLine()) != null; ) {
         line = line.trim();
-        if(!line.isEmpty()) {
-          this.addEntry(line);
-        }
+        this.addEntry(line);
       }
     } catch(final IOException ex) {
       LOGGER.error(ex);
@@ -125,10 +151,13 @@ public class CreditsScreen extends MenuScreen {
 
   private void setCredits() {
     float y = 0;
+    boolean wasLink = false;
     for(final CreditEntry entry : this.credits) {
       final float textHeight = DEFAULT_FONT.textHeight(entry.text) * entry.properties.font.getSize();
-      entry.y = y + entry.properties.paddingTop;
-      y += textHeight + entry.properties.paddingBottom + entry.properties.paddingTop;
+      final float extraHeight = wasLink && entry.type == CreditsType.NAME_2 ? 10 : 0;
+      entry.y = y + entry.properties.paddingTop + extraHeight;
+      y += textHeight + entry.properties.paddingBottom + entry.properties.paddingTop + extraHeight;
+      wasLink = entry.type == CreditsType.LINK_5;
     }
   }
 
@@ -165,22 +194,35 @@ public class CreditsScreen extends MenuScreen {
     }
   }
 
+  private void renderBackground() {
+    RENDERER
+      .queueOrthoModel(this.quad, this.m, QueuedModelStandard.class)
+      .colour(1, 1, 1)
+      .alpha(this.backgroundOpacity)
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .texture(this.textures[0]);
+  }
+
   @Override
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
+        this.renderBackground();
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
         this.loadingStage++;
       }
 
       case 1 -> {
+        this.renderBackground();
         deallocateRenderables(0);
         this.loadingStage++;
       }
 
       case 2 -> {
+        this.renderBackground();
         this.renderCredits();
+
         if(this.scrolling) {
           this.scrollValue = Math.max(0, this.scrollValue + this.scrollSpeed);
         } else {
@@ -190,10 +232,15 @@ public class CreditsScreen extends MenuScreen {
             this.scrolling = true;
           }
         }
+
+        if(this.backgroundOpacity < 0.3f) {
+          this.backgroundOpacity += 0.0035f;
+        }
       }
 
       // Fade out
       case 100 -> {
+        this.renderBackground();
         this.renderCredits();
         this.unload.run();
       }

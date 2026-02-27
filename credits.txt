@@ -1,11 +1,22 @@
-# lod_core.ui.links.sc_credits_director
+# lod_core.ui.about.sc_credits_creator
 Monoxide
-## lod_core.ui.links.sc_credits_community
+## lod_core.ui.about.sc_credits_developer
+tfz
+## lod_core.ui.about.sc_credits_community
 Drewniverse
-## lod_core.ui.links.sc_credits_collaborator
+## lod_core.ui.about.sc_credits_contributor
+Mr.Scentless
+@ Title Screen Update
+@ Memory Card Icons
 Senerio
-@ https://arks.itch.io/xbox-buttons
-## lod_core.ui.links.sc_credits_supporter
+@ Turn Order UI
+@ The credits you are watching
+## lod_core.ui.about.sc_credits_thirdparty
+https://arks.itch.io/
+@ Controller Button Icons
+## lod_core.ui.about.sc_credits_tester
+That guy
+## lod_core.ui.about.sc_credits_supporter
 Some Rich Girl
-### lod_core.ui.links.sc_credits_thanks
+### lod_core.ui.about.sc_credits_thanks
 My Dog

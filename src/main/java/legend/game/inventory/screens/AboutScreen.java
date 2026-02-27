@@ -38,24 +38,24 @@ public class AboutScreen extends VerticalLayoutScreen {
     this.unload = unload;
 
     this.addControl(new Background());
-    this.addLink(I18n.translate("lod_core.ui.links.discord"), "https://discord.gg/legendofdragoon", true);
-    this.addLink(I18n.translate("lod_core.ui.links.youtube"), "https://www.youtube.com/@legend-of-dragoon", true);
-    this.addLink(I18n.translate("lod_core.ui.links.fandom"), "https://legendofdragoon.org", true);
-    this.addLink(I18n.translate("lod_core.ui.links.wiki"), "https://legendofdragoon.org/wiki/Main_Page", true);
-    this.addLink(I18n.translate("lod_core.ui.links.project"), "https://legendofdragoon.org/projects/severed-chains", true);
-    this.addLink(I18n.translate("lod_core.ui.links.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains", true);
-    this.addLink(I18n.translate("lod_core.ui.links.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues", true);
-    this.addLink(I18n.translate("lod_core.ui.links.lod_credits"), LOD_CREDITS, false);
-    this.addLink(I18n.translate("lod_core.ui.links.sc_credits"), SC_CREDITS, false);
+    this.addLink(I18n.translate("lod_core.ui.about.discord"), "https://discord.gg/legendofdragoon", true);
+    this.addLink(I18n.translate("lod_core.ui.about.youtube"), "https://www.youtube.com/@legend-of-dragoon", true);
+    this.addLink(I18n.translate("lod_core.ui.about.fandom"), "https://legendofdragoon.org", true);
+    this.addLink(I18n.translate("lod_core.ui.about.wiki"), "https://legendofdragoon.org/wiki/Main_Page", true);
+    this.addLink(I18n.translate("lod_core.ui.about.project"), "https://legendofdragoon.org/projects/severed-chains", true);
+    this.addLink(I18n.translate("lod_core.ui.about.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains", true);
+    this.addLink(I18n.translate("lod_core.ui.about.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues", true);
+    this.addLink(I18n.translate("lod_core.ui.about.lod_credits"), LOD_CREDITS, false);
+    this.addLink(I18n.translate("lod_core.ui.about.sc_credits"), SC_CREDITS, false);
 
-    final Label help = this.addControl(new Label(I18n.translate("lod_core.ui.links.click_on_any_link_to_open")));
+    final Label help = this.addControl(new Label(I18n.translate("lod_core.ui.about.click_on_any_link_to_open")));
     help.setWidth(this.getWidth());
     help.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
     help.setY(200);
 
-    this.addHotkey(I18n.translate("lod_core.ui.links.view_link"), INPUT_ACTION_MENU_HELP, this::viewLink);
-    this.addHotkey(I18n.translate("lod_core.ui.links.open_link"), INPUT_ACTION_MENU_CONFIRM, this::openLink);
-    this.addHotkey(I18n.translate("lod_core.ui.links.back"), INPUT_ACTION_MENU_BACK, this::back);
+    this.addHotkey(I18n.translate("lod_core.ui.about.view_link"), INPUT_ACTION_MENU_HELP, this::viewLink);
+    this.addHotkey(I18n.translate("lod_core.ui.about.open_link"), INPUT_ACTION_MENU_CONFIRM, this::openLink);
+    this.addHotkey(I18n.translate("lod_core.ui.about.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
   private void addLink(final String text, final String url, final boolean help) {
