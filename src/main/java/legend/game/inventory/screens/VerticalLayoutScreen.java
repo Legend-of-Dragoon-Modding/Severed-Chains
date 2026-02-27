@@ -174,13 +174,13 @@ public class VerticalLayoutScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox(x, y, this.highlight.getX(), 30 + i * 13, this.highlight.getWidth(), 13) && this.highlightedRow != this.scroll + i) {
+      if(MathHelper.inBox((int)x, (int)y, this.highlight.getX(), 30 + i * 13, this.highlight.getWidth(), 13) && this.highlightedRow != this.scroll + i) {
         playMenuSound(1);
         this.highlightRow(this.scroll + i);
         return InputPropagation.HANDLED;

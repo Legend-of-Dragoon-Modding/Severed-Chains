@@ -15,6 +15,18 @@ public class UnaryStat extends Stat {
     this(type, stats, i -> i);
   }
 
+  public void set(final UnaryStat other) {
+    this.value = other.value;
+    copyMods(other, this);
+  }
+
+  @Override
+  public UnaryStat copy() {
+    final UnaryStat stat = new UnaryStat((StatType<UnaryStat>)this.type, this.stats, this.validator);
+    stat.set(this);
+    return stat;
+  }
+
   public int getRaw() {
     return this.value;
   }

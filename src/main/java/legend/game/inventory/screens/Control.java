@@ -305,7 +305,7 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
     }
@@ -330,7 +330,57 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mousePress(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    if(super.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.mousePressHandler != null) {
+      return this.mousePressHandler.mouseClick(x, y, button, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseRelease(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    if(super.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.mouseReleaseHandler != null) {
+      return this.mouseReleaseHandler.mouseClick(x, y, button, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
     }
@@ -624,6 +674,14 @@ public abstract class Control extends ControlHost {
     this.mouseMoveHandler = handler;
   }
 
+  public void onMousePress(final MouseClick handler) {
+    this.mousePressHandler = handler;
+  }
+
+  public void onMouseRelease(final MouseClick handler) {
+    this.mouseReleaseHandler = handler;
+  }
+
   public void onMouseClick(final MouseClick handler) {
     this.mouseClickHandler = handler;
   }
@@ -673,6 +731,8 @@ public abstract class Control extends ControlHost {
   private GotFocus gotFocusHandler;
   private LostFocus lostFocusHandler;
   private MouseMove mouseMoveHandler;
+  private MouseClick mousePressHandler;
+  private MouseClick mouseReleaseHandler;
   private MouseClick mouseClickHandler;
   private MouseScroll mouseScrollHandler;
   private MouseScrollHighRes mouseScrollHighResHandler;
@@ -689,8 +749,8 @@ public abstract class Control extends ControlHost {
   @FunctionalInterface public interface HoverOut { void hoverOut(); }
   @FunctionalInterface public interface GotFocus { void gotFocus(); }
   @FunctionalInterface public interface LostFocus { void lostFocus(); }
-  @FunctionalInterface public interface MouseMove { InputPropagation mouseMove(final int x, final int y); }
-  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods); }
+  @FunctionalInterface public interface MouseMove { InputPropagation mouseMove(final double x, final double y); }
+  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods); }
   @FunctionalInterface public interface MouseScroll { InputPropagation mouseScroll(final int deltaX, final int deltaY); }
   @FunctionalInterface public interface MouseScrollHighRes { InputPropagation mouseScroll(final double deltaX, final double deltaY); }
   @FunctionalInterface public interface KeyPress { InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat); }

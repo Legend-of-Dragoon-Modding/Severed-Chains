@@ -27,7 +27,9 @@ import legend.game.characters.UnaryStat;
 import legend.game.characters.UnaryStatMod;
 import legend.game.characters.UnaryStatModConfig;
 import legend.game.characters.UnaryStatModType;
+import legend.game.characters.UnaryStatType;
 import legend.game.characters.VitalsStat;
+import legend.game.characters.VitalsStatType;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
@@ -134,18 +136,18 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_OPTIONS = INPUT_ACTION_REGISTRAR.register("bttl_options", InputAction::editable);
 
   private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
-  public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
-  public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_TYPE_REGISTRAR.register("mp", () -> new StatType<>(VitalsStat::new));
-  public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
+  public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", VitalsStatType::new);
+  public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_TYPE_REGISTRAR.register("mp", VitalsStatType::new);
+  public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", VitalsStatType::new);
 
-  public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_TYPE_REGISTRAR.register("speed", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_STAT = STAT_TYPE_REGISTRAR.register("attack", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_TYPE_REGISTRAR.register("speed", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_STAT = STAT_TYPE_REGISTRAR.register("attack", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", UnaryStatType::new);
 
   private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statModTypes, MOD_ID);
   public static final RegistryDelegate<StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig>> UNARY_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("unary", UnaryStatModType::new);

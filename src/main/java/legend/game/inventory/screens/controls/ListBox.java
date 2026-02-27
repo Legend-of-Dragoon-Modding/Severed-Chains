@@ -254,13 +254,13 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(this.slot != i && MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
+      if(this.slot != i && MathHelper.inBox((int)x, (int)y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
         playMenuSound(1);
         this.select(i);
         return InputPropagation.HANDLED;
@@ -271,13 +271,13 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
+      if(MathHelper.inBox((int)x, (int)y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
         this.select(i);
 
         if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {

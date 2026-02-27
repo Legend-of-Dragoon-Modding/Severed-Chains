@@ -16,6 +16,16 @@ public abstract class Stat {
     this.stats = stats;
   }
 
+  public abstract Stat copy();
+
+  protected static void copyMods(final Stat source, final Stat dest) {
+    dest.mods.clear();
+
+    for(final var entry : source.mods.entrySet()) {
+      dest.mods.put(entry.getKey(), entry.getValue().copy());
+    }
+  }
+
   public boolean hasMod(final RegistryId id) {
     return this.mods.containsKey(id);
   }

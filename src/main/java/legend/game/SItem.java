@@ -19,7 +19,6 @@ import legend.game.inventory.Good;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
@@ -401,8 +400,8 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean given = giveItem(REGISTRIES.items.getEntry(id).get());
-    script.params_20[1].set(given ? 1 : 0);
+    final ItemStack remaining = gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(remaining.isEmpty() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -421,8 +420,8 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean taken = takeItem(REGISTRIES.items.getEntry(id).get());
-    script.params_20[1].set(taken ? 1 : 0);
+    final ItemStack remaining = gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(remaining.isEmpty() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -642,14 +641,6 @@ public final class SItem {
     return responseType;
   }
 
-  public static boolean takeItem(final Item item) {
-    return gameState_800babc8.items_2e9.take(item).isEmpty();
-  }
-
-  public static boolean takeItem(final ItemStack stack) {
-    return gameState_800babc8.items_2e9.take(stack).isEmpty();
-  }
-
   @Method(0x800232dcL)
   public static boolean takeItemFromSlot(final int itemSlot) {
     return takeItemFromSlot(itemSlot, gameState_800babc8.items_2e9.get(itemSlot).getSize());
@@ -692,19 +683,6 @@ public final class SItem {
 
     gameState_800babc8.equipment_1e8.remove(equipmentIndex);
     return true;
-  }
-
-  @Method(0x80023484L)
-  public static boolean giveItem(final Item item) {
-    return gameState_800babc8.items_2e9.give(item).isEmpty();
-  }
-
-  /**
-   * Note: does NOT consume the passed in item stack
-   */
-  @Method(0x80023484L)
-  public static boolean giveItem(final ItemStack item) {
-    return gameState_800babc8.items_2e9.give(new ItemStack(item)).isEmpty();
   }
 
   @Method(0x80023484L)

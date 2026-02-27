@@ -32,6 +32,7 @@ import static legend.game.SItem.initArrowRenderable;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
+import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.setRandomRepeatGlyph;
@@ -146,6 +147,12 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       fadeOutArrow(this.rightArrowRenderable);
       this.rightArrowRenderable = null;
     }
+  }
+
+  @Override
+  public void drawShopHeader(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry, final int x, final int y) {
+    super.drawShopHeader(screen, shop, gameState, entry, x, y);
+    renderFraction(x + 120, y + 8, gameState.equipment_1e8.size(), 255);
   }
 
   @Override

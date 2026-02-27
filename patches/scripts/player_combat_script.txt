@@ -2597,8 +2597,8 @@ call Battle::scriptSetBentPos, stor[0], stor[10], stor[11], stor[12] ; bentIndex
 call Battle::FUN_800cbde0, stor[0], 0xffffffff, 0xa, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
 call Battle::FUN_800cbb00, stor[28], 0xffffffff, 0xa, stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26] ; bentIndex0, bentIndex1, ticks, x, y, z
 wait_cmp !&, 0x4000000, stor[7] ; operator, left, right
-gosub inl[:LABEL_291] ; addr
-gosub inl[:LABEL_298] ; addr
+gosub inl[:HIDE_ALL_PLAYERS_BUT_ME_AND_RESET_DEFF_STAGE_EFFECTS] ; addr
+gosub inl[:HIDE_ALL_MONSTERS_ETC_IF_ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES] ; addr
 call Audio::scriptPlaySound, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
 gosub inl[:LABEL_269] ; addr
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0xe ; bentIndex, animIndex
@@ -2648,8 +2648,8 @@ yield
 call Battle::FUN_800cbb00, stor[0], 0xffffffff, 0x6, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
 call Battle::FUN_800cbb00, stor[28], 0xffffffff, 0xa, stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26] ; bentIndex0, bentIndex1, ticks, x, y, z
 wait_cmp !&, 0x4000000, stor[7] ; operator, left, right
-gosub inl[:LABEL_291] ; addr
-gosub inl[:LABEL_298] ; addr
+gosub inl[:HIDE_ALL_PLAYERS_BUT_ME_AND_RESET_DEFF_STAGE_EFFECTS] ; addr
+gosub inl[:HIDE_ALL_MONSTERS_ETC_IF_ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES] ; addr
 gosub inl[:LABEL_268] ; addr
 gosub inl[:WAIT_FOR_ANIMATION_TO_FINISH] ; addr
 LABEL_286:
@@ -2688,62 +2688,77 @@ data 0
 
 
 ; SUBROUTINE
-LABEL_291:
-mov 0x0, stor[8] ; source, dest
+HIDE_ALL_PLAYERS_BUT_ME_AND_RESET_DEFF_STAGE_EFFECTS:
+
+mov 0x0, stor[8] ; loop counter, player bent slot
 LABEL_292:
-mov var[34][stor[8]], stor[9] ; source, dest
+mov var[34][stor[8]], stor[9] ; s9 = player bent id
+
 jmp_cmp ==, stor[0], stor[9], inl[:LABEL_293] ; operand, left, right, addr
 call Battle::scriptSetBentHidden, stor[9], 0x1 ; bentIndex, set
 LABEL_293:
 incr stor[8] ; operand
 jmp_cmp <, stor[8], var[35], inl[:LABEL_292] ; operand, left, right, addr
+
 call SEffe::scriptLoadDeffStageEffects, 0x0 ; mode
 return
 
+
+
 ; SUBROUTINE
 LABEL_294:
-gosub inl[:LABEL_317] ; addr
+gosub inl[:ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES] ; addr
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_295] ; operand, left, right, addr
-gosub inl[:LABEL_296] ; addr
+
+gosub inl[:HIDE_ALL_MONSTERS] ; addr
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[23] ; effectIndex
 mov stor[28], stor[stor[stor[0], 23], 23] ; source, dest
-gosub inl[:LABEL_304] ; addr
-gosub inl[:LABEL_310] ; addr
+gosub inl[:HIDE_MAIN_PART_IF_SUB_PART] ; addr
+gosub inl[:HIDE_SUCC_MODEL_CLONE] ; addr
+
 LABEL_295:
 return
 
+
+
 ; SUBROUTINE
-LABEL_296:
+HIDE_ALL_MONSTERS:
 mov 0x0, stor[8] ; source, dest
-LABEL_297:
+HIDE_ALL_MONSTERS_LOOP:
 mov var[52][stor[8]], stor[9] ; source, dest
 call Battle::scriptSetBentHidden, stor[9], 0x0 ; bentIndex, set
 incr stor[8] ; operand
-jmp_cmp <, stor[8], var[53], inl[:LABEL_297] ; operand, left, right, addr
+jmp_cmp <, stor[8], var[53], inl[:HIDE_ALL_MONSTERS_LOOP] ; operand, left, right, addr
 return
 
-; SUBROUTINE
-LABEL_298:
-gosub inl[:LABEL_317] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_301] ; operand, left, right, addr
+
 
 ; SUBROUTINE
-LABEL_299:
-mov 0x0, stor[8] ; source, dest
+HIDE_ALL_MONSTERS_ETC_IF_ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES:
+gosub inl[:ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:HIDE_ALL_MONSTERS_ETC_IF_ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES_EXIT] ; operand, left, right, addr
 
-ADDITION_HIDE_ENEMIES_LOOP:
-jmp_cmp >=, stor[8], var[53], inl[:ADDITION_HIDE_ENEMIES_LOOP_EXIT] ; operand, left, right, addr
-mov var[52][stor[8]], stor[9] ; source, dest
+; SUBROUTINE
+; Hides monsters including their main part and succ clones
+HIDE_ALL_MONSTERS_ETC:
+mov 0x0, stor[8] ; alive monster slot
+
+HIDE_ALL_MONSTERS_ETC_LOOP:
+jmp_cmp >=, stor[8], var[53], inl[:HIDE_ALL_MONSTERS_ETC_LOOP_EXIT] ; operand, left, right, addr
+mov var[52][stor[8]], stor[9] ; s9 = monster bent ID
 call Battle::scriptAllocateEmptyEffectManagerChild, stor[23] ; effectIndex
-mov stor[9], stor[stor[stor[0], 23], 23] ; source, dest
-gosub inl[:LABEL_304] ; addr
+mov stor[9], stor[stor[stor[0], 23], 23] ; temporary script s23 = monster bent ID
+gosub inl[:HIDE_MAIN_PART_IF_SUB_PART] ; addr
 incr stor[8] ; operand
-jmp inl[:ADDITION_HIDE_ENEMIES_LOOP]
-ADDITION_HIDE_ENEMIES_LOOP_EXIT:
+jmp inl[:HIDE_ALL_MONSTERS_ETC_LOOP]
 
-gosub inl[:LABEL_308] ; addr
-LABEL_301:
+HIDE_ALL_MONSTERS_ETC_LOOP_EXIT:
+gosub inl[:SHOW_SUCC_MODEL_CLONE] ; addr
+
+HIDE_ALL_MONSTERS_ETC_IF_ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES_EXIT:
 return
+
+
 
 ; SUBROUTINE
 LABEL_302:
@@ -2753,27 +2768,48 @@ gosub inl[:LABEL_358] ; addr
 LABEL_303:
 return
 
+
+
 ; SUBROUTINE
-LABEL_304:
-mov stor[8], stor[stor[stor[0], 23], 8] ; source, dest
-mov stor[9], stor[stor[stor[0], 23], 9] ; source, dest
-call Battle::scriptSetBentHidden, stor[stor[stor[0], 23], 23], 0x1 ; bentIndex, set
-jmp_cmp !=, 0x0, inl[:LABEL_316], inl[:LABEL_307] ; operand, left, right, addr
-jmp_cmp !&, 0x200, stor[stor[stor[23], 23], 7], inl[:LABEL_307] ; operand, left, right, addr
-mov 0x0, stor[8] ; source, dest
-LABEL_305:
-mov var[36][stor[8]], stor[9] ; source, dest
-jmp_cmp !&, 0x8000, stor[stor[stor[0], 9], 7], inl[:LABEL_306] ; operand, left, right, addr
+; If the passed in monster is a sub-part, hide its main part
+; @param int stor[8] Alive monster slot
+; @param int stor[9] Monster bent ID
+; @param int stor[23] Temporary script ID
+HIDE_MAIN_PART_IF_SUB_PART:
+; backup s8/s9
+mov stor[8], stor[stor[stor[0], 23], 8] ; copy alive monster slot into temporary script
+mov stor[9], stor[stor[stor[0], 23], 9] ; copy monster bent ID into temporary script
+
+call Battle::scriptSetBentHidden, stor[stor[stor[0], 23], 23], 0x1 ; hide monster
+
+jmp_cmp !=, 0x0, inl[:LABEL_316], inl[:HIDE_MAIN_PART_IF_SUB_PART_EXIT] ; this seems to always be 0
+jmp_cmp !&, 0x200, stor[stor[stor[23], 23], 7], inl[:HIDE_MAIN_PART_IF_SUB_PART_EXIT] ; unknown flag
+
+; hide first monster with flag 0x8000 set
+mov 0x0, stor[8] ; all monster slot
+
+HIDE_MAIN_PART_IF_SUB_PART_LOOP:
+mov var[36][stor[8]], stor[9] ; s9 = monster bent ID
+
+jmp_cmp !&, 0x8000, stor[stor[stor[0], 9], 7], inl[:HIDE_MAIN_PART_IF_SUB_PART_LOOP_NOT_MAIN_PART] ; unknown flag
 call Battle::scriptSetBentHidden, stor[9], 0x1 ; bentIndex, set
-jmp inl[:LABEL_307] ; addr
-LABEL_306:
-incr stor[9] ; operand
-jmp_cmp <, stor[9], var[37], inl[:LABEL_305] ; operand, left, right, addr
-LABEL_307:
+jmp inl[:HIDE_MAIN_PART_IF_SUB_PART_EXIT] ; addr
+HIDE_MAIN_PART_IF_SUB_PART_LOOP_NOT_MAIN_PART:
+
+; retail bug: this was using s9 instead of s8
+incr stor[8] ; operand
+jmp_cmp <, stor[8], var[37], inl[:HIDE_MAIN_PART_IF_SUB_PART_LOOP] ; operand, left, right, addr
+
+HIDE_MAIN_PART_IF_SUB_PART_EXIT:
+; restore s8/s9
 mov stor[stor[stor[0], 23], 9], stor[9] ; source, dest
 mov stor[stor[stor[0], 23], 8], stor[8] ; source, dest
+
 deallocate_other stor[23] ; index
 return
+
+
+
 data 0x208
 data 0x2000008
 data 0x3081700
@@ -2822,64 +2858,73 @@ data 0x153
 data 0x2000017
 data 0x49
 
+
+
 ; SUBROUTINE
-LABEL_308:
-mov stor[8], inl[:LABEL_315] ; source, dest
-gosub inl[:LABEL_312] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_309] ; operand, left, right, addr
+SHOW_SUCC_MODEL_CLONE:
+mov stor[8], inl[:SHOW_SUCC_MODEL_CLONE_S8_BACKUP] ; back up s8
+gosub inl[:IS_CHARACTER_SUCCD] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:SHOW_SUCC_MODEL_CLONE_NOT_SUCCD] ; operand, left, right, addr
 call SEffe::scriptSetEffectErrorFlag, var[45][50], 0x1 ; effectIndex, clear
-LABEL_309:
-mov inl[:LABEL_315], stor[8] ; source, dest
+SHOW_SUCC_MODEL_CLONE_NOT_SUCCD:
+mov inl[:SHOW_SUCC_MODEL_CLONE_S8_BACKUP], stor[8] ; restore s8
 return
 
+
+
 ; SUBROUTINE
-LABEL_310:
-mov stor[8], inl[:LABEL_315] ; source, dest
-gosub inl[:LABEL_312] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_311] ; operand, left, right, addr
+HIDE_SUCC_MODEL_CLONE:
+mov stor[8], inl[:SHOW_SUCC_MODEL_CLONE_S8_BACKUP] ; source, dest
+gosub inl[:IS_CHARACTER_SUCCD] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:HIDE_SUCC_MODEL_CLONE_NOT_SUCCD] ; operand, left, right, addr
 call SEffe::scriptSetEffectErrorFlag, var[45][50], 0x0 ; effectIndex, clear
-LABEL_311:
-mov inl[:LABEL_315], stor[8] ; source, dest
+HIDE_SUCC_MODEL_CLONE_NOT_SUCCD:
+mov inl[:SHOW_SUCC_MODEL_CLONE_S8_BACKUP], stor[8] ; source, dest
 return
 
+
+
 ; SUBROUTINE
-; @return bool stor[8] True if (windigo || melbu stage index 1) && var[45][50] != 0. Maybe something to do with succ abilities?
+; @return bool stor[8] True if (windigo || melbu stage index 1) && var[45][50] != 0
 ;TODO this is most likely broken due to encounter ID refactor
-LABEL_312:
+IS_CHARACTER_SUCCD:
 mov 0x0, stor[8] ; source, dest
 
 ; Windigo
-jmp_cmp ==, 422, var[43], inl[:LABEL_313] ; operand, left, right, addr
+jmp_cmp ==, id[lod:windigo], var[43], inl[:IS_CHARACTER_SUCCD_WINDIGO] ; operand, left, right, addr
 
 ; Melbu
-jmp_cmp !=, 443, var[43], inl[:LABEL_314] ; operand, left, right, addr
+jmp_cmp !=, id[lod:melbu_frahma], var[43], inl[:IS_CHARACTER_SUCCD_NOPE] ; operand, left, right, addr
 ; Battle phase
-jmp_cmp !=, 1, var[39], inl[:LABEL_314] ; operand, left, right, addr
+jmp_cmp !=, 1, var[39], inl[:IS_CHARACTER_SUCCD_NOPE] ; operand, left, right, addr
 
-LABEL_313:
-jmp_cmp ==, 0x0, var[45][50], inl[:LABEL_314] ; operand, left, right, addr
+IS_CHARACTER_SUCCD_WINDIGO:
+; No character succ'd
+jmp_cmp ==, 0x0, var[45][50], inl[:IS_CHARACTER_SUCCD_NOPE] ; operand, left, right, addr
 
 incr stor[8] ; operand
 
-LABEL_314:
+IS_CHARACTER_SUCCD_NOPE:
 return
 
-LABEL_315:
+
+
+SHOW_SUCC_MODEL_CLONE_S8_BACKUP:
 data 0x0
 LABEL_316:
 data 0x0
 data 0x0
 
 ; SUBROUTINE
-LABEL_317:
+ENCOUNTER_HAS_EXTRA_BATTLE_ENTITIES:
 mov 0x0, stor[8] ; source, dest
-jmp_cmp ==, 0x19c, var[43], inl[:LABEL_319] ; operand, left, right, addr
-jmp_cmp ==, 0x19f, var[43], inl[:LABEL_319] ; operand, left, right, addr
-jmp_cmp ==, 0x1a2, var[43], inl[:LABEL_319] ; operand, left, right, addr
-jmp_cmp ==, 0x1a3, var[43], inl[:LABEL_319] ; operand, left, right, addr
-jmp_cmp ==, 0x1a6, var[43], inl[:LABEL_319] ; operand, left, right, addr
-jmp_cmp ==, 0x1b0, var[43], inl[:LABEL_319] ; operand, left, right, addr
-jmp_cmp !=, 0x1bb, var[43], inl[:LABEL_318] ; operand, left, right, addr
+jmp_cmp ==, id[lod:drake_the_bandit], var[43], inl[:LABEL_319] ; Drake
+jmp_cmp ==, id[lod:fire_bird], var[43], inl[:LABEL_319] ; Fire Bird
+jmp_cmp ==, id[lod:kamuy], var[43], inl[:LABEL_319] ; Kamuy
+jmp_cmp ==, id[lod:scissorhands_94], var[43], inl[:LABEL_319] ; Scissorhands (unused)
+jmp_cmp ==, id[lod:windigo], var[43], inl[:LABEL_319] ; Windigo
+jmp_cmp ==, id[lod:last_kraken], var[43], inl[:LABEL_319] ; Kraken
+jmp_cmp !=, id[lod:melbu_frahma], var[43], inl[:LABEL_318] ; Melbu
 jmp_cmp ==, 0x0, var[39], inl[:LABEL_319] ; operand, left, right, addr
 jmp_cmp ==, 0x1, var[39], inl[:LABEL_319] ; operand, left, right, addr
 LABEL_318:
@@ -2897,13 +2942,17 @@ mov stor[0], var[80] ; source, dest
 mov stor[28], var[81] ; source, dest
 gosub inl[:LABEL_363] ; addr
 mov 0x0, var[45][105] ; source, dest
+
 call Battle::scriptGetBentSlot, stor[28], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
 mov 0x1, stor[9] ; source, dest
 shl stor[8], stor[9] ; right, left
 jmp_cmp !&, stor[9], var[45][250], inl[:LABEL_320] ; operand, left, right, addr
-jmp_cmp ==, 0x19e, var[43], inl[:LABEL_320] ; operand, left, right, addr
+
+; if not Urobolus, set missed
+jmp_cmp ==, id[lod:urobolus], var[43], inl[:LABEL_320] ; Urobolus
 or 0x10, var[45][105] ; right, left
 LABEL_320:
+
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x10 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
 gosub inl[:LABEL_348] ; addr
@@ -6383,8 +6432,8 @@ call SEffe::scriptSetRelativePosition, stor[22], stor[30], 0x0, 0x0, 0x0 ; bobjI
 call SEffe::scriptSetRelativeScale, stor[22], 0xffffffff, 0x12c, 0x12c, 0x12c ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptAddLifespanAttachment, stor[22], 0xf ; effectIndex, ticks
 gosub inl[:LABEL_719] ; addr
-gosub inl[:LABEL_296] ; addr
-gosub inl[:LABEL_310] ; addr
+gosub inl[:HIDE_ALL_MONSTERS] ; addr
+gosub inl[:HIDE_SUCC_MODEL_CLONE] ; addr
 gosub inl[:LABEL_720] ; addr
 mov 0xf, stor[23] ; source, dest
 LABEL_672:
@@ -6464,7 +6513,7 @@ call FullScreenEffects::scriptStartFadeEffect, 0x3, 0xe ; type, frames
 mov 0xd, stor[23] ; source, dest
 wait stor[23] ; frames
 gosub inl[:LABEL_719] ; addr
-gosub inl[:LABEL_299] ; addr
+gosub inl[:HIDE_ALL_MONSTERS_ETC] ; addr
 gosub inl[:LABEL_720] ; addr
 call Battle::scriptSetBentPos, stor[30], stor[24], stor[25], stor[26] ; bentIndex, x, y, z
 call Audio::scriptPlaySound, 0x0, 0x1e, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay

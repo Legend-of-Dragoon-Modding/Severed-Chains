@@ -789,7 +789,7 @@
 "SMap::FUN_800f2554","Unknown"
 "SMap::scriptDeallocateLawPodTrail","If param 0 is 1, deallocate the Zenebatos law pod trail effect."
 "SMap::scriptAllocateUnusedSmokeEffectData","Allocates/initializes struct data for unused smoke effect."
-"Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
+"SMap::scriptOpenShop","Opens a shop"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"

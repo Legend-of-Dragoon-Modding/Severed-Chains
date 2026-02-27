@@ -78,9 +78,7 @@ import static legend.game.Models.loadModelAndAnimation;
 import static legend.game.SItem.addGold;
 import static legend.game.SItem.clearCharacterStats;
 import static legend.game.SItem.giveEquipment;
-import static legend.game.SItem.giveItem;
 import static legend.game.SItem.takeEquipmentId;
-import static legend.game.SItem.takeItem;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
@@ -458,7 +456,7 @@ public final class Scus94491BpeSegment {
         if(itemId < 0xc0) {
           yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff;
         }
-        yield giveItem(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff;
+        yield gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()).isEmpty() ? 0 : 0xff;
       }
     };
 
@@ -479,7 +477,7 @@ public final class Scus94491BpeSegment {
     if(itemId < 0xc0) {
       script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff);
     } else {
-      script.params_20[1].set(takeItem(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff);
+      script.params_20[1].set(gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()).isEmpty() ? 0 : 0xff);
     }
 
     return FlowControl.CONTINUE;

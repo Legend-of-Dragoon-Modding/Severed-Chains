@@ -23,6 +23,11 @@ public class UiBox {
   private int width;
   private int height;
 
+  @Deprecated // use ctor with no name param, it isn't used anymore
+  public UiBox(final String name, final int x, final int y, final int width, final int height) {
+    this(x, y, width, height);
+  }
+
   @Method(0x800f1268L) // buildBattleHudBackground
   public UiBox(final int x, final int y, final int width, final int height) {
     this.textbox.backgroundType_04 = BackgroundType.NORMAL;

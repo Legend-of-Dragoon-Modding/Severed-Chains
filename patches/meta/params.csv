@@ -1340,6 +1340,7 @@
 "SMap::scriptAllocateUnusedSmokeEffectData","in","int","offsetRandomX","Multiplication factor of randomized component of particle x-offset.","none"
 "SMap::scriptAllocateUnusedSmokeEffectData","in","int","size","Size of the particle.","none"
 "SMap::scriptAllocateUnusedSmokeEffectData","in","int","sizeChange","Amount the size of the particle changes over lifecycle.","none"
+"SMap::scriptOpenShop","in","reg","shopId","The shop ID","none"
 "SEffe::scriptAllocateLensFlareEffect","out","int","effectIndex","The new effect manager script index","none"
 "SEffe::scriptAllocateLensFlareEffect","in","int","bentIndex","The battle entity to attach to","none"
 "SEffe::scriptAllocateLensFlareEffect","in","int","x","The X position","none"

@@ -57,7 +57,7 @@ public class Dropdown<T> extends Control {
 
     this.panel.onMouseMove((x, y) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
+        if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.hover(i);
           return InputPropagation.HANDLED;
         }
@@ -68,7 +68,7 @@ public class Dropdown<T> extends Control {
 
     this.panel.onMouseClick((x, y, button, mods) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
+        if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.select(i);
           this.panel.getScreen().getStack().popScreen();
           return InputPropagation.HANDLED;
@@ -179,7 +179,7 @@ public class Dropdown<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -285,7 +285,7 @@ public class Dropdown<T> extends Control {
     }
 
     @Override
-    protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+    protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
       if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
         return InputPropagation.HANDLED;
       }

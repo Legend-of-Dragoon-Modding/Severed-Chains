@@ -219,7 +219,6 @@ import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.SItem.characterDragoonIndices_800c6e68;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
-import static legend.game.SItem.giveItem;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
@@ -4331,7 +4330,7 @@ public class Battle extends EngineState<Battle> {
                 if(drop.item() instanceof final Equipment equipment) {
                   itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment, () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
                 } else if(drop.item() instanceof final ItemStack item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item, () -> giveItem(new ItemStack(item)), () -> itemOverflow.add(new ItemStack(item))));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item, () -> gameState_800babc8.items_2e9.give(item).isEmpty(), () -> itemOverflow.add(new ItemStack(item))));
                 }
 
                 state.setFlag(FLAG_NO_LOOT);
@@ -8362,8 +8361,9 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_800eed78
     for(final ItemStack stack : this.usedRepeatItems_800c6c3c) {
-      if(!giveItem(stack)) {
-        itemOverflow.add(stack);
+      final ItemStack remaining = gameState_800babc8.items_2e9.give(stack);
+      if(!remaining.isEmpty()) {
+        itemOverflow.add(remaining);
       }
     }
 
@@ -9130,7 +9130,7 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptGiveItem(final RunningScript<?> script) {
     final RegistryId itemId = script.params_20[0].getRegistryId();
 
-    if(giveItem(REGISTRIES.items.getEntry(itemId).get())) {
+    if(gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(itemId).get()).isEmpty()) {
       script.params_20[1].set(itemId);
     } else {
       script.params_20[1].set(0);

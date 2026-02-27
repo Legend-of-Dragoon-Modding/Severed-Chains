@@ -183,7 +183,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -193,7 +193,7 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 7; i++) {
-      if(!this.additions.isEmpty() && this.selectedSlot != i && MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
+      if(!this.additions.isEmpty() && this.selectedSlot != i && MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
         playMenuSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
@@ -205,7 +205,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -216,7 +216,7 @@ public class AdditionsScreen extends MenuScreen {
 
     if(button == PLATFORM.getMouseButton(0) && !this.additions.isEmpty()) {
       for(int i = 0; i < this.additions.size(); i++) {
-        if(MathHelper.inBox(x, y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
+        if(MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
           this.selectedSlot = i;
           this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
           gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = this.additions.get(i).getRegistryId();
