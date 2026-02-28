@@ -1,19 +1,12 @@
 package legend.game.inventory.screens;
 
 import discord.DiscordRichPresence;
-import legend.core.QueuedModelStandard;
-import legend.core.gpu.Bpp;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.credits.Credits.CreditsType;
 import legend.game.i18n.I18n;
-import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -64,10 +57,6 @@ public class CreditsScreen extends MenuScreen {
   private int loadingStage;
   private final Runnable unload;
 
-  private final Matrix4f m;
-  private final Obj quad;
-  private final Texture[] textures;
-
   private final List<CreditEntry> credits;
   private final Map<CreditsType, CreditFontProperties> fonts;
   private final FontOptions font;
@@ -83,22 +72,6 @@ public class CreditsScreen extends MenuScreen {
     this.credits = new ArrayList<>();
     this.font = new FontOptions();
     this.scrolling = true;
-
-    this.m = new Matrix4f();
-    this.m.translation(0, 0, 160);
-    this.m.scale(368, 240, 1);
-
-    this.quad = new QuadBuilder("Statistics Quad")
-      .rgb(1f, 1f, 1f)
-      .size(1.0f, 1.0f)
-      .uv(0.0f, 0.0f)
-      .uvSize(1.0f, 1.0f)
-      .bpp(Bpp.BITS_24)
-      .build();
-
-    this.textures = new Texture[] {
-      Texture.png(Path.of("gfx", "textures", "credits", "0.png")),    //0
-    };
 
     this.setFonts();
     this.loadCredits();
@@ -196,12 +169,7 @@ public class CreditsScreen extends MenuScreen {
   }
 
   private void renderBackground() {
-    RENDERER
-      .queueOrthoModel(this.quad, this.m, QueuedModelStandard.class)
-      .colour(1, 1, 1)
-      .alpha(this.backgroundOpacity)
-      .translucency(Translucency.HALF_B_PLUS_HALF_F)
-      .texture(this.textures[0]);
+
   }
 
   @Override
