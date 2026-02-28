@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.DEFAULT_FONT;
@@ -68,7 +69,7 @@ public class CreditsScreen extends MenuScreen {
   private final Texture[] textures;
 
   private final List<CreditEntry> credits;
-  private final HashMap<CreditsType, CreditFontProperties> fonts;
+  private final Map<CreditsType, CreditFontProperties> fonts;
   private final FontOptions font;
   private float scrollSpeed = 1;
   private float scrollValue;
@@ -122,7 +123,7 @@ public class CreditsScreen extends MenuScreen {
         this.addEntry(line);
       }
     } catch(final IOException ex) {
-      LOGGER.error(ex);
+      LOGGER.error("Failed to load credits.txt", ex);
     }
   }
 
