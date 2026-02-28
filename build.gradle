@@ -168,6 +168,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.MAC_OS:
@@ -183,6 +184,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'macosx', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.WINDOWS:
@@ -198,7 +200,6 @@ tasks.register('copySupportFiles', Copy) {
         break
     }
 
-    from 'launch.conf.example'
     from 'log4j2.xml'
     from 'gamecontrollerdb.txt'
     from 'README.md'

@@ -18,10 +18,6 @@ cd "$SCRIPT_DIR"
 GPU_PREFERENCE=0
 if [[ -f ./launch.conf ]]; then
   source ./launch.conf
-elif [[ -f ./launch.conf.example ]]; then
-  cp ./launch.conf.example ./launch.conf
-  echo "Created launch.conf from example. Edit it to customize settings."
-  source ./launch.conf
 fi
 
 # Apply GPU preference
