@@ -14,6 +14,7 @@ import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
@@ -258,7 +259,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.getSize() + itemCount > CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
-      menuStack.pushScreen(new MessageBoxScreen("Dabas has more items\nthan you can hold", 0, result -> {}));
+      menuStack.pushScreen(new MessageBoxScreen("Dabas has more items\nthan you can hold", MessageBoxType.ALERT, result -> {}));
       return;
     }
 
@@ -285,7 +286,7 @@ public class DabasScreen extends MenuScreen {
 
     dabasData.specialItem_2c = 0;
 
-    setMessageBoxText(this.messageBox_8011dc90, TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)], 0x1);
+    setMessageBoxText(this.messageBox_8011dc90, TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)], MessageBoxType.UNKNOWN);
     this.renderable2 = null;
     this.loadingStage = 3;
   }
@@ -304,7 +305,7 @@ public class DabasScreen extends MenuScreen {
     this.menuItems.clear();
     this.specialItem = null;
 
-    menuStack.pushScreen(new MessageBoxScreen(DISCARD_RESPONSES[ThreadLocalRandom.current().nextInt(DISCARD_RESPONSES.length)], 0, result -> this.loadingStage = 2));
+    menuStack.pushScreen(new MessageBoxScreen(DISCARD_RESPONSES[ThreadLocalRandom.current().nextInt(DISCARD_RESPONSES.length)], MessageBoxType.ALERT, result -> this.loadingStage = 2));
   }
 
   private void newDig() {
@@ -318,7 +319,7 @@ public class DabasScreen extends MenuScreen {
     dabasData.specialItem_2c = 0;
     this.newDigEnabled = false;
 
-    menuStack.pushScreen(new MessageBoxScreen(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)], 0, result -> this.loadingStage = 2));
+    menuStack.pushScreen(new MessageBoxScreen(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)], MessageBoxType.ALERT, result -> this.loadingStage = 2));
   }
 
   @Override
@@ -358,7 +359,7 @@ public class DabasScreen extends MenuScreen {
         if(this.hasItems || this.gold != 0) {
           playMenuSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen("Take items from Dabas?", 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Take items from Dabas?", MessageBoxType.CONFIRMATION, result -> {
             if(result == MessageBoxResult.YES) {
               this.takeItems();
             }
@@ -368,11 +369,13 @@ public class DabasScreen extends MenuScreen {
         }
 
         return InputPropagation.HANDLED;
-      } else if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(1), 85, 14)) {
+      }
+
+      if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(1), 85, 14)) {
         if(this.hasItems) {
           playMenuSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen("Discard items?", 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Discard items?", MessageBoxType.CONFIRMATION, result -> {
             if(result == MessageBoxResult.YES) {
               this.discardItems();
             }
@@ -382,11 +385,13 @@ public class DabasScreen extends MenuScreen {
         }
 
         return InputPropagation.HANDLED;
-      } else if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(2), 85, 14)) {
+      }
+
+      if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(2), 85, 14)) {
         if(this.newDigEnabled) {
           playMenuSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen("Begin new expedition?", 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Begin new expedition?", MessageBoxType.CONFIRMATION, result -> {
             if(result == MessageBoxResult.YES) {
               this.newDig();
             }

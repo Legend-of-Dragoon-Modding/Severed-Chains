@@ -48,6 +48,7 @@ import legend.game.tmd.TmdWithId;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -525,7 +526,7 @@ public class Ttle extends EngineState<Ttle> {
       this.saveCategorizationShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> {
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           }));
           return;
@@ -546,13 +547,13 @@ public class Ttle extends EngineState<Ttle> {
       this.memcardConversionShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> {
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           }));
           return;
         }
 
-        menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", 2, result1 -> {
+        menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", MessageBoxType.CONFIRMATION, result1 -> {
           try {
             SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {

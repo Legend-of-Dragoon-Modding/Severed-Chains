@@ -8,6 +8,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -112,10 +113,10 @@ public class LoadGameScreen extends MenuScreen {
 
     if(save.isValid()) {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen("Load this save?", 2, result -> this.onMessageboxResult(result, save)));
+      menuStack.pushScreen(new MessageBoxScreen("Load this save?", MessageBoxType.CONFIRMATION, result -> this.onMessageboxResult(result, save)));
     } else {
       playMenuSound(4);
-      menuStack.pushScreen(new MessageBoxScreen("This save cannot be loaded", 0, result -> { }));
+      menuStack.pushScreen(new MessageBoxScreen("This save cannot be loaded", MessageBoxType.ALERT, result -> { }));
     }
   }
 
@@ -153,19 +154,19 @@ public class LoadGameScreen extends MenuScreen {
     playMenuSound(40);
 
     if(this.saveList.size() == 1) {
-      menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", 0, result -> {}));
+      menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", MessageBoxType.ALERT, result -> {}));
       return;
     }
 
     if(this.saveList.getSelected() != null && this.saveList.getSelected().isDone()) {
-      menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           try {
             this.campaign.deleteSave(this.saveList.getSelected().resultNow().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
-            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Failed to delete save", 0, result1 -> {})));
+            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Failed to delete save", MessageBoxType.ALERT, result1 -> {})));
           }
         }
       }));

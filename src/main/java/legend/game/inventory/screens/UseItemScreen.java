@@ -11,6 +11,7 @@ import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.lodmod.LodMod;
 
@@ -484,7 +485,7 @@ public class UseItemScreen extends MenuScreen {
 
     if(this.useItemResponse.text != null) {
       final String text = this.useItemResponse.text;
-      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(text, 0, result -> {})));
+      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(text, MessageBoxType.ALERT, result -> {})));
     }
 
     this.useItemResponse.success = false;

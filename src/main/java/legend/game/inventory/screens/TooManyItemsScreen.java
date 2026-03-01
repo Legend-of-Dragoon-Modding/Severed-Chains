@@ -12,6 +12,7 @@ import legend.game.inventory.WhichMenu;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.lodmod.LodMod;
 
@@ -133,7 +134,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       case RENDER_4 -> {
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(TOO_MANY_ITEMS_CONFIRM), 2, result -> this.menuState = result == MessageBoxResult.YES ? MenuState.RENDER_6 : MenuState.DISCARD_10));
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(TOO_MANY_ITEMS_CONFIRM), MessageBoxType.CONFIRMATION, result -> this.menuState = result == MessageBoxResult.YES ? MenuState.RENDER_6 : MenuState.DISCARD_10));
         this.menuState = MenuState.REPLACE_5;
       }
 
@@ -203,11 +204,11 @@ public class TooManyItemsScreen extends MenuScreen {
       case DISCARD_10 -> {
         this.renderItemLists(false, this.droppedItems.get(this.dropScroll + this.dropIndex).item_00, 0);
 
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(DISCARD_ITEMS_CONFIRM), 2, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(DISCARD_ITEMS_CONFIRM), MessageBoxType.CONFIRMATION, result -> {
           if(result == MessageBoxResult.YES) {
             for(final MenuEntryStruct04<InventoryEntry<?>> item : this.droppedItems) {
               if(item.item_00 instanceof final Equipment equipment && !equipment.canBeDiscarded()) {
-                menuStack.pushScreen(new MessageBoxScreen(I18n.translate(CANNOT_BE_THROWN_AWAY), 0, result1 -> this.menuState = MenuState.RENDER_6));
+                menuStack.pushScreen(new MessageBoxScreen(I18n.translate(CANNOT_BE_THROWN_AWAY), MessageBoxType.ALERT, result1 -> this.menuState = MenuState.RENDER_6));
                 return;
               }
             }

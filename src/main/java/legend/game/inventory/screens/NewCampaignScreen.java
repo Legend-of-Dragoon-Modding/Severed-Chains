@@ -17,6 +17,7 @@ import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
+import legend.game.types.MessageBoxType;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
@@ -114,7 +115,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow("", startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { })));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> { })));
       } else {
         this.unload = true;
       }

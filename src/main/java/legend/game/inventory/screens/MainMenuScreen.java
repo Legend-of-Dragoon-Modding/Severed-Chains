@@ -10,6 +10,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -96,7 +97,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Goods", this::showGoodsScreen);
     this.addButton("Diiig", this::showDabasScreen);
     this.addButton("", () -> { }).hide();
-    this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen("Quit to main menu?", 2, result -> {
+    this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen("Quit to main menu?", MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
         this.menuEscape();
         whichMenu_800bdc38 = WhichMenu.QUIT;

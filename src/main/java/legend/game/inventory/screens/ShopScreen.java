@@ -19,6 +19,7 @@ import legend.game.modding.events.inventory.ShopSellEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.MenuGlyph06;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
 
@@ -481,7 +482,7 @@ public class ShopScreen extends MenuScreen {
     switch(i) {
       case 0 -> { // Buy
         if(this.inv.isEmpty()) {
-          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.shop_empty"), 0, result -> {}));
+          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.shop_empty"), MessageBoxType.ALERT, result -> {}));
           return;
         }
 
@@ -497,7 +498,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       case 1 -> // Sell
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.what_do_you_want_to_sell"), I18n.translate("lod_core.ui.shop.equipment"), I18n.translate("lod_core.ui.shop.items"), 2, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.what_do_you_want_to_sell"), I18n.translate("lod_core.ui.shop.equipment"), I18n.translate("lod_core.ui.shop.items"), MessageBoxType.CONFIRMATION, result -> {
           switch(result) {
             case YES -> {
               this.invIndex_8011e0e0 = 0;
@@ -511,7 +512,7 @@ public class ShopScreen extends MenuScreen {
                 this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
                 initHighlight(this.selectedInventoryRowRenderable_800bdbe4);
               } else {
-                menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
+                menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), MessageBoxType.ALERT, result1 -> {}));
               }
             }
 
@@ -527,7 +528,7 @@ public class ShopScreen extends MenuScreen {
                 this.selectedInventoryRowRenderable_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
                 initHighlight(this.selectedInventoryRowRenderable_800bdbe4);
               } else {
-                menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
+                menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), MessageBoxType.ALERT, result1 -> {}));
               }
             }
           }
@@ -741,7 +742,7 @@ public class ShopScreen extends MenuScreen {
         inv = gameState_800babc8.equipment_1e8.get(slot);
       }
 
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.sell", I18n.translate(inv.getNameTranslationKey())), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.sell", I18n.translate(inv.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           final boolean taken;
           final int count;
@@ -759,7 +760,7 @@ public class ShopScreen extends MenuScreen {
             addGold(priceEvent.price);
 
             if(count == 0) {
-              menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), 0, result1 -> {}));
+              menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.you_have_nothing_to_sell"), MessageBoxType.ALERT, result1 -> {}));
               unloadRenderable(this.selectedInventoryRowRenderable_800bdbe4);
               this.menuState = MenuState.INIT_2;
               return;
