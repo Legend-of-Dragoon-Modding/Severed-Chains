@@ -149,7 +149,7 @@ public class TurnOrderMod {
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = 40;
-      this.background.setZ((textZ_800bdf00 * 4) + 1); // for whatever reason, UiBox divdes Z by 4.0
+      this.background.setZ((textZ_800bdf00 * 4) + 1);
 
       for(int bentIndex = 0; bentIndex < this.sortedBents.size(); bentIndex++) {
         final TurnOrder turn = this.sortedBents.get(bentIndex);
