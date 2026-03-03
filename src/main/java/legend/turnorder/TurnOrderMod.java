@@ -148,23 +148,13 @@ public class TurnOrderMod {
       final float x = 5.5f;
 
       final int oldZ = textZ_800bdf00;
-      textZ_800bdf00 = 30;
+      textZ_800bdf00 = 40;
+      this.background.setZ((textZ_800bdf00 * 4) + 1); // for whatever reason, UiBox divdes Z by 4.0
 
       for(int bentIndex = 0; bentIndex < this.sortedBents.size(); bentIndex++) {
         final TurnOrder turn = this.sortedBents.get(bentIndex);
 
-        final BattleMenuStruct58 menu = battle.hud.battleMenu_800c6c34;
-        boolean targeted = false;
-
-        if(menu.displayTargetArrowAndName_4c) {
-          if(menu.combatantIndex_54 == -1) { // target all
-            targeted = (menu.targetType_50 == 0 && turn.bent instanceof PlayerBattleEntity) || (menu.targetType_50 == 1 && turn.bent instanceof MonsterBattleEntity);
-          } else if(menu.targetType_50 == 0) { // player
-            targeted = turn.bent == battleState_8006e398.playerBents_e40.get(menu.combatantIndex_54).innerStruct_00;
-          } else if(menu.targetType_50 == 1) { // monster
-            targeted = turn.bent == battleState_8006e398.aliveMonsterBents_ebc.get(menu.combatantIndex_54).innerStruct_00;
-          }
-        }
+        final boolean targeted = isTargeted(battle, turn);
 
         if(turn.interrupt) {
           FONT.colour(TextColour.RED);
@@ -178,21 +168,9 @@ public class TurnOrderMod {
 
         final float y = 14.0f + bentIndex * 8.0f;
         renderText(DEFAULT_FONT, turn.bent.getName(), x + 9.5f - xOffset, y, FONT);
-
-        if(turn.bent instanceof final PlayerBattleEntity player) {
-          final Renderable58 portrait = renderManualCharacterPortrait(player.charId_272, (int)(x - xOffset) + 5, (int)y - 6, 0);
-          portrait.clut_30 = (500 + player.charId_272 & 0x1ff) << 6 | 0x2b;
-          portrait.z_3c = 30.0f;
-          portrait.widthScale = 0.45f;
-          portrait.heightScale_38 = 0.45f;
-          uploadRenderable(portrait, 0, 0);
-        } else {
-          final Renderable58 skull = ItemIcon.SKULL.renderManual((int)(x - xOffset) + 5, (int)y - 6, 0);
-          skull.z_3c = 30.0f;
-          skull.widthScale = 0.45f;
-          skull.heightScale_38 = 0.45f;
-          uploadRenderable(skull, 0, 0);
-        }
+        final int xIconPos = (int)(x - xOffset) + 5;
+        final int yIconPos = (int)y - 6;
+        this.renderTurnIcon(turn, xIconPos, yIconPos);
       }
 
       this.background.setPos(Math.round(x - 2 - xOffset), 4);
@@ -201,6 +179,40 @@ public class TurnOrderMod {
       renderText("Turn Order", x + 1 - xOffset, 6, FONT);
 
       textZ_800bdf00 = oldZ;
+    }
+  }
+
+  private static boolean isTargeted(final Battle battle, final TurnOrder turn) {
+    final BattleMenuStruct58 menu = battle.hud.battleMenu_800c6c34;
+    boolean targeted = false;
+
+    if(menu.displayTargetArrowAndName_4c) {
+      if(menu.combatantIndex_54 == -1) { // target all
+        targeted = (menu.targetType_50 == 0 && turn.bent instanceof PlayerBattleEntity) || (menu.targetType_50 == 1 && turn.bent instanceof MonsterBattleEntity);
+      } else if(menu.targetType_50 == 0) { // player
+        targeted = turn.bent == battleState_8006e398.playerBents_e40.get(menu.combatantIndex_54).innerStruct_00;
+      } else if(menu.targetType_50 == 1) { // monster
+        targeted = turn.bent == battleState_8006e398.aliveMonsterBents_ebc.get(menu.combatantIndex_54).innerStruct_00;
+      }
+    }
+    return targeted;
+  }
+
+  private void renderTurnIcon(final TurnOrder turn, final int xPos, final int yPos) {
+    final float zIndex = textZ_800bdf00;
+    if(turn.bent instanceof final PlayerBattleEntity player) {
+      final Renderable58 portrait = renderManualCharacterPortrait(player.charId_272, xPos, yPos, 0);
+      portrait.clut_30 = (500 + player.charId_272 & 0x1ff) << 6 | 0x2b;
+      portrait.z_3c = zIndex;
+      portrait.widthScale = 0.45f;
+      portrait.heightScale_38 = 0.45f;
+      uploadRenderable(portrait, 0, 0);
+    } else {
+      final Renderable58 skull = ItemIcon.SKULL.renderManual(xPos, yPos, 0);
+      skull.z_3c = zIndex;
+      skull.widthScale = 0.45f;
+      skull.heightScale_38 = 0.45f;
+      uploadRenderable(skull, 0, 0);
     }
   }
 }
