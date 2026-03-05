@@ -1,13 +1,16 @@
 package legend.game.combat.types;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+import legend.game.characters.CharacterData2c;
+import legend.game.inventory.SpellStats0c;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DragoonSpells09 {
-  public final int charId_00;
-  public final IntList spellIndices_01 = new IntArrayList();
+  public final CharacterData2c character_00;
+  public final List<SpellStats0c> spells_01 = new ArrayList<>();
 
-  public DragoonSpells09(final int charId) {
-    this.charId_00 = charId;
+  public DragoonSpells09(final CharacterData2c character) {
+    this.character_00 = character;
   }
 }

@@ -1,15 +1,26 @@
 package legend.lodmod.characters;
 
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.AdditionHitProperties10;
+import legend.game.additions.AdditionHits80;
+import legend.game.additions.AdditionSound;
+import legend.game.characters.AdditionLevelUnlockCriterion;
+import legend.game.characters.AdditionMasteryUnlockCriterion;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.Element;
+import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.lodmod.LodAdditions;
-import org.legendofdragoon.modloader.registries.RegistryId;
+import legend.lodmod.LodSpells;
+
+import java.util.List;
 
 import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.WIND_ELEMENT;
 
 public class LavitzTemplate extends RetailCharacterTemplate {
   private static final int[] XP = {35, 60, 110, 203, 350, 557, 831, 1183, 1624, 2161, 2806, 3567, 4456, 5481, 6651, 7978, 9471, 11139, 12992, 15039, 17292, 19759, 22450, 25375, 28543, 31965, 35650, 39607, 43848, 48380, 53215, 58361, 63829, 69629, 75769, 82260, 89112, 96334, 103936, 111927, 120318, 129119, 138338, 147987, 158073, 168608, 179601, 191061, 203000, 218531, 234684, 251470, 268901, 286991, 305750, 325191, 345327, 366169, 387730};
@@ -23,11 +34,16 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   public CharacterData2c make(final GameState52c gameState) {
     final CharacterData2c character = super.make(gameState);
 
-    character.additionStats.put(LodAdditions.HARPOON.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.SPINNING_CANE.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.ROD_TYPHOON.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.GUST_OF_WIND_DANCE.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.FLOWER_STORM.getId(), new CharacterAdditionStats());
+    character.addAddition(LodAdditions.HARPOON.getId(), new CharacterAdditionInfo(List.of()));
+    character.addAddition(LodAdditions.SPINNING_CANE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(5))));
+    character.addAddition(LodAdditions.ROD_TYPHOON.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(7))));
+    character.addAddition(LodAdditions.GUST_OF_WIND_DANCE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(11))));
+    character.addAddition(LodAdditions.FLOWER_STORM.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
+
+    character.addSpell(LodSpells.WING_BLASTER.getId(), new CharacterSpellInfo(List.of()));
+    character.addSpell(LodSpells.BLOSSOM_STORM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.GASPLESS.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.JADE_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.HARPOON.getId();
 
@@ -60,8 +76,18 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+    return WIND_ELEMENT.get();
+  }
+
+  @Override
   protected Good getDragoonSpirit() {
     return JADE_DRAGOON_SPIRIT.get();
+  }
+
+  @Override
+  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+    return new AdditionHits80(new AdditionHitProperties10(0xc0, 2, 0, 0, 100, 0, 13, 0, 0, 0, 1, 7, 10, 32, 18, 11, new AdditionSound(5, 5), new AdditionSound(0, 3)), new AdditionHitProperties10(0xc0, 14, 5, 0, 10, 0, 0, 0, 0, 0, 0, 0, 7, 32, 0, 0, new AdditionSound(4, 11), new AdditionSound(2, 9)), new AdditionHitProperties10(0xc0, 32, 25, 0, 20, 0, 0, 0, 0, 4, 21, 2, 7, 32, 0, 0, new AdditionSound(5, 5), new AdditionSound(0, 3)), new AdditionHitProperties10(0xc0, 10, 1, 0, 30, 0, 0, 0, 0, 1, 8, 29, 7, 32, 0, 0, new AdditionSound(7, 9), new AdditionSound(1, 7)), new AdditionHitProperties10(0xc0, 11, 10, 0, 40, 0, 0, 0, 0, 0, 10, 29, 5, 32, 19, 0, new AdditionSound(10, 8), new AdditionSound(3, 6)), new AdditionHitProperties10(0xc0, 61, 29, 0, 0, 0, 0, 0, 0, 0, 60, 5, 7, 32, 0, 0, new AdditionSound(5, 5), new AdditionSound(0, 3)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(4, 12), new AdditionSound(1, 10)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(8, 16), new AdditionSound(2, 14)));
   }
 
   @Override
@@ -134,27 +160,5 @@ public class LavitzTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
-  }
-
-  @Override
-  protected RegistryId getAdditionUnlock(final int level) {
-    return switch(level) {
-      case 1 -> LodAdditions.HARPOON.getId();
-      case 5 -> LodAdditions.SPINNING_CANE.getId();
-      case 7 -> LodAdditions.ROD_TYPHOON.getId();
-      case 11 -> LodAdditions.GUST_OF_WIND_DANCE.getId();
-      default -> null;
-    };
-  }
-
-  @Override
-  protected int getSpellUnlock(final int dlevel) {
-    return switch(dlevel) {
-      case 1 -> 5;
-      case 2 -> 7;
-      case 3 -> 6;
-      case 5 -> 8;
-      default -> -1;
-    };
   }
 }

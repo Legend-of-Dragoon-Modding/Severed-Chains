@@ -8,7 +8,7 @@ import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.controls.SeveredSaveCard;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;

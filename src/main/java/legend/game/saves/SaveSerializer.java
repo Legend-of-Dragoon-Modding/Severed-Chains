@@ -5,6 +5,7 @@ import legend.game.EngineState;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
+@FunctionalInterface
 public interface SaveSerializer {
   void serialize(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState);
 }

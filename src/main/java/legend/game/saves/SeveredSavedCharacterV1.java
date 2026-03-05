@@ -1,11 +1,14 @@
 package legend.game.saves;
 
 import legend.core.GameEngine;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.Addition;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.Equipment;
-import legend.game.types.CharacterData2c;
+import legend.game.inventory.SpellStats0c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.Renderable58;
@@ -15,13 +18,17 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.renderNumber;
-import static legend.game.types.CharacterData2c.IN_PARTY;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.characters.CharacterData2c.IN_PARTY;
+import static legend.lodmod.Legacy.CHARACTER_SPELLS;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
@@ -30,6 +37,7 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SeveredSavedCharacterV1.class);
 
   public final RegistryId templateId;
+  private final int index;
 
   public final int maxHp;
   public final int maxMp;
@@ -45,10 +53,11 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
   public int dlevel;
   public final Map<EquipmentSlot, RegistryId> equipmentIds = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition;
-  public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
+  public final Map<RegistryId, AdditionInfo> additionInfo = new LinkedHashMap<>();
 
-  public SeveredSavedCharacterV1(final RegistryId templateId, final int maxHp, final int maxMp) {
+  public SeveredSavedCharacterV1(final RegistryId templateId, final int index, final int maxHp, final int maxMp) {
     this.templateId = templateId;
+    this.index = index;
     this.maxHp = maxHp;
     this.maxMp = maxMp;
   }
@@ -94,9 +103,84 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
       }
     }
 
-    character.selectedAddition_19 = this.selectedAddition;
-    character.additionStats.putAll(this.additionStats);
+    final RegistryDelegate<Addition>[] additions = CHARACTER_ADDITIONS[this.index];
+    if(additions.length != 0) {
+      final Set<RegistryId> seen = new HashSet<>();
+
+      // Check retail additions first so we get them in order
+      int i = 0;
+      for(final RegistryDelegate<Addition> addition : additions) {
+        final RegistryId id = addition.getId();
+        final AdditionInfo saveAdditionInfo = this.additionInfo.get(id);
+        this.updateAddition(character, gameState.timestamp_a0 + i, id, saveAdditionInfo);
+        seen.add(id);
+        i++;
+      }
+
+      // Then add non-retail additions
+      for(final var entry : this.additionInfo.entrySet()) {
+        final RegistryId id = entry.getKey();
+
+        if(!seen.contains(id)) {
+          final AdditionInfo saveAdditionInfo = entry.getValue();
+          this.updateAddition(character, gameState.timestamp_a0 + i, id, saveAdditionInfo);
+          i++;
+        }
+      }
+
+      if(REGISTRIES.additions.hasEntry(this.selectedAddition)) {
+        character.selectedAddition_19 = this.selectedAddition;
+      } else {
+        character.selectedAddition_19 = character.getUnlockedAdditions().getFirst();
+      }
+    }
+
+    final RegistryDelegate<SpellStats0c>[] spells = CHARACTER_SPELLS[this.index];
+    if(spells.length != 0) {
+      final Set<RegistryId> seen = new HashSet<>();
+
+      // Check retail spells first so we get them in order
+      int i = 0;
+      for(final RegistryDelegate<SpellStats0c> spell : spells) {
+        final RegistryId id = spell.getId();
+        final CharacterSpellInfo info = character.getSpellInfo(id);
+
+        if(info.checkUnlock(character)) {
+          info.unlock(gameState.timestamp_a0 + i);
+        }
+
+        seen.add(id);
+        i++;
+      }
+
+      // Then add non-retail spells
+      for(final RegistryId id : character.getAllSpells()) {
+        if(!seen.contains(id)) {
+          final CharacterSpellInfo info = character.getSpellInfo(id);
+
+          if(info.checkUnlock(character)) {
+            info.unlock(gameState.timestamp_a0 + i);
+          }
+
+          i++;
+        }
+      }
+    }
+
     return character;
+  }
+
+  private void updateAddition(final CharacterData2c character, final int timestamp, final RegistryId id, final AdditionInfo saveAdditionInfo) {
+    final CharacterAdditionInfo charAdditionInfo = character.getAdditionInfo(id);
+
+    if(charAdditionInfo != null) {
+      charAdditionInfo.level = saveAdditionInfo.level;
+      charAdditionInfo.xp = saveAdditionInfo.xp;
+
+      if(charAdditionInfo.checkUnlock(character)) {
+        charAdditionInfo.unlock(timestamp);
+      }
+    }
   }
 
   @Override
@@ -110,5 +194,15 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
   @Override
   public boolean inParty() {
     return (this.flags & IN_PARTY) != 0;
+  }
+
+  public static class AdditionInfo {
+    public final int level;
+    public final int xp;
+
+    public AdditionInfo(final int level, final int xp) {
+      this.level = level;
+      this.xp = xp;
+    }
   }
 }

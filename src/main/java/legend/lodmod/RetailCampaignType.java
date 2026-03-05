@@ -2,7 +2,7 @@ package legend.lodmod;
 
 import legend.game.fmv.Fmv;
 import legend.game.saves.CampaignType;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 

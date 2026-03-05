@@ -4836,7 +4836,7 @@ ACTION_DRAGOON_MAGIC:
 call Battle::scriptInitSpellAndItemMenu, stor[0], 0x1 ; bentIndex, menuType
 LABEL_520:
 yield
-call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], stor[29] ; selectionState, targetBentIndex, itemOrSpellId
+call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], reg[0] ; selectionState, targetBentIndex, itemOrSpellId
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_520] ; operand, left, right, addr
 jmp_cmp ==, 0xffffffff, stor[8], inl[:LABEL_526] ; operand, left, right, addr
 mov 0x2, stor[8] ; source, dest
@@ -4851,10 +4851,10 @@ call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:LABEL_670] ; addr
 or 0x2, var[45][245] ; right, left
 gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_521] ; don't need to change stages
+jmp_cmp ==, -1, stor[8], inl[:LABEL_521] ; don't need to change stages
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 LABEL_521:
-call Battle::scriptLoadDeff, stor[29], stor[0], stor[28], 0x0, 0x1000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
+call Battle::scriptLoadDeff, reg[0], stor[0], stor[28], 0x0, 0x1000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
 mov 0x1, var[45][248] ; source, dest
 LABEL_522:
 mov var[45][248], stor[8] ; source, dest
@@ -4864,7 +4864,7 @@ call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
 call DrgnFiles::scriptWaitForFilesToLoad ; index
 gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_525] ; don't need to change stages
+jmp_cmp ==, -1, stor[8], inl[:LABEL_525] ; don't need to change stages
 mov var[45][76], stor[8] ; source, dest
 jmp_cmp >, 0x0, stor[8], inl[:LABEL_523] ; operand, left, right, addr
 mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[8] ; source, dest
@@ -4885,19 +4885,25 @@ gosub inl[:LABEL_64] ; addr
 return
 data 0x49
 
+
+
 ; SUBROUTINE
 ; If the spell is a dragon summon spell, returns the special stage to switch to
-; @param int stor[29] spell id
-; @return int stor[8] the special stage to switch to if any, or 0 if not a dragon summon or already on that stage
+; @param int reg[0] spell id
+; @return int stor[8] the special stage to switch to if any, or -1 if not a dragon summon or already on that stage
 GET_DRAGON_SUMMON_SPECIAL_STAGE:
-mov 0x0, stor[23] ; source, dest
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp !=, stor[29], inl[:DRAGON_SUMMON_SPELL_INDICES[stor[8]]], inl[:LABEL_528] ; operand, left, right, addr
-jmp_cmp ==, stor[8], var[45][76], inl[:LABEL_528] ; operand, left, right, addr
-mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[23] ; source, dest
+mov -1, stor[23] ; source, dest
+
+call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:spells], reg[0], 0, stor[8] ; read battle stage from spell
+jmp_cmp ==, stor[8], -1, inl[:LABEL_528] ; no battle stage
+jmp_cmp ==, stor[8], var[97], inl[:LABEL_528] ; operand, left, right, addr
+mov stor[8], stor[23] ; source, dest
+
 LABEL_528:
 mov stor[23], stor[8] ; source, dest
 return
+
+
 
 DRAGON_SUMMON_SPELL_INDICES:
 data 0x3
@@ -4969,7 +4975,7 @@ call Battle::scriptInitSpellAndItemMenu, stor[0], 0x0 ; bentIndex, menuType
 ; wait for selection
 WAIT_FOR_ITEM_SELECTION:
 yield
-call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], stor[29], reg[0] ; selectionState, targetBentIndex, itemOrSpellId
+call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], reg[0] ; selectionState, targetBentIndex, itemOrSpellId
 jmp_cmp ==, 0x0, stor[8], inl[:WAIT_FOR_ITEM_SELECTION] ; operand, left, right, addr
 
 ; menu was canceled

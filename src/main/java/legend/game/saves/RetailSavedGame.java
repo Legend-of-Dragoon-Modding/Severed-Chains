@@ -3,14 +3,17 @@ package legend.game.saves;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.Addition;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
+import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.controls.RetailSaveCard;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.Flags;
 import legend.game.types.GameState52c;
@@ -23,10 +26,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.lodmod.Legacy.CHARACTER_SPELLS;
 import static legend.lodmod.Legacy.CHAR_IDS;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
@@ -152,8 +159,69 @@ public class RetailSavedGame extends SavedGame {
         }
       }
 
-      character.selectedAddition_19 = savedCharacter.selectedAddition;
-      character.additionStats.putAll(savedCharacter.additionStats);
+      final RegistryDelegate<Addition>[] additions = CHARACTER_ADDITIONS[charId];
+      if(additions.length != 0) {
+        final Set<RegistryId> seen = new HashSet<>();
+
+        // Check retail additions first so we get them in order
+        int i = 0;
+        for(final RegistryDelegate<Addition> addition : additions) {
+          final RegistryId id = addition.getId();
+          final SeveredSavedCharacterV1.AdditionInfo saveAdditionInfo = savedCharacter.additionInfo.get(id);
+          this.updateAddition(character, gameState.timestamp_a0 + i, id, saveAdditionInfo);
+          seen.add(id);
+          i++;
+        }
+
+        // Then add non-retail additions
+        for(final var entry : savedCharacter.additionInfo.entrySet()) {
+          final RegistryId id = entry.getKey();
+
+          if(!seen.contains(id)) {
+            final SeveredSavedCharacterV1.AdditionInfo saveAdditionInfo = entry.getValue();
+            this.updateAddition(character, gameState.timestamp_a0 + i, id, saveAdditionInfo);
+            i++;
+          }
+        }
+
+        if(REGISTRIES.additions.hasEntry(savedCharacter.selectedAddition)) {
+          character.selectedAddition_19 = savedCharacter.selectedAddition;
+        } else {
+          character.selectedAddition_19 = character.getUnlockedAdditions().getFirst();
+        }
+      }
+
+      final RegistryDelegate<SpellStats0c>[] spells = CHARACTER_SPELLS[charId];
+      if(spells.length != 0) {
+        final Set<RegistryId> seen = new HashSet<>();
+
+        // Check retail spells first so we get them in order
+        int i = 0;
+        for(final RegistryDelegate<SpellStats0c> spell : spells) {
+          final RegistryId id = spell.getId();
+          final CharacterSpellInfo info = character.getSpellInfo(id);
+
+          if(info.checkUnlock(character)) {
+            info.unlock(gameState.timestamp_a0 + i);
+          }
+
+          seen.add(id);
+          i++;
+        }
+
+        // Then add non-retail spells
+        for(final RegistryId id : character.getAllSpells()) {
+          if(!seen.contains(id)) {
+            final CharacterSpellInfo info = character.getSpellInfo(id);
+
+            if(info.checkUnlock(character)) {
+              info.unlock(gameState.timestamp_a0 + i);
+            }
+
+            i++;
+          }
+        }
+      }
     }
 
     gameState.pathIndex_4d8 = this.pathIndex;
@@ -167,6 +235,19 @@ public class RetailSavedGame extends SavedGame {
     gameState.characterInitialized_4e6 = this.characterInitialized;
 
     return gameState;
+  }
+
+  private void updateAddition(final CharacterData2c character, final int timestamp, final RegistryId id, final SeveredSavedCharacterV1.AdditionInfo saveAdditionInfo) {
+    final CharacterAdditionInfo charAdditionInfo = character.getAdditionInfo(id);
+
+    if(charAdditionInfo != null) {
+      charAdditionInfo.level = saveAdditionInfo.level;
+      charAdditionInfo.xp = saveAdditionInfo.xp;
+
+      if(charAdditionInfo.checkUnlock(character)) {
+        charAdditionInfo.unlock(timestamp);
+      }
+    }
   }
 
   @Override
@@ -186,6 +267,6 @@ public class RetailSavedGame extends SavedGame {
     public int dlevel;
     public final Map<EquipmentSlot, RegistryId> equipmentIds = new EnumMap<>(EquipmentSlot.class);
     public RegistryId selectedAddition;
-    public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
+    public final Map<RegistryId, SeveredSavedCharacterV1.AdditionInfo> additionInfo = new HashMap<>();
   }
 }

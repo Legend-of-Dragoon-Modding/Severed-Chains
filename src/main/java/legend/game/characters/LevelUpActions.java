@@ -1,7 +1,5 @@
 package legend.game.characters;
 
-import legend.game.types.CharacterData2c;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;

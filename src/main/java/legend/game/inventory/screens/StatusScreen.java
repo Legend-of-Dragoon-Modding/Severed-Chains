@@ -1,30 +1,29 @@
 package legend.game.inventory.screens;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.platform.input.InputAction;
+import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
-import legend.game.types.CharacterData2c;
+import legend.game.inventory.SpellStats0c;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.List;
+
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
-import static legend.game.SItem.getUnlockedDragoonSpells;
-import static legend.game.SItem.getUnlockedSpellCount;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterEquipment;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.SItem.spellMp_80114290;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
@@ -121,21 +120,22 @@ public class StatusScreen extends MenuScreen {
     final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
 
     if(character.hasDragoon()) {
-      final IntList spellIndices = new IntArrayList();
-      getUnlockedDragoonSpells(spellIndices, charIndex);
-      final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
+      final List<RegistryId> unlockedSpells = character.getUnlockedSpells();
+      final int allSpellCount = character.getAllSpells().size();
 
-      for(int i = 0; i < spellIndices.size(); i++) {
-        if(allocate && i < unlockedSpellCount) {
+      for(int i = 0; i < allSpellCount; i++) {
+        if(allocate) {
           renderCharacter(200, 127 + i * 14, i + 1);
         }
 
-        //LAB_80109370
-        final int spellIndex = spellIndices.getInt(i);
-        renderText(I18n.translate(spellStats_800fa0b8[spellIndex]), 210, 125 + i * 14, UI_TEXT);
+        if(i < unlockedSpells.size()) {
+          final RegistryId spellId = unlockedSpells.get(i);
+          final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
+          renderText(I18n.translate(spell), 210, 125 + i * 14, UI_TEXT);
 
-        if(allocate) {
-          renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
+          if(allocate) {
+            renderThreeDigitNumber(342, 128 + i * 14, spell.mp_06);
+          }
         }
       }
     }

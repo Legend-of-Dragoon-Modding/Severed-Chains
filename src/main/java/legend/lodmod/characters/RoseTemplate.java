@@ -1,15 +1,26 @@
 package legend.lodmod.characters;
 
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.AdditionHitProperties10;
+import legend.game.additions.AdditionHits80;
+import legend.game.additions.AdditionSound;
+import legend.game.characters.AdditionLevelUnlockCriterion;
+import legend.game.characters.AdditionMasteryUnlockCriterion;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.Element;
+import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.lodmod.LodAdditions;
-import org.legendofdragoon.modloader.registries.RegistryId;
+import legend.lodmod.LodSpells;
+
+import java.util.List;
 
 import static legend.lodmod.LodGoods.DARK_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.DARK_ELEMENT;
 
 public class RoseTemplate extends RetailCharacterTemplate {
   private static final int[] XP = {20, 44, 104, 204, 353, 561, 838, 1193, 1636, 2178, 2828, 3596, 4491, 5524, 6704, 8041, 9545, 11226, 13094, 15158, 17428, 19914, 22627, 25575, 28768, 32217, 35931, 39919, 44193, 48761, 53634, 58821, 64332, 70177, 76366, 82908, 89814, 97093, 104755, 112809, 121267, 130137, 139429, 149153, 159319, 169937, 181016, 192567, 204600, 220253, 236533, 253452, 271021, 289253, 308160, 327754, 348049, 369055, 390786};
@@ -23,10 +34,15 @@ public class RoseTemplate extends RetailCharacterTemplate {
   public CharacterData2c make(final GameState52c gameState) {
     final CharacterData2c character = super.make(gameState);
 
-    character.additionStats.put(LodAdditions.WHIP_SMACK.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.MORE_MORE.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.HARD_BLADE.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.DEMONS_DANCE.getId(), new CharacterAdditionStats());
+    character.addAddition(LodAdditions.WHIP_SMACK.getId(), new CharacterAdditionInfo(List.of()));
+    character.addAddition(LodAdditions.MORE_MORE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(14))));
+    character.addAddition(LodAdditions.HARD_BLADE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(19))));
+    character.addAddition(LodAdditions.DEMONS_DANCE.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
+
+    character.addSpell(LodSpells.ASTRAL_DRAIN.getId(), new CharacterSpellInfo(List.of()));
+    character.addSpell(LodSpells.DEATH_DIMENSION.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.DEMONS_GATE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.DARK_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.WHIP_SMACK.getId();
 
@@ -59,8 +75,18 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+    return DARK_ELEMENT.get();
+  }
+
+  @Override
   protected Good getDragoonSpirit() {
     return DARK_DRAGOON_SPIRIT.get();
+  }
+
+  @Override
+  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+    return new AdditionHits80(new AdditionHitProperties10(0xc0, 0, 0, 0, 100, 0, 18, 0, 0, 0, 0, 0, 12, 0, 0, 0, new AdditionSound(4, 9), new AdditionSound(0, 7)), new AdditionHitProperties10(0xc0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, new AdditionSound(10, 3), new AdditionSound(1, 1)), new AdditionHitProperties10(0xc0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, new AdditionSound(4, 9), new AdditionSound(0, 7)), new AdditionHitProperties10(0xc0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, new AdditionSound(10, 3), new AdditionSound(0, 1)), new AdditionHitProperties10(0xc0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 9, 32, 0, 0, new AdditionSound(11, 42), new AdditionSound(3, 40)), new AdditionHitProperties10(0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, new AdditionSound(4, 9), new AdditionSound(0, 7)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(9, 10), new AdditionSound(1, 8)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(5, 11), new AdditionSound(2, 9)));
   }
 
   @Override
@@ -133,26 +159,5 @@ public class RoseTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
-  }
-
-  @Override
-  protected RegistryId getAdditionUnlock(final int level) {
-    return switch(level) {
-      case 1 -> LodAdditions.WHIP_SMACK.getId();
-      case 14 -> LodAdditions.MORE_MORE.getId();
-      case 19 -> LodAdditions.HARD_BLADE.getId();
-      default -> null;
-    };
-  }
-
-  @Override
-  protected int getSpellUnlock(final int dlevel) {
-    return switch(dlevel) {
-      case 1 -> 15;
-      case 2 -> 16;
-      case 3 -> 18;
-      case 5 -> 19;
-      default -> -1;
-    };
   }
 }

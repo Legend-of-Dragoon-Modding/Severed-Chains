@@ -3,7 +3,7 @@ package legend.game.inventory.screens.controls;
 import legend.core.GameEngine;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.screens.Control;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 
 import javax.annotation.Nullable;
 

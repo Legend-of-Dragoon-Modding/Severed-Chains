@@ -9,7 +9,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;

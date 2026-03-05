@@ -1,15 +1,27 @@
 package legend.lodmod.characters;
 
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.AdditionHitProperties10;
+import legend.game.additions.AdditionHits80;
+import legend.game.additions.AdditionSound;
+import legend.game.characters.AdditionLevelUnlockCriterion;
+import legend.game.characters.AdditionMasteryUnlockCriterion;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.Element;
+import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.lodmod.LodAdditions;
+import legend.lodmod.LodSpells;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.List;
+
 import static legend.lodmod.LodGoods.GOLD_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.EARTH_ELEMENT;
 
 public class KongolTemplate extends RetailCharacterTemplate {
   private static final int[] XP = {20, 43, 104, 203, 351, 558, 833, 1186, 1627, 2165, 2811, 3574, 4465, 5491, 6665, 7994, 9489, 11160, 13017, 15069, 17326, 19798, 22494, 25425, 28599, 32028, 35720, 39685, 43934, 48475, 53320, 58476, 63955, 69766, 75918, 82422, 89287, 96523, 104140, 112148, 120555, 129373, 138611, 148278, 158385, 168940, 179955, 191438, 203400, 218962, 235146, 251965, 269431, 287556, 306352, 325832, 346007, 366890, 388494};
@@ -23,9 +35,13 @@ public class KongolTemplate extends RetailCharacterTemplate {
   public CharacterData2c make(final GameState52c gameState) {
     final CharacterData2c character = super.make(gameState);
 
-    character.additionStats.put(LodAdditions.INFERNO.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.PURSUIT.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.BONE_CRUSH.getId(), new CharacterAdditionStats());
+    character.addAddition(LodAdditions.INFERNO.getId(), new CharacterAdditionInfo(List.of()));
+    character.addAddition(LodAdditions.PURSUIT.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(23))));
+    character.addAddition(LodAdditions.BONE_CRUSH.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
+
+    character.addSpell(LodSpells.GRAND_STREAM.getId(), new CharacterSpellInfo(List.of()));
+    character.addSpell(LodSpells.METEOR_STRIKE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.GOLDEN_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.INFERNO.getId();
 
@@ -58,8 +74,18 @@ public class KongolTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+    return EARTH_ELEMENT.get();
+  }
+
+  @Override
   protected Good getDragoonSpirit() {
     return GOLD_DRAGOON_SPIRIT.get();
+  }
+
+  @Override
+  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+    return new AdditionHits80(new AdditionHitProperties10(0xc0, 0, 0, 0, 100, 0, 22, 0, 0, 0, 0, 0, 7, 0, 0, 0, new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0)), new AdditionHitProperties10(0xc0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0), new AdditionSound(0, 0)), new AdditionHitProperties10(0xc0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
   }
 
   @Override
@@ -132,24 +158,5 @@ public class KongolTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
-  }
-
-  @Override
-  protected RegistryId getAdditionUnlock(final int level) {
-    return switch(level) {
-      case 1 -> LodAdditions.INFERNO.getId();
-      case 23 -> LodAdditions.PURSUIT.getId();
-      default -> null;
-    };
-  }
-
-  @Override
-  protected int getSpellUnlock(final int dlevel) {
-    return switch(dlevel) {
-      case 1 -> 29;
-      case 3 -> 30;
-      case 5 -> 31;
-      default -> -1;
-    };
   }
 }

@@ -194,8 +194,8 @@ public class CombatDebuggerController {
     this.def.getValueFactory().setValue(bent.stats.getStat(LodMod.DEFENSE_STAT.get()).get());
     this.matk.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get());
     this.mdef.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get());
-    this.ahit.getValueFactory().setValue(bent.attackHit_3c);
-    this.mhit.getValueFactory().setValue(bent.magicHit_3e);
+    this.ahit.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).get());
+    this.mhit.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).get());
     this.aavd.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).get());
     this.mavd.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get());
 
@@ -261,8 +261,8 @@ public class CombatDebuggerController {
     bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(this.matk.getValue());
     bent.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(this.def.getValue());
     bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(this.mdef.getValue());
-    bent.attackHit_3c = this.ahit.getValue().shortValue();
-    bent.magicHit_3e = this.mhit.getValue().shortValue();
+    bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(this.ahit.getValue().shortValue());
+    bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(this.mhit.getValue().shortValue());
     bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(this.aavd.getValue());
     bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(this.mavd.getValue());
   }

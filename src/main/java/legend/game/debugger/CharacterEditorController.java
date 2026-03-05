@@ -5,11 +5,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterAdditionInfo;
 import legend.game.additions.UnlockState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -19,10 +19,11 @@ import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
-import static legend.game.types.CharacterData2c.CANT_REMOVE;
-import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
-import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
-import static legend.game.types.CharacterData2c.IN_PARTY;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.characters.CharacterData2c.CANT_REMOVE;
+import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.characters.CharacterData2c.HAS_ULTIMATE_ADDITION;
+import static legend.game.characters.CharacterData2c.IN_PARTY;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
@@ -60,7 +61,7 @@ public class CharacterEditorController {
   private CharacterData2c charData;
 
   private final Map<EquipmentSlot, Equipment> equipped = new EnumMap<>(EquipmentSlot.class);
-  private final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
+  private final Map<RegistryId, CharacterAdditionInfo> additionInfo = new HashMap<>();
 
   public void initialize() {
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
@@ -84,7 +85,7 @@ public class CharacterEditorController {
     this.selectedAddition.getItems().clear();
     this.additionList.getItems().clear();
 
-    for(final RegistryId id : this.charData.additionStats.keySet()) {
+    for(final RegistryId id : this.charData.getAllAdditions()) {
       this.selectedAddition.getItems().add(id);
       this.additionList.getItems().add(id);
     }
@@ -128,8 +129,11 @@ public class CharacterEditorController {
       }
     }
 
-    this.additionStats.clear();
-    this.additionStats.putAll(this.charData.additionStats);
+    this.additionInfo.clear();
+
+    for(final RegistryId additionId : this.charData.getAllAdditions()) {
+      this.additionInfo.put(additionId, this.charData.getAdditionInfo(additionId));
+    }
 
     this.refreshEquipment();
     this.refreshAddition();
@@ -150,10 +154,10 @@ public class CharacterEditorController {
     final RegistryId id = this.additionList.getValue();
 
     if(id != null) {
-      final CharacterAdditionStats stats = this.additionStats.get(id);
-      this.additionUnlockState.getSelectionModel().select(stats.unlockState);
-      this.additionLevel.setText(String.valueOf(stats.level));
-      this.additionXp.setText(String.valueOf(stats.xp));
+      final CharacterAdditionInfo info = this.additionInfo.get(id);
+      this.additionUnlockState.getSelectionModel().select(info.getUnlockState());
+      this.additionLevel.setText(String.valueOf(info.level));
+      this.additionXp.setText(String.valueOf(info.xp));
     } else {
       this.additionUnlockState.getSelectionModel().clearSelection();
       this.additionLevel.setText("");
@@ -194,10 +198,10 @@ public class CharacterEditorController {
     ;
 
     if(this.additionList.getValue() != null) {
-      final CharacterAdditionStats additionStats = this.additionStats.get(this.additionList.getValue());
-      additionStats.unlockState = this.additionUnlockState.getValue();
-      additionStats.level = Integer.parseInt(this.additionLevel.getText());
-      additionStats.xp = Integer.parseInt(this.additionXp.getText());
+      final CharacterAdditionInfo info = this.additionInfo.get(this.additionList.getValue());
+      info.setUnlockState(this.additionUnlockState.getValue(), gameState_800babc8.timestamp_a0);
+      info.level = Integer.parseInt(this.additionLevel.getText());
+      info.xp = Integer.parseInt(this.additionXp.getText());
     }
 
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
@@ -210,9 +214,6 @@ public class CharacterEditorController {
     }
 
     this.charData.selectedAddition_19 = this.selectedAddition.getValue();
-
-    this.charData.additionStats.clear();
-    this.charData.additionStats.putAll(this.additionStats);
   }
 
   public void onEquipmentSlotSelect() {

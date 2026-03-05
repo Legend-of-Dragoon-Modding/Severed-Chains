@@ -19,11 +19,12 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
 import legend.game.saves.SeveredSavedGame;
 import legend.game.textures.PngWriter;
 import legend.game.textures.TexturePacker;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -42,19 +43,9 @@ public final class V9Serializer {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(V9Serializer.class);
 
-  public static final int MAGIC_V9 = 0x39615344; // DSa9
-
   private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
-  public static FileData fromV9Matcher(final FileData data) {
-    if(data.readInt(0) == MAGIC_V9) {
-      return data.slice(0x4);
-    }
-
-    return null;
-  }
-
-  public static SavedGame fromV9(final Campaign campaign, final String filename, final FileData data) {
+  public static SavedGame fromV9(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
     final RegistryId campaignTypeId = data.readRegistryId(offset);
@@ -67,7 +58,7 @@ public final class V9Serializer {
     offset.add(atlasSize);
 
     final ConfigCollection config = new ConfigCollection();
-    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V9", filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
+    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
 
     for(int i = 0; i < savedGame.scriptData.length; i++) {
       savedGame.scriptData[i] = data.readInt(offset);

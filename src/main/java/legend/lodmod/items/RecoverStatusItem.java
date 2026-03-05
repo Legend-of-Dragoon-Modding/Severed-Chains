@@ -7,7 +7,7 @@ import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
 import legend.game.scripting.ScriptState;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 
 import java.util.ArrayList;
 import java.util.List;

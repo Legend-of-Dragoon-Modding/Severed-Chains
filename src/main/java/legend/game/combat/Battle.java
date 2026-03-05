@@ -21,13 +21,15 @@ import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 import legend.game.characters.Element;
 import legend.game.characters.Stat;
 import legend.game.characters.StatMod;
 import legend.game.characters.StatModConfig;
 import legend.game.characters.StatModType;
 import legend.game.characters.StatType;
+import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.AttackEvent;
 import legend.game.combat.bent.BattleEntity27c;
@@ -93,6 +95,7 @@ import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
+import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.CorePostBattleActions;
@@ -111,6 +114,7 @@ import legend.game.scripting.ScriptEnum;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
+import legend.game.scripting.ScriptTempParam;
 import legend.game.scripting.ScriptedObject;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -123,17 +127,14 @@ import legend.game.tmd.Tmd;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdWithId;
 import legend.game.tmd.UvAdjustmentMetrics14;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.ui.UiBox;
@@ -150,7 +151,6 @@ import org.joml.Math;
 import org.joml.Matrix3f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -216,9 +216,7 @@ import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.loadPlayerModelAndAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.Models.vramSlots_8005027c;
-import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -246,10 +244,10 @@ import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Text.scriptDeallocateAllTextboxes;
+import static legend.game.characters.CharacterData2c.HAS_ULTIMATE_ADDITION;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
@@ -304,29 +302,23 @@ import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.stopSoundSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.sound.Audio.victoryMusic;
-import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
-import static legend.lodmod.LodMod.ATTACK_STAT;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
-import static legend.lodmod.LodMod.DARK_ELEMENT;
+import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
 import static legend.lodmod.LodMod.DIVINE_ELEMENT;
-import static legend.lodmod.LodMod.EARTH_ELEMENT;
-import static legend.lodmod.LodMod.FIRE_ELEMENT;
 import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
-import static legend.lodmod.LodMod.LIGHT_ELEMENT;
 import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
 import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
 import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MAGIC_HIT_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SPEED_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
-import static legend.lodmod.LodMod.THUNDER_ELEMENT;
-import static legend.lodmod.LodMod.WATER_ELEMENT;
-import static legend.lodmod.LodMod.WIND_ELEMENT;
 import static legend.lodmod.LodMod.disableRetailBattleActions;
 
 public class Battle extends EngineState<Battle> {
@@ -466,7 +458,7 @@ public class Battle extends EngineState<Battle> {
   public BttlLightStruct84[] lights_800c692c;
   public BattleLightStruct64 _800c6930;
 
-  private LoadedDeff24 loadedDeff_800c6938;
+  public LoadedDeff24 loadedDeff_800c6938;
   public static DeffManager7cc deffManager_800c693c;
 
   public static BattleStageDarkening1800 stageDarkening_800c6958;
@@ -503,13 +495,8 @@ public class Battle extends EngineState<Battle> {
   public static final int[] melbuStageToMonsterNameIndices_800c6f30 = {0, 0, 0, 0, 1, 0, 2};
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
 
-  @SuppressWarnings("unchecked")
-  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {FIRE_ELEMENT, WIND_ELEMENT, LIGHT_ELEMENT, DARK_ELEMENT, THUNDER_ELEMENT, WIND_ELEMENT, WATER_ELEMENT, EARTH_ELEMENT, LIGHT_ELEMENT};
-
   /** Different sets of bents for different target types (chars, monsters, all) */
   public List<? extends ScriptState<? extends BattleEntity27c>>[] targetBents_800c71f0;
-
-  public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
 
   public int mcqColour_800fa6dc = 0x80;
   public static final Rect4i[] combatantTimRects_800fa6e0 = {
@@ -1474,7 +1461,7 @@ public class Battle extends EngineState<Battle> {
    * </ol>
    */
   @Method(0x8001d068L)
-  private void loadDeffSounds(final ScriptState<BattleEntity27c> bentState, final int type) {
+  public void loadDeffSounds(final ScriptState<BattleEntity27c> bentState, final int type) {
     final BattleEntity27c bent = bentState.innerStruct_00;
 
     if(type == 0) {
@@ -2107,14 +2094,15 @@ public class Battle extends EngineState<Battle> {
       }
 
       final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
-      final String name = getCharacterName(charId);
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+      final String name = character.getName();
 
       final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, scriptSlot, this.playerBattleScript_800c66fc);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
-      bent.element = characterElements_800c706c[charId].get();
-      bent.combatant_144 = this.getCombatant((short)combatantIndices[charSlot]);
+      bent.element = character.getElement();
+      bent.combatant_144 = this.getCombatant(combatantIndices[charSlot]);
       bent.charId_272 = charId;
       bent.combatantIndex_26c = combatantIndices[charSlot];
 
@@ -2974,7 +2962,7 @@ public class Battle extends EngineState<Battle> {
           // Additions
           if(charId != 2 && charId != 8) {
             final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
-            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.additionStats.get(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.getAdditionInfo(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
 
@@ -4196,23 +4184,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptEnum(BattleEntityStat.class)
   @Method(0x800ccd34L)
   public FlowControl scriptSetBentStat(final RunningScript<?> script) {
-    //LAB_800ccd8c
-    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
-    final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-
-    switch(stat) {
-      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
-      default -> {
-        int value = script.params_20[1].get();
-        if(script.params_20[2].get() == 2 && value < 0) {
-          value = 0;
-        }
-
-        bent.setStat(stat, value);
-      }
-    }
-
-    return FlowControl.CONTINUE;
+    return scriptSetBentRawStat(script);
   }
 
   @ScriptDescription("Sets a stat value of a battle entity")
@@ -4224,12 +4196,7 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-
-    switch(stat) {
-      case ITEM_ID -> bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(script.params_20[1].getRegistryId()).get());
-      default -> bent.setStat(stat, script.params_20[1].get());
-    }
-
+    bent.setStat(stat, script.params_20[1]);
     return FlowControl.CONTINUE;
   }
 
@@ -4242,19 +4209,7 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptGetBentStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(script.params_20[1].get());
-
-    switch(stat) {
-      case EQUIPMENT_WEAPON_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId());
-      case EQUIPMENT_HELMET_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.HELMET).getRegistryId());
-      case EQUIPMENT_ARMOUR_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
-      case EQUIPMENT_BOOTS_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
-      case EQUIPMENT_ACCESSORY_SLOT -> script.params_20[2].set(((PlayerBattleEntity)bent).equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
-      case ITEM_ID -> script.params_20[2].set(bent.item_d4.getItem().getRegistryId());
-      case ITEM_ELEMENT -> script.params_20[2].set(bent.item_d4.getAttackElement().getRegistryId());
-      case ELEMENT -> script.params_20[2].set(bent.getElement().getRegistryId());
-      default -> script.params_20[2].set(bent.getStat(stat));
-    }
-
+    bent.getStat(stat, script.params_20[2]);
     return FlowControl.CONTINUE;
   }
 
@@ -4401,13 +4356,13 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800cd208
-      final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
-      final int additionXp = Math.min(99, additionStats.xp + 1);
+      final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(charData.selectedAddition_19);
+      final int additionXp = Math.min(99, additionInfo.xp + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(additionStats.level < 4 && additionXp >= (additionStats.level + 1) * 20) {
-        additionStats.level++;
+      while(additionInfo.level < 4 && additionXp >= (additionInfo.level + 1) * 20) {
+        additionInfo.level++;
       }
 
       //LAB_800cd2ac
@@ -4416,7 +4371,7 @@ public class Battle extends EngineState<Battle> {
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
       for(int additionIndex2 = 0; additionIndex2 < CHARACTER_ADDITIONS[charIndex].length; additionIndex2++) {
-        if(charData.additionStats.get(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 4) {
+        if(charData.getAdditionInfo(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 4) {
           nonMaxedAdditions--;
         }
 
@@ -4430,7 +4385,7 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800cd390
-      additionStats.xp = additionXp;
+      additionInfo.xp = additionXp;
     }
 
     //LAB_800cd3ac
@@ -6608,6 +6563,11 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800e665cL)
   public void loadDragoonDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
+    if(script.params_20[0].isRegistryId()) {
+      this.loadSpellDeff(script, effect);
+      return;
+    }
+
     final int index = script.params_20[0].get() & 0xffff;
     final int scriptEntrypoint = script.params_20[3].get() & 0xff;
 
@@ -6632,6 +6592,16 @@ public class Battle extends EngineState<Battle> {
       Loader.resolve("SECT/DRGN0.BIN/" + (4139 + index * 2)),
       Loader.resolve("SECT/DRGN0.BIN/" + (4140 + index * 2))
     );
+  }
+
+  public void loadSpellDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
+    final RegistryId spellId = script.params_20[0].getRegistryId();
+    final int bentIndex = script.params_20[1].get();
+    final int deffParam = script.params_20[2].get();
+    final int entrypoint = script.params_20[3].get() & 0xff;
+
+    final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
+    spell.loadDeff(this, script.scriptState_04, effect, 0, bentIndex, deffParam, entrypoint);
   }
 
   @Method(0x800e6844L)
@@ -6997,7 +6967,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptDescription("Allocates a DEFF and effect manager child")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffParam", description = "The parameter to the DEFF script")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0x100_0000 = dragoon, 0x200_0000 = spell/item, 0x300_0000/0x400_0000 = enemy/boss, 0x500_0000 = cutscene")
   @Method(0x800e73acL)
@@ -8368,7 +8338,6 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800ef28cL)
   public void initPlayerBattleEntityStats() {
-    loadCharacterStats();
     characterStatsLoaded_800be5d0 = true;
 
     //LAB_800ef31c
@@ -8377,48 +8346,30 @@ public class Battle extends EngineState<Battle> {
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
       final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
       final CharacterData2c character = gameState_800babc8.charData_32c.get(player.charId_272);
-      final DragoonSpells09 spells = new DragoonSpells09(player.charId_272);
+      final DragoonSpells09 spells = new DragoonSpells09(character);
       this.dragoonSpells_800c6960.add(spells);
 
-      getUnlockedDragoonSpells(spells.spellIndices_01, player.charId_272);
+      for(final RegistryId spellId : character.getUnlockedSpells()) {
+        spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
+      }
 
       //LAB_800ef400
       player.stats.set(character.stats);
 
-      final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
-      player.status_0e = stats.flags_0c;
-      player.specialEffectFlag_14 = stats.specialEffectFlag_76;
-      player.equipment_02_18 = stats.equipment_02_78;
-      player.equipmentEquipableFlags_1a = stats.equipmentEquipableFlags_79;
-      player.equipmentAttackElements_1c.set(stats.equipmentAttackElements_7a);
-      player.equipmentElementalResistance_20.set(stats.equipmentElementalResistance_7c);
-      player.equipmentElementalImmunity_22.set(stats.equipmentElementalImmunity_7d);
-      player.equipmentStatusResist_24 = stats.equipmentStatusResist_7e;
-      player.equipmentAttack1_28 = stats.equipmentAttack1_80;
-      player.stats.getStat(SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
-      player.stats.getStat(ATTACK_STAT.get()).setRaw(stats.equipmentAttack_88 + stats.bodyAttack_6a);
-      player.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b);
-      player.stats.getStat(DEFENSE_STAT.get()).setRaw(stats.equipmentDefence_8c + stats.bodyDefence_6c);
-      player.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d);
-      player.attackHit_3c = stats.equipmentAttackHit_90;
-      player.magicHit_3e = stats.equipmentMagicHit_92;
-      player.stats.getStat(ATTACK_AVOID_STAT.get()).setRaw(stats.equipmentAttackAvoid_94);
-      player.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(stats.equipmentMagicAvoid_96);
-      player.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10 + stats.equipmentGuardHeal);
-      player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
-      player.equipmentOnHitStatus_4a = stats.equipmentOnHitStatus_9b;
-      player.spellId_4e = stats.equipmentOnHitStatus_9b; //TODO retail bug?
+      final UnaryStat speed = player.stats.getStat(SPEED_STAT.get());
+      final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
+      final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
+      final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
+      final UnaryStat magicDefense = player.stats.getStat(MAGIC_DEFENSE_STAT.get());
+      final UnaryStat attackHit = player.stats.getStat(ATTACK_HIT_STAT.get());
+      final UnaryStat magicHit = player.stats.getStat(MAGIC_HIT_STAT.get());
+      final UnaryStat attackAvoid = player.stats.getStat(ATTACK_AVOID_STAT.get());
+      final UnaryStat magicAvoid = player.stats.getStat(MAGIC_AVOID_STAT.get());
+      final UnaryStat guardHeal = player.stats.getStat(GUARD_HEAL_STAT.get());
+
+      player.status_0e = character.getStatusAndFlags();
       player.selectedAddition_58 = character.selectedAddition_19;
-      player.dragoonAttack_ac = stats.dragoonAttack_72;
-      player.dragoonMagic_ae = stats.dragoonMagicAttack_73;
-      player.dragoonDefence_b0 = stats.dragoonDefence_74;
-      player.dragoonMagicDefence_b2 = stats.dragoonMagicDefence_75;
-      player.physicalImmunity_110 = stats.equipmentPhysicalImmunity_46;
-      player.magicalImmunity_112 = stats.equipmentMagicalImmunity_48;
-      player.physicalResistance_114 = stats.equipmentPhysicalResistance_4a;
-      player.magicalResistance_116 = stats.equipmentMagicalResistance_60;
-      player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
-      player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
+      player.addition = character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(character.selectedAddition_19).get() : null;
 
       player.equipment_11e.clear();
 
@@ -8427,22 +8378,50 @@ public class Battle extends EngineState<Battle> {
 
         if(equipment != null) {
           player.equipment_11e.put(slot, equipment);
+
+          player.specialEffectFlag_14 |= equipment.flags_00;
+          player.equipmentEquipableFlags_1a |= equipment.equipableFlags_03;
+          player.equipmentAttackElements_1c.addAll(equipment.attackElement_04);
+          player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
+          player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
+          player.equipmentStatusResist_24 |= equipment.statusResist_08;
+          player.equipmentAttack1_28 += equipment.attack1_0a;
+          speed.setRaw(speed.getRaw() + equipment.speed_0f);
+          attack.setRaw(attack.getRaw() + equipment.attack2_10 + equipment.attack1_0a);
+          magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
+          defense.setRaw(defense.getRaw() + equipment.defence_12);
+          magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);
+          attackHit.setRaw(attackHit.getRaw() + equipment.attackHit_14);
+          magicHit.setRaw(magicHit.getRaw() + equipment.magicHit_15);
+          attackAvoid.setRaw(attackAvoid.getRaw() + equipment.attackAvoid_16);
+          magicAvoid.setRaw(magicAvoid.getRaw() + equipment.magicAvoid_17);
+          guardHeal.setRaw(guardHeal.getRaw() + equipment.getGuardHealBonus());
+          player.onHitStatusChance_44 += equipment.onHitStatusChance_18;
+          player.equipmentOnHitStatus_4a |= equipment.onHitStatus_1b;
+          player.physicalImmunity_110 |= equipment.physicalImmunity;
+          player.magicalImmunity_112 |= equipment.magicalImmunity;
+          player.physicalResistance_114 |= equipment.physicalResistance;
+          player.magicalResistance_116 |= equipment.magicalResistance;
+          player.spMultiplier_128 += equipment.spMultiplier;
+          player.spPerPhysicalHit_12a += equipment.spPerPhysicalHit;
+          player.mpPerPhysicalHit_12c += equipment.mpPerPhysicalHit;
+          player.spPerMagicalHit_12e += equipment.spPerMagicalHit;
+          player.mpPerMagicalHit_130 += equipment.mpPerMagicalHit;
+          player.escapeBonus_132 += equipment.escapeBonus;
+          player.hpRegen_134 += equipment.hpRegen;
+          player.mpRegen_136 += equipment.mpRegen;
+          player.spRegen_138 += equipment.spRegen;
+          player.revive_13a += equipment.revive;
+          player.hpMulti_13c += equipment.hpMultiplier;
+          player.mpMulti_13e += equipment.mpMultiplier;
+          player._142 |= equipment.onHitStatus_1b;
         }
       }
 
-      player.spMultiplier_128 = stats.equipmentSpMultiplier_4c;
-      player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
-      player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
-      player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
-      player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
-      player.escapeBonus_132 = stats.equipmentEscapeBonus_56;
-      player.hpRegen_134 = stats.equipmentHpRegen_58;
-      player.mpRegen_136 = stats.equipmentMpRegen_5a;
-      player.spRegen_138 = stats.equipmentSpRegen_5c;
-      player.revive_13a = stats.equipmentRevive_5e;
-      player.hpMulti_13c = stats.equipmentHpMulti_62;
-      player.mpMulti_13e = stats.equipmentMpMulti_64;
-      player._142 = stats.equipmentOnHitStatus_9b;
+      player.originalSpPerPhysicalHit += player.spPerPhysicalHit_12a;
+      player.originalMpPerPhysicalHit += player.mpPerPhysicalHit_12c;
+      player.originalSpPerMagicalHit += player.spPerMagicalHit_12e;
+      player.originalMpPerMagicalHit += player.mpPerMagicalHit_130;
     }
 
     //LAB_800ef798
@@ -8456,17 +8435,14 @@ public class Battle extends EngineState<Battle> {
 
     int effectAccuracy;
     if(attackType == AttackType.PHYSICAL) {
-      attacker.setTempSpellStats();
-
       if(isMonster) {
         effectAccuracy = attacker.spell_94.accuracy_05;
       } else {
         //LAB_800f1bf4
-        effectAccuracy = attacker.attackHit_3c;
+        effectAccuracy = attacker.stats.getStat(ATTACK_HIT_STAT.get()).get();
       }
     } else if(attackType == AttackType.DRAGOON_MAGIC_STATUS_ITEMS) {
       //LAB_800f1c08
-      attacker.setTempSpellStats();
       effectAccuracy = attacker.spell_94.accuracy_05;
     } else {
       //LAB_800f1c38
@@ -8474,7 +8450,7 @@ public class Battle extends EngineState<Battle> {
     }
 
     //LAB_800f1c44
-    final int hitStat = (byte)attacker.getStat(attackType.tempHitStat);
+    final int hitStat = attackType.tempHitStat.applyAsInt(attacker);
     effectAccuracy = effectAccuracy * (hitStat + 100) / 100;
 
     final int avoidChance;
@@ -8488,13 +8464,9 @@ public class Battle extends EngineState<Battle> {
     boolean effectHit = false;
 
     //LAB_800f1ca8
-    final int modifiedAvoidChance = (avoidChance * ((byte)attacker.getStat(attackType.tempAvoidStat) + 100)) / 100;
+    final int modifiedAvoidChance = (avoidChance * (attackType.tempAvoidStat.applyAsInt(attacker) + 100)) / 100;
     if(modifiedAvoidChance < effectAccuracy && effectAccuracy - modifiedAvoidChance >= (simpleRand() * 101 >> 16)) {
       effectHit = true;
-
-      if(isMonster) {
-        attacker.setTempSpellStats();
-      }
     }
 
     //LAB_800f1d28
@@ -8502,7 +8474,7 @@ public class Battle extends EngineState<Battle> {
       if(attacker.item_d4.alwaysHits()) {
         effectHit = true;
       }
-    } else if((attacker.getStat(attackType.alwaysHitStat) & attackType.alwaysHitMask) != 0) {
+    } else if((attackType.alwaysHitStat.applyAsInt(attacker) & attackType.alwaysHitMask) != 0) {
       effectHit = true;
     }
 
@@ -8620,10 +8592,8 @@ public class Battle extends EngineState<Battle> {
     final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
-    attacker.spellId_4e = script.params_20[2].get();
-
     attacker.clearTempWeaponAndSpellStats();
-    attacker.setTempSpellStats();
+    attacker.setActiveSpell(script.params_20[2].get());
 
     int damage = this.calculateMagicDamage(attacker, defender, 1);
     damage = applyMagicDamageMultiplier(attacker, defender, damage, 0);
@@ -8724,8 +8694,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptDescription("Unknown, this might handle players selecting an attack target")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectionState", description = "0 - nothing selected, 1 - item/spell selected, -1 - menu unloading")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "registryId", description = "The item registry ID (not used for spells yet")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell registry ID")
   @Method(0x800f4600L)
   public FlowControl scriptGetItemOrSpellTargetingInfo(final RunningScript<?> script) {
     this.hud.listMenu_800c6b60.getTargetingInfo(script);
@@ -8780,21 +8749,14 @@ public class Battle extends EngineState<Battle> {
       return attacker.item_d4.getSpecialEffect(attacker, defender);
     }
 
-    final BattleEntityStat[] statusEffectChances = {BattleEntityStat.ON_HIT_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.ON_HIT_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.ON_HIT_STATUS_CHANCE}; // onHitStatusChance, statusChance, onHitStatusChance, statusChance, statusChance, onHitStatusChance
-    final BattleEntityStat[] statusEffectStats = {BattleEntityStat.EQUIPMENT_ON_HIT_STATUS, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.ITEM_STATUS, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.ITEM_STATUS}; // onHitStatus, statusType, itemStatus, statusType, statusType, itemStatus
-    final BattleEntityStat[] specialEffectStats = {BattleEntityStat.SPECIAL_EFFECT_FLAGS, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.ITEM_TARGET, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.ITEM_TARGET}; // specialEffectFlag, spellFlags, itemTarget, spellFlags, spellFlags, itemTarget
-    final int[] specialEffectMasks = {0x40, 0xf0, 0x80, 0xf0, 0xf0, 0x80};
-
     final boolean isAttackerMonster = attacker instanceof MonsterBattleEntity;
 
-    final int index = (!isAttackerMonster ? 0 : 3) + attackType.ordinal(); //TODO
-
-    final int effectChance = attacker.getStat(statusEffectChances[index]);
+    final int effectChance = attacker.getStatusEffectChance(attackType);
 
     //LAB_800f7e98
     int effect = -1;
     if(simpleRand() * 101 >> 16 < effectChance) {
-      final int statusType = attacker.getStat(statusEffectStats[index]);
+      final int statusType = attacker.getStatusEffectStatus(attackType);
 
       if((statusType & 0xff) != 0) {
         //LAB_800f7eec
@@ -8810,7 +8772,7 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800f7f14
-      final int specialEffects = attacker.getStat(specialEffectStats[index]) & specialEffectMasks[index];
+      final int specialEffects = attacker.getSpecialEffectStat(attackType) & attacker.getSpecialEffectMask(attackType);
       if(specialEffects != 0) {
         if(!isAttackerMonster && attackType != AttackType.DRAGOON_MAGIC_STATUS_ITEMS || specialEffects == 0x80) {
           effect = 0;
@@ -8852,8 +8814,6 @@ public class Battle extends EngineState<Battle> {
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
-//    monster.equipmentType_16 = 0;
-    monster.equipment_02_18 = 0;
     monster.equipmentEquipableFlags_1a = 0;
     monster.element = statsEvent.elementFlag;
     monster.equipmentElementalImmunity_22.set(statsEvent.elementalImmunityFlag);
@@ -8864,8 +8824,6 @@ public class Battle extends EngineState<Battle> {
     monster.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(statsEvent.magicAttack);
     monster.stats.getStat(DEFENSE_STAT.get()).setRaw(statsEvent.defence);
     monster.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(statsEvent.magicDefence);
-    monster.attackHit_3c = 0;
-    monster.magicHit_3e = 0;
     monster.stats.getStat(ATTACK_AVOID_STAT.get()).setRaw(statsEvent.attackAvoid);
     monster.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(statsEvent.magicAvoid);
     monster.onHitStatusChance_44 = 0;
@@ -8907,7 +8865,8 @@ public class Battle extends EngineState<Battle> {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        defender.setStat(stats[i % 4], turnCount << 8 | (amount & 0xff));
+        //TODO don't use setStat
+        defender.setStat(stats[i % 4], new ScriptTempParam(turnCount << 8 | (amount & 0xff)));
       }
     }
   }
@@ -8919,7 +8878,7 @@ public class Battle extends EngineState<Battle> {
   public static int applyMagicDamageMultiplier(final BattleEntity27c attacker, final BattleEntity27c defender, final int damage, final int magicType) {
     final int damageMultiplier;
     if(magicType == 0) {
-      damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
+      damageMultiplier = attacker.spell_94.damageMultiplier_03;
     } else {
       //LAB_800f949c
       damageMultiplier = attacker.item_d4.getAttackDamageMultiplier(attacker, defender);
@@ -9003,11 +8962,11 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Caches selected spell's stats on a battle entity")
+  @ScriptDescription("Caches selected spell's stats on a battle entity (no longer does anything)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f96a8L)
   public FlowControl scriptSetTempSpellStats(final RunningScript<?> script) {
-    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempSpellStats();
+//    SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class).setTempSpellStats();
     return FlowControl.CONTINUE;
   }
 

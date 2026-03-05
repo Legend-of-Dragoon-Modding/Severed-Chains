@@ -32,15 +32,7 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
-import legend.game.saves.serializers.RetailSerializer;
-import legend.game.saves.serializers.V1Serializer;
-import legend.game.saves.serializers.V2Serializer;
-import legend.game.saves.serializers.V3Serializer;
-import legend.game.saves.serializers.V4Serializer;
-import legend.game.saves.serializers.V5Serializer;
-import legend.game.saves.serializers.V6Serializer;
-import legend.game.saves.serializers.V7Serializer;
-import legend.game.saves.serializers.V8Serializer;
+import legend.game.saves.SaveVersion;
 import legend.game.saves.serializers.V9Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
@@ -105,7 +97,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V9Serializer.MAGIC_V9, V9Serializer::toV9);
+  public static final SaveManager SAVES = new SaveManager(SaveVersion.V9, V9Serializer::toV9);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
@@ -203,16 +195,6 @@ public final class GameEngine {
         RENDERER.setRenderCallback(GameEngine::loadGfx);
 
         Files.createDirectories(Path.of("saves"));
-        SAVES.registerDeserializer(RetailSerializer::fromRetailMatcher, RetailSerializer::fromRetail);
-        SAVES.registerDeserializer(V1Serializer::fromV1Matcher, V1Serializer::fromV1);
-        SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
-        SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
-        SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
-        SAVES.registerDeserializer(V5Serializer::fromV5Matcher, V5Serializer::fromV5);
-        SAVES.registerDeserializer(V6Serializer::fromV6Matcher, V6Serializer::fromV6);
-        SAVES.registerDeserializer(V7Serializer::fromV7Matcher, V7Serializer::fromV7);
-        SAVES.registerDeserializer(V8Serializer::fromV8Matcher, V8Serializer::fromV8);
-        SAVES.registerDeserializer(V9Serializer::fromV9Matcher, V9Serializer::fromV9);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);

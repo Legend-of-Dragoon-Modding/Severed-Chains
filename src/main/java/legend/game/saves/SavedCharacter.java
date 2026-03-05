@@ -1,6 +1,6 @@
 package legend.game.saves;
 
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.GameState52c;
 
 public interface SavedCharacter {

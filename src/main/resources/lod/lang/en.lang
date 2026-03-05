@@ -20,6 +20,7 @@ lod.character_templates.albert.name=Albert
 lod.character_templates.meru.name=Meru
 lod.character_templates.kongol.name=Kongol
 lod.character_templates.miranda.name=Miranda
+lod.character_templates.shant.name=Shant
 
 # Equipment
 lod.equipment.broad_sword.name=Broad Sword
@@ -590,8 +591,8 @@ lod.spells.moon_light.name=Moon Light
 lod.spells.moon_light.description=Ally 50%% Rev, 100%% Rec, Cure
 lod.spells.gates_of_heaven.name=Gates of Heaven
 lod.spells.gates_of_heaven.description=Ally All 50%% Rev & Rec, Cure
-lod.spells.w_silver_dragon.name=W Silver Dragon
-lod.spells.w_silver_dragon.description=Light STR 75%% & Allies 100%% Rec
+lod.spells.white_silver_dragon.name=W Silver Dragon
+lod.spells.white_silver_dragon.description=Light STR 75%% & Allies 100%% Rec
 lod.spells.astral_drain.name=Astral Drain
 lod.spells.astral_drain.description=Dark STR 50%% Single & HP
 lod.spells.death_dimension.name=Death Dimension

@@ -5,8 +5,8 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionHits80;
-import legend.game.additions.CharacterAdditionStats;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.McqHeader;
 
 import java.util.ArrayList;
@@ -36,9 +36,9 @@ public class BattlePreloadedEntities_18cb0 {
     }
 
     //LAB_800c74fc
-    final CharacterData2c charData = gameState_800babc8.getCharacterBySlot(charSlot);
-    final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
-    return REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().getHit(gameState_800babc8, charData, additionStats, hitNum);
+    final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
+    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(character.selectedAddition_19);
+    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHit(gameState_800babc8, character, additionInfo, hitNum);
   }
 
   public int getHitCount(final int charSlot) {
@@ -47,9 +47,9 @@ public class BattlePreloadedEntities_18cb0 {
     }
 
     //LAB_800c74fc
-    final CharacterData2c charData = gameState_800babc8.getCharacterBySlot(charSlot);
-    final CharacterAdditionStats additionStats = charData.additionStats.get(charData.selectedAddition_19);
-    return REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().getHitCount(gameState_800babc8, charData, additionStats);
+    final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
+    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(character.selectedAddition_19);
+    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHitCount(gameState_800babc8, character, additionInfo);
   }
 
   @Method(0x800c7488L)

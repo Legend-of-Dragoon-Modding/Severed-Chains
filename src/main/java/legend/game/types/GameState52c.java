@@ -2,6 +2,7 @@ package legend.game.types;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.game.characters.CharacterData2c;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;

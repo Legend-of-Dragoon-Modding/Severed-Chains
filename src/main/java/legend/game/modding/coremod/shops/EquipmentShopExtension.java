@@ -11,7 +11,7 @@ import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.controls.AtlasIcon;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;

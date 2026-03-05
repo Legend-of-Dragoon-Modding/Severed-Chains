@@ -8,7 +8,7 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.scripting.ScriptReadable;
 import legend.game.scripting.ScriptState;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
@@ -24,11 +24,13 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
   /**
    * <ul>
    *   <li>0x4 - can't be discarded</li>
+   *   <li>0x40 - instakill</li>
+   *   <li>0x80 - resist instakill</li>
    * </ul>
    */
   public final int flags_00;
   public final EquipmentSlot slot;
-  public final int _02;
+//  public final int _02;
   /**
    * Which characters can wear this (bitset)
    */
@@ -76,11 +78,10 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
 //  public final int _1a;
   public final int onHitStatus_1b;
 
-  public Equipment(final int price, final int flags, final EquipmentSlot slot, final int _02, final int equipableFlags, final Element element, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int onHitStatus) {
+  public Equipment(final int price, final int flags, final EquipmentSlot slot, final int equipableFlags, final Element element, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int onHitStatus) {
     this.price = price;
     this.slot = slot;
     this.flags_00 = flags;
-    this._02 = _02;
     this.equipableFlags_03 = equipableFlags;
     this.attackElement_04.add(element);
     this.mpPerPhysicalHit = mpPerPhysicalHit;

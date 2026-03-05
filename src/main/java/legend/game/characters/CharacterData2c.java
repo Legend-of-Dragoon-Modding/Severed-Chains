@@ -1,16 +1,19 @@
-package legend.game.types;
+package legend.game.characters;
 
-import legend.game.additions.CharacterAdditionStats;
-import legend.game.characters.CharacterTemplate;
-import legend.game.characters.StatCollection;
+import legend.game.additions.AdditionHits80;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
+import legend.game.types.EquipmentSlot;
+import legend.game.types.GameState52c;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CharacterData2c {
   public static final int IN_PARTY = 0x1;
@@ -22,7 +25,7 @@ public class CharacterData2c {
   public static final int CANT_REMOVE = 0x20;
   public static final int HAS_ULTIMATE_ADDITION = 0x40;
 
-  private final GameState52c gameState;
+  public final GameState52c gameState;
   public final CharacterTemplate template;
 
   public int xp_00;
@@ -58,7 +61,8 @@ public class CharacterData2c {
   public final StatCollection stats;
   private final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition_19;
-  public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
+  private final Map<RegistryId, CharacterAdditionInfo> additions = new HashMap<>();
+  private final Map<RegistryId, CharacterSpellInfo> spells = new HashMap<>();
 //  public final int[] additionLevels_1a = new int[8];
 //  public final int[] additionXp_22 = new int[8];
 
@@ -83,10 +87,16 @@ public class CharacterData2c {
     this.equipment_14.clear();
     this.equipment_14.putAll(other.equipment_14);
     this.selectedAddition_19 = other.selectedAddition_19;
-    this.additionStats.clear();
+    this.additions.clear();
 
-    for(final var entry : other.additionStats.entrySet()) {
-      this.additionStats.put(entry.getKey(), new CharacterAdditionStats(entry.getValue()));
+    for(final var entry : other.additions.entrySet()) {
+      this.additions.put(entry.getKey(), new CharacterAdditionInfo(entry.getValue()));
+    }
+
+    this.spells.clear();
+
+    for(final var entry : other.spells.entrySet()) {
+      this.spells.put(entry.getKey(), new CharacterSpellInfo(entry.getValue()));
     }
 
 //    System.arraycopy(other.additionLevels_1a, 0, this.additionLevels_1a, 0, this.additionLevels_1a.length);
@@ -114,11 +124,93 @@ public class CharacterData2c {
     return this.equipment_14.get(slot);
   }
 
+  public int getStatusAndFlags() {
+    int flags = this.status_10;
+
+    if(this.hasDragoon()) {
+      flags |= 0x2000;
+    }
+
+    return flags;
+  }
+
+  public Element getElement() {
+    return this.template.getElement(this.gameState, this);
+  }
+
   public boolean hasDragoon() {
     return this.template.hasDragoon(this.gameState, this);
   }
 
+  public AdditionHits80 getDragoonAddition() {
+    return this.template.getDragoonAddition(this.gameState, this);
+  }
+
+  public void applyLevelUp(@Nullable final LevelUpActions actions) {
+    this.template.applyLevelUp(this.gameState, this, actions);
+  }
+
+  public void applyDragoonLevelUp(@Nullable final LevelUpActions actions) {
+    this.template.applyDragoonLevelUp(this.gameState, this, actions);
+  }
+
   public int getXpToNextLevel() {
     return this.template.getXpToNextLevel(this.gameState, this);
+  }
+
+  public int getDxpToNextLevel() {
+    return this.template.getDxpToNextLevel(this.gameState, this);
+  }
+
+  public List<RegistryId> getUnlockedAdditions() {
+    return this.additions.entrySet().stream()
+      .filter(e -> e.getValue().getUnlockState().isUsable())
+      .sorted(Comparator.comparingInt(e -> e.getValue().getUnlockTimestamp()))
+      .map(Map.Entry::getKey)
+      .toList()
+    ;
+  }
+
+  public Set<RegistryId> getAllAdditions() {
+    return this.additions.keySet();
+  }
+
+  public CharacterAdditionInfo getAdditionInfo(final RegistryId id) {
+    return this.additions.get(id);
+  }
+
+  public CharacterAdditionInfo addAddition(final RegistryId id, final CharacterAdditionInfo info) {
+    this.additions.put(id, info);
+    return info;
+  }
+
+  public void removeAddition(final RegistryId id) {
+    this.additions.remove(id);
+  }
+
+  public List<RegistryId> getUnlockedSpells() {
+    return this.spells.entrySet().stream()
+      .filter(e -> e.getValue().getUnlockState().isUsable())
+      .sorted(Comparator.comparingInt(e -> e.getValue().getUnlockTimestamp()))
+      .map(Map.Entry::getKey)
+      .toList()
+    ;
+  }
+
+  public Set<RegistryId> getAllSpells() {
+    return this.spells.keySet();
+  }
+
+  public CharacterSpellInfo getSpellInfo(final RegistryId id) {
+    return this.spells.get(id);
+  }
+
+  public CharacterSpellInfo addSpell(final RegistryId id, final CharacterSpellInfo info) {
+    this.spells.put(id, info);
+    return info;
+  }
+
+  public void removeSpell(final RegistryId id) {
+    this.spells.remove(id);
   }
 }

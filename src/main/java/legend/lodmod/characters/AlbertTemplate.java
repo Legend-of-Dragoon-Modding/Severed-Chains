@@ -1,21 +1,67 @@
 package legend.lodmod.characters;
 
-import legend.game.additions.CharacterAdditionStats;
-import legend.game.types.CharacterData2c;
+import legend.game.additions.AdditionHitProperties10;
+import legend.game.additions.AdditionHits80;
+import legend.game.characters.AdditionLevelUnlockCriterion;
+import legend.game.characters.AdditionMasteryUnlockCriterion;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.characters.StatCollection;
+import legend.game.characters.VitalsStat;
 import legend.game.types.GameState52c;
 import legend.lodmod.LodAdditions;
-import org.legendofdragoon.modloader.registries.RegistryId;
+import legend.lodmod.LodSpells;
+
+import java.util.List;
+
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
+import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
+import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MAGIC_HIT_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class AlbertTemplate extends LavitzTemplate {
   @Override
   public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c character = super.make(gameState);
+    final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
+    final AlbertCharacterData character = new AlbertCharacterData(gameState, this, stats);
 
-    character.additionStats.put(LodAdditions.ALBERT_HARPOON.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.ALBERT_SPINNING_CANE.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.ALBERT_ROD_TYPHOON.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.ALBERT_GUST_OF_WIND_DANCE.getId(), new CharacterAdditionStats());
-    character.additionStats.put(LodAdditions.ALBERT_FLOWER_STORM.getId(), new CharacterAdditionStats());
+    stats.getStat(ATTACK_HIT_STAT.get()).setRaw(100);
+    stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
+    stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10);
+
+    this.applyLevelUp(gameState, character, null);
+    this.applyDragoonLevelUp(gameState, character, null);
+
+    final VitalsStat hp = character.stats.getStat(HP_STAT.get());
+    final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+    hp.restore();
+    mp.restore();
+
+    character.addAddition(LodAdditions.ALBERT_HARPOON.getId(), new CharacterAdditionInfo(List.of()));
+    character.addAddition(LodAdditions.ALBERT_SPINNING_CANE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(5))));
+    character.addAddition(LodAdditions.ALBERT_ROD_TYPHOON.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(7))));
+    character.addAddition(LodAdditions.ALBERT_GUST_OF_WIND_DANCE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(11))));
+    character.addAddition(LodAdditions.ALBERT_FLOWER_STORM.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
+
+    character.addSpell(LodSpells.WING_BLASTER.getId(), new CharacterSpellInfo(List.of()));
+    character.addSpell(LodSpells.ROSE_STORM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.GASPLESS.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.JADE_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.ALBERT_HARPOON.getId();
 
@@ -23,13 +69,7 @@ public class AlbertTemplate extends LavitzTemplate {
   }
 
   @Override
-  protected RegistryId getAdditionUnlock(final int level) {
-    return switch(level) {
-      case 1 -> LodAdditions.ALBERT_HARPOON.getId();
-      case 5 -> LodAdditions.ALBERT_SPINNING_CANE.getId();
-      case 7 -> LodAdditions.ALBERT_ROD_TYPHOON.getId();
-      case 11 -> LodAdditions.ALBERT_GUST_OF_WIND_DANCE.getId();
-      default -> null;
-    };
+  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+    return new AdditionHits80(new AdditionHitProperties10(0xc0, 0, 0, 0, 100, 0, 41, 0, 0, 0, 0, 0, 12, 0, 18, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
   }
 }

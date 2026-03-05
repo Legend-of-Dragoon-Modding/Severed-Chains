@@ -1,23 +1,23 @@
 package legend.game.saves.serializers;
 
 import legend.game.additions.Addition;
-import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.InventoryEntry;
 import legend.game.saves.MemcardSavedGame;
 import legend.game.saves.RetailSavedGame;
+import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
+import legend.game.saves.SeveredSavedCharacterV1;
 import legend.game.types.EquipmentSlot;
 import legend.game.unpacker.FileData;
+import legend.lodmod.Legacy;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
-import static legend.game.SItem.levelStuff_80111cfc;
-import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.lodmod.LodMod.getLocationName;
@@ -27,17 +27,7 @@ public final class RetailSerializer {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSerializer.class);
 
-  public static final int MAGIC_RETAIL = 0x01114353; // SC__
-
-  public static FileData fromRetailMatcher(final FileData data) {
-    if(data.readInt(0) == MAGIC_RETAIL) {
-      return data.slice(0x4);
-    }
-
-    return null;
-  }
-
-  public static SavedGame fromRetail(final Campaign campaign, final String name, final FileData data) {
+  public static SavedGame fromRetail(final SaveVersion version, final Campaign campaign, final String name, final FileData data) {
     final MemcardSavedGame savedGame = new MemcardSavedGame(campaign, name, name, LodMod.RETAIL_CAMPAIGN_TYPE.getId(), new ConfigCollection());
 
     deserializeRetailGameState(savedGame, data.slice(0x1fc));
@@ -45,6 +35,18 @@ public final class RetailSerializer {
     savedGame.locationType = data.readUByte(0x1a9);
     savedGame.locationIndex = data.readUByte(0x1a8);
     savedGame.locationName = getLocationName(savedGame.locationType, savedGame.locationIndex);
+
+    return savedGame;
+  }
+
+  public static SavedGame fromV1(final SaveVersion version, final Campaign campaign, final String name, final FileData data) {
+    final RetailSavedGame savedGame = new RetailSavedGame(campaign, version.name, name, name, LodMod.RETAIL_CAMPAIGN_TYPE.getId(), new ConfigCollection());
+
+    deserializeRetailGameState(savedGame, data.slice(0x30));
+
+    final int locationType = data.readUByte(0x2d);
+    final int locationIndex = data.readUByte(0x2c);
+    savedGame.locationName = getLocationName(locationType, locationIndex);
 
     return savedGame;
   }
@@ -175,10 +177,7 @@ public final class RetailSerializer {
 
         if(i < CHARACTER_ADDITIONS[charSlot].length) {
           final RegistryDelegate<Addition> addition = CHARACTER_ADDITIONS[charSlot][i];
-          final CharacterAdditionStats stats = new CharacterAdditionStats();
-          stats.level = Math.max(0, level - 1);
-          stats.xp = xp;
-          charData.additionStats.put(addition.getId(), stats);
+          charData.additionInfo.put(addition.getId(), new SeveredSavedCharacterV1.AdditionInfo(Math.max(0, level - 1), xp));
         }
       }
     }
@@ -197,7 +196,7 @@ public final class RetailSerializer {
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
 
     final RetailSavedGame.SavedCharacter charData = savedGame.characters[savedGame.charIndices.getInt(0)];
-    savedGame.maxHp = levelStuff_80111cfc[savedGame.charIndices.getInt(0)][charData.level].hp_00;
-    savedGame.maxMp = magicStuff_80111d20[savedGame.charIndices.getInt(0)][charData.dlevel].mp_00;
+    savedGame.maxHp = Legacy.RETAIL_HP[savedGame.charIndices.getInt(0)][charData.level - 1];
+    savedGame.maxMp = charData.dlevel * 20;
   }
 }

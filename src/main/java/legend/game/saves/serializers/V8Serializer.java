@@ -7,13 +7,13 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.ReflectionAccessFilter;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
-import legend.game.additions.CharacterAdditionStats;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
 import legend.game.saves.SeveredSavedCharacterV1;
 import legend.game.saves.SeveredSavedGame;
@@ -33,26 +33,16 @@ public final class V8Serializer {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(V8Serializer.class);
 
-  public static final int MAGIC_V8 = 0x38615344; // DSa8
-
   private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
-  public static FileData fromV8Matcher(final FileData data) {
-    if(data.readInt(0) == MAGIC_V8) {
-      return data.slice(0x4);
-    }
-
-    return null;
-  }
-
-  public static SavedGame fromV8(final Campaign campaign, final String filename, final FileData data) {
+  public static SavedGame fromV8(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
     final RegistryId campaignTypeId = data.readRegistryId(offset);
     final String locationName = data.readAscii(offset);
 
     final ConfigCollection config = new ConfigCollection();
-    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V8", filename, name, campaignTypeId, config, SAVES.getRetailAtlas(), 512, 64);
+    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, SAVES.getRetailAtlas(), 512, 64);
 
     for(int i = 0; i < savedGame.scriptData.length; i++) {
       savedGame.scriptData[i] = data.readInt(offset);
@@ -137,7 +127,7 @@ public final class V8Serializer {
       final RegistryId templateId = CHAR_IDS[charIndex];
       final int maxHp = data.readInt(offset);
       final int maxMp = data.readInt(offset);
-      final SeveredSavedCharacterV1 charData = new SeveredSavedCharacterV1(templateId, maxHp, maxMp);
+      final SeveredSavedCharacterV1 charData = new SeveredSavedCharacterV1(templateId, charIndex, maxHp, maxMp);
       savedGame.characters.add(charData);
       savedGame.charPortraits.add(new Rect4i(charIndex * 48, 0, 48, 48));
 
@@ -169,11 +159,7 @@ public final class V8Serializer {
         final RegistryId id = data.readRegistryId(offset);
         final int level = data.readShort(offset);
         final int xp = data.readInt(offset);
-
-        final CharacterAdditionStats stats = new CharacterAdditionStats();
-        stats.level = level;
-        stats.xp = xp;
-        charData.additionStats.put(id, stats);
+        charData.additionInfo.put(id, new SeveredSavedCharacterV1.AdditionInfo(level, xp));
       }
     }
 

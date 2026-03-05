@@ -89,7 +89,6 @@ public final class Unpacker {
 
     // Spells, XP, and TIMs from lod_engine
     transformers.add(new LeafTransformation("LOD engine", Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor));
-    transformers.add(new LeafTransformation("Spells", Unpacker::spellsDiscriminator, Unpacker::spellsExtractor));
 
     // Savepoint etc. from SMAP
     transformers.add(new LeafTransformation("SMAP assets", Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor));
@@ -694,20 +693,6 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     transformations.replaceNode(node, new FileData(newData));
-  }
-
-  private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {
-    return "OVL/BTTL.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
-  }
-
-  private static void spellsExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    flags.add(node.fullPath);
-
-    transformations.addNode(node);
-
-    for(int i = 0; i < 128; i++) {
-      transformations.addNode("spells/" + i + ".dspl", node.data.slice(0x33a30 + i * 0xc, 0xc));
-    }
   }
 
   private static boolean smapAssetDiscriminator(final PathNode node, final Set<String> flags) {

@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 
 public class CharacterEditor extends Application {
   private final int charId;

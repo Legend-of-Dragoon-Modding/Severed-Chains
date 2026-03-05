@@ -1,10 +1,10 @@
 package legend.game.characters;
 
 import legend.core.memory.types.IntRef;
+import legend.game.additions.AdditionHits80;
 import legend.game.textures.Image;
 import legend.game.inventory.Equipment;
 import legend.game.saves.SavedCharacter;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
@@ -22,10 +22,14 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract void applyLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions);
   public abstract void applyDragoonLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions);
+  public abstract void checkUnlocks(final CharacterData2c character, final LevelUpActions actions);
   public abstract int getXpToNextLevel(final GameState52c gameState, final CharacterData2c character);
   public abstract int getDxpToNextLevel(final GameState52c gameState, final CharacterData2c character);
 
+  public abstract Element getElement(final GameState52c gameState, final CharacterData2c character);
   public abstract boolean hasDragoon(final GameState52c gameState, final CharacterData2c character);
+  public abstract AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character);
+
   public abstract boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
 
   protected void addToStat(final CharacterData2c character, final StatType<?> statType, final int amount) {

@@ -21,7 +21,7 @@ import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.Menus;
 import legend.game.SItem;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
@@ -54,7 +54,6 @@ import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
-import legend.game.types.CharacterData2c;
 import legend.game.types.ClutAnimations;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
@@ -145,7 +144,6 @@ import static legend.game.SItem.shopId_8007a3b4;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.srand;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -1103,21 +1101,7 @@ public class SMap extends EngineState<SMap> {
     final CharacterData2c char0 = gameState_800babc8.charData_32c.get(id0);
     final CharacterData2c char1 = gameState_800babc8.charData_32c.get(id1);
 
-    //LAB_800d9c78
     char1.set(char0);
-
-    // When cloning Albert -> Lavitz we need to swap addition IDs
-    if(id0 == 1 && id1 == 5) {
-      char1.additionStats.clear();
-
-      for(int i = 0; i < CHARACTER_ADDITIONS[id0].length; i++) {
-        char1.additionStats.put(CHARACTER_ADDITIONS[id1][i].getId(), new CharacterAdditionStats(char0.additionStats.get(CHARACTER_ADDITIONS[id0][i].getId())));
-
-        if(char1.selectedAddition_19.equals(CHARACTER_ADDITIONS[id0][i].getId())) {
-          char1.selectedAddition_19 = CHARACTER_ADDITIONS[id1][i].getId();
-        }
-      }
-    }
 
     this.restoreCharDataVitals(script.params_20[1].get());
     return FlowControl.CONTINUE;

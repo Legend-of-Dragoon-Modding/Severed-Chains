@@ -13,7 +13,6 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.saves.CampaignType;
 import legend.game.submap.SobjPos14;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
@@ -99,11 +98,6 @@ public final class Scus94491BpeSegment_800b {
   public static boolean loadingNewGameState_800bdc34;
 
   public static boolean characterStatsLoaded_800be5d0;
-
-  public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
-  static {
-    Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
-  }
 
   // These are outside of SMAP because they have to persist between engine states
   public static final MV playerPositionBeforeBattle_800bed30 = new MV();

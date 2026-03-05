@@ -9,7 +9,7 @@ import legend.core.platform.input.InputMod;
 import legend.game.characters.VitalsStat;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.textures.TextureAtlasIcon;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.Renderable58;
 
 import java.util.Set;
@@ -35,8 +35,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
-import static legend.game.types.CharacterData2c.CANT_REMOVE;
-import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.characters.CharacterData2c.CANT_REMOVE;
+import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 

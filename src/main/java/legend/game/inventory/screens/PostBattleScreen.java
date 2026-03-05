@@ -11,21 +11,26 @@ import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.additions.Addition;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.LevelUpActions;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
+import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.CharacterLevelUpEvent;
-import legend.game.types.CharacterData2c;
-import legend.game.types.MagicStuff08;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
+import legend.lodmod.characters.UnlockSpellLevelUpAction;
+import legend.lodmod.characters.UnlockSpellLevelUpActionOptions;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -39,9 +44,7 @@ import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
-import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.giveItems;
-import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -53,7 +56,6 @@ import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SBtld.FUN_80019470;
 import static legend.game.combat.SBtld.addLevelUpOverlay;
 import static legend.game.combat.SBtld.drawBattleReportOverlays;
@@ -75,7 +77,7 @@ public class PostBattleScreen extends MenuScreen {
   private int unlockHeight_8011e178;
   private int soundTick_8011e17c;
   private final int[] pendingXp_8011e180 = new int[10];
-  private final int[] spellsUnlocked_8011e1a8 = new int[12];
+  private final SpellStats0c[] spellsUnlocked_8011e1a8 = new SpellStats0c[12];
   private final Addition[] additionsUnlocked_8011e1b8 = new Addition[12];
   private final int[] levelsGained_8011e1c8 = new int[12];
   private final int[] dragoonLevelsGained_8011e1d8 = new int[12];
@@ -119,7 +121,7 @@ public class PostBattleScreen extends MenuScreen {
           cacheCharacterSlots();
 
           //LAB_8010d87c
-          Arrays.fill(this.spellsUnlocked_8011e1a8, 0);
+          Arrays.fill(this.spellsUnlocked_8011e1a8, null);
           Arrays.fill(this.additionsUnlocked_8011e1b8, null);
           Arrays.fill(this.levelsGained_8011e1c8, 0);
           Arrays.fill(this.dragoonLevelsGained_8011e1d8, 0);
@@ -306,7 +308,7 @@ public class PostBattleScreen extends MenuScreen {
         }
 
         //LAB_8010de6c
-        if(this.spellsUnlocked_8011e1a8[0] != 0 || this.spellsUnlocked_8011e1a8[1] != 0 || this.spellsUnlocked_8011e1a8[2] != 0) {
+        if(this.spellsUnlocked_8011e1a8[0] != null || this.spellsUnlocked_8011e1a8[1] != null || this.spellsUnlocked_8011e1a8[2] != null) {
           this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11;
         } else {
           //LAB_8010de98
@@ -482,21 +484,19 @@ public class PostBattleScreen extends MenuScreen {
 
       character.dlevelXp_0e += spGained_800bc950.get(charId);
 
-      if(character.dlevelXp_0e > 32000) {
-        character.dlevelXp_0e = 32000;
-      }
-
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(character.dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charId][character.dlevel_13 + 1] && character.dlevel_13 < 5) {
-        character.dlevel_13++;
+      while(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
+        final LevelUpActions levelUpActions = new LevelUpActions();
+        character.applyDragoonLevelUp(levelUpActions);
+        final List<LevelUpActions.Entry<?>> results = levelUpActions.run(character);
         this.dragoonLevelsGained_8011e1d8[charSlot]++;
 
-        final MagicStuff08 spellStuff = magicStuff_80111d20[charId][character.dlevel_13];
-        final int spellId = spellStuff.spellIndex_02;
-
-        if(spellId != -1) {
-          this.spellsUnlocked_8011e1a8[charSlot] = spellId;
+        for(final LevelUpActions.Entry<?> entry : results) {
+          if(entry.action instanceof final UnlockSpellLevelUpAction unlockSpell) {
+            final UnlockSpellLevelUpActionOptions options = unlockSpell.cast(entry.options);
+            this.spellsUnlocked_8011e1a8[charSlot] = REGISTRIES.spells.getEntry(options.spellId).get();
+          }
         }
 
         //LAB_8010cf70
@@ -762,7 +762,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);
 
-      final int dxp = dragoonXpRequirements_800fbbf0[charId][character.dlevel_13 + 1];
+      final int dxp = character.getDxpToNextLevel();
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 52, dxp);
@@ -839,8 +839,8 @@ public class PostBattleScreen extends MenuScreen {
   private void renderSpellsUnlocked(final int height) {
     //LAB_8010ec98
     for(int i = 0; i < 3; i++) {
-      if(this.spellsUnlocked_8011e1a8[i] != 0) {
-        this.renderSpellUnlocked(168, 40 + i * 64, this.spellsUnlocked_8011e1a8[i] - 1, height);
+      if(this.spellsUnlocked_8011e1a8[i] != null) {
+        this.renderSpellUnlocked(168, 40 + i * 64, this.spellsUnlocked_8011e1a8[i], height);
       }
 
       //LAB_8010ecc0
@@ -868,12 +868,12 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010d498L)
-  private void renderSpellUnlocked(final int x, final int y, final int spellIndex, final int height) {
+  private void renderSpellUnlocked(final int x, final int y, final SpellStats0c spell, final int height) {
     this.drawResultsBackground(x, y + 20 - height, 134, (height + 1) * 2, 6); // New spell border
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      renderText(I18n.translate(spellStats_800fa0b8[spellIndex]), x - 4, y + 6, this.fontOptions);
+      renderText(I18n.translate(spell), x - 4, y + 6, this.fontOptions);
       renderText(SPELL_UNLOCKED, x - 4, y + 20, this.fontOptions);
     }
 

@@ -8,6 +8,7 @@ import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.modding.events.RenderEvent;
@@ -25,7 +26,6 @@ import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.BattleUiParts;
 import legend.game.types.CContainer;
-import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
 import legend.game.types.TmdAnimationFile;
@@ -76,7 +76,6 @@ import static legend.game.Menus.loadAndRenderMenus;
 import static legend.game.Menus.renderUi;
 import static legend.game.Models.loadModelAndAnimation;
 import static legend.game.SItem.addGold;
-import static legend.game.SItem.clearCharacterStats;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
@@ -563,7 +562,6 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, 6669, Scus94491BpeSegment::basicUiTexturesLoaded);
 
     textZ_800bdf00 = 13;
-    clearCharacterStats();
     initTextboxes();
   }
 

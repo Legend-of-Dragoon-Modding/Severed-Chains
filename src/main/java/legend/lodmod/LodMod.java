@@ -73,8 +73,6 @@ import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.textures.Image;
 import legend.game.textures.RegisterAtlasTexturesEvent;
-import legend.game.types.SpellStats0c;
-import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -91,7 +89,6 @@ import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
@@ -424,11 +421,7 @@ public class LodMod {
 
   @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
-    for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
-      if(spellStats_800fa0b8[spellId] == null) {
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(id(SPELL_IDS[spellId]), Loader.loadFile("spells/" + spellId + ".dspl"));
-      }
-    }
+    LodSpells.register(event);
   }
 
   @EventListener

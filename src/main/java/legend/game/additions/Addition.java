@@ -1,7 +1,8 @@
 package legend.game.additions;
 
+import legend.game.characters.CharacterAdditionInfo;
 import legend.game.i18n.I18n;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
@@ -14,14 +15,13 @@ public abstract class Addition extends RegistryEntry {
     return I18n.translate(this);
   }
 
-  public abstract boolean isUnlocked(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats);
-  public abstract int getDamage(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats);
-  public abstract int getSp(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats);
-  public abstract float getDamageMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats);
-  public abstract float getSpMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats);
+  public abstract int getDamage(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats);
+  public abstract int getSp(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats);
+  public abstract float getDamageMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats);
+  public abstract float getSpMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats);
 
-  public abstract int getHitCount(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats);
-  public abstract AdditionHitProperties10 getHit(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats, final int index);
+  public abstract int getHitCount(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats);
+  public abstract AdditionHitProperties10 getHit(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats, final int index);
 
-  public abstract void loadAnimations(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats, Consumer<List<FileData>> onLoad);
+  public abstract void loadAnimations(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats, Consumer<List<FileData>> onLoad);
 }

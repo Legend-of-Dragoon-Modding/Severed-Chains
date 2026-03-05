@@ -1,7 +1,7 @@
 package legend.lodmod.characters;
 
 import legend.game.characters.LevelUpAction;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 
 public class LevelUpLevelUpAction extends LevelUpAction<Void> {
   @Override

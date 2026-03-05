@@ -4,9 +4,9 @@ import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.additions.Addition;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
-import legend.game.types.CharacterData2c;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
@@ -25,7 +26,6 @@ import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.additionGlyphs_801141e4;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadAdditions;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
@@ -51,7 +51,8 @@ public class AdditionsScreen extends MenuScreen {
   private int charSlot;
   private int selectedSlot;
   private Renderable58 additionHighlight;
-  private final List<Addition> additions = new ArrayList<>();
+  private final List<RegistryId> additionIds = new ArrayList<>();
+  private int additionCount;
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapX = true;
@@ -75,22 +76,23 @@ public class AdditionsScreen extends MenuScreen {
 
       case 1 -> {
         deallocateRenderables(0);
-        loadAdditions(characterIndices_800bdbb8.getInt(this.charSlot), this.additions);
+        this.additionIds.clear();
+        this.additionIds.addAll(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).getUnlockedAdditions());
 
-        if(!this.additions.isEmpty()) {
+        if(!this.additionIds.isEmpty()) {
           this.additionHighlight = allocateUiElement(117, 117, 39, this.getAdditionSlotY(this.selectedSlot) - 4);
           initHighlight(this.additionHighlight);
         }
 
         allocateUiElement(69, 69, 0, 0); // Background left
         allocateUiElement(70, 70, 192, 0); // Background right
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0xffL);
+        this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0xffL);
         this.loadingStage++;
       }
 
       case 2 -> {
         addLeftRightArrows(this.charSlot, characterIndices_800bdbb8.size());
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
+        this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -111,13 +113,13 @@ public class AdditionsScreen extends MenuScreen {
 
       // Fade out
       case 100 -> {
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
+        this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
         this.unload.run();
       }
     }
   }
 
-  private void renderAdditions(final int charSlot, final List<Addition> additions, final RegistryId selectedAddition, final long a4) {
+  private void renderAdditions(final int charSlot, final List<RegistryId> additions, final RegistryId selectedAddition, final long a4) {
     final boolean allocate = a4 == 0xff;
     final int charIndex = characterIndices_800bdbb8.getInt(charSlot);
 
@@ -131,26 +133,27 @@ public class AdditionsScreen extends MenuScreen {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
       if(allocate) {
-        for(int i = 0; i < charData.additionStats.size(); i++) {
+        for(int i = 0; i < this.additionCount; i++) {
           final int y = this.getAdditionSlotY(i);
           renderCharacter(24, y, i + 1); // Addition number
         }
       }
 
-      for(int i = 0; i < this.additions.size(); i++) {
-        final Addition addition = this.additions.get(i);
+      for(int i = 0; i < this.additionIds.size(); i++) {
+        final RegistryId additionId = this.additionIds.get(i);
+        final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
         final int y = this.getAdditionSlotY(i);
 
-        renderText(addition.getName(), 33, y - 2, !addition.getRegistryId().equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);
+        renderText(addition.getName(), 33, y - 2, !additionId.equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);
 
         if(allocate) {
-          final CharacterAdditionStats additionStats = charData.additionStats.get(addition.getRegistryId());
-          final int level = additionStats.level + 1;
+          final CharacterAdditionInfo info = charData.getAdditionInfo(additionId);
+          final int level = info.level + 1;
           renderThreeDigitNumber(197, y, level);
-          renderThreeDigitNumber(230, y, addition.getHitCount(gameState_800babc8, charData, additionStats));
-          renderThreeDigitNumber(263, y, addition.getSp(gameState_800babc8, charData, additionStats));
-          renderThreeDigitNumber(297, y, addition.getDamage(gameState_800babc8, charData, additionStats));
-          renderThreeDigitNumber(322, y, additionStats.xp);
+          renderThreeDigitNumber(230, y, addition.getHitCount(gameState_800babc8, charData, info));
+          renderThreeDigitNumber(263, y, addition.getSp(gameState_800babc8, charData, info));
+          renderThreeDigitNumber(297, y, addition.getDamage(gameState_800babc8, charData, info));
+          renderThreeDigitNumber(322, y, info.xp);
 
           if(level < 5) {
             renderThreeDigitNumber(342, y, level * 20); // Max XP
@@ -191,7 +194,7 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 7; i++) {
-      if(!this.additions.isEmpty() && this.selectedSlot != i && MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
+      if(!this.additionIds.isEmpty() && this.selectedSlot != i && MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
         playMenuSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
@@ -212,12 +215,12 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(button == PLATFORM.getMouseButton(0) && !this.additions.isEmpty()) {
-      for(int i = 0; i < this.additions.size(); i++) {
+    if(button == PLATFORM.getMouseButton(0) && !this.additionIds.isEmpty()) {
+      for(int i = 0; i < this.additionIds.size(); i++) {
         if(MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
           this.selectedSlot = i;
           this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
-          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19 = this.additions.get(i).getRegistryId();
+          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19 = this.additionIds.get(i);
           playMenuSound(2);
           unloadRenderable(this.additionHighlight);
           this.loadingStage = 1;
@@ -236,7 +239,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
-    if(!this.additions.isEmpty()) {
+    if(!this.additionIds.isEmpty()) {
       if(this.selectedSlot > 0) {
         playMenuSound(1);
         this.selectedSlot--;
@@ -250,7 +253,7 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuNavigateDown() {
-    if(!this.additions.isEmpty()) {
+    if(!this.additionIds.isEmpty()) {
       if(this.selectedSlot < 6) {
         playMenuSound(1);
         this.selectedSlot++;
@@ -296,8 +299,8 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuSelect() {
-    if(this.selectedSlot < this.additions.size()) {
-      gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19 = this.additions.get(this.selectedSlot).getRegistryId();
+    if(this.selectedSlot < this.additionIds.size()) {
+      gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19 = this.additionIds.get(this.selectedSlot);
       playMenuSound(2);
       unloadRenderable(this.additionHighlight);
       this.loadingStage = 1;

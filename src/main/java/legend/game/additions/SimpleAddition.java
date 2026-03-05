@@ -1,6 +1,7 @@
 package legend.game.additions;
 
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.GameState52c;
 
 public abstract class SimpleAddition extends Addition {
@@ -15,12 +16,12 @@ public abstract class SimpleAddition extends Addition {
   }
 
   @Override
-  public int getDamage(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public int getDamage(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
     return (int)(this.baseDamage * this.getDamageMultiplier(state, charData, additionStats));
   }
 
   @Override
-  public int getSp(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public int getSp(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
     final float multi = this.getSpMultiplier(state, charData, additionStats);
     int sp = 0;
 
@@ -32,22 +33,22 @@ public abstract class SimpleAddition extends Addition {
   }
 
   @Override
-  public float getDamageMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public float getDamageMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
     return this.levelMultipliers[additionStats.level].damage;
   }
 
   @Override
-  public float getSpMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public float getSpMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
     return this.levelMultipliers[additionStats.level].sp;
   }
 
   @Override
-  public int getHitCount(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public int getHitCount(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
     return this.hits.length;
   }
 
   @Override
-  public AdditionHitProperties10 getHit(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats, final int index) {
+  public AdditionHitProperties10 getHit(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats, final int index) {
     return this.hits[index];
   }
 

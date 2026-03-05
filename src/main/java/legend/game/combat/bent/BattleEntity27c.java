@@ -15,15 +15,17 @@ import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.ItemStack;
+import legend.game.inventory.SpellStats0c;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
+import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.SoundFile;
 import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
-import legend.game.types.SpellStats0c;
 import legend.lodmod.LodMod;
+import legend.lodmod.LodSpells;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -32,6 +34,7 @@ import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.GsGetLws;
@@ -45,10 +48,10 @@ import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Battle.FUN_800ca194;
 import static legend.game.combat.Battle.combatantTimRects_800fa6e0;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
@@ -119,7 +122,7 @@ public abstract class BattleEntity27c extends BattleObject {
    */
   public int specialEffectFlag_14;
 //  public int equipmentType_16;
-  public int equipment_02_18;
+//  public int equipment_02_18;
   public int equipmentEquipableFlags_1a;
 
 //  public int equipment_05_1e;
@@ -143,8 +146,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
 //  public int _2e;
 //  public int equipmentIcon_30;
-  public int attackHit_3c;
-  public int magicHit_3e;
+//  public int attackHit_3c;
+//  public int magicHit_3e;
   /**
    * Player only - if you have a weapon that inflicts a status, this will be a %
    * <p>
@@ -170,7 +173,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int equipmentOnHitStatus_4a;
   /** Determines turn order */
   public int turnValue_4c;
-  public int spellId_4e;
+//  public int spellId_4e;
 
 //  public int itemId_52;
   public int guard_54;
@@ -341,16 +344,85 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public void turnFinished() {
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_ATTACK);
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_MAGIC_ATTACK);
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_DEFENCE);
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_MAGIC_DEFENCE);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_ATTACK_HIT);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MAGIC_HIT);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_ATTACK_AVOID);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MAGIC_AVOID);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_PHYSICAL_IMMUNITY);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MAGICAL_IMMUNITY);
+    if(this.powerAttackTurns_b5 > 0) {
+      this.powerAttackTurns_b5--;
+
+      if(this.powerAttackTurns_b5 == 0) {
+        this.powerAttack_b4 = 0;
+      }
+    }
+
+    if(this.powerMagicAttackTurns_b7 > 0) {
+      this.powerMagicAttackTurns_b7--;
+
+      if(this.powerMagicAttackTurns_b7 == 0) {
+        this.powerMagicAttack_b6 = 0;
+      }
+    }
+
+    if(this.powerDefenceTurns_b9 > 0) {
+      this.powerDefenceTurns_b9--;
+
+      if(this.powerDefenceTurns_b9 == 0) {
+        this.powerDefence_b8 = 0;
+      }
+    }
+
+    if(this.powerMagicDefenceTurns_bb > 0) {
+      this.powerMagicDefenceTurns_bb--;
+
+      if(this.powerMagicDefenceTurns_bb == 0) {
+        this.powerMagicDefence_ba = 0;
+      }
+    }
+
+    if(this.tempAttackHitTurns_bd > 0) {
+      this.tempAttackHitTurns_bd--;
+
+      if(this.tempAttackHitTurns_bd == 0) {
+        this.tempAttackHit_bc = 0;
+      }
+    }
+
+    if(this.tempMagicHitTurns_bf > 0) {
+      this.tempMagicHitTurns_bf--;
+
+      if(this.tempMagicHitTurns_bf == 0) {
+        this.tempMagicHit_be = 0;
+      }
+    }
+
+    if(this.tempAttackAvoidTurns_c1 > 0) {
+      this.tempAttackAvoidTurns_c1--;
+
+      if(this.tempAttackAvoidTurns_c1 == 0) {
+        this.tempAttackAvoid_c0 = 0;
+      }
+    }
+
+    if(this.tempMagicAvoidTurns_c3 > 0) {
+      this.tempMagicAvoidTurns_c3--;
+
+      if(this.tempMagicAvoidTurns_c3 == 0) {
+        this.tempMagicAvoid_c2 = 0;
+      }
+    }
+
+    if(this.tempPhysicalImmunityTurns_c5 > 0) {
+      this.tempPhysicalImmunityTurns_c5--;
+
+      if(this.tempPhysicalImmunityTurns_c5 == 0) {
+        this.tempPhysicalImmunity_c4 = 0;
+      }
+    }
+
+    if(this.tempMagicalImmunityTurns_c7 > 0) {
+      this.tempMagicalImmunityTurns_c7--;
+
+      if(this.tempMagicalImmunityTurns_c7 == 0) {
+        this.tempMagicalImmunity_c6 = 0;
+      }
+    }
 
     this.stats.turnFinished(this);
   }
@@ -360,55 +432,51 @@ public abstract class BattleEntity27c extends BattleObject {
 
   }
 
-  protected void tickTemporaryStatMod(final BattleEntity27c bent, final BattleEntityStat stat) {
-    if(bent.getStat(stat) != 0) {
-      if((bent.getStat(stat) & 0xff00) < 0x200) { // Turns is stored in upper byte
-        bent.setStat(stat, 0);
-      } else {
-        bent.setStat(stat, bent.getStat(stat) - 0x100); // Subtract one turn
-      }
-    }
-  }
+  public abstract int getStatusEffectChance(final AttackType attackType);
+  public abstract int getStatusEffectStatus(final AttackType attackType);
+  public abstract int getSpecialEffectStat(final AttackType attackType);
+  public abstract int getSpecialEffectMask(final AttackType attackType);
 
   @Deprecated
-  public int getStat(final BattleEntityStat statIndex) {
-    return switch(statIndex) {
+  public void getStat(final BattleEntityStat statIndex, final Param out) {
+    if(out.isRegistryId()) {
+      out.set(switch(statIndex) {
+        case SPELL_ID -> this.spell_94 != null ? this.spell_94.getRegistryId() : null;
+        case ITEM_ID -> this.item_d4.getItem().getRegistryId();
+        case ITEM_ELEMENT -> this.item_d4.getAttackElement().getRegistryId();
+        case ELEMENT -> this.getElement().getRegistryId();
+
+        default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
+      });
+    }
+
+    out.set(switch(statIndex) {
       case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getCurrent();
 
       case STATUS -> this.status_0e;
       case MAX_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getMax();
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14;
-//      case EQUIPMENT_TYPE -> this.equipmentType_16;
-      case EQUIPMENT_02 -> this.equipment_02_18;
       case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a;
 
-//      case EQUIPMENT_05 -> this.equipment_05_1e;
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.pack();
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.pack();
       case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24;
-//      case EQUIPMENT_09 -> this.equipment_09_26;
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28;
 
-//      case _21 -> this._2e;
-//      case EQUIPMENT_ICON -> this.equipmentIcon_30;
       case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
       case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
       case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
       case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).get();
       case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get();
-      case ATTACK_HIT -> this.attackHit_3c;
-      case MAGIC_HIT -> this.magicHit_3e;
+      case ATTACK_HIT -> this.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).get();
+      case MAGIC_HIT -> this.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).get();
       case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).get();
       case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44;
-//      case EQUIPMENT_19 -> this.equipment_19_46;
-//      case EQUIPMENT_1a -> this.equipment_1a_48;
       case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a;
       case TURN_VALUE -> this.turnValue_4c;
-      case SPELL_ID -> this.spellId_4e;
 
-//      case ITEM_ID -> this.itemId_52;
       case GUARD -> this.guard_54;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e;
@@ -416,8 +484,6 @@ public abstract class BattleEntity27c extends BattleObject {
       case _63 -> this._82;
       case MIDDLE_OFFSET_X -> this.middleOffsetX_84;
       case MIDDLE_OFFSET_Y -> this.middleOffsetY_86;
-//      case _66 -> this._88;
-//      case _67 -> this._8a;
 
       case SPELL_TARGET_TYPE -> this.spell_94.targetType_00;
       case SPELL_FLAGS -> this.spell_94.flags_01;
@@ -443,22 +509,6 @@ public abstract class BattleEntity27c extends BattleObject {
       case TEMP_PHYSICAL_IMMUNITY -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
       case TEMP_MAGICAL_IMMUNITY -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
 
-//      case ITEM_TARGET -> this.item_d4.target_00;
-//      case ITEM_ELEMENT -> this.item_d4.element_01.flag;
-//      case ITEM_DAMAGE_MULTIPLIER -> this.item_d4.damageMultiplier_02;
-
-//      case ITEM_DAMAGE -> this.item_d4.damage_05;
-
-//      case ITEM_ICON -> this.item_d4.icon_07;
-//      case ITEM_STATUS -> this.item_d4.status_08;
-//      case ITEM_PERCENTAGE -> this.item_d4.percentage_09;
-//      case ITEM_UU2 -> this.item_d4.uu2_0a;
-//      case ITEM_TYPE -> this.item_d4.type_0b;
-//      case _116 -> this._ec;
-//      case _117 -> this._ee;
-//      case _118 -> this._f0;
-//      case _119 -> this._f2;
-
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 ? 1 : 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 ? 1 : 0;
       case PHYSICAL_RESISTANCE -> this.physicalResistance_114 ? 1 : 0;
@@ -467,108 +517,99 @@ public abstract class BattleEntity27c extends BattleObject {
       case _159 -> this._142;
 
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
-    };
+    });
   }
 
   @Deprecated
-  public void setStat(final BattleEntityStat statIndex, final int value) {
+  public void setStat(final BattleEntityStat statIndex, final Param value) {
     switch(statIndex) {
-      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).setCurrent(value);
+      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).setCurrent(value.get());
 
-      case STATUS -> this.status_0e = value;
+      case STATUS -> this.status_0e = value.get();
 
-      case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14 = value;
-//      case EQUIPMENT_TYPE -> this.equipmentType_16 = value;
-      case EQUIPMENT_02 -> this.equipment_02_18 = value;
-      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value;
+      case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14 = value.get();
+      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value.get();
 
-//      case EQUIPMENT_05 -> this.equipment_05_1e = value;
-      case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value);
-      case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value);
-      case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 = value;
-//      case EQUIPMENT_09 -> this.equipment_09_26 = value;
-      case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value;
+      case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value.get());
+      case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value.get());
+      case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 = value.get();
+      case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value.get();
 
-//      case _21 -> this._2e = value;
-//      case EQUIPMENT_ICON -> this.equipmentIcon_30 = value;
-      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value);
-      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value);
-      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value);
-      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value);
-      case ATTACK_HIT -> this.attackHit_3c = value;
-      case MAGIC_HIT -> this.magicHit_3e = value;
-      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(value);
-      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value);
-      case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value;
-//      case EQUIPMENT_19 -> this.equipment_19_46 = value;
-//      case EQUIPMENT_1a -> this.equipment_1a_48 = value;
-      case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a = value;
-      case TURN_VALUE -> this.turnValue_4c = value;
-      case SPELL_ID -> this.spellId_4e = value;
+      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value.get());
+      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value.get());
+      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value.get());
+      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value.get());
+      case ATTACK_HIT -> this.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(value.get());
+      case MAGIC_HIT -> this.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(value.get());
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(value.get());
+      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value.get());
+      case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value.get();
+      case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a = value.get();
+      case TURN_VALUE -> this.turnValue_4c = value.get();
+      case SPELL_ID -> {
+        if(value.isRegistryId()) {
+          this.spell_94 = REGISTRIES.spells.getEntry(value.getRegistryId()).get();
+        } else {
+          this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[value.get()])).get();
+        }
+      }
+      case ITEM_ID -> this.item_d4 = new ItemStack(REGISTRIES.items.getEntry(value.getRegistryId()).get());
 
-//      case ITEM_ID -> this.itemId_52 = value;
-      case GUARD -> this.guard_54 = value;
+      case GUARD -> this.guard_54 = value.get();
 
-      case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
-      case _62 -> this._80 = value;
-      case _63 -> this._82 = value;
-      case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value;
-      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value;
-//      case _66 -> this._88 = value;
-//      case _67 -> this._8a = value;
+      case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value.get();
+      case _62 -> this._80 = value.get();
+      case _63 -> this._82 = value.get();
+      case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value.get();
+      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value.get();
 
       case POWER_ATTACK -> {
-        this.powerAttack_b4 = (byte)value;
-        this.powerAttackTurns_b5 = value >>> 8 & 0xff;
+        this.powerAttack_b4 = (byte)value.get();
+        this.powerAttackTurns_b5 = value.get() >>> 8 & 0xff;
       }
       case POWER_MAGIC_ATTACK -> {
-        this.powerMagicAttack_b6 = (byte)value;
-        this.powerMagicAttackTurns_b7 = value >>> 8 & 0xff;
+        this.powerMagicAttack_b6 = (byte)value.get();
+        this.powerMagicAttackTurns_b7 = value.get() >>> 8 & 0xff;
       }
       case POWER_DEFENCE -> {
-        this.powerDefence_b8 = (byte)value;
-        this.powerDefenceTurns_b9 = value >>> 8 & 0xff;
+        this.powerDefence_b8 = (byte)value.get();
+        this.powerDefenceTurns_b9 = value.get() >>> 8 & 0xff;
       }
       case POWER_MAGIC_DEFENCE -> {
-        this.powerMagicDefence_ba = (byte)value;
-        this.powerMagicDefenceTurns_bb = value >>> 8 & 0xff;
+        this.powerMagicDefence_ba = (byte)value.get();
+        this.powerMagicDefenceTurns_bb = value.get() >>> 8 & 0xff;
       }
       case TEMP_ATTACK_HIT -> {
-        this.tempAttackHit_bc = value & 0xff;
-        this.tempAttackHitTurns_bd = value >>> 8 & 0xff;
+        this.tempAttackHit_bc = value.get() & 0xff;
+        this.tempAttackHitTurns_bd = value.get() >>> 8 & 0xff;
       }
       case TEMP_MAGIC_HIT -> {
-        this.tempMagicHit_be = value & 0xff;
-        this.tempMagicHitTurns_bf = value >>> 8 & 0xff;
+        this.tempMagicHit_be = value.get() & 0xff;
+        this.tempMagicHitTurns_bf = value.get() >>> 8 & 0xff;
       }
       case TEMP_ATTACK_AVOID -> {
-        this.tempAttackAvoid_c0 = value & 0xff;
-        this.tempAttackAvoidTurns_c1 = value >>> 8 & 0xff;
+        this.tempAttackAvoid_c0 = value.get() & 0xff;
+        this.tempAttackAvoidTurns_c1 = value.get() >>> 8 & 0xff;
       }
       case TEMP_MAGIC_AVOID -> {
-        this.tempMagicAvoid_c2 = value & 0xff;
-        this.tempMagicAvoidTurns_c3 = value >>> 8 & 0xff;
+        this.tempMagicAvoid_c2 = value.get() & 0xff;
+        this.tempMagicAvoidTurns_c3 = value.get() >>> 8 & 0xff;
       }
       case TEMP_PHYSICAL_IMMUNITY -> {
-        this.tempPhysicalImmunity_c4 = value & 0xff;
-        this.tempPhysicalImmunityTurns_c5 = value >>> 8 & 0xff;
+        this.tempPhysicalImmunity_c4 = value.get() & 0xff;
+        this.tempPhysicalImmunityTurns_c5 = value.get() >>> 8 & 0xff;
       }
       case TEMP_MAGICAL_IMMUNITY -> {
-        this.tempMagicalImmunity_c6 = value & 0xff;
-        this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
+        this.tempMagicalImmunity_c6 = value.get() & 0xff;
+        this.tempMagicalImmunityTurns_c7 = value.get() >>> 8 & 0xff;
       }
 
-//      case _116 -> this._ec = value;
-//      case _117 -> this._ee = value;
-//      case _118 -> this._f0 = value;
-//      case _119 -> this._f2 = value;
+      case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value.get() != 0;
+      case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value.get() != 0;
+      case PHYSICAL_RESISTANCE -> this.physicalResistance_114 = value.get() != 0;
+      case MAGICAL_RESISTANCE -> this.magicalResistance_116 = value.get() != 0;
 
-      case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value != 0;
-      case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value != 0;
-      case PHYSICAL_RESISTANCE -> this.physicalResistance_114 = value != 0;
-      case MAGICAL_RESISTANCE -> this.magicalResistance_116 = value != 0;
-
-      case _159 -> this._142 = value;
+      case _159 -> this._142 = value.get();
 
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     }
@@ -758,28 +799,15 @@ public abstract class BattleEntity27c extends BattleObject {
   public void setActiveItem(final ItemStack item) {
     //LAB_800f7a98
     this.item_d4 = item;
-//    this._ec = 0;
-//    this._ee = 0;
-//    this._f0 = 0;
-//    this._f2 = 0;
-  }
-
-  @Method(0x800f7b68L)
-  public void setTempSpellStats() {
-    //LAB_800f7b8c
-    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
-    if(this.spellId_4e != -1 && this.spellId_4e <= 127) {
-      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this.spellId_4e, spellStats_800fa0b8[this.spellId_4e])).spell;
-    } else {
-      this.spell_94 = new SpellStats0c();
-    }
-
-    //LAB_800f7c54
   }
 
   @Method(0x800f9e50L)
   public void setActiveSpell(final int spellId) {
-    this.spellId_4e = spellId;
-    this.setTempSpellStats();
+    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
+    if(spellId != -1 && spellId <= 127) {
+      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(gameState_800babc8.charData_32c.get(this.charId_272), REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get())).spell;
+    } else {
+      this.spell_94 = LodSpells.SPELL127.get();
+    }
   }
 }

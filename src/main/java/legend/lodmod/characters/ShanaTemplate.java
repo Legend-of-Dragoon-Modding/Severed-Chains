@@ -1,13 +1,20 @@
 package legend.lodmod.characters;
 
+import legend.game.additions.AdditionHits80;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.Element;
+import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
-import org.legendofdragoon.modloader.registries.RegistryId;
+import legend.lodmod.LodSpells;
+
+import java.util.List;
 
 import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.LIGHT_ELEMENT;
 
 public class ShanaTemplate extends RetailCharacterTemplate {
   private static final int[] XP = {30, 50, 100, 204, 352, 559, 835, 1189, 1632, 2172, 2820, 3585, 4478, 5508, 6684, 8018, 9517, 11193, 13056, 15113, 17377, 19856, 22560, 25500, 28684, 32122, 35825, 39802, 44064, 48618, 53477, 58649, 64144, 69972, 76142, 82665, 89551, 96808, 104448, 112479, 120911, 129755, 139020, 148716, 158852, 169439, 180486, 192003, 204000, 219608, 235840, 252709, 270226, 288405, 307256, 326793, 347028, 367973, 389640};
@@ -16,6 +23,18 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   private static final int[] DEFENSE = {2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 4, 3, 4, 4, 3, 4, 3, 4, 4, 5, 5, 6, 5, 5, 6, 5, 5, 6};
   private static final int[] MAGIC_ATTACK = {3, 3, 3, 3, 4, 3, 3, 4, 3, 3, 4, 5, 6, 6, 5, 6, 6, 5, 6, 6, 6, 5, 6, 5, 6, 5, 6, 5, 6, 6, 5, 5, 5, 6, 5, 5, 5, 5, 5, 5, 6, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3};
   private static final int[] MAGIC_DEFENSE = {3, 3, 3, 3, 3, 4, 3, 3, 3, 3, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 6, 5, 6, 5, 6, 5, 6, 5, 5, 5, 5, 6, 5, 5, 5, 5, 6, 2, 3, 2, 3, 3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2};
+
+  @Override
+  public CharacterData2c make(final GameState52c gameState) {
+    final CharacterData2c character = super.make(gameState);
+
+    character.addSpell(LodSpells.STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of()));
+    character.addSpell(LodSpells.MOON_LIGHT.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.GATES_OF_HEAVEN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.WHITE_SILVER_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
+
+    return character;
+  }
 
   @Override
   public boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
@@ -43,8 +62,18 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+    return LIGHT_ELEMENT.get();
+  }
+
+  @Override
   protected Good getDragoonSpirit() {
     return SILVER_DRAGOON_SPIRIT.get();
+  }
+
+  @Override
+  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+    return null;
   }
 
   @Override
@@ -117,21 +146,5 @@ public class ShanaTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
-  }
-
-  @Override
-  protected RegistryId getAdditionUnlock(final int level) {
-    return null;
-  }
-
-  @Override
-  protected int getSpellUnlock(final int dlevel) {
-    return switch(dlevel) {
-      case 0 -> 11;
-      case 1 -> 10;
-      case 2 -> 12;
-      case 4 -> 13;
-      default -> -1;
-    };
   }
 }

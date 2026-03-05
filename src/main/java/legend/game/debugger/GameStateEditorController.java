@@ -11,7 +11,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

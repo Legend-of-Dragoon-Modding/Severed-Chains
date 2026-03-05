@@ -1,6 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
@@ -11,8 +10,8 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.additions.Addition;
-import legend.game.additions.CharacterAdditionStats;
-import legend.game.additions.UnlockState;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.types.EnemyDrop;
@@ -32,10 +31,7 @@ import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.controls.Highlight;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
-import legend.game.modding.events.characters.CharacterStatsEvent;
-import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
@@ -45,12 +41,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.textures.TextureAtlasIcon;
-import legend.game.types.ActiveStatsa0;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.GameState52c;
-import legend.game.types.LevelStuff08;
-import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MenuGlyph06;
@@ -73,10 +64,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -97,14 +86,13 @@ import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
-import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
+import static legend.game.characters.CharacterData2c.IN_PARTY;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -117,7 +105,6 @@ import static legend.game.sound.Audio.queuedSounds_800bd110;
 import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
-import static legend.game.types.CharacterData2c.IN_PARTY;
 import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
 import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.DARK_DRAGOON_SPIRIT;
@@ -191,43 +178,7 @@ public final class SItem {
     new MenuStatus08("Poison", new FontOptions().colour(TextColour.LIME).shadowColour(TextColour.GREEN).horizontalAlign(HorizontalAlign.CENTRE)),
   };
 
-  /** Note: arrays run into the next array's first element */
-  public static final int[][] dragoonXpRequirements_800fbbf0 = {
-    {0, 0, 1200, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1200, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-    {0, 0, 1000, 2000, 12000, 20000, 0},
-    {0, 0, 1000, 2000, 12000, 20000, 0},
-    {0, 0, 1000, 6000, 12000, 20000, 0},
-  };
-
   public static final int[] dragoonGoodsBits_800fbd08 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
-
-  public static final LevelStuff08[][] levelStuff_80111cfc = {
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(30, 50, 2, 3, 4, 4), new LevelStuff08(60, 50, 4, 5, 5, 5), new LevelStuff08(90, 50, 6, 7, 7, 7), new LevelStuff08(120, 50, 8, 9, 10, 9), new LevelStuff08(150, 50, 11, 11, 12, 11), new LevelStuff08(180, 50, 13, 13, 14, 13), new LevelStuff08(210, 50, 15, 15, 16, 15), new LevelStuff08(240, 50, 18, 17, 19, 17), new LevelStuff08(270, 50, 20, 19, 21, 19), new LevelStuff08(300, 50, 22, 21, 23, 21), new LevelStuff08(330, 50, 25, 24, 26, 24), new LevelStuff08(413, 50, 27, 26, 28, 26), new LevelStuff08(496, 50, 30, 29, 31, 29), new LevelStuff08(579, 50, 32, 31, 33, 32), new LevelStuff08(662, 50, 35, 34, 36, 34), new LevelStuff08(745, 50, 37, 36, 38, 37), new LevelStuff08(828, 50, 40, 39, 41, 40), new LevelStuff08(911, 50, 42, 41, 43, 42), new LevelStuff08(994, 50, 45, 44, 46, 45), new LevelStuff08(1077, 50, 47, 46, 48, 48), new LevelStuff08(1160, 50, 50, 49, 51, 51), new LevelStuff08(1272, 50, 52, 51, 53, 53), new LevelStuff08(1384, 50, 55, 54, 56, 55), new LevelStuff08(1496, 50, 57, 56, 58, 57), new LevelStuff08(1608, 50, 60, 59, 61, 60), new LevelStuff08(1720, 50, 62, 61, 63, 62), new LevelStuff08(1832, 50, 65, 64, 66, 64), new LevelStuff08(1944, 50, 67, 66, 68, 67), new LevelStuff08(2056, 50, 70, 69, 71, 69), new LevelStuff08(2168, 50, 72, 71, 73, 71), new LevelStuff08(2280, 50, 75, 74, 76, 74), new LevelStuff08(2399, 50, 77, 76, 78, 76), new LevelStuff08(2518, 50, 80, 79, 81, 79), new LevelStuff08(2637, 50, 82, 81, 83, 82), new LevelStuff08(2756, 50, 85, 84, 86, 84), new LevelStuff08(2875, 50, 87, 86, 88, 87), new LevelStuff08(2994, 50, 90, 89, 91, 90), new LevelStuff08(3113, 50, 92, 91, 93, 92), new LevelStuff08(3232, 50, 95, 94, 96, 95), new LevelStuff08(3351, 50, 97, 96, 98, 98), new LevelStuff08(3470, 50, 100, 99, 101, 101), new LevelStuff08(3729, 50, 102, 101, 103, 103), new LevelStuff08(3988, 50, 105, 104, 105, 105), new LevelStuff08(4247, 50, 107, 106, 108, 107), new LevelStuff08(4506, 50, 110, 109, 110, 110), new LevelStuff08(4765, 50, 112, 111, 113, 112), new LevelStuff08(5024, 50, 115, 114, 115, 114), new LevelStuff08(5283, 50, 117, 116, 118, 117), new LevelStuff08(5542, 50, 120, 119, 120, 119), new LevelStuff08(5801, 50, 122, 121, 123, 121), new LevelStuff08(6060, 50, 125, 124, 125, 124), new LevelStuff08(6220, 50, 127, 126, 128, 126), new LevelStuff08(6380, 50, 130, 129, 131, 129), new LevelStuff08(6540, 50, 133, 132, 133, 132), new LevelStuff08(6700, 50, 136, 135, 136, 135), new LevelStuff08(6860, 50, 138, 138, 139, 138), new LevelStuff08(7020, 50, 141, 141, 141, 141), new LevelStuff08(7180, 50, 144, 144, 144, 144), new LevelStuff08(7340, 50, 147, 147, 147, 147), new LevelStuff08(7500, 50, 150, 150, 150, 150), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(35, 40, 3, 2, 4, 2), new LevelStuff08(67, 40, 6, 3, 7, 3), new LevelStuff08(100, 40, 13, 4, 10, 4), new LevelStuff08(133, 40, 15, 6, 13, 5), new LevelStuff08(166, 40, 16, 7, 16, 6), new LevelStuff08(199, 40, 20, 8, 19, 7), new LevelStuff08(231, 40, 23, 10, 22, 7), new LevelStuff08(264, 40, 27, 11, 25, 8), new LevelStuff08(297, 40, 30, 13, 28, 9), new LevelStuff08(330, 40, 34, 14, 31, 10), new LevelStuff08(363, 40, 37, 15, 34, 11), new LevelStuff08(454, 40, 41, 17, 37, 12), new LevelStuff08(545, 40, 45, 18, 41, 13), new LevelStuff08(636, 40, 48, 20, 44, 14), new LevelStuff08(728, 40, 52, 22, 47, 15), new LevelStuff08(819, 40, 56, 23, 51, 16), new LevelStuff08(910, 40, 60, 25, 54, 17), new LevelStuff08(1002, 40, 63, 27, 57, 18), new LevelStuff08(1093, 40, 67, 28, 61, 19), new LevelStuff08(1184, 40, 71, 30, 64, 20), new LevelStuff08(1276, 40, 75, 31, 67, 21), new LevelStuff08(1399, 40, 78, 33, 71, 24), new LevelStuff08(1522, 40, 82, 35, 74, 27), new LevelStuff08(1645, 40, 86, 37, 77, 29), new LevelStuff08(1768, 40, 90, 39, 81, 32), new LevelStuff08(1892, 40, 93, 41, 84, 35), new LevelStuff08(2015, 40, 97, 43, 87, 37), new LevelStuff08(2138, 40, 101, 45, 91, 40), new LevelStuff08(2261, 40, 105, 47, 94, 43), new LevelStuff08(2384, 40, 108, 48, 97, 45), new LevelStuff08(2508, 40, 112, 50, 101, 48), new LevelStuff08(2638, 40, 116, 52, 104, 49), new LevelStuff08(2769, 40, 120, 54, 107, 50), new LevelStuff08(2900, 40, 123, 55, 111, 51), new LevelStuff08(3031, 40, 127, 57, 114, 52), new LevelStuff08(3162, 40, 131, 59, 117, 53), new LevelStuff08(3293, 40, 135, 61, 121, 54), new LevelStuff08(3424, 40, 138, 62, 124, 55), new LevelStuff08(3555, 40, 142, 64, 127, 57), new LevelStuff08(3686, 40, 146, 66, 131, 58), new LevelStuff08(3817, 40, 150, 68, 134, 59), new LevelStuff08(4101, 40, 153, 70, 137, 61), new LevelStuff08(4386, 40, 157, 72, 141, 64), new LevelStuff08(4671, 40, 161, 74, 144, 67), new LevelStuff08(4956, 40, 165, 76, 147, 70), new LevelStuff08(5241, 40, 168, 78, 151, 73), new LevelStuff08(5526, 40, 172, 80, 154, 76), new LevelStuff08(5811, 40, 176, 82, 157, 79), new LevelStuff08(6096, 40, 180, 84, 161, 82), new LevelStuff08(6381, 40, 183, 86, 164, 85), new LevelStuff08(6666, 40, 187, 88, 167, 87), new LevelStuff08(6842, 40, 191, 90, 171, 88), new LevelStuff08(7018, 40, 195, 92, 174, 89), new LevelStuff08(7194, 40, 200, 94, 178, 90), new LevelStuff08(7370, 40, 204, 97, 182, 91), new LevelStuff08(7546, 40, 208, 99, 185, 93), new LevelStuff08(7722, 40, 212, 101, 189, 94), new LevelStuff08(7898, 40, 216, 104, 192, 95), new LevelStuff08(8074, 40, 220, 106, 196, 96), new LevelStuff08(8250, 40, 225, 108, 199, 97), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(24, 65, 2, 3, 2, 3), new LevelStuff08(48, 65, 3, 6, 3, 6), new LevelStuff08(72, 65, 5, 9, 5, 9), new LevelStuff08(96, 65, 7, 12, 6, 12), new LevelStuff08(120, 65, 8, 16, 8, 15), new LevelStuff08(144, 65, 10, 19, 9, 19), new LevelStuff08(168, 65, 12, 22, 11, 22), new LevelStuff08(192, 65, 13, 26, 12, 25), new LevelStuff08(216, 65, 15, 29, 14, 28), new LevelStuff08(240, 65, 17, 32, 15, 31), new LevelStuff08(264, 65, 19, 36, 17, 35), new LevelStuff08(330, 65, 20, 41, 18, 41), new LevelStuff08(396, 65, 21, 47, 20, 47), new LevelStuff08(463, 65, 22, 53, 22, 53), new LevelStuff08(529, 65, 23, 58, 24, 59), new LevelStuff08(596, 65, 24, 64, 25, 65), new LevelStuff08(662, 65, 26, 70, 27, 71), new LevelStuff08(728, 65, 27, 75, 29, 77), new LevelStuff08(795, 65, 28, 81, 31, 83), new LevelStuff08(861, 65, 29, 87, 33, 89), new LevelStuff08(928, 65, 30, 93, 34, 95), new LevelStuff08(1017, 65, 32, 98, 36, 101), new LevelStuff08(1107, 65, 33, 104, 37, 106), new LevelStuff08(1196, 65, 35, 109, 39, 111), new LevelStuff08(1286, 65, 36, 115, 40, 117), new LevelStuff08(1376, 65, 38, 120, 42, 122), new LevelStuff08(1465, 65, 39, 126, 43, 128), new LevelStuff08(1555, 65, 40, 131, 45, 133), new LevelStuff08(1644, 65, 42, 137, 46, 139), new LevelStuff08(1734, 65, 43, 143, 48, 144), new LevelStuff08(1824, 65, 45, 148, 50, 150), new LevelStuff08(1919, 65, 47, 153, 51, 155), new LevelStuff08(2014, 65, 48, 158, 53, 160), new LevelStuff08(2109, 65, 50, 164, 54, 165), new LevelStuff08(2204, 65, 52, 169, 56, 170), new LevelStuff08(2300, 65, 54, 174, 57, 176), new LevelStuff08(2395, 65, 56, 179, 59, 181), new LevelStuff08(2490, 65, 58, 184, 60, 186), new LevelStuff08(2585, 65, 60, 189, 62, 191), new LevelStuff08(2680, 65, 61, 194, 63, 196), new LevelStuff08(2776, 65, 63, 200, 65, 202), new LevelStuff08(2983, 65, 65, 202, 68, 204), new LevelStuff08(3190, 65, 67, 205, 72, 207), new LevelStuff08(3397, 65, 69, 208, 75, 209), new LevelStuff08(3604, 65, 71, 211, 79, 212), new LevelStuff08(3812, 65, 73, 214, 83, 215), new LevelStuff08(4019, 65, 76, 217, 86, 217), new LevelStuff08(4226, 65, 78, 220, 90, 220), new LevelStuff08(4433, 65, 80, 223, 93, 222), new LevelStuff08(4640, 65, 82, 226, 97, 225), new LevelStuff08(4848, 65, 84, 229, 101, 228), new LevelStuff08(4976, 65, 86, 232, 106, 231), new LevelStuff08(5104, 65, 88, 235, 111, 234), new LevelStuff08(5232, 65, 91, 238, 117, 237), new LevelStuff08(5360, 65, 93, 240, 122, 240), new LevelStuff08(5488, 65, 95, 243, 127, 243), new LevelStuff08(5616, 65, 97, 246, 133, 246), new LevelStuff08(5744, 65, 100, 249, 138, 249), new LevelStuff08(5872, 65, 102, 252, 143, 252), new LevelStuff08(6000, 65, 104, 255, 149, 254), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(21, 55, 3, 6, 5, 5), new LevelStuff08(42, 55, 6, 10, 8, 7), new LevelStuff08(63, 55, 9, 14, 11, 10), new LevelStuff08(84, 55, 13, 18, 14, 12), new LevelStuff08(105, 55, 16, 22, 17, 15), new LevelStuff08(126, 55, 20, 27, 19, 17), new LevelStuff08(147, 55, 23, 31, 22, 20), new LevelStuff08(168, 55, 27, 35, 25, 22), new LevelStuff08(189, 55, 30, 39, 28, 25), new LevelStuff08(210, 55, 34, 43, 31, 27), new LevelStuff08(231, 55, 37, 48, 34, 30), new LevelStuff08(289, 55, 39, 49, 35, 32), new LevelStuff08(347, 55, 40, 50, 37, 34), new LevelStuff08(405, 55, 42, 51, 38, 37), new LevelStuff08(463, 55, 44, 53, 39, 39), new LevelStuff08(521, 55, 46, 54, 40, 41), new LevelStuff08(579, 55, 47, 55, 41, 43), new LevelStuff08(637, 55, 49, 57, 43, 45), new LevelStuff08(695, 55, 51, 58, 44, 47), new LevelStuff08(753, 55, 52, 59, 45, 50), new LevelStuff08(812, 55, 54, 61, 46, 52), new LevelStuff08(890, 55, 56, 62, 49, 55), new LevelStuff08(968, 55, 57, 63, 53, 58), new LevelStuff08(1047, 55, 59, 64, 56, 61), new LevelStuff08(1125, 55, 61, 66, 59, 64), new LevelStuff08(1204, 55, 63, 67, 63, 67), new LevelStuff08(1282, 55, 64, 68, 66, 70), new LevelStuff08(1360, 55, 66, 70, 69, 73), new LevelStuff08(1439, 55, 68, 71, 72, 76), new LevelStuff08(1517, 55, 70, 72, 76, 79), new LevelStuff08(1596, 55, 71, 74, 79, 82), new LevelStuff08(1679, 55, 73, 75, 80, 83), new LevelStuff08(1762, 55, 75, 77, 81, 84), new LevelStuff08(1845, 55, 77, 79, 83, 85), new LevelStuff08(1929, 55, 79, 80, 84, 86), new LevelStuff08(2012, 55, 81, 82, 85, 87), new LevelStuff08(2095, 55, 83, 84, 86, 88), new LevelStuff08(2179, 55, 84, 86, 87, 90), new LevelStuff08(2262, 55, 86, 87, 88, 91), new LevelStuff08(2345, 55, 88, 89, 90, 92), new LevelStuff08(2429, 55, 90, 91, 91, 93), new LevelStuff08(2610, 55, 94, 95, 95, 97), new LevelStuff08(2791, 55, 98, 99, 99, 101), new LevelStuff08(2972, 55, 103, 103, 103, 105), new LevelStuff08(3154, 55, 107, 107, 108, 109), new LevelStuff08(3335, 55, 111, 111, 112, 113), new LevelStuff08(3516, 55, 115, 115, 116, 117), new LevelStuff08(3698, 55, 119, 119, 120, 121), new LevelStuff08(3879, 55, 124, 123, 124, 125), new LevelStuff08(4060, 55, 128, 127, 129, 129), new LevelStuff08(4242, 55, 132, 131, 133, 133), new LevelStuff08(4354, 55, 133, 133, 134, 135), new LevelStuff08(4466, 55, 134, 135, 135, 136), new LevelStuff08(4578, 55, 135, 137, 136, 138), new LevelStuff08(4690, 55, 136, 139, 137, 140), new LevelStuff08(4802, 55, 137, 141, 138, 142), new LevelStuff08(4914, 55, 139, 143, 139, 144), new LevelStuff08(5026, 55, 140, 145, 140, 146), new LevelStuff08(5138, 55, 141, 147, 141, 148), new LevelStuff08(5250, 55, 142, 150, 142, 150), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(27, 60, 3, 2, 4, 2), new LevelStuff08(54, 60, 5, 3, 6, 3), new LevelStuff08(81, 60, 8, 5, 8, 5), new LevelStuff08(108, 60, 11, 6, 10, 6), new LevelStuff08(135, 60, 14, 8, 12, 7), new LevelStuff08(162, 60, 17, 10, 15, 9), new LevelStuff08(189, 60, 19, 11, 17, 10), new LevelStuff08(216, 60, 22, 13, 19, 11), new LevelStuff08(243, 60, 25, 14, 21, 13), new LevelStuff08(270, 60, 28, 16, 23, 14), new LevelStuff08(297, 60, 31, 18, 26, 15), new LevelStuff08(371, 60, 34, 20, 28, 19), new LevelStuff08(446, 60, 37, 23, 31, 22), new LevelStuff08(521, 60, 40, 26, 33, 25), new LevelStuff08(595, 60, 43, 29, 36, 28), new LevelStuff08(670, 60, 47, 32, 38, 32), new LevelStuff08(745, 60, 50, 35, 41, 35), new LevelStuff08(819, 60, 53, 38, 43, 38), new LevelStuff08(894, 60, 56, 41, 46, 41), new LevelStuff08(969, 60, 59, 44, 48, 45), new LevelStuff08(1044, 60, 63, 47, 51, 48), new LevelStuff08(1144, 60, 66, 48, 53, 49), new LevelStuff08(1245, 60, 69, 49, 56, 50), new LevelStuff08(1346, 60, 72, 49, 58, 51), new LevelStuff08(1447, 60, 75, 50, 61, 52), new LevelStuff08(1548, 60, 78, 51, 63, 53), new LevelStuff08(1648, 60, 81, 52, 66, 54), new LevelStuff08(1749, 60, 84, 53, 68, 55), new LevelStuff08(1850, 60, 87, 53, 71, 56), new LevelStuff08(1951, 60, 90, 54, 73, 56), new LevelStuff08(2052, 60, 94, 55, 76, 57), new LevelStuff08(2159, 60, 97, 59, 78, 62), new LevelStuff08(2266, 60, 100, 64, 81, 66), new LevelStuff08(2373, 60, 103, 68, 83, 70), new LevelStuff08(2480, 60, 106, 73, 86, 74), new LevelStuff08(2587, 60, 109, 77, 88, 78), new LevelStuff08(2694, 60, 112, 81, 91, 82), new LevelStuff08(2801, 60, 115, 86, 93, 87), new LevelStuff08(2908, 60, 118, 90, 96, 91), new LevelStuff08(3015, 60, 121, 95, 98, 95), new LevelStuff08(3123, 60, 125, 99, 101, 99), new LevelStuff08(3356, 60, 128, 100, 103, 100), new LevelStuff08(3589, 60, 131, 101, 105, 101), new LevelStuff08(3822, 60, 134, 101, 108, 102), new LevelStuff08(4055, 60, 137, 102, 110, 103), new LevelStuff08(4288, 60, 140, 103, 113, 103), new LevelStuff08(4521, 60, 143, 104, 115, 104), new LevelStuff08(4754, 60, 146, 104, 118, 105), new LevelStuff08(4987, 60, 149, 105, 120, 106), new LevelStuff08(5220, 60, 152, 106, 123, 107), new LevelStuff08(5454, 60, 156, 107, 125, 108), new LevelStuff08(5598, 60, 159, 111, 128, 112), new LevelStuff08(5742, 60, 163, 116, 131, 117), new LevelStuff08(5886, 60, 166, 120, 133, 121), new LevelStuff08(6030, 60, 170, 125, 136, 126), new LevelStuff08(6174, 60, 173, 130, 139, 130), new LevelStuff08(6318, 60, 177, 134, 141, 135), new LevelStuff08(6462, 60, 180, 139, 144, 139), new LevelStuff08(6606, 60, 184, 143, 147, 144), new LevelStuff08(6750, 60, 188, 148, 150, 148), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(35, 40, 3, 2, 4, 2), new LevelStuff08(67, 40, 6, 3, 7, 3), new LevelStuff08(100, 40, 13, 4, 10, 4), new LevelStuff08(133, 40, 15, 6, 13, 5), new LevelStuff08(166, 40, 16, 7, 16, 6), new LevelStuff08(199, 40, 20, 8, 19, 7), new LevelStuff08(231, 40, 23, 10, 22, 7), new LevelStuff08(264, 40, 27, 11, 25, 8), new LevelStuff08(297, 40, 30, 13, 28, 9), new LevelStuff08(330, 40, 34, 14, 31, 10), new LevelStuff08(363, 40, 37, 15, 34, 11), new LevelStuff08(454, 40, 41, 17, 37, 12), new LevelStuff08(545, 40, 45, 18, 41, 13), new LevelStuff08(636, 40, 48, 20, 44, 14), new LevelStuff08(728, 40, 52, 22, 47, 15), new LevelStuff08(819, 40, 56, 23, 51, 16), new LevelStuff08(910, 40, 60, 25, 54, 17), new LevelStuff08(1002, 40, 63, 27, 57, 18), new LevelStuff08(1093, 40, 67, 28, 61, 19), new LevelStuff08(1184, 40, 71, 30, 64, 20), new LevelStuff08(1276, 40, 75, 31, 67, 21), new LevelStuff08(1399, 40, 78, 33, 71, 24), new LevelStuff08(1522, 40, 82, 35, 74, 27), new LevelStuff08(1645, 40, 86, 37, 77, 29), new LevelStuff08(1768, 40, 90, 39, 81, 32), new LevelStuff08(1892, 40, 93, 41, 84, 35), new LevelStuff08(2015, 40, 97, 43, 87, 37), new LevelStuff08(2138, 40, 101, 45, 91, 40), new LevelStuff08(2261, 40, 105, 47, 94, 43), new LevelStuff08(2384, 40, 108, 48, 97, 45), new LevelStuff08(2508, 40, 112, 50, 101, 48), new LevelStuff08(2638, 40, 116, 52, 104, 49), new LevelStuff08(2769, 40, 120, 54, 107, 50), new LevelStuff08(2900, 40, 123, 55, 111, 51), new LevelStuff08(3031, 40, 127, 57, 114, 52), new LevelStuff08(3162, 40, 131, 59, 117, 53), new LevelStuff08(3293, 40, 135, 61, 121, 54), new LevelStuff08(3424, 40, 138, 62, 124, 55), new LevelStuff08(3555, 40, 142, 64, 127, 57), new LevelStuff08(3686, 40, 146, 66, 131, 58), new LevelStuff08(3817, 40, 150, 68, 134, 59), new LevelStuff08(4101, 40, 153, 70, 137, 61), new LevelStuff08(4386, 40, 157, 72, 141, 64), new LevelStuff08(4671, 40, 161, 74, 144, 67), new LevelStuff08(4956, 40, 165, 76, 147, 70), new LevelStuff08(5241, 40, 168, 78, 151, 73), new LevelStuff08(5526, 40, 172, 80, 154, 76), new LevelStuff08(5811, 40, 176, 82, 157, 79), new LevelStuff08(6096, 40, 180, 84, 161, 82), new LevelStuff08(6381, 40, 183, 86, 164, 85), new LevelStuff08(6666, 40, 187, 88, 167, 87), new LevelStuff08(6842, 40, 191, 90, 171, 88), new LevelStuff08(7018, 40, 195, 92, 174, 89), new LevelStuff08(7194, 40, 200, 94, 178, 90), new LevelStuff08(7370, 40, 204, 97, 182, 91), new LevelStuff08(7546, 40, 208, 99, 185, 93), new LevelStuff08(7722, 40, 212, 101, 189, 94), new LevelStuff08(7898, 40, 216, 104, 192, 95), new LevelStuff08(8074, 40, 220, 106, 196, 96), new LevelStuff08(8250, 40, 225, 108, 199, 97), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(18, 70, 2, 3, 2, 4), new LevelStuff08(36, 70, 3, 6, 3, 7), new LevelStuff08(54, 70, 5, 9, 4, 10), new LevelStuff08(72, 70, 7, 12, 6, 13), new LevelStuff08(90, 70, 8, 15, 7, 16), new LevelStuff08(108, 70, 10, 19, 9, 20), new LevelStuff08(126, 70, 12, 22, 10, 23), new LevelStuff08(144, 70, 13, 25, 11, 26), new LevelStuff08(162, 70, 15, 28, 13, 29), new LevelStuff08(180, 70, 17, 31, 14, 32), new LevelStuff08(198, 70, 19, 34, 16, 36), new LevelStuff08(247, 70, 21, 38, 17, 39), new LevelStuff08(297, 70, 23, 42, 19, 42), new LevelStuff08(347, 70, 25, 46, 21, 45), new LevelStuff08(397, 70, 27, 50, 23, 48), new LevelStuff08(447, 70, 29, 54, 25, 51), new LevelStuff08(496, 70, 31, 58, 27, 54), new LevelStuff08(546, 70, 33, 62, 29, 57), new LevelStuff08(596, 70, 35, 66, 31, 60), new LevelStuff08(646, 70, 37, 70, 33, 63), new LevelStuff08(696, 70, 40, 74, 34, 66), new LevelStuff08(763, 70, 41, 77, 37, 69), new LevelStuff08(830, 70, 42, 81, 39, 73), new LevelStuff08(897, 70, 43, 85, 41, 76), new LevelStuff08(964, 70, 44, 88, 43, 80), new LevelStuff08(1032, 70, 45, 92, 45, 84), new LevelStuff08(1099, 70, 46, 96, 47, 87), new LevelStuff08(1166, 70, 47, 99, 49, 91), new LevelStuff08(1233, 70, 48, 103, 52, 94), new LevelStuff08(1300, 70, 49, 107, 54, 98), new LevelStuff08(1368, 70, 50, 111, 56, 102), new LevelStuff08(1439, 70, 52, 114, 58, 105), new LevelStuff08(1510, 70, 53, 118, 60, 108), new LevelStuff08(1582, 70, 54, 122, 62, 111), new LevelStuff08(1653, 70, 56, 126, 65, 114), new LevelStuff08(1725, 70, 57, 130, 67, 117), new LevelStuff08(1796, 70, 58, 133, 69, 120), new LevelStuff08(1867, 70, 60, 137, 71, 123), new LevelStuff08(1939, 70, 61, 141, 73, 126), new LevelStuff08(2010, 70, 62, 145, 75, 129), new LevelStuff08(2082, 70, 64, 149, 77, 133), new LevelStuff08(2237, 70, 68, 152, 80, 136), new LevelStuff08(2392, 70, 72, 156, 82, 140), new LevelStuff08(2548, 70, 76, 160, 85, 143), new LevelStuff08(2703, 70, 80, 163, 87, 147), new LevelStuff08(2859, 70, 85, 167, 90, 150), new LevelStuff08(3014, 70, 89, 171, 92, 154), new LevelStuff08(3169, 70, 93, 174, 94, 157), new LevelStuff08(3325, 70, 97, 178, 97, 161), new LevelStuff08(3480, 70, 101, 182, 99, 164), new LevelStuff08(3636, 70, 105, 186, 102, 168), new LevelStuff08(3732, 70, 110, 190, 104, 171), new LevelStuff08(3828, 70, 115, 194, 106, 174), new LevelStuff08(3924, 70, 119, 199, 108, 178), new LevelStuff08(4020, 70, 124, 203, 110, 181), new LevelStuff08(4116, 70, 129, 207, 112, 184), new LevelStuff08(4212, 70, 133, 212, 114, 188), new LevelStuff08(4308, 70, 138, 216, 116, 191), new LevelStuff08(4404, 70, 143, 220, 118, 195), new LevelStuff08(4500, 70, 147, 225, 120, 198), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(45, 30, 4, 2, 4, 3), new LevelStuff08(83, 30, 9, 3, 8, 4), new LevelStuff08(121, 30, 14, 4, 13, 5), new LevelStuff08(160, 30, 18, 5, 17, 6), new LevelStuff08(198, 30, 23, 6, 22, 7), new LevelStuff08(237, 30, 28, 7, 27, 8), new LevelStuff08(275, 30, 33, 8, 31, 9), new LevelStuff08(313, 30, 38, 9, 36, 10), new LevelStuff08(352, 30, 43, 10, 40, 11), new LevelStuff08(390, 30, 48, 11, 45, 12), new LevelStuff08(429, 30, 53, 12, 50, 13), new LevelStuff08(536, 30, 57, 13, 55, 14), new LevelStuff08(644, 30, 62, 14, 60, 15), new LevelStuff08(752, 30, 66, 15, 65, 16), new LevelStuff08(860, 30, 71, 17, 70, 17), new LevelStuff08(968, 30, 76, 18, 76, 18), new LevelStuff08(1076, 30, 80, 19, 81, 19), new LevelStuff08(1184, 30, 85, 21, 86, 20), new LevelStuff08(1292, 30, 89, 22, 91, 21), new LevelStuff08(1400, 30, 94, 23, 96, 22), new LevelStuff08(1508, 30, 99, 25, 102, 23), new LevelStuff08(1653, 30, 103, 26, 107, 24), new LevelStuff08(1799, 30, 108, 27, 112, 25), new LevelStuff08(1944, 30, 113, 28, 117, 26), new LevelStuff08(2090, 30, 118, 29, 122, 27), new LevelStuff08(2236, 30, 123, 31, 128, 28), new LevelStuff08(2381, 30, 128, 32, 133, 29), new LevelStuff08(2527, 30, 133, 33, 138, 30), new LevelStuff08(2672, 30, 138, 34, 143, 31), new LevelStuff08(2818, 30, 143, 35, 148, 32), new LevelStuff08(2964, 30, 148, 37, 154, 34), new LevelStuff08(3118, 30, 153, 38, 157, 35), new LevelStuff08(3273, 30, 159, 39, 161, 36), new LevelStuff08(3428, 30, 164, 40, 165, 38), new LevelStuff08(3582, 30, 170, 42, 168, 39), new LevelStuff08(3737, 30, 176, 43, 172, 41), new LevelStuff08(3892, 30, 181, 44, 176, 42), new LevelStuff08(4046, 30, 187, 46, 179, 44), new LevelStuff08(4201, 30, 192, 47, 183, 45), new LevelStuff08(4356, 30, 198, 48, 187, 47), new LevelStuff08(4511, 30, 204, 50, 190, 48), new LevelStuff08(4847, 30, 206, 51, 194, 50), new LevelStuff08(5184, 30, 209, 52, 197, 51), new LevelStuff08(5521, 30, 211, 53, 201, 53), new LevelStuff08(5857, 30, 214, 54, 205, 54), new LevelStuff08(6194, 30, 217, 56, 208, 56), new LevelStuff08(6531, 30, 219, 57, 212, 58), new LevelStuff08(6867, 30, 222, 58, 215, 59), new LevelStuff08(7204, 30, 224, 59, 219, 61), new LevelStuff08(7541, 30, 227, 60, 223, 63), new LevelStuff08(7878, 30, 230, 62, 226, 64), new LevelStuff08(8086, 30, 232, 63, 229, 66), new LevelStuff08(8294, 30, 235, 64, 232, 68), new LevelStuff08(8502, 30, 238, 66, 236, 69), new LevelStuff08(8710, 30, 241, 67, 239, 71), new LevelStuff08(8918, 30, 243, 69, 242, 73), new LevelStuff08(9126, 30, 246, 70, 245, 74), new LevelStuff08(9334, 30, 249, 72, 248, 76), new LevelStuff08(9542, 30, 252, 73, 251, 78), new LevelStuff08(9750, 30, 254, 75, 254, 80), },
-    {new LevelStuff08(0, 0, 0, 0, 0, 0), new LevelStuff08(24, 65, 2, 3, 2, 3), new LevelStuff08(48, 65, 3, 6, 3, 6), new LevelStuff08(72, 65, 5, 9, 5, 9), new LevelStuff08(96, 65, 7, 12, 6, 12), new LevelStuff08(120, 65, 8, 16, 8, 15), new LevelStuff08(144, 65, 10, 19, 9, 19), new LevelStuff08(168, 65, 12, 22, 11, 22), new LevelStuff08(192, 65, 13, 26, 12, 25), new LevelStuff08(216, 65, 15, 29, 14, 28), new LevelStuff08(240, 65, 17, 32, 15, 31), new LevelStuff08(264, 65, 19, 36, 17, 35), new LevelStuff08(330, 65, 20, 41, 18, 41), new LevelStuff08(396, 65, 21, 47, 20, 47), new LevelStuff08(463, 65, 22, 53, 22, 53), new LevelStuff08(529, 65, 23, 58, 24, 59), new LevelStuff08(596, 65, 24, 64, 25, 65), new LevelStuff08(662, 65, 26, 70, 27, 71), new LevelStuff08(728, 65, 27, 75, 29, 77), new LevelStuff08(795, 65, 28, 81, 31, 83), new LevelStuff08(861, 65, 29, 87, 33, 89), new LevelStuff08(928, 65, 30, 93, 34, 95), new LevelStuff08(1017, 65, 32, 98, 36, 101), new LevelStuff08(1107, 65, 33, 104, 37, 106), new LevelStuff08(1196, 65, 35, 109, 39, 111), new LevelStuff08(1286, 65, 36, 115, 40, 117), new LevelStuff08(1376, 65, 38, 120, 42, 122), new LevelStuff08(1465, 65, 39, 126, 43, 128), new LevelStuff08(1555, 65, 40, 131, 45, 133), new LevelStuff08(1644, 65, 42, 137, 46, 139), new LevelStuff08(1734, 65, 43, 143, 48, 144), new LevelStuff08(1824, 65, 45, 148, 50, 150), new LevelStuff08(1919, 65, 47, 153, 51, 155), new LevelStuff08(2014, 65, 48, 158, 53, 160), new LevelStuff08(2109, 65, 50, 164, 54, 165), new LevelStuff08(2204, 65, 52, 169, 56, 170), new LevelStuff08(2300, 65, 54, 174, 57, 176), new LevelStuff08(2395, 65, 56, 179, 59, 181), new LevelStuff08(2490, 65, 58, 184, 60, 186), new LevelStuff08(2585, 65, 60, 189, 62, 191), new LevelStuff08(2680, 65, 61, 194, 63, 196), new LevelStuff08(2776, 65, 63, 200, 65, 202), new LevelStuff08(2983, 65, 65, 202, 68, 204), new LevelStuff08(3190, 65, 67, 205, 72, 207), new LevelStuff08(3397, 65, 69, 208, 75, 209), new LevelStuff08(3604, 65, 71, 211, 79, 212), new LevelStuff08(3812, 65, 73, 214, 83, 215), new LevelStuff08(4019, 65, 76, 217, 86, 217), new LevelStuff08(4226, 65, 78, 220, 90, 220), new LevelStuff08(4433, 65, 80, 223, 93, 222), new LevelStuff08(4640, 65, 82, 226, 97, 225), new LevelStuff08(4848, 65, 84, 229, 101, 228), new LevelStuff08(4976, 65, 86, 232, 106, 231), new LevelStuff08(5104, 65, 88, 235, 111, 234), new LevelStuff08(5232, 65, 91, 238, 117, 237), new LevelStuff08(5360, 65, 93, 240, 122, 240), new LevelStuff08(5488, 65, 95, 243, 127, 243), new LevelStuff08(5616, 65, 97, 246, 133, 246), new LevelStuff08(5744, 65, 100, 249, 138, 249), new LevelStuff08(5872, 65, 102, 252, 143, 252), new LevelStuff08(6000, 65, 104, 255, 149, 254), },
-  };
-  public static final MagicStuff08[][] magicStuff_80111d20 = {
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 0, 150, 150, 200, 200), new MagicStuff08(40, 1, 155, 155, 210, 210), new MagicStuff08(60, 2, 160, 160, 220, 220), new MagicStuff08(80, -1, 165, 165, 230, 230), new MagicStuff08(100, 3, 170, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 5, 150, 200, 200, 200), new MagicStuff08(40, 7, 155, 205, 210, 210), new MagicStuff08(60, 6, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 8, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 11, 200, 150, 200, 200), new MagicStuff08(40, 10, 205, 155, 210, 210), new MagicStuff08(60, 12, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 13, 220, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 15, 150, 150, 200, 200), new MagicStuff08(40, 16, 155, 155, 210, 210), new MagicStuff08(60, 18, 160, 160, 220, 220), new MagicStuff08(80, -1, 165, 165, 230, 230), new MagicStuff08(100, 19, 170, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 20, 150, 200, 200, 200), new MagicStuff08(40, 21, 155, 205, 210, 210), new MagicStuff08(60, 22, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 23, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 14, 150, 200, 200, 200), new MagicStuff08(40, 26, 155, 205, 210, 210), new MagicStuff08(60, 17, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 8, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 24, 200, 150, 200, 200), new MagicStuff08(40, 25, 205, 155, 210, 210), new MagicStuff08(60, 27, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 28, 220, 170, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 29, 150, 200, 200, 200), new MagicStuff08(40, -1, 155, 205, 210, 210), new MagicStuff08(60, 30, 160, 210, 220, 220), new MagicStuff08(80, -1, 165, 215, 230, 230), new MagicStuff08(100, 31, 170, 220, 250, 250), },
-    {new MagicStuff08(0, -1, 255, 255, 255, 255), new MagicStuff08(20, 66, 200, 150, 200, 200), new MagicStuff08(40, 65, 205, 155, 210, 210), new MagicStuff08(60, 67, 210, 160, 220, 220), new MagicStuff08(80, -1, 215, 165, 230, 230), new MagicStuff08(100, 13, 220, 170, 250, 250), },
-  };
 
   public static final MenuGlyph06[] charSwapGlyphs_80114160 = {
     new MenuGlyph06(69, 0, 0),
@@ -268,19 +219,6 @@ public final class SItem {
     new MenuGlyph06(161, 192, 16),
   };
 
-  public static final int[] characterValidEquipment_80114284 = {0x80, 0x40, 0x2, 0x4, 0x10, 0x40, 0x1, 0x20, 0x2};
-
-  public static final int[] spellMp_80114290 = {
-    10, 20, 30, 80, 50, 20, 30, 20,
-    80, 50, 20, 10, 30, 80, 20, 10,
-    20, 30, 30, 80, 10, 20, 30, 80,
-    10, 20, 20, 30, 80, 20, 30, 80,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 20, 10, 30,
-  };
   public static final MenuGlyph06 glyph_801142d4 = new MenuGlyph06(0, 202, 24);
 
   public static final String[] chapterNames_80114248 = {
@@ -477,66 +415,6 @@ public final class SItem {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80022928L)
-  public static void getUnlockedDragoonSpells(final IntList spellIndices, final int charIndex) {
-    //LAB_80022940
-    spellIndices.clear();
-
-    if(charIndex == -1) {
-      //LAB_80022a08
-      return;
-    }
-
-    // Hardcoded Divine Dragoon spells
-    if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      spellIndices.add(9);
-      spellIndices.add(4);
-      return;
-    }
-
-    //LAB_80022994
-    //LAB_80022998
-    //LAB_800229d0
-    for(int dlevel = 1; dlevel <= gameState_800babc8.charData_32c.get(charIndex).dlevel_13; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
-
-      if(spellStuff.spellIndex_02 != -1) {
-        spellIndices.add(spellStuff.spellIndex_02);
-      }
-
-      //LAB_800229e8
-    }
-
-    //LAB_80022a00
-  }
-
-  @Method(0x80022a10L)
-  public static int getUnlockedSpellCount(final int charIndex) {
-    if(charIndex == -1) {
-      return 0;
-    }
-
-    //LAB_80022a24
-    // Divine dragoon
-    if(charIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      return 2;
-    }
-
-    //LAB_80022a4c
-    //LAB_80022a50
-    //LAB_80022a64
-    int unlockedSpells = 0;
-    for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
-        unlockedSpells++;
-      }
-
-      //LAB_80022a7c
-    }
-
-    return unlockedSpells;
-  }
-
   /**
    * @param amount Amount of HP to restore, -1 restores all hP
    * @return The amount of HP restored, -1 if all HP is restored, or -2 if HP was already full
@@ -622,12 +500,8 @@ public final class SItem {
     sp.restore(spToAdd);
     character.dlevelXp_0e += amount == -1 ? spToAdd : amount;
 
-    if(character.dlevelXp_0e > 32000) {
-      character.dlevelXp_0e = 32000;
-    }
-
-    if(character.dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][character.dlevel_13 + 1] && character.dlevel_13 < 5) {
-      character.dlevel_13++;
+    if(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
+      character.applyDragoonLevelUp(null);
     }
 
     return responseType;
@@ -853,84 +727,6 @@ public final class SItem {
     }
 
     sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize(), List.of(LodMod.ITEM_IDS));
-  }
-
-  @Method(0x8002a6fcL)
-  public static void clearCharacterStats() {
-    clearCharacterStats(stats_800be5f8);
-  }
-
-  @Method(0x8002a6fcL)
-  public static void clearCharacterStats(final ActiveStatsa0[] activeStats) {
-    //LAB_8002a730
-    for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final ActiveStatsa0 stats = activeStats[charIndex];
-
-      stats.flags_0c = 0;
-
-      stats.equipmentPhysicalImmunity_46 = false;
-      stats.equipmentMagicalImmunity_48 = false;
-      stats.equipmentPhysicalResistance_4a = false;
-      stats.equipmentSpMultiplier_4c = 0;
-      stats.equipmentSpPerPhysicalHit_4e = 0;
-      stats.equipmentMpPerPhysicalHit_50 = 0;
-      stats.equipmentSpPerMagicalHit_52 = 0;
-      stats.equipmentMpPerMagicalHit_54 = 0;
-      stats.equipmentEscapeBonus_56 = 0;
-      stats.equipmentHpRegen_58 = 0;
-      stats.equipmentMpRegen_5a = 0;
-      stats.equipmentSpRegen_5c = 0;
-      stats.equipmentRevive_5e = 0;
-      stats.equipmentMagicalResistance_60 = false;
-      stats.equipmentHpMulti_62 = 0;
-      stats.equipmentMpMulti_64 = 0;
-//      stats.addition_68 = 0;
-      stats.bodySpeed_69 = 0;
-      stats.bodyAttack_6a = 0;
-      stats.bodyMagicAttack_6b = 0;
-      stats.bodyDefence_6c = 0;
-      stats.bodyMagicDefence_6d = 0;
-      stats.spellId_70 = 0;
-      stats.dragoonAttack_72 = 0;
-      stats.dragoonMagicAttack_73 = 0;
-      stats.dragoonDefence_74 = 0;
-      stats.dragoonMagicDefence_75 = 0;
-
-      clearEquipmentStats(activeStats, charIndex);
-
-//      stats.addition_00_9c = 0;
-      stats.additionSpMultiplier_9e = 0;
-      stats.additionDamageMultiplier_9f = 0;
-    }
-
-    characterStatsLoaded_800be5d0 = false;
-  }
-
-  @Method(0x8002a86cL)
-  public static void clearEquipmentStats(final ActiveStatsa0[] activeStats, final int charIndex) {
-    final ActiveStatsa0 stats = activeStats[charIndex];
-
-    stats.specialEffectFlag_76 = 0;
-//    stats.equipmentType_77 = 0;
-    stats.equipment_02_78 = 0;
-    stats.equipmentEquipableFlags_79 = 0;
-    stats.equipmentAttackElements_7a.clear();
-    stats.equipmentElementalResistance_7c.clear();
-    stats.equipmentElementalImmunity_7d.clear();
-    stats.equipmentStatusResist_7e = 0;
-    stats.equipmentAttack1_80 = 0;
-
-    stats.equipmentSpeed_86 = 0;
-    stats.equipmentAttack_88 = 0;
-    stats.equipmentMagicAttack_8a = 0;
-    stats.equipmentDefence_8c = 0;
-    stats.equipmentMagicDefence_8e = 0;
-    stats.equipmentAttackHit_90 = 0;
-    stats.equipmentMagicHit_92 = 0;
-    stats.equipmentAttackAvoid_94 = 0;
-    stats.equipmentMagicAvoid_96 = 0;
-    stats.equipmentOnHitStatusChance_98 = 0;
-    stats.equipmentOnHitStatus_9b = 0;
   }
 
   @Method(0x800fc814L)
@@ -1301,36 +1097,6 @@ public final class SItem {
     }
   }
 
-  public static void loadAdditions(final int charId, final List<Addition> additions) {
-    additions.clear();
-
-    if(charId == -1) {
-      return;
-    }
-
-    checkForNewlyUnlockedAddition(charId);
-
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
-    final Set<RegistryId> seen = new HashSet<>();
-
-    for(final var entry : charData.additionStats.entrySet()) {
-      final Addition addition = REGISTRIES.additions.getEntry(entry.getKey()).get();
-      final CharacterAdditionStats additionStats = entry.getValue();
-
-      if(additionStats.unlockState.isUsable()) {
-        additions.add(addition);
-      }
-
-      seen.add(addition.getRegistryId());
-    }
-
-    for(final var entry : charData.additionStats.entrySet()) {
-      if(!seen.contains(entry.getKey()) && entry.getValue().unlockState.isUsable()) {
-        additions.add(REGISTRIES.additions.getEntry(entry.getKey()).get());
-      }
-    }
-  }
-
   public static Addition checkForNewlyUnlockedAddition(final int charId) {
     if(charId == -1) {
       return null;
@@ -1339,16 +1105,16 @@ public final class SItem {
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
     Addition newlyUnlocked = null;
 
-    for(final var entry : charData.additionStats.entrySet()) {
-      final Addition addition = REGISTRIES.additions.getEntry(entry.getKey()).get();
-      final CharacterAdditionStats additionStats = entry.getValue();
+    for(final RegistryId registryId : charData.getAllAdditions()) {
+      final Addition addition = REGISTRIES.additions.getEntry(registryId).get();
+      final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(registryId);
 
-      if(additionStats.unlockState.isUnlockable() && addition.isUnlocked(gameState_800babc8, charData, additionStats)) {
-        final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionStats, addition));
+      if(additionInfo.checkUnlock(charData)) {
+        final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionInfo, addition));
 
         if(!event.isCanceled()) {
           newlyUnlocked = addition;
-          additionStats.unlockState = UnlockState.UNLOCKED;
+          additionInfo.unlock(gameState_800babc8.timestamp_a0);
         }
       }
     }
@@ -2293,145 +2059,5 @@ public final class SItem {
     messageBox.menuIndex_18 = 0;
     messageBox.ticks_10 = 0;
     messageBox.state_0c = 1;
-  }
-
-  @Method(0x80110030L)
-  public static void loadCharacterStats() {
-    clearCharacterStats();
-    loadCharacterStats(gameState_800babc8, stats_800be5f8);
-  }
-
-  @Method(0x80110030L)
-  public static void loadCharacterStats(final GameState52c gameState, final ActiveStatsa0[] activeStats) {
-    clearCharacterStats(activeStats);
-
-    //LAB_80110174
-    for(int charId = 0; charId < 9; charId++) {
-      final ActiveStatsa0 stats = activeStats[charId];
-
-      final CharacterData2c charData = gameState.charData_32c.get(charId);
-      final VitalsStat hp = charData.stats.getStat(HP_STAT.get());
-      final VitalsStat mp = charData.stats.getStat(MP_STAT.get());
-      final VitalsStat sp = charData.stats.getStat(SP_STAT.get());
-
-      final CharacterStatsEvent statsEvent = EVENTS.postEvent(new CharacterStatsEvent(charId));
-
-      charData.xp_00 = statsEvent.xp;
-      hp.setCurrent(statsEvent.hp);
-      mp.setCurrent(statsEvent.mp);
-      sp.setCurrent(statsEvent.sp);
-      charData.dlevelXp_0e = statsEvent.dxp;
-      stats.flags_0c = statsEvent.flags;
-      charData.level_12 = statsEvent.level;
-      charData.dlevel_13 = statsEvent.dlevel;
-
-      //LAB_801101e4
-      stats.bodySpeed_69 = statsEvent.bodySpeed;
-      stats.bodyAttack_6a = statsEvent.bodyAttack;
-      stats.bodyMagicAttack_6b = statsEvent.bodyMagicAttack;
-      stats.bodyDefence_6c = statsEvent.bodyDefence;
-      stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
-
-      stats.spellId_70 = statsEvent.spellId;
-      stats.dragoonAttack_72 = statsEvent.dragoonAttack;
-      stats.dragoonMagicAttack_73 = statsEvent.dragoonMagicAttack;
-      stats.dragoonDefence_74 = statsEvent.dragoonDefence;
-      stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
-
-      if(charData.selectedAddition_19 != null && REGISTRIES.additions.hasEntry(charData.selectedAddition_19)) {
-        final Addition addition = REGISTRIES.additions.getEntry(charData.selectedAddition_19).get();
-        final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(charData.selectedAddition_19, k -> new CharacterAdditionStats());
-
-        final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(charData, additionStats, addition));
-        stats.additionSpMultiplier_9e = Math.round(event.additionSpMulti * 100) - 100;
-        stats.additionDamageMultiplier_9f = Math.round(event.additionDmgMulti * 100) - 100;
-      } else {
-        stats.additionDamageMultiplier_9f = 0;
-      }
-
-      //LAB_8011042c
-      applyEquipmentStats(gameState, activeStats, charId);
-
-      final int v0 = dragoonGoodsBits_800fbd08[charId];
-      if(charData.hasDragoon()) {
-        mp.setMaxRaw(statsEvent.maxMp);
-        stats.flags_0c |= 0x2000;
-
-        if((gameState.characterInitialized_4e6 & 0x1 << v0) == 0) {
-          gameState.characterInitialized_4e6 |= 0x1 << v0;
-          mp.restore();
-        }
-      }
-
-      //LAB_801104f8
-      if(charId == 0 && gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-        stats.flags_0c |= 0x6000;
-
-        final int a1 = dragoonGoodsBits_800fbd08[0];
-
-        if((gameState.characterInitialized_4e6 & 0x1 << a1) == 0) {
-          gameState.characterInitialized_4e6 |= 0x1 << a1;
-          mp.restore();
-        }
-      }
-
-      //LAB_80110654
-    }
-
-    //LAB_8011069c
-  }
-
-  @Method(0x8011085cL)
-  public static void applyEquipmentStats(final GameState52c gameState, final ActiveStatsa0[] activeStats, final int charId) {
-    clearEquipmentStats(activeStats, charId);
-
-    final CharacterData2c character = gameState.charData_32c.get(charId);
-    final ActiveStatsa0 characterStats = activeStats[charId];
-
-    //LAB_801108b0
-    for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-      final Equipment equipment = character.getEquipment(equipmentSlot);
-
-      if(equipment != null) {
-        final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipment));
-
-        characterStats.specialEffectFlag_76 |= event.flags_00;
-        characterStats.equipment_02_78 |= event._02;
-        characterStats.equipmentEquipableFlags_79 |= event.equipableFlags_03;
-        characterStats.equipmentAttackElements_7a.addAll(event.attackElement_04);
-        characterStats.equipmentElementalResistance_7c.addAll(event.elementalResistance_06);
-        characterStats.equipmentElementalImmunity_7d.addAll(event.elementalImmunity_07);
-        characterStats.equipmentStatusResist_7e |= event.statusResist_08;
-        characterStats.equipmentAttack1_80 += event.attack1_0a;
-        characterStats.equipmentSpeed_86 += event.speed_0f;
-        characterStats.equipmentAttack_88 += event.attack2_10 + event.attack1_0a;
-        characterStats.equipmentMagicAttack_8a += event.magicAttack_11;
-        characterStats.equipmentDefence_8c += event.defence_12;
-        characterStats.equipmentMagicDefence_8e += event.magicDefence_13;
-        characterStats.equipmentAttackHit_90 += event.attackHit_14;
-        characterStats.equipmentMagicHit_92 += event.magicHit_15;
-        characterStats.equipmentAttackAvoid_94 += event.attackAvoid_16;
-        characterStats.equipmentMagicAvoid_96 += event.magicAvoid_17;
-        characterStats.equipmentOnHitStatusChance_98 += event.onHitStatusChance_18;
-        characterStats.equipmentOnHitStatus_9b |= event.onHitStatus_1b;
-        characterStats.equipmentMpPerMagicalHit_54 += event.mpPerMagicalHit;
-        characterStats.equipmentSpPerMagicalHit_52 += event.spPerMagicalHit;
-        characterStats.equipmentMpPerPhysicalHit_50 += event.mpPerPhysicalHit;
-        characterStats.equipmentSpPerPhysicalHit_4e += event.spPerPhysicalHit;
-        characterStats.equipmentHpMulti_62 += event.hpMultiplier;
-        characterStats.equipmentMpMulti_64 += event.mpMultiplier;
-        characterStats.equipmentSpMultiplier_4c += event.spMultiplier;
-        characterStats.equipmentMagicalResistance_60 |= event.magicalResistance;
-        characterStats.equipmentPhysicalResistance_4a |= event.physicalResistance;
-        characterStats.equipmentMagicalImmunity_48 |= event.magicalImmunity;
-        characterStats.equipmentPhysicalImmunity_46 |= event.physicalImmunity;
-        characterStats.equipmentRevive_5e += event.revive;
-        characterStats.equipmentHpRegen_58 += event.hpRegen;
-        characterStats.equipmentMpRegen_5a += event.mpRegen;
-        characterStats.equipmentSpRegen_5c += event.spRegen;
-        characterStats.equipmentEscapeBonus_56 += event.escapeBonus;
-        characterStats.equipmentGuardHeal += event.guardHealBonus;
-      }
-    }
   }
 }
