@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
@@ -19,11 +20,13 @@ import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.CharacterLevelUpEvent;
+import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 import legend.lodmod.characters.UnlockSpellLevelUpAction;
 import legend.lodmod.characters.UnlockSpellLevelUpActionOptions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,11 +70,11 @@ public class PostBattleScreen extends MenuScreen {
   private static final String NEW_ADDITION = "New Addition";
   private static final String SPELL_UNLOCKED = "Spell Unlocked";
 
-  private static final int[] characterPortraitVs_800fbc88 = {0x1f0, 0x1f2, 0x1f1, 0x1f3, 0x1f4, 0x1f5, 0x1f6, 0x1f7, 0x1f8};
-  private static final int[] charPortraitGlyphs_800fbc9c = {0xd, 0xf, 0xe, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15};
-  private static final int[] _800fbca8 = {0x26, 0x28, 0x27, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e};
-
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+  private final FontOptions nameFont = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).size(0.8f);
+
+  private final List<TextureAtlasIcon> portraits = new ArrayList<>();
+  private final MV transforms = new MV();
 
   private int levelUpCharSlot_8011e170;
   private int unlockHeight_8011e178;
@@ -126,6 +129,12 @@ public class PostBattleScreen extends MenuScreen {
           Arrays.fill(this.levelsGained_8011e1c8, 0);
           Arrays.fill(this.dragoonLevelsGained_8011e1d8, 0);
           Arrays.fill(this.pendingXp_8011e180, 0);
+
+          this.portraits.clear();
+
+          for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+            this.portraits.add(GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId()));
+          }
 
           int xpDivisor = 0;
           for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
@@ -625,18 +634,11 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e114L)
-  private Renderable58 drawCharPortrait(final int x, final int y, final int charId) {
-    if(charId >= 9) {
-      //LAB_8010e1ec
-      throw new IllegalArgumentException("Invalid character index");
-    }
-
-    final int glyph = charPortraitGlyphs_800fbc9c[charId];
-    final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, characterPortraitVs_800fbc88[charId]);
-    renderable.z_3c = 35;
-
-    //LAB_8010e1f0
-    return renderable;
+  private void drawCharPortrait(final int x, final int y, final int charId) {
+    this.transforms.transfer.set(x - 7.0f, y - 1.0f, 140.0f);
+    this.transforms.scaling(30.0f, 36.0f, 1.0f);
+    this.portraits.get(charId).render(this.transforms)
+      .scissor(x - 6, y + 1, 24, 32);
   }
 
   @Method(0x8010e200L)
@@ -735,8 +737,8 @@ public class PostBattleScreen extends MenuScreen {
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
 
       this.drawResultsBackground(x + 1, y + 5, 24, 32, 2);
-      this.drawCharPortrait(x - 1, y + 4, charId).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph(_800fbca8[charId], _800fbca8[charId], x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawCharPortrait(x - 1, y + 4, charId);
+      renderText(character.getName(), x + 22, y + 4, this.nameFont);
       this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
