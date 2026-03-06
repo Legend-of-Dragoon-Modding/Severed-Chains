@@ -24,7 +24,6 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
-import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.inventory.WhichMenu;
@@ -136,18 +135,6 @@ public class BattleHud {
     "Confused", "Bewitched", "Petrified",
   };
 
-  private static final NameAndPortraitDisplayMetrics0c[] hudNameAndPortraitMetrics_800fb444 = {
-    new NameAndPortraitDisplayMetrics0c(104, 32, 24, 8, 24, 0, 24, 32, 0),
-    new NameAndPortraitDisplayMetrics0c(112, 56, 40, 8, 48, 0, 24, 32, 2),
-    new NameAndPortraitDisplayMetrics0c(128, 32, 32, 8, 0, 0, 24, 32, 1),
-    new NameAndPortraitDisplayMetrics0c(0, 232, 32, 8, 72, 0, 24, 32, 3),
-    new NameAndPortraitDisplayMetrics0c(216, 24, 39, 8, 96, 0, 24, 32, 4),
-    new NameAndPortraitDisplayMetrics0c(152, 48, 40, 8, 120, 0, 24, 32, 5),
-    new NameAndPortraitDisplayMetrics0c(32, 232, 32, 8, 144, 0, 24, 32, 6),
-    new NameAndPortraitDisplayMetrics0c(152, 56, 40, 8, 168, 0, 24, 32, 7),
-    new NameAndPortraitDisplayMetrics0c(64, 232, 40, 8, 192, 0, 24, 32, 8),
-    new NameAndPortraitDisplayMetrics0c(104, 32, 24, 8, 24, 0, 24, 32, 0),
-  };
   private static final SpBarBorderMetrics04[] spBarBorderMetrics_800fb46c = {
     new SpBarBorderMetrics04(1, 6, 39, 6),
     new SpBarBorderMetrics04(1, 7, 1, 11),
@@ -622,8 +609,6 @@ public class BattleHud {
           }
 
           //LAB_800f01f0
-          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
-
           final float portraitColour;
           if(charDisplay._14[2] < 6) {
             final float colour = ((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f;
@@ -654,15 +639,15 @@ public class BattleHud {
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14[2]) * 8 + 100;
-            final int x = displayStats.x_00 - centreScreenX_1f8003dc + namePortraitMetrics.portraitW_06 / 2 - 44;
-            final int y = displayStats.y_02 - centreScreenY_1f8003de + namePortraitMetrics.portraitH_07 / 2 - 22;
-            int dimVertexPositionModifier = (namePortraitMetrics.portraitW_06 + 2) * v1_0 / 100 / 2;
+            final int x = displayStats.x_00 - centreScreenX_1f8003dc + 24 / 2 - 44;
+            final int y = displayStats.y_02 - centreScreenY_1f8003de + 32 / 2 - 22;
+            int dimVertexPositionModifier = 26 * v1_0 / 100 / 2;
             final int x0 = x - dimVertexPositionModifier;
             final int x1 = x + dimVertexPositionModifier - 1;
 
             final short[] xs = {(short)x0, (short)x1, (short)x0, (short)x1};
 
-            dimVertexPositionModifier = (namePortraitMetrics.portraitH_07 + 2) * v1_0 / 100 / 2;
+            dimVertexPositionModifier = 34 * v1_0 / 100 / 2;
             final int y0 = y - dimVertexPositionModifier;
             final int y1 = y + dimVertexPositionModifier - 1;
 
