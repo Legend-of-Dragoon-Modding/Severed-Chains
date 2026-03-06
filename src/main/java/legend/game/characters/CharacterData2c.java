@@ -105,7 +105,7 @@ public class CharacterData2c {
   }
 
   public boolean canEquip(final EquipmentSlot slot, final Equipment equipment) {
-    return this.template.canEquip(this.gameState, this, slot, equipment);
+    return this.template.canEquip(this, slot, equipment);
   }
 
   public void equip(final EquipmentSlot slot, @Nullable final Equipment equipment) {
@@ -144,31 +144,31 @@ public class CharacterData2c {
   }
 
   public Element getElement() {
-    return this.template.getElement(this.gameState, this);
+    return this.template.getElement(this);
   }
 
   public boolean hasDragoon() {
-    return this.template.hasDragoon(this.gameState, this);
+    return this.template.hasDragoon(this);
   }
 
   public AdditionHits80 getDragoonAddition() {
-    return this.template.getDragoonAddition(this.gameState, this);
+    return this.template.getDragoonAddition(this);
   }
 
   public void applyLevelUp(@Nullable final LevelUpActions actions) {
-    this.template.applyLevelUp(this.gameState, this, actions);
+    this.template.applyLevelUp(this, actions);
   }
 
   public void applyDragoonLevelUp(@Nullable final LevelUpActions actions) {
-    this.template.applyDragoonLevelUp(this.gameState, this, actions);
+    this.template.applyDragoonLevelUp(this, actions);
   }
 
   public int getXpToNextLevel() {
-    return this.template.getXpToNextLevel(this.gameState, this);
+    return this.template.getXpToNextLevel(this);
   }
 
   public int getDxpToNextLevel() {
-    return this.template.getDxpToNextLevel(this.gameState, this);
+    return this.template.getDxpToNextLevel(this);
   }
 
   public List<RegistryId> getUnlockedAdditions() {

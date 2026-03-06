@@ -4,7 +4,6 @@ import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.SimpleAddition;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
-import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class RetailAddition extends SimpleAddition {
   }
 
   @Override
-  public void loadAnimations(final GameState52c state, final CharacterData2c charData, final CharacterAdditionInfo additionStats, final Consumer<List<FileData>> onLoad) {
+  public void loadAnimations(final CharacterData2c charData, final CharacterAdditionInfo additionStats, final Consumer<List<FileData>> onLoad) {
     loadDrgnDir(0, this.additionFile, onLoad);
   }
 }

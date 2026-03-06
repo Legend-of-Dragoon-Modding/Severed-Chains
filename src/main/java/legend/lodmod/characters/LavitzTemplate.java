@@ -52,12 +52,12 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
+  public boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
     return (equipment.equipableFlags_03 & 0x40) != 0;
   }
 
   @Override
-  public int getXpToNextLevel(final GameState52c gameState, final CharacterData2c character) {
+  public int getXpToNextLevel(final CharacterData2c character) {
     if(character.level_12 - 1 < XP.length) {
       return XP[character.level_12 - 1];
     }
@@ -66,7 +66,7 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public int getDxpToNextLevel(final GameState52c gameState, final CharacterData2c character) {
+  public int getDxpToNextLevel(final CharacterData2c character) {
     return switch(character.dlevel_13) {
       case 1 -> 1000;
       case 2 -> 6000;
@@ -77,7 +77,7 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+  public Element getElement(final CharacterData2c character) {
     return WIND_ELEMENT.get();
   }
 
@@ -87,7 +87,7 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+  public AdditionHits80 getDragoonAddition(final CharacterData2c character) {
     return new AdditionHits80(new AdditionHitProperties10(0xc0, 2, 0, 0, 100, 0, 13, 0, 0, 0, 1, 7, 10, 32, 18, 11, new AdditionSound(5, 5), new AdditionSound(0, 3)), new AdditionHitProperties10(0xc0, 14, 5, 0, 10, 0, 0, 0, 0, 0, 0, 0, 7, 32, 0, 0, new AdditionSound(4, 11), new AdditionSound(2, 9)), new AdditionHitProperties10(0xc0, 32, 25, 0, 20, 0, 0, 0, 0, 4, 21, 2, 7, 32, 0, 0, new AdditionSound(5, 5), new AdditionSound(0, 3)), new AdditionHitProperties10(0xc0, 10, 1, 0, 30, 0, 0, 0, 0, 1, 8, 29, 7, 32, 0, 0, new AdditionSound(7, 9), new AdditionSound(1, 7)), new AdditionHitProperties10(0xc0, 11, 10, 0, 40, 0, 0, 0, 0, 0, 10, 29, 5, 32, 19, 0, new AdditionSound(10, 8), new AdditionSound(3, 6)), new AdditionHitProperties10(0xc0, 61, 29, 0, 0, 0, 0, 0, 0, 0, 60, 5, 7, 32, 0, 0, new AdditionSound(5, 5), new AdditionSound(0, 3)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(4, 12), new AdditionSound(1, 10)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(8, 16), new AdditionSound(2, 14)));
   }
 

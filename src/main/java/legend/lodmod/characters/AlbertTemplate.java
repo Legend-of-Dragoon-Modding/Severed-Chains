@@ -45,8 +45,8 @@ public class AlbertTemplate extends LavitzTemplate {
     stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
     stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10);
 
-    this.applyLevelUp(gameState, character, null);
-    this.applyDragoonLevelUp(gameState, character, null);
+    this.applyLevelUp(character, null);
+    this.applyDragoonLevelUp(character, null);
 
     final VitalsStat hp = character.stats.getStat(HP_STAT.get());
     final VitalsStat mp = character.stats.getStat(MP_STAT.get());
@@ -70,7 +70,7 @@ public class AlbertTemplate extends LavitzTemplate {
   }
 
   @Override
-  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+  public AdditionHits80 getDragoonAddition(final CharacterData2c character) {
     return new AdditionHits80(new AdditionHitProperties10(0xc0, 0, 0, 0, 100, 0, 41, 0, 0, 0, 0, 0, 12, 0, 18, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
   }
 

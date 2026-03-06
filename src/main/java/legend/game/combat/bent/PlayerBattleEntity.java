@@ -381,12 +381,12 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public int getAdditionSpMultiplier() {
-    final float multiplier = this.addition.getSpMultiplier(gameState_800babc8, this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
+    final float multiplier = this.addition.getSpMultiplier(this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
     return round(multiplier * 100);
   }
 
   public int getAdditionDamageMultiplier() {
-    final float multiplier = this.addition.getDamageMultiplier(gameState_800babc8, this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
+    final float multiplier = this.addition.getDamageMultiplier(this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
     return round(multiplier * 100);
   }
 

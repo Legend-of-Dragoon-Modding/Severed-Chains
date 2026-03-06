@@ -38,12 +38,12 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
+  public boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
     return (equipment.equipableFlags_03 & 0x2) != 0;
   }
 
   @Override
-  public int getXpToNextLevel(final GameState52c gameState, final CharacterData2c character) {
+  public int getXpToNextLevel(final CharacterData2c character) {
     if(character.level_12 - 1 < XP.length) {
       return XP[character.level_12 - 1];
     }
@@ -52,7 +52,7 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public int getDxpToNextLevel(final GameState52c gameState, final CharacterData2c character) {
+  public int getDxpToNextLevel(final CharacterData2c character) {
     return switch(character.dlevel_13) {
       case 1 -> 1000;
       case 2 -> 6000;
@@ -63,7 +63,7 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+  public Element getElement(final CharacterData2c character) {
     return LIGHT_ELEMENT.get();
   }
 
@@ -73,7 +73,7 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+  public AdditionHits80 getDragoonAddition(final CharacterData2c character) {
     return null;
   }
 

@@ -77,11 +77,11 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
     character.status_10 = this.status;
 
     for(int i = 1; i < this.level; i++) {
-      template.applyLevelUp(gameState, character, null);
+      template.applyLevelUp(character, null);
     }
 
     for(int i = 1; i < this.dlevel; i++) {
-      template.applyDragoonLevelUp(gameState, character, null);
+      template.applyDragoonLevelUp(character, null);
     }
 
     hpStat.setCurrent(this.hp);

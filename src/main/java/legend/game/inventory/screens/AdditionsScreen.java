@@ -76,8 +76,11 @@ public class AdditionsScreen extends MenuScreen {
 
       case 1 -> {
         deallocateRenderables(0);
+
+        final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot));
         this.additionIds.clear();
-        this.additionIds.addAll(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).getUnlockedAdditions());
+        this.additionIds.addAll(character.getUnlockedAdditions());
+        this.additionCount = character.getAllAdditions().size();
 
         if(!this.additionIds.isEmpty()) {
           this.additionHighlight = allocateUiElement(117, 117, 39, this.getAdditionSlotY(this.selectedSlot) - 4);
@@ -86,7 +89,7 @@ public class AdditionsScreen extends MenuScreen {
 
         allocateUiElement(69, 69, 0, 0); // Background left
         allocateUiElement(70, 70, 192, 0); // Background right
-        this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0xffL);
+        this.renderAdditions(this.charSlot, this.additionIds, character.selectedAddition_19, 0xffL);
         this.loadingStage++;
       }
 
@@ -150,9 +153,9 @@ public class AdditionsScreen extends MenuScreen {
           final CharacterAdditionInfo info = charData.getAdditionInfo(additionId);
           final int level = info.level + 1;
           renderThreeDigitNumber(197, y, level);
-          renderThreeDigitNumber(230, y, addition.getHitCount(gameState_800babc8, charData, info));
-          renderThreeDigitNumber(263, y, addition.getSp(gameState_800babc8, charData, info));
-          renderThreeDigitNumber(297, y, addition.getDamage(gameState_800babc8, charData, info));
+          renderThreeDigitNumber(230, y, addition.getHitCount(charData, info));
+          renderThreeDigitNumber(263, y, addition.getSp(charData, info));
+          renderThreeDigitNumber(297, y, addition.getDamage(charData, info));
           renderThreeDigitNumber(322, y, info.xp);
 
           if(level < 5) {

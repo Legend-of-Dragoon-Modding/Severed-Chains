@@ -15,7 +15,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
 import static legend.lodmod.LodConfig.UI_COLOUR;
 
@@ -118,8 +117,8 @@ public class AdditionListMenu extends ListMenu {
         final RegistryId additionId = this.additionIds.get(listIndex);
         final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
         final CharacterAdditionInfo additionInfo = this.player_08.character.getAdditionInfo(additionId);
-        final int damage = addition.getDamage(gameState_800babc8, this.player_08.character, additionInfo);
-        final int sp = addition.getSp(gameState_800babc8, this.player_08.character, additionInfo);
+        final int damage = addition.getDamage(this.player_08.character, additionInfo);
+        final int sp = addition.getSp(this.player_08.character, additionInfo);
 
         //Selected item description
         if(this.description == null) {
@@ -130,7 +129,7 @@ public class AdditionListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText("Hits: " + addition.getHitCount(gameState_800babc8, this.player_08.character, additionInfo) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
+        renderText("Hits: " + addition.getHitCount(this.player_08.character, additionInfo) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
     }
   }

@@ -56,8 +56,8 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
     stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10);
 
-    this.applyLevelUp(gameState, character, null);
-    this.applyDragoonLevelUp(gameState, character, null);
+    this.applyLevelUp(character, null);
+    this.applyDragoonLevelUp(character, null);
 
     final VitalsStat hp = character.stats.getStat(HP_STAT.get());
     final VitalsStat mp = character.stats.getStat(MP_STAT.get());
@@ -164,7 +164,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public void applyLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions) {
+  public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
     this.addToStat(character, HP_STAT.get(), this.getHpToAdd(character.level_12));
     this.addToStat(character, ATTACK_STAT.get(), this.getAttackToAdd(character.level_12));
     this.addToStat(character, DEFENSE_STAT.get(), this.getDefenseToAdd(character.level_12));
@@ -178,7 +178,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public void applyDragoonLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions) {
+  public void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
     this.addToStat(character, MP_STAT.get(), 20);
     this.addToStat(character, SP_STAT.get(), 100);
     this.addToStat(character, DRAGOON_ATTACK_STAT.get(), this.getDragoonAttackToAdd(character.dlevel_13));
@@ -219,8 +219,8 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public boolean hasDragoon(final GameState52c gameState, final CharacterData2c character) {
-    return gameState.goods_19c.has(this.getDragoonSpirit());
+  public boolean hasDragoon(final CharacterData2c character) {
+    return character.gameState.goods_19c.has(this.getDragoonSpirit());
   }
 
   @Override

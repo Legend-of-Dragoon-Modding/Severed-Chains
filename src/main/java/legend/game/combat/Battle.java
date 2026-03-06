@@ -2963,7 +2963,7 @@ public class Battle extends EngineState<Battle> {
           // Additions
           if(charId != 2 && charId != 8) {
             final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
-            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(gameState_800babc8, charData, charData.getAdditionInfo(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.getAdditionInfo(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
 
@@ -4351,7 +4351,7 @@ public class Battle extends EngineState<Battle> {
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-      if(charIndex == 2 || charIndex == 8 || charData.selectedAddition_19 == null) {
+      if(charData.selectedAddition_19 == null) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }

@@ -38,7 +38,7 @@ public class BattlePreloadedEntities_18cb0 {
     //LAB_800c74fc
     final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
     final CharacterAdditionInfo additionInfo = character.getAdditionInfo(character.selectedAddition_19);
-    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHit(gameState_800babc8, character, additionInfo, hitNum);
+    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHit(character, additionInfo, hitNum);
   }
 
   public int getHitCount(final int charSlot) {
@@ -49,7 +49,7 @@ public class BattlePreloadedEntities_18cb0 {
     //LAB_800c74fc
     final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
     final CharacterAdditionInfo additionInfo = character.getAdditionInfo(character.selectedAddition_19);
-    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHitCount(gameState_800babc8, character, additionInfo);
+    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHitCount(character, additionInfo);
   }
 
   @Method(0x800c7488L)

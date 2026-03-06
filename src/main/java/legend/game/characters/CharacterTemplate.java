@@ -22,17 +22,17 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract Image loadPortrait();
 
-  public abstract void applyLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions);
-  public abstract void applyDragoonLevelUp(final GameState52c gameState, final CharacterData2c character, @Nullable final LevelUpActions actions);
+  public abstract void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions);
+  public abstract void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions);
   public abstract void checkUnlocks(final CharacterData2c character, final LevelUpActions actions);
-  public abstract int getXpToNextLevel(final GameState52c gameState, final CharacterData2c character);
-  public abstract int getDxpToNextLevel(final GameState52c gameState, final CharacterData2c character);
+  public abstract int getXpToNextLevel(final CharacterData2c character);
+  public abstract int getDxpToNextLevel(final CharacterData2c character);
 
-  public abstract Element getElement(final GameState52c gameState, final CharacterData2c character);
-  public abstract boolean hasDragoon(final GameState52c gameState, final CharacterData2c character);
-  public abstract AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character);
+  public abstract Element getElement(final CharacterData2c character);
+  public abstract boolean hasDragoon(final CharacterData2c character);
+  public abstract AdditionHits80 getDragoonAddition(final CharacterData2c character);
 
-  public abstract boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
+  public abstract boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
 
   public abstract Path getBattleModelPath(final CharacterData2c character);
   public abstract Path getBattleTexturePath(final CharacterData2c character);

@@ -22,35 +22,35 @@ public class RetailCampaignType extends CampaignType {
     final CharacterData2c miranda = gameState.addCharacter(LodCharacterTemplates.MIRANDA.get().make(gameState));
 
     for(int i = 1; i < 3; i++) {
-      lavitz.template.applyLevelUp(gameState, lavitz, null);
+      lavitz.template.applyLevelUp(lavitz, null);
     }
 
     for(int i = 1; i < 4; i++) {
-      shana.template.applyLevelUp(gameState, shana, null);
+      shana.template.applyLevelUp(shana, null);
     }
 
     for(int i = 1; i < 8; i++) {
-      rose.template.applyLevelUp(gameState, rose, null);
+      rose.template.applyLevelUp(rose, null);
     }
 
     for(int i = 1; i < 13; i++) {
-      haschel.template.applyLevelUp(gameState, haschel, null);
+      haschel.template.applyLevelUp(haschel, null);
     }
 
     for(int i = 1; i < 15; i++) {
-      albert.template.applyLevelUp(gameState, albert, null);
+      albert.template.applyLevelUp(albert, null);
     }
 
     for(int i = 1; i < 17; i++) {
-      meru.template.applyLevelUp(gameState, meru, null);
+      meru.template.applyLevelUp(meru, null);
     }
 
     for(int i = 1; i < 19; i++) {
-      kongol.template.applyLevelUp(gameState, kongol, null);
+      kongol.template.applyLevelUp(kongol, null);
     }
 
     for(int i = 1; i < 23; i++) {
-      miranda.template.applyLevelUp(gameState, miranda, null);
+      miranda.template.applyLevelUp(miranda, null);
     }
 
     gameState.charData_32c.get(0).partyFlags_04 = 0x3;

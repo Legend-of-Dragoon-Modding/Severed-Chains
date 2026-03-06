@@ -51,12 +51,12 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
+  public boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
     return (equipment.equipableFlags_03 & 0x4) != 0;
   }
 
   @Override
-  public int getXpToNextLevel(final GameState52c gameState, final CharacterData2c character) {
+  public int getXpToNextLevel(final CharacterData2c character) {
     if(character.level_12 - 1 < XP.length) {
       return XP[character.level_12 - 1];
     }
@@ -65,7 +65,7 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public int getDxpToNextLevel(final GameState52c gameState, final CharacterData2c character) {
+  public int getDxpToNextLevel(final CharacterData2c character) {
     return switch(character.dlevel_13) {
       case 1 -> 1200;
       case 2 -> 6000;
@@ -76,7 +76,7 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public Element getElement(final GameState52c gameState, final CharacterData2c character) {
+  public Element getElement(final CharacterData2c character) {
     return DARK_ELEMENT.get();
   }
 
@@ -86,7 +86,7 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
+  public AdditionHits80 getDragoonAddition(final CharacterData2c character) {
     return new AdditionHits80(new AdditionHitProperties10(0xc0, 0, 0, 0, 100, 0, 18, 0, 0, 0, 0, 0, 12, 0, 0, 0, new AdditionSound(4, 9), new AdditionSound(0, 7)), new AdditionHitProperties10(0xc0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, new AdditionSound(10, 3), new AdditionSound(1, 1)), new AdditionHitProperties10(0xc0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, new AdditionSound(4, 9), new AdditionSound(0, 7)), new AdditionHitProperties10(0xc0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, new AdditionSound(10, 3), new AdditionSound(0, 1)), new AdditionHitProperties10(0xc0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 9, 32, 0, 0, new AdditionSound(11, 42), new AdditionSound(3, 40)), new AdditionHitProperties10(0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, new AdditionSound(4, 9), new AdditionSound(0, 7)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(9, 10), new AdditionSound(1, 8)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(5, 11), new AdditionSound(2, 9)));
   }
 
