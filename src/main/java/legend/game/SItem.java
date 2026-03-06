@@ -18,7 +18,6 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
-import legend.game.inventory.Good;
 import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemGroupSortMode;
@@ -57,7 +56,6 @@ import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -106,14 +104,6 @@ import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
-import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.DARK_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.GOLD_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
-import static legend.lodmod.LodGoods.VIOLET_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
@@ -153,20 +143,6 @@ public final class SItem {
 
   public static RegistryId shopId_8007a3b4;
 
-  public static final RegistryDelegate<Good>[] characterDragoonIndices_800c6e68 = new RegistryDelegate[10];
-  static {
-    characterDragoonIndices_800c6e68[0] = RED_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[1] = JADE_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[2] = SILVER_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[3] = DARK_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[4] = VIOLET_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[5] = JADE_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[6] = BLUE_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[7] = GOLD_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[8] = SILVER_DRAGOON_SPIRIT;
-    characterDragoonIndices_800c6e68[9] = DIVINE_DRAGOON_SPIRIT;
-  }
-
   public static final MenuStatus08[] menuStatus_800fba7c = {
     new MenuStatus08("Petrify", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
     new MenuStatus08("Charmed", new FontOptions().colour(TextColour.MIDDLE_BROWN).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
@@ -177,8 +153,6 @@ public final class SItem {
     new MenuStatus08("Dspirit", new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE)),
     new MenuStatus08("Poison", new FontOptions().colour(TextColour.LIME).shadowColour(TextColour.GREEN).horizontalAlign(HorizontalAlign.CENTRE)),
   };
-
-  public static final int[] dragoonGoodsBits_800fbd08 = {0, 2, 5, 6, 4, 2, 1, 3, 5, 7};
 
   public static final MenuGlyph06[] charSwapGlyphs_80114160 = {
     new MenuGlyph06(69, 0, 0),
