@@ -10,6 +10,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
@@ -161,5 +162,69 @@ public class HaschelTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public boolean hasWeaponTrail(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return false;
+  }
+
+  @Override
+  public int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x88d4d8;
+  }
+
+  @Override
+  public int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x6c306c;
+  }
+
+  @Override
+  public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 6;
+  }
+
+  @Override
+  public int getRightHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 7;
+  }
+
+  @Override
+  public int getFootModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    if(bent.isDragoon()) {
+      return 8;
+    }
+
+    return 10;
+  }
+
+  @Override
+  public int getWeaponModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 5;
+  }
+
+  @Override
+  public int getWeaponTrailVertexComponent(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 2;
+  }
+
+  @Override
+  public int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x1600;
+  }
+
+  @Override
+  public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x28;
+  }
+
+  @Override
+  public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x34;
+  }
+
+  @Override
+  public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x6c;
   }
 }

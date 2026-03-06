@@ -10,6 +10,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
+import static legend.lodmod.LodMod.DIVINE_ELEMENT;
 import static legend.lodmod.LodMod.FIRE_ELEMENT;
 
 public class DartTemplate extends RetailCharacterTemplate {
@@ -90,7 +92,7 @@ public class DartTemplate extends RetailCharacterTemplate {
 
   @Override
   public Element getElement(final GameState52c gameState, final CharacterData2c character) {
-    return FIRE_ELEMENT.get();
+    return gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? DIVINE_ELEMENT.get() : FIRE_ELEMENT.get();
   }
 
   @Override
@@ -193,5 +195,64 @@ public class DartTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x808080 : 0x2068e8;
+  }
+
+  @Override
+  public int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x808080 : 0x201996;
+  }
+
+  @Override
+  public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 5;
+  }
+
+  @Override
+  public int getRightHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 6;
+  }
+
+  @Override
+  public int getFootModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    if(bent.isDragoon()) {
+      return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 7 : 8;
+    }
+
+    return 8;
+  }
+
+  @Override
+  public int getWeaponModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0 : 14;
+  }
+
+  @Override
+  public int getWeaponTrailVertexComponent(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0;
+  }
+
+  @Override
+  public int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x1500 : 0x1800;
+  }
+
+  @Override
+  public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x2e : 0x20;
+  }
+
+  @Override
+  public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x39 : 0x30;
+  }
+
+  @Override
+  public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x68;
   }
 }

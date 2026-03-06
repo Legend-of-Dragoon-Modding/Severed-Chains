@@ -2,7 +2,6 @@ package legend.game.combat.ui;
 
 import legend.game.additions.Addition;
 import legend.game.characters.CharacterAdditionInfo;
-import legend.game.characters.CharacterData2c;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
@@ -30,13 +29,12 @@ public class AdditionListMenu extends ListMenu {
   public AdditionListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
     super(hud, activePlayer, 186, lastPosition, onClose);
 
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(activePlayer.charId_272);
-    this.additionIds.addAll(charData.getUnlockedAdditions());
+    this.additionIds.addAll(activePlayer.character.getUnlockedAdditions());
 
     int index = 0;
     for(int i = 0; i < this.additionIds.size(); i++) {
       final RegistryId id = this.additionIds.get(i);
-      if(id.equals(charData.selectedAddition_19)) {
+      if(id.equals(activePlayer.character.selectedAddition_19)) {
         index = i;
       }
     }
@@ -58,8 +56,7 @@ public class AdditionListMenu extends ListMenu {
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     final RegistryId additionId = this.additionIds.get(index);
-    final CharacterData2c character = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
-    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(additionId);
+    final CharacterAdditionInfo additionInfo = this.player_08.character.getAdditionInfo(additionId);
     final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
 
     this.fontOptions.trim(trim);
@@ -87,10 +84,9 @@ public class AdditionListMenu extends ListMenu {
 
   @Override
   protected void onUse(final int index) {
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
     this.player_08.combatant_144.mrg_04 = null;
-    charData.selectedAddition_19 = this.additionIds.get(index);
-    this.player_08.addition = REGISTRIES.additions.getEntry(charData.selectedAddition_19).get();
+    this.player_08.character.selectedAddition_19 = this.additionIds.get(index);
+    this.player_08.addition = REGISTRIES.additions.getEntry(this.player_08.character.selectedAddition_19).get();
     this.hud.battle.loadAttackAnimations(this.player_08.combatant_144);
     this.flags_02 &= ~0x8;
     this.menuState_00 = 8;
@@ -121,10 +117,9 @@ public class AdditionListMenu extends ListMenu {
         final int listIndex = this.listScroll_1e + this.listIndex_24;
         final RegistryId additionId = this.additionIds.get(listIndex);
         final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
-        final CharacterData2c charData = gameState_800babc8.charData_32c.get(this.player_08.charId_272);
-        final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(additionId);
-        final int damage = addition.getDamage(gameState_800babc8, charData, additionInfo);
-        final int sp = addition.getSp(gameState_800babc8, charData, additionInfo);
+        final CharacterAdditionInfo additionInfo = this.player_08.character.getAdditionInfo(additionId);
+        final int damage = addition.getDamage(gameState_800babc8, this.player_08.character, additionInfo);
+        final int sp = addition.getSp(gameState_800babc8, this.player_08.character, additionInfo);
 
         //Selected item description
         if(this.description == null) {
@@ -135,7 +130,7 @@ public class AdditionListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText("Hits: " + addition.getHitCount(gameState_800babc8, charData, additionInfo) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
+        renderText("Hits: " + addition.getHitCount(gameState_800babc8, this.player_08.character, additionInfo) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
       }
     }
   }

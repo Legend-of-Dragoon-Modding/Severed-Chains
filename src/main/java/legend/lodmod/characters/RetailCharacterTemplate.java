@@ -21,6 +21,7 @@ import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Set;
 
 import static legend.lodmod.LodLevelUpActions.UNLOCK_ADDITION;
@@ -220,6 +221,16 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   @Override
   public boolean hasDragoon(final GameState52c gameState, final CharacterData2c character) {
     return gameState.goods_19c.has(this.getDragoonSpirit());
+  }
+
+  @Override
+  public Path getBattleModelPath(final CharacterData2c character) {
+    return Path.of("characters", this.getRegistryId().entryId(), "models", "combat");
+  }
+
+  @Override
+  public Path getBattleTexturePath(final CharacterData2c character) {
+    return Path.of("characters", this.getRegistryId().entryId(), "textures", "combat");
   }
 
   protected abstract Good getDragoonSpirit();

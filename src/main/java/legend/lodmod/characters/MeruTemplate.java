@@ -10,6 +10,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
@@ -160,5 +161,60 @@ public class MeruTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x808080;
+  }
+
+  @Override
+  public int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x78462c;
+  }
+
+  @Override
+  public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 6;
+  }
+
+  @Override
+  public int getRightHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 7;
+  }
+
+  @Override
+  public int getFootModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 12;
+  }
+
+  @Override
+  public int getWeaponModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 21;
+  }
+
+  @Override
+  public int getWeaponTrailVertexComponent(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0;
+  }
+
+  @Override
+  public int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0xe00;
+  }
+
+  @Override
+  public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x2a;
+  }
+
+  @Override
+  public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x36;
+  }
+
+  @Override
+  public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x6e;
   }
 }

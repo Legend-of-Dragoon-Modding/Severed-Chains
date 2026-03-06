@@ -8,6 +8,7 @@ import legend.game.types.GameState52c;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -122,6 +123,14 @@ public class CharacterData2c {
 
   public Equipment getEquipment(final EquipmentSlot slot) {
     return this.equipment_14.get(slot);
+  }
+
+  public Path getBattleModelPath() {
+    return this.template.getBattleModelPath(this);
+  }
+
+  public Path getBattleTexturePath() {
+    return this.template.getBattleTexturePath(this);
   }
 
   public int getStatusAndFlags() {

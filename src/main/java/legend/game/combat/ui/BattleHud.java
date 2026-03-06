@@ -126,10 +126,7 @@ public class BattleHud {
 
   /** Targeting ("All allies", "All players", "All") */
   private static final String[] targeting_800fb36c = { "All allies", "All enemies", "All" };
-  public static final String[] playerNames_800fb378 = {
-    "Dart", "Lavitz", "Shana", "Rose", "Haschel",
-    "Albert", "Meru", "Kongol", "Miranda", "DivinDGDart",
-  };
+
   /** Poisoned, Dispirited, Weapon blocked, Stunned, Fearful, Confused, Bewitched, Petrified */
   public static final String[] ailments_800fb3a0 = {
     "Poisoned", "Dispirited", "Weapon blocked", "Stunned", "Fearful",
@@ -843,7 +840,7 @@ public class BattleHud {
             targetBent = monsterBent;
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.playerBents_e40.get(targetCombatant).innerStruct_00;
-            str = playerNames_800fb378[targetBent.charId_272];
+            str = targetBent.getName();
           } else {
             //LAB_800f0d58
             //LAB_800f0d5c
@@ -852,7 +849,7 @@ public class BattleHud {
               //LAB_800f0e24
               str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[targetCombatant]);
             } else {
-              str = playerNames_800fb378[targetBent.charId_272];
+              str = targetBent.getName();
             }
           }
 

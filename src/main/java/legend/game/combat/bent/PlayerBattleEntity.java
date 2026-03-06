@@ -8,6 +8,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
+import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.ArcherSpEvent;
@@ -26,10 +27,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.ui.BattleHud.playerNames_800fb378;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
-import static legend.lodmod.LodMod.DIVINE_ELEMENT;
 import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
 import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
 import static legend.lodmod.LodMod.DRAGOON_MAGIC_ATTACK_STAT;
@@ -42,6 +40,8 @@ import static legend.lodmod.LodMod.SP_STAT;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
+
+  public final CharacterData2c character;
 
   public int level_04;
   public int dlevel_06;
@@ -92,16 +92,17 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   private final ScriptFile script;
 
-  public PlayerBattleEntity(final Battle battle, final String name, final int scriptIndex, final ScriptFile script) {
-    super(PLAYER_TYPE.get(), battle, name);
+  public PlayerBattleEntity(final Battle battle, final String name, final int charId, final int scriptIndex, final ScriptFile script) {
+    super(PLAYER_TYPE.get(), battle, name, charId);
 
     this.scriptState = new Latch<>(() -> SCRIPTS.getState(scriptIndex, PlayerBattleEntity.class));
     this.script = script;
+    this.character = gameState_800babc8.charData_32c.get(charId);
   }
 
   @Override
   public String getName() {
-    return this.charId_272 == 8 ? "Who?" : playerNames_800fb378[this.charId_272];
+    return I18n.translate(this.character.template);
   }
 
   @Override
@@ -142,11 +143,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   @Override
   public Element getElement() {
-    if(this.charId_272 == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT) && this.isDragoon()) { // Dart Divine Dragoon
-      return DIVINE_ELEMENT.get();
-    }
-
-    return super.getElement();
+    return this.character.getElement();
   }
 
   @Override
@@ -283,155 +280,51 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   protected boolean hasWeaponTrail() {
-    return this.charId_272 != 4; // Haschel
+    return this.character.template.hasWeaponTrail(this.character, this);
   }
 
   protected int getWeaponTrailColour() {
-    return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x2068e8 : 0x808080;
-      case 1, 5 -> 0x20a878;
-      case 2, 6, 8 -> 0x808080;
-      case 3 -> 0x1090d8;
-      case 4 -> 0x88d4d8;
-      case 7 -> 0x90d0f0;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getWeaponTrailColour(this.character, this);
   }
 
   protected int getSpellRingColour() {
-    return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x201996 : 0x808080;
-      case 1, 5 -> 0x297231;
-      case 2, 8 -> 0x6c8283;
-      case 3 -> 0x5e263a;
-      case 4 -> 0x6c306c;
-      case 6 -> 0x78462c;
-      case 7 -> 0x286499;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getSpellRingColour(this.character, this);
   }
 
   public int getLeftHandModelPart() {
-    return switch(this.charId_272) {
-      case 0, 7 -> 5;
-      case 1, 4, 5, 6 -> 6;
-      case 2 -> 11;
-      case 3 -> 8;
-      case 8 -> 10;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getLeftHandModelPart(this.character, this);
   }
 
   public int getRightHandModelPart() {
-    return switch(this.charId_272) {
-      case 0, 7 -> 6;
-      case 1, 4, 5, 6 -> 7;
-      case 2 -> 12;
-      case 3 -> 9;
-      case 8 -> 11;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getRightHandModelPart(this.character, this);
   }
 
   public int getFootModelPart() {
-    if(this.isDragoon()) {
-      return switch(this.charId_272) {
-        case 0 -> (this.status_0e & 0x4000) == 0 ? 8 : 7;
-        case 1, 5 -> 9;
-        case 2, 3, 8 -> 11;
-        case 4, 7 -> 8;
-        case 6 -> 12;
-        default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-      };
-    }
-
-    return switch(this.charId_272) {
-      case 0, 7 -> 8;
-      case 1, 5 -> 9;
-      case 2 -> 13;
-      case 3 -> 11;
-      case 4 -> 10;
-      case 6, 8 -> 12;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getFootModelPart(this.character, this);
   }
 
   public int getWeaponModelPart() {
-    return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 14 : 0;
-      case 1, 5 -> 3;
-      case 2, 8 -> 0;
-      case 3 -> 18;
-      case 4 -> 5;
-      case 6 -> 21;
-      case 7 -> 9;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getWeaponModelPart(this.character, this);
   }
 
   public int getWeaponTrailVertexComponent() {
-    return switch(this.charId_272) {
-      case 0, 2, 6, 8 -> 0;
-      case 1, 3, 4, 5, 7 -> 2;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getWeaponTrailVertexComponent(this.character, this);
   }
 
   protected int getShadowSize() {
-    return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x1800 : 0x1500;
-      case 1 -> 0x1800;
-      case 2 -> 0x1000;
-      case 3, 6 -> 0xe00;
-      case 4 -> 0x1600;
-      case 5, 8 -> 0x1300;
-      case 7 -> 0x2000;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getShadowSize(this.character, this);
   }
 
   protected int getDragoonTransformDeff() {
-    return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x20 : 0x2e;
-      case 1 -> 0x22;
-      case 2 -> 0x24;
-      case 3 -> 0x26;
-      case 4 -> 0x28;
-      case 5 -> 0x2f;
-      case 6 -> 0x2a;
-      case 7 -> 0x2c;
-      case 8 -> 0x40;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getDragoonTransformDeff(this.character, this);
   }
 
   protected int getDragoonAttackDeff() {
-    return switch(this.charId_272) {
-      case 0 -> (this.status_0e & 0x4000) == 0 ? 0x30 : 0x39;
-      case 1 -> 0x31;
-      case 2, 8 -> -1;
-      case 3 -> 0x33;
-      case 4 -> 0x34;
-      case 5 -> 0x35;
-      case 6 -> 0x36;
-      case 7 -> 0x37;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getDragoonAttackDeff(this.character, this);
   }
 
   protected int getDragoonAttackSounds() {
-    return switch(this.charId_272) {
-      case 0 -> 0x68;
-      case 1 -> 0x69;
-      case 2 -> 0x6a;
-      case 3 -> 0x6b;
-      case 4 -> 0x6c;
-      case 5 -> 0x6d;
-      case 6 -> 0x6e;
-      case 7 -> 0x6f;
-      case 8 -> 0x70;
-      default -> throw new IllegalStateException("Unknown character ID " + this.charId_272);
-    };
+    return this.character.template.getDragoonAttackSounds(this.character, this);
   }
 
   protected int getArcherSp() {
@@ -488,26 +381,24 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public int getAdditionSpMultiplier() {
-    final CharacterData2c character = gameState_800babc8.charData_32c.get(this.charId_272);
-    final float multiplier = this.addition.getSpMultiplier(gameState_800babc8, character, character.getAdditionInfo(this.addition.getRegistryId()));
-    return Math.round(multiplier * 100);
+    final float multiplier = this.addition.getSpMultiplier(gameState_800babc8, this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
+    return round(multiplier * 100);
   }
 
   public int getAdditionDamageMultiplier() {
-    final CharacterData2c character = gameState_800babc8.charData_32c.get(this.charId_272);
-    final float multiplier = this.addition.getDamageMultiplier(gameState_800babc8, character, character.getAdditionInfo(this.addition.getRegistryId()));
-    return Math.round(multiplier * 100);
+    final float multiplier = this.addition.getDamageMultiplier(gameState_800babc8, this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
+    return round(multiplier * 100);
   }
 
   @Override
   public void getStat(final BattleEntityStat statIndex, final Param out) {
     if(out.isRegistryId()) {
       switch(statIndex) {
-        case EQUIPMENT_WEAPON_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId());
-        case EQUIPMENT_HELMET_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.HELMET).getRegistryId());
-        case EQUIPMENT_ARMOUR_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId());
-        case EQUIPMENT_BOOTS_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId());
-        case EQUIPMENT_ACCESSORY_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId());
+        case EQUIPMENT_WEAPON_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() : null);
+        case EQUIPMENT_HELMET_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.HELMET).getRegistryId() : null);
+        case EQUIPMENT_ARMOUR_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId() : null);
+        case EQUIPMENT_BOOTS_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId() : null);
+        case EQUIPMENT_ACCESSORY_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId() : null);
         default -> super.getStat(statIndex, out);
       }
 

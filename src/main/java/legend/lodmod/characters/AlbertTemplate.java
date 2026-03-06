@@ -10,6 +10,7 @@ import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.types.GameState52c;
 import legend.lodmod.LodAdditions;
 import legend.lodmod.LodSpells;
@@ -71,5 +72,25 @@ public class AlbertTemplate extends LavitzTemplate {
   @Override
   public AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character) {
     return new AdditionHits80(new AdditionHitProperties10(0xc0, 0, 0, 0, 100, 0, 41, 0, 0, 0, 0, 0, 12, 0, 18, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0), new AdditionHitProperties10(0xc0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+  }
+
+  @Override
+  public int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x1300;
+  }
+
+  @Override
+  public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x2f;
+  }
+
+  @Override
+  public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x35;
+  }
+
+  @Override
+  public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x6d;
   }
 }

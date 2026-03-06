@@ -5,6 +5,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
@@ -146,5 +147,64 @@ public class ShanaTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x808080;
+  }
+
+  @Override
+  public int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x6c8283;
+  }
+
+  @Override
+  public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 11;
+  }
+
+  @Override
+  public int getRightHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 12;
+  }
+
+  @Override
+  public int getFootModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    if(bent.isDragoon()) {
+      return 11;
+    }
+
+    return 13;
+  }
+
+  @Override
+  public int getWeaponModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0;
+  }
+
+  @Override
+  public int getWeaponTrailVertexComponent(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0;
+  }
+
+  @Override
+  public int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x1000;
+  }
+
+  @Override
+  public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x24;
+  }
+
+  @Override
+  public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return -1;
+  }
+
+  @Override
+  public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x6a;
   }
 }

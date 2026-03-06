@@ -10,6 +10,7 @@ import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.types.Translucency;
+import legend.lodmod.characters.DartTemplate;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
@@ -96,7 +97,7 @@ public class TransformAction extends RetailBattleAction {
     final QueuedModelStandard model = RENDERER.queueOrthoModel(menu.menuObj, menu.transforms, QueuedModelStandard.class)
       .translucency(Translucency.of(battleMenuIconMetrics_800fb674[1].translucencyMode_06));
 
-    if(menu.player_04.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+    if(!(menu.player_04.character.template instanceof DartTemplate) || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
       model.vertices(menu.actionDragoonIconObjOffset + menu.player_04.charId_272 * 12 + iconState * 4, 4);
     } else {
       model.vertices(menu.actionDragoonIconObjOffset + 9 * 12 + iconState * 4, 4);

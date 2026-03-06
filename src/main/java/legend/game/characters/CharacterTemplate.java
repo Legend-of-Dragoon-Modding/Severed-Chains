@@ -2,15 +2,17 @@ package legend.game.characters;
 
 import legend.core.memory.types.IntRef;
 import legend.game.additions.AdditionHits80;
-import legend.game.textures.Image;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.saves.SavedCharacter;
+import legend.game.textures.Image;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 
 public abstract class CharacterTemplate extends RegistryEntry {
   public abstract CharacterData2c make(final GameState52c gameState);
@@ -31,6 +33,25 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract AdditionHits80 getDragoonAddition(final GameState52c gameState, final CharacterData2c character);
 
   public abstract boolean canEquip(final GameState52c gameState, final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
+
+  public abstract Path getBattleModelPath(final CharacterData2c character);
+  public abstract Path getBattleTexturePath(final CharacterData2c character);
+
+  public boolean hasWeaponTrail(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return true;
+  }
+
+  public abstract int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getRightHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getFootModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getWeaponModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getWeaponTrailVertexComponent(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent);
 
   protected void addToStat(final CharacterData2c character, final StatType<?> statType, final int amount) {
     final Stat stat = character.stats.getStat(statType);

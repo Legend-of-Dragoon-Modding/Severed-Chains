@@ -232,7 +232,7 @@ public abstract class BattleEntity27c extends BattleObject {
   /** Not 100% sure on this name */
   public int currentAnimIndex_270;
   /** Also monster ID */
-  public int charId_272;
+  public final int charId_272;
   public int bentSlot_274;
   public int charSlot_276;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
@@ -256,10 +256,11 @@ public abstract class BattleEntity27c extends BattleObject {
 
   public SoundFile soundFile;
 
-  public BattleEntity27c(final BattleEntityType type, final Battle battle, final String name) {
+  public BattleEntity27c(final BattleEntityType type, final Battle battle, final String name, final int charId) {
     super(battle, BattleObject.BOBJ);
     this.type = type;
     this.model_148 = new Model124(name);
+    this.charId_272 = charId;
 
     final Set<StatType> stats = new HashSet<>();
     EVENTS.postEvent(new RegisterBattleEntityStatsEvent(type, stats));
