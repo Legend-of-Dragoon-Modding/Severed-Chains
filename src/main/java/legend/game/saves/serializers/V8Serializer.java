@@ -157,7 +157,7 @@ public final class V8Serializer {
 
       for(int additionIndex = 0; additionIndex < additionCount; additionIndex++) {
         final RegistryId id = data.readRegistryId(offset);
-        final int level = data.readShort(offset);
+        final int level = data.readShort(offset) + 1;
         final int xp = data.readInt(offset);
         charData.additionInfo.put(id, new SeveredSavedCharacterV1.AdditionInfo(level, xp));
       }

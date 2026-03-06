@@ -254,7 +254,7 @@ public final class LegacySerializer {
       if(version.ordinal() >= SaveVersion.V7.ordinal()) {
         for(int additionIndex = 0; additionIndex < additionCount; additionIndex++) {
           final RegistryId id = data.readRegistryId(offset);
-          final int level = data.readShort(offset);
+          final int level = data.readShort(offset) + 1;
           final int xp = data.readInt(offset);
           charData.additionInfo.put(id, new SeveredSavedCharacterV1.AdditionInfo(level, xp));
         }
@@ -265,7 +265,7 @@ public final class LegacySerializer {
 
           if(additionIndex < CHARACTER_ADDITIONS[charIndex].length) {
             final RegistryId additionId = CHARACTER_ADDITIONS[charIndex][additionIndex].getId();
-            charData.additionInfo.put(additionId, new SeveredSavedCharacterV1.AdditionInfo(Math.max(0, level - 1), xp));
+            charData.additionInfo.put(additionId, new SeveredSavedCharacterV1.AdditionInfo(level, xp));
           }
         }
       }

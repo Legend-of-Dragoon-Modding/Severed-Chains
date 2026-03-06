@@ -658,7 +658,7 @@ public abstract class BattleEntity27c extends BattleObject {
         }
 
         this.loadingAnimIndex_26e = 0;
-        loadCombatantModelAndAnimation(this.battle, this.model_148, this.combatant_144);
+        loadCombatantModelAndAnimation(this.battle, this, this.combatant_144);
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 

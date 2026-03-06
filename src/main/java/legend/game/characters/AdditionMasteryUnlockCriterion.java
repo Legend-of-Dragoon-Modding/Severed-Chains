@@ -1,10 +1,22 @@
 package legend.game.characters;
 
-import static legend.game.characters.CharacterData2c.HAS_ULTIMATE_ADDITION;
+import legend.game.additions.Addition;
+import org.legendofdragoon.modloader.registries.RegistryId;
+
+import static legend.core.GameEngine.REGISTRIES;
 
 public class AdditionMasteryUnlockCriterion implements AdditionUnlockCriterion {
   @Override
   public boolean isUnlocked(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
-    return (character.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0;
+    for(final RegistryId id : character.getAllAdditions()) {
+      final CharacterAdditionInfo info = character.getAdditionInfo(id);
+      final Addition addition = REGISTRIES.additions.getEntry(id).get();
+
+      if(addition.countsTowardsMastery(character, info) && !addition.isComplete(character, info)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

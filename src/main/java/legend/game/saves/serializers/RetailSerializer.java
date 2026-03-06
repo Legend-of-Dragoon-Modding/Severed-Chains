@@ -177,7 +177,7 @@ public final class RetailSerializer {
 
         if(i < CHARACTER_ADDITIONS[charSlot].length) {
           final RegistryDelegate<Addition> addition = CHARACTER_ADDITIONS[charSlot][i];
-          charData.additionInfo.put(addition.getId(), new SeveredSavedCharacterV1.AdditionInfo(Math.max(0, level - 1), xp));
+          charData.additionInfo.put(addition.getId(), new SeveredSavedCharacterV1.AdditionInfo(level, xp));
         }
       }
     }

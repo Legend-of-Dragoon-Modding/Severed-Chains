@@ -13,6 +13,8 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class CharacterTemplate extends RegistryEntry {
   public abstract CharacterData2c make(final GameState52c gameState);
@@ -36,6 +38,8 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract Path getBattleModelPath(final CharacterData2c character);
   public abstract Path getBattleTexturePath(final CharacterData2c character);
+  /** Must load the following files in order: model, texture, idle animation, walking animation, running animation */
+  public abstract void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad);
 
   public boolean hasWeaponTrail(final CharacterData2c character, final PlayerBattleEntity bent) {
     return true;

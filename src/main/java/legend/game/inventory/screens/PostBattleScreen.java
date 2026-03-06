@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
@@ -19,19 +19,21 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.characters.CharacterLevelUpEvent;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
+import legend.lodmod.characters.UnlockAdditionLevelUpAction;
+import legend.lodmod.characters.UnlockAdditionLevelUpActionOptions;
 import legend.lodmod.characters.UnlockSpellLevelUpAction;
 import legend.lodmod.characters.UnlockSpellLevelUpActionOptions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
@@ -46,14 +48,13 @@ import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.SItem.giveItems;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
-import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.livingChars_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
@@ -67,23 +68,19 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class PostBattleScreen extends MenuScreen {
-  private static final String NEW_ADDITION = "New Addition";
-  private static final String SPELL_UNLOCKED = "Spell Unlocked";
-
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
   private final FontOptions nameFont = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).size(0.8f);
 
-  private final List<TextureAtlasIcon> portraits = new ArrayList<>();
+  private final Map<CharacterData2c, TextureAtlasIcon> portraits = new HashMap<>();
   private final MV transforms = new MV();
 
-  private int levelUpCharSlot_8011e170;
   private int unlockHeight_8011e178;
   private int soundTick_8011e17c;
-  private final int[] pendingXp_8011e180 = new int[10];
-  private final SpellStats0c[] spellsUnlocked_8011e1a8 = new SpellStats0c[12];
-  private final Addition[] additionsUnlocked_8011e1b8 = new Addition[12];
-  private final int[] levelsGained_8011e1c8 = new int[12];
-  private final int[] dragoonLevelsGained_8011e1d8 = new int[12];
+  private final Object2IntMap<CharacterData2c> pendingXp_8011e180 = new Object2IntLinkedOpenHashMap<>();
+  private final Object2IntMap<CharacterData2c> levelsGained_8011e1c8 = new Object2IntLinkedOpenHashMap<>();
+  private final Object2IntMap<CharacterData2c> dragoonLevelsGained_8011e1d8 = new Object2IntLinkedOpenHashMap<>();
+  private final Map<CharacterData2c, List<Addition>> additionsUnlocked_8011e1b8 = new LinkedHashMap<>();
+  private final Map<CharacterData2c, List<SpellStats0c>> spellsUnlocked_8011e1a8 = new LinkedHashMap<>();
 
   private MenuState inventoryMenuState_800bdc28 = MenuState.INIT_0;
   private MenuState confirmDest_800bdc30;
@@ -95,16 +92,16 @@ public class PostBattleScreen extends MenuScreen {
   @Override
   protected void render() {
     switch(this.inventoryMenuState_800bdc28) {
-      case INIT_0:
+      case INIT_0 -> {
         clearRenderables();
         resizeDisplay(320, 240);
         textZ_800bdf00 = 33;
         this.initResultBackgrounds();
         startFadeEffect(2, 10);
         this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2;
-        break;
+      }
 
-      case WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2:
+      case WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2 -> {
         if(fullScreenEffect_800bb140.currentColour_28 == 0) {
           deallocateRenderables(0xff);
           Renderable58 glyph = this.drawGlyph(0, 0, 165, 21, 720, 497);
@@ -124,28 +121,28 @@ public class PostBattleScreen extends MenuScreen {
           cacheCharacterSlots();
 
           //LAB_8010d87c
-          Arrays.fill(this.spellsUnlocked_8011e1a8, null);
-          Arrays.fill(this.additionsUnlocked_8011e1b8, null);
-          Arrays.fill(this.levelsGained_8011e1c8, 0);
-          Arrays.fill(this.dragoonLevelsGained_8011e1d8, 0);
-          Arrays.fill(this.pendingXp_8011e180, 0);
+          this.pendingXp_8011e180.clear();
+          this.levelsGained_8011e1c8.clear();
+          this.dragoonLevelsGained_8011e1d8.clear();
+          this.additionsUnlocked_8011e1b8.clear();
+          this.spellsUnlocked_8011e1a8.clear();
 
           this.portraits.clear();
 
           for(final CharacterData2c character : gameState_800babc8.charData_32c) {
-            this.portraits.add(GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId()));
+            this.portraits.put(character, GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId()));
           }
 
           int xpDivisor = 0;
           for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
-            if(this.characterIsAlive(charSlot)) {
+            if(livingChars_800bc968.contains(gameState_800babc8.getCharacterBySlot(charSlot))) {
               xpDivisor++;
             }
           }
 
           for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
-            if(this.characterIsAlive(charSlot)) {
-              this.pendingXp_8011e180[gameState_800babc8.charIds_88.getInt(charSlot)] = totalXpFromCombat_800bc95c / xpDivisor;
+            if(livingChars_800bc968.contains(gameState_800babc8.getCharacterBySlot(charSlot))) {
+              this.pendingXp_8011e180.put(gameState_800babc8.getCharacterBySlot(charSlot), totalXpFromCombat_800bc95c / xpDivisor);
             }
           }
 
@@ -155,36 +152,67 @@ public class PostBattleScreen extends MenuScreen {
           //LAB_8010d9f8
           for(int secondaryCharSlot = 0; secondaryCharSlot < secondaryCharIds_800bdbf8.size(); secondaryCharSlot++) {
             final int secondaryCharIndex = secondaryCharIds_800bdbf8.getInt(secondaryCharSlot);
-
-            if(secondaryCharIndex != -1) {
-              this.pendingXp_8011e180[secondaryCharIndex] = (int)(MathHelper.safeDiv(totalXpFromCombat_800bc95c, xpDivisor) * secondaryCharXpMultiplier);
-            }
-
-            //LAB_8010da24
+            this.pendingXp_8011e180.put(gameState_800babc8.charData_32c.get(secondaryCharIndex), (int)(MathHelper.safeDiv(totalXpFromCombat_800bc95c, xpDivisor) * secondaryCharXpMultiplier));
           }
 
           this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FIRST_BUTTON_PRESS_3;
-          this.drawGlyph(0x3f, 0x3f, 144,  28, 736, 497);
+          this.drawGlyph(0x3f, 0x3f, 144, 28, 736, 497);
           this.drawGlyph(0x3f, 0x3f, 144, 156, 736, 497);
           this.drawReport();
         }
+      }
 
-        break;
-
-      case WAIT_FOR_FIRST_BUTTON_PRESS_3:
+      case WAIT_FOR_FIRST_BUTTON_PRESS_3 -> {
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          //LAB_8010da84
-          if(goldGainedFromCombat_800bc920 == 0) {
-            this.inventoryMenuState_800bdc28 = MenuState.TICK_XP_5;
-          } else {
-            this.inventoryMenuState_800bdc28 = MenuState.TICK_GOLD_4;
-          }
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
         }
 
         this.drawReport();
-        break;
+      }
 
-      case TICK_GOLD_4:
+      case CHECK_NEXT_THING_TO_GIVE -> {
+        this.checkForUnlocks();
+        this.drawReport();
+
+        this.additionsUnlocked_8011e1b8.values().removeIf(List::isEmpty);
+        this.spellsUnlocked_8011e1a8.values().removeIf(List::isEmpty);
+
+        if(goldGainedFromCombat_800bc920 != 0) {
+          this.inventoryMenuState_800bdc28 = MenuState.TICK_GOLD_4;
+          break;
+        }
+
+        if(!this.pendingXp_8011e180.isEmpty()) {
+          this.inventoryMenuState_800bdc28 = MenuState.TICK_XP_5;
+          break;
+        }
+
+        if(!this.levelsGained_8011e1c8.isEmpty()) {
+          this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_8;
+          break;
+        }
+
+        if(!spGained_800bc950.isEmpty()) {
+          this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
+          break;
+        }
+
+        if(!this.additionsUnlocked_8011e1b8.isEmpty()) {
+          this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_UNLOCKED_ADDITIONS_6;
+          this.unlockHeight_8011e178 = 0;
+          break;
+        }
+
+        if(!this.spellsUnlocked_8011e1a8.isEmpty()) {
+          this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_SPELL_UNLOCK_12;
+          this.unlockHeight_8011e178 = 0;
+          break;
+        }
+
+        this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_INPUT_14;
+      }
+
+      case TICK_GOLD_4 -> {
         final int goldTick;
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           goldTick = goldGainedFromCombat_800bc920;
@@ -199,7 +227,7 @@ public class PostBattleScreen extends MenuScreen {
         if(goldTick >= goldGained) {
           this.soundTick_8011e17c = 0;
           goldGainedFromCombat_800bc920 = 0;
-          this.inventoryMenuState_800bdc28 = MenuState.TICK_XP_5;
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
           gameState_800babc8.gold_94 += goldGained;
         } else {
           //LAB_8010db00
@@ -221,9 +249,9 @@ public class PostBattleScreen extends MenuScreen {
         }
 
         this.drawReport();
-        break;
+      }
 
-      case TICK_XP_5:
+      case TICK_XP_5 -> {
         final boolean moreXpToGive = this.givePendingXp();
 
         if(moreXpToGive) {
@@ -233,23 +261,59 @@ public class PostBattleScreen extends MenuScreen {
             playMenuSound(1);
           }
         } else {
-          this.levelUpCharSlot_8011e170 = 3;
           totalXpFromCombat_800bc95c = 0;
 
-          if(this.additionsUnlocked_8011e1b8[0] == null && this.additionsUnlocked_8011e1b8[1] == null && this.additionsUnlocked_8011e1b8[2] == null) {
-            //LAB_8010dc9c
-            this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
-          } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
             playMenuSound(2);
             this.unlockHeight_8011e178 = 0;
-            this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_UNLOCKED_ADDITIONS_6;
+            this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
           }
         }
 
         this.drawReport();
-        break;
+      }
 
-      case EMBIGGEN_UNLOCKED_ADDITIONS_6:
+      case SECONDARY_LEVEL_UPS_8 -> {
+        addLevelUpOverlay(-80, 44);
+        playMenuSound(9);
+        this.inventoryMenuState_800bdc28 = MenuState.CONFIRM_SECONDARY_LEVEL_UP_9;
+        this.drawReport();
+      }
+
+      case CONFIRM_SECONDARY_LEVEL_UP_9 -> {
+        final var it = this.levelsGained_8011e1c8.object2IntEntrySet().iterator();
+        final var entry = it.next();
+        final CharacterData2c character = entry.getKey();
+        this.drawChar(24, 152, character);
+
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
+          playMenuSound(2);
+          it.remove();
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+        }
+
+        this.drawReport();
+      }
+
+      case DRAGOON_LEVEL_UPS_10 -> {
+        final boolean moreXpToGive = this.givePendingDxp();
+
+        if(moreXpToGive) {
+          this.soundTick_8011e17c++;
+
+          if((this.soundTick_8011e17c & 0x1) != 0) {
+            playMenuSound(1);
+          }
+        } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+          playMenuSound(2);
+          this.unlockHeight_8011e178 = 0;
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+        }
+
+        this.drawReport();
+      }
+
+      case EMBIGGEN_UNLOCKED_ADDITIONS_6 -> {
         if(this.unlockHeight_8011e178 < 20) {
           this.unlockHeight_8011e178 += 2;
         } else {
@@ -266,80 +330,30 @@ public class PostBattleScreen extends MenuScreen {
         //LAB_8010dcf8
         this.renderAdditionsUnlocked(this.unlockHeight_8011e178);
         this.drawReport();
-        break;
+      }
 
-      case ENSMALLEN_UNLOCKED_ADDITIONS_7:
+      case ENSMALLEN_UNLOCKED_ADDITIONS_7 -> {
+        this.renderAdditionsUnlocked(this.unlockHeight_8011e178);
+        this.drawReport();
+
         if(this.unlockHeight_8011e178 > 0) {
           this.unlockHeight_8011e178 -= 2;
         } else {
-          //LAB_8010dd28
-          this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
-        }
+          for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
+            final List<Addition> unlocks = this.additionsUnlocked_8011e1b8.get(character);
 
-        this.renderAdditionsUnlocked(this.unlockHeight_8011e178);
-        this.drawReport();
-        break;
-
-      case MAIN_LEVEL_UPS_8:
-        if(this.levelUpCharSlot_8011e170 >= this.levelsGained_8011e1c8.length) {
-          //LAB_8010dd90
-          this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
-        } else if(this.levelsGained_8011e1c8[this.levelUpCharSlot_8011e170] != 0) {
-          addLevelUpOverlay(-80, 44);
-          playMenuSound(9);
-          this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_9;
-        } else {
-          //LAB_8010dd88
-          this.levelUpCharSlot_8011e170++;
-        }
-
-        this.drawReport();
-        break;
-
-      case SECONDARY_LEVEL_UPS_9:
-        this.drawChar(24, 152, secondaryCharIds_800bdbf8.getInt(this.levelUpCharSlot_8011e170 - 3));
-
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
-          playMenuSound(2);
-          this.levelsGained_8011e1c8[this.levelUpCharSlot_8011e170] = 0;
-          this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
-          this.levelUpCharSlot_8011e170++;
-        }
-
-        this.drawReport();
-        break;
-
-      case DRAGOON_LEVEL_UPS_10:
-        for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
-          if(this.characterIsAlive(charSlot)) {
-            this.levelUpDragoon(gameState_800babc8.charIds_88.getInt(charSlot), charSlot);
+            if(unlocks != null) {
+              unlocks.removeFirst();
+            }
           }
+
+          //LAB_8010dd28
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
         }
+      }
 
-        //LAB_8010de6c
-        if(this.spellsUnlocked_8011e1a8[0] != null || this.spellsUnlocked_8011e1a8[1] != null || this.spellsUnlocked_8011e1a8[2] != null) {
-          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11;
-        } else {
-          //LAB_8010de98
-          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_INPUT_14;
-        }
-
-        this.drawReport();
-        break;
-
-      case WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11:
-        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          this.unlockHeight_8011e178 = 0;
-          playMenuSound(2);
-
-          //LAB_8010decc
-          this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_SPELL_UNLOCK_12;
-        }
-
-        this.drawReport();
-        break;
-
-      case EMBIGGEN_SPELL_UNLOCK_12:
+      case EMBIGGEN_SPELL_UNLOCK_12 -> {
         if(this.unlockHeight_8011e178 < 20) {
           this.unlockHeight_8011e178 += 2;
         } else {
@@ -356,24 +370,34 @@ public class PostBattleScreen extends MenuScreen {
         //LAB_8010df24
         this.renderSpellsUnlocked(this.unlockHeight_8011e178);
         this.drawReport();
-        break;
+      }
 
-      case ENSMALLEN_SPELL_UNLOCK_13:
+      case ENSMALLEN_SPELL_UNLOCK_13 -> {
+        this.renderSpellsUnlocked(this.unlockHeight_8011e178);
+        this.drawReport();
+
         if(this.unlockHeight_8011e178 > 0) {
           this.unlockHeight_8011e178 -= 2;
         } else {
+          for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
+            final List<SpellStats0c> unlocks = this.spellsUnlocked_8011e1a8.get(character);
+
+            if(unlocks != null) {
+              unlocks.removeFirst();
+            }
+          }
+
           //LAB_8010df54
           //LAB_8010df1c
-          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_INPUT_14;
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
         }
 
         //LAB_8010df20
         //LAB_8010df24
-        this.renderSpellsUnlocked(this.unlockHeight_8011e178);
-        this.drawReport();
-        break;
+      }
 
-      case WAIT_FOR_INPUT_14:
+      case WAIT_FOR_INPUT_14 -> {
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(3);
 
@@ -394,27 +418,28 @@ public class PostBattleScreen extends MenuScreen {
         //LAB_8010dfb8
         //LAB_8010dfbc
         this.drawReport();
-        break;
+      }
 
-      case FADE_OUT_16:
+      case FADE_OUT_16 -> {
         startFadeEffect(1, 10);
         this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FADE_OUT_17;
-
-      case WAIT_FOR_FADE_OUT_17:
         this.drawReport();
+      }
 
+      case WAIT_FOR_FADE_OUT_17 -> {
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           this.inventoryMenuState_800bdc28 = this.confirmDest_800bdc30;
           FUN_80019470();
         }
 
-        break;
+        this.drawReport();
+      }
 
-      case UNLOAD_18:
+      case UNLOAD_18 -> {
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         menuStack.popScreen();
         this.deleteResultsScreenObjects();
-        break;
+      }
     }
 
     //LAB_8010e09c
@@ -429,90 +454,116 @@ public class PostBattleScreen extends MenuScreen {
    */
   @Method(0x8010cc24L)
   private boolean givePendingXp() {
-    final IntList charIds = new IntArrayList();
-    charIds.addAll(gameState_800babc8.charIds_88);
-    charIds.addAll(secondaryCharIds_800bdbf8);
-    int pendingXpCleared = 0;
+    for(final var entry : this.pendingXp_8011e180.object2IntEntrySet()) {
+      final CharacterData2c character = entry.getKey();
+      final int pendingXp = entry.getIntValue();
 
-    for(int charSlot = 0; charSlot < charIds.size(); charSlot++) {
-      final int charId = charIds.getInt(charSlot);
-      if(charId >= 0) {
-        final int pendingXp = this.pendingXp_8011e180[charId];
-
-        if(pendingXp != 0) {
-          final int cappedPendingXp;
-          if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || pendingXp < 10) {
-            cappedPendingXp = pendingXp;
-          } else {
-            cappedPendingXp = 10;
-          }
-
-          //LAB_8010cc94
-          //LAB_8010cc98
-          final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
-
-          int xp = character.xp_00;
-          if(xp <= 999999) {
-            xp = xp + cappedPendingXp;
-          } else {
-            xp = 999999;
-          }
-
-          //LAB_8010ccd4
-          character.xp_00 = xp;
-          this.pendingXp_8011e180[charId] -= cappedPendingXp;
-
-          //LAB_8010cd30
-          while(character.xp_00 >= character.getXpToNextLevel() && character.level_12 < 60) {
-            character.level_12++;
-            this.levelsGained_8011e1c8[charSlot]++;
-            EVENTS.postEvent(new CharacterLevelUpEvent(charId, character));
-          }
-        } else {
-          //LAB_8010cc68
-          pendingXpCleared++;
-        }
-
-        if(this.additionsUnlocked_8011e1b8[charSlot] == null) {
-          this.additionsUnlocked_8011e1b8[charSlot] = checkForNewlyUnlockedAddition(charId);
-        }
+      final int cappedPendingXp;
+      if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || pendingXp < 10) {
+        cappedPendingXp = pendingXp;
       } else {
-        pendingXpCleared++;
+        cappedPendingXp = 10;
       }
+
+      //LAB_8010cc94
+      //LAB_8010cc98
+      //LAB_8010ccd4
+      character.xp_00 += cappedPendingXp;
+      this.pendingXp_8011e180.mergeInt(character, -cappedPendingXp, Integer::sum);
+
+      if(this.pendingXp_8011e180.getInt(character) <= 0) {
+        this.pendingXp_8011e180.removeInt(character);
+      }
+
+      //LAB_8010cd30
+      final LevelUpActions levelUpActions = new LevelUpActions();
+      while(character.xp_00 >= character.getXpToNextLevel()) {
+        character.applyLevelUp(levelUpActions);
+        this.levelsGained_8011e1c8.mergeInt(character, 1, Integer::sum);
+      }
+
+      this.applyLevelUpActions(character, levelUpActions);
     }
 
     //LAB_8010cdb0
     //LAB_8010cdcc
-    return pendingXpCleared < charIds.size();
+    return !this.pendingXp_8011e180.isEmpty();
+  }
+
+  private boolean givePendingDxp() {
+    for(final var entry : spGained_800bc950.object2IntEntrySet()) {
+      final CharacterData2c character = entry.getKey();
+      final int pendingXp = entry.getIntValue();
+
+      final int cappedPendingXp;
+      if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || pendingXp < 10) {
+        cappedPendingXp = pendingXp;
+      } else {
+        cappedPendingXp = 10;
+      }
+
+      //LAB_8010cc94
+      //LAB_8010cc98
+      //LAB_8010ccd4
+      character.dlevelXp_0e += cappedPendingXp;
+      spGained_800bc950.mergeInt(character, -cappedPendingXp, Integer::sum);
+
+      if(spGained_800bc950.getInt(character) <= 0) {
+        spGained_800bc950.removeInt(character);
+      }
+
+      //LAB_8010cd30
+      final LevelUpActions levelUpActions = new LevelUpActions();
+      while(character.dlevelXp_0e >= character.getDxpToNextLevel()) {
+        character.applyDragoonLevelUp(levelUpActions);
+        this.dragoonLevelsGained_8011e1d8.mergeInt(character, 1, Integer::sum);
+      }
+
+      this.applyLevelUpActions(character, levelUpActions);
+    }
+
+    //LAB_8010cdb0
+    //LAB_8010cdcc
+    return !spGained_800bc950.isEmpty();
   }
 
   @Method(0x8010cde8L)
-  private void levelUpDragoon(final int charId, final int charSlot) {
-    if(charId != -1) {
-      final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+  private void levelUpDragoon(final CharacterData2c character) {
+    character.dlevelXp_0e += spGained_800bc950.getInt(character);
 
-      character.dlevelXp_0e += spGained_800bc950.get(charId);
-
-      //LAB_8010ceb0
-      //LAB_8010cecc
-      while(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
-        final LevelUpActions levelUpActions = new LevelUpActions();
-        character.applyDragoonLevelUp(levelUpActions);
-        final List<LevelUpActions.Entry<?>> results = levelUpActions.run(character);
-        this.dragoonLevelsGained_8011e1d8[charSlot]++;
-
-        for(final LevelUpActions.Entry<?> entry : results) {
-          if(entry.action instanceof final UnlockSpellLevelUpAction unlockSpell) {
-            final UnlockSpellLevelUpActionOptions options = unlockSpell.cast(entry.options);
-            this.spellsUnlocked_8011e1a8[charSlot] = REGISTRIES.spells.getEntry(options.spellId).get();
-          }
-        }
-
-        //LAB_8010cf70
-      }
+    final LevelUpActions levelUpActions = new LevelUpActions();
+    while(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
+      character.applyDragoonLevelUp(levelUpActions);
+      this.dragoonLevelsGained_8011e1d8.mergeInt(character, 1, Integer::sum);
     }
 
-    //LAB_8010cf84
+    this.applyLevelUpActions(character, levelUpActions);
+  }
+
+  private void checkForUnlocks() {
+    for(int i = 0; i < gameState_800babc8.charData_32c.size(); i++) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(i);
+      final LevelUpActions actions = new LevelUpActions();
+      character.template.checkUnlocks(character, actions);
+      this.applyLevelUpActions(character, actions);
+    }
+  }
+
+  //TODO refactor this so it doesn't need to check instanceof
+  private void applyLevelUpActions(final CharacterData2c character, final LevelUpActions levelUpActions) {
+    final List<LevelUpActions.Entry<?>> results = levelUpActions.run(character);
+
+    for(final LevelUpActions.Entry<?> entry : results) {
+      if(entry.action instanceof final UnlockAdditionLevelUpAction unlockAddition) {
+        final UnlockAdditionLevelUpActionOptions options = unlockAddition.cast(entry.options);
+        this.additionsUnlocked_8011e1b8.computeIfAbsent(character, k -> new ArrayList<>()).add(REGISTRIES.additions.getEntry(options.additionId).get());
+      }
+
+      if(entry.action instanceof final UnlockSpellLevelUpAction unlockSpell) {
+        final UnlockSpellLevelUpActionOptions options = unlockSpell.cast(entry.options);
+        this.spellsUnlocked_8011e1a8.computeIfAbsent(character, k -> new ArrayList<>()).add(REGISTRIES.spells.getEntry(options.spellId).get());
+      }
+    }
   }
 
   @Method(0x8010cfa0L)
@@ -603,10 +654,10 @@ public class PostBattleScreen extends MenuScreen {
       final int z;
       switch(type) {
         case 1 -> //Background gradient
-          z = 37;
+          z = 38;
 
         case 2 -> //Character portrait shadow
-          z = 36;
+          z = 37;
 
         case 3 -> //Addition background
           z = 34;
@@ -634,10 +685,10 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e114L)
-  private void drawCharPortrait(final int x, final int y, final int charId) {
-    this.transforms.transfer.set(x - 7.0f, y - 1.0f, 140.0f);
+  private void drawCharPortrait(final int x, final int y, final CharacterData2c character) {
+    this.transforms.transfer.set(x - 7.0f, y - 1.0f, 144.0f);
     this.transforms.scaling(30.0f, 36.0f, 1.0f);
-    this.portraits.get(charId).render(this.transforms)
+    this.portraits.get(character).render(this.transforms)
       .scissor(x - 6, y + 1, 24, 32);
   }
 
@@ -732,45 +783,39 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e708L)
-  private void drawChar(final int x, final int y, final int charId) {
-    if(charId != -1) {
-      final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+  private void drawChar(final int x, final int y, final CharacterData2c character) {
+    this.drawResultsBackground(x + 1, y + 5, 24, 32, 2);
+    this.drawCharPortrait(x - 1, y + 4, character);
+    renderText(character.getName(), x + 22, y + 4, this.nameFont);
+    this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-      this.drawResultsBackground(x + 1, y + 5, 24, 32, 2);
-      this.drawCharPortrait(x - 1, y + 4, charId);
-      renderText(character.getName(), x + 22, y + 4, this.nameFont);
-      this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    final Renderable58 glyph = this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497);
+    glyph.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    glyph.widthCut = 16;
+    this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-      final Renderable58 glyph = this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497);
-      glyph.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      glyph.widthCut = 16;
-      this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawTwoDigitNumber(x + 108, y + 16, character.level_12);
 
-      this.drawTwoDigitNumber(x + 108, y + 16, character.level_12);
-
-      final int dlevel;
-      if(!character.hasDragoon()) {
-        dlevel = 0;
-      } else {
-        dlevel = character.dlevel_13;
-      }
-
-      //LAB_8010e8e0
-      this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
-      final int xp = character.getXpToNextLevel();
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, character.xp_00);
-      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawNextLevelXp(x + 84, y + 40, xp);
-
-      final int dxp = character.getDxpToNextLevel();
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
-      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawNextLevelXp(x + 84, y + 52, dxp);
+    final int dlevel;
+    if(!character.hasDragoon()) {
+      dlevel = 0;
+    } else {
+      dlevel = character.dlevel_13;
     }
 
-    //LAB_8010e978
+    //LAB_8010e8e0
+    this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
+    final int xp = character.getXpToNextLevel();
+    this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, character.xp_00);
+    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawNextLevelXp(x + 84, y + 40, xp);
+
+    final int dxp = character.getDxpToNextLevel();
+    this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
+    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawNextLevelXp(x + 84, y + 52, dxp);
   }
 
   @Method(0x8010e9a8L)
@@ -781,17 +826,19 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010e9fc
     for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-      this.drawChar(176, y1, gameState_800babc8.charIds_88.getInt(i));
+      final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
 
-      if(this.levelsGained_8011e1c8[i] != 0) {
-        this.levelsGained_8011e1c8[i] = 0;
+      this.drawChar(176, y1, character);
+
+      if(this.levelsGained_8011e1c8.containsKey(character)) {
+        this.levelsGained_8011e1c8.removeInt(character);
         addLevelUpOverlay(72, y2);
         playMenuSound(9);
       }
 
       //LAB_8010ea44
-      if(this.dragoonLevelsGained_8011e1d8[i] != 0) {
-        this.dragoonLevelsGained_8011e1d8[i] = 0;
+      if(this.dragoonLevelsGained_8011e1d8.containsKey(character)) {
+        this.dragoonLevelsGained_8011e1d8.removeInt(character);
         addLevelUpOverlay(72, y3);
         playMenuSound(9);
       }
@@ -830,9 +877,11 @@ public class PostBattleScreen extends MenuScreen {
 
   @Method(0x8010ebecL)
   private void renderAdditionsUnlocked(final int height) {
-    for(int i = 0; i < 3; i++) {
-      if(this.additionsUnlocked_8011e1b8[i] != null) {
-        this.renderAdditionUnlocked(168, 40 + i * 64, this.additionsUnlocked_8011e1b8[i], height);
+    for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+      final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
+
+      if(this.additionsUnlocked_8011e1b8.containsKey(character)) {
+        this.renderAdditionUnlocked(168, 40 + i * 64, this.additionsUnlocked_8011e1b8.get(character).getFirst(), height);
       }
     }
   }
@@ -840,19 +889,15 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010ec6cL)
   private void renderSpellsUnlocked(final int height) {
     //LAB_8010ec98
-    for(int i = 0; i < 3; i++) {
-      if(this.spellsUnlocked_8011e1a8[i] != null) {
-        this.renderSpellUnlocked(168, 40 + i * 64, this.spellsUnlocked_8011e1a8[i], height);
+    for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+      final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
+
+      if(this.spellsUnlocked_8011e1a8.containsKey(character)) {
+        this.renderSpellUnlocked(168, 40 + i * 64, this.spellsUnlocked_8011e1a8.get(character).getFirst(), height);
       }
 
       //LAB_8010ecc0
     }
-  }
-
-  @Method(0x8010d32cL)
-  private boolean characterIsAlive(final int charSlot) {
-    final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
-    return livingCharIds_800bc968.contains(charId);
   }
 
   @Method(0x8010d398L)
@@ -863,7 +908,7 @@ public class PostBattleScreen extends MenuScreen {
     if(height >= 20) {
       this.fontOptions.noShadow();
       renderText(I18n.translate(addition), x - 4, y + 6, this.fontOptions);
-      renderText(NEW_ADDITION, x - 4, y + 20, this.fontOptions);
+      renderText(I18n.translate("lod_core.ui.post_battle.addition_unlocked"), x - 4, y + 20, this.fontOptions);
     }
 
     //LAB_8010d470
@@ -876,7 +921,7 @@ public class PostBattleScreen extends MenuScreen {
 
     if(height >= 20) {
       renderText(I18n.translate(spell), x - 4, y + 6, this.fontOptions);
-      renderText(SPELL_UNLOCKED, x - 4, y + 20, this.fontOptions);
+      renderText(I18n.translate("lod_core.ui.post_battle.spell_unlocked"), x - 4, y + 20, this.fontOptions);
     }
 
     //LAB_8010d470
@@ -896,12 +941,13 @@ public class PostBattleScreen extends MenuScreen {
     WAIT_FOR_UI_FILE_TO_LOAD_1,
     WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2,
     WAIT_FOR_FIRST_BUTTON_PRESS_3,
+    CHECK_NEXT_THING_TO_GIVE,
     TICK_GOLD_4,
     TICK_XP_5,
     EMBIGGEN_UNLOCKED_ADDITIONS_6,
     ENSMALLEN_UNLOCKED_ADDITIONS_7,
-    MAIN_LEVEL_UPS_8,
-    SECONDARY_LEVEL_UPS_9,
+    SECONDARY_LEVEL_UPS_8,
+    CONFIRM_SECONDARY_LEVEL_UP_9,
     DRAGOON_LEVEL_UPS_10,
     WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11,
     EMBIGGEN_SPELL_UNLOCK_12,

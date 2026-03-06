@@ -5,14 +5,18 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodSpells;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.LIGHT_ELEMENT;
@@ -29,12 +33,17 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   public CharacterData2c make(final GameState52c gameState) {
     final CharacterData2c character = super.make(gameState);
 
-    character.addSpell(LodSpells.STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of()));
-    character.addSpell(LodSpells.MOON_LIGHT.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
-    character.addSpell(LodSpells.GATES_OF_HEAVEN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
-    character.addSpell(LodSpells.WHITE_SILVER_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
+    character.addSpell(LodSpells.STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.MOON_LIGHT.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.GATES_OF_HEAVEN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.WHITE_SILVER_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
 
     return character;
+  }
+
+  @Override
+  public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
+    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/33", "SECT/DRGN22.BIN/836/textures/1", "SECT/DRGN22.BIN/836/34", "SECT/DRGN22.BIN/836/35", "SECT/DRGN22.BIN/836/36");
   }
 
   @Override

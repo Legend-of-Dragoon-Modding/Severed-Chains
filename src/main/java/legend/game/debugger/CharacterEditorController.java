@@ -5,11 +5,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import legend.game.characters.CharacterAdditionInfo;
 import legend.game.additions.UnlockState;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.characters.CharacterData2c.CANT_REMOVE;
 import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
@@ -80,8 +79,6 @@ public class CharacterEditorController {
   }
 
   private void refresh() {
-    checkForNewlyUnlockedAddition(this.charId);
-
     this.selectedAddition.getItems().clear();
     this.additionList.getItems().clear();
 
@@ -199,7 +196,11 @@ public class CharacterEditorController {
 
     if(this.additionList.getValue() != null) {
       final CharacterAdditionInfo info = this.additionInfo.get(this.additionList.getValue());
-      info.setUnlockState(this.additionUnlockState.getValue(), gameState_800babc8.timestamp_a0);
+
+      if(info.getUnlockState() != this.additionUnlockState.getValue()) {
+        info.setUnlockState(this.additionUnlockState.getValue(), gameState_800babc8.timestamp_a0);
+      }
+
       info.level = Integer.parseInt(this.additionLevel.getText());
       info.xp = Integer.parseInt(this.additionXp.getText());
     }

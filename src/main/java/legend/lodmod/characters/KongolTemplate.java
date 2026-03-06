@@ -10,15 +10,19 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;
 import legend.lodmod.LodSpells;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static legend.lodmod.LodGoods.GOLD_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.EARTH_ELEMENT;
@@ -39,13 +43,18 @@ public class KongolTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.INFERNO.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(23))));
     character.addAddition(LodAdditions.BONE_CRUSH.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.GRAND_STREAM.getId(), new CharacterSpellInfo(List.of()));
-    character.addSpell(LodSpells.METEOR_STRIKE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
-    character.addSpell(LodSpells.GOLDEN_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
+    character.addSpell(LodSpells.GRAND_STREAM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.METEOR_STRIKE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.GOLDEN_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.PURSUIT.getId();
 
     return character;
+  }
+
+  @Override
+  public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
+    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/198", "SECT/DRGN22.BIN/836/textures/6", "SECT/DRGN22.BIN/836/199", "SECT/DRGN22.BIN/836/200", "SECT/DRGN22.BIN/836/201");
   }
 
   @Override

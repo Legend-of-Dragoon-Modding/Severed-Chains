@@ -24,6 +24,7 @@ public class CharacterData2c {
   public static final int TEMPORARILY_REMOVED_FROM_PARTY = 0x4;
   /** don't select, can't be taken out of main party */
   public static final int CANT_REMOVE = 0x20;
+  /** no longer used */
   public static final int HAS_ULTIMATE_ADDITION = 0x40;
 
   public final GameState52c gameState;
@@ -189,6 +190,10 @@ public class CharacterData2c {
   }
 
   public CharacterAdditionInfo addAddition(final RegistryId id, final CharacterAdditionInfo info) {
+    if(info.checkUnlock(this)) {
+      info.unlock(this.gameState.timestamp_a0 + this.additions.size());
+    }
+
     this.additions.put(id, info);
     return info;
   }

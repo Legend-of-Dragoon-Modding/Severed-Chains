@@ -2,8 +2,18 @@ package legend.lodmod.characters;
 
 import legend.game.characters.CharacterData2c;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class MirandaTemplate extends ShanaTemplate {
+  @Override
+  public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
+    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/231", "SECT/DRGN22.BIN/836/textures/7", "SECT/DRGN22.BIN/836/232", "SECT/DRGN22.BIN/836/233", "SECT/DRGN22.BIN/836/234");
+  }
+
   @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 10;

@@ -90,6 +90,23 @@ public final class Loader {
     }).exceptionally(t -> onFileLoadingException(t, Arrays.toString(files)));
   }
 
+  public static void loadFiles(final Consumer<List<FileData>> onCompletion, final Path... files) {
+    final int total = LOADING_COUNT.updateAndGet(i -> i + files.length);
+    LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
+
+    Async.run(() -> {
+      final List<FileData> fileData = new ArrayList<>();
+      for(final Path file : files) {
+        final FileData data = loadFile(file);
+        fileData.add(data);
+      }
+
+      onCompletion.accept(fileData);
+      final int remaining = LOADING_COUNT.updateAndGet(i -> i - files.length);
+      LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
+    }).exceptionally(t -> onFileLoadingException(t, Arrays.toString(files)));
+  }
+
   public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
     final int total = LOADING_COUNT.incrementAndGet();
     LOGGER.info("Queueing directory %s (total queued: %d)", name, total);

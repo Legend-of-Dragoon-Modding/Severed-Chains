@@ -89,6 +89,9 @@ lod_core.ui.shop.you_have_nothing_to_sell=You have nothing\nto sell
 
 lod_core.ui.additions.no_additions=No additions available
 
+lod_core.ui.post_battle.addition_unlocked=Addition Unlocked
+lod_core.ui.post_battle.spell_unlocked=Spell Unlocked
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing

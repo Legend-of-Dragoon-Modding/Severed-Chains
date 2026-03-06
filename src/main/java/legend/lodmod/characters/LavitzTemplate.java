@@ -10,15 +10,19 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;
 import legend.lodmod.LodSpells;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static legend.lodmod.LodGoods.JADE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.WIND_ELEMENT;
@@ -41,14 +45,19 @@ public class LavitzTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.GUST_OF_WIND_DANCE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(11))));
     character.addAddition(LodAdditions.FLOWER_STORM.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.WING_BLASTER.getId(), new CharacterSpellInfo(List.of()));
-    character.addSpell(LodSpells.BLOSSOM_STORM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
-    character.addSpell(LodSpells.GASPLESS.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
-    character.addSpell(LodSpells.JADE_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
+    character.addSpell(LodSpells.WING_BLASTER.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.BLOSSOM_STORM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.GASPLESS.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.JADE_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.HARPOON.getId();
 
     return character;
+  }
+
+  @Override
+  public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
+    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/290/33", "SECT/DRGN22.BIN/290/textures/1", "SECT/DRGN22.BIN/290/34", "SECT/DRGN22.BIN/290/35", "SECT/DRGN22.BIN/290/36");
   }
 
   @Override

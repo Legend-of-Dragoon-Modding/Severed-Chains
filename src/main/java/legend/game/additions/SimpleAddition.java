@@ -5,11 +5,13 @@ import legend.game.characters.CharacterData2c;
 
 public abstract class SimpleAddition extends Addition {
   public final int baseDamage;
+  public final boolean countsTowardsMastery;
   private final LevelMultipliers[] levelMultipliers;
   private final AdditionHitProperties10[] hits;
 
-  public SimpleAddition(final int baseDamage, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
+  public SimpleAddition(final int baseDamage, final boolean countsTowardsMastery, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
     this.baseDamage = baseDamage;
+    this.countsTowardsMastery = countsTowardsMastery;
     this.levelMultipliers = levelMultipliers;
     this.hits = hits;
   }
@@ -33,12 +35,32 @@ public abstract class SimpleAddition extends Addition {
 
   @Override
   public float getDamageMultiplier(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
-    return this.levelMultipliers[additionInfo.level].damage;
+    return this.levelMultipliers[additionInfo.level - 1].damage;
   }
 
   @Override
   public float getSpMultiplier(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
-    return this.levelMultipliers[additionInfo.level].sp;
+    return this.levelMultipliers[additionInfo.level - 1].sp;
+  }
+
+  @Override
+  public int getXpToNextLevel(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return additionInfo.level * 20;
+  }
+
+  @Override
+  public int getMaxLevel(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.levelMultipliers.length;
+  }
+
+  @Override
+  public boolean isComplete(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return additionInfo.level >= this.getMaxLevel(character, additionInfo);
+  }
+
+  @Override
+  public boolean countsTowardsMastery(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.countsTowardsMastery;
   }
 
   @Override

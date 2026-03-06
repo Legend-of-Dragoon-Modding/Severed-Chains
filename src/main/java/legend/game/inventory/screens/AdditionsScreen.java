@@ -151,15 +151,14 @@ public class AdditionsScreen extends MenuScreen {
 
         if(allocate) {
           final CharacterAdditionInfo info = charData.getAdditionInfo(additionId);
-          final int level = info.level + 1;
-          renderThreeDigitNumber(197, y, level);
+          renderThreeDigitNumber(197, y, info.level);
           renderThreeDigitNumber(230, y, addition.getHitCount(charData, info));
           renderThreeDigitNumber(263, y, addition.getSp(charData, info));
           renderThreeDigitNumber(297, y, addition.getDamage(charData, info));
           renderThreeDigitNumber(322, y, info.xp);
 
-          if(level < 5) {
-            renderThreeDigitNumber(342, y, level * 20); // Max XP
+          if(info.level < addition.getMaxLevel(charData, info)) {
+            renderThreeDigitNumber(342, y, addition.getXpToNextLevel(charData, info)); // Max XP
           } else {
             renderCharacter(354, y, 218); // Dash if at max XP
           }

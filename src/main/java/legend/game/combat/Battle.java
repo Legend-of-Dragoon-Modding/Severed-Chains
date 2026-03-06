@@ -224,7 +224,6 @@ import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -239,7 +238,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
-import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.livingChars_800bc968;
 import static legend.game.Scus94491BpeSegment_800b.loadingMonsterModels;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
@@ -247,7 +246,6 @@ import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Text.scriptDeallocateAllTextboxes;
-import static legend.game.characters.CharacterData2c.HAS_ULTIMATE_ADDITION;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
@@ -2378,9 +2376,9 @@ public class Battle extends EngineState<Battle> {
       final int aliveCharBents = battleState_8006e398.getAlivePlayerCount();
 
       //LAB_800c8104
-      livingCharIds_800bc968.clear();
+      livingChars_800bc968.clear();
       for(int i = 0; i < aliveCharBents; i++) {
-        livingCharIds_800bc968.add(battleState_8006e398.alivePlayerBents_eac.get(i).innerStruct_00.charId_272);
+        livingChars_800bc968.add(battleState_8006e398.alivePlayerBents_eac.get(i).innerStruct_00.character);
       }
     }
 
@@ -2904,13 +2902,13 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x800c952cL)
-  public static void loadCombatantModelAndAnimation(final Battle battle, final Model124 model, final CombatantStruct1a8 combatant) {
+  public static void loadCombatantModelAndAnimation(final Battle battle, final BattleEntity27c bent, final CombatantStruct1a8 combatant) {
     final CContainer tmd;
     if(combatant._1a4 >= 0) {
-      tmd = new CContainer(model.name, battleState_8006e398.getGlobalAsset(combatant._1a4).data_00);
+      tmd = new CContainer(bent.model_148.name, battleState_8006e398.getGlobalAsset(combatant._1a4).data_00);
       //LAB_800c9590
     } else if(combatant.mrg_00 != null && combatant.mrg_00.get(32).hasVirtualSize()) {
-      tmd = new CContainer(model.name, combatant.mrg_00.get(32));
+      tmd = new CContainer(bent.model_148.name, combatant.mrg_00.get(32));
     } else {
       throw new RuntimeException("Invalid state");
     }
@@ -2920,8 +2918,8 @@ public class Battle extends EngineState<Battle> {
 
     final TmdAnimationFile anim = battleState_8006e398.getAnimationGlobalAsset(combatant, 0);
     if((combatant.flags_19e & 0x4) != 0) {
-      model.modelParts_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
-      Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
+      bent.model_148.modelParts_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
+      Arrays.setAll(bent.model_148.modelParts_00, i -> new ModelPart10());
 
       final int shadowSizeIndex;
       if((combatant.charIndex_1a2 & 0x1) != 0) {
@@ -2931,15 +2929,17 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800c9650
-      loadPlayerModelAndAnimation(model, tmd, anim, shadowSizeIndex);
+      final PlayerBattleEntity player = ((PlayerBattleEntity)bent);
+      final CharacterData2c character = player.character;
+      loadPlayerModelAndAnimation(bent.model_148, tmd, anim, character.template.getShadowSize(character, player));
     } else {
       //LAB_800c9664
-      initModel(model, tmd, anim);
+      initModel(bent.model_148, tmd, anim);
     }
 
-    TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
+    TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', bent.model_148);
 
-    EVENTS.postEvent(new CombatantModelLoadedEvent(battle, combatant, model));
+    EVENTS.postEvent(new CombatantModelLoadedEvent(battle, combatant, bent.model_148));
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
@@ -4157,7 +4157,7 @@ public class Battle extends EngineState<Battle> {
       this.loadCombatantTmdAndAnims(combatant);
       //LAB_800ccc94
     } else if((combatant.flags_19e & 0x20) == 0) {
-      loadCombatantModelAndAnimation(this, bent.model_148, combatant);
+      loadCombatantModelAndAnimation(this, bent, combatant);
       bent.loadingAnimIndex_26e = 0;
       bent.currentAnimIndex_270 = -1;
       state.clearFlag(FLAG_1);
@@ -4357,36 +4357,15 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800cd208
+      final Addition addition = REGISTRIES.additions.getEntry(charData.selectedAddition_19).get();
       final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(charData.selectedAddition_19);
-      final int additionXp = Math.min(99, additionInfo.xp + 1);
+      additionInfo.xp++;
 
       //LAB_800cd240
       //LAB_800cd288
-      while(additionInfo.level < 4 && additionXp >= (additionInfo.level + 1) * 20) {
+      while(additionInfo.level < addition.getMaxLevel(charData, additionInfo) && additionInfo.xp >= addition.getXpToNextLevel(charData, additionInfo)) {
         additionInfo.level++;
       }
-
-      //LAB_800cd2ac
-      int nonMaxedAdditions = CHARACTER_ADDITIONS[charIndex].length;
-
-      // Find the first addition that isn't already maxed out
-      //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < CHARACTER_ADDITIONS[charIndex].length; additionIndex2++) {
-        if(charData.getAdditionInfo(CHARACTER_ADDITIONS[charIndex][additionIndex2].getId()).level == 4) {
-          nonMaxedAdditions--;
-        }
-
-        //LAB_800cd30c
-      }
-
-      // If there's only one addition that isn't maxed (the ultimate addition), unlock it
-      //LAB_800cd31c
-      if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) == 0) {
-        charData.partyFlags_04 |= HAS_ULTIMATE_ADDITION;
-      }
-
-      //LAB_800cd390
-      additionInfo.xp = additionXp;
     }
 
     //LAB_800cd3ac
@@ -4633,7 +4612,7 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_800cdaf4
     bent.loadingAnimIndex_26e = 0;
-    loadCombatantModelAndAnimation(this, bent.model_148, bent.combatant_144);
+    loadCombatantModelAndAnimation(this, bent, bent.combatant_144);
 
     //LAB_800cdb08
     return FlowControl.CONTINUE;
@@ -8661,7 +8640,7 @@ public class Battle extends EngineState<Battle> {
     final VitalsStat sp = player.stats.getStat(SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
-    spGained_800bc950.mergeInt(player.charId_272, script.params_20[1].get(), Integer::sum);
+    spGained_800bc950.mergeInt(player.character, script.params_20[1].get(), Integer::sum);
 
     //LAB_800f4500
     script.params_20[2].set(sp.getCurrent());

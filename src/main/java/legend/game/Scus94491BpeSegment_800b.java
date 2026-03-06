@@ -1,10 +1,11 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.gte.MV;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.postbattleactions.PostBattleActionInstance;
@@ -41,7 +42,7 @@ public final class Scus94491BpeSegment_800b {
   public static final List<ItemStack> itemOverflow = new ArrayList<>();
   public static final List<Equipment> equipmentOverflow = new ArrayList<>();
   public static boolean battleLoaded_800bc94c;
-  public static final Int2IntMap spGained_800bc950 = new Int2IntOpenHashMap();
+  public static final Object2IntMap<CharacterData2c> spGained_800bc950 = new Object2IntOpenHashMap<>();
   public static int totalXpFromCombat_800bc95c;
   /**
    * <ul>
@@ -60,7 +61,7 @@ public final class Scus94491BpeSegment_800b {
   public static int battleFlags_800bc960;
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
-  public static final IntList livingCharIds_800bc968 = new IntArrayList();
+  public static final List<CharacterData2c> livingChars_800bc968 = new ArrayList<>();
 
   /**
    * <ol>

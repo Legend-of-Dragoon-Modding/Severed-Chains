@@ -9,8 +9,6 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.game.additions.Addition;
-import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
@@ -30,7 +28,6 @@ import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.controls.Highlight;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
 import legend.game.modding.events.inventory.GiveEquipmentEvent;
@@ -1069,31 +1066,6 @@ public final class SItem {
         }
       }
     }
-  }
-
-  public static Addition checkForNewlyUnlockedAddition(final int charId) {
-    if(charId == -1) {
-      return null;
-    }
-
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
-    Addition newlyUnlocked = null;
-
-    for(final RegistryId registryId : charData.getAllAdditions()) {
-      final Addition addition = REGISTRIES.additions.getEntry(registryId).get();
-      final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(registryId);
-
-      if(additionInfo.checkUnlock(charData)) {
-        final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(charData, additionInfo, addition));
-
-        if(!event.isCanceled()) {
-          newlyUnlocked = addition;
-          additionInfo.unlock(gameState_800babc8.timestamp_a0);
-        }
-      }
-    }
-
-    return newlyUnlocked;
   }
 
   @Method(0x80104b1cL)

@@ -10,15 +10,19 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;
 import legend.lodmod.LodSpells;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static legend.lodmod.LodGoods.VIOLET_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.THUNDER_ELEMENT;
@@ -42,14 +46,19 @@ public class HaschelTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.HEX_HAMMER.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(26))));
     character.addAddition(LodAdditions.OMNI_SWEEP.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.ATOMIC_MIND.getId(), new CharacterSpellInfo(List.of()));
-    character.addSpell(LodSpells.THUNDER_KID.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(2))));
-    character.addSpell(LodSpells.THUNDER_GOD.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
-    character.addSpell(LodSpells.VIOLET_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
+    character.addSpell(LodSpells.ATOMIC_MIND.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.THUNDER_KID.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.THUNDER_GOD.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.VIOLET_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
 
     character.selectedAddition_19 = LodAdditions.DOUBLE_PUNCH.getId();
 
     return character;
+  }
+
+  @Override
+  public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
+    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/165", "SECT/DRGN22.BIN/836/textures/5", "SECT/DRGN22.BIN/836/166", "SECT/DRGN22.BIN/836/167", "SECT/DRGN22.BIN/836/168");
   }
 
   @Override

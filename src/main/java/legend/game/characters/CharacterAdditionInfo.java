@@ -10,19 +10,11 @@ public class CharacterAdditionInfo {
 
   private UnlockState unlockState = UnlockState.UNLOCKABLE;
   private int unlockTimestamp = -1;
-  public int level;
+  public int level = 1;
   public int xp;
 
   public CharacterAdditionInfo(final List<AdditionUnlockCriterion> unlockCriteria) {
     this.unlockCriteria.addAll(unlockCriteria);
-  }
-
-  public CharacterAdditionInfo(final List<AdditionUnlockCriterion> unlockCriteria, final UnlockState unlockState, final int unlockTimestamp, final int level, final int xp) {
-    this.unlockCriteria.addAll(unlockCriteria);
-    this.unlockState = unlockState;
-    this.unlockTimestamp = unlockTimestamp;
-    this.level = level;
-    this.xp = xp;
   }
 
   public CharacterAdditionInfo(final CharacterAdditionInfo other) {

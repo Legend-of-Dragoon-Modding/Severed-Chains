@@ -67,8 +67,8 @@ public class AdditionListMenu extends ListMenu {
     renderText(String.valueOf(additionInfo.xp), x + 145, y, this.fontOptions);
 
     final String max;
-    if(additionInfo.level < 4) {
-      max = String.valueOf((additionInfo.level + 1) * 20);
+    if(additionInfo.level < addition.getMaxLevel(this.player_08.character, additionInfo)) {
+      max = String.valueOf(addition.getXpToNextLevel(this.player_08.character, additionInfo));
     } else {
       max = "-";
     }
