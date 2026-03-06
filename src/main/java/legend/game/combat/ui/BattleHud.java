@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.Transformations;
@@ -28,10 +29,12 @@ import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
+import legend.game.inventory.screens.FontOptions;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
+import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.Translucency;
 import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
@@ -199,11 +202,12 @@ public class BattleHud {
 
   public final Battle battle;
 
+  private final FontOptions font = new FontOptions().set(UI_WHITE_CENTERED).size(0.75f);
+  private final List<TextureAtlasIcon> portraits = new ArrayList<>();
+
   private UiBox battleUiBackground;
   private UiBox battleUiName;
   private Obj nameAndPortraitObj;
-  private final IntList nameObjIndices = new IntArrayList();
-  private final IntList portraitObjIndices = new IntArrayList();
   private final List<IntList> statObjIndices = new ArrayList<>();
   private final MV uiTransforms = new MV();
   private final Vector3f colourTemp = new Vector3f();
@@ -213,9 +217,6 @@ public class BattleHud {
   private final Obj[] type3FloatingDigits = new Obj[10];
   private Obj miss;
 
-  private UiBox battleUiItemSpellList;
-  private UiBox battleUiSpellList;
-  private UiBox battleUiItemDescription;
   private Obj spBars;
   private final MV spBarTransforms = new MV();
   private final MV lineTransforms = new MV();
@@ -536,34 +537,17 @@ public class BattleHud {
       }
 
       if(this.nameAndPortraitObj == null) {
-        this.nameObjIndices.clear();
-        this.portraitObjIndices.clear();
+        this.portraits.clear();
+
+        for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
+          this.portraits.add(GameEngine.getTextureAtlas().getIcon(battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00.character.template.getRegistryId()));
+        }
+
         this.statObjIndices.clear();
 
         final QuadBuilder builder = new QuadBuilder("Names/Portraits");
 
         for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
-          final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
-          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
-
-          this.nameObjIndices.add(builder.currentQuadIndex() * 4);
-
-          this.buildUiTextureElement(
-            builder,
-            namePortraitMetrics.nameU_00, namePortraitMetrics.nameV_01,
-            namePortraitMetrics.nameW_02, namePortraitMetrics.nameH_03,
-            0x2c
-          );
-
-          this.portraitObjIndices.add(builder.currentQuadIndex() * 4);
-
-          this.buildUiTextureElement(
-            builder,
-            namePortraitMetrics.portraitU_04, namePortraitMetrics.portraitV_05,
-            namePortraitMetrics.portraitW_06, namePortraitMetrics.portraitH_07,
-            namePortraitMetrics.portraitClutOffset_08
-          );
-
           final IntList statObjIndices = new IntArrayList();
           this.statObjIndices.add(statObjIndices);
 
@@ -640,23 +624,33 @@ public class BattleHud {
           //LAB_800f01f0
           final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
 
-          // Names
-          this.uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
-          final QueuedModelStandard nameModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
-            .vertices(this.nameObjIndices.getInt(charSlot), 4);
-
-          // Portraits
-          this.uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
-          final QueuedModelStandard portraitModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
-            .vertices(this.portraitObjIndices.getInt(charSlot), 4);
-
+          final float portraitColour;
           if(charDisplay._14[2] < 6) {
-            nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
-            portraitModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex1] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f);
+            final float colour = ((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f;
+            this.font.colour(colour, colour, colour);
+            portraitColour = ((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex1] + 0x80) / 6 * charDisplay._14[2] - 0x80 & 0xff) / 128.0f;
           } else {
-            nameModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f);
-            portraitModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex1] & 0xff) / 128.0f);
+            final float colour = (uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f;
+            this.font.colour(colour, colour, colour);
+            portraitColour = (uiTextureElementBrightness_800c71ec[brightnessIndex1] & 0xff) / 128.0f;
           }
+
+          // Name
+          renderText(player.getName(), displayStats.x_00 + 16, displayStats.y_02 - 25, this.font);
+
+          // Portrait background
+          this.uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
+          this.uiTransforms.scaling(24.0f, 32.0f, 1.0f);
+          RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.uiTransforms, QueuedModelStandard.class)
+            .monochrome(portraitColour);
+
+          // Portrait
+          // Note - crops a bit of the portrait out
+          this.uiTransforms.transfer.set(displayStats.x_00 - 45, displayStats.y_02 - 24, 124.0f);
+          this.uiTransforms.scaling(30.0f, 36.0f, 1.0f);
+          this.portraits.get(charSlot).render(this.uiTransforms)
+            .monochrome(portraitColour)
+            .scissor(displayStats.x_00 - 44, displayStats.y_02 - 22, 24, 32);
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14[2]) * 8 + 100;
@@ -723,6 +717,7 @@ public class BattleHud {
 
             // HP: /  MP: /  SP:
             //LAB_800f0610
+            this.uiTransforms.identity();
             this.uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
             final QueuedModelStandard statsModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
               .vertices(this.statObjIndices.get(charSlot).getInt(i), 4);
