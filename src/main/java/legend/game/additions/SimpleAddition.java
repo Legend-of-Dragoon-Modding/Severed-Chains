@@ -15,13 +15,13 @@ public abstract class SimpleAddition extends Addition {
   }
 
   @Override
-  public int getDamage(final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
-    return (int)(this.baseDamage * this.getDamageMultiplier(charData, additionStats));
+  public int getDamage(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return (int)(this.baseDamage * this.getDamageMultiplier(character, additionInfo));
   }
 
   @Override
-  public int getSp(final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
-    final float multi = this.getSpMultiplier(charData, additionStats);
+  public int getSp(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    final float multi = this.getSpMultiplier(character, additionInfo);
     int sp = 0;
 
     for(int hit = 0; hit < this.hits.length; hit++) {
@@ -32,22 +32,22 @@ public abstract class SimpleAddition extends Addition {
   }
 
   @Override
-  public float getDamageMultiplier(final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
-    return this.levelMultipliers[additionStats.level].damage;
+  public float getDamageMultiplier(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.levelMultipliers[additionInfo.level].damage;
   }
 
   @Override
-  public float getSpMultiplier(final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
-    return this.levelMultipliers[additionStats.level].sp;
+  public float getSpMultiplier(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.levelMultipliers[additionInfo.level].sp;
   }
 
   @Override
-  public int getHitCount(final CharacterData2c charData, final CharacterAdditionInfo additionStats) {
+  public int getHitCount(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
     return this.hits.length;
   }
 
   @Override
-  public AdditionHitProperties10 getHit(final CharacterData2c charData, final CharacterAdditionInfo additionStats, final int index) {
+  public AdditionHitProperties10 getHit(final CharacterData2c character, final CharacterAdditionInfo additionInfo, final int index) {
     return this.hits[index];
   }
 

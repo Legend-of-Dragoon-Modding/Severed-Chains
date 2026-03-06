@@ -20,7 +20,7 @@ public class RetailAddition extends SimpleAddition {
   }
 
   @Override
-  public void loadAnimations(final CharacterData2c charData, final CharacterAdditionInfo additionStats, final Consumer<List<FileData>> onLoad) {
+  public void loadAnimations(final CharacterData2c character, final CharacterAdditionInfo additionInfo, final Consumer<List<FileData>> onLoad) {
     loadDrgnDir(0, this.additionFile, onLoad);
   }
 }
