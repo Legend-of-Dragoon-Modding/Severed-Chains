@@ -449,6 +449,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
         default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
       });
+
+      return;
     }
 
     out.set(switch(statIndex) {
