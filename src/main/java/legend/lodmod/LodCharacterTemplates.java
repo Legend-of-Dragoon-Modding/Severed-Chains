@@ -23,7 +23,6 @@ public final class LodCharacterTemplates {
   public static final RegistryDelegate<DartTemplate> DART = REGISTRAR.register("dart", DartTemplate::new);
   public static final RegistryDelegate<LavitzTemplate> LAVITZ = REGISTRAR.register("lavitz", LavitzTemplate::new);
   public static final RegistryDelegate<ShanaTemplate> SHANA = REGISTRAR.register("shana", ShanaTemplate::new);
-  public static final RegistryDelegate<ShanaTemplate> SHANT = REGISTRAR.register("shant", ShanaTemplate::new);
   public static final RegistryDelegate<RoseTemplate> ROSE = REGISTRAR.register("rose", RoseTemplate::new);
   public static final RegistryDelegate<HaschelTemplate> HASCHEL = REGISTRAR.register("haschel", HaschelTemplate::new);
   public static final RegistryDelegate<AlbertTemplate> ALBERT = REGISTRAR.register("albert", AlbertTemplate::new);
