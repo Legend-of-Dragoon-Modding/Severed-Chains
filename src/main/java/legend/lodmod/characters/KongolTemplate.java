@@ -35,15 +35,15 @@ public class KongolTemplate extends RetailCharacterTemplate {
   public CharacterData2c make(final GameState52c gameState) {
     final CharacterData2c character = super.make(gameState);
 
-    character.addAddition(LodAdditions.INFERNO.getId(), new CharacterAdditionInfo(List.of()));
-    character.addAddition(LodAdditions.PURSUIT.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(23))));
+    character.addAddition(LodAdditions.PURSUIT.getId(), new CharacterAdditionInfo(List.of()));
+    character.addAddition(LodAdditions.INFERNO.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(23))));
     character.addAddition(LodAdditions.BONE_CRUSH.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
     character.addSpell(LodSpells.GRAND_STREAM.getId(), new CharacterSpellInfo(List.of()));
     character.addSpell(LodSpells.METEOR_STRIKE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.GOLDEN_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonLevelUnlockCriterion(5))));
 
-    character.selectedAddition_19 = LodAdditions.INFERNO.getId();
+    character.selectedAddition_19 = LodAdditions.PURSUIT.getId();
 
     return character;
   }
