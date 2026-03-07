@@ -8345,6 +8345,8 @@ public class Battle extends EngineState<Battle> {
       final UnaryStat magicAvoid = player.stats.getStat(MAGIC_AVOID_STAT.get());
       final UnaryStat guardHeal = player.stats.getStat(GUARD_HEAL_STAT.get());
 
+      player.level_04 = player.character.level_12;
+      player.dlevel_06 = player.character.dlevel_13;
       player.status_0e = player.character.getStatusAndFlags();
       player.selectedAddition_58 = player.character.selectedAddition_19;
       player.addition = player.character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(player.character.selectedAddition_19).get() : null;
