@@ -188,7 +188,7 @@ public class PostBattleScreen extends MenuScreen {
         }
 
         if(!this.levelsGained_8011e1c8.isEmpty()) {
-          this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_8;
+          this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UP_8;
           break;
         }
 
@@ -198,14 +198,46 @@ public class PostBattleScreen extends MenuScreen {
         }
 
         if(!this.additionsUnlocked_8011e1b8.isEmpty()) {
-          this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_UNLOCKED_ADDITIONS_6;
-          this.unlockHeight_8011e178 = 0;
+          boolean foundPrimary = false;
+          for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
+
+            if(this.additionsUnlocked_8011e1b8.containsKey(character)) {
+              foundPrimary = true;
+              break;
+            }
+          }
+
+          if(foundPrimary) {
+            this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_UNLOCKED_ADDITIONS_6;
+            this.unlockHeight_8011e178 = 0;
+          } else {
+            this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_ADDITION;
+            playMenuSound(9);
+          }
+
           break;
         }
 
         if(!this.spellsUnlocked_8011e1a8.isEmpty()) {
-          this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_SPELL_UNLOCK_12;
-          this.unlockHeight_8011e178 = 0;
+          boolean foundPrimary = false;
+          for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
+
+            if(this.spellsUnlocked_8011e1a8.containsKey(character)) {
+              foundPrimary = true;
+              break;
+            }
+          }
+
+          if(foundPrimary) {
+            this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_SPELL_UNLOCK_12;
+            this.unlockHeight_8011e178 = 0;
+          } else {
+            this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_SPELL;
+            playMenuSound(9);
+          }
+
           break;
         }
 
@@ -273,7 +305,7 @@ public class PostBattleScreen extends MenuScreen {
         this.drawReport();
       }
 
-      case SECONDARY_LEVEL_UPS_8 -> {
+      case SECONDARY_LEVEL_UP_8 -> {
         addLevelUpOverlay(-80, 44);
         playMenuSound(9);
         this.inventoryMenuState_800bdc28 = MenuState.CONFIRM_SECONDARY_LEVEL_UP_9;
@@ -353,6 +385,23 @@ public class PostBattleScreen extends MenuScreen {
         }
       }
 
+      case SECONDARY_ADDITION -> {
+        final var it = this.additionsUnlocked_8011e1b8.entrySet().iterator();
+        final var entry = it.next();
+        final CharacterData2c character = entry.getKey();
+        final List<Addition> additions = entry.getValue();
+        this.drawChar(24, 152, character);
+        this.renderAdditionUnlocked(20, 169, additions.getFirst(), 20);
+
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
+          playMenuSound(2);
+          additions.removeFirst();
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+        }
+
+        this.drawReport();
+      }
+
       case EMBIGGEN_SPELL_UNLOCK_12 -> {
         if(this.unlockHeight_8011e178 < 20) {
           this.unlockHeight_8011e178 += 2;
@@ -395,6 +444,23 @@ public class PostBattleScreen extends MenuScreen {
 
         //LAB_8010df20
         //LAB_8010df24
+      }
+
+      case SECONDARY_SPELL -> {
+        final var it = this.spellsUnlocked_8011e1a8.entrySet().iterator();
+        final var entry = it.next();
+        final CharacterData2c character = entry.getKey();
+        final List<SpellStats0c> spells = entry.getValue();
+        this.drawChar(24, 152, character);
+        this.renderSpellUnlocked(20, 169, spells.getFirst(), 20);
+
+        if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
+          playMenuSound(2);
+          spells.removeFirst();
+          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+        }
+
+        this.drawReport();
       }
 
       case WAIT_FOR_INPUT_14 -> {
@@ -525,19 +591,6 @@ public class PostBattleScreen extends MenuScreen {
     //LAB_8010cdb0
     //LAB_8010cdcc
     return !spGained_800bc950.isEmpty();
-  }
-
-  @Method(0x8010cde8L)
-  private void levelUpDragoon(final CharacterData2c character) {
-    character.dlevelXp_0e += spGained_800bc950.getInt(character);
-
-    final LevelUpActions levelUpActions = new LevelUpActions();
-    while(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
-      character.applyDragoonLevelUp(levelUpActions);
-      this.dragoonLevelsGained_8011e1d8.mergeInt(character, 1, Integer::sum);
-    }
-
-    this.applyLevelUpActions(character, levelUpActions);
   }
 
   private void checkForUnlocks() {
@@ -946,12 +999,13 @@ public class PostBattleScreen extends MenuScreen {
     TICK_XP_5,
     EMBIGGEN_UNLOCKED_ADDITIONS_6,
     ENSMALLEN_UNLOCKED_ADDITIONS_7,
-    SECONDARY_LEVEL_UPS_8,
+    SECONDARY_ADDITION,
+    SECONDARY_LEVEL_UP_8,
     CONFIRM_SECONDARY_LEVEL_UP_9,
     DRAGOON_LEVEL_UPS_10,
-    WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11,
     EMBIGGEN_SPELL_UNLOCK_12,
     ENSMALLEN_SPELL_UNLOCK_13,
+    SECONDARY_SPELL,
     WAIT_FOR_INPUT_14,
     _15,
     FADE_OUT_16,
