@@ -175,7 +175,7 @@ public abstract class Control extends ControlHost {
   }
 
   public void enable() {
-    this.disabled = true;
+    this.disabled = false;
   }
 
   public void setDisabled(final boolean disabled) {
