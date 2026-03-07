@@ -182,7 +182,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     this.addToStat(character, MP_STAT.get(), 20);
     this.addToStat(character, SP_STAT.get(), 100);
     this.addToStat(character, DRAGOON_ATTACK_STAT.get(), this.getDragoonAttackToAdd(character.dlevel_13));
-    this.addToStat(character, DRAGOON_DEFENSE_STAT.get(), this.getDragoonDefenseToAdd(character.dlevelXp_0e));
+    this.addToStat(character, DRAGOON_DEFENSE_STAT.get(), this.getDragoonDefenseToAdd(character.dlevel_13));
     this.addToStat(character, DRAGOON_MAGIC_ATTACK_STAT.get(), this.getDragoonMagicAttackToAdd(character.dlevel_13));
     this.addToStat(character, DRAGOON_MAGIC_DEFENSE_STAT.get(), this.getDragoonMagicDefenseToAdd(character.dlevel_13));
 
