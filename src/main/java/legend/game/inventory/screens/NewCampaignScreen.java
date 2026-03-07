@@ -53,6 +53,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private boolean unload;
 
   public NewCampaignScreen() {
+    loadingNewGameState_800bdc34 = false;
+
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     this.enabledMods.addAll(MODS.getAllModIds());
 
