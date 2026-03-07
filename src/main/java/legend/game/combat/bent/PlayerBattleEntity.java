@@ -328,17 +328,15 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   protected int getArcherSp() {
-    int sp;
-    switch(this.dlevel_06) {
-      case 1 -> sp = 35;
-      case 2 -> sp = 50;
-      case 3 -> sp = 70;
-      case 4 -> sp = 100;
-      case 5 -> sp = 150;
-      default -> sp = 0;
-    }
-    sp = EVENTS.postEvent(new ArcherSpEvent(this.battle, this, sp)).sp;
-    return sp;
+    final int sp = switch(this.dlevel_06) {
+      case 0 -> 0;
+      case 1 -> 35;
+      case 2 -> 50;
+      case 3 -> 70;
+      default -> 100 + (this.dlevel_06 - 4) * 50;
+    };
+
+    return EVENTS.postEvent(new ArcherSpEvent(this.battle, this, sp)).sp;
   }
 
   protected int getAdditionHitCount() {
