@@ -2961,8 +2961,8 @@ public class Battle extends EngineState<Battle> {
         final int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
         if(isDragoon == 0) {
           // Additions
-          if(charId != 2 && charId != 8) {
-            final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+          final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+          if(!charData.isArcher()) {
             REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.getAdditionInfo(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
             return;
           }
