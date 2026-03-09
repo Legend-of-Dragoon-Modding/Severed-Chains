@@ -2119,7 +2119,7 @@ public class Battle extends EngineState<Battle> {
       bent.model_148.coord2_14.transforms.rotate.zero();
       battleState_8006e398.addPlayer(state);
 
-      Loader.loadDirectory(Loader.resolve(character.getBattleSoundsPath()), files -> {
+      Loader.loadDirectory(character.getBattleSoundsPath(), files -> {
         this.charSoundEffectsLoaded(files, bent);
 
         if(remaining.decrementAndGet() == 0) {
@@ -2226,7 +2226,7 @@ public class Battle extends EngineState<Battle> {
     for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
       final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
       final int finalCharSlot = charSlot;
-      Loader.loadFile(Loader.resolve(character.getBattleTexturePath()), files -> this.loadCharacterTim(files, finalCharSlot));
+      Loader.loadFile(character.getBattleTexturePath(), files -> this.loadCharacterTim(files, finalCharSlot));
     }
   }
 
@@ -2243,7 +2243,7 @@ public class Battle extends EngineState<Battle> {
     for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
       final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
       final int finalCharSlot = charSlot;
-      Loader.loadDirectory(Loader.resolve(character.getBattleModelPath()), files -> this.loadCharTmdAndAnims(files, finalCharSlot));
+      Loader.loadDirectory(character.getBattleModelPath(), files -> this.loadCharTmdAndAnims(files, finalCharSlot));
     }
   }
 
