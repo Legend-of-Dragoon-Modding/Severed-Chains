@@ -5,7 +5,6 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
-import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -128,15 +127,15 @@ public class CharacterData2c {
   }
 
   public Path getBattleModelPath() {
-    return Loader.resolve(this.template.getBattleModelPath(this));
+    return this.template.getBattleModelPath(this);
   }
 
   public Path getBattleTexturePath() {
-    return Loader.resolve(this.template.getBattleTexturePath(this));
+    return this.template.getBattleTexturePath(this);
   }
 
   public Path getBattleSoundsPath() {
-    return Loader.resolve(this.template.getBattleSoundsPath(this));
+    return this.template.getBattleSoundsPath(this);
   }
 
   public int getStatusAndFlags() {

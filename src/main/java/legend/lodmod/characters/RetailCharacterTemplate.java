@@ -225,17 +225,17 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public Path getBattleModelPath(final CharacterData2c character) {
-    return Path.of("characters", this.getRegistryId().entryId(), "models", "combat");
+    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "models", "combat"));
   }
 
   @Override
   public Path getBattleTexturePath(final CharacterData2c character) {
-    return Path.of("characters", this.getRegistryId().entryId(), "textures", "combat");
+    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "textures", "combat"));
   }
 
   @Override
   public Path getBattleSoundsPath(final CharacterData2c character) {
-    return Path.of("characters", this.getRegistryId().entryId(), "sounds", "combat");
+    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "sounds", "combat"));
   }
 
   protected abstract Good getDragoonSpirit();
