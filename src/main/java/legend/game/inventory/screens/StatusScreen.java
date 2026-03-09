@@ -4,6 +4,7 @@ import legend.core.platform.input.InputAction;
 import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
+import legend.game.inventory.screens.controls.CharacterCard;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.List;
@@ -17,10 +18,8 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterEquipment;
-import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
@@ -32,6 +31,7 @@ import static legend.game.sound.Audio.playMenuSound;
 public class StatusScreen extends MenuScreen {
   protected int loadingStage;
 
+  private final CharacterCard characterCard;
   private int charSlot;
 
   private boolean allowWrapX = true;
@@ -40,12 +40,15 @@ public class StatusScreen extends MenuScreen {
   private final Runnable unload;
 
   public StatusScreen(final Runnable unload) {
-    this.unload = unload;
+    this(0, unload);
   }
 
   public StatusScreen(final int charSlot, final Runnable unload) {
     this.charSlot = charSlot;
     this.unload = unload;
+    this.characterCard = this.addControl(new CharacterCard());
+    this.characterCard.setCharacter(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(charSlot)));
+    this.characterCard.setPos(8, 20);
   }
 
   @Override
@@ -97,13 +100,13 @@ public class StatusScreen extends MenuScreen {
     if(characterIndices_800bdbb8.size() > 1) {
       playMenuSound(1);
       this.charSlot = slot;
+      this.characterCard.setCharacter(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)));
       this.loadingStage = 1;
     }
   }
 
   private void renderStatusMenu(final int charSlot, final int a1) {
-    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), null, a1 == 0xff);
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff, false);
+    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), null);
     renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff);
     this.renderCharacterSpells(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff);
   }
@@ -132,10 +135,7 @@ public class StatusScreen extends MenuScreen {
           final RegistryId spellId = unlockedSpells.get(i);
           final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
           renderText(I18n.translate(spell), 210, 125 + i * 14, UI_TEXT);
-
-          if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spell.mp_06);
-          }
+          this.renderNumber(342, 128 + i * 14, spell.mp_06, 3);
         }
       }
     }

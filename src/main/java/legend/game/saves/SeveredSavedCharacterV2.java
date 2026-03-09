@@ -11,7 +11,6 @@ import legend.game.characters.VitalsStat;
 import legend.game.inventory.Equipment;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
-import legend.game.types.Renderable58;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.renderFourDigitHp;
+import static legend.game.SItem.renderHp;
 import static legend.game.SItem.renderNumber;
 import static legend.game.characters.CharacterData2c.IN_PARTY;
 
@@ -110,10 +109,9 @@ public class SeveredSavedCharacterV2 implements SavedCharacter {
   public void render(final SavedGame savedGame, final int x, final int y) {
     final VitalsStat hp = this.stats.getStat(LodMod.HP_STAT.get());
 
-    renderNumber(224, y + 6, this.level, 0x2, 2);
-    renderNumber(269, y + 6, this.dlevel, 0x2, 2);
-    renderFourDigitHp(302, y + 6, hp.getCurrent(), hp.getMax(), Renderable58.FLAG_DELETE_AFTER_RENDER);
-    renderNumber(332, y + 6, hp.getMax(), 0x2, 4);
+    renderNumber(225, y + 6, this.level, 0x2, 2);
+    renderNumber(270, y + 6, this.dlevel, 0x2, 2);
+    renderHp(361, y + 6, hp.getCurrent(), hp.getMax());
   }
 
   @Override

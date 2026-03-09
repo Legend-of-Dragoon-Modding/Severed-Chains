@@ -144,12 +144,7 @@ public class SeveredSaveCard extends BlankSaveCard {
       this.renderNumber(330, y + 17, getTimestampPart(this.savedGame.timestamp, 1), 2, 0x1);
       this.renderCharacter(342, y + 17, 10);
       this.renderNumber(348, y + 17, getTimestampPart(this.savedGame.timestamp, 2), 2, 0x1);
-      this.renderNumber(344, y + 34, this.savedGame.stardust, 2);
+      this.renderNumber(348, y + 34, this.savedGame.stardust, 2);
     }
-  }
-
-  @Override
-  protected void delete() {
-    super.delete();
   }
 }

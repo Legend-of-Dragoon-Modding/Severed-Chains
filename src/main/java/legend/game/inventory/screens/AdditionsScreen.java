@@ -7,6 +7,7 @@ import legend.game.additions.Addition;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
+import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -27,9 +28,7 @@ import static legend.game.SItem.additionGlyphs_801141e4;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.renderCharacter;
-import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
@@ -42,12 +41,14 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
 
 public class AdditionsScreen extends MenuScreen {
   private int loadingStage;
   private double scrollAccumulator;
   private final Runnable unload;
 
+  private final CharacterCard characterCard;
   private int charSlot;
   private int selectedSlot;
   private Renderable58 additionHighlight;
@@ -60,6 +61,9 @@ public class AdditionsScreen extends MenuScreen {
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;
+
+    this.characterCard = this.addControl(new CharacterCard());
+    this.characterCard.setPos(8, 20);
   }
 
   @Override
@@ -78,6 +82,8 @@ public class AdditionsScreen extends MenuScreen {
         deallocateRenderables(0);
 
         final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot));
+        this.characterCard.setCharacter(character);
+
         this.additionIds.clear();
         this.additionIds.addAll(character.getUnlockedAdditions());
         this.additionCount = character.getAllAdditions().size();
@@ -149,24 +155,20 @@ public class AdditionsScreen extends MenuScreen {
 
         renderText(addition.getName(), 33, y - 2, !additionId.equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);
 
-        if(allocate) {
-          final CharacterAdditionInfo info = charData.getAdditionInfo(additionId);
-          renderThreeDigitNumber(197, y, info.level);
-          renderThreeDigitNumber(230, y, addition.getHitCount(charData, info));
-          renderThreeDigitNumber(263, y, addition.getSp(charData, info));
-          renderThreeDigitNumber(297, y, addition.getDamage(charData, info));
-          renderThreeDigitNumber(322, y, info.xp);
+        final CharacterAdditionInfo info = charData.getAdditionInfo(additionId);
+        this.renderNumber(197, y, info.level, 3);
+        this.renderNumber(230, y, addition.getHitCount(charData, info), 3);
+        this.renderNumber(263, y, addition.getSp(charData, info), 3);
+        this.renderNumber(297, y, addition.getDamage(charData, info), 3);
+        this.renderNumber(322, y, info.xp, 3);
 
-          if(info.level < addition.getMaxLevel(charData, info)) {
-            renderThreeDigitNumber(342, y, addition.getXpToNextLevel(charData, info)); // Max XP
-          } else {
-            renderCharacter(354, y, 218); // Dash if at max XP
-          }
+        if(info.level < addition.getMaxLevel(charData, info)) {
+          this.renderNumber(342, y, addition.getXpToNextLevel(charData, info), 3);
+        } else {
+          renderCharacter(354, y, 218).flags_00 |= FLAG_DELETE_AFTER_RENDER; // Dash if at max XP
         }
       }
     }
-
-    renderCharacterSlot(16, 21, charIndex, allocate, false);
   }
 
   private int getAdditionSlotY(final int slot) {

@@ -1,7 +1,7 @@
 package legend.game;
 
-import legend.core.GameEngine;
 import legend.core.MathHelper;
+import legend.core.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
@@ -36,7 +36,6 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
-import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -68,6 +67,7 @@ import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.getTextureAtlas;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
@@ -75,7 +75,6 @@ import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.leftArrowRenderable_800bdba4;
 import static legend.game.Menus.loadMenuTexture;
-import static legend.game.Menus.managedRenderables_800bdc5c;
 import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
@@ -895,25 +894,13 @@ public final class SItem {
     return allocateUiElement(renderable, startGlyph, endGlyph, x, y);
   }
 
-  @Method(0x80103910L)
-  public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
-    final Renderable58 portrait = renderManualCharacterPortrait(charId, x, y, flags);
-    managedRenderables_800bdc5c.addFirst(portrait);
-    return portrait;
-  }
+  private static final MV portraitTransforms = new MV();
 
   @Method(0x80103910L)
-  public static Renderable58 renderManualCharacterPortrait(final int charId, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateManualRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
-    renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = 48 + charId;
-    renderable.startGlyph_10 = renderable.glyph_04;
-    renderable.endGlyph_14 = renderable.glyph_04;
-    renderable.tpage_2c = 0x19;
-    renderable.clut_30 = 0;
-    renderable.x_40 = x;
-    renderable.y_44 = y;
-    return renderable;
+  public static QueuedModelStandard renderCharacterPortrait(final int charId, final float x, final float y, final float z, final float width, final float height) {
+    portraitTransforms.transfer.set(x, y, z);
+    portraitTransforms.scaling(width, height, 1.0f);
+    return getTextureAtlas().getIcon(gameState_800babc8.charData_32c.get(charId).template.getRegistryId()).render(portraitTransforms);
   }
 
   /**
@@ -1086,80 +1073,39 @@ public final class SItem {
     glyph.z_3c = 35;
   }
 
-  @Method(0x80104c30L)
-  public static void renderTwoDigitNumber(final int x, final int y, final int value) {
-    renderNumber(x, y, value, 0, 2);
-  }
-
-  @Method(0x80104dd4L)
-  public static void renderThreeDigitNumber(final int x, final int y, final int value) {
-    renderNumber(x, y, value, 0, 3);
-  }
-
-  @Method(0x80105048L)
-  public static int renderThreeDigitNumberComparison(final int x, final int y, final int currentVal, int newVal) {
-    long flags = 0;
+  public static int renderNumberComparison(final int x, final int y, final int currentVal, int newVal, final int digitCount) {
+    int flags = 0;
     final int clut;
     if(currentVal < newVal) {
       clut = 0x7c6b;
-      //LAB_80105090
     } else if(currentVal > newVal) {
       clut = 0x7c2b;
     } else {
       clut = 0;
     }
 
-    //LAB_801050a0
-    //LAB_801050a4
-    if(newVal > 999) {
-      newVal = 999;
+    final int max = (int)Math.pow(10, digitCount) - 1;
+
+    if(newVal > max) {
+      newVal = max;
     }
 
-    //LAB_801050b0
-    int s0 = newVal / 100 % 10;
-    if(s0 != 0) {
-      //LAB_80105108
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      //LAB_80105138
-      //LAB_8010513c
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
-      renderable.glyph_04 = s0;
-      renderable.tpage_2c = 0x19;
-      renderable.clut_30 = clut;
-      renderable.z_3c = 0x21;
-      renderable.x_40 = x;
-      renderable.y_44 = y;
-      flags |= 0x1L;
+    for(int i = 0; i < digitCount; i++) {
+      final int digit = newVal / (int)Math.pow(10, digitCount - (i + 1)) % 10;
+
+      if(digit != 0 || i == digitCount - 1 || (flags & 0x1) != 0) {
+        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
+        renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
+        renderable.glyph_04 = digit;
+        renderable.tpage_2c = 0x19;
+        renderable.clut_30 = clut;
+        renderable.z_3c = 33;
+        renderable.x_40 = x + i * 6;
+        renderable.y_44 = y;
+        flags |= 0x1;
+      }
     }
 
-    //LAB_80105190
-    s0 = newVal / 10 % 10;
-    if(s0 != 0 || (flags & 0x1L) != 0) {
-      //LAB_801051ec
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      //LAB_8010521c
-      //LAB_80105220
-      renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
-      renderable.glyph_04 = s0;
-      renderable.tpage_2c = 0x19;
-      renderable.clut_30 = clut;
-      renderable.z_3c = 0x21;
-      renderable.x_40 = x + 6;
-      renderable.y_44 = y;
-    }
-
-    //LAB_80105274
-    s0 = newVal % 10;
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-    //LAB_801052d8
-    //LAB_801052dc
-    renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
-    renderable.glyph_04 = s0;
-    renderable.tpage_2c = 0x19;
-    renderable.clut_30 = clut;
-    renderable.z_3c = 0x21;
-    renderable.x_40 = x + 12;
-    renderable.y_44 = y;
     return clut;
   }
 
@@ -1180,7 +1126,7 @@ public final class SItem {
       clut = 0;
     }
 
-    final int width = renderRightAlignedNumber(x, y, denominator, 0);
+    final int width = renderRightAlignedNumber(x, y, denominator);
     allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= FLAG_DELETE_AFTER_RENDER;
     renderRightAlignedNumber(x - width - 5, y, numerator, clut);
   }
@@ -1285,121 +1231,6 @@ public final class SItem {
     renderable.z_3c = 0x21;
   }
 
-  @Method(0x80105a50L)
-  public static void renderSixDigitNumber(final int x, final int y, int value) {
-    long flags = 0;
-
-    if(value > 999999) {
-      value = 999999;
-    }
-
-    //LAB_80105a98
-    int s0 = value / 100_000 % 10;
-    if(s0 != 0) {
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.glyph_04 = s0;
-      //LAB_80105b10
-      //LAB_80105b14
-      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-      struct.tpage_2c = 0x19;
-      struct.clut_30 = 0;
-      struct.z_3c = 0x21;
-      struct.x_40 = x;
-      struct.y_44 = y;
-      flags |= 0x1L;
-    }
-
-    //LAB_80105b4c
-    s0 = value / 10_000 % 10;
-    if(s0 != 0 || (flags & 0x1) != 0) {
-      //LAB_80105ba8
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.glyph_04 = s0;
-      //LAB_80105bd8
-      //LAB_80105bdc
-      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-      struct.tpage_2c = 0x19;
-      struct.clut_30 = 0;
-      struct.z_3c = 0x21;
-      struct.x_40 = x + 6;
-      struct.y_44 = y;
-      flags |= 0x1L;
-    }
-
-    //LAB_80105c18
-    s0 = value / 1_000 % 10;
-    if(s0 != 0 || (flags & 0x1) != 0) {
-      //LAB_80105c70
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.glyph_04 = s0;
-      //LAB_80105ca0
-      //LAB_80105ca4
-      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-      struct.tpage_2c = 0x19;
-      struct.clut_30 = 0;
-      struct.z_3c = 0x21;
-      struct.x_40 = x + 12;
-      struct.y_44 = y;
-      flags |= 0x1L;
-    }
-
-    //LAB_80105ce0
-    s0 = value / 100 % 10;
-    if(s0 != 0 || (flags & 0x1) != 0) {
-      //LAB_80105d38
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.glyph_04 = s0;
-      //LAB_80105d68
-      //LAB_80105d6c
-      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-      struct.tpage_2c = 0x19;
-      struct.clut_30 = 0;
-      struct.z_3c = 0x21;
-      struct.x_40 = x + 18;
-      struct.y_44 = y;
-      flags |= 0x1L;
-    }
-
-    //LAB_80105da4
-    s0 = value / 10 % 10;
-    if(s0 != 0 || (flags & 0x1) != 0) {
-      //LAB_80105dfc
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.glyph_04 = s0;
-      //LAB_80105e2c
-      //LAB_80105e30
-      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-      struct.tpage_2c = 0x19;
-      struct.clut_30 = 0;
-      struct.z_3c = 0x21;
-      struct.x_40 = x + 24;
-      struct.y_44 = y;
-    }
-
-    //LAB_80105e68
-    s0 = value % 10;
-    final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-    struct.glyph_04 = s0;
-    //LAB_80105ecc
-    //LAB_80105ed0
-    struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-    struct.tpage_2c = 0x19;
-    struct.clut_30 = 0;
-    struct.z_3c = 0x21;
-    struct.x_40 = x + 30;
-    struct.y_44 = y;
-  }
-
-  @Method(0x80105f2cL)
-  public static void renderEightDigitNumber(final int x, final int y, final int value, final int flags) {
-    renderNumber(x, y, value, flags, 8);
-  }
-
-  @Method(0x801065bcL)
-  public static void renderFiveDigitNumber(final int x, final int y, final int value) {
-    renderNumber(x, y, value, 0x2, 5);
-  }
-
   public static int renderRightAlignedNumber(final int x, final int y, final int value, final int clut) {
     final int digitCount = MathHelper.digitCount(value);
 
@@ -1420,6 +1251,10 @@ public final class SItem {
     }
 
     return totalWidth;
+  }
+
+  public static int renderRightAlignedNumber(final int x, final int y, final int value) {
+    return renderRightAlignedNumber(x, y, value, 0);
   }
 
   /**
@@ -1447,18 +1282,8 @@ public final class SItem {
     }
   }
 
-  @Method(0x80107764L)
-  public static void renderThreeDigitNumber(final int x, final int y, final int value, final int flags) {
-    renderNumber(x, y, value, flags, 3);
-  }
-
-  @Method(0x801079fcL)
-  public static void renderTwoDigitNumber(final int x, final int y, final int value, final int flags) {
-    renderNumber(x, y, value, flags, 2);
-  }
-
   @Method(0x80107cb4L)
-  public static void renderCharacter(final int x, final int y, final int character) {
+  public static Renderable58 renderCharacter(final int x, final int y, final int character) {
     final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
     v0.glyph_04 = character;
@@ -1467,38 +1292,20 @@ public final class SItem {
     v0.z_3c = 0x21;
     v0.x_40 = x;
     v0.y_44 = y;
+    return v0;
   }
 
   @Method(0x80107d34L)
-  public static void renderThreeDigitNumberComparisonWithPercent(final int x, final int y, final int currentVal, final int newVal) {
-    final int clut = renderThreeDigitNumberComparison(x, y, currentVal, newVal);
+  public static void renderNumberComparisonWithPercent(final int x, final int y, final int currentVal, final int newVal, final int digitCount) {
+    final int clut = renderNumberComparison(x, y, currentVal, newVal, digitCount);
     final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
     v0.glyph_04 = 0xc;
     v0.tpage_2c = 0x19;
     v0.clut_30 = clut;
     v0.z_3c = 0x21;
-    v0.x_40 = x + 20;
+    v0.x_40 = x + digitCount * 6;
     v0.y_44 = y;
-  }
-
-  @Method(0x80107dd4L)
-  public static void renderXp(final int x, final int y, final int xp) {
-    if(xp != 0) {
-      renderSixDigitNumber(x, y, xp);
-    } else {
-      //LAB_80107e08
-      final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
-      v0.glyph_04 = 218;
-      v0.tpage_2c = 0x19;
-      v0.clut_30 = 0x7ca9;
-      v0.z_3c = 0x21;
-      v0.x_40 = x + 30;
-      v0.y_44 = y;
-    }
-
-    //LAB_80107e58
   }
 
   @Method(0x80107e70L)
@@ -1559,55 +1366,8 @@ public final class SItem {
     return true;
   }
 
-  private static final MV portraitTransforms = new MV();
-
-  @Method(0x80107f9cL)
-  public static void renderCharacterSlot(final int x, final int y, final int charId, final boolean allocate, final boolean dontSelect) {
-    if(charId != -1) {
-      final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
-      final TextureAtlasIcon icon = GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId());
-      portraitTransforms.transfer.set(x, y + 8.0f, 132.0f);
-      portraitTransforms.scaling(48.0f, 48.0f, 1.0f);
-      icon.render(portraitTransforms);
-
-      if(allocate) {
-        allocateUiElement( 74,  74, x, y).z_3c = 33;
-        allocateUiElement(153, 153, x, y);
-
-        final VitalsStat hp = character.stats.getStat(HP_STAT.get());
-        final VitalsStat mp = character.stats.getStat(MP_STAT.get());
-        final VitalsStat sp = character.stats.getStat(SP_STAT.get());
-
-        renderTwoDigitNumber(x + 154, y + 6, character.level_12);
-        renderTwoDigitNumber(x + 112, y + 17, character.dlevel_13);
-        renderThreeDigitNumber(x + 148, y + 17, sp.getCurrent());
-        renderFourDigitHp(x + 100, y + 28, hp.getCurrent(), hp.getMax());
-        renderCharacter(x + 124, y + 28, 11);
-        renderFourDigitNumber(x + 142, y + 28, hp.getMax());
-        renderThreeDigitNumber(x + 106, y + 39, mp.getCurrent());
-        renderCharacter(x + 124, y + 39, 11);
-        renderThreeDigitNumber(x + 148, y + 39, mp.getMax());
-        renderSixDigitNumber(x + 88, y + 50, character.xp_00);
-        renderCharacter(x + 124, y + 50, 11);
-        renderXp(x + 130, y + 50, character.getXpToNextLevel());
-
-        // Render "don't select" overlay
-        if(dontSelect) {
-          allocateUiElement(113, 113, x + 56, y + 24).z_3c = 33;
-        }
-      }
-
-      //LAB_80108218
-      if(!renderCharacterStatusEffect(x + 46, y + 3, character)) {
-        renderText(character.getName(), x + 49, y + 3, UI_TEXT);
-      }
-    }
-
-    //LAB_80108270
-  }
-
   @Method(0x801085e0L)
-  public static void renderCharacterStats(final int charIndex, @Nullable final Equipment equipment, final boolean allocate) {
+  public static void renderCharacterStats(final int charIndex, @Nullable final Equipment equipment) {
     if(charIndex != -1) {
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
 
@@ -1688,62 +1448,60 @@ public final class SItem {
       final UnaryStat speed = character.stats.getStat(SPEED_STAT.get());
 
       //LAB_80108770
-      renderThreeDigitNumber( 58, 116, attack.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 116, equipmentAttack, newEquipmentAttack);
-      renderThreeDigitNumberComparison(122, 116, attack.getRaw() + equipmentAttack, attack.getRaw() + newEquipmentAttack);
+      renderNumber( 53, 116, attack.getRaw(), 0x2, 4);
+      renderNumberComparison( 85, 116, equipmentAttack, newEquipmentAttack, 4);
+      renderNumberComparison(120, 116, attack.getRaw() + equipmentAttack, attack.getRaw() + newEquipmentAttack, 4);
 
       if(character.hasDragoon()) {
-        renderThreeDigitNumberComparisonWithPercent(159, 116, dragoonAttack.getRaw(), dragoonAttack.getRaw());
+        renderNumberComparisonWithPercent(153, 116, dragoonAttack.getRaw(), dragoonAttack.getRaw(), 4);
       }
 
       //LAB_801087fc
-      renderThreeDigitNumber( 58, 128, defense.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 128, equipmentDefense, newEquipmentDefense);
-      renderThreeDigitNumberComparison(122, 128, defense.getRaw() + equipmentDefense, defense.getRaw() + newEquipmentDefense);
+      renderNumber( 53, 128, defense.getRaw(), 0x2, 4);
+      renderNumberComparison( 85, 128, equipmentDefense, newEquipmentDefense, 4);
+      renderNumberComparison(120, 128, defense.getRaw() + equipmentDefense, defense.getRaw() + newEquipmentDefense, 4);
 
       if(character.hasDragoon()) {
-        renderThreeDigitNumberComparisonWithPercent(159, 128, dragoonDefense.getRaw(), dragoonDefense.getRaw());
+        renderNumberComparisonWithPercent(153, 128, dragoonDefense.getRaw(), dragoonDefense.getRaw(), 4);
       }
 
       //LAB_8010886c
-      renderThreeDigitNumber( 58, 140, magicAttack.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 140, equipmentMagicAttack, newEquipmentMagicAttack);
-      renderThreeDigitNumberComparison(122, 140, magicAttack.getRaw() + equipmentMagicAttack, magicAttack.getRaw() + equipmentMagicAttack);
+      renderNumber( 53, 140, magicAttack.getRaw(), 0x2, 4);
+      renderNumberComparison( 85, 140, equipmentMagicAttack, newEquipmentMagicAttack, 4);
+      renderNumberComparison(120, 140, magicAttack.getRaw() + equipmentMagicAttack, magicAttack.getRaw() + equipmentMagicAttack, 4);
 
       if(character.hasDragoon()) {
-        renderThreeDigitNumberComparisonWithPercent(159, 140, dragoonMagicAttack.getRaw(), dragoonMagicAttack.getRaw());
+        renderNumberComparisonWithPercent(153, 140, dragoonMagicAttack.getRaw(), dragoonMagicAttack.getRaw(), 4);
       }
 
       //LAB_801088dc
-      renderThreeDigitNumber( 58, 152, magicDefense.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 152, equipmentMagicDefense, newEquipmentMagicDefense);
-      renderThreeDigitNumberComparison(122, 152, magicDefense.getRaw() + equipmentMagicDefense, magicDefense.getRaw() + newEquipmentMagicDefense);
+      renderNumber( 53, 152, magicDefense.getRaw(), 0x2, 4);
+      renderNumberComparison( 85, 152, equipmentMagicDefense, newEquipmentMagicDefense, 4);
+      renderNumberComparison(120, 152, magicDefense.getRaw() + equipmentMagicDefense, magicDefense.getRaw() + newEquipmentMagicDefense, 4);
 
       if(character.hasDragoon()) {
-        renderThreeDigitNumberComparisonWithPercent(159, 152, dragoonMagicDefense.getRaw(), dragoonMagicDefense.getRaw());
+        renderNumberComparisonWithPercent(153, 152, dragoonMagicDefense.getRaw(), dragoonMagicDefense.getRaw(), 4);
       }
 
       //LAB_8010894c
-      renderThreeDigitNumber( 58, 164, speed.getRaw(), 0x2);
-      renderThreeDigitNumberComparison( 90, 164, equipmentSpeed, newEquipmentSpeed);
-      renderThreeDigitNumberComparison(122, 164, speed.getRaw() + equipmentSpeed, speed.getRaw() + newEquipmentSpeed);
+      renderNumber( 53, 164, speed.getRaw(), 0x2, 4);
+      renderNumberComparison( 85, 164, equipmentSpeed, newEquipmentSpeed, 4);
+      renderNumberComparison(120, 164, speed.getRaw() + equipmentSpeed, speed.getRaw() + newEquipmentSpeed, 4);
 
-      renderThreeDigitNumberComparisonWithPercent( 58, 176, attackHit.getRaw(), attackHit.getRaw());
-      renderThreeDigitNumberComparisonWithPercent( 90, 176, equipmentAttackHit, newEquipmentAttackHit);
-      renderThreeDigitNumberComparisonWithPercent(122, 176, attackHit.getRaw() + equipmentAttackHit, attackHit.getRaw() + newEquipmentAttackHit);
-      renderThreeDigitNumberComparisonWithPercent( 58, 188, magicHit.getRaw(), magicHit.getRaw());
-      renderThreeDigitNumberComparisonWithPercent( 90, 188, equipmentMagicHit, newEquipmentMagicHit);
-      renderThreeDigitNumberComparisonWithPercent(122, 188, magicHit.getRaw() + equipmentMagicHit, magicHit.getRaw() + newEquipmentMagicHit);
-      renderThreeDigitNumberComparisonWithPercent( 58, 200, attackAvoid.getRaw(), attackAvoid.getRaw());
-      renderThreeDigitNumberComparisonWithPercent( 90, 200, equipmentAttackAvoid, newEquipmentAttackAvoid);
-      renderThreeDigitNumberComparisonWithPercent(122, 200, attackAvoid.getRaw() + equipmentAttackAvoid, attackAvoid.getRaw() + newEquipmentAttackAvoid);
-      renderThreeDigitNumberComparisonWithPercent( 58, 212, magicAvoid.getRaw(), magicAvoid.getRaw());
-      renderThreeDigitNumberComparisonWithPercent( 90, 212, equipmentMagicAvoid, newEquipmentMagicAvoid);
-      renderThreeDigitNumberComparisonWithPercent(122, 212, magicAvoid.getRaw() + equipmentMagicAvoid, magicAvoid.getRaw() + newEquipmentMagicAvoid);
+      renderNumberComparisonWithPercent( 53, 176, attackHit.getRaw(), attackHit.getRaw(), 4);
+      renderNumberComparisonWithPercent( 85, 176, equipmentAttackHit, newEquipmentAttackHit, 4);
+      renderNumberComparisonWithPercent(120, 176, attackHit.getRaw() + equipmentAttackHit, attackHit.getRaw() + newEquipmentAttackHit, 4);
+      renderNumberComparisonWithPercent( 53, 188, magicHit.getRaw(), magicHit.getRaw(), 4);
+      renderNumberComparisonWithPercent( 85, 188, equipmentMagicHit, newEquipmentMagicHit, 4);
+      renderNumberComparisonWithPercent(120, 188, magicHit.getRaw() + equipmentMagicHit, magicHit.getRaw() + newEquipmentMagicHit, 4);
+      renderNumberComparisonWithPercent( 53, 200, attackAvoid.getRaw(), attackAvoid.getRaw(), 4);
+      renderNumberComparisonWithPercent( 85, 200, equipmentAttackAvoid, newEquipmentAttackAvoid, 4);
+      renderNumberComparisonWithPercent(120, 200, attackAvoid.getRaw() + equipmentAttackAvoid, attackAvoid.getRaw() + newEquipmentAttackAvoid, 4);
+      renderNumberComparisonWithPercent( 53, 212, magicAvoid.getRaw(), magicAvoid.getRaw(), 4);
+      renderNumberComparisonWithPercent( 85, 212, equipmentMagicAvoid, newEquipmentMagicAvoid, 4);
+      renderNumberComparisonWithPercent(120, 212, magicAvoid.getRaw() + equipmentMagicAvoid, magicAvoid.getRaw() + newEquipmentMagicAvoid, 4);
 
-      if(allocate) {
-        allocateUiElement(0x56, 0x56, 16, 94);
-      }
+      allocateUiElement(0x56, 0x56, 16, 94).flags_00 |= FLAG_DELETE_AFTER_RENDER;
     }
 
     //LAB_80108a50
@@ -1818,7 +1576,7 @@ public final class SItem {
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {
-        renderCharacterPortrait(s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
+        renderCharacterPortrait(s0 & 0xf, x + 140, y + FUN_800fc814(i) - 1, 144.0f, 16.0f, 16.0f);
         //LAB_80109574
       } else if((s0 & 0x2000) != 0) {
         ItemIcon.WARNING.render(x + 148, y + FUN_800fc814(i) - 1, 0x8).clut_30 = 0x7eaa;

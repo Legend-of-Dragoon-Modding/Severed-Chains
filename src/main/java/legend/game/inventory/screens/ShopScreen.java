@@ -43,7 +43,6 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderFiveDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.takeEquipment;
@@ -335,7 +334,7 @@ public class ShopScreen extends MenuScreen {
 
         if(equipment.canBeDiscarded()) {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(this.shop, equipment, equipment.getSellPrice()));
-          renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
+          this.renderNumber(322, this.menuEntryY(i) + 4, event.price, 6);
         } else {
           ItemIcon.WARNING.render(330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
         }

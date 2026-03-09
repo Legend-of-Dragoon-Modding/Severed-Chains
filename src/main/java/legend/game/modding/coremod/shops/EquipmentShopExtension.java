@@ -2,6 +2,7 @@ package legend.game.modding.coremod.shops;
 
 import legend.core.GameEngine;
 import legend.core.platform.input.InputAction;
+import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
@@ -11,7 +12,6 @@ import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.controls.AtlasIcon;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
@@ -28,8 +28,8 @@ import static legend.game.SItem.initArrowRenderable;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderFraction;
-import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.SItem.renderThreeDigitNumberComparison;
+import static legend.game.SItem.renderNumber;
+import static legend.game.SItem.renderNumberComparison;
 import static legend.game.SItem.setRandomRepeatGlyph;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -206,15 +206,15 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
         allocateOneFrameGlyph(0x6b, 274, 147);
         allocateOneFrameGlyph(0x6b, 274, 157);
 
-        renderThreeDigitNumber(246, 127, equipmentAttack, 0x2);
-        renderThreeDigitNumber(246, 137, equipmentDefense, 0x2);
-        renderThreeDigitNumber(246, 147, equipmentMagicAttack, 0x2);
-        renderThreeDigitNumber(246, 157, equipmentMagicDefense, 0x2);
+        renderNumber(246, 127, equipmentAttack, 0x2, 4);
+        renderNumber(246, 137, equipmentDefense, 0x2, 4);
+        renderNumber(246, 147, equipmentMagicAttack, 0x2, 4);
+        renderNumber(246, 157, equipmentMagicDefense, 0x2, 4);
 
-        renderThreeDigitNumberComparison(284, 127, equipmentAttack, newEquipmentAttack);
-        renderThreeDigitNumberComparison(284, 137, equipmentDefense, newEquipmentDefense);
-        renderThreeDigitNumberComparison(284, 147, equipmentMagicAttack, newEquipmentMagicAttack);
-        renderThreeDigitNumberComparison(284, 157, equipmentMagicDefense, newEquipmentMagicDefense);
+        renderNumberComparison(284, 127, equipmentAttack, newEquipmentAttack, 4);
+        renderNumberComparison(284, 137, equipmentDefense, newEquipmentDefense, 4);
+        renderNumberComparison(284, 147, equipmentMagicAttack, newEquipmentMagicAttack, 4);
+        renderNumberComparison(284, 157, equipmentMagicDefense, newEquipmentMagicDefense, 4);
       } else {
         renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
       }

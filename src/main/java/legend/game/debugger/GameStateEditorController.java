@@ -499,7 +499,7 @@ public class GameStateEditorController {
   @FXML
   public void editCharacter() throws Exception {
     final int id = this.getCharacter.getSelectionModel().getSelectedIndex();
-    final CharacterEditor charEditor = new CharacterEditor(id, gameState_800babc8.charData_32c.get(id));
+    final CharacterEditor charEditor = new CharacterEditor(gameState_800babc8.charData_32c.get(id));
     charEditor.start(new Stage());
   }
 

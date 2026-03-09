@@ -2864,6 +2864,8 @@ public class Battle extends EngineState<Battle> {
             // Player TMDs
             //LAB_800c9334
             int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
+            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(combatant.charSlot_19c);
+
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
@@ -2874,8 +2876,7 @@ public class Battle extends EngineState<Battle> {
               final String charName = getCharacterName(charId).toLowerCase();
               loadDir("characters/%s/models/dragoon".formatted(charName), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
             } else {
-              final String charName = getCharacterName(charId).toLowerCase();
-              loadDir("characters/%s/models/combat".formatted(charName), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
+              Loader.loadDirectory(character.getBattleModelPath(), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
             }
           }
         }
@@ -3268,18 +3269,18 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800ca55cL)
   public void loadCombatantTextures(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
-      int fileIndex = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
+      int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
+      final CharacterData2c character = gameState_800babc8.getCharacterBySlot(combatant.charSlot_19c);
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
-        if(fileIndex == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-          fileIndex = 10;
+        if(charId == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+          charId = 10;
         }
 
-        final String charName = getCharacterName(fileIndex).toLowerCase();
+        final String charName = getCharacterName(charId).toLowerCase();
         loadFile("characters/%s/textures/dragoon".formatted(charName), files -> this.loadCombatantTim(combatant, files));
       } else {
-        final String charName = getCharacterName(fileIndex).toLowerCase();
-        loadFile("characters/%s/textures/combat".formatted(charName), files -> this.loadCombatantTim(combatant, files));
+        Loader.loadFile(character.getBattleTexturePath(), files -> this.loadCombatantTim(combatant, files));
       }
     }
 

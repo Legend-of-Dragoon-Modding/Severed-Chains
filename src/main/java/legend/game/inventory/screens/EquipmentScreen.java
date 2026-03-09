@@ -4,10 +4,11 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
+import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
-import legend.game.characters.CharacterData2c;
+import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -28,7 +29,6 @@ import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuEquipmentSlotComparator;
 import static legend.game.SItem.renderCharacterEquipment;
-import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
@@ -58,6 +58,7 @@ public class EquipmentScreen extends MenuScreen {
   private double scrollAccumulator;
   private final Runnable unload;
 
+  private final CharacterCard characterCard;
   private int slotScroll;
   private int selectedSlot;
   private int charSlot;
@@ -74,6 +75,9 @@ public class EquipmentScreen extends MenuScreen {
 
   public EquipmentScreen(final Runnable unload) {
     this.unload = unload;
+
+    this.characterCard = this.addControl(new CharacterCard());
+    this.characterCard.setPos(8, 20);
   }
 
   @Override
@@ -85,6 +89,7 @@ public class EquipmentScreen extends MenuScreen {
         this.loadingStage++;
 
       case 1:
+        this.characterCard.setCharacter(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)));
         this.slotScroll = 0;
         this.selectedSlot = 0;
         this.loadingStage++;
@@ -163,8 +168,7 @@ public class EquipmentScreen extends MenuScreen {
   private void renderEquipmentScreen(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
     final boolean allocate = a3 == 0xff;
 
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.getInt(charSlot), allocate, false);
-    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00, allocate);
+    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00);
     renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate);
 
     if(allocate) {

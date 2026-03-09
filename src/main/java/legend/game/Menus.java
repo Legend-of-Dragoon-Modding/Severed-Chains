@@ -295,6 +295,10 @@ public final class Menus {
 
         //LAB_80023e94
         for(int metricsIndex = Math.min(metricses.length, renderable.metricsCount) - 1; metricsIndex >= 0; metricsIndex--) {
+          if(renderable.metricsBlacklist.contains(metricsIndex)) {
+            continue;
+          }
+
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
           final float x1;

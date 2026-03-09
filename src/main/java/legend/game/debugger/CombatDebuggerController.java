@@ -126,7 +126,7 @@ public class CombatDebuggerController {
     this.statusCondition.getSelectionModel().select(0);
 
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
-    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
+    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
     this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
     this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE));
     this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));

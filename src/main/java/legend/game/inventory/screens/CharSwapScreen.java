@@ -6,10 +6,11 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
+import legend.game.characters.CharacterData2c;
 import legend.game.characters.VitalsStat;
+import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.textures.TextureAtlasIcon;
-import legend.game.characters.CharacterData2c;
 import legend.game.types.Renderable58;
 
 import java.util.Set;
@@ -22,12 +23,13 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.charSwapGlyphs_80114160;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderFourDigitHp;
 import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
+import static legend.game.characters.CharacterData2c.CANT_REMOVE;
+import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -35,8 +37,6 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
-import static legend.game.characters.CharacterData2c.CANT_REMOVE;
-import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 
@@ -48,6 +48,8 @@ public class CharSwapScreen extends MenuScreen {
   private boolean allowWrapX = true;
   private boolean allowWrapY = true;
 
+  private final CharacterCard[] characterCard = new CharacterCard[3];
+
   private int primaryCharSlot;
   private int secondaryCharSlot;
   private Renderable58 primaryCharHighlight;
@@ -57,6 +59,11 @@ public class CharSwapScreen extends MenuScreen {
 
   public CharSwapScreen(final Runnable unload) {
     this.unload = unload;
+
+    for(int i = 0; i < this.characterCard.length; i++) {
+      this.characterCard[i] = this.addControl(new CharacterCard());
+      this.characterCard[i].setPos(8, 16 + i * 72);
+    }
   }
 
   @Override
@@ -134,7 +141,18 @@ public class CharSwapScreen extends MenuScreen {
         renderGlyphs(charSwapGlyphs_80114160, 0, 0);
         this.primaryCharHighlight = allocateUiElement(0x7f, 0x7f, 16, this.getSlotY(this.primaryCharSlot));
         initHighlight(this.primaryCharHighlight);
+        this.primaryCharHighlight.z_3c += 0.5f;
         this.renderCharacterSwapScreen(0xff);
+
+        for(int i = 0; i < this.characterCard.length; i++) {
+          if(i < gameState_800babc8.charIds_88.size()) {
+            this.characterCard[i].setCharacter(gameState_800babc8.getCharacterBySlot(i));
+            this.characterCard[i].show();
+          } else {
+            this.characterCard[i].hide();
+          }
+        }
+
         this.loadingStage++;
       }
 
@@ -153,10 +171,6 @@ public class CharSwapScreen extends MenuScreen {
 
     for(int i = 0; i < secondaryCharIds_800bdbf8.size(); i++) {
       this.renderSecondaryChar(this.getSecondaryCharX(i), this.getSecondaryCharY(i), secondaryCharIds_800bdbf8.getInt(i), allocate);
-    }
-
-    for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
-      renderCharacterSlot(16, 16 + i * 72, gameState_800babc8.charIds_88.getInt(i), allocate, !CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) != 0);
     }
   }
 

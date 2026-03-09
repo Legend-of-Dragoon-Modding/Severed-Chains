@@ -56,7 +56,6 @@ public class CharacterEditorController {
   public TextField additionLevel;
   public TextField additionXp;
 
-  private int charId;
   private CharacterData2c charData;
 
   private final Map<EquipmentSlot, Equipment> equipped = new EnumMap<>(EquipmentSlot.class);
@@ -72,8 +71,7 @@ public class CharacterEditorController {
     }
   }
 
-  public void setChar(final int id, final CharacterData2c data) {
-    this.charId = id;
+  public void setChar(final CharacterData2c data) {
     this.charData = data;
     this.refresh();
   }

@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.inventory.screens.PostBattleScreen;
 import org.joml.Vector3f;
 
@@ -48,6 +50,8 @@ public class Renderable58 {
 
   /** The max number of parts of this glyph to render (can be used to truncate parts of a glyph) */
   public int metricsCount = Integer.MAX_VALUE;
+  /** Used to blacklist certain indices from a renderable from rendering */
+  public final IntList metricsBlacklist = new IntArrayList();
 
   /** We moved the UI textures into the vram region that the render buffers used to use so they could stay loaded. Some UIs like {@link PostBattleScreen} use their own textures so we have to use the normal tpage that's passed in. */
   public boolean useOriginalTpage;

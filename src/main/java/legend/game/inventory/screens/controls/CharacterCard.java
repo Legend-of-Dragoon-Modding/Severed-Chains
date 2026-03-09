@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderHp;
+import static legend.game.SItem.renderRightAlignedNumber;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
@@ -44,9 +45,9 @@ public class CharacterCard extends Control {
   public void setZ(final int z) {
     super.setZ(z);
     this.background.setZ(z);
-    this.overlay.setZ(z);
-    this.name.setZ(z);
-    this.portrait.setZ(z);
+    this.overlay.setZ(z - 2);
+    this.name.setZ(z - 1);
+    this.portrait.setZ(z - 1);
   }
 
   public CharacterData2c getCharacter() {
@@ -76,9 +77,9 @@ public class CharacterCard extends Control {
       final VitalsStat hp = this.character.stats.getStat(HP_STAT.get());
       final VitalsStat mp = this.character.stats.getStat(MP_STAT.get());
       final VitalsStat sp = this.character.stats.getStat(SP_STAT.get());
-      this.renderNumber(x + 162, y + 6, this.character.level_12, 2);
-      this.renderNumber(x + 120, y + 17, this.character.dlevel_13, 2);
-      this.renderNumber(x + 156, y + 17, sp.getCurrent(), 3);
+      renderRightAlignedNumber(x + this.getWidth(), y + 6, this.character.level_12);
+      renderRightAlignedNumber(x + 123, y + 17, this.character.dlevel_13);
+      renderRightAlignedNumber(x + this.getWidth(), y + 17, sp.getCurrent());
       renderHp(x + this.getWidth(), y + 28, hp.getCurrent(), hp.getMax());
       renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), mp.getMax());
       renderFraction(x + this.getWidth(), y + 50, this.character.xp_00, this.character.getXpToNextLevel());

@@ -2,12 +2,11 @@ package legend.game.inventory.screens.controls;
 
 import legend.game.inventory.screens.FontOptions;
 import legend.game.saves.RetailSavedGame;
-import legend.game.types.Renderable58;
 
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.getTimestampPart;
-import static legend.game.SItem.renderFourDigitHp;
+import static legend.game.SItem.renderHp;
 import static legend.game.Text.renderText;
 
 public class RetailSaveCard extends BlankSaveCard {
@@ -39,17 +38,16 @@ public class RetailSaveCard extends BlankSaveCard {
 
       final int charindex = this.savedGame.charIndices.getInt(0);
       final RetailSavedGame.SavedCharacter character = this.savedGame.characters[charindex];
-      this.renderNumber(224, y + 6, character.level, 2); // Level
-      this.renderNumber(269, y + 6, character.dlevel, 2); // Dragoon level
-      renderFourDigitHp(302, y + 6, character.hp, this.savedGame.maxHp, Renderable58.FLAG_DELETE_AFTER_RENDER); // Current HP
-      this.renderNumber(332, y + 6, this.savedGame.maxHp, 4); // Max HP
+      this.renderNumber(225, y + 6, character.level, 2); // Level
+      this.renderNumber(270, y + 6, character.dlevel, 2); // Dragoon level
+      renderHp(361, y + 6, character.hp, this.savedGame.maxHp); // Current HP
       this.renderNumber(245, y + 17, this.savedGame.gold, 8); // Gold
       this.renderNumber(306, y + 17, getTimestampPart(this.savedGame.timestamp, 0), 3); // Time played hour
       this.renderCharacter(324, y + 17, 10); // Hour-minute colon
       this.renderNumber(330, y + 17, getTimestampPart(this.savedGame.timestamp, 1), 2, 0x1); // Time played minute
       this.renderCharacter(342, y + 17, 10); // Minute-second colon
       this.renderNumber(348, y + 17, getTimestampPart(this.savedGame.timestamp, 2), 2, 0x1); // Time played second
-      this.renderNumber(344, y + 34, this.savedGame.stardust, 2); // Stardust
+      this.renderNumber(348, y + 34, this.savedGame.stardust, 2); // Stardust
     }
   }
 }
