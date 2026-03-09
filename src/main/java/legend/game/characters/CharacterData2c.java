@@ -134,6 +134,10 @@ public class CharacterData2c {
     return this.template.getBattleTexturePath(this);
   }
 
+  public Path getBattleSoundsPath() {
+    return this.template.getBattleSoundsPath(this);
+  }
+
   public int getStatusAndFlags() {
     int flags = this.status_10;
 

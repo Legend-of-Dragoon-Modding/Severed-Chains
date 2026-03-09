@@ -2119,7 +2119,7 @@ public class Battle extends EngineState<Battle> {
       bent.model_148.coord2_14.transforms.rotate.zero();
       battleState_8006e398.addPlayer(state);
 
-      loadDir("characters/%s/sounds/combat".formatted(name.toLowerCase()), files -> {
+      Loader.loadDirectory(Loader.resolve(character.getBattleSoundsPath()), files -> {
         this.charSoundEffectsLoaded(files, bent);
 
         if(remaining.decrementAndGet() == 0) {

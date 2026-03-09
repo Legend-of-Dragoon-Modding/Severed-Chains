@@ -38,6 +38,7 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract Path getBattleModelPath(final CharacterData2c character);
   public abstract Path getBattleTexturePath(final CharacterData2c character);
+  public abstract Path getBattleSoundsPath(final CharacterData2c character);
   /** Must load the following files in order: model, texture, idle animation, walking animation, running animation */
   public abstract void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad);
 

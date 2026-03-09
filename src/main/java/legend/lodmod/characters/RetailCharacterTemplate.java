@@ -233,6 +233,11 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     return Path.of("characters", this.getRegistryId().entryId(), "textures", "combat");
   }
 
+  @Override
+  public Path getBattleSoundsPath(final CharacterData2c character) {
+    return Path.of("characters", this.getRegistryId().entryId(), "sounds", "combat");
+  }
+
   protected abstract Good getDragoonSpirit();
 
   protected abstract int getHpToAdd(final int level);
