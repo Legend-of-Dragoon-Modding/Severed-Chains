@@ -159,6 +159,11 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public boolean isArcher(final CharacterData2c character) {
+    return true;
+  }
+
+  @Override
   public int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 0x808080;
   }

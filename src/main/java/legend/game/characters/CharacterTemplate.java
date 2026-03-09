@@ -46,6 +46,10 @@ public abstract class CharacterTemplate extends RegistryEntry {
     return true;
   }
 
+  public boolean isArcher(final CharacterData2c character) {
+    return false;
+  }
+
   public abstract int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent);

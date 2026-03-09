@@ -471,6 +471,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
       case DETRANSFORMATION_MODE -> out.set(this.detransformationMode.ordinal());
 
+      case IS_ARCHER -> out.set(this.character.isArcher());
+
       default -> super.getStat(statIndex, out);
     }
   }

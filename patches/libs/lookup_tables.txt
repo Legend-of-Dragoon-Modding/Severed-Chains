@@ -10,21 +10,6 @@ data 0x4c
 data 0x4b
 data 0x4e
 
-; Indexed by character ID
-; Only checked to see if the value is 0 (archers), unsure what the values are
-; Seems to be related to sounds for additions?
-LABEL_586:
-data 0x7
-data 0xd
-data 0x0
-data 0x12
-data 0x23
-data 0x29
-data 0x1c
-data 0x16
-data 0x0
-data 0x7
-
 ;TODO unknown colour red indexed by char ID
 LABEL_684:
 data 0xff

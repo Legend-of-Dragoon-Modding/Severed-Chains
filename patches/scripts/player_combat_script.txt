@@ -2494,7 +2494,7 @@ data 0x80
 
 
 ; SUBROUTINE
-JMP_bf38_0:
+ADDITION_HANDLER_STANDARD:
 mov 0xffffffff, var[45][241] ; source, dest
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
 gosub inl[:LABEL_346] ; addr
@@ -2591,8 +2591,8 @@ mov 0xe2, var[44] ; source, dest
 call Battle::scriptMoveCameraProjectionPlane, 0x2, 0x152, 0x11, 0x0 ; mode, newDistance, frames, stepZ1
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x1b ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
-call Battle::scriptGetBentStat, stor[0], FOOT_MODEL_PART, inl[:JMP_bf38_0_FOOT_MODEL_PART_INDEX]
-call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:JMP_bf38_0_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
+call Battle::scriptGetBentStat, stor[0], FOOT_MODEL_PART, inl[:ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX]
+call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
 call Battle::scriptSetBentPos, stor[0], stor[10], stor[11], stor[12] ; bentIndex, x, y, z
 call Battle::FUN_800cbde0, stor[0], 0xffffffff, 0xa, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
 call Battle::FUN_800cbb00, stor[28], 0xffffffff, 0xa, stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26] ; bentIndex0, bentIndex1, ticks, x, y, z
@@ -2642,7 +2642,7 @@ mov 0xe2, var[44] ; source, dest
 call Battle::scriptMoveCameraProjectionPlane, 0x2, 0x152, 0x11, 0x0 ; mode, newDistance, frames, stepZ1
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x6 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
-call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:JMP_bf38_0_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
+call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
 call Battle::scriptSetBentPos, stor[0], stor[10], 0x0, stor[12] ; bentIndex, x, y, z
 yield
 call Battle::FUN_800cbb00, stor[0], 0xffffffff, 0x6, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
@@ -2683,7 +2683,7 @@ fork_reenter stor[28], 0x4, stor[8] ; index, entrypoint, p2
 gosub inl[:LABEL_144] ; addr
 return
 
-JMP_bf38_0_FOOT_MODEL_PART_INDEX:
+ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX:
 data 0
 
 
@@ -2933,7 +2933,7 @@ LABEL_319:
 return
 
 ; SUBROUTINE
-JMP_bf60_2:
+ADDITION_HANDLER_ARCHER:
 mov 0x1, stor[8] ; source, dest
 gosub_table stor[8], inl[:LABEL_90] ; index, table
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
@@ -3743,19 +3743,19 @@ data 0x49
 data 0x49
 
 ; SUBROUTINE
-JMP_bf60_0:
+ADDITION_HANDLER_DRAGOON:
 gosub inl[:LABEL_93] ; addr
 call Battle::scriptGetBentPos, stor[0], stor[24], stor[25], stor[26] ; bentIndex, x, y, z
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
 gosub inl[:LOAD_D_ATTACK_SOUNDS] ; addr
-call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_DEFF, inl[:JMP_bf60_0_DEFF]
-call Battle::scriptLoadDragoonDeffSync, inl[:JMP_bf60_0_DEFF], stor[0], stor[28], 0x0 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
+call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_DEFF, inl[:ADDITION_HANDLER_DRAGOON_DEFF]
+call Battle::scriptLoadDragoonDeffSync, inl[:ADDITION_HANDLER_DRAGOON_DEFF], stor[0], stor[28], 0x0 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
 yield
 call Audio::scriptUnloadSoundFile, 0x6 ; soundType
 yield
 return
 
-JMP_bf60_0_DEFF:
+ADDITION_HANDLER_DRAGOON_DEFF:
 data 0
 
 ; SUBROUTINE
@@ -4510,33 +4510,16 @@ return
 
 ; SUBROUTINE TABLE
 ; Indexed by character ID
-;TODO addition handler for each character, need to externalize this to support new chars
-LABEL_479:
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf60_2
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf60_2
-rel :JMP_bf38_0
+ADDITION_HANDLER_TABLE:
+rel :ADDITION_HANDLER_STANDARD
+rel :ADDITION_HANDLER_ARCHER
 
 ; SUBROUTINE TABLE
 ; Indexed by character ID
 ;TODO dragoon addition handler for each character, need to externalize this to support new chars
-LABEL_480:
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_2
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_2
-rel :JMP_bf60_0
+DRAGOON_ADDITION_HANDLER_TABLE:
+rel :ADDITION_HANDLER_DRAGOON
+rel :ADDITION_HANDLER_ARCHER
 
 data 0xfffff98c
 data 0xfffff98c
@@ -4931,8 +4914,9 @@ wait stor[23] ; frames
 
 gosub inl[:LABEL_471] ; addr
 
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_531] ; operand, left, right, addr
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+jmp_cmp ==, 1, stor[8], inl[:LABEL_531] ; operand, left, right, addr
+
 ; audio file
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 call Battle::scriptLoadCharacterAttackSounds, stor[8] ; charId
@@ -4943,11 +4927,12 @@ call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x10000, stor[31], inl[:ACTION_ATTACK_WAIT_FOR_SOUND_TO_LOAD] ; operand, left, right, addr
 
 LABEL_531:
-gosub inl[:GET_MY_CHAR_ID] ; addr
-gosub_table stor[8], inl[:LABEL_479] ; index, table
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+gosub_table stor[8], inl[:ADDITION_HANDLER_TABLE] ; index, table
 call Audio::scriptStopSound, 0xa, 0x0, 0x3 ; soundFileIndex, soundIndex, mode
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_532] ; operand, left, right, addr
+
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+jmp_cmp ==, 1, stor[8], inl[:LABEL_532] ; operand, left, right, addr
 call Audio::scriptUnloadSoundFile, 0x7 ; soundType
 LABEL_532:
 call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
@@ -5451,8 +5436,10 @@ call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlo
 add 0xbd, stor[8] ; amount, operand
 mov var[45][stor[8]], var[45][227] ; source, dest
 mov 0x0, var[45][stor[8]] ; source, dest
-gosub inl[:GET_MY_CHAR_ID] ; addr
-gosub_table stor[8], inl[:LABEL_480] ; index, table
+
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+gosub_table stor[8], inl[:DRAGOON_ADDITION_HANDLER_TABLE] ; index, table
+
 call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
 add 0xbd, stor[8] ; amount, operand
 mov var[45][227], var[45][stor[8]] ; source, dest

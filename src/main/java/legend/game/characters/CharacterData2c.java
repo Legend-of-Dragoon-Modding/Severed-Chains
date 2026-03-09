@@ -138,6 +138,10 @@ public class CharacterData2c {
     return this.template.getBattleSoundsPath(this);
   }
 
+  public boolean isArcher() {
+    return this.template.isArcher(this);
+  }
+
   public int getStatusAndFlags() {
     int flags = this.status_10;
 
