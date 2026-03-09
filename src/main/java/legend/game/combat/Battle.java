@@ -94,6 +94,7 @@ import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.EquipmentAttackType;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
@@ -1261,14 +1262,28 @@ public class Battle extends EngineState<Battle> {
 
   @ScriptDescription("Calls prepareAttack on the player's weapon")
   private FlowControl scriptPrepareAttack(final RunningScript<PlayerBattleEntity> script) {
-    script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON).prepareAttack(script.scriptState_04);
+    final Equipment weapon = script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON);
+
+    if(weapon != null) {
+      weapon.prepareAttack(script.scriptState_04);
+    }
+
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Calls attack on the player's weapon")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "type", description = "The EquipmentAttackType")
   private FlowControl scriptAttack(final RunningScript<PlayerBattleEntity> script) {
-    script.params_20[0].set(script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON).attack(script.scriptState_04).ordinal());
+    final Equipment weapon = script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON);
+    final EquipmentAttackType type;
+
+    if(weapon != null) {
+      type = weapon.attack(script.scriptState_04);
+    } else {
+      type = EquipmentAttackType.NORMAL;
+    }
+
+    script.params_20[0].set(type.ordinal());
     return FlowControl.CONTINUE;
   }
 

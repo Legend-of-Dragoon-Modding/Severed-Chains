@@ -393,10 +393,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
     if(out.isRegistryId()) {
       switch(statIndex) {
         case EQUIPMENT_WEAPON_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.WEAPON).getRegistryId() : null);
-        case EQUIPMENT_HELMET_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.HELMET).getRegistryId() : null);
-        case EQUIPMENT_ARMOUR_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId() : null);
-        case EQUIPMENT_BOOTS_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId() : null);
-        case EQUIPMENT_ACCESSORY_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.WEAPON) != null ? this.equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId() : null);
+        case EQUIPMENT_HELMET_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.HELMET) != null ? this.equipment_11e.get(EquipmentSlot.HELMET).getRegistryId() : null);
+        case EQUIPMENT_ARMOUR_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.ARMOUR) != null ? this.equipment_11e.get(EquipmentSlot.ARMOUR).getRegistryId() : null);
+        case EQUIPMENT_BOOTS_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.BOOTS) != null ? this.equipment_11e.get(EquipmentSlot.BOOTS).getRegistryId() : null);
+        case EQUIPMENT_ACCESSORY_SLOT -> out.set(this.equipment_11e.get(EquipmentSlot.ACCESSORY) != null ? this.equipment_11e.get(EquipmentSlot.ACCESSORY).getRegistryId() : null);
         default -> super.getStat(statIndex, out);
       }
 
