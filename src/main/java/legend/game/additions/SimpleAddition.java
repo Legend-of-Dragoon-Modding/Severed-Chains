@@ -4,13 +4,11 @@ import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 
 public abstract class SimpleAddition extends Addition {
-  public final int baseDamage;
   public final boolean countsTowardsMastery;
   private final LevelMultipliers[] levelMultipliers;
   private final AdditionHitProperties10[] hits;
 
-  public SimpleAddition(final int baseDamage, final boolean countsTowardsMastery, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
-    this.baseDamage = baseDamage;
+  public SimpleAddition(final boolean countsTowardsMastery, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
     this.countsTowardsMastery = countsTowardsMastery;
     this.levelMultipliers = levelMultipliers;
     this.hits = hits;
@@ -18,7 +16,14 @@ public abstract class SimpleAddition extends Addition {
 
   @Override
   public int getDamage(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
-    return (int)(this.baseDamage * this.getDamageMultiplier(character, additionInfo));
+    final float multi = this.getDamageMultiplier(character, additionInfo);
+    float damage = 0;
+
+    for(int hit = 0; hit < this.hits.length; hit++) {
+      damage += this.hits[hit].damageMultiplier_04 * multi;
+    }
+
+    return (int)damage;
   }
 
   @Override

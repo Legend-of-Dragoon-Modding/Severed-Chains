@@ -4,10 +4,13 @@ import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.fmv.Fmv;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
+
+import static legend.game.EngineStates.postCreditsEngineState;
 
 /** Plays the final cutscene tying everything up */
 public class FinalFmv extends EngineState<FinalFmv> {
@@ -38,7 +41,8 @@ public class FinalFmv extends EngineState<FinalFmv> {
     super.tick();
 
     if(this.ticks++ > 94) {
-      Fmv.playCurrentFmv(17, LodEngineStateTypes.CREDITS.get());
+      postCreditsEngineState = LodEngineStateTypes.SUBMAP.get();
+      Fmv.playCurrentFmv(17, CoreEngineStateTypes.CREDITS.get());
     }
   }
 

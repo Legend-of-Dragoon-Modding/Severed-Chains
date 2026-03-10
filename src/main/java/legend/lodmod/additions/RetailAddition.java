@@ -14,8 +14,8 @@ import static legend.game.DrgnFiles.loadDrgnDir;
 public class RetailAddition extends SimpleAddition {
   public final int additionFile;
 
-  public RetailAddition(final int additionFile, final int baseDamage, final boolean countsTowardsMastery, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
-    super(baseDamage, countsTowardsMastery, levelMultipliers, hits);
+  public RetailAddition(final int additionFile, final boolean countsTowardsMastery, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
+    super(countsTowardsMastery, levelMultipliers, hits);
     this.additionFile = additionFile;
   }
 

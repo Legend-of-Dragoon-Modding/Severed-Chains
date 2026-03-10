@@ -41,6 +41,7 @@ public final class EngineStates {
   public static EngineStateType<?> lastSavableEngineState;
 
   public static EngineStateType<?> postBattleEngineState_800bc91c;
+  public static EngineStateType<?> postCreditsEngineState;
 
   public static EngineStateType<?> previousEngineState_800bdb88;
 

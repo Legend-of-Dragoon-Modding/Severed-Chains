@@ -4,7 +4,6 @@ import legend.core.GameEngine;
 import legend.game.EngineStateType;
 import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.combat.Battle;
-import legend.game.credits.Credits;
 import legend.game.credits.FinalFmv;
 import legend.game.submap.SMap;
 import legend.game.title.GameOver;
@@ -22,7 +21,6 @@ public final class LodEngineStateTypes {
   public static final RegistryDelegate<EngineStateType<Battle>> BATTLE = REGISTRAR.register("battle", () -> new EngineStateType<>(Battle.class, Battle::new));
   public static final RegistryDelegate<EngineStateType<FinalFmv>> FINAL_FMV = REGISTRAR.register("final_fmv", () -> new EngineStateType<>(FinalFmv.class, FinalFmv::new));
   public static final RegistryDelegate<EngineStateType<GameOver>> GAME_OVER = REGISTRAR.register("game_over", () -> new EngineStateType<>(GameOver.class, GameOver::new));
-  public static final RegistryDelegate<EngineStateType<Credits>> CREDITS = REGISTRAR.register("credits", () -> new EngineStateType<>(Credits.class, Credits::new));
 
   static void register(final RegisterEngineStateTypesEvent event) {
     REGISTRAR.registryEvent(event);

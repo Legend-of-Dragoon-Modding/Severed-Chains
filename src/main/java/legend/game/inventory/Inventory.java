@@ -82,7 +82,7 @@ public class Inventory implements Iterable<ItemStack> {
    * @return Any portion of the stack that couldn't fit into the inventory, or EMPTY if the whole stack was added
    */
   public ItemStack give(final ItemStack stack) {
-    return this.give(stack, false);
+    return this.give(stack.copy(), false);
   }
 
   /**
@@ -108,7 +108,7 @@ public class Inventory implements Iterable<ItemStack> {
 
     boolean overflowed = false;
     for(int i = 0; i < event.givenItems.size(); i++) {
-      if(!temp.give(new ItemStack(event.givenItems.get(i))).isEmpty()) {
+      if(!temp.give(event.givenItems.get(i)).isEmpty()) {
         overflowed = true;
         break;
       }

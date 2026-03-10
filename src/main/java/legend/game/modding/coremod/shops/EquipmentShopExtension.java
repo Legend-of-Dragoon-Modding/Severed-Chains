@@ -15,6 +15,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
 
@@ -267,12 +268,12 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     this.returnControl = false;
 
     if(gameState_800babc8.equipment_1e8.size() >= 255) {
-      screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), 0, result -> { })));
+      screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, result -> { })));
       return false;
     }
 
     if(gameState_800babc8.gold_94 < entry.price) {
-      screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.not_enough_gold"), 0, result -> { })));
+      screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.not_enough_gold"), MessageBoxType.ALERT, result -> { })));
       return false;
     }
 
@@ -384,11 +385,11 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private void menuSelectChar5Select() {
     playMenuSound(2);
 
-    menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result -> {
+    menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
         final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
         if(this.selectedCharSlot != -1 && character.canEquip(this.entry.item.slot, this.entry.item)) {
-          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), 2, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result1 -> {
             if(result1 == MessageBoxResult.YES) {
               final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
@@ -398,11 +399,11 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
                     gameState_800babc8.gold_94 -= this.entry.price;
                   } else {
                     equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-                    this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), 0, onResult -> {})));
+                    this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
                   }
                 } else {
                   equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-                  this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), 0, onResult -> {})));
+                  this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.ALERT, onResult -> {})));
                 }
               }
             } else {
@@ -425,7 +426,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     if(giveEquipment(shopEntry.item)) {
       gameState_800babc8.gold_94 -= shopEntry.price;
     } else {
-      screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), 0, onResult -> { })));
+      screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> { })));
     }
   }
 }

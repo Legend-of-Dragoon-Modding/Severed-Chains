@@ -380,7 +380,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
     if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       final Control control = this.configControls.get(this.highlightedRow);
-      if(control != null) {
+      if(control != null && !control.isDisabled()) {
         if(control instanceof final Button button) {
           this.deferAction(button::press);
         } else {

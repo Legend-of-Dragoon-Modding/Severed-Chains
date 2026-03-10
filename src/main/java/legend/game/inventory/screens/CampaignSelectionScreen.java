@@ -11,6 +11,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -110,7 +111,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     }
 
     if(!currentMods.equals(knownMods)) {
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.installed_mods_changed"), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.installed_mods_changed"), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           this.changeMods(campaign, () -> this.bootModsAndLoadSaves(campaign));
         } else {
@@ -135,7 +136,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     if(missingMods.isEmpty()) {
       this.loadSaves(campaign);
     } else {
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.missing_mods_confirm"), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.missing_mods_confirm"), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           this.loadSaves(campaign);
         } else {
@@ -203,7 +204,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     menuStack.pushScreen(new ModsScreen(modIds, () -> {
       if(!originalMods.equals(modIds)) {
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.change_mods_confirm"), 2, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.change_mods_confirm"), MessageBoxType.CONFIRMATION, result -> {
           if(result == MessageBoxResult.YES) {
             campaign.config.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), modIds.toArray(String[]::new));
             ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
@@ -224,14 +225,14 @@ public class CampaignSelectionScreen extends MenuScreen {
     playMenuSound(40);
 
     if(this.campaignList.getSelected() != null) {
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.delete_campaign_confirm"), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.delete_campaign_confirm"), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           try {
             this.campaignList.getSelected().delete();
             this.campaignList.removeEntry(this.campaignList.getSelected());
           } catch(final IOException e) {
             LOGGER.error(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), e);
-            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), 0, result1 -> {})));
+            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), MessageBoxType.ALERT, result1 -> {})));
           }
         }
       }));

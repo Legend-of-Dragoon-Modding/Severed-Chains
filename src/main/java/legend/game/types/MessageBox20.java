@@ -11,7 +11,7 @@ public class MessageBox20 {
   /** The number of frames the messagebox has been displayed */
   public int ticks_10;
 
-  public int type_15;
+  public MessageBoxType type_15;
 
   public int menuIndex_18;
   public int x_1c;
