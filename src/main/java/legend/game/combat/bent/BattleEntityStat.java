@@ -183,6 +183,7 @@ public enum BattleEntityStat {
   /** See {@link DetransformationMode} */
   DETRANSFORMATION_MODE,
   IS_ARCHER,
+  CURRENT_ANIMATION_LENGTH,
   ;
 
   public static BattleEntityStat fromLegacy(final int statIndex) {

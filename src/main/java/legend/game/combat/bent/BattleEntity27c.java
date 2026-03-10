@@ -519,6 +519,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
       case _159 -> this._142;
 
+      case CURRENT_ANIMATION_LENGTH -> this.model_148.totalFrames_9a / 2;
+
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     });
   }
