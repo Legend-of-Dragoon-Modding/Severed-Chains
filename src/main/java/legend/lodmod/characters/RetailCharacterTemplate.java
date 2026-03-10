@@ -10,6 +10,7 @@ import legend.game.characters.CharacterTemplate;
 import legend.game.characters.LevelUpActions;
 import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Good;
 import legend.game.saves.SavedCharacter;
 import legend.game.saves.SeveredSavedCharacterV2;
@@ -22,8 +23,11 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_ADDITION;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_SPELL;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
@@ -224,17 +228,34 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public Path getBattleModelPath(final CharacterData2c character) {
-    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "models", "combat"));
+  public void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    if(!bent.isDragoon()) {
+      this.loadHumanAttackAnimations(character, bent, onLoad);
+    } else {
+      this.loadDragoonAttackAnimations(character, bent, onLoad);
+    }
+  }
+
+  public void loadHumanAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    REGISTRIES.additions.getEntry(character.selectedAddition_19).get().loadAnimations(character, character.getAdditionInfo(character.selectedAddition_19), onLoad);
+  }
+
+  public abstract void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad);
+
+  @Override
+  public Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    final String file = bent.isDragoon() ? "dragoon" : "combat";
+    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "models", file));
   }
 
   @Override
-  public Path getBattleTexturePath(final CharacterData2c character) {
-    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "textures", "combat"));
+  public Path getBattleTexturePath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    final String file = bent.isDragoon() ? "dragoon" : "combat";
+    return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "textures", file));
   }
 
   @Override
-  public Path getBattleSoundsPath(final CharacterData2c character) {
+  public Path getBattleSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
     return Loader.resolve(Path.of("characters", this.getRegistryId().entryId(), "sounds", "combat"));
   }
 

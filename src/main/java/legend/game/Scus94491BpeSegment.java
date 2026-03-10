@@ -674,20 +674,4 @@ public final class Scus94491BpeSegment {
   public static void initFmvs() {
     _800bf0cf = 0;
   }
-
-  public static String getCharacterName(final int id) {
-    return switch(id) {
-      case 0 -> "Dart";
-      case 1 -> "Lavitz";
-      case 2 -> "Shana";
-      case 3 -> "Rose";
-      case 4 -> "Haschel";
-      case 5 -> "Albert";
-      case 6 -> "Meru";
-      case 7 -> "Kongol";
-      case 8 -> "Miranda";
-      case 9, 10 -> "Divine";
-      default -> throw new IllegalArgumentException("Invalid character ID " + id);
-    };
-  }
 }

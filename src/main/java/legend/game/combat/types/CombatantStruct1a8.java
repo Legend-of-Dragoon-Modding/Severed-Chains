@@ -2,6 +2,7 @@ package legend.game.combat.types;
 
 import legend.core.gpu.Gpu;
 import legend.core.memory.Method;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
@@ -48,6 +49,12 @@ public class CombatantStruct1a8 {
   public int charIndex_1a2;
   public int _1a4;
   public int _1a6;
+
+  public PlayerBattleEntity playerBent;
+
+  public boolean isDragoon() {
+    return (this.charIndex_1a2 & 0x1) != 0;
+  }
 
   @Method(0x800c90b0L)
   public boolean isModelLoaded() {

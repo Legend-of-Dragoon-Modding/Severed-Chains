@@ -2886,7 +2886,6 @@ return
 
 ; SUBROUTINE
 ; @return bool stor[8] True if (windigo || melbu stage index 1) && var[45][50] != 0
-;TODO this is most likely broken due to encounter ID refactor
 IS_CHARACTER_SUCCD:
 mov 0x0, stor[8] ; source, dest
 
@@ -4516,7 +4515,6 @@ rel :ADDITION_HANDLER_ARCHER
 
 ; SUBROUTINE TABLE
 ; Indexed by character ID
-;TODO dragoon addition handler for each character, need to externalize this to support new chars
 DRAGOON_ADDITION_HANDLER_TABLE:
 rel :ADDITION_HANDLER_DRAGOON
 rel :ADDITION_HANDLER_ARCHER

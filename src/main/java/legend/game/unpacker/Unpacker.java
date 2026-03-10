@@ -39,8 +39,6 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static legend.game.Scus94491BpeSegment.getCharacterName;
-
 public final class Unpacker {
   private Unpacker() { }
 
@@ -557,6 +555,22 @@ public final class Unpacker {
     }
 
     transformations.decrementRemaining();
+  }
+
+  private static String getCharacterName(final int id) {
+    return switch(id) {
+      case 0 -> "Dart";
+      case 1 -> "Lavitz";
+      case 2 -> "Shana";
+      case 3 -> "Rose";
+      case 4 -> "Haschel";
+      case 5 -> "Albert";
+      case 6 -> "Meru";
+      case 7 -> "Kongol";
+      case 8 -> "Miranda";
+      case 9, 10 -> "Divine";
+      default -> throw new IllegalArgumentException("Invalid character ID " + id);
+    };
   }
 
   private static boolean decompressDiscriminator(final PathNode node, final Set<String> flags) {

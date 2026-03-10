@@ -1,6 +1,7 @@
 package legend.game.characters;
 
 import legend.game.additions.AdditionHits80;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.types.EquipmentSlot;
@@ -126,16 +127,16 @@ public class CharacterData2c {
     return this.equipment_14.get(slot);
   }
 
-  public Path getBattleModelPath() {
-    return this.template.getBattleModelPath(this);
+  public Path getBattleModelPath(final PlayerBattleEntity bent) {
+    return this.template.getBattleModelPath(this, bent);
   }
 
-  public Path getBattleTexturePath() {
-    return this.template.getBattleTexturePath(this);
+  public Path getBattleTexturePath(final PlayerBattleEntity bent) {
+    return this.template.getBattleTexturePath(this, bent);
   }
 
-  public Path getBattleSoundsPath() {
-    return this.template.getBattleSoundsPath(this);
+  public Path getBattleSoundsPath(final PlayerBattleEntity bent) {
+    return this.template.getBattleSoundsPath(this, bent);
   }
 
   public boolean isArcher() {

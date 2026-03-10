@@ -24,6 +24,7 @@ import legend.lodmod.LodSpells;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.WATER_ELEMENT;
 
@@ -170,6 +171,11 @@ public class MeruTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    loadDrgnDir(0, 4109, onLoad);
   }
 
   @Override

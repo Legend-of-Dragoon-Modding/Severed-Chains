@@ -18,6 +18,7 @@ import legend.lodmod.LodSpells;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.lodmod.LodGoods.SILVER_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.LIGHT_ELEMENT;
 
@@ -161,6 +162,16 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   @Override
   public boolean isArcher(final CharacterData2c character) {
     return true;
+  }
+
+  @Override
+  public void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    loadDrgnDir(0, 4047, onLoad);
+  }
+
+  @Override
+  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    loadDrgnDir(0, 4105, onLoad);
   }
 
   @Override

@@ -8,10 +8,22 @@ import legend.game.unpacker.Loader;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.game.DrgnFiles.loadDrgnDir;
+
 public class MirandaTemplate extends ShanaTemplate {
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
     Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/231", "SECT/DRGN22.BIN/836/textures/7", "SECT/DRGN22.BIN/836/232", "SECT/DRGN22.BIN/836/233", "SECT/DRGN22.BIN/836/234");
+  }
+
+  @Override
+  public void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    loadDrgnDir(0, 4095, onLoad);
+  }
+
+  @Override
+  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    loadDrgnDir(0, 4111, onLoad);
   }
 
   @Override

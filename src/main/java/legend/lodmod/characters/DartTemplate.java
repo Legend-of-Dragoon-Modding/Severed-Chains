@@ -21,9 +21,12 @@ import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;
 import legend.lodmod.LodSpells;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodGoods.RED_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.DIVINE_ELEMENT;
@@ -204,6 +207,32 @@ public class DartTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    final String name = gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT) ? "divine" : this.getRegistryId().entryId();
+    final String file = bent.isDragoon() ? "dragoon" : "combat";
+    return Loader.resolve(Path.of("characters", name, "models", file));
+  }
+
+  @Override
+  public Path getBattleTexturePath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    final String name = gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT) ? "divine" : this.getRegistryId().entryId();
+    final String file = bent.isDragoon() ? "dragoon" : "combat";
+    return Loader.resolve(Path.of("characters", name, "textures", file));
+  }
+
+  @Override
+  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    final int fileIndex;
+    if(!gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+      fileIndex = 4103;
+    } else {
+      fileIndex = 4112;
+    }
+
+    loadDrgnDir(0, fileIndex, onLoad);
   }
 
   @Override

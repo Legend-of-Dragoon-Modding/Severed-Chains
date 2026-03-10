@@ -24,6 +24,7 @@ import legend.lodmod.LodSpells;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.lodmod.LodGoods.GOLD_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.EARTH_ELEMENT;
 
@@ -167,6 +168,11 @@ public class KongolTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+    loadDrgnDir(0, 4110, onLoad);
   }
 
   @Override

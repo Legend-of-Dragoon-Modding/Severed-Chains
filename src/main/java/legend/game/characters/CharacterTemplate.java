@@ -36,9 +36,9 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
 
-  public abstract Path getBattleModelPath(final CharacterData2c character);
-  public abstract Path getBattleTexturePath(final CharacterData2c character);
-  public abstract Path getBattleSoundsPath(final CharacterData2c character);
+  public abstract Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract Path getBattleTexturePath(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract Path getBattleSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);
   /** Must load the following files in order: model, texture, idle animation, walking animation, running animation */
   public abstract void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad);
 
@@ -49,6 +49,8 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public boolean isArcher(final CharacterData2c character) {
     return false;
   }
+
+  public abstract void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad);
 
   public abstract int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent);

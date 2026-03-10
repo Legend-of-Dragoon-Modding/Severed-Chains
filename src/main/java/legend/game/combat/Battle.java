@@ -221,7 +221,6 @@ import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -2089,14 +2088,6 @@ public class Battle extends EngineState<Battle> {
     //LAB_800fbdb8
     final int charCount = gameState_800babc8.charIds_88.size();
 
-    //LAB_800fbde8
-    final int[] combatantIndices = new int[charCount];
-
-    //LAB_800fbe18
-    for(int charSlot = 0; charSlot < charCount; charSlot++) {
-      combatantIndices[charSlot] = this.addCombatant(0x200 + gameState_800babc8.charIds_88.getInt(charSlot) * 2, charSlot);
-    }
-
     //LAB_8001df9c
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8);
 
@@ -2106,6 +2097,8 @@ public class Battle extends EngineState<Battle> {
     //LAB_800fbe70
     int scriptSlot = 6;
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
+      final int combatantIndex = this.addCombatant(gameState_800babc8.charIds_88.getInt(charSlot), charSlot);
+
       while(SCRIPTS.getState(scriptSlot) != null) {
         scriptSlot++;
       }
@@ -2119,8 +2112,9 @@ public class Battle extends EngineState<Battle> {
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
       bent.element = character.getElement();
-      bent.combatant_144 = this.getCombatant(combatantIndices[charSlot]);
-      bent.combatantIndex_26c = combatantIndices[charSlot];
+      bent.combatant_144 = this.getCombatant(combatantIndex);
+      bent.combatantIndex_26c = combatantIndex;
+      bent.combatant_144.playerBent = bent;
 
       final int offset = ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1);
       final float theta = MathHelper.PI / 8.0f * offset;
@@ -2134,7 +2128,7 @@ public class Battle extends EngineState<Battle> {
       bent.model_148.coord2_14.transforms.rotate.zero();
       battleState_8006e398.addPlayer(state);
 
-      Loader.loadDirectory(character.getBattleSoundsPath(), files -> {
+      Loader.loadDirectory(character.getBattleSoundsPath(bent), files -> {
         this.charSoundEffectsLoaded(files, bent);
 
         if(remaining.decrementAndGet() == 0) {
@@ -2227,7 +2221,7 @@ public class Battle extends EngineState<Battle> {
         continue;
       }
 
-      final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+      final int enemyIndex = a0.charIndex_1a2;
 
       if(Loader.exists("monsters/%d/textures/combat".formatted(enemyIndex))) {
         loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> this.loadCombatantTim(a0, files));
@@ -2241,7 +2235,7 @@ public class Battle extends EngineState<Battle> {
     for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
       final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
       final int finalCharSlot = charSlot;
-      Loader.loadFile(character.getBattleTexturePath(), files -> this.loadCharacterTim(files, finalCharSlot));
+      Loader.loadFile(character.getBattleTexturePath(battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00), files -> this.loadCharacterTim(files, finalCharSlot));
     }
   }
 
@@ -2258,7 +2252,7 @@ public class Battle extends EngineState<Battle> {
     for(int charSlot = 0; charSlot < gameState_800babc8.charIds_88.size(); charSlot++) {
       final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
       final int finalCharSlot = charSlot;
-      Loader.loadDirectory(character.getBattleModelPath(), files -> this.loadCharTmdAndAnims(files, finalCharSlot));
+      Loader.loadDirectory(character.getBattleModelPath(battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00), files -> this.loadCharTmdAndAnims(files, finalCharSlot));
     }
   }
 
@@ -2743,7 +2737,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x800c8f50L)
-  public int addCombatant(final int a0, final int charSlot) {
+  public int addCombatant(final int charId, final int charSlot) {
     //LAB_800c8f6c
     for(int combatantIndex = 0; combatantIndex < 10; combatantIndex++) {
       if(this.combatants_8005e398[combatantIndex] == null) {
@@ -2753,11 +2747,11 @@ public class Battle extends EngineState<Battle> {
         if(charSlot < 0) {
           combatant.flags_19e = 0x1;
           try {
-            if(a0 < 0 || (Loader.exists("monsters/%d/textures/combat".formatted(a0)) && Files.size(Loader.resolve("monsters/%d/textures/combat".formatted(a0))) > 0)) {
-              combatant.vramSlot_1a0 = this.findFreeMonsterTextureSlot(a0);
+            if(charId < 0 || (Loader.exists("monsters/%d/textures/combat".formatted(charId)) && Files.size(Loader.resolve("monsters/%d/textures/combat".formatted(charId))) > 0)) {
+              combatant.vramSlot_1a0 = this.findFreeMonsterTextureSlot(charId);
             }
           } catch(final IOException e) {
-            LOGGER.error("Failed to find texture file for monster %d", a0);
+            LOGGER.error("Failed to find texture file for monster %d", charId);
           }
         } else {
           //LAB_800c8f90
@@ -2772,7 +2766,7 @@ public class Battle extends EngineState<Battle> {
 
         //LAB_800c8f94
         combatant.charSlot_19c = charSlot;
-        combatant.charIndex_1a2 = a0;
+        combatant.charIndex_1a2 = charId;
         combatant._1a4 = -1;
         combatant._1a6 = -1;
         this.combatantCount_800c66a0++;
@@ -2863,21 +2857,10 @@ public class Battle extends EngineState<Battle> {
           } else {
             // Player TMDs
             //LAB_800c9334
-            int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
-            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(combatant.charSlot_19c);
-
             combatant.flags_19e |= 0x2;
 
-            if((combatant.charIndex_1a2 & 0x1) != 0) {
-              if(charId == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-                charId = 10; // Divine dragoon
-              }
-
-              final String charName = getCharacterName(charId).toLowerCase();
-              loadDir("characters/%s/models/dragoon".formatted(charName), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
-            } else {
-              Loader.loadDirectory(character.getBattleModelPath(), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
-            }
+            final CharacterData2c character = gameState_800babc8.getCharacterBySlot(combatant.charSlot_19c);
+            Loader.loadDirectory(character.getBattleModelPath(combatant.playerBent), files -> this.combatantTmdAndAnimLoadedCallback(files, combatant, false));
           }
         }
       }
@@ -2937,14 +2920,6 @@ public class Battle extends EngineState<Battle> {
       bent.model_148.modelParts_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
       Arrays.setAll(bent.model_148.modelParts_00, i -> new ModelPart10());
 
-      final int shadowSizeIndex;
-      if((combatant.charIndex_1a2 & 0x1) != 0) {
-        shadowSizeIndex = 9;
-      } else {
-        shadowSizeIndex = combatant.charIndex_1a2 - 0x200 >>> 1;
-      }
-
-      //LAB_800c9650
       final PlayerBattleEntity player = ((PlayerBattleEntity)bent);
       final CharacterData2c character = player.character;
       loadPlayerModelAndAnimation(bent.model_148, tmd, anim, character.template.getShadowSize(character, player));
@@ -2973,27 +2948,9 @@ public class Battle extends EngineState<Battle> {
         loadDrgnDir(0, fileIndex, files -> this.attackAnimationsLoaded(files, combatant, true, -1));
       } else {
         //LAB_800c97a4
-        final int isDragoon = combatant.charIndex_1a2 & 0x1;
         final int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
-        if(isDragoon == 0) {
-          // Additions
-          final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
-          if(!charData.isArcher()) {
-            REGISTRIES.additions.getEntry(charData.selectedAddition_19).get().loadAnimations(charData, charData.getAdditionInfo(charData.selectedAddition_19), files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
-            return;
-          }
-
-          // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
-          fileIndex = 4031 + charId * 8;
-        } else if(charId != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-          // Dragoon addition
-          fileIndex = 4103 + charId;
-        } else { // Divine dragoon
-          // Divine dragoon addition
-          fileIndex = 4112;
-        }
-
-        loadDrgnDir(0, fileIndex, files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
+        final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
+        character.template.loadAttackAnimations(character, combatant.playerBent, files -> this.attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
       }
     }
 
@@ -3269,19 +3226,8 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800ca55cL)
   public void loadCombatantTextures(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
-      int charId = gameState_800babc8.charIds_88.getInt(combatant.charSlot_19c);
       final CharacterData2c character = gameState_800babc8.getCharacterBySlot(combatant.charSlot_19c);
-
-      if((combatant.charIndex_1a2 & 0x1) != 0) {
-        if(charId == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-          charId = 10;
-        }
-
-        final String charName = getCharacterName(charId).toLowerCase();
-        loadFile("characters/%s/textures/dragoon".formatted(charName), files -> this.loadCombatantTim(combatant, files));
-      } else {
-        Loader.loadFile(character.getBattleTexturePath(), files -> this.loadCombatantTim(combatant, files));
-      }
+      Loader.loadFile(character.getBattleTexturePath(combatant.playerBent), files -> this.loadCombatantTim(combatant, files));
     }
 
     //LAB_800ca64c
