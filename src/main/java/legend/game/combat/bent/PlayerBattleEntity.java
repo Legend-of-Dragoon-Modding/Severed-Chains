@@ -477,6 +477,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case DETRANSFORMATION_MODE -> out.set(this.detransformationMode.ordinal());
 
       case IS_ARCHER -> out.set(this.character.isArcher());
+      case HAS_TRANSFORMED_BEFORE -> out.set(this.character.hasTransformed);
 
       default -> super.getStat(statIndex, out);
     }
@@ -531,6 +532,8 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case MP_MULTI -> this.mpMulti_13e = value.get();
 
       case GUARD_HEAL_RAW -> this.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(value.get());
+
+      case HAS_TRANSFORMED_BEFORE -> this.character.hasTransformed = value.get() != 0;
 
       default -> super.setStat(statIndex, value);
     }

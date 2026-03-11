@@ -165,7 +165,7 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+  public void loadHumanAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
     loadDrgnDir(0, 4047, onLoad);
   }
 

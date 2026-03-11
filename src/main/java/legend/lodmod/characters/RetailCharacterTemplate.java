@@ -78,6 +78,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     data.writeInt(offset, character.dlevelXp_0e);
     data.writeInt(offset, character.level_12);
     data.writeInt(offset, character.dlevel_13);
+    data.writeBool(offset, character.hasTransformed);
     data.writeInt(offset, character.status_10);
     character.stats.serialize(data, offset);
 
@@ -122,6 +123,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     character.dxp = data.readInt(offset);
     character.level = data.readInt(offset);
     character.dlevel = data.readInt(offset);
+    character.hasTransformed = data.readBool(offset);
     character.status = data.readInt(offset);
     character.stats = StatCollection.deserialize(data, offset);
 

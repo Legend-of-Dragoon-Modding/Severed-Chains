@@ -50,6 +50,7 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
   public int status;
   public int level;
   public int dlevel;
+  public boolean hasTransformed;
   public final Map<EquipmentSlot, RegistryId> equipmentIds = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition;
   public final Map<RegistryId, AdditionInfo> additionInfo = new LinkedHashMap<>();
@@ -74,6 +75,7 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
     character.partyFlags_04 = this.flags;
     character.dlevelXp_0e = this.dlevelXp;
     character.status_10 = this.status;
+    character.hasTransformed = this.hasTransformed;
 
     for(int i = 1; i < this.level; i++) {
       template.applyLevelUp(character, null);

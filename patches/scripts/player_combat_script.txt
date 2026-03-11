@@ -5138,7 +5138,6 @@ mov var[45][118], stor[8] ; source, dest
 mul 0x41, stor[8] ; amount, operand
 div 0x64, stor[8] ; amount, operand
 call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
-gosub inl[:GET_MY_CHAR_ID] ; addr
 gosub inl[:GET_TRANSFORM_MODE] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:LABEL_547] ; is short transform
 call Battle::scriptGetBentStat, stor[0], DRAGOON_TRANSFORM_DEFF, stor[27]
@@ -5285,28 +5284,16 @@ return
 ; @return bool stor[31] use short transform
 GET_TRANSFORM_MODE:
 mov 0x0, stor[9] ; source, dest
-call Scus94491BpeSegment::scriptReadGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], stor[31] ; flag, value
+call Battle::scriptGetBentStat, stor[0], HAS_TRANSFORMED_BEFORE, stor[31]
 jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; has not transformed before
 jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; short transform mode
 mov 0x0, stor[31] ; source, dest
 jmp_cmp !=, 0x9, stor[8], inl[:LABEL_572] ; not divine dragoon
 mov 0x1, stor[9] ; source, dest
 LABEL_572:
-call Scus94491BpeSegment::scriptSetGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], 0x1 ; flag, value
+call Battle::scriptSetBentStat, stor[0], 1, HAS_TRANSFORMED_BEFORE
 LABEL_573:
 return
-
-CHAR_HAS_TRANSFORMED_BEFORE_FLAGS:
-data 0x1b8
-data 0x1ba
-data 0x1b9
-data 0x1bb
-data 0x1bc
-data 0x1bd
-data 0x1be
-data 0x1bf
-data 0x1c0
-data 0x1c1
 
 
 

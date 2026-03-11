@@ -17,7 +17,7 @@ public class MirandaTemplate extends ShanaTemplate {
   }
 
   @Override
-  public void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
+  public void loadHumanAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
     loadDrgnDir(0, 4095, onLoad);
   }
 

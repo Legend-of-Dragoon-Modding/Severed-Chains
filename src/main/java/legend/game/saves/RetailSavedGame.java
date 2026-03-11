@@ -234,6 +234,16 @@ public class RetailSavedGame extends SavedGame {
 
     gameState.characterInitialized_4e6 = this.characterInitialized;
 
+    gameState.charData_32c.get(0).hasTransformed = gameState.scriptFlags2_bc.get(0x1b8);
+    gameState.charData_32c.get(1).hasTransformed = gameState.scriptFlags2_bc.get(0x1ba);
+    gameState.charData_32c.get(2).hasTransformed = gameState.scriptFlags2_bc.get(0x1b9);
+    gameState.charData_32c.get(3).hasTransformed = gameState.scriptFlags2_bc.get(0x1bb);
+    gameState.charData_32c.get(4).hasTransformed = gameState.scriptFlags2_bc.get(0x1bc);
+    gameState.charData_32c.get(5).hasTransformed = gameState.scriptFlags2_bc.get(0x1bd);
+    gameState.charData_32c.get(6).hasTransformed = gameState.scriptFlags2_bc.get(0x1be);
+    gameState.charData_32c.get(7).hasTransformed = gameState.scriptFlags2_bc.get(0x1bf);
+    gameState.charData_32c.get(8).hasTransformed = gameState.scriptFlags2_bc.get(0x1c0);
+
     return gameState;
   }
 

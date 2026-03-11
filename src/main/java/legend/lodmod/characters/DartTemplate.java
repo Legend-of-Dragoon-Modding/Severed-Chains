@@ -211,14 +211,24 @@ public class DartTemplate extends RetailCharacterTemplate {
 
   @Override
   public Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent) {
-    final String name = gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT) ? "divine" : this.getRegistryId().entryId();
+    String name = this.getRegistryId().entryId();
+
+    if(bent.isDragoon() && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+      name = "divine";
+    }
+
     final String file = bent.isDragoon() ? "dragoon" : "combat";
     return Loader.resolve(Path.of("characters", name, "models", file));
   }
 
   @Override
   public Path getBattleTexturePath(final CharacterData2c character, final PlayerBattleEntity bent) {
-    final String name = gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT) ? "divine" : this.getRegistryId().entryId();
+    String name = this.getRegistryId().entryId();
+
+    if(bent.isDragoon() && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+      name = "divine";
+    }
+
     final String file = bent.isDragoon() ? "dragoon" : "combat";
     return Loader.resolve(Path.of("characters", name, "textures", file));
   }

@@ -38,6 +38,7 @@ public class SeveredSavedCharacterV2 implements SavedCharacter {
   public int status;
   public int level;
   public int dlevel;
+  public boolean hasTransformed;
   public final Map<EquipmentSlot, RegistryId> equipmentIds = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition;
   public final Map<RegistryId, AdditionInfo> additionInfo = new HashMap<>();
@@ -59,6 +60,7 @@ public class SeveredSavedCharacterV2 implements SavedCharacter {
     character.status_10 = this.status;
     character.level_12 = this.level;
     character.dlevel_13 = this.dlevel;
+    character.hasTransformed = this.hasTransformed;
 
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       if(this.equipmentIds.containsKey(slot)) {

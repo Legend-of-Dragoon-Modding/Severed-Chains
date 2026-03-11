@@ -35,6 +35,19 @@ public final class V8Serializer {
 
   private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
+  private static final int[] transformFlags = {
+    0x1b8,
+    0x1ba,
+    0x1b9,
+    0x1bb,
+    0x1bc,
+    0x1bd,
+    0x1be,
+    0x1bf,
+    0x1c0,
+    0x1c1,
+  };
+
   public static SavedGame fromV8(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
@@ -140,6 +153,7 @@ public final class V8Serializer {
       charData.status = data.readInt(offset);
       charData.level = data.readUShort(offset);
       charData.dlevel = data.readUShort(offset);
+      charData.hasTransformed = savedGame.scriptFlags2.get(transformFlags[charIndex]);
 
       final int equipmentSlotCount = data.readByte(offset);
 

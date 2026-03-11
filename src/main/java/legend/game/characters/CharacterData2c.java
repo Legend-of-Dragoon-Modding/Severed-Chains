@@ -69,6 +69,8 @@ public class CharacterData2c {
 //  public final int[] additionLevels_1a = new int[8];
 //  public final int[] additionXp_22 = new int[8];
 
+  public boolean hasTransformed;
+
   public CharacterData2c(final GameState52c gameState, final CharacterTemplate template, final StatCollection stats) {
     this.gameState = gameState;
     this.template = template;

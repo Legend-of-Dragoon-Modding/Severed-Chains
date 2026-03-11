@@ -520,7 +520,9 @@ public class PostBattleScreen extends MenuScreen {
    */
   @Method(0x8010cc24L)
   private boolean givePendingXp() {
-    for(final var entry : this.pendingXp_8011e180.object2IntEntrySet()) {
+    final var it = this.pendingXp_8011e180.object2IntEntrySet().iterator();
+    while(it.hasNext()) {
+      final var entry = it.next();
       final CharacterData2c character = entry.getKey();
       final int pendingXp = entry.getIntValue();
 
@@ -535,10 +537,10 @@ public class PostBattleScreen extends MenuScreen {
       //LAB_8010cc98
       //LAB_8010ccd4
       character.xp_00 += cappedPendingXp;
-      this.pendingXp_8011e180.mergeInt(character, -cappedPendingXp, Integer::sum);
+      entry.setValue(pendingXp - cappedPendingXp);
 
-      if(this.pendingXp_8011e180.getInt(character) <= 0) {
-        this.pendingXp_8011e180.removeInt(character);
+      if(entry.getIntValue() <= 0) {
+        it.remove();
       }
 
       //LAB_8010cd30
@@ -557,7 +559,9 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   private boolean givePendingDxp() {
-    for(final var entry : spGained_800bc950.object2IntEntrySet()) {
+    final var it = spGained_800bc950.object2IntEntrySet().iterator();
+    while(it.hasNext()) {
+      final var entry = it.next();
       final CharacterData2c character = entry.getKey();
       final int pendingXp = entry.getIntValue();
 
@@ -573,9 +577,10 @@ public class PostBattleScreen extends MenuScreen {
       //LAB_8010ccd4
       character.dlevelXp_0e += cappedPendingXp;
       spGained_800bc950.mergeInt(character, -cappedPendingXp, Integer::sum);
+      entry.setValue(pendingXp - cappedPendingXp);
 
-      if(spGained_800bc950.getInt(character) <= 0) {
-        spGained_800bc950.removeInt(character);
+      if(entry.getIntValue() <= 0) {
+        it.remove();
       }
 
       //LAB_8010cd30
