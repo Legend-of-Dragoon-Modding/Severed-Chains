@@ -184,6 +184,7 @@ public enum BattleEntityStat {
   DETRANSFORMATION_MODE,
   IS_ARCHER,
   CURRENT_ANIMATION_LENGTH,
+  PARTICLE_COLOUR,
   ;
 
   public static BattleEntityStat fromLegacy(final int statIndex) {

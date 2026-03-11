@@ -1,0 +1,75 @@
+--- original
++++ modified
+@@ -2384,9 +2384,10 @@
+ data 0x49
+ LABEL_0:
+ memcpy 0x2, stor[8], inl[:LABEL_5]
+-gosub inl[:LABEL_1]
++gosub inl[:SET_CHAR_BENT_SHADOW_SIZE]
+ memcpy 0x2, inl[:LABEL_5], stor[8]
+ return
++#include shadow.txt
+ LABEL_1:
+ call 169, stor[8], STATUS, stor[9]
+ jmp_cmp !&, 0x4000, stor[9], inl[:LABEL_2]
+@@ -2933,6 +2934,23 @@
+ data 0x80
+ data 0x2000008
+ data 0x49
++PARTICLE_R:
++data 0
++PARTICLE_G:
++data 0
++PARTICLE_B:
++data 0
++LOAD_PARTICLE_COLOUR:
++call 169, stor[30], PARTICLE_COLOUR, stor[40]
++mov stor[40], inl[:PARTICLE_R]
++mov stor[40], inl[:PARTICLE_G]
++mov stor[40], inl[:PARTICLE_B]
++shr  8, inl[:PARTICLE_G]
++shr 16, inl[:PARTICLE_B]
++and 0xff, inl[:PARTICLE_R]
++and 0xff, inl[:PARTICLE_G]
++and 0xff, inl[:PARTICLE_B]
++return
+ ENTRYPOINT_0:
+ call 592, stor[30], stor[28]
+ gosub inl[:LABEL_17]
+@@ -2947,7 +2965,8 @@
+ call 545, stor[20], stor[30], 0x0, 0xffffff00, 0x0
+ call 549, stor[20], 0xffffffff, 0x400, 0x400, 0x400
+ gosub inl[:LABEL_15]
+-call 551, stor[20], 0xffffffff, inl[:LABEL_12[stor[22]]], inl[:LABEL_13[stor[22]]], inl[:LABEL_14[stor[22]]]
++gosub inl[:LOAD_PARTICLE_COLOUR]
++call 551, stor[20], 0xffffffff, inl[:PARTICLE_R], inl[:PARTICLE_G], inl[:PARTICLE_B]
+ call 553, stor[20], 0x0, 0x1
+ call 588, stor[20], 0x14
+ mov 0x12, stor[23]
+@@ -3070,9 +3089,10 @@
+ call 576, stor[21], 0xffffffff, 0xc, 0xe00, 0xe00, 0xe00
+ call 551, stor[21], 0xffffffff, 0x0, 0x0, 0x0
+ gosub inl[:LABEL_15]
+-mov inl[:LABEL_12[stor[22]]], stor[23]
+-mov inl[:LABEL_13[stor[22]]], stor[24]
+-mov inl[:LABEL_14[stor[22]]], stor[25]
++gosub inl[:LOAD_PARTICLE_COLOUR]
++mov inl[:PARTICLE_R], stor[23]
++mov inl[:PARTICLE_G], stor[24]
++mov inl[:PARTICLE_B], stor[25]
+ shr 0x1, stor[23]
+ shr 0x1, stor[24]
+ shr 0x1, stor[25]
+@@ -3088,9 +3108,9 @@
+ call 576, stor[20], 0xffffffff, 0x14, 0x1800, 0x1800, 0x1800
+ call 551, stor[20], 0xffffffff, 0x0, 0x0, 0x0
+ gosub inl[:LABEL_15]
+-mov inl[:LABEL_12[stor[22]]], stor[23]
+-mov inl[:LABEL_13[stor[22]]], stor[24]
+-mov inl[:LABEL_14[stor[22]]], stor[25]
++mov inl[:PARTICLE_R], stor[23]
++mov inl[:PARTICLE_G], stor[24]
++mov inl[:PARTICLE_B], stor[25]
+ shr 0x1, stor[23]
+ shr 0x1, stor[24]
+ shr 0x1, stor[25]

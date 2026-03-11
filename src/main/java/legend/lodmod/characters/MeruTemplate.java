@@ -189,6 +189,11 @@ public class MeruTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x51a6e8;
+  }
+
+  @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 6;
   }
@@ -220,16 +225,16 @@ public class MeruTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x2a;
+    return 42;
   }
 
   @Override
   public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x36;
+    return 54;
   }
 
   @Override
   public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x6e;
+    return 110;
   }
 }

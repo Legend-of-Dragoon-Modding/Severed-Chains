@@ -195,6 +195,11 @@ public class HaschelTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0xd888d4;
+  }
+
+  @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 6;
   }
@@ -230,16 +235,16 @@ public class HaschelTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x28;
+    return 40;
   }
 
   @Override
   public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x34;
+    return 52;
   }
 
   @Override
   public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x6c;
+    return 108;
   }
 }

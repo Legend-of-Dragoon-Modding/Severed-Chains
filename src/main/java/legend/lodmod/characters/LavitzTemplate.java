@@ -189,6 +189,11 @@ public class LavitzTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x55c883;
+  }
+
+  @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 6;
   }
@@ -220,16 +225,16 @@ public class LavitzTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x22;
+    return 34;
   }
 
   @Override
   public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x31;
+    return 49;
   }
 
   @Override
   public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x69;
+    return 105;
   }
 }

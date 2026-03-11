@@ -34,6 +34,7 @@ entrypoint :ENTRYPOINT_31_NOOP
 
 
 #include lookup_tables.txt
+#include shadow.txt
 
 
 data 0x10c
@@ -506,22 +507,6 @@ data 0x5000033
 data 0x200000d
 data 0x900ffed
 data 0x49
-
-
-
-; SUBROUTINE
-; @param int s8 shadow size
-SET_CHAR_BENT_SHADOW_SIZE:
-call Battle::scriptGetBentStat, stor[8], FOOT_MODEL_PART, inl[:SET_CHAR_BENT_SHADOW_SIZE_FOOT_MODEL_PART_INDEX]
-call Battle::scriptGetBentStat, stor[8], SHADOW_SIZE, inl[:SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE]
-call Battle::scriptAttachShadowToBentModelPart, stor[8], inl[:SET_CHAR_BENT_SHADOW_SIZE_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
-call Battle::scriptSetBentShadowSize, stor[8], inl[:SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE], inl[:SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE] ; bentIndex, x, z
-return
-
-SET_CHAR_BENT_SHADOW_SIZE_FOOT_MODEL_PART_INDEX:
-data 0
-SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE:
-data 0
 
 
 

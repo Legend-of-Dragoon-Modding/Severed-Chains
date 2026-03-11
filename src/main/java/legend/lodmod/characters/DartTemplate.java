@@ -246,6 +246,11 @@ public class DartTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0xf5ffd7 : 0xff2000;
+  }
+
+  @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 5;
   }
@@ -281,16 +286,16 @@ public class DartTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x2e : 0x20;
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 46 : 32;
   }
 
   @Override
   public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 0x39 : 0x30;
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 57 : 48;
   }
 
   @Override
   public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x68;
+    return 104;
   }
 }

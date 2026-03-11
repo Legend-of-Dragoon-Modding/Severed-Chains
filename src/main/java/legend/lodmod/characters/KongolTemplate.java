@@ -186,6 +186,11 @@ public class KongolTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0xe7a53c;
+  }
+
+  @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 5;
   }
@@ -217,16 +222,16 @@ public class KongolTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x2c;
+    return 44;
   }
 
   @Override
   public int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x37;
+    return 55;
   }
 
   @Override
   public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x6f;
+    return 111;
   }
 }

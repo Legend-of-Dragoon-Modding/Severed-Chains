@@ -185,6 +185,11 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 0x747044;
+  }
+
+  @Override
   public int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 11;
   }
@@ -220,7 +225,7 @@ public class ShanaTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x24;
+    return 36;
   }
 
   @Override
@@ -230,6 +235,6 @@ public class ShanaTemplate extends RetailCharacterTemplate {
 
   @Override
   public int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent) {
-    return 0x6a;
+    return 106;
   }
 }

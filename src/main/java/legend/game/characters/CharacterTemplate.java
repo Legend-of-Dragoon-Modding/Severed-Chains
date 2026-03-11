@@ -54,6 +54,8 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent);
+  /** Elemental particle effects, like during quick transform */
+  public abstract int getParticleColour(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getLeftHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getRightHandModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getFootModelPart(final CharacterData2c character, final PlayerBattleEntity bent);

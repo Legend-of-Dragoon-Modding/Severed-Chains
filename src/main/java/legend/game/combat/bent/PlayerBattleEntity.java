@@ -291,6 +291,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
     return this.character.template.getSpellRingColour(this.character, this);
   }
 
+  protected int getParticleColour() {
+    return this.character.template.getParticleColour(this.character, this);
+  }
+
   public int getLeftHandModelPart() {
     return this.character.template.getLeftHandModelPart(this.character, this);
   }
@@ -455,6 +459,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case HAS_WEAPON_TRAIL -> out.set(this.hasWeaponTrail() ? 1 : 0);
       case WEAPON_TRAIL_COLOUR -> out.set(this.getWeaponTrailColour());
       case SPELL_RING_COLOUR -> out.set(this.getSpellRingColour());
+      case PARTICLE_COLOUR -> out.set(this.getParticleColour());
       case HAND_MODEL_PART -> out.set(this.getLeftHandModelPart());
       case FOOT_MODEL_PART -> out.set(this.getFootModelPart());
       case WEAPON_MODEL_PART -> out.set(this.getWeaponModelPart());
