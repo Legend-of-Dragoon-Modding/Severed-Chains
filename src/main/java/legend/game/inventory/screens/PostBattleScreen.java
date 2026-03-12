@@ -733,34 +733,31 @@ public class PostBattleScreen extends MenuScreen {
       this.drawCharPortrait(x - 1, y + 4, charId).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(_800fbca8[charId], _800fbca8[charId], x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-
-      final Renderable58 glyph = this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497);
-      glyph.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      glyph.widthCut = 16;
-      this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
       this.drawTwoDigitNumber(x + 108, y + 16, gameState_800babc8.charData_32c[charId].level_12);
 
-      final int dlevel;
-      if(!hasDragoon(gameState_800babc8.goods_19c, charId)) {
-        dlevel = 0;
-      } else {
-        dlevel = gameState_800babc8.charData_32c[charId].dlevel_13;
+      if(hasDragoon(gameState_800babc8.goods_19c, charId)) {
+        final int dlevel = gameState_800babc8.charData_32c[charId].dlevel_13;
+        this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+        this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
+
+        final Renderable58 glyph = this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497);
+        glyph.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+        glyph.widthCut = 16;
+        this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+
+        final int dxp = dragoonXpRequirements_800fbbf0[charId][gameState_800babc8.charData_32c[charId].dlevel_13 + 1];
+        this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
+        this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+        this.drawNextLevelXp(x + 84, y + 52, dxp);
       }
 
       //LAB_8010e8e0
-      this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
       final int xp = getXpToNextLevel(charId);
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, gameState_800babc8.charData_32c[charId].xp_00);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);
-
-      final int dxp = dragoonXpRequirements_800fbbf0[charId][gameState_800babc8.charData_32c[charId].dlevel_13 + 1];
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
-      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawNextLevelXp(x + 84, y + 52, dxp);
     }
 
     //LAB_8010e978
