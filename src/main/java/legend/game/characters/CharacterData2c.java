@@ -159,6 +159,10 @@ public class CharacterData2c {
     return this.template.getElement(this);
   }
 
+  public Element getElement(final PlayerBattleEntity bent) {
+    return this.template.getElement(this, bent);
+  }
+
   public boolean hasDragoon() {
     return this.template.hasDragoon(this);
   }

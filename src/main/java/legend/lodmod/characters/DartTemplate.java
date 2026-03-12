@@ -104,7 +104,12 @@ public class DartTemplate extends RetailCharacterTemplate {
 
   @Override
   public Element getElement(final CharacterData2c character) {
-    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? DIVINE_ELEMENT.get() : FIRE_ELEMENT.get();
+    return FIRE_ELEMENT.get();
+  }
+
+  @Override
+  public Element getElement(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return bent.isDragoon() && character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? DIVINE_ELEMENT.get() : FIRE_ELEMENT.get();
   }
 
   @Override

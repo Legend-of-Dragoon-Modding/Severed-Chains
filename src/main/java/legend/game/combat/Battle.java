@@ -2111,7 +2111,7 @@ public class Battle extends EngineState<Battle> {
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
       state.setTicker(bent::bentLoadingTicker);
       state.setDestructor(bent::bentDestructor);
-      bent.element = character.getElement();
+      bent.element = character.getElement(bent);
       bent.combatant_144 = this.getCombatant(combatantIndex);
       bent.combatantIndex_26c = combatantIndex;
       bent.combatant_144.playerBent = bent;

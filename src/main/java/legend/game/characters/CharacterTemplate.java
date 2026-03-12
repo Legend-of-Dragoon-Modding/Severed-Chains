@@ -31,6 +31,11 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract int getDxpToNextLevel(final CharacterData2c character);
 
   public abstract Element getElement(final CharacterData2c character);
+
+  public Element getElement(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return this.getElement(character);
+  }
+
   public abstract boolean hasDragoon(final CharacterData2c character);
   public abstract AdditionHits80 getDragoonAddition(final CharacterData2c character);
 

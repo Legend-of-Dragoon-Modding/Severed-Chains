@@ -143,7 +143,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   @Override
   public Element getElement() {
-    return this.character.getElement();
+    return this.character.getElement(this);
   }
 
   @Override
