@@ -726,12 +726,14 @@ public class PostBattleScreen extends MenuScreen {
     return 6;
   }
 
+  private static final int[] charNameOffset = {31, 25, 29, 29, 31, 29, 28, 31, 31};
+
   @Method(0x8010e708L)
   private void drawChar(final int x, final int y, final int charId) {
     if(charId != -1) {
       this.drawResultsBackground(x + 1, y + 5, 24, 32, 2);
       this.drawCharPortrait(x - 1, y + 4, charId).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph(_800fbca8[charId], _800fbca8[charId], x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(_800fbca8[charId], _800fbca8[charId], x + charNameOffset[charId], y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
