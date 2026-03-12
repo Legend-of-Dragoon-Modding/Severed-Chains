@@ -115,7 +115,7 @@ public class BattleHud {
     new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
   };
 
-  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
+  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}};
   private static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
@@ -492,8 +492,6 @@ public class BattleHud {
 
   @Method(0x800efd34L)
   private void drawUiElements() {
-    int spBarIndex = 0;
-
     //LAB_800efe04
     //LAB_800efe9c
     //LAB_800eff1c
@@ -724,40 +722,39 @@ public class BattleHud {
             final int partialSp = sp % 100;
 
             //SP bars
+            if(this.spBars == null) {
+              this.spBars = new QuadBuilder("SPBar")
+                .monochrome(0, 229.0f / 255.0f)
+                .monochrome(1, 133.0f / 255.0f)
+                .monochrome(2, 229.0f / 255.0f)
+                .monochrome(3, 133.0f / 255.0f)
+                .size(1, 1)
+                .build();
+            }
+
             //LAB_800f0714
             for(int i = 0; i < 2; i++) {
-              int spBarW;
+              final int spBarW;
+              final int spBarIndex;
               if(i == 0) {
                 spBarW = partialSp;
-                spBarIndex = fullLevels + 1;
-                //LAB_800f0728
-              } else if(fullLevels == 0) {
-                spBarW = 0;
-              } else {
-                spBarW = 100;
                 spBarIndex = fullLevels;
+                //LAB_800f0728
+              } else if(fullLevels != 0) {
+                spBarW = 100;
+                spBarIndex = fullLevels - 1;
+              } else {
+                continue;
               }
 
               //LAB_800f0738
-              spBarW = Math.max(0, (short)spBarW * 35 / 100);
-
               //LAB_800f0780
               final int left = displayStats.x_00 - centreScreenX_1f8003dc + 3;
               final int top = displayStats.y_02 - centreScreenY_1f8003de + 8;
-              final int right = left + spBarW;
+              final int right = left + Math.max(0, spBarW * 35 / 100);
               final int bottom = top + 3;
 
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
-
-              if(this.spBars == null) {
-                this.spBars = new QuadBuilder("SPBar")
-                  .monochrome(0, 229.0f / 255.0f)
-                  .monochrome(1, 133.0f / 255.0f)
-                  .monochrome(2, 229.0f / 255.0f)
-                  .monochrome(3, 133.0f / 255.0f)
-                  .size(1, 1)
-                  .build();
-              }
+              final int[] spBarColours = spBarColours_800c6f04[spBarIndex % spBarColours_800c6f04.length];
 
               this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f + i * 0.1f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);

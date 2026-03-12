@@ -17,7 +17,6 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
-import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
@@ -48,7 +47,6 @@ import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Battle.FUN_800ca194;
 import static legend.game.combat.Battle.combatantTimRects_800fa6e0;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
@@ -810,7 +808,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public void setActiveSpell(final int spellId) {
     // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
     if(spellId != -1 && spellId <= 127) {
-      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(gameState_800babc8.charData_32c.get(this.charId_272), REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get())).spell;
+      this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();
     } else {
       this.spell_94 = LodSpells.SPELL127.get();
     }

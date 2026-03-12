@@ -3,15 +3,17 @@ package legend.game.characters;
 import legend.core.memory.types.IntRef;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.unpacker.FileData;
+import org.jetbrains.annotations.NotNull;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 
-public class StatCollection {
-  private final Map<RegistryId, Stat> stats = new HashMap<>();
+public class StatCollection implements Iterable<RegistryId> {
+  private final Map<RegistryId, Stat> stats = new LinkedHashMap<>();
 
   public StatCollection(final StatType... stats) {
     for(final StatType stat : stats) {
@@ -67,5 +69,10 @@ public class StatCollection {
     }
 
     return stats;
+  }
+
+  @Override
+  public @NotNull Iterator<RegistryId> iterator() {
+    return this.stats.keySet().iterator();
   }
 }

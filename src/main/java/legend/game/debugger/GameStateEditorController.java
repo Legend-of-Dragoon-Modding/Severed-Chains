@@ -6,7 +6,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.characters.CharacterTemplate;
-import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.Item;
@@ -15,7 +14,6 @@ import legend.game.characters.CharacterData2c;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.Comparator;
 
@@ -593,19 +591,4 @@ public class GameStateEditorController {
     }
   }
 
-  private static class RegistryEntryConverter<T extends RegistryEntry> extends StringConverter<T> {
-    @Override
-    public String toString(final T t) {
-      if(t == null) {
-        return "";
-      }
-
-      return t.getRegistryId() + " - " + I18n.translate(t);
-    }
-
-    @Override
-    public T fromString(final String s) {
-      return null;
-    }
-  }
 }
