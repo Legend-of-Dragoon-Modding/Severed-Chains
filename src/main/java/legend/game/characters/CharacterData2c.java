@@ -10,6 +10,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -230,7 +231,7 @@ public class CharacterData2c {
     ;
   }
 
-  public Set<RegistryId> getAllSpells() {
+  public Collection<RegistryId> getAllSpells() {
     return this.spells.keySet();
   }
 

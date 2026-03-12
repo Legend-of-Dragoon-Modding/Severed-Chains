@@ -23,6 +23,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -103,7 +104,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
       data.writeInt(offset, info.xp);
     }
 
-    final Set<RegistryId> spellIds = character.getAllSpells();
+    final Collection<RegistryId> spellIds = character.getAllSpells();
     data.writeShort(offset, spellIds.size());
 
     for(final RegistryId spellId : spellIds) {
