@@ -8,11 +8,9 @@ import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
-import legend.game.characters.CharacterData2c;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.modding.events.RenderEvent;
-import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.inventory.ScriptFlags1ChangedEvent;
 import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
@@ -99,7 +97,6 @@ import static legend.game.sound.Audio.initSound;
 import static legend.game.sound.Audio.loadMenuSounds;
 import static legend.game.sound.Audio.startQueuedSounds;
 import static legend.game.sound.Audio.stopSound;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -323,16 +320,6 @@ public final class Scus94491BpeSegment {
 
     gameState_800babc8.scriptFlags2_bc.set(packedIndex, set);
 
-    //LAB_800174a4
-    if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
-      if(!divineEvent.bypassOverride) {
-        final CharacterData2c dart = gameState_800babc8.charData_32c.get(0);
-        dart.dlevelXp_0e = 0x7fff;
-        dart.dlevel_13 = 5;
-      }
-    }
-
     //LAB_800174d0
     return FlowControl.CONTINUE;
   }
@@ -369,16 +356,6 @@ public final class Scus94491BpeSegment {
     } else {
       //LAB_800175fc
       script.params_20[0].array(index).and(~(1 << shift));
-    }
-
-    //LAB_80017614
-    final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
-    if(!divineEvent.bypassOverride) {
-      if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-        final CharacterData2c dart = gameState_800babc8.charData_32c.get(0);
-        dart.dlevel_13 = 5;
-        dart.dlevelXp_0e = 0x7fff;
-      }
     }
 
     //LAB_80017640

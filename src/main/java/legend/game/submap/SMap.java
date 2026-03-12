@@ -69,6 +69,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodCharacterTemplates;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
@@ -1132,14 +1133,14 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
-      final CharacterData2c dart = gameState_800babc8.charData_32c.get(0);
-
-      if(dart.dlevelXp_0e < 63901) {
-        dart.dlevelXp_0e = 63901;
+      for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+        if(character.template == LodCharacterTemplates.DART.get()) {
+          while(character.dlevel_13 < 5) {
+            character.dlevelXp_0e = character.getDxpToNextLevel();
+            character.template.applyDragoonLevelUp(character, null);
+          }
+        }
       }
-
-      //LAB_800d9d90
-      dart.dlevel_13 = 5;
     }
 
     this.restoreVitalsAndSp(0);
