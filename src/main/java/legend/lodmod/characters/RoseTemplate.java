@@ -45,7 +45,7 @@ public class RoseTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.HARD_BLADE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(19))));
     character.addAddition(LodAdditions.DEMONS_DANCE.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.ASTRAL_DRAIN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.ASTRAL_DRAIN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.DEATH_DIMENSION.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
     character.addSpell(LodSpells.DEMONS_GATE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.DARK_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));

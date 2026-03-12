@@ -44,7 +44,7 @@ public class KongolTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.INFERNO.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(23))));
     character.addAddition(LodAdditions.BONE_CRUSH.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.GRAND_STREAM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.GRAND_STREAM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.METEOR_STRIKE.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.GOLDEN_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
 

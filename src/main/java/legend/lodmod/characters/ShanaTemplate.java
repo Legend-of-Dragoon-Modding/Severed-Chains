@@ -34,7 +34,7 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   public CharacterData2c make(final GameState52c gameState) {
     final CharacterData2c character = super.make(gameState);
 
-    character.addSpell(LodSpells.STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.MOON_LIGHT.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
     character.addSpell(LodSpells.GATES_OF_HEAVEN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.WHITE_SILVER_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));

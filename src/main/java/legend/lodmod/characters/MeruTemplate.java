@@ -46,7 +46,7 @@ public class MeruTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.CATS_CRADLE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(30))));
     character.addAddition(LodAdditions.PERKY_STEP.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.FREEZING_RING.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.FREEZING_RING.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.RAINBOW_BREATH.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
     character.addSpell(LodSpells.DIAMOND_DUST.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.BLUE_SEA_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));

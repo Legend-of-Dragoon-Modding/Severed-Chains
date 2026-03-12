@@ -64,7 +64,7 @@ public class AlbertTemplate extends LavitzTemplate {
     character.addAddition(LodAdditions.ALBERT_GUST_OF_WIND_DANCE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(11))));
     character.addAddition(LodAdditions.ALBERT_FLOWER_STORM.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.WING_BLASTER.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.WING_BLASTER.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.ROSE_STORM.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
     character.addSpell(LodSpells.GASPLESS.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.JADE_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));

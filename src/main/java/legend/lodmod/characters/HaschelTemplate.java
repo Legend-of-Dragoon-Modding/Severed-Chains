@@ -47,7 +47,7 @@ public class HaschelTemplate extends RetailCharacterTemplate {
     character.addAddition(LodAdditions.HEX_HAMMER.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(26))));
     character.addAddition(LodAdditions.OMNI_SWEEP.getId(), new CharacterAdditionInfo(List.of(new AdditionMasteryUnlockCriterion())));
 
-    character.addSpell(LodSpells.ATOMIC_MIND.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion())));
+    character.addSpell(LodSpells.ATOMIC_MIND.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.THUNDER_KID.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
     character.addSpell(LodSpells.THUNDER_GOD.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
     character.addSpell(LodSpells.VIOLET_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
