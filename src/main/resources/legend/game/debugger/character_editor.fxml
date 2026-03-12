@@ -69,13 +69,13 @@
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Label>
-            <Spinner fx:id="hp">
+            <Spinner fx:id="hp" editable="true">
                <FlowPane.margin>
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Spinner>
             <Label text="/" />
-            <Spinner fx:id="maxHp">
+            <Spinner fx:id="maxHp" editable="true">
                <FlowPane.margin>
                   <Insets left="4.0" right="4.0" />
                </FlowPane.margin>
@@ -95,13 +95,13 @@
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Label>
-            <Spinner fx:id="mp">
+            <Spinner fx:id="mp" editable="true">
                <FlowPane.margin>
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Spinner>
             <Label text="/" />
-            <Spinner fx:id="maxMp">
+            <Spinner fx:id="maxMp" editable="true">
                <FlowPane.margin>
                   <Insets left="4.0" right="4.0" />
                </FlowPane.margin>
@@ -124,13 +124,13 @@
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Label>
-            <Spinner fx:id="sp">
+            <Spinner fx:id="sp" editable="true">
                <FlowPane.margin>
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Spinner>
             <Label text="/" />
-            <Spinner fx:id="maxSp">
+            <Spinner fx:id="maxSp" editable="true">
                <FlowPane.margin>
                   <Insets left="4.0" right="4.0" />
                </FlowPane.margin>
@@ -153,13 +153,13 @@
          </VBox.margin>
          <children>
             <Label prefWidth="50.0" text="Level" />
-            <Spinner fx:id="level">
+            <Spinner fx:id="level" editable="true">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
             </Spinner>
             <Label prefWidth="36.0" text="XP" />
-            <Spinner fx:id="xp">
+            <Spinner editable="true" fx:id="xp">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
@@ -170,13 +170,13 @@
       <FlowPane prefHeight="21.0" prefWidth="644.0">
          <children>
             <Label prefWidth="50.0" text="D'Level" />
-            <Spinner fx:id="dlevel">
+            <Spinner fx:id="dlevel" editable="true">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
             </Spinner>
             <Label prefWidth="36.0" text="D'XP" />
-            <Spinner fx:id="dxp">
+            <Spinner fx:id="dxp" editable="true">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
@@ -217,22 +217,22 @@
             <Label text="MAV" textOverrun="CLIP" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <Label text="SPD" textOverrun="CLIP" GridPane.rowIndex="4" />
             <Label text="HEAL" textOverrun="CLIP" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <Spinner fx:id="atk" prefWidth="9.99999999E8" GridPane.columnIndex="1" />
-            <Spinner fx:id="def" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Spinner fx:id="ahit" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Spinner fx:id="aav" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Spinner fx:id="spd" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Spinner fx:id="matk" prefWidth="9.99999999E8" GridPane.columnIndex="3" />
-            <Spinner fx:id="mdef" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Spinner fx:id="mhit" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <Spinner fx:id="mav" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <Spinner fx:id="heal" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <Spinner fx:id="datk" prefWidth="9.99999999E8" GridPane.columnIndex="5" />
-            <Spinner fx:id="ddef" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Spinner fx:id="atk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" />
+            <Spinner fx:id="def" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Spinner fx:id="ahit" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Spinner fx:id="aav" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Spinner fx:id="spd" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Spinner fx:id="matk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" />
+            <Spinner fx:id="mdef" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Spinner fx:id="mhit" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Spinner fx:id="mav" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Spinner fx:id="heal" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Spinner fx:id="datk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" />
+            <Spinner fx:id="ddef" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="1" />
             <Label text="DMATK" textOverrun="CLIP" GridPane.columnIndex="4" GridPane.rowIndex="2" />
             <Label text="DMDEF" textOverrun="CLIP" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-            <Spinner fx:id="dmatk" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-            <Spinner fx:id="dmdef" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+            <Spinner fx:id="dmatk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+            <Spinner fx:id="dmdef" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="3" />
          </children>
          <VBox.margin>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
