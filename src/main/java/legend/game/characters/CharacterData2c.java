@@ -155,6 +155,10 @@ public class CharacterData2c {
     return flags;
   }
 
+  public boolean hasTransformed() {
+    return this.hasTransformed;
+  }
+
   public Element getElement() {
     return this.template.getElement(this);
   }

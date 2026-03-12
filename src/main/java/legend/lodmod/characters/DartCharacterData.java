@@ -22,4 +22,9 @@ public class DartCharacterData extends CharacterData2c {
 
     return flags;
   }
+
+  @Override
+  public boolean hasTransformed() {
+    return !this.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT) && super.hasTransformed();
+  }
 }
