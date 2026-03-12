@@ -5278,9 +5278,12 @@ return
 
 
 
+GET_TRANSFORM_MODE_BENT_STATUS:
+data 0
+
 ; SUBROUTINE
 ; @param int stor[8] char id
-; @return bool stor[9] has transformed before (and not divine dragoon)
+; @return bool stor[9] is divine dragoon
 ; @return bool stor[31] use short transform
 GET_TRANSFORM_MODE:
 mov 0x0, stor[9] ; source, dest
@@ -5288,7 +5291,11 @@ call Battle::scriptGetBentStat, stor[0], HAS_TRANSFORMED_BEFORE, stor[31]
 jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; has not transformed before
 jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; short transform mode
 mov 0x0, stor[31] ; source, dest
+
+call Battle::scriptGetBentStat, stor[0], STATUS, inl[:GET_TRANSFORM_MODE_BENT_STATUS] ; bentIndex, statIndex, value
+jmp_cmp !&, 0x4000, inl[:GET_TRANSFORM_MODE_BENT_STATUS], inl[:LABEL_572] ; operand, left, right, addr
 mov 0x1, stor[9] ; source, dest
+
 LABEL_572:
 call Battle::scriptSetBentStat, stor[0], 1, HAS_TRANSFORMED_BEFORE
 LABEL_573:
