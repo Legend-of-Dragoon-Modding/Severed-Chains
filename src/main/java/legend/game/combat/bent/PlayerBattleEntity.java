@@ -10,12 +10,16 @@ import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.SpellStats0c;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.ArcherSpEvent;
+import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.EquipmentSlot;
+import legend.lodmod.LodMod;
+import legend.lodmod.LodSpells;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
@@ -24,6 +28,7 @@ import java.util.Map;
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -537,5 +542,18 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
       default -> super.setStat(statIndex, value);
     }
+  }
+
+  @Override
+  public void setActiveSpell(final int spellId) {
+    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
+    final SpellStats0c spell;
+    if(spellId != -1 && spellId <= 127) {
+      spell = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();
+    } else {
+      spell = LodSpells.SPELL127.get();
+    }
+
+    this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(gameState_800babc8.charData_32c.get(this.charId_272), spell)).spell;
   }
 }

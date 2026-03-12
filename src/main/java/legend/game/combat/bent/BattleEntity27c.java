@@ -24,7 +24,6 @@ import legend.game.sound.SoundFile;
 import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
 import legend.lodmod.LodMod;
-import legend.lodmod.LodSpells;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -806,11 +805,6 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800f9e50L)
   public void setActiveSpell(final int spellId) {
-    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
-    if(spellId != -1 && spellId <= 127) {
-      this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();
-    } else {
-      this.spell_94 = LodSpells.SPELL127.get();
-    }
+    this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();
   }
 }
