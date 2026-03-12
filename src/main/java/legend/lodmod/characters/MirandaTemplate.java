@@ -5,6 +5,7 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -14,6 +15,21 @@ public class MirandaTemplate extends ShanaTemplate {
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
     Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/231", "SECT/DRGN22.BIN/836/textures/7", "SECT/DRGN22.BIN/836/232", "SECT/DRGN22.BIN/836/233", "SECT/DRGN22.BIN/836/234");
+  }
+
+  @Override
+  public Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1306"));
+  }
+
+  @Override
+  public Path getDragoonAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1315"));
+  }
+
+  @Override
+  public Path getDragoonTransformSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1325"));
   }
 
   @Override

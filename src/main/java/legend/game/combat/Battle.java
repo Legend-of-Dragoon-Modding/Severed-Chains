@@ -300,7 +300,6 @@ import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.stopSoundSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.sound.Audio.victoryMusic;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
@@ -1484,14 +1483,8 @@ public class Battle extends EngineState<Battle> {
     if(type == 0) {
       //LAB_8001d0e0
       loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x40);
-      if(bent.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-        //LAB_8001d134
-        // Regular dragoons
-        loadDrgnDir(0, 1317 + bent.charId_272, this::deffSoundsLoaded);
-      } else {
-        // Divine dragoon
-        loadDrgnDir(0, 1328, this::deffSoundsLoaded);
-      }
+      final PlayerBattleEntity player = (PlayerBattleEntity)bent;
+      Loader.loadDirectory(player.character.getDragoonTransformSoundsPath(player), this::deffSoundsLoaded);
     } else if(type == 1) {
       //LAB_8001d164
       this.loadEncounterMonsterSoundsWithPhases();
@@ -1508,7 +1501,7 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x8001cce8L)
   private void loadCharAttackSounds(final int bentIndex, final int type) {
-    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
+    final PlayerBattleEntity bent = SCRIPTS.getObject(bentIndex, PlayerBattleEntity.class);
 
     //LAB_8001cd78
     sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
@@ -1518,23 +1511,18 @@ public class Battle extends EngineState<Battle> {
 
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8);
 
-    final int fileIndex;
+    final Path path;
     final String soundName;
     if(type != 0) {
-      //LAB_8001ce44
-      fileIndex = 1298 + bent.charId_272;
+      path = bent.character.getAttackSoundsPath(bent);
       soundName = bent + " attack sounds";
-    } else if(bent.charId_272 != 0 || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      //LAB_8001ce18
-      fileIndex = 1307 + bent.charId_272;
-      soundName = bent + " dragoon attack sounds";
     } else {
-      fileIndex = 1307;
-      soundName = bent + " divine dragoon attack sounds";
+      path = bent.character.getDragoonAttackSoundsPath(bent);
+      soundName = bent + " dragoon attack sounds";
     }
 
     //LAB_8001ce70
-    loadDrgnDir(0, fileIndex, files -> this.charAttackSoundsLoaded(files, soundName, bent));
+    Loader.loadDirectory(path, files -> this.charAttackSoundsLoaded(files, soundName, bent));
   }
 
   @Method(0x8001ce98L)
@@ -4147,7 +4135,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptEnum(BattleEntityStat.class)
   @Method(0x800ccd34L)
   public FlowControl scriptSetBentStat(final RunningScript<?> script) {
-    return scriptSetBentRawStat(script);
+    return this.scriptSetBentRawStat(script);
   }
 
   @ScriptDescription("Sets a stat value of a battle entity")

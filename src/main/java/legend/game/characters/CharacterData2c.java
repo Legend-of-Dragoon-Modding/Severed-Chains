@@ -130,6 +130,18 @@ public class CharacterData2c {
     return this.equipment_14.get(slot);
   }
 
+  public Path getAttackSoundsPath(final PlayerBattleEntity bent) {
+    return this.template.getAttackSoundsPath(this, bent);
+  }
+
+  public Path getDragoonAttackSoundsPath(final PlayerBattleEntity bent) {
+    return this.template.getDragoonAttackSoundsPath(this, bent);
+  }
+
+  public Path getDragoonTransformSoundsPath(final PlayerBattleEntity bent) {
+    return this.template.getDragoonTransformSoundsPath(this, bent);
+  }
+
   public Path getBattleModelPath(final PlayerBattleEntity bent) {
     return this.template.getBattleModelPath(this, bent);
   }

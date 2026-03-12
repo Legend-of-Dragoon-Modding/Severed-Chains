@@ -15,6 +15,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodSpells;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -162,6 +163,21 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   @Override
   public boolean isArcher(final CharacterData2c character) {
     return true;
+  }
+
+  @Override
+  public Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1300"));
+  }
+
+  @Override
+  public Path getDragoonAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1309"));
+  }
+
+  @Override
+  public Path getDragoonTransformSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1319"));
   }
 
   @Override

@@ -215,6 +215,25 @@ public class DartTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1298"));
+  }
+
+  @Override
+  public Path getDragoonAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1307"));
+  }
+
+  @Override
+  public Path getDragoonTransformSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    if(bent.charId_272 == 0 && gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
+      return Loader.resolve(Path.of("SECT/DRGN0.BIN/1328"));
+    }
+
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1317"));
+  }
+
+  @Override
   public Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent) {
     String name = this.getRegistryId().entryId();
 

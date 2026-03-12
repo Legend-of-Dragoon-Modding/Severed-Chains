@@ -21,6 +21,7 @@ import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;
 import legend.lodmod.LodSpells;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -172,6 +173,21 @@ public class HaschelTemplate extends RetailCharacterTemplate {
     }
 
     return 5;
+  }
+
+  @Override
+  public Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1302"));
+  }
+
+  @Override
+  public Path getDragoonAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1311"));
+  }
+
+  @Override
+  public Path getDragoonTransformSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return Loader.resolve(Path.of("SECT/DRGN0.BIN/1321"));
   }
 
   @Override

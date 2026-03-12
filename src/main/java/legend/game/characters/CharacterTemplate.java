@@ -41,6 +41,9 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   public abstract boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
 
+  public abstract Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract Path getDragoonAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract Path getDragoonTransformSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract Path getBattleTexturePath(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract Path getBattleSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);
