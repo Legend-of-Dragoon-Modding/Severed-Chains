@@ -137,6 +137,14 @@ public class RetailSavedGame extends SavedGame {
       final CharacterData2c character = template.make(gameState);
       gameState.charData_32c.add(character);
 
+      while(character.level_12 < savedCharacter.level) {
+        character.applyLevelUp(null);
+      }
+
+      while(character.dlevel_13 < savedCharacter.dlevel) {
+        character.applyDragoonLevelUp(null);
+      }
+
       character.xp_00 = savedCharacter.xp;
       character.partyFlags_04 = savedCharacter.flags;
       character.stats.getStat(HP_STAT.get()).setCurrent(savedCharacter.hp);
@@ -144,8 +152,6 @@ public class RetailSavedGame extends SavedGame {
       character.stats.getStat(SP_STAT.get()).setCurrent(savedCharacter.sp);
       character.dlevelXp_0e = savedCharacter.dlevelXp;
       character.status_10 = savedCharacter.status;
-      character.level_12 = savedCharacter.level;
-      character.dlevel_13 = savedCharacter.dlevel;
 
       for(final EquipmentSlot slot : EquipmentSlot.values()) {
         if(savedCharacter.equipmentIds.containsKey(slot)) {
