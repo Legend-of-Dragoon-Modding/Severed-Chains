@@ -227,7 +227,7 @@ public class LodMod {
 
   public static final String[] SPELL_IDS = {
     "flameshot", "explosion", "final_burst", "red_eyed_dragon", "divine_dg_cannon", "wing_blaster", "gaspless", "blossom_storm",
-    "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "w_silver_dragon", "wing_blaster", "astral_drain",
+    "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "white_silver_dragon", "wing_blaster", "astral_drain",
     "death_dimension", "gaspless", "demons_gate", "dark_dragon", "atomic_mind", "thunder_kid", "thunder_god", "violet_dragon",
     "freezing_ring", "rainbow_breath", "rose_storm", "diamond_dust", "blue_sea_dragon", "grand_stream", "meteor_strike", "golden_dragon",
     "spell32", "spell33", "spell34", "spell35", "spell36", "spell37", "spell38", "spell39",
