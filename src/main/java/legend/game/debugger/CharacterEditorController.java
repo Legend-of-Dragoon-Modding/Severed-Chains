@@ -97,12 +97,12 @@ public class CharacterEditorController {
   private final Map<RegistryId, CharacterAdditionInfo> additionInfo = new HashMap<>();
 
   public void initialize() {
-    this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
-    this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
-    this.sp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
+    this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.sp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
     this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
-    this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
-    this.maxSp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
+    this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.maxSp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
     this.xp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
     this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
