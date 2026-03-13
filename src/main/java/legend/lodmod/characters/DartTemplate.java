@@ -319,6 +319,11 @@ public class DartTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getSpecialTransformStage(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 78 : 71;
+  }
+
+  @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
     return character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? 46 : 32;
   }

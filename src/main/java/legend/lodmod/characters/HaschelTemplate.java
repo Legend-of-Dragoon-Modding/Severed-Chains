@@ -250,6 +250,11 @@ public class HaschelTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getSpecialTransformStage(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 77;
+  }
+
+  @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 40;
   }

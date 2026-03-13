@@ -273,8 +273,8 @@ public class BattleStateEf4 {
   public int scriptsProcessingStatusAfflictions_45c;
   /** Indexed by char slot, something to do with bewitched (set to -1 if not bewitched) */
   public final int[] _460 = new int[3];
-  /** Combat stage ID is stored here when player combat script is initialized */
-  public int _46c;
+  /** Battle stage ID is stored here when player combat script is initialized, updated for special transformation stages */
+  public int battleStage_46c;
   /** Used in player combat script, one bit for each player bent slot */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];

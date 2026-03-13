@@ -239,6 +239,11 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int getSpecialTransformStage(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 74;
+  }
+
+  @Override
   public int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent) {
     return 38;
   }

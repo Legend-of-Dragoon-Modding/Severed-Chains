@@ -9052,14 +9052,10 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetDragoonSpaceElementIndex(final RunningScript<?> script) {
     final int characterId = script.params_20[0].get();
 
-    this.dragoonSpaceElement_800c6b64 = null;
-
     if(characterId != -1) {
-      if(characterId == 9) { //TODO stupid special case handling for DD Dart
-        this.dragoonSpaceElement_800c6b64 = DIVINE_ELEMENT.get();
-      } else {
-        this.dragoonSpaceElement_800c6b64 = battleState_8006e398.getPlayerById(characterId).element;
-      }
+      this.dragoonSpaceElement_800c6b64 = battleState_8006e398.getPlayerById(characterId).getElement();
+    } else {
+      this.dragoonSpaceElement_800c6b64 = null;
     }
 
     return FlowControl.CONTINUE;

@@ -70,6 +70,7 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract int getWeaponModelPart(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getWeaponTrailVertexComponent(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getShadowSize(final CharacterData2c character, final PlayerBattleEntity bent);
+  public abstract int getSpecialTransformStage(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getDragoonTransformDeff(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getDragoonAttackDeff(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getDragoonAttackSounds(final CharacterData2c character, final PlayerBattleEntity bent);

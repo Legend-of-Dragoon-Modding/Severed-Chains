@@ -324,6 +324,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
     return this.character.template.getShadowSize(this.character, this);
   }
 
+  protected int getSpecialTransformStage() {
+    return this.character.template.getSpecialTransformStage(this.character, this);
+  }
+
   protected int getDragoonTransformDeff() {
     return this.character.template.getDragoonTransformDeff(this.character, this);
   }
@@ -470,6 +474,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case WEAPON_MODEL_PART -> out.set(this.getWeaponModelPart());
       case WEAPON_TRAIL_VERTEX_COMPONENT -> out.set(this.getWeaponTrailVertexComponent());
       case SHADOW_SIZE -> out.set(this.getShadowSize());
+      case SPECIAL_TRANSFORM_STAGE -> out.set(this.getSpecialTransformStage());
       case DRAGOON_TRANSFORM_DEFF -> out.set(this.getDragoonTransformDeff());
       case DRAGOON_ATTACK_DEFF -> out.set(this.getDragoonAttackDeff());
       case DRAGOON_ATTACK_SOUNDS -> out.set(this.getDragoonAttackSounds());
