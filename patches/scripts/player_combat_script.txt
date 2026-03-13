@@ -4896,20 +4896,6 @@ return
 
 
 
-DRAGON_SUMMON_SPELL_INDICES:
-data 0x3
-data 0x8
-data 0xd
-data 0x13
-data 0x17
-data 0x8
-data 0x1c
-data 0x1f
-data 0xd
-data 0xffffffff
-
-
-
 ; SUBROUTINE
 ACTION_ATTACK:
 gosub inl[:RANDOMIZE_TARGET_ARROW_IF_FLAG_SET] ; addr
