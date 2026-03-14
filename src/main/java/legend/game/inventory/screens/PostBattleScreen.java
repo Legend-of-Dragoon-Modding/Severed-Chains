@@ -47,7 +47,6 @@ import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.giveItems;
 import static legend.game.SItem.menuStack;
@@ -92,8 +91,6 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010d614L)
   @Override
   protected void render() {
-    renderText(this.inventoryMenuState_800bdc28.name(), 4, 4, UI_WHITE_SMALL);
-
     switch(this.inventoryMenuState_800bdc28) {
       case INIT_0 -> {
         clearRenderables();
@@ -826,34 +823,29 @@ public class PostBattleScreen extends MenuScreen {
     this.drawCharPortrait(x - 1, y + 4, character);
     renderText(character.getName(), x + 22, y + 4, this.nameFont);
     this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-    this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
     this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-
-    final Renderable58 glyph = this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497);
-    glyph.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-    glyph.widthCut = 16;
-    this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
     this.drawTwoDigitNumber(x + 108, y + 16, character.level_12);
 
-    final int dlevel;
-    if(!character.hasDragoon()) {
-      dlevel = 0;
-    } else {
-      dlevel = character.dlevel_13;
-    }
-
-    //LAB_8010e8e0
-    this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
     final int xp = character.getXpToNextLevel();
     this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, character.xp_00);
     this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
     this.drawNextLevelXp(x + 84, y + 40, xp);
 
-    final int dxp = character.getDxpToNextLevel();
-    this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
-    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-    this.drawNextLevelXp(x + 84, y + 52, dxp);
+    if(character.hasDragoon()) {
+      this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      final Renderable58 glyph = this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497);
+      glyph.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      glyph.widthCut = 16;
+      this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+
+      this.drawTwoDigitNumber(x + 108, y + 28, character.dlevel_13);
+
+      final int dxp = character.getDxpToNextLevel();
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
+      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawNextLevelXp(x + 84, y + 52, dxp);
+    }
   }
 
   @Method(0x8010e9a8L)
