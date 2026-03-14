@@ -47,6 +47,7 @@ import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
+import static legend.game.SItem.UI_WHITE_SMALL;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.giveItems;
 import static legend.game.SItem.menuStack;
@@ -91,6 +92,8 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010d614L)
   @Override
   protected void render() {
+    renderText(this.inventoryMenuState_800bdc28.name(), 4, 4, UI_WHITE_SMALL);
+
     switch(this.inventoryMenuState_800bdc28) {
       case INIT_0 -> {
         clearRenderables();
@@ -192,11 +195,6 @@ public class PostBattleScreen extends MenuScreen {
           break;
         }
 
-        if(!spGained_800bc950.isEmpty()) {
-          this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
-          break;
-        }
-
         if(!this.additionsUnlocked_8011e1b8.isEmpty()) {
           boolean foundPrimary = false;
           for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
@@ -284,7 +282,7 @@ public class PostBattleScreen extends MenuScreen {
       }
 
       case TICK_XP_5 -> {
-        final boolean moreXpToGive = this.givePendingXp();
+        final boolean moreXpToGive = this.givePendingXp() || this.givePendingDxp();
 
         if(moreXpToGive) {
           this.soundTick_8011e17c++;
@@ -321,24 +319,6 @@ public class PostBattleScreen extends MenuScreen {
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(2);
           it.remove();
-          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
-        }
-
-        this.drawReport();
-      }
-
-      case DRAGOON_LEVEL_UPS_10 -> {
-        final boolean moreXpToGive = this.givePendingDxp();
-
-        if(moreXpToGive) {
-          this.soundTick_8011e17c++;
-
-          if((this.soundTick_8011e17c & 0x1) != 0) {
-            playMenuSound(1);
-          }
-        } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-          playMenuSound(2);
-          this.unlockHeight_8011e178 = 0;
           this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
         }
 
@@ -996,7 +976,6 @@ public class PostBattleScreen extends MenuScreen {
 
   private enum MenuState {
     INIT_0,
-    WAIT_FOR_UI_FILE_TO_LOAD_1,
     WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2,
     WAIT_FOR_FIRST_BUTTON_PRESS_3,
     CHECK_NEXT_THING_TO_GIVE,
@@ -1007,12 +986,10 @@ public class PostBattleScreen extends MenuScreen {
     SECONDARY_ADDITION,
     SECONDARY_LEVEL_UP_8,
     CONFIRM_SECONDARY_LEVEL_UP_9,
-    DRAGOON_LEVEL_UPS_10,
     EMBIGGEN_SPELL_UNLOCK_12,
     ENSMALLEN_SPELL_UNLOCK_13,
     SECONDARY_SPELL,
     WAIT_FOR_INPUT_14,
-    _15,
     FADE_OUT_16,
     WAIT_FOR_FADE_OUT_17,
     UNLOAD_18,
