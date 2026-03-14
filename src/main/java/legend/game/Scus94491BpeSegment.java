@@ -72,6 +72,7 @@ import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Menus.clearRenderables;
 import static legend.game.Menus.loadAndRenderMenus;
 import static legend.game.Menus.renderUi;
+import static legend.game.Menus.uploadRenderables;
 import static legend.game.Models.loadModelAndAnimation;
 import static legend.game.SItem.addGold;
 import static legend.game.SItem.giveEquipment;
@@ -150,6 +151,8 @@ public final class Scus94491BpeSegment {
     EVENTS.postEvent(RENDER_EVENT);
 
     loadAndRenderMenus();
+    // TODO temporary until everything is moved over to controls and no longer uses the LOD system
+    uploadRenderables();
 
     final boolean scriptsTicked = SCRIPTS.tick();
 

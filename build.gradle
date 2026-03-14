@@ -169,6 +169,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.MAC_OS:
@@ -184,6 +185,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'macosx', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.WINDOWS:
@@ -195,6 +197,7 @@ tasks.register('copySupportFiles', Copy) {
           filter(ReplaceTokens, tokens: [false: "true"])
           filter(ReplaceTokens, tokens: [libs: libs])
         }
+        from 'gpu-optional-setup.bat'
         break
     }
 
