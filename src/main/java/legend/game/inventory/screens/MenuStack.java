@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Menus.uploadRenderables;
 
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();
@@ -108,9 +107,6 @@ public class MenuStack {
     if(it.hasNext()) {
       this.propagate(it, MenuScreen::renderScreen, MenuScreen::propagateRender, true);
     }
-
-    //TODO temporary until everything is moved over to controls and no longer uses the LOD system
-    uploadRenderables();
   }
 
   private void input(final Consumer<MenuScreen> method) {
