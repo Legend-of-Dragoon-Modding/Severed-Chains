@@ -182,7 +182,7 @@ public class PostBattleScreen extends MenuScreen {
           break;
         }
 
-        if(!this.pendingXp_8011e180.isEmpty()) {
+        if(!this.pendingXp_8011e180.isEmpty() || !spGained_800bc950.isEmpty()) {
           this.inventoryMenuState_800bdc28 = MenuState.TICK_XP_5;
           break;
         }
