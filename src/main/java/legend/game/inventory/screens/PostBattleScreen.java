@@ -289,8 +289,15 @@ public class PostBattleScreen extends MenuScreen {
           }
         } else {
           totalXpFromCombat_800bc95c = 0;
-          this.unlockHeight_8011e178 = 0;
-          this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+
+          if(this.levelsGained_8011e1c8.isEmpty() && this.dragoonLevelsGained_8011e1d8.isEmpty()) {
+            this.unlockHeight_8011e178 = 0;
+            this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+          } else if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
+            playMenuSound(2);
+            this.unlockHeight_8011e178 = 0;
+            this.inventoryMenuState_800bdc28 = MenuState.CHECK_NEXT_THING_TO_GIVE;
+          }
         }
 
         this.drawReport();
