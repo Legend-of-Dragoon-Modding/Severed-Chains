@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,8 +65,8 @@ public class CharacterData2c {
   public final StatCollection stats;
   private final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition_19;
-  private final Map<RegistryId, CharacterAdditionInfo> additions = new HashMap<>();
-  private final Map<RegistryId, CharacterSpellInfo> spells = new HashMap<>();
+  private final Map<RegistryId, CharacterAdditionInfo> additions = new LinkedHashMap<>();
+  private final Map<RegistryId, CharacterSpellInfo> spells = new LinkedHashMap<>();
 //  public final int[] additionLevels_1a = new int[8];
 //  public final int[] additionXp_22 = new int[8];
 
