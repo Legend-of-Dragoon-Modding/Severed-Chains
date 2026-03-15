@@ -22,7 +22,7 @@ public final class LodSpells {
   public static final RegistryDelegate<RetailSpell> WING_BLASTER = REGISTRAR.register("wing_blaster", () -> new RetailSpell(200, 0, 0, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 5));
   public static final RegistryDelegate<RetailSpell> GASPLESS = REGISTRAR.register("gaspless", () -> new RetailSpell(192, 0, 0, 16, 0, 100, 30, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 6));
   public static final RegistryDelegate<RetailSpell> BLOSSOM_STORM = REGISTRAR.register("blossom_storm", () -> new RetailSpell(136, 4, 16, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0xc0, 0, 7));
-  public static final RegistryDelegate<RetailSpell> JADE_DRAGON = REGISTRAR.register("jade_dragon", () -> new DragonSpell(200, 0, 0, 16, 0, 100, 80, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 72, 8));
+  public static final RegistryDelegate<RetailSpell> JADE_DRAGON = REGISTRAR.register("jade_dragon", () -> new DragonSpell(200, 0, 0, 16, 0, 100, 80, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 8, 72));
   public static final RegistryDelegate<RetailSpell> DIVINE_DG_BALL = REGISTRAR.register("divine_dg_ball", () -> new RetailSpell(200, 0, 0, 8, 0, 100, 50, 0, LodMod.DIVINE_ELEMENT, 0, 0, 0, 9));
   public static final RegistryDelegate<RetailSpell> STAR_CHILDREN = REGISTRAR.register("star_children", () -> new RetailSpell(200, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 10));
   public static final RegistryDelegate<RetailSpell> MOON_LIGHT = REGISTRAR.register("moon_light", () -> new RetailSpell(128, 4, 2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 11));
