@@ -2119,15 +2119,11 @@ public class Battle extends EngineState<Battle> {
       bent.charId_272 = charId;
       bent.combatantIndex_26c = combatantIndices[charSlot];
 
-      final int offset = ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1);
-      final float theta = MathHelper.PI / 8.0f * offset;
-      final float sin = MathHelper.sin(theta);
-      final float cos = MathHelper.cosFromSin(sin, theta);
-      final float spreadFactor = 0x1c00 - Math.max(0, gameState_800babc8.charIds_88.size() - 3) * 0x200;
-
-      bent.model_148.coord2_14.coord.transfer.x = 0x800 - 0x300 * cos;
-      bent.model_148.coord2_14.coord.transfer.z = spreadFactor * (float)java.lang.Math.pow(Math.abs(sin), 1.3) * Math.signum(sin) + (charCount % 2 - 1) * 0x400;
+      bent.model_148.coord2_14.coord.transfer.x = charCount > 2 && charSlot == 0 ? 0x900 : 0xa00;
+      // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
+      bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount % 2 - 1) * 0x400;
       bent.model_148.coord2_14.coord.transfer.y = 0.0f;
+
       bent.model_148.coord2_14.transforms.rotate.zero();
       battleState_8006e398.addPlayer(state);
 
