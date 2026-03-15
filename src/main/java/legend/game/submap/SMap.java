@@ -80,6 +80,7 @@ import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -489,6 +490,15 @@ public class SMap extends EngineState<SMap> {
     stopMusicSequence();
     unloadSoundFile(8);
 
+    if(this.is(this.engineStateToTransitionTo)) {
+      this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+      this.transitioning_800f7e4c = false;
+      this.loadingSave = true;
+      this.mapTransition(submapCut_80052c30, submapScene_80052c34);
+    } else {
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
+    }
+
     this.restoreMusicAfterMenu();
   }
 
@@ -791,6 +801,7 @@ public class SMap extends EngineState<SMap> {
     functions[788] = this::FUN_800f2554;
     functions[789] = this::scriptDeallocateLawPodTrail;
     functions[790] = this::scriptAllocateUnusedSmokeEffectData;
+    functions[791] = this::scriptOpenShop;
 
     functions[940] = this::scriptSetSobjUsePs1Depth;
 
@@ -3625,6 +3636,8 @@ public class SMap extends EngineState<SMap> {
     return latch;
   }
 
+  private boolean loadingSave;
+
   @Method(0x800e5104L)
   private void loadAndRenderSubmapModelAndEffects(final int collisionGeometryIndexForInitialPlayerPosition, final MapTransitionData4c mapTransitionData) {
     this.executeSubmapMediaLoadingStage(collisionGeometryIndexForInitialPlayerPosition);
@@ -3643,7 +3656,7 @@ public class SMap extends EngineState<SMap> {
     this.resetLatches();
     this.collisionGeometry_800cbe08.tick();
 
-    if(submapFullyLoaded_800bd7b4) {
+    if(submapFullyLoaded_800bd7b4 && !this.loadingSave) {
       this.renderSubmap();
     }
   }
@@ -4012,6 +4025,7 @@ public class SMap extends EngineState<SMap> {
       }
 
       case FINISH_LOADING_AND_FADE_IN_11 -> {
+        this.loadingSave = false;
         this.executeSubmapMediaLoadingStage(this.currentSubmapScene_800caaf8);
 
         // Wait for media to finish loading
@@ -4109,14 +4123,6 @@ public class SMap extends EngineState<SMap> {
         SCRIPTS.resume();
         this.transitioning_800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-
-        if(loadingNewGameState_800bdc34) {
-          if(this.is(this.engineStateToTransitionTo)) {
-            this.mapTransition(submapCut_80052c30, submapScene_80052c34);
-          } else {
-            this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
-          }
-        }
       }
 
       case TRANSITION_TO_SUBMAP_17 -> {
@@ -5159,6 +5165,14 @@ public class SMap extends EngineState<SMap> {
   @ScriptDescription("No-op")
   @Method(0x800f2780L)
   private FlowControl FUN_800f2780(final RunningScript<?> script) {
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Opens a shop")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "shopId", description = "The shop ID")
+  private FlowControl scriptOpenShop(final RunningScript<?> script) {
+    final RegistryId shopId = script.params_20[0].getRegistryId();
+    initMenu(WhichMenu.RENDER_NEW_MENU, () -> new ShopScreen(REGISTRIES.shop.getEntry(shopId).get()));
     return FlowControl.CONTINUE;
   }
 

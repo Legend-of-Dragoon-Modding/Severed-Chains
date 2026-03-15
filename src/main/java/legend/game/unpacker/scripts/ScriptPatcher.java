@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.scripting.IncludeFailedException;
 import org.legendofdragoon.scripting.Patcher;
 import org.legendofdragoon.scripting.Translator;
 import org.legendofdragoon.scripting.tokens.Script;
@@ -35,6 +36,8 @@ import static legend.core.IoHelper.loadCsvFile;
 
 public class ScriptPatcher {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptPatcher.class);
+
+  private final List<Path> includeDirs = List.of(Path.of("libs"), Path.of("scripts"));
 
   private final Translator translator = new Translator();
 
@@ -119,9 +122,32 @@ public class ScriptPatcher {
         .toList();
 
       for(final String includePath : includePaths) {
-        this.getCrc32s(basePath, basePath.relativize(fullPath.getParent().resolve(includePath)).toString(), crc32s);
+        this.getCrc32s(basePath, this.resolveInclude(basePath, this.includeDirs, Path.of(includePath)).toString(), crc32s);
       }
     }
+  }
+
+  private Path resolveInclude(final Path basePath, final List<Path> includePaths, final Path originalIncludeFile) {
+    Path includeFile = originalIncludeFile;
+    Path resolvedIncludeFile = null;
+
+    if(!includeFile.isAbsolute()) {
+      for(final Path includePath : includePaths) {
+        final Path resolved = basePath.resolve(includePath).resolve(includeFile).normalize();
+        if(Files.exists(resolved)) {
+          resolvedIncludeFile = resolved;
+          break;
+        }
+      }
+
+      includeFile = resolvedIncludeFile;
+    }
+
+    if(includeFile == null || !Files.exists(includeFile)) {
+      throw new IncludeFailedException("Could not resolve include " + originalIncludeFile + " in include paths " + includePaths);
+    }
+
+    return basePath.relativize(includeFile).normalize();
   }
 
   public void apply() throws IOException, PatchFailedException {

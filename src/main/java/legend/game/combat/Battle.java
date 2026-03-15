@@ -91,7 +91,6 @@ import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.WhichMenu;
@@ -220,7 +219,6 @@ import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.SItem.characterDragoonIndices_800c6e68;
 import static legend.game.SItem.getUnlockedDragoonSpells;
 import static legend.game.SItem.giveEquipment;
-import static legend.game.SItem.giveItem;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.sortItems;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
@@ -825,6 +823,8 @@ public class Battle extends EngineState<Battle> {
     functions[176] = this::scriptLevelUpAddition;
     functions[177] = this::scriptGetBentStat2;
     functions[178] = this::scriptSetBentRawStat;
+
+    functions[182] = this::scriptSetAnimationScale;
 
     functions[226] = this::scriptLoadCharAttackSounds;
 
@@ -2119,15 +2119,11 @@ public class Battle extends EngineState<Battle> {
       bent.charId_272 = charId;
       bent.combatantIndex_26c = combatantIndices[charSlot];
 
-      final int offset = ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1);
-      final float theta = MathHelper.PI / 8.0f * offset;
-      final float sin = MathHelper.sin(theta);
-      final float cos = MathHelper.cosFromSin(sin, theta);
-      final float spreadFactor = 0x1c00 - Math.max(0, gameState_800babc8.charIds_88.size() - 3) * 0x200;
-
-      bent.model_148.coord2_14.coord.transfer.x = 0x800 - 0x300 * cos;
-      bent.model_148.coord2_14.coord.transfer.z = spreadFactor * (float)java.lang.Math.pow(Math.abs(sin), 1.3) * Math.signum(sin) + (charCount % 2 - 1) * 0x400;
+      bent.model_148.coord2_14.coord.transfer.x = charCount > 2 && charSlot == 0 ? 0x900 : 0xa00;
+      // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
+      bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount % 2 - 1) * 0x400;
       bent.model_148.coord2_14.coord.transfer.y = 0.0f;
+
       bent.model_148.coord2_14.transforms.rotate.zero();
       battleState_8006e398.addPlayer(state);
 
@@ -3523,6 +3519,16 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a battle entity's animation scale")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The animation scale (percentile)")
+  @Method(0x800cb674L)
+  public FlowControl scriptSetAnimationScale(final RunningScript<?> script) {
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    bent.model_148.interpolationScale = script.params_20[1].get() / 100.0f;
+    return FlowControl.CONTINUE;
+  }
+
   @ScriptDescription("Something related to loading a battle entity's animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
@@ -4320,7 +4326,7 @@ public class Battle extends EngineState<Battle> {
                 if(drop.item() instanceof final Equipment equipment) {
                   itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment, () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
                 } else if(drop.item() instanceof final ItemStack item) {
-                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item, () -> giveItem(new ItemStack(item)), () -> itemOverflow.add(new ItemStack(item))));
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item, () -> gameState_800babc8.items_2e9.give(item).isEmpty(), () -> itemOverflow.add(new ItemStack(item))));
                 }
 
                 state.setFlag(FLAG_NO_LOOT);
@@ -5187,7 +5193,7 @@ public class Battle extends EngineState<Battle> {
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
-      final String additionName = I18n.translate(addition);
+      final String additionName = addition.getName();
 
       //LAB_800d3e5c
       //LAB_800d3e7c
@@ -8351,8 +8357,9 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_800eed78
     for(final ItemStack stack : this.usedRepeatItems_800c6c3c) {
-      if(!giveItem(stack)) {
-        itemOverflow.add(stack);
+      final ItemStack remaining = gameState_800babc8.items_2e9.give(stack);
+      if(!remaining.isEmpty()) {
+        itemOverflow.add(remaining);
       }
     }
 
@@ -9119,7 +9126,7 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptGiveItem(final RunningScript<?> script) {
     final RegistryId itemId = script.params_20[0].getRegistryId();
 
-    if(giveItem(REGISTRIES.items.getEntry(itemId).get())) {
+    if(gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(itemId).get()).isEmpty()) {
       script.params_20[1].set(itemId);
     } else {
       script.params_20[1].set(0);
@@ -9228,17 +9235,16 @@ public class Battle extends EngineState<Battle> {
     final int g = textboxColours_800c6fec[colourIndex][1];
     final int b = textboxColours_800c6fec[colourIndex][2];
 
-    // This is kinda dumb since we'll have to upload a new box each frame, but there isn't a great
-    // way to deal with it. Maybe check to see if any of the params have changed before deleting?
-
-    if(this.scriptUi != null) {
-      this.scriptUi.delete();
+    if(this.scriptUi == null) {
+      this.scriptUi = new UiBox();
     }
 
-    this.scriptUi = new UiBox(
-      "Scripted Battle UI",
+    this.scriptUi.setPos(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
-      (short)script.params_20[1].get() - script.params_20[3].get() / 2,
+      (short)script.params_20[1].get() - script.params_20[3].get() / 2
+    );
+
+    this.scriptUi.setSize(
       (short)script.params_20[2].get(),
       (short)script.params_20[3].get()
     );

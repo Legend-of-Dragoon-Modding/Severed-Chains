@@ -31,8 +31,8 @@ public class GameVarArrayParam extends Param {
     return switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex];
       case 17 -> this.arrIndex < Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.size() ? Scus94491BpeSegment_800b.gameState_800babc8.charIds_88.getInt(this.arrIndex) : -1;
-      case 32 -> Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c.get(this.arrIndex) != null ? Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c.get(this.arrIndex).index : -1;
-      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40.get(this.arrIndex) != null ? Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40.get(this.arrIndex).index : -1;
+      case 32 -> this.arrIndex < Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c.size() ? Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c.get(this.arrIndex).index : -1;
+      case 34 -> this.arrIndex < Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40.size() ? Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40.get(this.arrIndex).index : -1;
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex].index : -1;
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
       case 45 -> this.readBattleVar(this.arrIndex);
@@ -173,7 +173,7 @@ public class GameVarArrayParam extends Param {
       case 47 -> Scus94491BpeSegment_8006.battleState_8006e398._23c;
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398._240;
       case 49 -> Scus94491BpeSegment_8006.battleState_8006e398._244;
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398._248;
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.succCloneEffectId_248;
       case 51 -> Scus94491BpeSegment_8006.battleState_8006e398._24c;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398._250;
       case 53 -> Scus94491BpeSegment_8006.battleState_8006e398._254;
@@ -205,14 +205,14 @@ public class GameVarArrayParam extends Param {
       case 79 -> Scus94491BpeSegment_8006.battleState_8006e398._2bc;
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0;
       case 81 -> Scus94491BpeSegment_8006.battleState_8006e398._2c4;
-      case 82 -> Scus94491BpeSegment_8006.battleState_8006e398._2c8;
+      case 82 -> Scus94491BpeSegment_8006.battleState_8006e398.additionLoadingStage_2c8;
       case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc;
-      case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0;
-      case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4;
+      case 84 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTicks_2d0;
+      case 85 -> Scus94491BpeSegment_8006.battleState_8006e398.additionRemainingSuccessFrames_2d4;
       case 86 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalFrames_2d8;
       case 87 -> Scus94491BpeSegment_8006.battleState_8006e398.additionOverlayHitFrameOffset_2dc;
       case 88 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalSuccessFrames_2e0;
-      case 89 -> Scus94491BpeSegment_8006.battleState_8006e398._2e4;
+      case 89 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitCount_2e4;
       case 90 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[0];
       case 91 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[1];
       case 92 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[2];
@@ -436,7 +436,7 @@ public class GameVarArrayParam extends Param {
       case 47 -> Scus94491BpeSegment_8006.battleState_8006e398._23c = val;
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398._240 = val;
       case 49 -> Scus94491BpeSegment_8006.battleState_8006e398._244 = val;
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398._248 = val;
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.succCloneEffectId_248 = val;
       case 51 -> Scus94491BpeSegment_8006.battleState_8006e398._24c = val;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398._250 = val;
       case 53 -> Scus94491BpeSegment_8006.battleState_8006e398._254 = val;
@@ -468,14 +468,14 @@ public class GameVarArrayParam extends Param {
       case 79 -> Scus94491BpeSegment_8006.battleState_8006e398._2bc = val;
       case 80 -> Scus94491BpeSegment_8006.battleState_8006e398._2c0 = val;
       case 81 -> Scus94491BpeSegment_8006.battleState_8006e398._2c4 = val;
-      case 82 -> Scus94491BpeSegment_8006.battleState_8006e398._2c8 = val;
+      case 82 -> Scus94491BpeSegment_8006.battleState_8006e398.additionLoadingStage_2c8 = val;
       case 83 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitIndex_2cc = val;
-      case 84 -> Scus94491BpeSegment_8006.battleState_8006e398._2d0 = val;
-      case 85 -> Scus94491BpeSegment_8006.battleState_8006e398._2d4 = val;
+      case 84 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTicks_2d0 = val;
+      case 85 -> Scus94491BpeSegment_8006.battleState_8006e398.additionRemainingSuccessFrames_2d4 = val;
       case 86 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalFrames_2d8 = val;
       case 87 -> Scus94491BpeSegment_8006.battleState_8006e398.additionOverlayHitFrameOffset_2dc = val;
       case 88 -> Scus94491BpeSegment_8006.battleState_8006e398.additionTotalSuccessFrames_2e0 = val;
-      case 89 -> Scus94491BpeSegment_8006.battleState_8006e398._2e4 = val;
+      case 89 -> Scus94491BpeSegment_8006.battleState_8006e398.additionHitCount_2e4 = val;
       case 90 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[0] = val;
       case 91 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[1] = val;
       case 92 -> Scus94491BpeSegment_8006.battleState_8006e398._2e8[2] = val;

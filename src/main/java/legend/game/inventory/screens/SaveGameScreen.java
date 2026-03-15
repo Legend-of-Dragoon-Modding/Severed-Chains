@@ -8,6 +8,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -133,14 +134,14 @@ public class SaveGameScreen extends MenuScreen {
     if(save == null) {
       menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(this.saves, gameState_800babc8), this::onNewSaveResult));
     } else {
-      menuStack.pushScreen(new MessageBoxScreen(Overwrite_save_8011c9e8, 2, result -> this.onOverwriteResult(result, save)));
+      menuStack.pushScreen(new MessageBoxScreen(Overwrite_save_8011c9e8, MessageBoxType.CONFIRMATION, result -> this.onOverwriteResult(result, save)));
     }
   }
 
   private void onNewSaveResult(final MessageBoxResult result, final String name) {
     if(result == MessageBoxResult.YES) {
       if(gameState_800babc8.campaign.saveExists(name)) {
-        menuStack.pushScreen(new MessageBoxScreen("Save name already\nin use", 0, result1 -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Save name already\nin use", MessageBoxType.ALERT, result1 -> { }));
         return;
       }
 
@@ -148,7 +149,7 @@ public class SaveGameScreen extends MenuScreen {
         SAVES.newSave(name, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
-        menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Failed to save game", MessageBoxType.ALERT, r -> { }));
         LOGGER.error("Failed to save game", e);
       }
     }
@@ -160,7 +161,7 @@ public class SaveGameScreen extends MenuScreen {
         SAVES.overwriteSave(save.fileName, save.saveName, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
         this.unload.run();
       } catch(final SaveFailedException e) {
-        menuStack.pushScreen(new MessageBoxScreen("Failed to save game", 0, r -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Failed to save game", MessageBoxType.ALERT, r -> { }));
         LOGGER.error("Failed to save game", e);
       }
     }
@@ -170,12 +171,12 @@ public class SaveGameScreen extends MenuScreen {
     playMenuSound(40);
 
     if(this.saveList.size() == 1) {
-      menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", 0, result -> {}));
+      menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", MessageBoxType.ALERT, result -> {}));
       return;
     }
 
     if(this.saveList.getSelected() != null && this.saveList.getSelected().isDone()) {
-      menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           try {
             final SavedGame savedGame = this.saveList.getSelected().resultNow();
@@ -184,7 +185,7 @@ public class SaveGameScreen extends MenuScreen {
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
-            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Failed to delete save", 0, result1 -> {})));
+            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Failed to delete save", MessageBoxType.ALERT, result1 -> {})));
           }
         }
       }));

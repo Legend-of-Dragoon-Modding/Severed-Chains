@@ -14,6 +14,7 @@ import legend.game.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.lodmod.LodMod;
 
 import javax.annotation.Nullable;
@@ -142,7 +143,7 @@ public class ItemListScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen("Discard?", 2, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new MessageBoxScreen("Discard?", MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 
@@ -151,7 +152,7 @@ public class ItemListScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen("Discard?", 2, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new MessageBoxScreen("Discard?", MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 

@@ -32,7 +32,7 @@ import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.FullScreenInputScreen;
 import legend.game.inventory.screens.HorizontalAlign;
-import legend.game.inventory.screens.LinksScreen;
+import legend.game.inventory.screens.AboutScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
@@ -49,6 +49,7 @@ import legend.game.tmd.TmdWithId;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -178,7 +179,7 @@ public class Ttle extends EngineState<Ttle> {
   private boolean fireLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
-  private final int[] menuTextWidth = {407, 257, 227, 169, 141};
+  private final int[] menuTextWidth = {407, 257, 227, 189, 141};
 
   public static final FontOptions VERSION_FONT = new FontOptions().size(0.5f).colour(TextColour.LIGHT_BROWN).noShadow().horizontalAlign(HorizontalAlign.RIGHT);
 
@@ -520,7 +521,7 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForLinks() {
-    this.fadeOutToMenu(() -> new LinksScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
+    this.fadeOutToMenu(() -> new AboutScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
   }
 
   private void fadeOutForCategorizeSave() {
@@ -528,7 +529,7 @@ public class Ttle extends EngineState<Ttle> {
       this.saveCategorizationShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> {
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           }));
           return;
@@ -549,13 +550,13 @@ public class Ttle extends EngineState<Ttle> {
       this.memcardConversionShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> {
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           }));
           return;
         }
 
-        menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", 2, result1 -> {
+        menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", MessageBoxType.CONFIRMATION, result1 -> {
           try {
             SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {

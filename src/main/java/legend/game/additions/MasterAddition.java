@@ -13,8 +13,8 @@ import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
 public class MasterAddition extends SimpleAddition {
   public final int additionFile;
 
-  public MasterAddition(final int additionFile, final int baseDamage, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
-    super(baseDamage, levelMultipliers, hits);
+  public MasterAddition(final int additionFile, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
+    super(levelMultipliers, hits);
     this.additionFile = additionFile;
   }
 

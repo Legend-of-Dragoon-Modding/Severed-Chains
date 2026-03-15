@@ -420,6 +420,9 @@ public final class SaveManager {
 
   public void loadGameState(final GameState52c state) {
     for(final CharacterData2c character : state.charData_32c) {
+      // Remove any addition stats for additions that no longer exist
+      character.additionStats.keySet().removeIf(id -> !REGISTRIES.additions.hasEntry(id));
+
       for(final var entry : character.additionStats.entrySet()) {
         if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(state, character, entry.getValue())) {
           entry.getValue().unlockState = UnlockState.UNLOCKED;

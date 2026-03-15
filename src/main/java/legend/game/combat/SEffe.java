@@ -186,7 +186,7 @@ public final class SEffe {
   public static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
 
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
-  public static final byte[] additionHitCompletionState_8011a014 = new byte[8];
+  public static byte[] additionHitCompletionState_8011a014;
 
   private static int daddyHudOffsetX_8011a01c;
   private static int daddyHudOffsetY_8011a020;
@@ -1179,7 +1179,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "result", description = "0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button")
   @Method(0x801077bcL)
   public static FlowControl scriptGetHitCompletionState(final RunningScript<?> script) {
-    script.params_20[2].set(additionHitCompletionState_8011a014[script.params_20[1].get()]);
+    script.params_20[2].set(additionHitCompletionState_8011a014 != null ? additionHitCompletionState_8011a014[script.params_20[1].get()] : 0);
     return FlowControl.CONTINUE;
   }
 

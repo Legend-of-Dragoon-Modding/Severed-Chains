@@ -5,6 +5,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 
 import java.util.Set;
 import java.util.function.Consumer;
@@ -26,11 +27,11 @@ public class MessageBoxScreen extends MenuScreen {
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapY = true;
 
-  public MessageBoxScreen(final String text, final int type, final Consumer<MessageBoxResult> onResult) {
+  public MessageBoxScreen(final String text, final MessageBoxType type, final Consumer<MessageBoxResult> onResult) {
     this(text, "Yes", "No", type, onResult);
   }
 
-  public MessageBoxScreen(final String text, final String yes, final String no, final int type, final Consumer<MessageBoxResult> onResult) {
+  public MessageBoxScreen(final String text, final String yes, final String no, final MessageBoxType type, final Consumer<MessageBoxResult> onResult) {
     setMessageBoxText(this.messageBox, text, type);
     setMessageBoxOptions(this.messageBox, yes, no);
     this.onResult = onResult;
@@ -47,7 +48,7 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -57,17 +58,17 @@ public class MessageBoxScreen extends MenuScreen {
     }
 
     // Yes/no
-    if(this.messageBox.type_15 == 2) {
+    if(this.messageBox.type_15 == MessageBoxType.CONFIRMATION) {
       final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
 
-      if(this.messageBox.menuIndex_18 != 0 && MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {
+      if(this.messageBox.menuIndex_18 != 0 && MathHelper.inBox((int)x, (int)y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {
         playMenuSound(1);
         this.messageBox.menuIndex_18 = 0;
 
         if(this.messageBox.highlightRenderable_04 != null) {
           this.messageBox.highlightRenderable_04.setY(selectionY - 2);
         }
-      } else if(this.messageBox.menuIndex_18 != 1 && MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
+      } else if(this.messageBox.menuIndex_18 != 1 && MathHelper.inBox((int)x, (int)y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
         playMenuSound(1);
         this.messageBox.menuIndex_18 = 1;
 
@@ -81,7 +82,7 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -90,15 +91,15 @@ public class MessageBoxScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(this.messageBox.type_15 == 0) {
+    if(this.messageBox.type_15 == MessageBoxType.ALERT) {
       playMenuSound(2);
       this.result = MessageBoxResult.YES;
       this.messageBox.state_0c = 4;
-    } else if(this.messageBox.type_15 == 2) {
+    } else if(this.messageBox.type_15 == MessageBoxType.CONFIRMATION) {
       // Yes/no
       final int selectionY = this.messageBox.y_1e + 21 + this.messageBox.text_00.length * 12 / 2 - (this.messageBox.text_00.length - 1) * 3;
 
-      if(MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {
+      if(MathHelper.inBox((int)x, (int)y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {
         playMenuSound(2);
         this.messageBox.menuIndex_18 = 0;
 
@@ -108,7 +109,7 @@ public class MessageBoxScreen extends MenuScreen {
 
         this.result = MessageBoxResult.YES;
         this.messageBox.state_0c = 4;
-      } else if(MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
+      } else if(MathHelper.inBox((int)x, (int)y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
         playMenuSound(2);
         this.messageBox.menuIndex_18 = 1;
 
@@ -193,14 +194,14 @@ public class MessageBoxScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    if(this.messageBox.type_15 == 0) {
+    if(this.messageBox.type_15 == MessageBoxType.ALERT) {
       playMenuSound(2);
       this.result = MessageBoxResult.YES;
       this.messageBox.state_0c = 4;
       return InputPropagation.HANDLED;
     }
 
-    if(this.messageBox.type_15 == 2) {
+    if(this.messageBox.type_15 == MessageBoxType.CONFIRMATION) {
       if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
         this.menuSelect();
         return InputPropagation.HANDLED;

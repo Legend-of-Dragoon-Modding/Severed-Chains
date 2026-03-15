@@ -13,8 +13,8 @@ public class LevelLockedAddition extends SimpleAddition {
   public final int additionFile;
   public final int unlockLevel;
 
-  public LevelLockedAddition(final int additionFile, final int unlockLevel, final int baseDamage, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
-    super(baseDamage, levelMultipliers, hits);
+  public LevelLockedAddition(final int additionFile, final int unlockLevel, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
+    super(levelMultipliers, hits);
     this.additionFile = additionFile;
     this.unlockLevel = unlockLevel;
   }

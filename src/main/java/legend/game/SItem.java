@@ -19,7 +19,6 @@ import legend.game.inventory.Good;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
-import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortMode;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
@@ -55,6 +54,7 @@ import legend.game.types.MenuGlyph06;
 import legend.game.types.MenuStatus08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.UiFile;
@@ -72,9 +72,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -87,8 +89,9 @@ import static legend.game.DrgnFiles.loadDrgnFileSync;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.allocateManualRenderable;
 import static legend.game.Menus.allocateRenderable;
-import static legend.game.Menus.loadMenuTexture;
 import static legend.game.Menus.leftArrowRenderable_800bdba4;
+import static legend.game.Menus.loadMenuTexture;
+import static legend.game.Menus.managedRenderables_800bdc5c;
 import static legend.game.Menus.rightArrowRenderable_800bdba8;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
@@ -398,8 +401,8 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "given", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean given = giveItem(REGISTRIES.items.getEntry(id).get());
-    script.params_20[1].set(given ? 1 : 0);
+    final ItemStack remaining = gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(remaining.isEmpty() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -418,8 +421,8 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "taken", description = "True if given successfully, false otherwise (e.g. no space)")
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    final boolean taken = takeItem(REGISTRIES.items.getEntry(id).get());
-    script.params_20[1].set(taken ? 1 : 0);
+    final ItemStack remaining = gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(id).get());
+    script.params_20[1].set(remaining.isEmpty() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -639,14 +642,6 @@ public final class SItem {
     return responseType;
   }
 
-  public static boolean takeItem(final Item item) {
-    return gameState_800babc8.items_2e9.take(item).isEmpty();
-  }
-
-  public static boolean takeItem(final ItemStack stack) {
-    return gameState_800babc8.items_2e9.take(stack).isEmpty();
-  }
-
   @Method(0x800232dcL)
   public static boolean takeItemFromSlot(final int itemSlot) {
     return takeItemFromSlot(itemSlot, gameState_800babc8.items_2e9.get(itemSlot).getSize());
@@ -689,19 +684,6 @@ public final class SItem {
 
     gameState_800babc8.equipment_1e8.remove(equipmentIndex);
     return true;
-  }
-
-  @Method(0x80023484L)
-  public static boolean giveItem(final Item item) {
-    return gameState_800babc8.items_2e9.give(item).isEmpty();
-  }
-
-  /**
-   * Note: does NOT consume the passed in item stack
-   */
-  @Method(0x80023484L)
-  public static boolean giveItem(final ItemStack item) {
-    return gameState_800babc8.items_2e9.give(new ItemStack(item)).isEmpty();
   }
 
   @Method(0x80023484L)
@@ -1197,7 +1179,14 @@ public final class SItem {
 
   @Method(0x80103910L)
   public static Renderable58 renderCharacterPortrait(final int charId, final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
+    final Renderable58 portrait = renderManualCharacterPortrait(charId, x, y, flags);
+    managedRenderables_800bdc5c.addFirst(portrait);
+    return portrait;
+  }
+
+  @Method(0x80103910L)
+  public static Renderable58 renderManualCharacterPortrait(final int charId, final int x, final int y, final int flags) {
+    final Renderable58 renderable = allocateManualRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
     renderable.glyph_04 = 48 + charId;
     renderable.startGlyph_10 = renderable.glyph_04;
@@ -1380,6 +1369,7 @@ public final class SItem {
     checkForNewlyUnlockedAddition(charId);
 
     final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+    final Set<RegistryId> seen = new HashSet<>();
 
     for(final RegistryDelegate<Addition> additionDelegate : CHARACTER_ADDITIONS[charId]) {
       final Addition addition = additionDelegate.get();
@@ -1387,6 +1377,14 @@ public final class SItem {
 
       if(additionStats.unlockState.isUsable()) {
         additions.add(addition);
+      }
+
+      seen.add(additionDelegate.getId());
+    }
+
+    for(final var entry : charData.additionStats.entrySet()) {
+      if(!seen.contains(entry.getKey()) && entry.getValue().unlockState.isUsable()) {
+        additions.add(REGISTRIES.additions.getEntry(entry.getKey()).get());
       }
     }
   }
@@ -2203,26 +2201,32 @@ public final class SItem {
 
       case 3:
         textZ_800bdf00 = 31;
-        final int x = messageBox.x_1c + 60;
-        int y = messageBox.y_1e + 14;
+        final int leftPadding = 60;
+        final int topPadding = 14;
+        final int x = messageBox.x_1c + leftPadding;
+        int y = messageBox.y_1e + topPadding;
 
         messageBox.ticks_10++;
 
         if(messageBox.text_00 != null) {
-          y -= messageBox.text_00.length * 12 / 2;
+          final int textHeight = 12;
+          final int textOffset = textHeight / 2;
+          y -= textOffset;
 
           for(final String line : messageBox.text_00) {
             renderText(line, x, y, UI_TEXT_CENTERED);
-            y += 12;
+            y += textHeight;
           }
 
-          y -= (messageBox.text_00.length - 1) * 3;
+          if (messageBox.type_15 == MessageBoxType.CONFIRMATION) {
+            y -= (messageBox.text_00.length - 1) * 3;
+          }
         }
 
         //LAB_8010eeac
         textZ_800bdf00 = 33;
 
-        if(messageBox.type_15 == 0) {
+        if(messageBox.type_15 == MessageBoxType.ALERT) {
           //LAB_8010eed8
           if(!messageBox.ignoreInput && PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
             playMenuSound(2);
@@ -2233,7 +2237,7 @@ public final class SItem {
           break;
         }
 
-        if(messageBox.type_15 == 2) {
+        if(messageBox.type_15 == MessageBoxType.CONFIRMATION) {
           //LAB_8010ef10
           if(messageBox.highlightRenderable_04 == null) {
             messageBox.highlightRenderable_04 = new Highlight();
@@ -2247,8 +2251,8 @@ public final class SItem {
           //LAB_8010ef64
           textZ_800bdf00 = 30;
 
-          renderText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? UI_TEXT_SELECTED_CENTERED : UI_TEXT_CENTERED);
-          renderText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
+          renderText(messageBox.yes, messageBox.x_1c + leftPadding, y + 7, messageBox.menuIndex_18 == 0 ? UI_TEXT_SELECTED_CENTERED : UI_TEXT_CENTERED);
+          renderText(messageBox.no, messageBox.x_1c + leftPadding, y + 21, messageBox.menuIndex_18 == 0 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
 
           textZ_800bdf00 = 33;
         }
@@ -2294,7 +2298,7 @@ public final class SItem {
   }
 
   @Method(0x8010f130L)
-  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final int type) {
+  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type) {
     setMessageBoxOptions(messageBox, "Yes", "No");
 
     if(text != null) {
@@ -2361,7 +2365,7 @@ public final class SItem {
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
       stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
 
-      if(stats.selectedAddition_35 != null) {
+      if(stats.selectedAddition_35 != null && REGISTRIES.additions.hasEntry(stats.selectedAddition_35)) {
         final Addition addition = REGISTRIES.additions.getEntry(stats.selectedAddition_35).get();
         final CharacterAdditionStats additionStats = charData.additionStats.computeIfAbsent(stats.selectedAddition_35, k -> new CharacterAdditionStats());
 

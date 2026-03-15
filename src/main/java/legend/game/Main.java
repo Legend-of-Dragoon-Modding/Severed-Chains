@@ -9,12 +9,19 @@ import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.lastSavableEngineState;
@@ -50,7 +57,10 @@ public final class Main {
 
         gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
         gameState_800babc8.submapCut_a8 = submapCut_80052c30;
-        currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
+
+        if(lastSavableEngineState != null) {
+          currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
+        }
 
         try {
           SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
@@ -67,10 +77,23 @@ public final class Main {
       LOGGER.error("Crash detected");
       LOGGER.error("Severed Chains %s commit %s built %s", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
+      LOGGER.error("Loaded mods: %s", MODS.getLoadedMods().stream().map(container -> container.modId).collect(Collectors.joining(", ")));
+      LOGGER.error("All mods: %s", String.join(", ", MODS.getAllModIds()));
+
+      if(!MODS.getFailedToLoad().isEmpty()) {
+        LOGGER.error("Failed to load mods:");
+
+        for(final var entry : MODS.getFailedToLoad().entrySet()) {
+          LOGGER.error("- %s: %s", entry.getKey(), entry.getValue());
+        }
+      }
+
       if(generatedCrashSave) {
+        LOGGER.error("");
         LOGGER.error("We have attempted to generate a recovery save. You can load it next time you run Severed Chains.");
       }
 
+      LOGGER.error("");
       LOGGER.error("Please copy this crash log and send it to us in the Player Help channel in the Legend of Dragoon Discord server.");
       LOGGER.error("https://discord.gg/legendofdragoon");
 
@@ -85,6 +108,13 @@ public final class Main {
       LOGGER.error("https://discord.gg/legendofdragoon");
 
       LogManager.shutdown();
+
+      // Copy to timestamped crash log
+      final String dt = LocalDateTime.now().toString().replace(':', '-');
+      try {
+        Files.copy(Path.of("debug.log"), Path.of("CRASHLOG-" + dt + ".log"), StandardCopyOption.REPLACE_EXISTING);
+      } catch(final IOException ex) {}
+
       System.exit(1);
     }
   }

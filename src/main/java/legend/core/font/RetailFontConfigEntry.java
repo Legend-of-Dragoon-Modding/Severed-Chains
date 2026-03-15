@@ -22,7 +22,7 @@ public class RetailFontConfigEntry extends StringConfigEntry {
     this.setEditControl((current, gameState) -> {
       final Path fontsDir = Path.of("gfx", "fonts");
 
-      final Dropdown<Font> dropdown = new Dropdown<>(font -> font.name);
+      final Dropdown<Font> dropdown = new Dropdown<>((i, font) -> font.name);
       dropdown.onSelection(index -> {
         gameState.setConfig(this, fontsDir.relativize(dropdown.getSelectedOption().path).toString());
         GameEngine.DEFAULT_FONT = dropdown.getSelectedOption();

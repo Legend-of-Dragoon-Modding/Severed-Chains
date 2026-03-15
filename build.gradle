@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
   api 'org.legendofdragoon:mod-loader:4.2.2'
-  api 'org.legendofdragoon:script-recompiler:0.6.1'
+  api 'org.legendofdragoon:script-recompiler:0.6.2'
 
   api 'org.apache.logging.log4j:log4j-api:2.24.3'
   api 'org.apache.logging.log4j:log4j-core:2.24.3'
@@ -86,6 +86,7 @@ dependencies {
 
   implementation 'org.asynchttpclient:async-http-client:3.0.1' // update check
   implementation 'org.json:json:20250107'
+  api "com.google.code.gson:gson:2.13.2"
 
   implementation 'com.opencsv:opencsv:5.9'
   implementation 'io.github.java-diff-utils:java-diff-utils:4.15'
@@ -103,7 +104,7 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:6.0.0"))
   testImplementation("org.junit.jupiter:junit-jupiter")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+  testImplementation("org.junit.platform:junit-platform-launcher")
 }
 
 javafx {
@@ -185,6 +186,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.MAC_OS:
@@ -200,6 +202,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'macosx', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.WINDOWS:
@@ -211,6 +214,7 @@ tasks.register('copySupportFiles', Copy) {
           filter(ReplaceTokens, tokens: [false: "true"])
           filter(ReplaceTokens, tokens: [libs: libs])
         }
+        from 'gpu-optional-setup.bat'
         break
     }
 

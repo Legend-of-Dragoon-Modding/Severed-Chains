@@ -60,6 +60,26 @@ and select it from the controller dropdown in the in-game options menu.
 When a new version is available, an "Update Available" button appears on the title screen. Clicking it downloads and applies the update automatically if a platform-specific release is available, otherwise it opens the release page in your browser for manual download.
 
 The automatic updater preserves your saves, mods, ISOs, extracted files, and config. After the update completes, restart the game. A log of each update is written to `update_log.txt` in the game directory.
+### GPU Selection
+
+Severed Chains supports GPU preference settings for systems with multiple graphics cards (laptops with integrated and discrete GPUs).
+
+**Linux/Steam Deck**: GPU preference is applied automatically based on your `launch.conf` setting. No additional setup required.
+
+**Windows**: GPU preference requires one-time configuration. You have two options:
+
+1. **Easy Setup (Recommended)**: After running launch.bat Run `gpu-optional-setup.bat` and follow the prompts. This is optional but makes GPU selection automatic.
+   
+2. **Manual Setup**: Add Severed Chains to Windows Graphics Settings:
+   - Open Windows Settings > Display > Graphics
+   - Click "Add desktop app" or "Browse"
+   - Navigate to your Severed Chains folder and select `jdk25\bin\java.exe`
+   - Click "Options" and choose your preferred GPU (Power saving or High performance)
+
+To configure GPU preference in UNIX systems, edit `launch.conf` in your game folder:
+- `GPU_PREFERENCE=0` - Auto (let the system decide)
+- `GPU_PREFERENCE=1` - Discrete GPU (NVIDIA/AMD dedicated graphics)
+- `GPU_PREFERENCE=2` - Integrated GPU (Intel/AMD integrated graphics)
 
 ### Copyright Information
 

@@ -46,6 +46,7 @@
 -andor 0x40, 0x3, var[115 + 4]
 -andor 0x40, 0x3, var[115 + 7]
 +gosub inl[:RESTORE_ALL_TEMPORARILY_REMOVED_CHARS]
++and 0xffffffdf, var[115 + 4]
 +or 0x3, var[115 + 7]
  mov 0x4, var[17][1]
  mov 0x7, var[17][2]
