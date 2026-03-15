@@ -15,4 +15,9 @@ public class RegisterAtlasTexturesEvent extends Event {
   public void add(final RegistryId id, final Image image) {
     this.textures.put(id, image);
   }
+
+  @Override
+  protected boolean isCritical() {
+    return true;
+  }
 }
