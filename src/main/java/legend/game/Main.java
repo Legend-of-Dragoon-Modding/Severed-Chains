@@ -9,6 +9,11 @@ import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -103,6 +108,13 @@ public final class Main {
       LOGGER.error("https://discord.gg/legendofdragoon");
 
       LogManager.shutdown();
+
+      // Copy to timestamped crash log
+      final String dt = LocalDateTime.now().toString().replace(':', '-');
+      try {
+        Files.copy(Path.of("debug.log"), Path.of("CRASHLOG-" + dt + ".log"), StandardCopyOption.REPLACE_EXISTING);
+      } catch(final IOException ex) {}
+
       System.exit(1);
     }
   }
