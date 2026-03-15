@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.lastSavableEngineState;
@@ -70,10 +72,23 @@ public final class Main {
       LOGGER.error("Crash detected");
       LOGGER.error("Severed Chains %s commit %s built %s", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
+      LOGGER.error("Loaded mods: %s", MODS.getLoadedMods().stream().map(container -> container.modId).collect(Collectors.joining(", ")));
+      LOGGER.error("All mods: %s", String.join(", ", MODS.getAllModIds()));
+
+      if(!MODS.getFailedToLoad().isEmpty()) {
+        LOGGER.error("Failed to load mods:");
+
+        for(final var entry : MODS.getFailedToLoad().entrySet()) {
+          LOGGER.error("- %s: %s", entry.getKey(), entry.getValue());
+        }
+      }
+
       if(generatedCrashSave) {
+        LOGGER.error("");
         LOGGER.error("We have attempted to generate a recovery save. You can load it next time you run Severed Chains.");
       }
 
+      LOGGER.error("");
       LOGGER.error("Please copy this crash log and send it to us in the Player Help channel in the Legend of Dragoon Discord server.");
       LOGGER.error("https://discord.gg/legendofdragoon");
 
