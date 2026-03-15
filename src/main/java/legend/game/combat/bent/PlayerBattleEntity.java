@@ -110,6 +110,10 @@ public class PlayerBattleEntity extends BattleEntity27c {
     return I18n.translate(this.character.template);
   }
 
+  public ScriptState<PlayerBattleEntity> getState() {
+    return this.scriptState.get();
+  }
+
   @Override
   protected ScriptFile getScript() {
     return this.script;
