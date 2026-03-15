@@ -90,7 +90,7 @@ public class CharSwapScreen extends MenuScreen {
 
           // Add secondary chars to the main party if there are empty slots
           if(gameState_800babc8.charIds_88.size() < 3) {
-            for(int i = 0; i < 3 - gameState_800babc8.charIds_88.size(); i++) {
+            for(int i = 0; i < 3 - gameState_800babc8.charIds_88.size() && i < secondaryCharIds_800bdbf8.size(); i++) {
               gameState_800babc8.charIds_88.add(secondaryCharIds_800bdbf8.getInt(i));
             }
           }
