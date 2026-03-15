@@ -4,9 +4,12 @@ import legend.core.GameEngine;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.screens.Control;
 import legend.game.characters.CharacterData2c;
+import legend.game.types.Renderable58;
 
 import javax.annotation.Nullable;
 
+import static legend.game.Menus.uploadRenderable;
+import static legend.game.SItem.allocateManualUiElement;
 import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.renderFraction;
 import static legend.game.SItem.renderHp;
@@ -17,6 +20,7 @@ import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharacterCard extends Control {
   private CharacterData2c character;
+  private boolean dontSelect;
 
   private final Glyph background;
   private final Glyph overlay;
@@ -71,6 +75,10 @@ public class CharacterCard extends Control {
     }
   }
 
+  public void setDontSelect(final boolean dontSelect) {
+    this.dontSelect = dontSelect;
+  }
+
   @Override
   protected void render(final int x, final int y) {
     if(this.character != null) {
@@ -83,6 +91,12 @@ public class CharacterCard extends Control {
       renderHp(x + this.getWidth(), y + 28, hp.getCurrent(), hp.getMax());
       renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), mp.getMax());
       renderFraction(x + this.getWidth(), y + 50, this.character.xp_00, this.character.getXpToNextLevel());
+
+      if(this.dontSelect) {
+        final Renderable58 dontSelect = allocateManualUiElement(113, 113, x + 65, y + 24);
+        dontSelect.z_3c = this.getZ() - 2;
+        uploadRenderable(dontSelect, 0, 0);
+      }
 
       this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.character));
     }

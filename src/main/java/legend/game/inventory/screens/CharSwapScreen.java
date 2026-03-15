@@ -147,6 +147,7 @@ public class CharSwapScreen extends MenuScreen {
         for(int i = 0; i < this.characterCard.length; i++) {
           if(i < gameState_800babc8.charIds_88.size()) {
             this.characterCard[i].setCharacter(gameState_800babc8.getCharacterBySlot(i));
+            this.characterCard[i].setDontSelect(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIds_88.getInt(i)).partyFlags_04 & CANT_REMOVE) != 0);
             this.characterCard[i].show();
           } else {
             this.characterCard[i].hide();
