@@ -67,9 +67,11 @@ public class CampaignSelectionScreen extends MenuScreen {
         this.removeControl(this.saveCard);
       }
 
-      this.saveCard = this.addControl(campaign.latestSave.createSaveCard());
-      this.saveCard.alwaysReceiveInput();
-      this.saveCard.setPos(16, 160);
+      if(campaign != null) {
+        this.saveCard = this.addControl(campaign.latestSave.createSaveCard());
+        this.saveCard.alwaysReceiveInput();
+        this.saveCard.setPos(16, 160);
+      }
     });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);
@@ -230,6 +232,10 @@ public class CampaignSelectionScreen extends MenuScreen {
           try {
             this.campaignList.getSelected().delete();
             this.campaignList.removeEntry(this.campaignList.getSelected());
+
+            if(this.campaignList.size() == 0) {
+              this.menuEscape();
+            }
           } catch(final IOException e) {
             LOGGER.error(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), e);
             this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), MessageBoxType.ALERT, result1 -> {})));

@@ -15,12 +15,12 @@ import static legend.lodmod.LodMod.SP_STAT;
 
 public class RecoverSpItem extends BattleItem {
   private final boolean targetAll;
-  private final int percentage;
+  private final int amount;
 
-  public RecoverSpItem(final ItemIcon icon, final int price, final boolean targetAll, final int percentage) {
+  public RecoverSpItem(final ItemIcon icon, final int price, final boolean targetAll, final int amount) {
     super(icon, price);
     this.targetAll = targetAll;
-    this.percentage = percentage;
+    this.amount = amount;
   }
 
   @Override
@@ -52,14 +52,7 @@ public class RecoverSpItem extends BattleItem {
   @Override
   @Method(0x80022d88L)
   public void useInMenu(final ItemStack stack, final UseItemResponse response, final int charId) {
-    final int amount;
-    if(this.percentage == 100) {
-      amount = -1;
-    } else {
-      amount = this.percentage;
-    }
-
-    addSp(charId, amount);
+    addSp(charId, this.amount);
     response.success();
   }
 
