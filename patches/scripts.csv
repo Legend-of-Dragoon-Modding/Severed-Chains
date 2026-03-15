@@ -217,6 +217,7 @@ diff,SECT/DRGN22.BIN/1173/3,scripts/DRGN22/1173/3.diff,"Fletz, Return from HoG, 
 diff,SECT/DRGN22.BIN/1173/5,scripts/DRGN22/1173/5.diff,"Fletz, Return from HoG, Rose, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/7,scripts/DRGN22/1173/7.diff,"Fletz, Return from HoG, Kongol, don't hide body parts, GH#2208"
 diff,SECT/DRGN23.BIN/12/1,scripts/DRGN23/12/1.diff,"Furni retail dialogue fix, GH#1484"
+diff,SECT/DRGN23.BIN/45/4,scripts/DRGN23/45/4.diff,"Evergreen Forest, Meeting Kamuy, Bulgus, don't hide head, GH#2568"
 diff,SECT/DRGN23.BIN/141/1,scripts/DRGN23/141/1.diff,"Crystal Palace Queen Theresa Kidnap, widescreen patch"
 diff,SECT/DRGN23.BIN/144/1,scripts/DRGN23/144/1.diff,"Crystal Palace Queen Theresa Kidnap, widescreen patch"
 diff,SECT/DRGN23.BIN/204/1,scripts/DRGN23/204/1.diff,"Kadessa teleporter floating point error, GH#2322"
