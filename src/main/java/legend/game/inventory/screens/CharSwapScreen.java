@@ -339,11 +339,11 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void adjustScroll() {
-    if(this.secondaryCharSlot < this.secondaryScroll * SECONDARY_CHAR_PITCH) {
+    while(this.secondaryCharSlot < this.secondaryScroll * SECONDARY_CHAR_PITCH) {
       this.secondaryScroll--;
     }
 
-    if(this.secondaryCharSlot - SECONDARY_SLOTS >= this.secondaryScroll * SECONDARY_CHAR_PITCH) {
+    while(this.secondaryCharSlot - SECONDARY_SLOTS >= this.secondaryScroll * SECONDARY_CHAR_PITCH) {
       this.secondaryScroll++;
     }
 
@@ -356,20 +356,29 @@ public class CharSwapScreen extends MenuScreen {
     this.downArrow.setVisibility(secondaryCharIds_800bdbf8.size() - this.secondaryScroll * SECONDARY_CHAR_PITCH > SECONDARY_SLOTS);
   }
 
+  private int getTotalSlotCount() {
+    // If we have enough to fully fill all the rows, add an extra row so chars can be removed
+    if(CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && secondaryCharIds_800bdbf8.size() % SECONDARY_CHAR_PITCH == 0) {
+      return secondaryCharIds_800bdbf8.size() + SECONDARY_CHAR_PITCH;
+    }
+
+    return MathHelper.roundUpNpot(secondaryCharIds_800bdbf8.size(), SECONDARY_CHAR_PITCH);
+  }
+
   private void menuStage3NavigateUp() {
     if(this.secondaryCharSlot >= SECONDARY_CHAR_PITCH) {
       playMenuSound(1);
       this.secondaryCharSlot -= SECONDARY_CHAR_PITCH;
     } else if(this.allowWrapY) {
       playMenuSound(1);
-      this.secondaryCharSlot = Math.floorMod(this.secondaryCharSlot - SECONDARY_CHAR_PITCH, secondaryCharIds_800bdbf8.size());
+      this.secondaryCharSlot = Math.floorMod(this.secondaryCharSlot - SECONDARY_CHAR_PITCH, this.getTotalSlotCount());
     }
 
     this.adjustScroll();
   }
 
   private void menuStage3NavigateDown() {
-    if(this.secondaryCharSlot < secondaryCharIds_800bdbf8.size() - SECONDARY_CHAR_PITCH) {
+    if(this.secondaryCharSlot < this.getTotalSlotCount() - SECONDARY_CHAR_PITCH) {
       playMenuSound(1);
       this.secondaryCharSlot += SECONDARY_CHAR_PITCH;
     } else if(this.allowWrapY) {
@@ -386,14 +395,14 @@ public class CharSwapScreen extends MenuScreen {
       this.secondaryCharSlot--;
     } else if(this.allowWrapX) {
       playMenuSound(1);
-      this.secondaryCharSlot = secondaryCharIds_800bdbf8.size() - 1;
+      this.secondaryCharSlot = this.getTotalSlotCount() - 1;
     }
 
     this.adjustScroll();
   }
 
   private void menuStage3NavigateRight() {
-    if(this.secondaryCharSlot < secondaryCharIds_800bdbf8.size() - 1) {
+    if(this.secondaryCharSlot < this.getTotalSlotCount() - 1) {
       playMenuSound(1);
       this.secondaryCharSlot++;
     } else if(this.allowWrapX) {

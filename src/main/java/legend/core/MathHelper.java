@@ -219,8 +219,14 @@ public final class MathHelper {
     numerator.z = floorMod(numerator.z, denominator);
   }
 
+  /** Faster version of {@link #roundUpNpot} but only works with power-of-two numbers */
   public static int roundUp(final int val, final int step) {
     return val + step - 1 & -step;
+  }
+
+  /** Slower version of {@link #roundUp} but works with non-power-of-two numbers */
+  public static int roundUpNpot(final int val, final int step) {
+    return (val + step - 1) / step * step;
   }
 
   public static long roundUp(final long val, final long step) {
