@@ -4854,16 +4854,23 @@ jmp_cmp !=, 0x2, var[45][248], inl[:LABEL_522] ; operand, left, right, addr
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
 call DrgnFiles::scriptWaitForFilesToLoad ; index
+
 gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
 jmp_cmp ==, -1, stor[8], inl[:LABEL_525] ; don't need to change stages
+
 mov var[45][76], stor[8] ; source, dest
+
 jmp_cmp >, 0x0, stor[8], inl[:LABEL_523] ; operand, left, right, addr
-call Battle::scriptGetBentStat, stor[0], SPECIAL_TRANSFORM_STAGE, stor[8]
+gosub inl[:GET_BENT_FOR_CHAR]
+call Battle::scriptGetBentStat, stor[42], SPECIAL_TRANSFORM_STAGE, stor[8]
 jmp inl[:LABEL_524] ; addr
+
 LABEL_523:
 mov var[47], stor[8] ; source, dest
+
 LABEL_524:
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
+
 LABEL_525:
 and 0xfffffffd, var[45][245] ; right, left
 mov var[45][118], stor[8] ; source, dest
@@ -4881,14 +4888,16 @@ data 0x49
 ; SUBROUTINE
 ; If the spell is a dragon summon spell, returns the special stage to switch to
 ; @param int reg[0] spell id
-; @return int stor[8] the special stage to switch to if any, or -1 if not a dragon summon or already on that stage
+; @return int stor[8] the special stage to switch to if any, or -1 if not a dragon summon or we don't need to change the stage
 GET_DRAGON_SUMMON_SPECIAL_STAGE:
-mov -1, stor[23] ; source, dest
+call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:spells], reg[0], 0, stor[23] ; read battle stage from spell
+jmp_cmp ==, stor[23], -1, inl[:LABEL_528] ; no battle stage
 
-call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:spells], reg[0], 0, stor[8] ; read battle stage from spell
-jmp_cmp ==, stor[8], -1, inl[:LABEL_528] ; no battle stage
-jmp_cmp ==, stor[8], var[97], inl[:LABEL_528] ; operand, left, right, addr
-mov stor[8], stor[23] ; source, dest
+; if we're in special, we don't need to change the stage
+gosub inl[:GET_MY_CHAR_ID] ; addr
+jmp_cmp !=, stor[8], var[45][76], inl[:LABEL_528] ; operand, left, right, addr
+
+mov -1, stor[23] ; source, dest
 
 LABEL_528:
 mov stor[23], stor[8] ; source, dest
@@ -6738,15 +6747,6 @@ return
 ; @param int s0 my id
 ; @return int s8 char id
 GET_MY_CHAR_ID:
-
-; if divine dragoon return 9
-call Battle::scriptGetBentStat, stor[0], STATUS, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x4000, stor[8], inl[:GET_MY_CHAR_ID_NOT_DIVINE] ; operand, left, right, addr
-mov 0x9, stor[8] ; source, dest
-return
-GET_MY_CHAR_ID_NOT_DIVINE:
-
-; otherwise get char id
 call Battle::scriptGetCharOrMonsterId, stor[0], stor[8] ; bentIndex, id
 return
 
@@ -6754,12 +6754,6 @@ return
 
 ; SUBROUTINE
 GET_BENT_CHAR_ID:
-call Battle::scriptGetBentStat, stor[30], STATUS, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x4000, stor[8], inl[:GET_BENT_CHAR_ID_NOT_DIVINE] ; operand, left, right, addr
-mov 0x9, stor[8] ; source, dest
-return
-GET_BENT_CHAR_ID_NOT_DIVINE:
-
 call Battle::scriptGetCharOrMonsterId, stor[30], stor[8] ; bentIndex, id
 return
 
@@ -6767,13 +6761,36 @@ return
 
 ; SUBROUTINE
 LABEL_712:
-call Battle::scriptGetBentStat, stor[29], STATUS, stor[23] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x4000, stor[23], inl[:LABEL_713] ; operand, left, right, addr
-mov 0x9, stor[23] ; source, dest
-return
-LABEL_713:
 call Battle::scriptGetCharOrMonsterId, stor[29], stor[23] ; bentIndex, id
 return
+
+
+
+; gets the bent script index for the passed in char index
+; @param int stor[8] char index
+; @return int stor[42] bent script index, or -1 if not found
+GET_BENT_FOR_CHAR:
+mov 0, stor[40]
+mov var[35], stor[41]
+
+GET_BENT_FOR_CHAR_LOOP:
+mov var[34][stor[40]], stor[42] ; get player bent index
+call Battle::scriptGetCharOrMonsterId, stor[42], stor[43] ; bentIndex, id
+
+jmp_cmp !=, stor[43], stor[8], inl[:GET_BENT_FOR_CHAR_NOT_SAME]
+return ; we found it, return stor[42]
+
+GET_BENT_FOR_CHAR_NOT_SAME:
+incr stor[40]
+jmp_cmp <, stor[40], stor[41], inl[:GET_BENT_FOR_CHAR_LOOP]
+
+; loop is over, did not find, return -1
+mov -1, stor[42]
+return
+
+
+
+
 data 0xa90338
 data 0x200001e
 data 0x5
