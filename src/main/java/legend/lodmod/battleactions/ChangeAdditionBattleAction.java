@@ -2,7 +2,7 @@ package legend.lodmod.battleactions;
 
 import legend.game.combat.Battle;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.ui.BattleActionFlowControl;
+import legend.game.combat.ui.BattleActionUseFlowControl;
 
 public class ChangeAdditionBattleAction extends SeveredBattleAction {
   public ChangeAdditionBattleAction() {
@@ -10,12 +10,12 @@ public class ChangeAdditionBattleAction extends SeveredBattleAction {
   }
 
   @Override
-  public BattleActionFlowControl use(final Battle battle, final PlayerBattleEntity player) {
+  public BattleActionUseFlowControl use(final Battle battle, final PlayerBattleEntity player) {
     if(player.character.getUnlockedAdditions().isEmpty()) {
-      return BattleActionFlowControl.FAIL;
+      return BattleActionUseFlowControl.FAIL;
     }
 
     battle.hud.initListMenu(player, 2);
-    return BattleActionFlowControl.PAUSE_SCRIPT;
+    return BattleActionUseFlowControl.PAUSE_SCRIPT;
   }
 }

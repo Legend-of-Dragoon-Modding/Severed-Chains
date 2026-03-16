@@ -91,6 +91,7 @@ import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleAction;
+import legend.game.combat.ui.BattleActionTickFlowControl;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.inventory.Equipment;
@@ -304,7 +305,6 @@ import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
-import static legend.lodmod.LodMod.DIVINE_ELEMENT;
 import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
@@ -2294,6 +2294,7 @@ public class Battle extends EngineState<Battle> {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
       this.currentTurnBent_800c66c8.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
+      this.hud.battleMenu_800c6c34.currentAction = null;
 
       if(battleState_8006e398.hasAlivePlayers()) {
         //LAB_800c7c98
@@ -4011,6 +4012,14 @@ public class Battle extends EngineState<Battle> {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
+    if(this.hud.battleMenu_800c6c34.currentAction != null) {
+      if(this.hud.battleMenu_800c6c34.currentAction.tick(this, this.hud.battleMenu_800c6c34.player_04) == BattleActionTickFlowControl.PAUSE_SCRIPT) {
+        return FlowControl.PAUSE_AND_REWIND;
+      }
+
+      return FlowControl.CONTINUE;
+    }
+
     if(script.scriptState_04.hasFlag(FLAG_RELOAD_BATTLE_ACTIONS)) {
       //LAB_800ccab4
       this.hud.initializeMenuIcons(script.scriptState_04);
@@ -4020,14 +4029,14 @@ public class Battle extends EngineState<Battle> {
     //LAB_800ccaec
     this.hud.toggleHighlight(true);
 
-    final BattleAction selectedAction = this.hud.tickAndRender();
-    if(selectedAction == null) {
+    this.hud.battleMenu_800c6c34.currentAction = this.hud.tickAndRender();
+    if(this.hud.battleMenu_800c6c34.currentAction == null) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     this.hud.toggleHighlight(false);
-    script.params_20[0].set(selectedAction.getRegistryId());
+    script.params_20[0].set(this.hud.battleMenu_800c6c34.currentAction.getRegistryId());
 
     //LAB_800ccb28
     return FlowControl.CONTINUE;

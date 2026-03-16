@@ -1754,15 +1754,15 @@ public class BattleHud {
       return null;
     }
 
-    final BattleActionFlowControl flow = selectedAction.use(this.battle, this.battleMenu_800c6c34.player_04);
-    if(flow == BattleActionFlowControl.FAIL) {
+    final BattleActionUseFlowControl flow = selectedAction.use(this.battle, this.battleMenu_800c6c34.player_04);
+    if(flow == BattleActionUseFlowControl.FAIL) {
       playMenuSound(40);
       return null;
     }
 
     playMenuSound(2);
 
-    if(flow == BattleActionFlowControl.PAUSE_SCRIPT) {
+    if(flow == BattleActionUseFlowControl.PAUSE_SCRIPT) {
       return null;
     }
 

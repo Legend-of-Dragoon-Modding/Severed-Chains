@@ -94,6 +94,7 @@ public class BattleMenuStruct58 {
 //  public final int[] iconFlags_10 = new int[9];
   public final List<BattleAction> actions = new ArrayList<>();
   public final Set<BattleAction> disabledActions = new HashSet<>();
+  public BattleAction currentAction;
   public short selectedIcon_22;
   public short currentIconStateTick_24;
   public short iconStateIndex_26;
@@ -152,6 +153,7 @@ public class BattleMenuStruct58 {
     //LAB_800f60fc
     this.actions.clear();
     this.disabledActions.clear();
+    this.currentAction = null;
 
     //LAB_800f611c
     this.countHighlightMovementStep_30 = 0;
