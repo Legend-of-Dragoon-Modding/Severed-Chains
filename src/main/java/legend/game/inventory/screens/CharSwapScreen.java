@@ -9,6 +9,7 @@ import legend.core.platform.input.InputMod;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.screens.controls.CharacterCard;
+import legend.game.inventory.screens.controls.Glyph;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.Renderable58;
@@ -24,7 +25,6 @@ import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.charSwapGlyphs_80114160;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.renderFourDigitHp;
-import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
@@ -41,6 +41,9 @@ import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 
 public class CharSwapScreen extends MenuScreen {
+  private static final int SECONDARY_CHAR_PITCH = 3;
+  private static final int SECONDARY_SLOTS = 6;
+
   private int loadingStage;
   private final Runnable unload;
 
@@ -50,8 +53,12 @@ public class CharSwapScreen extends MenuScreen {
 
   private final CharacterCard[] characterCard = new CharacterCard[3];
 
+  private final Glyph upArrow;
+  private final Glyph downArrow;
+
   private int primaryCharSlot;
   private int secondaryCharSlot;
+  private int secondaryScroll;
   private Renderable58 primaryCharHighlight;
   private Renderable58 secondaryCharHighlight;
 
@@ -64,6 +71,12 @@ public class CharSwapScreen extends MenuScreen {
       this.characterCard[i] = this.addControl(new CharacterCard());
       this.characterCard[i].setPos(8, 16 + i * 72);
     }
+
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
+    this.upArrow.setPos(this.getWidth() - 3, 13);
+
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
+    this.downArrow.setPos(this.getWidth() - 3, this.getHeight() - 31);
   }
 
   @Override
@@ -74,6 +87,7 @@ public class CharSwapScreen extends MenuScreen {
 
         this.primaryCharSlot = 0;
         this.secondaryCharSlot = 0;
+        this.secondaryScroll = 0;
 
         /* When unlock party is disabled, rearrange party to fit retail expectations. */
         if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get())) {
@@ -142,7 +156,7 @@ public class CharSwapScreen extends MenuScreen {
         this.primaryCharHighlight = allocateUiElement(0x7f, 0x7f, 16, this.getSlotY(this.primaryCharSlot));
         initHighlight(this.primaryCharHighlight);
         this.primaryCharHighlight.z_3c += 0.5f;
-        this.renderCharacterSwapScreen(0xff);
+        this.renderCharacterSwapScreen();
 
         for(int i = 0; i < this.characterCard.length; i++) {
           if(i < gameState_800babc8.charIds_88.size()) {
@@ -154,58 +168,63 @@ public class CharSwapScreen extends MenuScreen {
           }
         }
 
+        this.adjustScroll();
         this.loadingStage++;
       }
 
-      case 2, 3 -> this.renderCharacterSwapScreen(0);
+      case 2, 3 -> this.renderCharacterSwapScreen();
 
       // Fade out
       case 100 -> {
-        this.renderCharacterSwapScreen(0);
+        this.renderCharacterSwapScreen();
         this.unload.run();
       }
     }
   }
 
-  private void renderCharacterSwapScreen(final int a0) {
-    final boolean allocate = a0 == 0xff;
+  private void renderCharacterSwapScreen() {
+    final int firstSlot = this.secondaryScroll * SECONDARY_CHAR_PITCH;
 
-    for(int i = 0; i < secondaryCharIds_800bdbf8.size(); i++) {
-      this.renderSecondaryChar(this.getSecondaryCharX(i), this.getSecondaryCharY(i), secondaryCharIds_800bdbf8.getInt(i), allocate);
+    for(int i = 0; i < Math.min(SECONDARY_SLOTS, secondaryCharIds_800bdbf8.size() - firstSlot); i++) {
+      final int charIndex = firstSlot + i;
+      this.renderSecondaryChar(this.getSecondaryCharX(i), this.getSecondaryCharY(i), secondaryCharIds_800bdbf8.getInt(charIndex));
     }
   }
 
-  private void renderSecondaryChar(final int x, final int y, final int charIndex, final boolean allocate) {
+  private void renderSecondaryChar(final int x, final int y, final int charIndex) {
     final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
     final TextureAtlasIcon icon = GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId());
     this.transforms.transfer.set(x - 6.0f, y + 8.0f, 132.0f);
     this.transforms.scaling(48.0f, 48.0f, 1.0f);
     icon.render(this.transforms);
 
-    if(allocate) {
-      final VitalsStat hp = character.stats.getStat(HP_STAT.get());
-      final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+    final VitalsStat hp = character.stats.getStat(HP_STAT.get());
+    final VitalsStat mp = character.stats.getStat(MP_STAT.get());
 
-      allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
-      allocateUiElement(0x9c, 0x9c, x, y);
+    final Renderable58 border = allocateUiElement(0x50, 0x50, x, y);
+    border.z_3c = 33;
+    border.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-      if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (character.partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
-        allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
-      }
+    allocateUiElement(0x9c, 0x9c, x, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-      renderFourDigitNumber(x + 25, y + 57, character.level_12);
-      renderFourDigitNumber(x + 25, y + 68, character.dlevel_13);
-      renderFourDigitHp(x + 25, y + 79, hp.getCurrent(), hp.getMax());
-      renderFourDigitNumber(x + 25, y + 90, mp.getCurrent());
+    if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (character.partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
+      final Renderable58 cantRemove = allocateUiElement(0x72, 0x72, x, y + 24);
+      cantRemove.z_3c = 33;
+      cantRemove.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
     }
+
+    this.renderNumber(x + 25, y + 57, character.level_12, 4);
+    this.renderNumber(x + 25, y + 68, character.dlevel_13, 4);
+    renderFourDigitHp(x + 25, y + 79, hp.getCurrent(), hp.getMax(), Renderable58.FLAG_DELETE_AFTER_RENDER);
+    this.renderNumber(x + 25, y + 90, mp.getCurrent(), 4);
   }
 
   private int getSecondaryCharX(final int slot) {
-    return 198 + slot % 3 * 57;
+    return 198 + slot % SECONDARY_CHAR_PITCH * 57;
   }
 
   private int getSecondaryCharY(final int slot) {
-    return 16 + slot / 3 * 106;
+    return 16 + slot / SECONDARY_CHAR_PITCH * 106;
   }
 
   @Override
@@ -224,12 +243,11 @@ public class CharSwapScreen extends MenuScreen {
         }
       }
     } else if(this.loadingStage == 3) {
-      for(int i = 0; i < 6; i++) {
-        if(this.secondaryCharSlot != i && MathHelper.inBox((int)x, (int)y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
+      for(int i = 0; i < SECONDARY_SLOTS; i++) {
+        if(this.secondaryCharSlot != i + this.secondaryScroll * SECONDARY_CHAR_PITCH && MathHelper.inBox((int)x, (int)y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
           playMenuSound(1);
-          this.secondaryCharSlot = i;
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot);
+          this.secondaryCharSlot = i + this.secondaryScroll * SECONDARY_CHAR_PITCH;
+          this.adjustScroll();
           return InputPropagation.HANDLED;
         }
       }
@@ -252,7 +270,7 @@ public class CharSwapScreen extends MenuScreen {
         }
       }
     } else if(this.loadingStage == 3) {
-      for(int i = 0; i < 6; i++) {
+      for(int i = 0; i < SECONDARY_SLOTS; i++) {
         if(MathHelper.inBox((int)x, (int)y, this.getSecondaryCharX(i) - 8, this.getSecondaryCharY(i), 57, 102)) {
           this.menuStage3Select();
           return InputPropagation.HANDLED;
@@ -307,6 +325,7 @@ public class CharSwapScreen extends MenuScreen {
       playMenuSound(2);
       this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharSlot), this.getSecondaryCharY(this.secondaryCharSlot));
       initHighlight(this.secondaryCharHighlight);
+      this.adjustScroll();
       this.loadingStage = 3;
     } else {
       playMenuSound(40);
@@ -319,30 +338,46 @@ public class CharSwapScreen extends MenuScreen {
     this.loadingStage = 2;
   }
 
-  private void menuStage3NavigateUp() {
-    if(this.secondaryCharSlot > 2) {
-      playMenuSound(1);
-      this.secondaryCharSlot -= 3;
-    } else if(this.allowWrapY) {
-      playMenuSound(1);
-      this.secondaryCharSlot += 3;
+  private void adjustScroll() {
+    if(this.secondaryCharSlot < this.secondaryScroll * SECONDARY_CHAR_PITCH) {
+      this.secondaryScroll--;
     }
 
-    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot);
-    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot);
+    if(this.secondaryCharSlot - SECONDARY_SLOTS >= this.secondaryScroll * SECONDARY_CHAR_PITCH) {
+      this.secondaryScroll++;
+    }
+
+    if(this.secondaryCharHighlight != null) {
+      this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot - this.secondaryScroll * SECONDARY_CHAR_PITCH);
+      this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot - this.secondaryScroll * SECONDARY_CHAR_PITCH);
+    }
+
+    this.upArrow.setVisibility(this.secondaryScroll > 0);
+    this.downArrow.setVisibility(secondaryCharIds_800bdbf8.size() - this.secondaryScroll * SECONDARY_CHAR_PITCH > SECONDARY_SLOTS);
+  }
+
+  private void menuStage3NavigateUp() {
+    if(this.secondaryCharSlot >= SECONDARY_CHAR_PITCH) {
+      playMenuSound(1);
+      this.secondaryCharSlot -= SECONDARY_CHAR_PITCH;
+    } else if(this.allowWrapY) {
+      playMenuSound(1);
+      this.secondaryCharSlot = Math.floorMod(this.secondaryCharSlot - SECONDARY_CHAR_PITCH, secondaryCharIds_800bdbf8.size());
+    }
+
+    this.adjustScroll();
   }
 
   private void menuStage3NavigateDown() {
-    if(this.secondaryCharSlot < 3) {
+    if(this.secondaryCharSlot < secondaryCharIds_800bdbf8.size() - SECONDARY_CHAR_PITCH) {
       playMenuSound(1);
-      this.secondaryCharSlot += 3;
+      this.secondaryCharSlot += SECONDARY_CHAR_PITCH;
     } else if(this.allowWrapY) {
       playMenuSound(1);
-      this.secondaryCharSlot -= 3;
+      this.secondaryCharSlot %= SECONDARY_CHAR_PITCH;
     }
 
-    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot);
-    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot);
+    this.adjustScroll();
   }
 
   private void menuStage3NavigateLeft() {
@@ -351,15 +386,14 @@ public class CharSwapScreen extends MenuScreen {
       this.secondaryCharSlot--;
     } else if(this.allowWrapX) {
       playMenuSound(1);
-      this.secondaryCharSlot = 5;
+      this.secondaryCharSlot = secondaryCharIds_800bdbf8.size() - 1;
     }
 
-    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot);
-    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot);
+    this.adjustScroll();
   }
 
   private void menuStage3NavigateRight() {
-    if(this.secondaryCharSlot < 5) {
+    if(this.secondaryCharSlot < secondaryCharIds_800bdbf8.size() - 1) {
       playMenuSound(1);
       this.secondaryCharSlot++;
     } else if(this.allowWrapX) {
@@ -367,13 +401,11 @@ public class CharSwapScreen extends MenuScreen {
       this.secondaryCharSlot = 0;
     }
 
-    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot);
-    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot);
+    this.adjustScroll();
   }
 
   private void menuStage3Select() {
-    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharSlot);
-    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharSlot);
+    this.adjustScroll();
 
     final int charCount = gameState_800babc8.charIds_88.size();
     final int primaryCharId = this.primaryCharSlot < gameState_800babc8.charIds_88.size() ? gameState_800babc8.charIds_88.getInt(this.primaryCharSlot) : -1;
