@@ -429,7 +429,11 @@ public class EquipmentScreen extends MenuScreen {
     final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot));
 
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
-      character.equip(slot, null);
+      final Equipment old = character.equip(slot, null);
+
+      if(old != null) {
+        giveEquipment(old);
+      }
     }
 
     this.loadingStage = 2;

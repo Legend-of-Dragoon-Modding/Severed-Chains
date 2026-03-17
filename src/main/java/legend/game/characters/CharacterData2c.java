@@ -113,17 +113,24 @@ public class CharacterData2c {
     return this.template.canEquip(this, slot, equipment);
   }
 
-  public void equip(final EquipmentSlot slot, @Nullable final Equipment equipment) {
+  /**
+   * @return The old equipment that was in the slot
+   */
+  @Nullable
+  public Equipment equip(final EquipmentSlot slot, @Nullable final Equipment equipment) {
     if(this.equipment_14.containsKey(slot)) {
       this.equipment_14.get(slot).onUnequip(this);
     }
 
+    final Equipment previous;
     if(equipment != null) {
-      this.equipment_14.put(slot, equipment);
+      previous = this.equipment_14.put(slot, equipment);
       equipment.onEquip(this);
     } else {
-      this.equipment_14.remove(slot);
+      previous = this.equipment_14.remove(slot);
     }
+
+    return previous;
   }
 
   public Equipment getEquipment(final EquipmentSlot slot) {
