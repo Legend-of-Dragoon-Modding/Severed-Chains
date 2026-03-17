@@ -9,6 +9,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.screens.controls.CharacterCard;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
@@ -49,6 +50,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UNEQUIP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.sound.Audio.playMenuSound;
@@ -78,6 +80,8 @@ public class EquipmentScreen extends MenuScreen {
 
     this.characterCard = this.addControl(new CharacterCard());
     this.characterCard.setPos(8, 20);
+
+    this.addHotkey(I18n.translate("lod_core.ui.equipment.unequip"), INPUT_ACTION_MENU_UNEQUIP, this::menuUnequip);
   }
 
   @Override
@@ -416,6 +420,18 @@ public class EquipmentScreen extends MenuScreen {
     loadItemsAndEquipmentForDisplay(equipment, null, 1);
     equipment.sort(menuEquipmentSlotComparator());
     setInventoryFromDisplay(equipment, gameState_800babc8.equipment_1e8, equipment.size());
+    this.loadingStage = 2;
+  }
+
+  private void menuUnequip() {
+    playMenuSound(2);
+
+    final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot));
+
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      character.equip(slot, null);
+    }
+
     this.loadingStage = 2;
   }
 

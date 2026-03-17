@@ -172,6 +172,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_TEXTBOX_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_textbox_confirm", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_UNEQUIP = INPUT_ACTION_REGISTRAR.register("menu_unequip", InputAction::hidden);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_UPDATE = INPUT_ACTION_REGISTRAR.register("title_update", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_CONVERT_MEMCARD = INPUT_ACTION_REGISTRAR.register("title_convert_memcard", InputAction::fixed);
@@ -279,6 +280,8 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.Y))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new KeyInputActivation(InputKey.Q))
 
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new KeyInputActivation(InputKey.U))
