@@ -280,7 +280,7 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
-      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.Y))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.X))
       .add(INPUT_ACTION_MENU_UNEQUIP.get(), new KeyInputActivation(InputKey.Q))
 
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
