@@ -79,9 +79,9 @@ public final class LodSpells {
   public static final RegistryDelegate<RetailSpell> SPELL62 = REGISTRAR.register("spell62", () -> new RetailSpell(0, 0, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0x40, 0, 62));
   public static final RegistryDelegate<RetailSpell> SPELL63 = REGISTRAR.register("spell63", () -> new RetailSpell(64, 0, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0x4, 0, 63));
   public static final RegistryDelegate<RetailSpell> SPELL64 = REGISTRAR.register("spell64", () -> new RetailSpell(0, 64, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 64));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_STAR_CHILDREN = REGISTRAR.register("miranda_star_children", () -> new RetailSpell(200, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 10));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_MOON_LIGHT = REGISTRAR.register("miranda_moon_light", () -> new RetailSpell(128, 4, 2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 11));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_GATES_OF_HEAVEN = REGISTRAR.register("miranda_gates_of_heaven", () -> new RetailSpell(136, 4, 2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 12));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_STAR_CHILDREN = REGISTRAR.register("miranda_star_children", () -> new RetailSpell(200, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 65));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_MOON_LIGHT = REGISTRAR.register("miranda_moon_light", () -> new RetailSpell(128, 4, 2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 66));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_GATES_OF_HEAVEN = REGISTRAR.register("miranda_gates_of_heaven", () -> new RetailSpell(136, 4, 2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 67));
   public static final RegistryDelegate<RetailSpell> SPELL68 = REGISTRAR.register("spell68", () -> new RetailSpell(192, 1, 0, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 68));
   public static final RegistryDelegate<RetailSpell> SPELL69 = REGISTRAR.register("spell69", () -> new RetailSpell(192, 0, 0, 0, 0, 100, 0, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 69));
   public static final RegistryDelegate<RetailSpell> SPELL70 = REGISTRAR.register("spell70", () -> new RetailSpell(192, 0, 0, 0, 0, 100, 0, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 70));
