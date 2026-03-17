@@ -72,6 +72,7 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Menus.clearRenderables;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.loadAndRenderMenus;
 import static legend.game.Menus.renderUi;
 import static legend.game.Menus.uploadRenderables;
@@ -571,6 +572,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8002a9c0L)
   public static void resetSubmapToNewGame() {
+    deallocateRenderables(0xff);
     submapCut_80052c30 = 675; // Opening
     submapScene_80052c34 = 4;
     collidedPrimitiveIndex_80052c38 = 0;
