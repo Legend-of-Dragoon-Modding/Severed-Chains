@@ -7,6 +7,8 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import javax.annotation.Nullable;
 
 import static legend.lodmod.LodMod.id;
+import static legend.lodmod.LodSpells.ALBERT_GASPLESS;
+import static legend.lodmod.LodSpells.ALBERT_WING_BLASTER;
 import static legend.lodmod.LodSpells.ASTRAL_DRAIN;
 import static legend.lodmod.LodSpells.ATOMIC_MIND;
 import static legend.lodmod.LodSpells.BLOSSOM_STORM;
@@ -25,6 +27,9 @@ import static legend.lodmod.LodSpells.GOLDEN_DRAGON;
 import static legend.lodmod.LodSpells.GRAND_STREAM;
 import static legend.lodmod.LodSpells.JADE_DRAGON;
 import static legend.lodmod.LodSpells.METEOR_STRIKE;
+import static legend.lodmod.LodSpells.MIRANDA_GATES_OF_HEAVEN;
+import static legend.lodmod.LodSpells.MIRANDA_MOON_LIGHT;
+import static legend.lodmod.LodSpells.MIRANDA_STAR_CHILDREN;
 import static legend.lodmod.LodSpells.MOON_LIGHT;
 import static legend.lodmod.LodSpells.RAINBOW_BREATH;
 import static legend.lodmod.LodSpells.RED_EYED_DRAGON;
@@ -79,12 +84,12 @@ public final class Legacy {
   public static final RegistryDelegate<SpellStats0c>[][] CHARACTER_SPELLS = new RegistryDelegate[][] {
     {FLAMESHOT, EXPLOSION, FINAL_BURST, RED_EYED_DRAGON},
     {WING_BLASTER, BLOSSOM_STORM, GASPLESS, JADE_DRAGON},
-    {STAR_CHILDREN, MOON_LIGHT, GATES_OF_HEAVEN, WHITE_SILVER_DRAGON},
+    {MOON_LIGHT, STAR_CHILDREN, GATES_OF_HEAVEN, WHITE_SILVER_DRAGON},
     {ASTRAL_DRAIN, DEATH_DIMENSION, DEMONS_GATE, DARK_DRAGON},
     {ATOMIC_MIND, THUNDER_KID, THUNDER_GOD, VIOLET_DRAGON},
-    {WING_BLASTER, ROSE_STORM, GASPLESS, JADE_DRAGON},
+    {ALBERT_WING_BLASTER, ROSE_STORM, ALBERT_GASPLESS, JADE_DRAGON},
     {FREEZING_RING, RAINBOW_BREATH, DIAMOND_DUST, BLUE_SEA_DRAGON},
     {GRAND_STREAM, METEOR_STRIKE, GOLDEN_DRAGON},
-    {STAR_CHILDREN, MOON_LIGHT, GATES_OF_HEAVEN, WHITE_SILVER_DRAGON},
+    {MIRANDA_MOON_LIGHT, MIRANDA_STAR_CHILDREN, MIRANDA_GATES_OF_HEAVEN, WHITE_SILVER_DRAGON},
   };
 }
