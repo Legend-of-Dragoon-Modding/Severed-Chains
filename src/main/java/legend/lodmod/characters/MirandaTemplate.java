@@ -1,17 +1,66 @@
 package legend.lodmod.characters;
 
 import legend.game.characters.CharacterData2c;
+import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.SpellDragoonLevelUnlockCriterion;
+import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
+import legend.game.characters.StatCollection;
+import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodSpells;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
+import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
+import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MAGIC_HIT_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class MirandaTemplate extends ShanaTemplate {
+  @Override
+  public CharacterData2c make(final GameState52c gameState) {
+    final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
+    final AlbertCharacterData character = new AlbertCharacterData(gameState, this, stats);
+
+    stats.getStat(ATTACK_HIT_STAT.get()).setRaw(100);
+    stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
+    stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10);
+
+    this.applyLevelUp(character, null);
+    this.applyDragoonLevelUp(character, null);
+
+    final VitalsStat hp = character.stats.getStat(HP_STAT.get());
+    final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+    hp.restore();
+    mp.restore();
+
+    character.addSpell(LodSpells.MIRANDA_MOON_LIGHT.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
+    character.addSpell(LodSpells.MIRANDA_STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));
+    character.addSpell(LodSpells.MIRANDA_GATES_OF_HEAVEN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(3))));
+    character.addSpell(LodSpells.WHITE_SILVER_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
+
+    return character;
+  }
+
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
     Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/231", "SECT/DRGN22.BIN/836/textures/7", "SECT/DRGN22.BIN/836/232", "SECT/DRGN22.BIN/836/233", "SECT/DRGN22.BIN/836/234");
