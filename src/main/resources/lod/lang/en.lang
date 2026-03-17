@@ -5,8 +5,10 @@ lod.name=Legend of Dragoon
 lod.campaign_type.retail.name=Legend of Dragoon
 
 # Config
+lod.config.max_level.label=Max Level
+lod.config.max_dragoon_level.label=Max Dragoon Level
 lod.config.item_stack_size.label=Item Stack Size
-lod.config.extended_dragoon_actions.label=Extended dragoon actions
+lod.config.extended_dragoon_actions.label=Extended Dragoon Actions
 lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
 lod.config.ui_colour.label=UI Colour
 

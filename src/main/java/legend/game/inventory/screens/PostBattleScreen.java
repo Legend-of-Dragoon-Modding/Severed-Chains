@@ -66,6 +66,8 @@ import static legend.game.combat.SBtld.drawBattleReportOverlays;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.sound.Audio.playMenuSound;
+import static legend.lodmod.LodConfig.MAX_DRAGOON_LEVEL;
+import static legend.lodmod.LodConfig.MAX_LEVEL;
 
 public class PostBattleScreen extends MenuScreen {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -518,7 +520,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010cd30
       final LevelUpActions levelUpActions = new LevelUpActions();
-      while(character.xp_00 >= character.getXpToNextLevel()) {
+      while(character.xp_00 >= character.getXpToNextLevel() && character.level_12 < CONFIG.getConfig(MAX_LEVEL.get())) {
         character.applyLevelUp(levelUpActions);
         this.levelsGained_8011e1c8.mergeInt(character, 1, Integer::sum);
       }
@@ -558,7 +560,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010cd30
       final LevelUpActions levelUpActions = new LevelUpActions();
-      while(character.dlevelXp_0e >= character.getDxpToNextLevel()) {
+      while(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < CONFIG.getConfig(MAX_DRAGOON_LEVEL.get())) {
         character.applyDragoonLevelUp(levelUpActions);
         this.dragoonLevelsGained_8011e1d8.mergeInt(character, 1, Integer::sum);
       }
