@@ -1068,7 +1068,7 @@ public class SMap extends EngineState<SMap> {
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
         final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
-        charData.stats.getStat(MP_STAT.get()).restore();
+        charData.stats.getStat(HP_STAT.get()).restore();
         charData.stats.getStat(MP_STAT.get()).restore();
       }
     }
