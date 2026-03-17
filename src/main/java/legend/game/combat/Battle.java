@@ -4013,11 +4013,19 @@ public class Battle extends EngineState<Battle> {
     }
 
     if(this.hud.battleMenu_800c6c34.currentAction != null) {
-      if(this.hud.battleMenu_800c6c34.currentAction.tick(this, this.hud.battleMenu_800c6c34.player_04) == BattleActionTickFlowControl.PAUSE_SCRIPT) {
+      final BattleActionTickFlowControl flow = this.hud.battleMenu_800c6c34.currentAction.tick(this, this.hud.battleMenu_800c6c34.player_04);
+
+      if(flow != BattleActionTickFlowControl.IGNORE) {
+        if(flow == BattleActionTickFlowControl.CONTINUE_SCRIPT) {
+          return FlowControl.CONTINUE;
+        }
+
+        if(flow == BattleActionTickFlowControl.REPEAT_TURN) {
+          this.hud.battleMenu_800c6c34.currentAction = null;
+        }
+
         return FlowControl.PAUSE_AND_REWIND;
       }
-
-      return FlowControl.CONTINUE;
     }
 
     if(script.scriptState_04.hasFlag(FLAG_RELOAD_BATTLE_ACTIONS)) {

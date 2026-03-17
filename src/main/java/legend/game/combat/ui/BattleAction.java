@@ -12,7 +12,7 @@ public abstract class BattleAction extends RegistryEntry {
 
   /** Once the action is used, called once per frame until */
   public BattleActionTickFlowControl tick(final Battle battle, final PlayerBattleEntity player) {
-    return BattleActionTickFlowControl.CONTINUE_SCRIPT;
+    return BattleActionTickFlowControl.IGNORE;
   }
 
   public abstract void draw(final Battle battle, final int index, final boolean selected);

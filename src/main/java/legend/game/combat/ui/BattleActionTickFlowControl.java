@@ -5,4 +5,8 @@ public enum BattleActionTickFlowControl {
   PAUSE_SCRIPT,
   /** Allow the player combat script to continue once menuing is finished */
   CONTINUE_SCRIPT,
+  /** Ignore the tick method */
+  IGNORE,
+  /** Gives the player another turn */
+  REPEAT_TURN,
 }
