@@ -1261,7 +1261,14 @@ public final class SItem {
   /**
    * @param flags Bitset - 0x1: render leading zeros, 0x2: unload at end of frame
    */
-  public static void renderNumber(final int x, final int y, int value, int flags, final int digitCount) {
+  public static void renderNumber(final int x, final int y, final int value, final int flags, final int digitCount) {
+    renderNumber(x, y, value, flags, digitCount, 0);
+  }
+
+  /**
+   * @param flags Bitset - 0x1: render leading zeros, 0x2: unload at end of frame
+   */
+  public static void renderNumber(final int x, final int y, int value, int flags, final int digitCount, final int clut) {
     if(value >= Math.pow(10, digitCount)) {
       value = (int)Math.pow(10, digitCount) - 1;
     }
@@ -1274,7 +1281,7 @@ public final class SItem {
         struct.flags_00 |= (flags & 0x2) != 0 ? Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER : Renderable58.FLAG_NO_ANIMATION;
         struct.glyph_04 = digit;
         struct.tpage_2c = 0x19;
-        struct.clut_30 = 0;
+        struct.clut_30 = clut;
         struct.z_3c = 33;
         struct.x_40 = x + 6 * i;
         struct.y_44 = y;

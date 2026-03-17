@@ -8,6 +8,7 @@ import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.CharacterCard;
+import legend.game.inventory.screens.controls.Glyph;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -44,6 +45,8 @@ import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
 
 public class AdditionsScreen extends MenuScreen {
+  private static final int ADDITION_SLOTS = 7;
+
   private int loadingStage;
   private double scrollAccumulator;
   private final Runnable unload;
@@ -54,6 +57,10 @@ public class AdditionsScreen extends MenuScreen {
   private Renderable58 additionHighlight;
   private final List<RegistryId> additionIds = new ArrayList<>();
   private int additionCount;
+  private int additionScroll;
+
+  private final Glyph upArrow;
+  private final Glyph downArrow;
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapX = true;
@@ -64,6 +71,12 @@ public class AdditionsScreen extends MenuScreen {
 
     this.characterCard = this.addControl(new CharacterCard());
     this.characterCard.setPos(8, 20);
+
+    this.upArrow = this.addControl(Glyph.blueSpinnerUp());
+    this.upArrow.setPos(this.getWidth(), 91);
+
+    this.downArrow = this.addControl(Glyph.blueSpinnerDown());
+    this.downArrow.setPos(this.getWidth(), this.getHeight() - 45);
   }
 
   @Override
@@ -72,6 +85,7 @@ public class AdditionsScreen extends MenuScreen {
       case 0 -> {
         this.charSlot = 0;
         this.selectedSlot = 0;
+        this.additionScroll = 0;
         this.additionHighlight = null;
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
@@ -92,6 +106,8 @@ public class AdditionsScreen extends MenuScreen {
           this.additionHighlight = allocateUiElement(117, 117, 39, this.getAdditionSlotY(this.selectedSlot) - 4);
           initHighlight(this.additionHighlight);
         }
+
+        this.updateAdditionScroll();
 
         allocateUiElement(69, 69, 0, 0); // Background left
         allocateUiElement(70, 70, 192, 0); // Background right
@@ -141,15 +157,13 @@ public class AdditionsScreen extends MenuScreen {
 
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-      if(allocate) {
-        for(int i = 0; i < this.additionCount; i++) {
-          final int y = this.getAdditionSlotY(i);
-          renderCharacter(24, y, i + 1); // Addition number
-        }
+      for(int i = 0; i < Math.min(this.additionCount - this.additionScroll, ADDITION_SLOTS); i++) {
+        final int y = this.getAdditionSlotY(i);
+        this.renderNumber(21, y, i + this.additionScroll + 1, 2, 0, 0x7ca9);
       }
 
-      for(int i = 0; i < this.additionIds.size(); i++) {
-        final RegistryId additionId = this.additionIds.get(i);
+      for(int i = 0; i < Math.min(this.additionIds.size() - this.additionScroll, ADDITION_SLOTS); i++) {
+        final RegistryId additionId = this.additionIds.get(i + this.additionScroll);
         final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
         final int y = this.getAdditionSlotY(i);
 
@@ -187,6 +201,23 @@ public class AdditionsScreen extends MenuScreen {
     this.loadingStage = 1;
   }
 
+  private void updateAdditionScroll() {
+    if(this.additionScroll > this.selectedSlot) {
+      this.additionScroll = this.selectedSlot;
+    }
+
+    if(this.additionScroll < this.selectedSlot - ADDITION_SLOTS + 1) {
+      this.additionScroll = this.selectedSlot - ADDITION_SLOTS + 1;
+    }
+
+    if(!this.additionIds.isEmpty()) {
+      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot - this.additionScroll) - 4;
+    }
+
+    this.upArrow.setVisibility(!this.additionIds.isEmpty() && this.additionScroll > 0);
+    this.downArrow.setVisibility(!this.additionIds.isEmpty() && this.additionCount - this.additionScroll > ADDITION_SLOTS);
+  }
+
   @Override
   protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
@@ -197,8 +228,8 @@ public class AdditionsScreen extends MenuScreen {
       return InputPropagation.PROPAGATE;
     }
 
-    for(int i = 0; i < 7; i++) {
-      if(!this.additionIds.isEmpty() && this.selectedSlot != i && MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
+    for(int i = 0; i < Math.min(this.additionIds.size(), ADDITION_SLOTS); i++) {
+      if(this.selectedSlot != i && MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
         playMenuSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
@@ -220,11 +251,11 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     if(button == PLATFORM.getMouseButton(0) && !this.additionIds.isEmpty()) {
-      for(int i = 0; i < this.additionIds.size(); i++) {
+      for(int i = 0; i < Math.min(this.additionIds.size(), ADDITION_SLOTS); i++) {
         if(MathHelper.inBox((int)x, (int)y, 31, this.getAdditionSlotY(i) - 3, 141, 13)) {
-          this.selectedSlot = i;
+          this.selectedSlot = i + this.additionScroll;
           this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
-          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19 = this.additionIds.get(i);
+          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19 = this.additionIds.get(this.selectedSlot);
           playMenuSound(2);
           unloadRenderable(this.additionHighlight);
           this.loadingStage = 1;
@@ -249,16 +280,16 @@ public class AdditionsScreen extends MenuScreen {
         this.selectedSlot--;
       } else if(this.allowWrapY) {
         playMenuSound(1);
-        this.selectedSlot = 6;
+        this.selectedSlot = this.additionCount - 1;
       }
 
-      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+      this.updateAdditionScroll();
     }
   }
 
   private void menuNavigateDown() {
     if(!this.additionIds.isEmpty()) {
-      if(this.selectedSlot < 6) {
+      if(this.selectedSlot < this.additionCount - 1) {
         playMenuSound(1);
         this.selectedSlot++;
       } else if(this.allowWrapY) {
@@ -266,7 +297,7 @@ public class AdditionsScreen extends MenuScreen {
         this.selectedSlot = 0;
       }
 
-      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+      this.updateAdditionScroll();
     }
   }
 
@@ -287,18 +318,18 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void menuNavigateHome() {
-    if(this.selectedSlot != 0) {
+    if(this.selectedSlot > 0) {
       playMenuSound(1);
       this.selectedSlot = 0;
-      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+      this.updateAdditionScroll();
     }
   }
 
   private void menuNavigateEnd() {
-    if(this.selectedSlot != 6) {
+    if(this.selectedSlot < ADDITION_SLOTS - 1) {
       playMenuSound(1);
-      this.selectedSlot = 6;
-      this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+      this.selectedSlot = ADDITION_SLOTS - 1;
+      this.updateAdditionScroll();
     }
   }
 
