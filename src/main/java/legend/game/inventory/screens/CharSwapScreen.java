@@ -205,10 +205,10 @@ public class CharSwapScreen extends MenuScreen {
     border.z_3c = 33;
     border.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-    allocateUiElement(0x9c, 0x9c, x, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    allocateUiElement(156, 156, x, y).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
     if(!CONFIG.getConfig(CoreMod.UNLOCK_PARTY_CONFIG.get()) && (character.partyFlags_04 & CAN_BE_IN_PARTY) == 0) {
-      final Renderable58 cantRemove = allocateUiElement(0x72, 0x72, x, y + 24);
+      final Renderable58 cantRemove = allocateUiElement(114, 114, x, y + 24);
       cantRemove.z_3c = 33;
       cantRemove.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
     }

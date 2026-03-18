@@ -1132,16 +1132,6 @@ public final class SItem {
     renderRightAlignedNumber(x - width - 5, y, numerator, clut);
   }
 
-  @Method(0x80105350L)
-  public static void renderFourDigitNumber(final int x, final int y, final int value) {
-    renderNumber(x, y, value, 0, 4);
-  }
-
-  @Method(0x8010568cL)
-  public static void renderFourDigitHp(final int x, final int y, final int value, final int max) {
-    renderFourDigitHp(x, y, value, max, 0);
-  }
-
   @Method(0x8010568cL)
   public static void renderFourDigitHp(final int x, final int y, int value, final int max, final int renderableFlags) {
     int clut = 0;
