@@ -49,9 +49,9 @@ public class CharacterCard extends Control {
   public void setZ(final int z) {
     super.setZ(z);
     this.background.setZ(z);
-    this.overlay.setZ(z - 2);
-    this.name.setZ(z - 1);
-    this.portrait.setZ(z - 1);
+    this.overlay.setZ(z - 1);
+    this.name.setZ(z);
+    this.portrait.setZ(z);
   }
 
   public CharacterData2c getCharacter() {
