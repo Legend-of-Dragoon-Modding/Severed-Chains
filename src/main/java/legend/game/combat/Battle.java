@@ -8644,10 +8644,6 @@ public class Battle extends EngineState<Battle> {
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
-    if(sp.getCurrent() == 0) {
-      this.hud.clearFullSpFlags(player.charSlot_276);
-    }
-
     //LAB_800f45f8
     return FlowControl.CONTINUE;
   }
