@@ -50,7 +50,7 @@ public class FractionalStat extends Stat {
 
   /** Restore this vital to max */
   public void restore() {
-    this.value = this.validator.applyAsInt(this.max);
+    this.value = this.validator.applyAsInt(this.getMax());
   }
 
   public int getMaxRaw() {
