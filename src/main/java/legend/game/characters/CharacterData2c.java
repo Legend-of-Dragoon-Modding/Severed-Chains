@@ -105,8 +105,7 @@ public class CharacterData2c {
       this.spells.put(entry.getKey(), new CharacterSpellInfo(entry.getValue()));
     }
 
-//    System.arraycopy(other.additionLevels_1a, 0, this.additionLevels_1a, 0, this.additionLevels_1a.length);
-//    System.arraycopy(other.additionXp_22, 0, this.additionXp_22, 0, this.additionXp_22.length);
+    this.template.copy(other, this);
   }
 
   public boolean canEquip(final EquipmentSlot slot, final Equipment equipment) {

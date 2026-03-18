@@ -18,6 +18,9 @@ import java.util.function.Consumer;
 
 public abstract class CharacterTemplate extends RegistryEntry {
   public abstract CharacterData2c make(final GameState52c gameState);
+  public void copy(final CharacterData2c from, final CharacterData2c to) {
+
+  }
 
   public abstract void serialize(final CharacterData2c character, final FileData data, final IntRef offset);
   public abstract SavedCharacter deserialize(final FileData data, final IntRef offset);

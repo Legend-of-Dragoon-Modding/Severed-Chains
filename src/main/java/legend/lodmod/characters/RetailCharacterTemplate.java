@@ -297,4 +297,26 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
     return 10;
   }
+
+  protected void swapAddition(final CharacterData2c character, final RegistryId from, final RegistryId to) {
+    final CharacterAdditionInfo info = character.getAdditionInfo(from);
+
+    if(info != null) {
+      character.removeAddition(from);
+      character.addAddition(to, info);
+    }
+
+    if(from.equals(character.selectedAddition_19)) {
+      character.selectedAddition_19 = to;
+    }
+  }
+
+  protected void swapSpell(final CharacterData2c character, final RegistryId from, final RegistryId to) {
+    final CharacterSpellInfo info = character.getSpellInfo(from);
+
+    if(info != null) {
+      character.removeSpell(from);
+      character.addSpell(to, info);
+    }
+  }
 }

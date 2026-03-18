@@ -45,7 +45,7 @@ public class AlbertTemplate extends LavitzTemplate {
   @Override
   public CharacterData2c make(final GameState52c gameState) {
     final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
-    final AlbertCharacterData character = new AlbertCharacterData(gameState, this, stats);
+    final CharacterData2c character = new CharacterData2c(gameState, this, stats);
 
     stats.getStat(ATTACK_HIT_STAT.get()).setRaw(100);
     stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
@@ -73,6 +73,21 @@ public class AlbertTemplate extends LavitzTemplate {
     character.selectedAddition_19 = LodAdditions.ALBERT_HARPOON.getId();
 
     return character;
+  }
+
+  @Override
+  public void copy(final CharacterData2c from, final CharacterData2c to) {
+    super.copy(from, to);
+
+    this.swapAddition(to, LodAdditions.HARPOON.getId(), LodAdditions.ALBERT_HARPOON.getId());
+    this.swapAddition(to, LodAdditions.SPINNING_CANE.getId(), LodAdditions.ALBERT_SPINNING_CANE.getId());
+    this.swapAddition(to, LodAdditions.ROD_TYPHOON.getId(), LodAdditions.ALBERT_ROD_TYPHOON.getId());
+    this.swapAddition(to, LodAdditions.GUST_OF_WIND_DANCE.getId(), LodAdditions.ALBERT_GUST_OF_WIND_DANCE.getId());
+    this.swapAddition(to, LodAdditions.FLOWER_STORM.getId(), LodAdditions.ALBERT_FLOWER_STORM.getId());
+
+    this.swapSpell(to, LodSpells.WING_BLASTER.getId(), LodSpells.ALBERT_WING_BLASTER.getId());
+    this.swapSpell(to, LodSpells.BLOSSOM_STORM.getId(), LodSpells.ROSE_STORM.getId());
+    this.swapSpell(to, LodSpells.GASPLESS.getId(), LodSpells.ALBERT_GASPLESS.getId());
   }
 
   @Override

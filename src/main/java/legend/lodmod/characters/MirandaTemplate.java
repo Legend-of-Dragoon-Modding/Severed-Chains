@@ -39,7 +39,7 @@ public class MirandaTemplate extends ShanaTemplate {
   @Override
   public CharacterData2c make(final GameState52c gameState) {
     final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
-    final AlbertCharacterData character = new AlbertCharacterData(gameState, this, stats);
+    final CharacterData2c character = new CharacterData2c(gameState, this, stats);
 
     stats.getStat(ATTACK_HIT_STAT.get()).setRaw(100);
     stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
@@ -59,6 +59,15 @@ public class MirandaTemplate extends ShanaTemplate {
     character.addSpell(LodSpells.WHITE_SILVER_DRAGON.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(5))));
 
     return character;
+  }
+
+  @Override
+  public void copy(final CharacterData2c from, final CharacterData2c to) {
+    super.copy(from, to);
+
+    this.swapSpell(to, LodSpells.MOON_LIGHT.getId(), LodSpells.MIRANDA_MOON_LIGHT.getId());
+    this.swapSpell(to, LodSpells.STAR_CHILDREN.getId(), LodSpells.MIRANDA_STAR_CHILDREN.getId());
+    this.swapSpell(to, LodSpells.GATES_OF_HEAVEN.getId(), LodSpells.MIRANDA_GATES_OF_HEAVEN.getId());
   }
 
   @Override
