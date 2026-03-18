@@ -4406,20 +4406,38 @@ public class Battle extends EngineState<Battle> {
     final CombatantStruct1a8 combatant = this.getCombatant(script.params_20[1].get());
 
     final String name = "Bent allocated by script " + script.scriptState_04.index;
-    final MonsterBattleEntity bent = new MonsterBattleEntity(this, name, combatant.charIndex_1a2);
-    final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
+
+    if(combatant.isPlayer()) {
+      final int scriptIndex = SCRIPTS.findFreeScriptState();
+      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, combatant.charIndex_1a2, scriptIndex, null);
+      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptIndex, name, bent);
+      this.initBent(script, state, combatant);
+      battleState_8006e398.addPlayer(state);
+    } else {
+      final MonsterBattleEntity bent = new MonsterBattleEntity(this, name, combatant.charIndex_1a2);
+      final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
+      this.initBent(script, state, combatant);
+      state.setFlag(FLAG_NO_SCRIPT | FLAG_MONSTER);
+      battleState_8006e398.addMonster(state);
+    }
+
+    return FlowControl.CONTINUE;
+  }
+
+  private void initBent(final RunningScript<?> script, final ScriptState<? extends BattleEntity27c> state, final CombatantStruct1a8 combatant) {
+    final BattleEntity27c bent = state.innerStruct_00;
+
     script.params_20[2].set(state.index);
+
     state.setTicker(bent::bentLoadingTicker);
     state.setDestructor(bent::bentDestructor);
     state.loadScriptFile(script.scriptState_04.frame().file, script.params_20[0].get());
-    state.setFlag(FLAG_NO_SCRIPT | FLAG_MONSTER);
+    state.setFlag(FLAG_NO_SCRIPT);
 
     bent.combatant_144 = combatant;
     bent.combatantIndex_26c = script.params_20[1].get();
-    bent.model_148.coord2_14.coord.transfer.set(0, 0, 0);
+    bent.model_148.coord2_14.coord.transfer.zero();
     bent.model_148.coord2_14.transforms.rotate.zero();
-    battleState_8006e398.addMonster(state);
-    return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Sets global asset index of a model for combatant")

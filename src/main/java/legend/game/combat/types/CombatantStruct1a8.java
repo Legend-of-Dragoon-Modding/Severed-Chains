@@ -52,6 +52,10 @@ public class CombatantStruct1a8 {
 
   public PlayerBattleEntity playerBent;
 
+  public boolean isPlayer() {
+    return (this.flags_19e & 0x4) != 0;
+  }
+
   public boolean isDragoon() {
     return (this.charIndex_1a2 & 0x1) != 0;
   }

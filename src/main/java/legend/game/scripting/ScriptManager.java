@@ -242,7 +242,7 @@ public class ScriptManager {
     Arrays.fill(this.scriptStatePtrArr_800bc1c0, null);
   }
 
-  private int findFreeScriptState() {
+  public int findFreeScriptState() {
     this.upperBound++;
 
     if(this.upperBound >= this.scriptStatePtrArr_800bc1c0.length) {
