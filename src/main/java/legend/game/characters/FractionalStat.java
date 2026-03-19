@@ -19,8 +19,8 @@ public class FractionalStat extends Stat {
   }
 
   @Override
-  public FractionalStat copy() {
-    final FractionalStat stat = new FractionalStat((StatType<? extends FractionalStat>)this.type, this.stats, this.validator);
+  public FractionalStat copy(final StatCollection stats) {
+    final FractionalStat stat = new FractionalStat((StatType<? extends FractionalStat>)this.type, stats, this.validator);
     stat.set(this);
     return stat;
   }

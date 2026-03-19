@@ -23,7 +23,7 @@ public class StatCollection implements Iterable<RegistryId> {
 
   public void set(final StatCollection other) {
     for(final var entry : other.stats.entrySet()) {
-      this.stats.put(entry.getKey(), entry.getValue().copy());
+      this.stats.put(entry.getKey(), entry.getValue().copy(this));
     }
   }
 
