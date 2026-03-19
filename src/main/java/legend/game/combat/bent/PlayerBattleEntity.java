@@ -555,7 +555,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   @Override
   public void setActiveSpell(final int spellId) {
-    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
+    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack and virulent arrow
     final SpellStats0c spell;
     if(spellId != -1 && spellId <= 127) {
       spell = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();

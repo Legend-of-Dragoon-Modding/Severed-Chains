@@ -552,7 +552,7 @@ public abstract class BattleEntity27c extends BattleObject {
         if(value.isRegistryId()) {
           this.spell_94 = REGISTRIES.spells.getEntry(value.getRegistryId()).get();
         } else {
-          this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[value.get()])).get();
+          this.setActiveSpell(value.get());
         }
       }
       case ITEM_ID -> this.item_d4 = new ItemStack(REGISTRIES.items.getEntry(value.getRegistryId()).get());
