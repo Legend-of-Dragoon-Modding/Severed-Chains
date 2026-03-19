@@ -491,8 +491,14 @@ public class WMap extends EngineState<WMap> {
   @Override
   public void loadSaveFromMenu(final SavedGame save) {
     this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
-    this.engineStateData = save.engineStateData;
-    this.wmapState_800bb10c = this.is(this.engineStateToTransitionTo) ? WmapState.INIT : WmapState.TRANSITION_TO_ENGINE_STATE;
+
+    if(this.is(this.engineStateToTransitionTo)) {
+      this.wmapState_800bb10c = WmapState.INIT;
+    } else {
+      this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
+      this.engineStateData = save.engineStateData;
+    }
+
     this.encounterAccumulator_800c6ae8 = 0;
   }
 
