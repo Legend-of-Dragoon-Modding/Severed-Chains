@@ -528,7 +528,7 @@ public class LodMod {
       }
     }
 
-    final int legacyFlags = battleState_8006e398.statusConditions_00[player.bentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
+    final int legacyFlags = battleState_8006e398.statusConditions_00[player.allBentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
     disableRetailBattleActions(legacyFlags, event.disabledActions);
 
     if((player.status_0e & 0x20) != 0) {

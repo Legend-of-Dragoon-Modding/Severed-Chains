@@ -4295,7 +4295,7 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptGetHitProperty(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     script.params_20[3].set(battlePreloadedEntities_1f8003f4.getHitProperty(
-      bent.charSlot_276,
+      bent.typeBentSlot_276,
       script.params_20[1].get(),
       script.params_20[2].get()
     ));
@@ -4412,7 +4412,7 @@ public class Battle extends EngineState<Battle> {
       final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, combatant.charIndex_1a2, scriptIndex, null);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptIndex, name, bent);
       this.initBent(script, state, combatant);
-      battleState_8006e398.addPlayer(state);
+      battleState_8006e398.addGenericBent(state);
     } else {
       final MonsterBattleEntity bent = new MonsterBattleEntity(this, name, combatant.charIndex_1a2);
       final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
@@ -4550,10 +4550,10 @@ public class Battle extends EngineState<Battle> {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
     if(script.params_20[2].get() != 0) {
-      script.params_20[1].set(bent.charSlot_276);
+      script.params_20[1].set(bent.typeBentSlot_276);
     } else {
       //LAB_800cd9e8
-      script.params_20[1].set(bent.bentSlot_274);
+      script.params_20[1].set(bent.allBentSlot_274);
     }
 
     //LAB_800cd9f4

@@ -46,7 +46,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   public String getName() {
     final Battle battle = ((Battle)currentEngineState_8004dd04);
-    return battle.currentEnemyNames_800c69d0[this.charSlot_276];
+    return battle.currentEnemyNames_800c69d0[this.typeBentSlot_276];
   }
 
   @Override

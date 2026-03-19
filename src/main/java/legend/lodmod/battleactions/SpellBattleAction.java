@@ -14,7 +14,7 @@ public class SpellBattleAction extends RetailBattleAction {
     //LAB_800f67b8
     //LAB_800f67d8
     //LAB_800f67f4
-    if(!battle.dragoonSpells_800c6960.get(player.charSlot_276).spells_01.isEmpty()) {
+    if(!battle.dragoonSpells_800c6960.get(player.typeBentSlot_276).spells_01.isEmpty()) {
       return super.use(battle, player);
     }
 

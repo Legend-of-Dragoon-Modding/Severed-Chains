@@ -45,12 +45,12 @@ public class FractionalStat extends Stat {
 
   /** Adds to the current value of this vital */
   public void restore(final int value) {
-    this.value += this.validator.applyAsInt(value);
+    this.setCurrent(this.getCurrent() + value);
   }
 
   /** Restore this vital to max */
   public void restore() {
-    this.value = this.validator.applyAsInt(this.getMax());
+    this.setCurrent(this.getMax());
   }
 
   public int getMaxRaw() {
@@ -59,11 +59,6 @@ public class FractionalStat extends Stat {
 
   public void setMaxRaw(final int value) {
     this.max = this.validator.applyAsInt(value);
-    final int actualMax = this.getMax();
-
-    if(this.value > actualMax) {
-      this.value = actualMax;
-    }
   }
 
   public int getMax() {

@@ -404,53 +404,54 @@ public class BattleStateEf4 {
   }
 
   public void addMonster(final ScriptState<MonsterBattleEntity> state) {
-    state.innerStruct_00.bentSlot_274 = this.allBents_e0c.size();
-    state.innerStruct_00.charSlot_276 = this.monsterCount_800c6768;
-    this.allBents_e0c.add(state);
+    this.addGenericBent(state);
+    state.innerStruct_00.typeBentSlot_276 = this.monsterCount_800c6768;
     this.monsterBents_e50[this.monsterCount_800c6768] = state;
     this.monsterCount_800c6768++;
   }
 
   public void removeMonster(final MonsterBattleEntity monster) {
-    this.allBents_e0c.remove(monster.bentSlot_274);
-
-    //LAB_800cb0d4
-    for(int i = monster.bentSlot_274; i < this.allBents_e0c.size(); i++) {
-      this.allBents_e0c.get(i).innerStruct_00.bentSlot_274 = i;
-    }
+    this.removeGenericBent(monster);
 
     //LAB_800cb11c
     this.monsterCount_800c6768--;
 
     //LAB_800cb168
-    for(int i = monster.charSlot_276; i < this.monsterCount_800c6768; i++) {
+    for(int i = monster.typeBentSlot_276; i < this.monsterCount_800c6768; i++) {
       this.monsterBents_e50[i] = this.monsterBents_e50[i + 1];
-      this.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
+      this.monsterBents_e50[i].innerStruct_00.typeBentSlot_276 = i;
     }
   }
 
   public void addPlayer(final ScriptState<PlayerBattleEntity> state) {
-    state.innerStruct_00.bentSlot_274 = this.allBents_e0c.size();
-    state.innerStruct_00.charSlot_276 = this.playerBents_e40.size();
-    this.allBents_e0c.add(state);
+    this.addGenericBent(state);
+    state.innerStruct_00.typeBentSlot_276 = this.playerBents_e40.size();
     this.playerBents_e40.add(state);
   }
 
   public void removePlayer(final PlayerBattleEntity player) {
-    this.allBents_e0c.remove(player.bentSlot_274);
-
-    //LAB_800cb0d4
-    for(int i = player.bentSlot_274; i < this.allBents_e0c.size(); i++) {
-      this.allBents_e0c.get(i).innerStruct_00.bentSlot_274 = i;
-    }
+    this.removeGenericBent(player);
 
     //LAB_800cb11c
     //LAB_800cb1b8
-    this.playerBents_e40.remove(player.charSlot_276);
+    this.playerBents_e40.remove(player.typeBentSlot_276);
 
     //LAB_800cb1f4
-    for(int i = player.charSlot_276; i < this.playerBents_e40.size(); i++) {
-      this.playerBents_e40.get(i).innerStruct_00.charSlot_276 = i;
+    for(int i = player.typeBentSlot_276; i < this.playerBents_e40.size(); i++) {
+      this.playerBents_e40.get(i).innerStruct_00.typeBentSlot_276 = i;
+    }
+  }
+
+  public void addGenericBent(final ScriptState<? extends BattleEntity27c> state) {
+    state.innerStruct_00.allBentSlot_274 = this.allBents_e0c.size();
+    this.allBents_e0c.add(state);
+  }
+
+  public void removeGenericBent(final BattleEntity27c player) {
+    this.allBents_e0c.remove(player.allBentSlot_274);
+
+    for(int i = player.allBentSlot_274; i < this.allBents_e0c.size(); i++) {
+      this.allBents_e0c.get(i).innerStruct_00.allBentSlot_274 = i;
     }
   }
 

@@ -230,8 +230,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public int currentAnimIndex_270;
   /** Also monster ID */
   public final int charId_272;
-  public int bentSlot_274;
-  public int charSlot_276;
+  public int allBentSlot_274;
+  public int typeBentSlot_276 = -1;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
@@ -716,8 +716,10 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cb11c
     if(state.hasFlag(FLAG_MONSTER)) {
       battleState_8006e398.removeMonster((MonsterBattleEntity)this);
-    } else {
+    } else if(this.typeBentSlot_276 != -1) {
       battleState_8006e398.removePlayer((PlayerBattleEntity)this);
+    } else {
+      battleState_8006e398.removeGenericBent(this);
     }
 
     this.model_148.deleteModelParts();

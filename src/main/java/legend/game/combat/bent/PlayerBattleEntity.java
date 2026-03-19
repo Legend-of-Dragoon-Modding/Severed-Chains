@@ -171,7 +171,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       //LAB_800f2b94
       int additionMultiplier = 0;
       for(int i = 0; i < this.additionHits_56; i++) {
-        additionMultiplier += battlePreloadedEntities_1f8003f4.getHitProperty(this.charSlot_276, i, 4);
+        additionMultiplier += battlePreloadedEntities_1f8003f4.getHitProperty(this.typeBentSlot_276, i, 4);
       }
 
       //LAB_800f2bb4
@@ -357,7 +357,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   protected int getAdditionHitCount() {
-    return battlePreloadedEntities_1f8003f4.getHitCount(this.charSlot_276);
+    return battlePreloadedEntities_1f8003f4.getHitCount(this.typeBentSlot_276);
   }
 
   @Override

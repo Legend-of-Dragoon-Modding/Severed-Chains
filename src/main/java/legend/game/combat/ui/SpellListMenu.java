@@ -29,7 +29,7 @@ public class SpellListMenu extends ListMenu {
 
   public SpellListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
     super(hud, activePlayer, 186, modifyLastPosition(lastPosition), onClose);
-    this.spells = this.hud.battle.dragoonSpells_800c6960.get(activePlayer.charSlot_276);
+    this.spells = this.hud.battle.dragoonSpells_800c6960.get(activePlayer.typeBentSlot_276);
   }
 
   private static ListPosition modifyLastPosition(final ListPosition lastPosition) {
