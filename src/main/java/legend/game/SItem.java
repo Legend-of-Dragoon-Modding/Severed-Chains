@@ -1466,7 +1466,7 @@ public final class SItem {
       //LAB_8010886c
       renderNumber( 53, 140, magicAttack.getRaw(), 0x2, 4);
       renderNumberComparison( 85, 140, equipmentMagicAttack, newEquipmentMagicAttack, 4);
-      renderNumberComparison(120, 140, magicAttack.getRaw() + equipmentMagicAttack, magicAttack.getRaw() + equipmentMagicAttack, 4);
+      renderNumberComparison(120, 140, magicAttack.getRaw() + equipmentMagicAttack, magicAttack.getRaw() + newEquipmentMagicAttack, 4);
 
       if(character.hasDragoon()) {
         renderNumberComparisonWithPercent(153, 140, dragoonMagicAttack.getRaw(), dragoonMagicAttack.getRaw(), 4);
