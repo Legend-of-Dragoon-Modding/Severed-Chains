@@ -1149,7 +1149,7 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800d9dc0L)
   private void restoreVitalsAndSp(final int charIndex) {
-    gameState_800babc8.charData_32c.get(charIndex).stats.getStat(SP_STAT.get()).setCurrent(500);
+    gameState_800babc8.charData_32c.get(charIndex).stats.getStat(SP_STAT.get()).restore();
     this.restoreCharDataVitals(-1);
   }
 
