@@ -46,6 +46,10 @@ public final class LodSpells {
   public static final RegistryDelegate<RetailSpell> GRAND_STREAM = REGISTRAR.register("grand_stream", () -> new RetailSpell(200, 0, 0, 64, 0, 100, 20, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 29));
   public static final RegistryDelegate<RetailSpell> METEOR_STRIKE = REGISTRAR.register("meteor_strike", () -> new RetailSpell(200, 0, 0, 32, 0, 100, 30, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 30));
   public static final RegistryDelegate<RetailSpell> GOLDEN_DRAGON = REGISTRAR.register("golden_dragon", () -> new DragonSpell(200, 0, 0, 16, 0, 100, 80, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 31, 76));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_STAR_CHILDREN = REGISTRAR.register("miranda_star_children", () -> new RetailSpell(200, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 65));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_MOON_LIGHT = REGISTRAR.register("miranda_moon_light", () -> new RetailSpell(128, 4, 2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 66));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_GATES_OF_HEAVEN = REGISTRAR.register("miranda_gates_of_heaven", () -> new RetailSpell(136, 4, 2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 67));
+
   public static final RegistryDelegate<RetailSpell> SPELL32 = REGISTRAR.register("spell32", () -> new RetailSpell(64, 0, 0, 128, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 32));
   public static final RegistryDelegate<RetailSpell> SPELL33 = REGISTRAR.register("spell33", () -> new RetailSpell(64, 0, 0, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 33));
   public static final RegistryDelegate<RetailSpell> SPELL34 = REGISTRAR.register("spell34", () -> new RetailSpell(64, 0, 0, 64, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 34));
@@ -79,9 +83,9 @@ public final class LodSpells {
   public static final RegistryDelegate<RetailSpell> SPELL62 = REGISTRAR.register("spell62", () -> new RetailSpell(0, 0, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0x40, 0, 62));
   public static final RegistryDelegate<RetailSpell> SPELL63 = REGISTRAR.register("spell63", () -> new RetailSpell(64, 0, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0x4, 0, 63));
   public static final RegistryDelegate<RetailSpell> SPELL64 = REGISTRAR.register("spell64", () -> new RetailSpell(0, 64, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 64));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_STAR_CHILDREN = REGISTRAR.register("miranda_star_children", () -> new RetailSpell(200, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 65));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_MOON_LIGHT = REGISTRAR.register("miranda_moon_light", () -> new RetailSpell(128, 4, 2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 66));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_GATES_OF_HEAVEN = REGISTRAR.register("miranda_gates_of_heaven", () -> new RetailSpell(136, 4, 2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 67));
+  public static final RegistryDelegate<RetailSpell> SPELL65 = REGISTRAR.register("spell65", () -> new RetailSpell(0, 32, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 65));
+  public static final RegistryDelegate<RetailSpell> SPELL66 = REGISTRAR.register("spell66", () -> new RetailSpell(0, 96, 16, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 66));
+  public static final RegistryDelegate<RetailSpell> SPELL67 = REGISTRAR.register("spell67", () -> new RetailSpell(192, 2, 0, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 67));
   public static final RegistryDelegate<RetailSpell> SPELL68 = REGISTRAR.register("spell68", () -> new RetailSpell(192, 1, 0, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 68));
   public static final RegistryDelegate<RetailSpell> SPELL69 = REGISTRAR.register("spell69", () -> new RetailSpell(192, 0, 0, 0, 0, 100, 0, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 69));
   public static final RegistryDelegate<RetailSpell> SPELL70 = REGISTRAR.register("spell70", () -> new RetailSpell(192, 0, 0, 0, 0, 100, 0, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 70));

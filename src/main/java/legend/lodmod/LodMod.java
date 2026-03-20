@@ -231,7 +231,7 @@ public class LodMod {
     "spell40", "spell41", "spell42", "spell43", "spell44", "spell45", "spell46", "spell47",
     "spell48", "spell49", "spell50", "spell51", "spell52", "spell53", "spell54", "spell55",
     "spell56", "spell57", "spell58", "spell59", "spell60", "spell61", "spell62", "spell63",
-    "spell64", "star_children", "moon_light", "gates_of_heaven", "spell68", "spell69", "spell70", "spell71",
+    "spell64", "spell65", "spell66", "spell67", "spell68", "spell69", "spell70", "spell71",
     "spell72", "spell73", "spell74", "spell75", "spell76", "spell77", "spell78", "spell79",
     "spell80", "spell81", "spell82", "spell83", "spell84", "spell85", "spell86", "spell87",
     "spell88", "spell89", "spell90", "spell91", "spell92", "spell93", "spell94", "spell95",
