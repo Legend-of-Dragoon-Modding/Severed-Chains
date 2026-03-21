@@ -36,7 +36,7 @@ public class RecoverSpItem extends BattleItem {
   @Override
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
-      if(!gameState_800babc8.charData_32c.get(i).stats.getStat(SP_STAT.get()).isFull()) {
+      if(!gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)).stats.getStat(SP_STAT.get()).isFull()) {
         return true;
       }
     }
