@@ -1664,7 +1664,7 @@ public final class SItem {
 
         if(messageBox.text_00 != null) {
           final int textHeight = 12;
-          final int textOffset = textHeight / 2;
+          final int textOffset = messageBox.text_00.length * textHeight / 2;
           y -= textOffset;
 
           for(final String line : messageBox.text_00) {
@@ -1695,7 +1695,8 @@ public final class SItem {
           //LAB_8010ef10
           if(messageBox.highlightRenderable_04 == null) {
             messageBox.highlightRenderable_04 = new Highlight();
-            messageBox.highlightRenderable_04.setSize(Math.max(DEFAULT_FONT.textWidth(messageBox.yes), DEFAULT_FONT.textWidth(messageBox.no)) + 12, DEFAULT_FONT.textHeight(messageBox.yes));
+            final int horizontalSpacing = 12;
+            messageBox.highlightRenderable_04.setSize(Math.max(DEFAULT_FONT.textWidth(messageBox.yes), DEFAULT_FONT.textWidth(messageBox.no)) + horizontalSpacing, DEFAULT_FONT.textHeight(messageBox.yes));
             messageBox.highlightRenderable_04.setPos(messageBox.x_1c + 60 - messageBox.highlightRenderable_04.getWidth() / 2, messageBox.menuIndex_18 * messageBox.highlightRenderable_04.getHeight() + y + 5);
             messageBox.highlightRenderable_04.setZ(31);
           }
