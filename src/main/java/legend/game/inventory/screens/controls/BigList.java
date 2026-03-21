@@ -29,7 +29,7 @@ public class BigList<T> extends Control {
   private final List<T> entries = new ArrayList<>();
 
   private int scroll;
-  private int slot;
+  private int slot = -1;
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapY = true;
@@ -54,14 +54,15 @@ public class BigList<T> extends Control {
     this.entries.add(entry);
     final Label label = this.addLabel();
     this.labels.add(label);
+
+    if(this.entries.size() == 1) {
+      this.highlight(0);
+    }
+
     this.updateEntries();
 
     if(entry instanceof final CompletionStage<?> future) {
       future.thenAcceptAsync(e -> label.setText(this.entryToString.apply(entry)));
-    }
-
-    if(this.entries.size() == 1) {
-      this.highlight(0);
     }
   }
 
@@ -167,15 +168,15 @@ public class BigList<T> extends Control {
     }
 
     if(index != this.slot) {
+      this.slot = index;
       playMenuSound(1);
+
+      if(this.highlightHandler != null) {
+        this.highlightHandler.highlight(this.getSelected());
+      }
     }
 
-    this.slot = index;
     this.highlight.setY(this.labels.get(index).getY());
-
-    if(this.highlightHandler != null) {
-      this.highlightHandler.highlight(this.getSelected());
-    }
   }
 
   @Override
