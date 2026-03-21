@@ -393,18 +393,14 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
             if(result1 == MessageBoxResult.YES) {
               final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
-              if(equipResult.previousEquipment != null) {
-                if(equipResult.success) {
-                  if(giveEquipment(equipResult.previousEquipment)) {
-                    gameState_800babc8.gold_94 -= this.entry.price;
-                  } else {
-                    equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-                    this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
-                  }
-                } else {
-                  equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-                  this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.ALERT, onResult -> {})));
-                }
+              if(!equipResult.success) {
+                gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot)).equip(this.entry.item.slot, null);
+                this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.ALERT, onResult -> {})));
+              } else if(equipResult.previousEquipment != null && !giveEquipment(equipResult.previousEquipment)) {
+                equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+                this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
+              } else {
+                gameState_800babc8.gold_94 -= this.entry.price;
               }
             } else {
               this.giveUnequipped(this.screen, this.entry);
