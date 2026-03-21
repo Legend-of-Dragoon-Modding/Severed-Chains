@@ -168,8 +168,11 @@ public class BigList<T> extends Control {
     }
 
     if(index != this.slot) {
+      if(this.slot != -1) {
+        playMenuSound(1);
+      }
+
       this.slot = index;
-      playMenuSound(1);
 
       if(this.highlightHandler != null) {
         this.highlightHandler.highlight(this.getSelected());
