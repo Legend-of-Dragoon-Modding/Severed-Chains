@@ -76,6 +76,14 @@ public class MirandaTemplate extends ShanaTemplate {
   }
 
   @Override
+  public int prepareAttack(final CharacterData2c character, final PlayerBattleEntity bent) {
+    bent.battle.playBentSound(1, bent, 0, 0, 0, bent.isDragoon() ? 38 : 46, 0);
+    bent.battle.playBentSound(1, bent, 4, 0, 0, bent.isDragoon() ? 18 : 22, 0);
+    bent.battle.playBentSound(1, bent, 5, 0, 0, bent.isDragoon() ? 40 : 48, 0);
+    return bent.isDragoon() ? 38 : 46;
+  }
+
+  @Override
   public Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent) {
     return Loader.resolve(Path.of("SECT/DRGN0.BIN/1306"));
   }

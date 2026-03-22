@@ -49,6 +49,14 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   }
 
   @Override
+  public int prepareAttack(final CharacterData2c character, final PlayerBattleEntity bent) {
+    bent.battle.playBentSound(1, bent, 0, 0, 0, 44, 0);
+    bent.battle.playBentSound(1, bent, 4, 0, 0, 16, 0);
+    bent.battle.playBentSound(1, bent, 5, 0, 0, 46, 0);
+    return 44;
+  }
+
+  @Override
   public boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
     return (equipment.equipableFlags_03 & 0x2) != 0;
   }

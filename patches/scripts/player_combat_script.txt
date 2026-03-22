@@ -2533,8 +2533,10 @@ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_277] ; operand, left, right, addr
 call SEffe::scriptSetEffectErrorFlag, stor[18], 0x0 ; effectIndex, clear
 LABEL_277:
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x8 ; bentIndex, animIndex
-mov 0x5, stor[23] ; source, dest
+
+call Battle::scriptPrepareAttack, stor[23]
 wait stor[23] ; frames
+
 mov 0x0, stor[8] ; source, dest
 LABEL_278:
 mov var[34][stor[8]], stor[9] ; source, dest
@@ -2959,16 +2961,10 @@ LABEL_320:
 
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x10 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
-gosub inl[:LABEL_348] ; addr
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x0, 0x0, 0x0, inl[:LABEL_352[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x4, 0x0, 0x0, inl[:LABEL_353[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x5, 0x0, 0x0, inl[:LABEL_354[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 
-call Battle::scriptPrepareAttack
-
-gosub inl[:LABEL_348] ; addr
-mov inl[:LABEL_352[stor[8]]], stor[23] ; source, dest
+call Battle::scriptPrepareAttack, stor[23]
 wait stor[23] ; frames
+
 mov stor[0], stor[30] ; source, dest
 mov 0x0, stor[9] ; source, dest
 mov 0xfffffc00, stor[10] ; source, dest
@@ -3209,36 +3205,6 @@ call Battle::scriptSetBentRotationY, stor[0], stor[26] ; bentIndex, y
 deallocate_other stor[18] ; index
 deallocate_other stor[19] ; index
 return
-
-; SUBROUTINE
-LABEL_348:
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp ==, 0x8, stor[8], inl[:LABEL_349] ; operand, left, right, addr
-mov 0x0, stor[8] ; source, dest
-jmp inl[:LABEL_350] ; addr
-LABEL_349:
-mov 0x2, stor[8] ; source, dest
-LABEL_350:
-gosub inl[:IS_DRAGOON] ; addr
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_351] ; operand, left, right, addr
-incr stor[8] ; operand
-LABEL_351:
-return
-LABEL_352:
-data 0x2c
-data 0x2c
-data 0x2e
-data 0x26
-LABEL_353:
-data 0x10
-data 0x10
-data 0x16
-data 0x12
-LABEL_354:
-data 0x2e
-data 0x2e
-data 0x30
-data 0x28
 
 ; SUBROUTINE
 LABEL_356:
@@ -5113,7 +5079,6 @@ gosub inl[:CLEAR_BENT_STATUS] ; addr
 call Battle::scriptDisableBentShadow, stor[29] ; bentIndex
 call Battle::FUN_800ccba4, stor[29], 0x1 ; bentIndex, isDragoon
 call DrgnFiles::scriptWaitForFilesToLoad ; index
-gosub inl[:LABEL_712] ; addr
 call Battle::scriptGetBentStat, stor[29], FOOT_MODEL_PART, inl[:LABEL_546_FOOT_MODEL_PART_INDEX]
 call Battle::scriptAttachShadowToBentModelPart, stor[29], inl[:LABEL_546_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
 call Battle::scriptSetLoadingBentAnimationIndex, stor[29], 0x0 ; bentIndex, animIndex
@@ -6438,7 +6403,6 @@ mov 0xa, stor[23] ; source, dest
 wait stor[23] ; frames
 call SEffe::scriptAddConstantColourScalerAttachment, stor[18], 0xffffffff, 0x19, 0x0, 0x0, 0x0 ; effectIndex, parentIndex, ticks, destR, destG, destB
 call SEffe::scriptAddLifespanAttachment, stor[18], 0x19 ; effectIndex, ticks
-gosub inl[:GET_BENT_CHAR_ID] ; s8 = bent s30's char id
 call SEffe::allocateDeffTmd, stor[20], 0xfff0d ; effectIndex, flags
 call SEffe::scriptSetRelativePosition, stor[20], stor[30], 0x0, 0xfffffc00, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[20], 0xffffffff, 0x4000, 0x4000, 0x4000 ; bobjIndex1, bobjIndex2, x, y, z
@@ -6743,20 +6707,6 @@ return
 ; @return int s8 char id
 GET_MY_CHAR_ID:
 call Battle::scriptGetCharOrMonsterId, stor[0], stor[8] ; bentIndex, id
-return
-
-
-
-; SUBROUTINE
-GET_BENT_CHAR_ID:
-call Battle::scriptGetCharOrMonsterId, stor[30], stor[8] ; bentIndex, id
-return
-
-
-
-; SUBROUTINE
-LABEL_712:
-call Battle::scriptGetCharOrMonsterId, stor[29], stor[23] ; bentIndex, id
 return
 
 

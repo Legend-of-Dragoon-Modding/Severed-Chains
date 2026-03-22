@@ -1258,14 +1258,19 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Calls prepareAttack on the player's weapon")
+  @ScriptDescription("Calls prepareAttack on the player and player's weapon")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "waitTicks", description = "The number of ticks to wait before the attack starts")
   private FlowControl scriptPrepareAttack(final RunningScript<PlayerBattleEntity> script) {
-    final Equipment weapon = script.scriptState_04.innerStruct_00.equipment_11e.get(EquipmentSlot.WEAPON);
+    final PlayerBattleEntity player = script.scriptState_04.innerStruct_00;
+    final int ticks = player.character.template.prepareAttack(player.character, player);
+
+    final Equipment weapon = player.equipment_11e.get(EquipmentSlot.WEAPON);
 
     if(weapon != null) {
       weapon.prepareAttack(script.scriptState_04);
     }
 
+    script.params_20[0].set(ticks);
     return FlowControl.CONTINUE;
   }
 
@@ -1324,13 +1329,7 @@ public class Battle extends EngineState<Battle> {
    * @param type 1 - player, 2 - monster
    */
   @Method(0x80019e24L)
-  private void playBentSound(final int type, final ScriptState<BattleEntity27c> state, final int soundIndex, final int a3, final int a4, final int initialDelay, final int repeatDelay) {
-    final BattleEntity27c bent = state.innerStruct_00;
-
-    //LAB_80019f70
-    //LAB_80019f74
-    //LAB_80019f7c
-    //LAB_80019eac
+  public void playBentSound(final int type, final BattleEntity27c bent, final int soundIndex, final int a3, final int a4, final int initialDelay, final int repeatDelay) {
     final SoundFile soundFile = bent.soundFile;
 
     // Retail bug: one of the Divine Dragon Spirit's attack scripts tries to play soundIndex 10 but there are only 10 elements in the patch/sequence file (DRGN0.1225.1.1)
@@ -1405,7 +1404,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001abd0L)
   private FlowControl scriptPlayBentSound(final RunningScript<?> script) {
-    this.playBentSound(script.params_20[0].get(), SCRIPTS.getState(script.params_20[1].get(), BattleEntity27c.class), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    this.playBentSound(script.params_20[0].get(), SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
     return FlowControl.CONTINUE;
   }
 

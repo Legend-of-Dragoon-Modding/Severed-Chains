@@ -53,6 +53,11 @@ public abstract class CharacterTemplate extends RegistryEntry {
   /** Must load the following files in order: model, texture, idle animation, walking animation, running animation */
   public abstract void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad);
 
+  /** Returns the number of frames to wait before the attack starts */
+  public int prepareAttack(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return 5;
+  }
+
   public boolean hasWeaponTrail(final CharacterData2c character, final PlayerBattleEntity bent) {
     return true;
   }
