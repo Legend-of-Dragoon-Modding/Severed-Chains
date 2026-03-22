@@ -68,7 +68,7 @@ public final class SBtld {
 
   @Method(0x80018e84L)
   public static void drawBattleReportOverlays() {
-    final int[] sp0x30 = {0x42, 0x43, 0x02000802, 0x000a0406}; // These last two entries must be wrong but they might be unused cause I don't see anything wrong
+    final int[] sp0x30 = {0x42, 0x43};
 
     //LAB_80018f04
     BattleReportOverlayList10 current = battleReportOverlayLists_8004f658;

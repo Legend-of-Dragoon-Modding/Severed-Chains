@@ -45,7 +45,6 @@ import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.clearRenderables;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
-import static legend.game.Menus.uploadRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.giveItems;
@@ -899,7 +898,6 @@ public class PostBattleScreen extends MenuScreen {
     this.drawEightDigitNumber(96, 156, gameState_800babc8.gold_94);
 
     //LAB_8010ebb0
-    uploadRenderables();
     drawBattleReportOverlays();
   }
 
