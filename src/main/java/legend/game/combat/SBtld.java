@@ -18,6 +18,8 @@ import legend.game.types.Translucency;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodMod;
 
+import java.util.Iterator;
+
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
@@ -68,67 +70,35 @@ public final class SBtld {
 
   @Method(0x80018e84L)
   public static void drawBattleReportOverlays() {
-    final int[] sp0x30 = {0x42, 0x43};
+    final int[] cluts = {0x42, 0x43};
+
+    final Iterator<BattleReportOverlayList10> it = battleReportOverlayLists_8004f658.iterator();
 
     //LAB_80018f04
-    BattleReportOverlayList10 current = battleReportOverlayLists_8004f658;
-    while(current != null) {
-      do {
-        current.ticksRemaining_03--;
+    while(it.hasNext()) {
+      final BattleReportOverlayList10 current = it.next();
+      current.ticksRemaining_03--;
 
-        if(current.ticksRemaining_03 != 0) {
-          break;
-        }
-
-        if(current.next_08 == null) {
-          //LAB_80018f48
-          battleReportOverlayLists_8004f658 = current.prev_0c;
-        } else {
-          //LAB_80018f50
-          current.next_08.prev_0c = null;
-        }
-
-        //LAB_80018f54
-        final BattleReportOverlayList10 list = current.prev_0c;
-
-        if(list != null) {
-          if(current.next_08 == null) {
-            list.next_08 = null;
-            battleReportOverlayLists_8004f658 = current.prev_0c;
-          } else {
-            //LAB_80018f84
-            current.prev_0c.next_08 = current.next_08;
-            current.next_08.prev_0c = current.prev_0c;
-          }
-        }
-
-        //LAB_80018fa0
-        if(list == null) {
-          return;
-        }
-        current = list;
-      } while(true);
+      if(current.ticksRemaining_03 == 0) {
+        it.remove();
+        continue;
+      }
 
       //LAB_80018fd0
       //LAB_80018fd4
-      for(int overlayIndex = 0; overlayIndex < 8; overlayIndex++) {
+      for(int overlayIndex = 0; overlayIndex < current.overlays_04.length; overlayIndex++) {
         final BattleReportOverlay0e overlay = current.overlays_04[overlayIndex];
 
         overlay.negaticks_08++;
 
         if(overlay.negaticks_08 >= 0) {
-          final int v1 = overlay.clutAndTranslucency_0c >>> 8 & 0xf;
-
-          if(v1 == 0) {
+          if(overlay.state_0d == 0) {
             //LAB_80019040
             overlay._09--;
 
             if(overlay.widthScale_04 != 0) {
               overlay.widthScale_04 -= 0x492;
               overlay.heightScale_06 -= 0x492;
-            } else if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
-              //LAB_80019084
-              overlay.clutAndTranslucency_0c &= 0x8fff;
             }
 
             //LAB_80019094
@@ -136,25 +106,23 @@ public final class SBtld {
               overlay.negaticks_08 = 0;
 
               if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
-                overlay.clutAndTranslucency_0c &= 0x7fff;
-                overlay.clutAndTranslucency_0c &= 0xf0ff;
-                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+                overlay.state_0d++;
               }
             }
-          } else if(v1 == 1) {
+          } else if(overlay.state_0d == 1) {
             //LAB_800190d4
-            overlay.clutAndTranslucency_0c = sp0x30[overlay.clutAndTranslucency_0c >>> 15];
+            overlay.clut_0c = cluts[overlay.flash_0d];
+            overlay.flash_0d ^= 0x1;
 
             if(overlay.negaticks_08 == 10) {
               overlay._09 = (byte)(simpleRand() % 10 + 2);
 
               if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
-                overlay.clutAndTranslucency_0c &= 0xf0ff;
-                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+                overlay.state_0d++;
               }
             }
             //LAB_80019028
-          } else if(v1 == 2) {
+          } else if(overlay.state_0d == 2) {
             //LAB_80019164
             overlay._09--;
 
@@ -163,11 +131,10 @@ public final class SBtld {
               overlay._09 = 8;
 
               if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
-                overlay.clutAndTranslucency_0c &= 0xf0ff;
-                overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+                overlay.state_0d++;
               }
             }
-          } else if(v1 == 3) {
+          } else if(overlay.state_0d == 3) {
             //LAB_800191b8
             overlay._09--;
 
@@ -186,8 +153,6 @@ public final class SBtld {
           battleUiParts.queueLevelUp(overlay);
         }
       }
-
-      current = current.prev_0c;
     }
 
     //LAB_800192b4
@@ -197,14 +162,8 @@ public final class SBtld {
   public static void addLevelUpOverlay(int x, final int y) {
     final BattleReportOverlayList10 s0 = new BattleReportOverlayList10();
     s0.ticksRemaining_03 = 52;
-    s0.prev_0c = battleReportOverlayLists_8004f658;
 
-    if(s0.prev_0c != null) {
-      s0.prev_0c.next_08 = s0;
-    }
-
-    //LAB_800193b4
-    battleReportOverlayLists_8004f658 = s0;
+    battleReportOverlayLists_8004f658.add(s0);
 
     //LAB_800193dc
     for(int i = 0; i < 8; i++) {
@@ -215,16 +174,16 @@ public final class SBtld {
       overlay.heightScale_06 = 0x1ffe;
       overlay.negaticks_08 = (byte)~i;
       overlay._09 = (byte)(20 - i);
-      //      overlay.u_0b = levelUpUs_8001032c[i];
       overlay.letterIndex = i;
-      overlay.clutAndTranslucency_0c = 0x204a;
+      overlay.clut_0c = 0x4a;
+      overlay.translucency_0d = Translucency.B_PLUS_F;
       x += levelUpOffsets_80010334[i];
     }
   }
 
   @Method(0x80019470L)
-  public static void FUN_80019470() {
-    battleReportOverlayLists_8004f658 = null;
+  public static void clearBattleReportOverlays() {
+    battleReportOverlayLists_8004f658.clear();
   }
 
   @Method(0x8001b410L)

@@ -59,8 +59,8 @@ import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
-import static legend.game.combat.SBtld.FUN_80019470;
 import static legend.game.combat.SBtld.addLevelUpOverlay;
+import static legend.game.combat.SBtld.clearBattleReportOverlays;
 import static legend.game.combat.SBtld.drawBattleReportOverlays;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -469,7 +469,7 @@ public class PostBattleScreen extends MenuScreen {
       case WAIT_FOR_FADE_OUT_17 -> {
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           this.inventoryMenuState_800bdc28 = this.confirmDest_800bdc30;
-          FUN_80019470();
+          clearBattleReportOverlays();
         }
 
         this.drawReport();
