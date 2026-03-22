@@ -2142,7 +2142,7 @@ rel :JMP_5f58_0
 JMP_5f58_0:
 wait stor[9] ; frames
 gosub inl[:LABEL_265] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 call Battle::allocateBillboardSpriteEffect, stor[22], 0xfff17 ; effectIndex, flags
 call SEffe::scriptSetRelativePosition, stor[22], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[22], stor[0], 0x1000, 0x1000, 0x1000 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2194,7 +2194,7 @@ deallocate
 JMP_5f58_1:
 wait stor[9] ; frames
 gosub inl[:LABEL_265] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 call Battle::allocateBillboardSpriteEffect, stor[18], 0xfff40 ; effectIndex, flags
 call SEffe::scriptAttachEffectToBobj, stor[18], stor[0], 0xffffffff ; effectIndex, scriptIndex, coord2Index
 call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2244,7 +2244,7 @@ gosub inl[:LABEL_259] ; addr
 mov 0x24, stor[23] ; source, dest
 wait stor[23] ; frames
 gosub inl[:LABEL_255] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 call SEffe::scriptAllocateParticleEffect, stor[19], 0xffffffff, 0xfff26, 0x18, 0xa, 0x1, 0x800, 0xd087f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 call SEffe::scriptAttachEffectToBobj, stor[19], stor[0], 0xffffffff ; effectIndex, scriptIndex, coord2Index
 call SEffe::scriptSetRelativePosition, stor[19], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2352,7 +2352,7 @@ JMP_5f58_2:
 mov 0x9, stor[10] ; source, dest
 wait stor[9] ; frames
 gosub inl[:LABEL_265] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 gosub inl[:LABEL_264] ; addr
 call SEffe::scriptSetRelativeRotation, stor[18], 0xffffffff, 0x0, 0x500, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x1000, 0x1000, 0x1000 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2429,19 +2429,21 @@ call SEffe::scriptAddLifespanAttachment, stor[18], 0xf ; effectIndex, ticks
 jmp inl[:LABEL_267] ; addr
 data 0x49
 
+
+
 ; SUBROUTINE
-LABEL_270:
-gosub inl[:LABEL_273] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_271] ; operand, left, right, addr
+ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY:
+gosub inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_NOPE] ; operand, left, right, addr
 call Battle::scriptGetBobjModelPartCount, stor[28], stor[8] ; bobjIndex, partCount
 call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff18, stor[8], 0x0, 0x4, 0x0, 0x7084000, 0x40 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x40, 0x600, 0x600 ; bobjIndex1, bobjIndex2, x, y, z
-gosub inl[:LABEL_272] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT] ; addr
 call Battle::scriptGetBobjModelPartCount, stor[28], stor[8] ; bobjIndex, partCount
 call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff18, stor[8], 0x0, 0x4, 0x0, 0x7084000, 0x40 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x1800, 0x40, 0x1800 ; bobjIndex1, bobjIndex2, x, y, z
-gosub inl[:LABEL_272] ; addr
-LABEL_271:
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT] ; addr
+ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_NOPE:
 return
 
 
@@ -2470,36 +2472,29 @@ return
 
 
 ; SUBROUTINE
-LABEL_272:
+ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT:
 call SEffe::scriptSetRelativeRotation, stor[18], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
-call Battle::scriptGetCharOrMonsterId, stor[30], stor[8] ; bentIndex, id
+gosub inl[:LOAD_PARTICLE_COLOUR]
 call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:PARTICLE_R], inl[:PARTICLE_G], inl[:PARTICLE_B] ; bobjIndex1, bobjIndex2, r, g, b
 call SEffe::scriptSetEffectZ, stor[18], 0xffffff00 ; effectIndex, z
 call Battle::scriptGetBobjModelPartCount, stor[28], stor[8] ; bobjIndex, partCount
 call SEffe::scriptAddLifespanAttachment, stor[18], stor[8] ; effectIndex, ticks
 return
 
+
+
 ; SUBROUTINE
-LABEL_273:
+ATTACK_ELEMENT_STRONG_AGAINST_ENEMY:
 call Battle::scriptGetBentStat, stor[30], EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT, stor[8] ; bentIndex, statIndex, value
 call Battle::scriptGetBentStat, stor[28], MONSTER_ELEMENT, stor[9] ; bentIndex, statIndex, value
 add stor[9], stor[8] ; amount, operand
-jmp_cmp ==, 0x81, stor[8], inl[:LABEL_274] ; operand, left, right, addr
-jmp_cmp ==, 0x42, stor[8], inl[:LABEL_274] ; operand, left, right, addr
-jmp_cmp ==, 0x24, stor[8], inl[:LABEL_274] ; operand, left, right, addr
+jmp_cmp ==, 0x81, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
+jmp_cmp ==, 0x18, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
+jmp_cmp ==, 0x42, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
+jmp_cmp ==, 0x24, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
 mov 0x0, stor[8] ; source, dest
-LABEL_274:
+ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP:
 return
-data 0x80
-data 0x40
-data 0x20
-data 0x4
-data 0x10
-data 0x40
-data 0x1
-data 0x2
-data 0x20
-data 0x80
 
 
 
