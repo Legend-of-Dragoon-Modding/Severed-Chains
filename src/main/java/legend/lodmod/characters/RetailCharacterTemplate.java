@@ -1,6 +1,7 @@
 package legend.lodmod.characters;
 
 import legend.core.Latch;
+import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
 import legend.game.additions.UnlockState;
 import legend.game.characters.CharacterAdditionInfo;
@@ -15,10 +16,12 @@ import legend.game.inventory.Good;
 import legend.game.saves.SavedCharacter;
 import legend.game.saves.SeveredSavedCharacterV2;
 import legend.game.textures.Image;
+import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -29,6 +32,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.getTextureAtlas;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_ADDITION;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_SPELL;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
@@ -168,6 +172,12 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   @Override
   public Image loadPortrait() {
     return this.portrait.get();
+  }
+
+  @Override
+  public void renderTransformIcon(final CharacterData2c character, final PlayerBattleEntity bent, final MV transforms, final int frame) {
+    final TextureAtlasIcon icon = getTextureAtlas().getIcon(LodMod.id(bent.getElement().getRegistryId().entryId() + '_' + frame));
+    icon.render(transforms);
   }
 
   @Override

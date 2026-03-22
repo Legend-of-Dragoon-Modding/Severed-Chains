@@ -9,20 +9,14 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.Translucency;
-import legend.lodmod.characters.DartTemplate;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.ui.BattleHud.ICON_SIZE;
-import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
-import static legend.game.combat.ui.BattleMenuStruct58.battleMenuIconMetrics_800fb674;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public class TransformAction extends RetailBattleAction {
   private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
@@ -35,7 +29,6 @@ public class TransformAction extends RetailBattleAction {
   public void draw(final Battle battle, final int index, final boolean selected) {
     final BattleMenuStruct58 menu = battle.hud.battleMenu_800c6c34;
 
-    final int iconId = 1;
     final int iconState;
     if(selected) {
       iconState = battleMenuIconStates_800c71e4[menu.iconStateIndex_26];
@@ -46,7 +39,7 @@ public class TransformAction extends RetailBattleAction {
 
     //LAB_800f6c90
     final int menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + index * 19;
-    final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc[iconId][iconState];
+    final int menuElementBaseY = menu.y_08 - 16;
 
     if(selected && menu.renderSelectedIconText_40) {
       if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_UP.get())) {
@@ -91,24 +84,8 @@ public class TransformAction extends RetailBattleAction {
 
     // Combat menu icons
     //LAB_800f6d70
-    menu.transforms.identity();
+    menu.transforms.scaling(16.0f, 16.0f, 1.0f);
     menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.8f);
-
-    final QueuedModelStandard model = RENDERER.queueOrthoModel(menu.menuObj, menu.transforms, QueuedModelStandard.class)
-      .translucency(Translucency.of(battleMenuIconMetrics_800fb674[1].translucencyMode_06));
-
-    if(!(menu.player_04.character.template instanceof DartTemplate) || !gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      model.vertices(menu.actionDragoonIconObjOffset + menu.player_04.charId_272 * 12 + iconState * 4, 4);
-    } else {
-      model.vertices(menu.actionDragoonIconObjOffset + 9 * 12 + iconState * 4, 4);
-
-      if(iconState != 0) {
-        // Divine dragoon spirit overlay
-        //LAB_800f6de0
-        RENDERER.queueOrthoModel(menu.menuObj, menu.transforms, QueuedModelStandard.class)
-          .vertices(menu.divineSpiritObjOffset + (iconState - 1) * 4, 4)
-          .translucency(Translucency.B_PLUS_F);
-      }
-    }
+    menu.player_04.character.template.renderTransformIcon(menu.player_04.character, menu.player_04, menu.transforms, iconState);
   }
 }

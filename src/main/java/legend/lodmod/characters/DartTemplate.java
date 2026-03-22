@@ -1,5 +1,6 @@
 package legend.lodmod.characters;
 
+import legend.core.gte.MV;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionHits80;
 import legend.game.additions.AdditionSound;
@@ -14,17 +15,21 @@ import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
+import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
+import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;
+import legend.lodmod.LodMod;
 import legend.lodmod.LodSpells;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.getTextureAtlas;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
@@ -100,6 +105,25 @@ public class DartTemplate extends RetailCharacterTemplate {
     }
 
     return new AdditionHits80(new AdditionHitProperties10(0xc0, 5, 0, 0, 100, 0, 7, 0, 0, 0, 4, 1, 8, 32, 0, 11, new AdditionSound(5, 11), new AdditionSound(0, 9)), new AdditionHitProperties10(0xc0, 15, 4, 0, 10, 0, 0, 0, 0, 0, 14, 0, 7, 32, 0, 0, new AdditionSound(8, 13), new AdditionSound(3, 11)), new AdditionHitProperties10(0xc0, 16, 10, 0, 20, 0, 0, 0, 0, 6, 8, 1, 10, 32, 0, 0, new AdditionSound(5, 11), new AdditionSound(0, 9)), new AdditionHitProperties10(0xc0, 11, 5, 0, 30, 0, 0, 0, 0, 4, 6, 0, 9, 32, 0, 0, new AdditionSound(9, 16), new AdditionSound(1, 14)), new AdditionHitProperties10(0xc0, 19, 5, 0, 40, 0, 0, 0, 0, 0, 18, 0, 9, 32, 0, 0, new AdditionSound(10, 20), new AdditionSound(3, 18), new AdditionSound(7, 4), new AdditionSound(7, 10), new AdditionSound(5, 11), new AdditionSound(0, 9)), new AdditionHitProperties10(0xc0, 68, 39, 0, 0, 0, 0, 0, 0, 0, 67, 0, 11, 32, 0, 0, new AdditionSound(5, 11), new AdditionSound(0, 9)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(8, 14), new AdditionSound(1, 12)), new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, new AdditionSound(8, 7), new AdditionSound(2, 5)));
+  }
+
+  @Override
+  public void renderTransformIcon(final CharacterData2c character, final PlayerBattleEntity bent, final MV transforms, final int frame) {
+    final Element element = character.gameState.goods_19c.has(DIVINE_DRAGOON_SPIRIT.get()) ? DIVINE_ELEMENT.get() : FIRE_ELEMENT.get();
+    final TextureAtlasIcon icon = getTextureAtlas().getIcon(LodMod.id(element.getRegistryId().entryId() + '_' + frame));
+    icon.render(transforms);
+
+    if(element == DIVINE_ELEMENT.get()) {
+      if(frame != 0) {
+        transforms.transfer.x += 4.0f;
+        transforms.scale(0.5f, 1.0f, 1.0f);
+
+        final TextureAtlasIcon icon2 = getTextureAtlas().getIcon(LodMod.id(DIVINE_ELEMENT.getId().entryId() + "_overlay_" + (frame - 1)));
+        icon2.render(transforms)
+          .translucency(Translucency.B_PLUS_F)
+        ;
+      }
+    }
   }
 
   @Override

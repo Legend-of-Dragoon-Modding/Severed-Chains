@@ -1,5 +1,6 @@
 package legend.game.characters;
 
+import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
 import legend.game.additions.AdditionHits80;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -26,6 +27,7 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract SavedCharacter deserialize(final FileData data, final IntRef offset);
 
   public abstract Image loadPortrait();
+  public abstract void renderTransformIcon(final CharacterData2c character, final PlayerBattleEntity bent, final MV transforms, final int frame);
 
   public abstract void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions);
   public abstract void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions);

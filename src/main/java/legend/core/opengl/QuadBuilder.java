@@ -96,6 +96,7 @@ public class QuadBuilder {
   public QuadBuilder uvSize(final Vector2f size) {
     this.addFirstQuad();
     this.current.uvSize.set(size);
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 

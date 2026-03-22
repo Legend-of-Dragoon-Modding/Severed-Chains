@@ -1,6 +1,9 @@
 package legend.lodmod;
 
 import legend.core.GameEngine;
+import legend.core.gpu.Rect4i;
+import legend.core.gpu.VramTextureLoader;
+import legend.core.gpu.VramTextureSingle;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
@@ -70,12 +73,22 @@ import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.scripting.ScriptState;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
+import legend.game.tim.Tim;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
@@ -85,6 +98,7 @@ import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
@@ -658,6 +672,53 @@ public class LodMod {
     event.add(new ItemStack(LodItems.MOON_SERENADE.get()));
     event.add(new ItemStack(LodItems.HEALING_RAIN.get()));
     event.add(new ItemStack(LodItems.HEALING_BREEZE.get()));
+  }
+
+  private static final String[] DRAGOON_SPIRIT_ICONS = {
+    FIRE_ELEMENT.getId().entryId(),
+    WIND_ELEMENT.getId().entryId(),
+    LIGHT_ELEMENT.getId().entryId(),
+    DARK_ELEMENT.getId().entryId(),
+    THUNDER_ELEMENT.getId().entryId(),
+    WATER_ELEMENT.getId().entryId(),
+    EARTH_ELEMENT.getId().entryId(),
+    DIVINE_ELEMENT.getId().entryId(),
+  };
+
+  @EventListener
+  public static void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
+    // Dragoon spirit icons
+    final List<FileData> files = Loader.loadDirectory("SECT/DRGN0.BIN/4113");
+    final Tim tim0 = new Tim(files.get(0));
+    final Tim tim5 = new Tim(files.get(5));
+    final VramTextureSingle tex = VramTextureLoader.textureFromTim(tim0);
+    final VramTextureSingle[] cluts = VramTextureLoader.palettesFromTim(tim5);
+
+    try(final MemoryStack stack = stackPush()) {
+      final ByteBuffer buffer = stack.malloc(16 * 48 * 4);
+      buffer.order(ByteOrder.LITTLE_ENDIAN);
+      final IntBuffer intBuffer = buffer.asIntBuffer();
+
+      // Spirits
+      for(int spiritIndex = 0; spiritIndex < 8; spiritIndex++) {
+        tex.applyPalette(cluts[8 + spiritIndex], new Rect4i(80, 64, 16, 48), intBuffer);
+
+        for(int frameIndex = 0; frameIndex < 3; frameIndex++) {
+          final byte[] frame = new byte[16 * 16 * 4];
+          buffer.get(frameIndex * frame.length, frame, 0, frame.length);
+          event.add(id(DRAGOON_SPIRIT_ICONS[spiritIndex] + '_' + frameIndex), new Image(frame, 16, 16));
+        }
+      }
+
+      // DD overlay
+      for(int i = 0; i < 2; i++) {
+        tex.applyPalette(cluts[8], new Rect4i(80 + i * 8, 112, 8, 16), intBuffer);
+
+        final byte[] frame = new byte[8 * 16 * 4];
+        buffer.get(0, frame);
+        event.add(id(DIVINE_ELEMENT.getId().entryId() + "_overlay_" + i), new Image(frame, 8, 16));
+      }
+    }
   }
 
   @EventListener

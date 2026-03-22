@@ -476,14 +476,6 @@ public class Battle extends EngineState<Battle> {
 
   public int countCombatUiFilesLoaded_800c6cf4;
 
-  public static final Vector2i[] combatUiElementRectDimensions_800c6e48 = {
-    new Vector2i(16, 16),
-    new Vector2i(16, 16),
-    new Vector2i(16, 16),
-    new Vector2i(16, 16),
-    new Vector2i(16, 16),
-    new Vector2i(16, 16),
-  };
   /** Note: retail overlay doesn't have the last two elements, but the method that uses this copies the array and adds new elements */
   public static final int[] battleHudTextureVramXOffsets_800c6e60 = {0, 0x10, 0x20, 0x30, 0, 0x10};
 
@@ -8253,8 +8245,8 @@ public class Battle extends EngineState<Battle> {
         }
 
         //LAB_800eea50
-        rect.w = combatUiElementRectDimensions_800c6e48[fileIndex].x;
-        rect.h = combatUiElementRectDimensions_800c6e48[fileIndex].y;
+        rect.w = 16;
+        rect.h = 16;
         GPU.uploadData15(rect, tim.getClutData());
         this.countCombatUiFilesLoaded_800c6cf4++;
       }
