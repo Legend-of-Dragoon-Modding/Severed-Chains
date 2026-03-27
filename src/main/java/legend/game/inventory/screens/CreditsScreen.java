@@ -13,6 +13,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.credits.Credits.CreditsType;
 import legend.game.i18n.I18n;
+import legend.game.textures.ImageLoader;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -281,7 +282,7 @@ public class CreditsScreen extends MenuScreen {
 
   private void initBackground() {
     this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
-    this.fadeTex = Texture.png(Path.of("gfx/ui/credits_fade.png"));
+    this.fadeTex = Texture.fromImageFiltered(ImageLoader.safeLoadImage(Path.of("gfx/ui/credits_fade.png")));
 
     this.backgroundObj = new QuadBuilder("Title Screen Background")
       .pos(0.0f, 0.0f, 0.0f)

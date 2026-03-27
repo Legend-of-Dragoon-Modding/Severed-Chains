@@ -73,7 +73,7 @@ import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.scripting.ScriptState;
-import legend.game.textures.Image;
+import legend.game.textures.ArrayImage;
 import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
@@ -706,7 +706,7 @@ public class LodMod {
         for(int frameIndex = 0; frameIndex < 3; frameIndex++) {
           final byte[] frame = new byte[16 * 16 * 4];
           buffer.get(frameIndex * frame.length, frame, 0, frame.length);
-          event.add(id(DRAGOON_SPIRIT_ICONS[spiritIndex] + '_' + frameIndex), new Image(frame, 16, 16));
+          event.add(id(DRAGOON_SPIRIT_ICONS[spiritIndex] + '_' + frameIndex), new ArrayImage(frame, 16, 16));
         }
       }
 
@@ -716,7 +716,7 @@ public class LodMod {
 
         final byte[] frame = new byte[8 * 16 * 4];
         buffer.get(0, frame);
-        event.add(id(DIVINE_ELEMENT.getId().entryId() + "_overlay_" + i), new Image(frame, 8, 16));
+        event.add(id(DIVINE_ELEMENT.getId().entryId() + "_overlay_" + i), new ArrayImage(frame, 8, 16));
       }
     }
   }

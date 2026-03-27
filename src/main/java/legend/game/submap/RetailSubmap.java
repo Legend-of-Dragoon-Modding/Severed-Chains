@@ -102,7 +102,7 @@ import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.sound.Audio.stopCurrentMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 
 public class RetailSubmap extends Submap {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSubmap.class);
@@ -809,7 +809,7 @@ public class RetailSubmap extends Submap {
         builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
         builder.internalFormat(GL_RGBA);
         builder.dataFormat(GL_RGBA);
-        builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+        builder.dataType(GL_UNSIGNED_BYTE);
       });
 
       // Arrange the segments of the background textures into one texture
@@ -868,7 +868,7 @@ public class RetailSubmap extends Submap {
           builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
           builder.internalFormat(GL_RGBA);
           builder.dataFormat(GL_RGBA);
-          builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+          builder.dataType(GL_UNSIGNED_BYTE);
         });
 
         this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, appliedRect.w, appliedRect.h, data);

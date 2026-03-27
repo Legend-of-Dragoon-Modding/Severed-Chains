@@ -3,7 +3,7 @@ package legend.game.unpacker;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
-import legend.game.textures.PngWriter;
+import legend.game.textures.ImageLoader;
 import legend.game.tim.Tim;
 import legend.lodmod.LodGoods;
 import org.lwjgl.BufferUtils;
@@ -94,7 +94,7 @@ public final class SaveCardTextureExtractor {
       ints.put(y * region.w, uncompressed, dataIndex, region.w);
     }
 
-    return new FileData(PngWriter.compress(buffer, region.w, region.h));
+    return new FileData(ImageLoader.compressPng(buffer, region.w, region.h));
   }
 
   private static void extractPortraits(final Tim tim, final int[] newData) {

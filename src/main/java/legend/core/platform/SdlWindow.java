@@ -5,6 +5,8 @@ import legend.core.opengl.Action;
 import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.textures.BufferImage;
+import legend.game.textures.ImageLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.sdl.SDL_DisplayMode;
@@ -12,7 +14,7 @@ import org.lwjgl.sdl.SDL_Rect;
 import org.lwjgl.sdl.SDL_Surface;
 import org.lwjgl.system.MemoryStack;
 
-import java.nio.ByteBuffer;
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.EnumSet;
@@ -63,11 +65,8 @@ import static org.lwjgl.sdl.SDLVideo.SDL_ShowWindow;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_HIDDEN;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_OPENGL;
 import static org.lwjgl.sdl.SDLVideo.SDL_WINDOW_RESIZABLE;
-import static org.lwjgl.stb.STBImage.stbi_failure_reason;
-import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class SdlWindow extends Window {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SdlWindow.class);
@@ -319,18 +318,8 @@ public class SdlWindow extends Window {
 
   @Override
   public void setWindowIcon(final Path path) {
-    try(final MemoryStack stack = stackPush()) {
-      final IntBuffer w = stack.mallocInt(1);
-      final IntBuffer h = stack.mallocInt(1);
-      final IntBuffer comp = stack.mallocInt(1);
-
-      final ByteBuffer data = stbi_load(path.toString(), w, h, comp, 4);
-      if(data == null) {
-        LOGGER.warn("Failed to load icon %s: %s", path, stbi_failure_reason());
-        return;
-      }
-
-      final SDL_Surface surface = SDL_CreateSurfaceFrom(w.get(0), h.get(0), SDL_PIXELFORMAT_ARGB8888, data, w.get(0) * 4);
+    try(final BufferImage icon = ImageLoader.loadImage(path)) {
+      final SDL_Surface surface = SDL_CreateSurfaceFrom(icon.width, icon.height, SDL_PIXELFORMAT_ARGB8888, icon.getBuffer(), icon.width * 4);
 
       if(surface != null) {
         SDL_SetWindowIcon(this.window, surface);
@@ -338,8 +327,8 @@ public class SdlWindow extends Window {
       } else {
         LOGGER.error("Failed to set window icon: %s", SDL_GetError());
       }
-
-      memFree(data);
+    } catch(final IOException e) {
+      LOGGER.warn("Failed to load icon " + path, e);
     }
   }
 

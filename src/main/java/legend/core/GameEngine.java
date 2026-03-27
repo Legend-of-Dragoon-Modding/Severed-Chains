@@ -37,6 +37,7 @@ import legend.game.saves.serializers.V9Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.textures.Image;
+import legend.game.textures.ImageLoader;
 import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.textures.TextureAtlas;
 import legend.game.textures.TexturePacker;
@@ -72,12 +73,6 @@ import static legend.game.Text.initTextboxGeometry;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.sound.Audio.startSound;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
 
 public final class GameEngine {
   private GameEngine() { }
@@ -352,7 +347,7 @@ public final class GameEngine {
   }
 
   private static void transitionToGame() {
-    glDisable(GL_BLEND);
+    RENDERER.api().translucency(false);
 
     if(title1Texture != null) {
       title1Texture.delete();
@@ -419,14 +414,14 @@ public final class GameEngine {
   }
 
   private static void loadGfx() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    RENDERER.api().translucency(true);
+    RENDERER.api().translucencyMode(Translucency.HALF_B_PLUS_HALF_F);
 
-    UI_TEXTURE = Texture.png(Path.of("gfx", "ui", "ui.png"));
+    UI_TEXTURE = Texture.fromImage(ImageLoader.safeLoadImage(Path.of("gfx", "ui", "ui.png")));
 
-    title1Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title1.png"));
-    title2Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title2.png"));
-    eyeTexture = Texture.png(Path.of("gfx", "textures", "loading.png"));
+    title1Texture = Texture.fromImageFiltered(ImageLoader.safeLoadImage(Path.of("gfx", "textures", "intro", "title1.png")));
+    title2Texture = Texture.fromImageFiltered(ImageLoader.safeLoadImage(Path.of("gfx", "textures", "intro", "title2.png")));
+    eyeTexture = Texture.fromImage(ImageLoader.safeLoadImage(Path.of("gfx", "textures", "loading.png")));
 
     texturedObj = new QuadBuilder("Textured Obj")
       .bpp(Bpp.BITS_24)

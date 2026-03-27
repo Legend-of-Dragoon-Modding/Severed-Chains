@@ -13,7 +13,7 @@ import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
-import legend.core.opengl.RenderState;
+import legend.core.opengl.RenderApi;
 import legend.core.opengl.Resolution;
 import legend.core.opengl.ScissorStack;
 import legend.core.opengl.Shader;
@@ -46,8 +46,6 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLUtil;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -90,35 +88,15 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SPEED_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_SPEED;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TURBO;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
-import static org.lwjgl.opengl.GL11C.GL_FILL;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
-import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_RGBA16;
-import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11C.GL_VENDOR;
-import static org.lwjgl.opengl.GL11C.GL_VERSION;
-import static org.lwjgl.opengl.GL11C.glClear;
-import static org.lwjgl.opengl.GL11C.glClearColor;
-import static org.lwjgl.opengl.GL11C.glDepthMask;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glGetString;
-import static org.lwjgl.opengl.GL11C.glLineWidth;
-import static org.lwjgl.opengl.GL11C.glPolygonMode;
-import static org.lwjgl.opengl.GL11C.glViewport;
-import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
 
@@ -130,7 +108,7 @@ public class RenderEngine {
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
   public final ScissorStack scissorStack;
-  private final RenderState state;
+  private final RenderApi api;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -316,7 +294,11 @@ public class RenderEngine {
   public RenderEngine() {
     this.mainBatch = new RenderBatch(this, this.lightBuffer);
     this.scissorStack = new ScissorStack(this, this.mainBatch);
-    this.state = new RenderState(this);
+    this.api = new RenderApi(this);
+  }
+
+  public RenderApi api() {
+    return this.api;
   }
 
   /**
@@ -411,23 +393,7 @@ public class RenderEngine {
   }
 
   public void setClearColour(final float red, final float green, final float blue) {
-    glClearColor(red, green, blue, 1.0f);
-  }
-
-  public void setClearColour(final float red, final float green, final float blue, final float alpha) {
-    glClearColor(red, green, blue, alpha);
-  }
-
-  public void clear() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  }
-
-  public void clearColour() {
-    glClear(GL_COLOR_BUFFER_BIT);
-  }
-
-  public void clearDepth() {
-    glClear(GL_DEPTH_BUFFER_BIT);
+    this.api.setClearColour(red, green, blue);
   }
 
   public Runnable setRenderCallback(final Runnable renderCallback) {
@@ -477,17 +443,7 @@ public class RenderEngine {
     this.window.setFpsLimit(60);
     PLATFORM.setInputTickRate(60);
 
-    GL.createCapabilities();
-
-    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
-    LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
-
-    if("true".equals(System.getenv("opengl_debug"))) {
-      GLUtil.setupDebugMessageCallback(System.err);
-    }
-
-    glEnable(GL_LINE_SMOOTH);
+    this.api.create();
 
     this.window.events().onResize(this::onResize);
 
@@ -527,7 +483,7 @@ public class RenderEngine {
     postQuad.attribute(1, 2L, 2, 4);
 
     // Build fullscreen fade quads
-    for(final Translucency translucency : Translucency.FOR_RENDERING) {
+    for(final Translucency translucency : Translucency.values()) {
       final Obj obj = new QuadBuilder("Plain Quad " + translucency)
         .translucency(translucency)
         .size(1.0f, 1.0f)
@@ -679,7 +635,7 @@ public class RenderEngine {
         this.renderBuffers[this.renderBufferIndex].bind();
 
         if(this.frameSkipIndex == 0) {
-          this.clearColour();
+          this.api.clearColour();
 
           // Render batches
           for(int i = 0; i < this.batches.size(); i++) {
@@ -690,22 +646,22 @@ public class RenderEngine {
           this.renderBatch(this.mainBatch);
         }
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        this.api.wireframe(false);
 
         // set render states
-        this.state.disableDepthTest();
-        glDepthMask(true); // enable depth writes so glClear won't ignore clearing the depth buffer
-        glDisable(GL_BLEND);
+        this.api.disableDepthTest();
+        this.api.writeToDepthMask(true); // enable depth writes so glClear won't ignore clearing the depth buffer
+        this.api.translucency(false);
 
         // bind backbuffer
         FrameBuffer.unbind();
-        glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        this.api.clearDepth();
 
         // use screen shader
         screenShader.use();
 
         // draw final screen quad
-        glViewport(0, 0, this.window.getWidth(), this.window.getHeight());
+        this.api.viewport(0, 0, this.window.getWidth(), this.window.getHeight());
         this.renderTextures[this.renderBufferIndex].use();
         postQuad.draw();
 
@@ -788,25 +744,25 @@ public class RenderEngine {
       batch.needsSorting = false;
     }
 
-    this.state.initBatch(batch);
+    this.api.initBatch(batch);
 
-    this.clearDepth();
+    this.api.clearDepth();
 
-    glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
+    this.api.wireframe(this.wireframeMode);
     this.setProjectionMode(batch, ProjectionMode._3D);
     this.renderPool(batch.modelPool, true);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    this.api.wireframe(false);
     this.setProjectionMode(batch, ProjectionMode._2D);
     this.renderPool(batch.orthoPool, false);
 
-    glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
+    this.api.wireframe(this.wireframeMode);
     this.setProjectionMode(batch, ProjectionMode._3D);
-    this.renderPoolTranslucent(batch, batch.modelPool);
+    this.renderPoolTranslucent(batch.modelPool);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    this.api.wireframe(false);
     this.setProjectionMode(batch, ProjectionMode._2D);
-    this.renderPoolTranslucent(batch, batch.orthoPool);
+    this.renderPoolTranslucent(batch.orthoPool);
   }
 
   private void renderPool(final QueuePool<QueuedModel<?, ?>> pool, final boolean backFaceCulling) {
@@ -815,11 +771,9 @@ public class RenderEngine {
     }
 
     // Update the depth mask so nothing further away than this will render
-    glDepthMask(true);
-
-    glDisable(GL_BLEND);
-
-    this.state.backfaceCulling(backFaceCulling);
+    this.api.writeToDepthMask(true);
+    this.api.translucency(false);
+    this.api.backfaceCulling(backFaceCulling);
 
     for(int i = 0; i < pool.size(); i++) {
       final int modelIndex = i & 0x7f;
@@ -836,14 +790,14 @@ public class RenderEngine {
 
       final QueuedModel<?, ?> entry = pool.get(i);
       entry.useShader(modelIndex, 1);
-      this.state.enableDepthTest(entry.opaqueDepthComparator);
+      this.api.enableDepthTest(entry.opaqueDepthComparator);
 
-      this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
+      this.api.scissor(entry, this.scissorBuffer, this.scissorUniform);
 
       for(int layer = 0; layer < entry.getLayers(); layer++) {
         if(entry.shouldRender(null, layer)) {
           if(backFaceCulling) {
-            this.state.backfaceCulling(entry.obj.useBackfaceCulling());
+            this.api.backfaceCulling(entry.obj.useBackfaceCulling());
           }
 
           entry.useTexture();
@@ -852,11 +806,9 @@ public class RenderEngine {
 
         // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (note: does not apply to 24bpp textures)
         if(entry.hasTranslucency(layer)) {
-          for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-            final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
-
+          for(final Translucency translucency : Translucency.values()) {
             if(entry.shouldRender(translucency, layer)) {
-              this.state.backfaceCulling(false);
+              this.api.backfaceCulling(false);
               entry.useTexture();
               entry.render(translucency, layer);
             }
@@ -866,17 +818,15 @@ public class RenderEngine {
     }
   }
 
-  private void renderPoolTranslucent(final RenderBatch batch, final QueuePool<QueuedModel<?, ?>> pool) {
+  private void renderPoolTranslucent(final QueuePool<QueuedModel<?, ?>> pool) {
     if(pool.isEmpty()) {
       return;
     }
 
-    this.state.backfaceCulling(false);
-
     // Do not update the depth mask so that we don't prevent things further away than this from rendering
-    glDepthMask(false);
-
-    glEnable(GL_BLEND);
+    this.api.writeToDepthMask(false);
+    this.api.translucency(true);
+    this.api.backfaceCulling(false);
 
     for(int i = 0; i < pool.size(); i++) {
       final int modelIndex = i & 0x7f;
@@ -895,30 +845,30 @@ public class RenderEngine {
 
       if(entry.hasTranslucency()) {
         entry.useShader(modelIndex, 2);
-        this.state.enableDepthTest(entry.translucentDepthComparator);
+        this.api.enableDepthTest(entry.translucentDepthComparator);
 
-        this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
+        this.api.scissor(entry, this.scissorBuffer, this.scissorUniform);
 
         entry.useTexture();
 
         for(int layer = 0; layer < entry.getLayers(); layer++) {
           if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F, layer)) {
-            Translucency.HALF_B_PLUS_HALF_F.setGlState();
+            this.api.translucencyMode(Translucency.HALF_B_PLUS_HALF_F);
             entry.render(Translucency.HALF_B_PLUS_HALF_F, layer);
           }
 
           if(entry.shouldRender(Translucency.B_PLUS_F, layer)) {
-            Translucency.B_PLUS_F.setGlState();
+            this.api.translucencyMode(Translucency.B_PLUS_F);
             entry.render(Translucency.B_PLUS_F, layer);
           }
 
           if(entry.shouldRender(Translucency.B_MINUS_F, layer)) {
-            Translucency.B_MINUS_F.setGlState();
+            this.api.translucencyMode(Translucency.B_MINUS_F);
             entry.render(Translucency.B_MINUS_F, layer);
           }
 
           if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F, layer)) {
-            Translucency.B_PLUS_F.setGlState();
+            this.api.translucencyMode(Translucency.B_PLUS_F);
             entry.render(Translucency.B_PLUS_QUARTER_F, layer);
           }
         }
@@ -943,15 +893,15 @@ public class RenderEngine {
     final int w = texture.width;
     final int h = texture.height;
 
-    glDepthMask(false);
-    glDisable(GL_BLEND);
-    this.state.backfaceCulling(false);
-    this.state.disableDepthTest();
+    this.api.writeToDepthMask(false);
+    this.api.translucency(false);
+    this.api.backfaceCulling(false);
+    this.api.disableDepthTest();
 
     buffer.bind();
     texture.use();
 
-    glViewport(0, 0, w, h);
+    this.api.viewport(0, 0, w, h);
     options.projection.ortho2DLH(0.0f, w, 0.0f, h);
     shader.use();
     options.apply();
@@ -1053,13 +1003,13 @@ public class RenderEngine {
 
     switch(projectionMode) {
       case _2D -> {
-        this.state.backfaceCulling(false);
+        this.api.backfaceCulling(false);
         this.setTransforms(this.camera2d, batch.orthographicProjection);
         this.projectionBuffer.put(3, 0.0f); // Projection mode: ortho
       }
 
       case _3D -> {
-        this.state.backfaceCulling(true);
+        this.api.backfaceCulling(true);
         this.setTransforms(this.camera3d, batch.perspectiveProjection);
 
         if(highQualityProjection) {
@@ -1148,16 +1098,16 @@ public class RenderEngine {
       final int expectedWidth = Math.round(expectedHeight * expectedAspect);
       final int offset = (this.renderWidth - expectedWidth) / 2;
 
-      glViewport(offset, 0, expectedWidth, expectedHeight);
+      this.api.viewport(offset, 0, expectedWidth, expectedHeight);
     } else {
-      glViewport(0, 0, this.renderWidth, this.renderHeight);
+      this.api.viewport(0, 0, this.renderWidth, this.renderHeight);
     }
 
     // Update global transforms (default to 3D)
     this.setProjectionMode(ProjectionMode._3D);
 
     // Render scene
-    this.clear();
+    this.api.clear();
   }
 
   public void run() {
@@ -1209,7 +1159,7 @@ public class RenderEngine {
 
     // glLineWidth has been removed on M3 macs
     if(!this.isMac()) {
-      glLineWidth(Math.max(1, this.renderHeight / 480.0f));
+      this.api.lineWidth(this.renderHeight / 480.0f);
     }
 
     // Projections

@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.stb.STBRectPack.stbrp_init_target;
 import static org.lwjgl.stb.STBRectPack.stbrp_pack_rects;
 
@@ -81,7 +81,7 @@ public class TexturePacker {
     final Texture texture = Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.dataType(GL_UNSIGNED_BYTE);
       builder.minFilter(GL_NEAREST);
       builder.magFilter(GL_NEAREST);
       builder.data(buffer, width, height);
@@ -130,7 +130,7 @@ public class TexturePacker {
     final Image image = this.entryToImage.get(entry);
 
     for(int y = 0; y < icon.h; y++) {
-      System.arraycopy(image.data, y * icon.w * 4, data, ((icon.y + y) * stride + icon.x) * 4, icon.w * 4);
+      image.getRow(y * icon.w * 4, data, ((icon.y + y) * stride + icon.x) * 4, icon.w * 4);
     }
   }
 }

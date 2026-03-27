@@ -22,7 +22,7 @@ import legend.game.saves.InventoryEntry;
 import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
 import legend.game.saves.SeveredSavedGame;
-import legend.game.textures.PngWriter;
+import legend.game.textures.ImageLoader;
 import legend.game.textures.TexturePacker;
 import legend.game.characters.CharacterData2c;
 import legend.game.types.GameState52c;
@@ -177,7 +177,7 @@ public final class V9Serializer {
     final byte[] atlas = packer.packToBytes(512, 512);
     final ByteBuffer buffer = BufferUtils.createByteBuffer(atlas.length);
     buffer.put(0, atlas);
-    final byte[] compressed = PngWriter.compress(buffer, 512, 512);
+    final byte[] compressed = ImageLoader.compressPng(buffer, 512, 512);
 
     data.writeAscii(offset, name);
     data.writeRegistryId(offset, campaignType.getRegistryId());

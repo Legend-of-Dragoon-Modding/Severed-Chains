@@ -24,12 +24,10 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
 import static legend.game.Graphics.orderingTableSize_1f8003c8;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 import static org.lwjgl.opengl.GL30C.GL_R32UI;
 import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
 
@@ -99,7 +97,7 @@ public class Gpu {
       builder.size(1024, 512);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.dataType(GL_UNSIGNED_BYTE);
     });
 
     this.displaySize(320, 240);
@@ -429,8 +427,7 @@ public class Gpu {
 
   public void drawDisplay() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
-
-    glDisable(GL_BLEND);
+    RENDERER.api().translucency(false);
 
     this.identity.get(this.transforms2Buffer);
     this.transforms2Uniform.set(this.transforms2Buffer);
@@ -444,8 +441,7 @@ public class Gpu {
 
   public void drawVram() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
-
-    glDisable(GL_BLEND);
+    RENDERER.api().translucency(false);
 
     this.identity.get(this.transforms2Buffer);
     this.transforms2Uniform.set(this.transforms2Buffer);

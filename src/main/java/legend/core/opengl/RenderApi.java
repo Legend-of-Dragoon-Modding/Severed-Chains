@@ -6,18 +6,48 @@ import legend.core.RenderEngine;
 import legend.core.gpu.Rect4i;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.joml.Vector3f;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
 
 import java.nio.FloatBuffer;
 
 import static legend.core.GameEngine.CONFIG;
+import static org.lwjgl.opengl.GL11C.GL_BLEND;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.GL_FILL;
+import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11C.GL_LINE;
+import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11C.GL_ONE;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_VENDOR;
+import static org.lwjgl.opengl.GL11C.GL_VERSION;
+import static org.lwjgl.opengl.GL11C.glBlendFunc;
+import static org.lwjgl.opengl.GL11C.glClear;
+import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDepthFunc;
+import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glGetString;
+import static org.lwjgl.opengl.GL11C.glLineWidth;
+import static org.lwjgl.opengl.GL11C.glPolygonMode;
+import static org.lwjgl.opengl.GL11C.glViewport;
+import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
+import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
+import static org.lwjgl.opengl.GL14C.glBlendEquation;
+import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 
-public class RenderState {
-  private boolean backfaceCulling;
+public class RenderApi {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RenderApi.class);
 
   private final RenderEngine engine;
   private RenderBatch batch;
@@ -25,14 +55,40 @@ public class RenderState {
   private float w;
   private float h;
 
+  private final Vector3f clearColour = new Vector3f(-1.0f);
+
+  private boolean backfaceCulling;
+
   private final Rect4i tempScissorRect = new Rect4i();
   private final Rect4i activeScissorRect = new Rect4i();
 
   private boolean depthTest;
+  private boolean depthMask;
   private int depthComparator;
 
-  public RenderState(final RenderEngine engine) {
+  private boolean translucencyEnabled;
+  private Translucency translucency;
+
+  private boolean wireframe;
+
+  private float lineWidth;
+
+  public RenderApi(final RenderEngine engine) {
     this.engine = engine;
+  }
+
+  public void create() {
+    GL.createCapabilities();
+
+    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
+    LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
+
+    if("true".equals(System.getenv("opengl_debug"))) {
+      GLUtil.setupDebugMessageCallback(System.err);
+    }
+
+    glEnable(GL_LINE_SMOOTH);
   }
 
   public void initBatch(final RenderBatch batch) {
@@ -43,6 +99,29 @@ public class RenderState {
 
     this.backfaceCulling = false;
     glDisable(GL_CULL_FACE);
+  }
+
+  public void viewport(final int x, final int y, final int width, final int height) {
+    glViewport(x, y, width, height);
+  }
+
+  public void setClearColour(final float r, final float g, final float b) {
+    if(this.clearColour.x != r || this.clearColour.y != g || this.clearColour.z != b) {
+      glClearColor(r, g, b, 1.0f);
+      this.clearColour.set(r, g, b);
+    }
+  }
+
+  public void clear() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  }
+
+  public void clearColour() {
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
+
+  public void clearDepth() {
+    glClear(GL_DEPTH_BUFFER_BIT);
   }
 
   public void backfaceCulling(final boolean enable) {
@@ -73,6 +152,64 @@ public class RenderState {
     if(this.depthTest) {
       glDisable(GL_DEPTH_TEST);
       this.depthTest = false;
+    }
+  }
+
+  public void writeToDepthMask(final boolean enable) {
+    if(this.depthMask != enable) {
+      glDepthMask(enable);
+      this.depthMask = enable;
+    }
+  }
+
+  public void translucency(final boolean enable) {
+    if(this.translucencyEnabled != enable) {
+      if(enable) {
+        glEnable(GL_BLEND);
+      } else {
+        glDisable(GL_BLEND);
+      }
+
+      this.translucencyEnabled = enable;
+    }
+  }
+
+  public void translucencyMode(final Translucency translucency) {
+    if(this.translucency != translucency) {
+      this.translucency = translucency;
+
+      switch(translucency) {
+        case HALF_B_PLUS_HALF_F -> {
+          glBlendEquation(GL_FUNC_ADD);
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        case B_PLUS_F -> {
+          glBlendEquation(GL_FUNC_ADD);
+          glBlendFunc(GL_ONE, GL_ONE);
+        }
+
+        case B_MINUS_F -> {
+          glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+          glBlendFunc(GL_ONE, GL_ONE);
+        }
+
+        default -> throw new RuntimeException(translucency + " not supported");
+      }
+    }
+  }
+
+  public void wireframe(final boolean enable) {
+    if(this.wireframe != enable) {
+      glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
+      this.wireframe = enable;
+    }
+  }
+
+  public void lineWidth(final float width) {
+    if(this.lineWidth != width) {
+      glLineWidth(Math.max(1, width));
+      this.lineWidth = width;
     }
   }
 

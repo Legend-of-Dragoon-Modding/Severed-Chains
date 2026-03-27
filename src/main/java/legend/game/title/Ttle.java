@@ -43,6 +43,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
+import legend.game.textures.ImageLoader;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdWithId;
 import legend.game.types.GameState52c;
@@ -320,7 +321,7 @@ public class Ttle extends EngineState<Ttle> {
       .bpp(Bpp.BITS_24)
       .build();
 
-    this.logoTex = Texture.filteredPng(Path.of("gfx/ui/logo.png"));
+    this.logoTex = Texture.fromImageFiltered(ImageLoader.safeLoadImage(Path.of("gfx/ui/logo.png")));
     this.logoObj = new QuadBuilder("Title Screen Logo")
       .posSize(352.0f, 198.0f)
       .uvSize(1.0f, 1.0f)
@@ -336,7 +337,7 @@ public class Ttle extends EngineState<Ttle> {
       .translucency(Translucency.B_PLUS_F)
       .build();
 
-    this.menuTextTex = Texture.filteredPng(Path.of("gfx/ui/title_menu.png"));
+    this.menuTextTex = Texture.fromImageFiltered(ImageLoader.safeLoadImage(Path.of("gfx/ui/title_menu.png")));
     final QuadBuilder menuTextBuilder = new QuadBuilder("Title Screen Menu Text");
     for(int i = 0; i < MENU_OPTIONS; i++) {
       menuTextBuilder

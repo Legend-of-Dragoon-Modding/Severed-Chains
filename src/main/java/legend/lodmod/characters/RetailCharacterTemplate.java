@@ -16,6 +16,7 @@ import legend.game.inventory.Good;
 import legend.game.saves.SavedCharacter;
 import legend.game.saves.SeveredSavedCharacterV2;
 import legend.game.textures.Image;
+import legend.game.textures.ImageLoader;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
@@ -54,7 +55,7 @@ import static legend.lodmod.LodMod.SPEED_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
 
 public abstract class RetailCharacterTemplate extends CharacterTemplate {
-  private final Latch<Image> portrait = new Latch<>(() -> Image.load(Loader.resolve("characters/" + this.getRegistryId().entryId() + "/portrait.png")));
+  private final Latch<Image> portrait = new Latch<>(() -> ImageLoader.safeLoadImage(Loader.resolve("characters/" + this.getRegistryId().entryId() + "/portrait.png")));
 
   @Override
   public CharacterData2c make(final GameState52c gameState) {

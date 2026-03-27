@@ -8,6 +8,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
+import legend.game.textures.ImageLoader;
 
 import java.nio.file.Path;
 
@@ -30,7 +31,7 @@ public class Font {
   public void init() {
     if(this.texture == null) {
       final String fontName = this.path.getFileName().toString();
-      this.texture = Texture.png(this.path.resolveSibling(fontName.substring(0, fontName.lastIndexOf('.')) + ".png"));
+      this.texture = Texture.fromImage(ImageLoader.safeLoadImage(this.path.resolveSibling(fontName.substring(0, fontName.lastIndexOf('.')) + ".png")));
     }
 
     if(this.obj == null) {

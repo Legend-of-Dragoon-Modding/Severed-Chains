@@ -33,6 +33,7 @@ import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
+import legend.game.textures.ImageLoader;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.Translucency;
 import legend.game.ui.UiBox;
@@ -425,7 +426,7 @@ public class BattleHud {
     //LAB_800effa0
     if(this.battle.countCombatUiFilesLoaded_800c6cf4 >= 6) {
       if(this.battleIconsTexture == null) {
-        this.battleIconsTexture = Texture.png(Path.of("gfx/ui/battle_icons.png"));
+        this.battleIconsTexture = Texture.fromImage(ImageLoader.safeLoadImage(Path.of("gfx/ui/battle_icons.png")));
       }
 
       if(this.battleIconQuad == null) {
