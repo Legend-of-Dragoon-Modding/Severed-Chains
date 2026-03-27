@@ -17,6 +17,7 @@ import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -137,6 +138,7 @@ public class ScriptState<T extends ScriptedObject> {
   private final float[] storagef_44 = new float[STORAGE_COUNT];
   private final boolean[] isFloat = new boolean[STORAGE_COUNT];
   public final RegistryId[] registryIds = new RegistryId[REGISTRY_ID_COUNT];
+  private final Deque<Integer> stack = new LinkedList<>();
 
   private boolean paused;
   private int ticks;
@@ -646,6 +648,28 @@ public class ScriptState<T extends ScriptedObject> {
       return new ScriptStateVarRegistryIdParam(this, cmd0);
     }
 
+    if(type == 0x24) { // stor[inl]
+      final int storIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      return new ScriptStorageParam(this, storIndex);
+    }
+
+    if(type == 0x25) { // stor[inl, inl]
+      final int scriptIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      final int storIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      return new ScriptStorageParam(this.manager.getState(scriptIndex), storIndex);
+    }
+
+    if(type == 0x26) { // var[inl]
+      final int varIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      return new GameVarParam(varIndex);
+    }
+
+    if(type == 0x27) { // var[inl][inl]
+      final int varIndex1 = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      final int varIndex2 = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      return new GameVarArrayParam(varIndex1, varIndex2);
+    }
+
     // Treated as an immediate if not a valid op
     return new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
   }
@@ -721,6 +745,10 @@ public class ScriptState<T extends ScriptedObject> {
       case NOOP_97 -> this.FUN_800172fc();
       case NOOP_98 -> this.FUN_80017304();
       case DEPTH -> this.scriptGetCallStackDepth();
+
+      case PUSH -> this.scriptPush();
+      case POP -> this.scriptPop();
+      case CMP -> this.scriptCmp();
 
       default -> throw new IllegalArgumentException("Unknown script op " + op);
     };
@@ -1346,6 +1374,21 @@ public class ScriptState<T extends ScriptedObject> {
   @Method(0x8001730cL)
   public FlowControl scriptGetCallStackDepth() {
     this.context.params_20[0].set(this.callStackDepth());
+    return FlowControl.CONTINUE;
+  }
+
+  public FlowControl scriptPush() {
+    this.stack.push(this.context.params_20[0].get());
+    return FlowControl.CONTINUE;
+  }
+
+  public FlowControl scriptPop() {
+    this.context.params_20[0].set(this.stack.pop());
+    return FlowControl.CONTINUE;
+  }
+
+  public FlowControl scriptCmp() {
+    this.context.params_20[2].set(this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18));
     return FlowControl.CONTINUE;
   }
 
