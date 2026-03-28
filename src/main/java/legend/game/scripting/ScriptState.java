@@ -670,6 +670,17 @@ public class ScriptState<T extends ScriptedObject> {
       return new GameVarArrayParam(varIndex1, varIndex2);
     }
 
+    if(type == 0x28) { // reg[inl]
+      final int regIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      return new ScriptStateRegistryIdParam(this, regIndex);
+    }
+
+    if(type == 0x29) { // reg[inl, inl]
+      final int scriptIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      final int regIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+      return new ScriptStateRegistryIdParam(this.manager.getState(scriptIndex), regIndex);
+    }
+
     // Treated as an immediate if not a valid op
     return new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
   }
