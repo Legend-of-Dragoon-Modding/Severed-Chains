@@ -387,27 +387,33 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
-        final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-        if(this.selectedCharSlot != -1 && character.canEquip(this.entry.item.slot, this.entry.item)) {
-          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result1 -> {
-            if(result1 == MessageBoxResult.YES) {
-              final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+        if(this.selectedCharSlot != -1) {
+          final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
-              if(!equipResult.success) {
-                gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot)).equip(this.entry.item.slot, null);
-                this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.ALERT, onResult -> {})));
-              } else if(equipResult.previousEquipment != null && !giveEquipment(equipResult.previousEquipment)) {
-                equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
-                this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
+          if(character.canEquip(this.entry.item.slot, this.entry.item)) {
+            menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result1 -> {
+              if(result1 == MessageBoxResult.YES) {
+                final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+
+                if(!equipResult.success) {
+                  gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot)).equip(this.entry.item.slot, null);
+                  this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.ALERT, onResult -> {})));
+                } else if(equipResult.previousEquipment != null && !giveEquipment(equipResult.previousEquipment)) {
+                  equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+                  this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
+                } else {
+                  gameState_800babc8.gold_94 -= this.entry.price;
+                }
               } else {
-                gameState_800babc8.gold_94 -= this.entry.price;
+                this.giveUnequipped(this.screen, this.entry);
               }
-            } else {
-              this.giveUnequipped(this.screen, this.entry);
-            }
 
+              this.returnControl = true;
+            }));
+          } else {
+            this.giveUnequipped(this.screen, this.entry);
             this.returnControl = true;
-          }));
+          }
         } else {
           this.giveUnequipped(this.screen, this.entry);
           this.returnControl = true;
