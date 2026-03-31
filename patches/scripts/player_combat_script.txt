@@ -2489,7 +2489,6 @@ call Battle::scriptGetBentStat, stor[30], EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DI
 call Battle::scriptGetBentStat, stor[28], MONSTER_ELEMENT, stor[9] ; bentIndex, statIndex, value
 add stor[9], stor[8] ; amount, operand
 jmp_cmp ==, 0x81, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
-jmp_cmp ==, 0x18, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
 jmp_cmp ==, 0x42, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
 jmp_cmp ==, 0x24, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
 mov 0x0, stor[8] ; source, dest
