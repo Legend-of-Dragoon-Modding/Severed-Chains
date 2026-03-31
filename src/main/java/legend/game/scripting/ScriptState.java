@@ -648,37 +648,47 @@ public class ScriptState<T extends ScriptedObject> {
       return new ScriptStateVarRegistryIdParam(this, cmd0);
     }
 
-    if(type == 0x24) { // stor[inl]
-      final int storIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
+    if(type == 0x24) { // stor[inl?, inl]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int storIndex = this.frame().file.getOp(packed & 0xffff);
+
+      if(cmd0 == 2) {
+        final int scriptIndex = this.frame().file.getOp(packed >>> 16);
+        return new ScriptStorageParam(this.manager.getState(scriptIndex), storIndex);
+      }
+
       return new ScriptStorageParam(this, storIndex);
     }
 
-    if(type == 0x25) { // stor[inl, inl]
-      final int scriptIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      final int storIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      return new ScriptStorageParam(this.manager.getState(scriptIndex), storIndex);
+    if(type == 0x25) { // var[inl][inl?]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int varIndex1 = this.frame().file.getOp(packed & 0xffff);
+
+      if(cmd0 == 2) {
+        final int varIndex2 = this.frame().file.getOp(packed >>> 16);
+        return new GameVarArrayParam(varIndex1, varIndex2);
+      }
+
+      return new GameVarParam(varIndex1);
     }
 
-    if(type == 0x26) { // var[inl]
-      final int varIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      return new GameVarParam(varIndex);
-    }
+    if(type == 0x26) { // reg[inl?, inl]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int regIndex = this.frame().file.getOp(packed & 0xffff);
 
-    if(type == 0x27) { // var[inl][inl]
-      final int varIndex1 = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      final int varIndex2 = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      return new GameVarArrayParam(varIndex1, varIndex2);
-    }
+      if(cmd0 == 2) {
+        final int scriptIndex = this.frame().file.getOp(packed >>> 16);
+        return new ScriptStateRegistryIdParam(this.manager.getState(scriptIndex), regIndex);
+      }
 
-    if(type == 0x28) { // reg[inl]
-      final int regIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
       return new ScriptStateRegistryIdParam(this, regIndex);
     }
 
-    if(type == 0x29) { // reg[inl, inl]
-      final int scriptIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      final int regIndex = this.frame().file.getOp(this.frame().file.getOp(this.context.commandOffset_0c++));
-      return new ScriptStateRegistryIdParam(this.manager.getState(scriptIndex), regIndex);
+    if(type == 0x27) { // inl[inl]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int offset = packed & 0xffff;
+      final int index = this.frame().file.getOp(packed >>> 16);
+      return new ScriptInlineParam(this, offset).array(index);
     }
 
     // Treated as an immediate if not a valid op
@@ -805,6 +815,8 @@ public class ScriptState<T extends ScriptedObject> {
         case 5 -> operandA.getFloat() > operandB.getFloat() || MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
         case 6 -> (operandA.get() & operandB.get()) != 0;
         case 7 -> (operandA.get() & operandB.get()) == 0;
+        case 8 -> operandA.get() != 0 && operandB.get() != 0;
+        case 9 -> operandA.get() != 0 || operandB.get() != 0;
         default -> false;
       };
     }
@@ -819,6 +831,8 @@ public class ScriptState<T extends ScriptedObject> {
       case 5 -> operandA.get() >= operandB.get();
       case 6 -> (operandA.get() & operandB.get()) != 0;
       case 7 -> (operandA.get() & operandB.get()) == 0;
+      case 8 -> operandA.get() != 0 && operandB.get() != 0;
+      case 9 -> operandA.get() != 0 || operandB.get() != 0;
       default -> false;
     };
   }
@@ -864,6 +878,8 @@ public class ScriptState<T extends ScriptedObject> {
    *     <li>Greater than or equal to</li>
    *     <li>And</li>
    *     <li>Nand</li>
+   *     <li>Logical and</li>
+   *     <li>Logical or</li>
    *   </ol>
    * </p>
    *
