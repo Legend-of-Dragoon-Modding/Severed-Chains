@@ -37,7 +37,7 @@ https://arks.itch.io/
 
 ## lod_core.ui.about.sc_credits_tester
 Wulves
-interdimentional potato
+interdimensional potato
 Kenorah
 Kritis
 Tommcq
