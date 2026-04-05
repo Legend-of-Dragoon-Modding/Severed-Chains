@@ -146,9 +146,7 @@ public class StatusScreen extends MenuScreen {
 
       for(int i = this.spellScrollIndex; i < this.spellScrollIndex + this.MAX_SPELLS; i++) {
         if(i < unlockedSpells.size()) {
-          if(allocate) {
-            renderCharacter(200, 127 + (i - this.spellScrollIndex) * 14, i + 1);
-          }
+          this.renderNumber(198, 127 + (i - this.spellScrollIndex) * 14, i, 2, 0, 0x7ca9);
           final RegistryId spellId = unlockedSpells.get(i);
           final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
           renderText(I18n.translate(spell), 210, 125 + (i - this.spellScrollIndex) * 14, UI_TEXT);
