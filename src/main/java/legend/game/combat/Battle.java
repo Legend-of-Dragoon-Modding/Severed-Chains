@@ -6612,7 +6612,6 @@ public class Battle extends EngineState<Battle> {
     }
   }
 
-
   @Method(0x800e6aecL)
   public void loadCutsceneDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
     final int v1 = script.params_20[0].get();
