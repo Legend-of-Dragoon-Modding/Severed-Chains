@@ -6578,39 +6578,40 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800e6920L)
   public void loadEnemyOrBossDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
     if(script.params_20[0].isRegistryId()) {
-      deffManager_800c693c.flags_20 |= 0;
       this.allocateDeffEffectManager(script.scriptState_04, 0, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
       REGISTRIES.deff.getEntry(script.params_20[0].getRegistryId()).get().load();
+      return;
+    }
+
+    final int flags = script.params_20[0].get() & 0xff_0000;
+    final int monsterIndex = script.params_20[0].get() & 0xffff;
+
+    LOGGER.info(DEFF, "Loading enemy/boss DEFF (ID: %d, flags: %x)", monsterIndex, flags);
+
+    deffManager_800c693c.flags_20 |= flags & 0x10_0000;
+    this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
+
+    if(monsterIndex < 256) {
+      this.loadDeff(
+        Loader.resolve("SECT/DRGN0.BIN/" + (4433 + monsterIndex * 2)),
+        Loader.resolve("SECT/DRGN0.BIN/" + (4434 + monsterIndex * 2))
+      );
     } else {
-      final int flags = script.params_20[0].get() & 0xff_0000;
-      final int monsterIndex = script.params_20[0].get() & 0xffff;
-
-      LOGGER.info(DEFF, "Loading enemy/boss DEFF (ID: %d, flags: %x)", monsterIndex, flags);
-
-      deffManager_800c693c.flags_20 |= flags & 0x10_0000;
-      this.allocateDeffEffectManager(script.scriptState_04, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
-
-      if(monsterIndex < 256) {
-        this.loadDeff(
-          Loader.resolve("SECT/DRGN0.BIN/" + (4433 + monsterIndex * 2)),
-          Loader.resolve("SECT/DRGN0.BIN/" + (4434 + monsterIndex * 2))
-        );
-      } else {
-        final int a0_0 = monsterIndex >>> 4;
-        int fileIndex = enemyDeffFileIndices_800faec4[a0_0 - 0x100] + (monsterIndex & 0xf);
-        if(a0_0 >= 320) {
-          fileIndex += 117;
-        }
-
-        fileIndex = (fileIndex - 1) * 2;
-
-        this.loadDeff(
-          Loader.resolve("SECT/DRGN0.BIN/" + (4945 + fileIndex)),
-          Loader.resolve("SECT/DRGN0.BIN/" + (4946 + fileIndex))
-        );
+      final int a0_0 = monsterIndex >>> 4;
+      int fileIndex = enemyDeffFileIndices_800faec4[a0_0 - 0x100] + (monsterIndex & 0xf);
+      if(a0_0 >= 320) {
+        fileIndex += 117;
       }
+
+      fileIndex = (fileIndex - 1) * 2;
+
+      this.loadDeff(
+        Loader.resolve("SECT/DRGN0.BIN/" + (4945 + fileIndex)),
+        Loader.resolve("SECT/DRGN0.BIN/" + (4946 + fileIndex))
+      );
     }
   }
+
 
   @Method(0x800e6aecL)
   public void loadCutsceneDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
