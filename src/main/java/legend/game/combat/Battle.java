@@ -6577,6 +6577,12 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800e6920L)
   public void loadEnemyOrBossDeff(final RunningScript<? extends BattleObject> script, final ScriptDeffEffect effect) {
+    if(script.params_20[0].isRegistryId()) {
+      this.allocateDeffEffectManager(script.scriptState_04, 0, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), effect);
+      REGISTRIES.deff.getEntry(script.params_20[0].getRegistryId()).get().load();
+      return;
+    }
+
     final int flags = script.params_20[0].get() & 0xff_0000;
     final int monsterIndex = script.params_20[0].get() & 0xffff;
 
