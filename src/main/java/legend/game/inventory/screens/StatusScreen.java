@@ -5,10 +5,12 @@ import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.screens.controls.CharacterCard;
+import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -24,8 +26,11 @@ import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class StatusScreen extends MenuScreen {
@@ -38,6 +43,11 @@ public class StatusScreen extends MenuScreen {
   private double scrollAccumulator;
 
   private final Runnable unload;
+
+  private final int MAX_SPELLS = 7;
+  private int spellScrollIndex = 0;
+  private Renderable58 upArrow;
+  private Renderable58 downArrow;
 
   public StatusScreen(final Runnable unload) {
     this(0, unload);
@@ -118,6 +128,14 @@ public class StatusScreen extends MenuScreen {
 
     if(allocate) {
       allocateUiElement(0x58, 0x58, 194, 101);
+
+      if(!CONFIG.getConfig(REDUCE_MOTION_FLASHING_CONFIG.get())) {
+        this.upArrow = allocateUiElement(61, 68, 359, 123);
+        this.downArrow = allocateUiElement(53, 60, 359, 207);
+      } else {
+        this.upArrow = allocateUiElement(67, 67, 359, 123);
+        this.downArrow = allocateUiElement(59, 59, 359, 207);
+      }
     }
 
     final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
@@ -126,16 +144,29 @@ public class StatusScreen extends MenuScreen {
       final List<RegistryId> unlockedSpells = character.getUnlockedSpells();
       final int allSpellCount = character.getAllSpells().size();
 
-      for(int i = 0; i < allSpellCount; i++) {
-        if(allocate) {
-          renderCharacter(200, 127 + i * 14, i + 1);
-        }
-
+      for(int i = this.spellScrollIndex; i < this.spellScrollIndex + this.MAX_SPELLS; i++) {
         if(i < unlockedSpells.size()) {
+          this.renderNumber(198, 127 + (i - this.spellScrollIndex) * 14, i, 2, 0, 0x7ca9);
           final RegistryId spellId = unlockedSpells.get(i);
           final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
-          renderText(I18n.translate(spell), 210, 125 + i * 14, UI_TEXT);
-          this.renderNumber(342, 128 + i * 14, spell.mp_06, 3);
+          renderText(I18n.translate(spell), 210, 125 + (i - this.spellScrollIndex) * 14, UI_TEXT);
+          this.renderNumber(342, 128 + (i - this.spellScrollIndex) * 14, spell.mp_06, 3);
+        }
+      }
+
+      if(this.upArrow != null) {
+        if(this.spellScrollIndex != 0) {
+          this.upArrow.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
+        } else {
+          this.upArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
+        }
+      }
+
+      if(this.downArrow != null) {
+        if(this.spellScrollIndex + this.MAX_SPELLS < allSpellCount) {
+          this.downArrow.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
+        } else {
+          this.downArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
         }
       }
     }
@@ -152,6 +183,7 @@ public class StatusScreen extends MenuScreen {
     } else if(characterIndices_800bdbb8.size() > 1 && this.allowWrapX) {
       this.scroll(characterIndices_800bdbb8.size() - 1);
     }
+    this.spellScrollIndex = 0;
   }
 
   private void menuNavigateRight() {
@@ -159,6 +191,19 @@ public class StatusScreen extends MenuScreen {
       this.scroll(this.charSlot + 1);
     } else if(characterIndices_800bdbb8.size() > 1 && this.allowWrapX) {
       this.scroll(0);
+    }
+    this.spellScrollIndex = 0;
+  }
+
+  private void menuNavigateUp() {
+    if(this.spellScrollIndex != 0) {
+      this.spellScrollIndex -= 1;
+    }
+  }
+
+  private void menuNavigateDown() {
+    if(this.downArrow.flags_00 < Renderable58.FLAG_INVISIBLE) {
+      this.spellScrollIndex += 1;
     }
   }
 
@@ -199,6 +244,16 @@ public class StatusScreen extends MenuScreen {
     if(action == INPUT_ACTION_MENU_RIGHT.get()) {
       this.menuNavigateRight();
       this.allowWrapX = false;
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_UP.get()) {
+      this.menuNavigateUp();
+      return InputPropagation.HANDLED;
+    }
+
+    if(action == INPUT_ACTION_MENU_DOWN.get()) {
+      this.menuNavigateDown();
       return InputPropagation.HANDLED;
     }
 
