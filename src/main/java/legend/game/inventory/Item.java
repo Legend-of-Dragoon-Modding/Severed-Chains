@@ -135,5 +135,7 @@ public abstract class Item extends RegistryEntry {
     ALLIES,
     ENEMIES,
     ALL,
+    // Instant use, does not allow selecting target
+    INSTANT,
   }
 }

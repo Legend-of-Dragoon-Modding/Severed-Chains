@@ -49,7 +49,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
    * used renderCtmd
    */
   @Method(0x800dd89cL)
-  private void FUN_800dd89c(final Model124 model, final int newAttribute) {
+  private void renderModel(final Model124 model, final int newAttribute) {
     zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
@@ -94,7 +94,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
-          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .ctmdFlags(0x20 | ((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
@@ -163,7 +163,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
       }
 
       //LAB_800ea598
-      FUN_800dd89c(model, manager.params_10.flags_00);
+      renderModel(model, manager.params_10.flags_00);
 
       model.tpage_108 = oldTpage;
 

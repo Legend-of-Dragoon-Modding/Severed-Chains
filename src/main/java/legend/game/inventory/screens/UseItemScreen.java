@@ -11,13 +11,14 @@ import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.lodmod.LodMod;
 
 import java.util.List;
 import java.util.Set;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
@@ -25,7 +26,7 @@ import static legend.game.Menus.downArrow_800bdb98;
 import static legend.game.Menus.upArrow_800bdb94;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.glyph_801142d4;
@@ -97,7 +98,7 @@ public class UseItemScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(useItemGlyphs_801141fc, 0, 0);
         this.itemHighlight = allocateUiElement(0x77, 0x77, 42, this.getItemSlotY(this.selectedSlot));
-        FUN_80104b60(this.itemHighlight);
+        initHighlight(this.itemHighlight);
         this.itemCount = this.getUsableItemsInMenu();
         if(this.slotScroll > this.itemCount - 5) {
           this.slotScroll = Math.max(0, this.itemCount - 5);
@@ -223,14 +224,14 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     if(this.loadingStage == 2) {
       for(int slot = 0; slot < Math.min(5, this.itemCount - this.slotScroll); slot++) {
-        if(this.selectedSlot != slot && MathHelper.inBox(x, y, 33, this.getItemSlotY(slot), 136, 17)) {
+        if(this.selectedSlot != slot && MathHelper.inBox((int)x, (int)y, 33, this.getItemSlotY(slot), 136, 17)) {
           playMenuSound(1);
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
@@ -239,7 +240,7 @@ public class UseItemScreen extends MenuScreen {
       }
     } else if(this.loadingStage == 3 && !this.itemTargetAll) {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
-        if(this.charSlot != slot && MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
+        if(this.charSlot != slot && MathHelper.inBox((int)x, (int)y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           playMenuSound(1);
           this.charSlot = slot;
           this.charHighlight.x_40 = this.getCharacterPortraitX(this.charSlot) - 3;
@@ -252,7 +253,7 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -263,7 +264,7 @@ public class UseItemScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       for(int slot = 0; slot < Math.min(5, this.itemCount - this.slotScroll); slot++) {
-        if(MathHelper.inBox(x, y, 33, this.getItemSlotY(slot), 136, 17)) {
+        if(MathHelper.inBox((int)x, (int)y, 33, this.getItemSlotY(slot), 136, 17)) {
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = this.getItemSlotY(this.selectedSlot);
           this.menuStage2Select();
@@ -272,7 +273,7 @@ public class UseItemScreen extends MenuScreen {
       }
     } else if(this.loadingStage == 3) {
       for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
-        if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
+        if(MathHelper.inBox((int)x, (int)y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           this.menuStage3Select();
           return InputPropagation.HANDLED;
         }
@@ -399,11 +400,11 @@ public class UseItemScreen extends MenuScreen {
     if(this.itemTargetAll) {
       for(int i = 0; i < 7; i++) {
         this._8011d718[i] = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(i) - 3, 110);
-        FUN_80104b60(this._8011d718[i]);
+        initHighlight(this._8011d718[i]);
       }
     } else {
       this.charHighlight = allocateUiElement(0x7e, 0x7e, this.getCharacterPortraitX(this.charSlot) - 3, 110);
-      FUN_80104b60(this.charHighlight);
+      initHighlight(this.charHighlight);
     }
 
     playMenuSound(2);
@@ -484,7 +485,7 @@ public class UseItemScreen extends MenuScreen {
 
     if(this.useItemResponse.text != null) {
       final String text = this.useItemResponse.text;
-      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(text, 0, result -> {})));
+      this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(text, MessageBoxType.ALERT, result -> {})));
     }
 
     this.useItemResponse.success = false;

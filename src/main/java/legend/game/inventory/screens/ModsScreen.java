@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.MODS;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -23,8 +23,6 @@ public class ModsScreen extends VerticalLayoutScreen {
 
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, String> helpText = new HashMap<>();
-
-  private final FontOptions fontOptions = new FontOptions().size(0.66f).horizontalAlign(HorizontalAlign.RIGHT).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public ModsScreen(final Set<String> enabledMods, final Runnable unload) {
     deallocateRenderables(0xff);
@@ -53,7 +51,7 @@ public class ModsScreen extends VerticalLayoutScreen {
         final Label help = label.addControl(new Label("?"));
         help.setScale(0.4f);
         help.setPos((int)(help.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
-        help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.mods.required"), this.mouseX, this.mouseY)));
+        help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.mods.required"), (int)this.mouseX, (int)this.mouseY)));
         this.helpLabels.put(label, help);
         this.helpText.put(label, required);
       }

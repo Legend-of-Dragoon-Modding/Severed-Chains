@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import legend.game.additions.Addition;
 import legend.game.additions.CharacterAdditionStats;
+import legend.game.additions.UnlockState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.types.CharacterData2c;
@@ -22,6 +23,10 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.characterNames_801142dc;
 import static legend.game.SItem.checkForNewlyUnlockedAddition;
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import static legend.game.types.CharacterData2c.CANT_REMOVE;
+import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
+import static legend.game.types.CharacterData2c.IN_PARTY;
 
 public class CharacterEditorController {
   public Label name;
@@ -48,7 +53,7 @@ public class CharacterEditorController {
   public Label equipmentName;
   public ComboBox<RegistryId> selectedAddition;
   public ComboBox<RegistryId> additionList;
-  public CheckBox additionUnlocked;
+  public ComboBox<UnlockState> additionUnlockState;
   public TextField additionLevel;
   public TextField additionXp;
 
@@ -61,6 +66,10 @@ public class CharacterEditorController {
   public void initialize() {
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       this.equipmentSlots.getItems().add(slot);
+    }
+
+    for(final UnlockState state : UnlockState.values()) {
+      this.additionUnlockState.getItems().add(state);
     }
   }
 
@@ -83,10 +92,10 @@ public class CharacterEditorController {
 
     this.name.setText(characterNames_801142dc[this.charId]);
 
-    this.inParty.setSelected((this.charData.partyFlags_04 & 0x1) != 0);
-    this.canBeInParty.setSelected((this.charData.partyFlags_04 & 0x2) != 0);
-    this.cantRemove.setSelected((this.charData.partyFlags_04 & 0x20) != 0);
-    this.hasUltimate.setSelected((this.charData.partyFlags_04 & 0x40) != 0);
+    this.inParty.setSelected((this.charData.partyFlags_04 & IN_PARTY) != 0);
+    this.canBeInParty.setSelected((this.charData.partyFlags_04 & CAN_BE_IN_PARTY) != 0);
+    this.cantRemove.setSelected((this.charData.partyFlags_04 & CANT_REMOVE) != 0);
+    this.hasUltimate.setSelected((this.charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0);
 
     this.hp.setText(String.valueOf(this.charData.hp_08));
     this.mp.setText(String.valueOf(this.charData.mp_0a));
@@ -136,11 +145,11 @@ public class CharacterEditorController {
 
     if(id != null) {
       final CharacterAdditionStats stats = this.additionStats.get(id);
-      this.additionUnlocked.setSelected(stats.unlocked);
+      this.additionUnlockState.getSelectionModel().select(stats.unlockState);
       this.additionLevel.setText(String.valueOf(stats.level));
       this.additionXp.setText(String.valueOf(stats.xp));
     } else {
-      this.additionUnlocked.setSelected(false);
+      this.additionUnlockState.getSelectionModel().clearSelection();
       this.additionLevel.setText("");
       this.additionXp.setText("");
     }
@@ -152,10 +161,10 @@ public class CharacterEditorController {
 
   public void onSaveClick() {
     this.charData.partyFlags_04 =
-      (this.inParty.isSelected() ? 0x1 : 0) |
-      (this.canBeInParty.isSelected() ? 0x2 : 0) |
-      (this.cantRemove.isSelected() ? 0x20 : 0) |
-      (this.hasUltimate.isSelected() ? 0x40 : 0)
+      (this.inParty.isSelected() ? IN_PARTY : 0) |
+      (this.canBeInParty.isSelected() ? CAN_BE_IN_PARTY : 0) |
+      (this.cantRemove.isSelected() ? CANT_REMOVE : 0) |
+      (this.hasUltimate.isSelected() ? HAS_ULTIMATE_ADDITION : 0)
     ;
 
     this.charData.hp_08 = Integer.parseInt(this.hp.getText());
@@ -180,7 +189,7 @@ public class CharacterEditorController {
 
     if(this.additionList.getValue() != null) {
       final CharacterAdditionStats additionStats = this.additionStats.get(this.additionList.getValue());
-      additionStats.unlocked = this.additionUnlocked.isSelected();
+      additionStats.unlockState = this.additionUnlockState.getValue();
       additionStats.level = Integer.parseInt(this.additionLevel.getText());
       additionStats.xp = Integer.parseInt(this.additionXp.getText());
     }

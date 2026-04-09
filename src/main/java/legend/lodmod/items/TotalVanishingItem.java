@@ -39,7 +39,7 @@ public class TotalVanishingItem extends BattleItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 10;
+    return 42;
   }
 
   @Override

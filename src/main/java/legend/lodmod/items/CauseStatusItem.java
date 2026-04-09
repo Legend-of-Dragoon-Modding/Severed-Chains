@@ -67,7 +67,7 @@ public class CauseStatusItem extends BattleItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 12;
+    return 44;
   }
 
   @Override

@@ -14,11 +14,11 @@ import legend.game.types.Renderable58;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
-import static legend.game.SItem.FUN_801034cc;
-import static legend.game.SItem.FUN_80104b60;
+import static legend.game.SItem.addLeftRightArrows;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.addHp;
 import static legend.game.SItem.addMp;
 import static legend.game.SItem.allocateUiElement;
@@ -97,7 +97,7 @@ public class EquipmentScreen extends MenuScreen {
 
         if(this.itemHighlight == null) {
           this.itemHighlight = allocateUiElement(0x79, 0x79, this.FUN_800fc824(1), 0);
-          FUN_80104b60(this.itemHighlight);
+          initHighlight(this.itemHighlight);
         }
 
         this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
@@ -109,7 +109,7 @@ public class EquipmentScreen extends MenuScreen {
         break;
 
       case 3:
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
+        addLeftRightArrows(this.charSlot, characterCount_8011d7c4);
         this.renderEquipmentScreen(this.charSlot, this.selectedSlot, this.slotScroll, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -201,7 +201,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -211,7 +211,7 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     for(int slot = 0; slot < Math.min(4, this.equipmentCount - this.slotScroll); slot++) {
-      if(this.selectedSlot != slot && MathHelper.inBox(x, y, 212, this.menuHighlightPositionY(slot), 139, 15)) {
+      if(this.selectedSlot != slot && MathHelper.inBox((int)x, (int)y, 212, this.menuHighlightPositionY(slot), 139, 15)) {
         playMenuSound(1);
         this.selectedSlot = slot;
         this.itemHighlight.y_44 = this.menuHighlightPositionY(slot);
@@ -223,7 +223,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -233,7 +233,7 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     for(int slot = 0; slot < Math.min(4, this.equipmentCount - this.slotScroll); slot++) {
-      if(MathHelper.inBox(x, y, 212, this.menuHighlightPositionY(slot), 139, 15)) {
+      if(MathHelper.inBox((int)x, (int)y, 212, this.menuHighlightPositionY(slot), 139, 15)) {
         this.selectedSlot = slot;
         this.itemHighlight.y_44 = this.menuHighlightPositionY(slot);
 

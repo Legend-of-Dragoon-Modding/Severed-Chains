@@ -65,7 +65,7 @@ public abstract class BattleItem extends Item {
   }
 
   protected int getUseItemScriptEntrypoint() {
-    return 0;
+    return 32;
   }
 
   protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {

@@ -1,17 +1,24 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
+import legend.game.combat.postbattleactions.PostBattleActionInstance;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
+import legend.game.saves.CampaignType;
 import legend.game.submap.SobjPos14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
 import org.joml.Vector2f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +36,13 @@ public final class Scus94491BpeSegment_800b {
 
   public static int pregameLoadingStage_800bb10c;
 
-  public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
   public static int goldGainedFromCombat_800bc920;
 
   public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
   public static final List<ItemStack> itemOverflow = new ArrayList<>();
   public static final List<Equipment> equipmentOverflow = new ArrayList<>();
   public static boolean battleLoaded_800bc94c;
-  public static final int[] spGained_800bc950 = new int[3];
+  public static final Int2IntMap spGained_800bc950 = new Int2IntOpenHashMap();
   public static int totalXpFromCombat_800bc95c;
   /**
    * <ul>
@@ -55,17 +61,18 @@ public final class Scus94491BpeSegment_800b {
   public static int battleFlags_800bc960;
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
-  public static int[] livingCharIds_800bc968 = new int[3];
+  public static final IntList livingCharIds_800bc968 = new IntArrayList();
+
   /**
    * <ol>
    *   <li value="1">Combat victory</li>
    *   <li value="2">Game over</li>
+   *   <li value="3">Boss kill</li>
    *   <li value="4">FMV</li>
+   *   <li value="5">Merchant</li>
    * </ol>
    */
-  public static int postBattleAction_800bc974;
-
-  public static int livingCharCount_800bc97c;
+  public static PostBattleActionInstance<?, ?> postBattleAction_800bc974;
 
   public static boolean _800bd7ac;
   public static int _800bd7b0;
@@ -85,11 +92,10 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static EngineStateEnum previousEngineState_800bdb88 = EngineStateEnum.PRELOAD_00;
-
   public static final int[] characterIndices_800bdbb8 = new int[9];
   public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
+  public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
 
   public static boolean characterStatsLoaded_800be5d0;

@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import legend.core.Config;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
+import legend.game.combat.encounters.Encounter;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
@@ -19,11 +20,14 @@ import legend.game.submap.SubmapState;
 import legend.game.types.GsRVIEW2;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
-import legend.game.wmap.WmapState;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.GsSetRefView2L;
 import static legend.game.Graphics.GsSetSmapRefView2L;
@@ -31,7 +35,6 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
@@ -220,7 +223,8 @@ public class DebuggerController {
   @FXML
   private void startEncounter(final ActionEvent event) {
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
-      smap.submap.prepareEncounter(this.encounterId.getValue(), false);
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[this.encounterId.getValue()]).get();
+      smap.submap.prepareEncounter(encounter, false);
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       final int encounterId = this.encounterId.getValue();
@@ -236,13 +240,7 @@ public class DebuggerController {
       }
 
       startLegacyEncounter(encounterId, stageId);
-
-      gameState_800babc8.directionalPathIndex_4de = wmap.mapState_800c6798.directionalPathIndex_12;
-      gameState_800babc8.pathIndex_4d8 = wmap.mapState_800c6798.pathIndex_14;
-      gameState_800babc8.dotIndex_4da = wmap.mapState_800c6798.dotIndex_16;
-      gameState_800babc8.dotOffset_4dc = wmap.mapState_800c6798.dotOffset_18;
-      gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
-      wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
+      wmap.transitionToEngineState(LodEngineStateTypes.BATTLE.get());
     }
   }
 

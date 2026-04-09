@@ -53,7 +53,7 @@ New: No disappearing. Added movement and animation calls.
 # Animation freeze
 +call 99, 1
  return
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
  LABEL_54:
  rel :PTR_13c4_0
  rel :PTR_13c4_1

@@ -7,6 +7,6 @@ public class BodyPurifierItem extends RecoverStatusItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 4;
+    return 36;
   }
 }

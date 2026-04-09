@@ -1,8 +1,10 @@
 package legend.game.combat.types;
 
+import legend.core.gpu.Gpu;
 import legend.core.memory.Method;
 import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
+import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.unpacker.FileData;
 
@@ -35,6 +37,8 @@ public class CombatantStruct1a8 {
    */
   public int flags_19e;
   public int vramSlot_1a0;
+  public Tim tim;
+  public Gpu texture;
   /**
    * Not just char index
    * <ul>

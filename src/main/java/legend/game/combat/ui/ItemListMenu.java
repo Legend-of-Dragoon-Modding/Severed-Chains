@@ -44,7 +44,7 @@ public class ItemListMenu extends ListMenu {
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
-    renderText(I18n.translate(this.combatItems_800c6988.get(index).getStack().getItem()), x, y, this.fontOptions);
+    renderText(I18n.translate(this.combatItems_800c6988.get(index).getStack().getNameTranslationKey()), x, y, this.fontOptions);
     renderText("×", x + 143, y, this.fontOptions);
 
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
@@ -78,6 +78,10 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected int handleTargeting() {
+    if(this.player_08.item_d4.canTarget(Item.TargetType.INSTANT)) {
+      return 2;
+    }
+
     //TODO
     return this.hud.handleTargeting(this.player_08.item_d4.canTarget(Item.TargetType.ALLIES) ? 0 : 1, this.player_08.item_d4.canTarget(Item.TargetType.ALL));
   }
@@ -139,7 +143,7 @@ public class ItemListMenu extends ListMenu {
       if((this.flags_02 & 0x40) != 0) {
         //Selected item description
         if(this.description == null) {
-          this.description = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
+          this.description = new UiBox(44, 156, 232, 14);
         }
 
         this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
@@ -153,16 +157,6 @@ public class ItemListMenu extends ListMenu {
           renderText(I18n.translate(selected.getBattleDescriptionTranslationKey()), 160, 157, this.fontOptions);
         }
       }
-    }
-  }
-
-  @Override
-  public void delete() {
-    super.delete();
-
-    if(this.description != null) {
-      this.description.delete();
-      this.description = null;
     }
   }
 }

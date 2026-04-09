@@ -26,7 +26,7 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -148,23 +148,73 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    this.updateHover(x, y);
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseMove(x, y) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    this.updateHover((int)x, (int)y);
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mousePress(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(super.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseRelease(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(super.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
       return InputPropagation.HANDLED;
     }
 
-    this.updateHover(x, y);
-    this.updateFocus(x, y);
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    this.updateHover((int)x, (int)y);
+    this.updateFocus((int)x, (int)y);
 
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
@@ -177,6 +227,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
     if(super.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -192,6 +250,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.keyRelease(key, scancode, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.keyRelease(key, scancode, mods);
     }
@@ -203,6 +269,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation buttonPress(final InputButton button, final boolean repeat) {
     if(super.buttonPress(button, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.buttonPress(button, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -218,6 +292,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.buttonRelease(button) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.buttonRelease(button);
     }
@@ -229,6 +311,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
     if(super.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -244,6 +334,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.charPress(codepoint) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.charPress(codepoint);
     }
@@ -255,6 +353,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
     if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -281,6 +387,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation inputActionReleased(final InputAction action) {
     if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.inputActionReleased(action) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -360,7 +474,7 @@ public abstract class MenuScreen extends ControlHost {
     return false;
   }
 
-  protected void deferAction(final Runnable action) {
+  public void deferAction(final Runnable action) {
     synchronized(this.deferredActions) {
       this.deferredActions.add(action);
     }

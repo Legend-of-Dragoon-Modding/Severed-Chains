@@ -5,6 +5,7 @@ import legend.game.additions.Addition;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
+import legend.game.sound.Audio;
 import legend.game.types.BattleReportOverlayList10;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
@@ -92,10 +93,9 @@ public final class Scus94491BpeSegment_8004 {
 
     scriptSubFunctions_8004e29c[224] = Audio::scriptLoadMenuSounds;
     scriptSubFunctions_8004e29c[225] = Audio::FUN_8001e918;
-    scriptSubFunctions_8004e29c[226] = Audio::scriptLoadCharAttackSounds;
+
     scriptSubFunctions_8004e29c[227] = Audio::FUN_8001eb30;
-    scriptSubFunctions_8004e29c[228] = Audio::scriptLoadBattleCutsceneSounds;
-    scriptSubFunctions_8004e29c[229] = Audio::scriptLoadMonsterAttackSounds;
+
     scriptSubFunctions_8004e29c[230] = Audio::scriptLoadMusicPackage;
     scriptSubFunctions_8004e29c[231] = Audio::FUN_8001fe28;
     scriptSubFunctions_8004e29c[232] = Audio::scriptUnloadSoundFile;
@@ -110,9 +110,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[242] = Audio::scriptToggleMusicSequencePause;
     scriptSubFunctions_8004e29c[243] = Audio::scriptToggleMusicSequencePause2;
     scriptSubFunctions_8004e29c[244] = Audio::scriptStopCurrentMusicSequence;
-    scriptSubFunctions_8004e29c[245] = Audio::scriptStartEncounterSounds;
-    scriptSubFunctions_8004e29c[246] = Audio::scriptStopEncounterSounds;
-    scriptSubFunctions_8004e29c[247] = Audio::scriptStopEncounterSounds2;
+
     scriptSubFunctions_8004e29c[248] = Audio::FUN_8001b094;
     scriptSubFunctions_8004e29c[249] = Audio::FUN_8001b134;
     scriptSubFunctions_8004e29c[250] = Audio::FUN_8001b13c;
@@ -132,10 +130,6 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[711] = Audio::scriptGetSequenceVolume;
 
     scriptSubFunctions_8004e29c[714] = Audio::scriptStopAndUnloadSequences;
-    scriptSubFunctions_8004e29c[715] = Audio::scriptLoadCharacterAttackSounds;
-    scriptSubFunctions_8004e29c[716] = Audio::scriptReplaceMonsterSounds;
-    scriptSubFunctions_8004e29c[717] = Audio::scriptLoadCutsceneSounds;
-    scriptSubFunctions_8004e29c[718] = Audio::scriptLoadFinalBattleSounds;
 
     scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment::scriptGiveChestContents;
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment::scriptTakeItem;

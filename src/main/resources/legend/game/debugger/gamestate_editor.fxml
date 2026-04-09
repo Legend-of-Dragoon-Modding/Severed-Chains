@@ -73,7 +73,6 @@
       <Label alignment="CENTER" text="Dot Offset" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="CENTER" />
       <Label alignment="CENTER" text="Facing" GridPane.halignment="CENTER" GridPane.rowIndex="25" GridPane.valignment="CENTER" />
       <Label alignment="CENTER" text="Area Index" GridPane.halignment="CENTER" GridPane.rowIndex="26" GridPane.valignment="CENTER" />
-      <TextField fx:id="textData1" GridPane.columnIndex="1" />
       <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
             <ComboBox fx:id="getScriptData" onAction="#getScriptData" prefWidth="70.0" />
@@ -168,15 +167,6 @@
       <TextField fx:id="textDotOffset" GridPane.columnIndex="1" GridPane.rowIndex="24" />
       <TextField fx:id="textFacing" GridPane.columnIndex="1" GridPane.rowIndex="25" />
       <TextField fx:id="textAreaIndex" GridPane.columnIndex="1" GridPane.rowIndex="26" />
-      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
-         <GridPane.margin>
-            <Insets top="2.0" />
-         </GridPane.margin>
-         <children>
-            <Button fx:id="getData1" onAction="#getData1" prefHeight="25.0" prefWidth="999999.0" text="Get" />
-            <Button fx:id="setData1" onAction="#setData1" prefHeight="25.0" prefWidth="999999.0" text="Set" />
-         </children>
-      </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
          <GridPane.margin>
             <Insets top="2.0" />
@@ -191,6 +181,8 @@
          </GridPane.margin>
          <children>
             <Button fx:id="setParty" onAction="#setParty" prefHeight="25.0" prefWidth="999999.0" text="Set" />
+            <Button fx:id="addParty" onAction="#addParty" prefHeight="25.0" prefWidth="999999.0" text="Add" />
+            <Button fx:id="removeParty" onAction="#removeParty" prefHeight="25.0" prefWidth="999999.0" text="Rem" />
          </children>
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">

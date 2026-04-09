@@ -27,8 +27,6 @@ public class GameStateEditorController {
 
   private final String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
   @FXML
-  public TextField textData1;
-  @FXML
   public ComboBox<Integer> getScriptData;
   @FXML
   public TextField textScriptData;
@@ -99,19 +97,13 @@ public class GameStateEditorController {
   public Button editCharacter;
 
   public void initialize() {
-    this.textData1.setText(String.format("%#x", gameState_800babc8._04));
-
     for(int i = 0; i < 0x20; i++) {
       this.getScriptData.getItems().add(i);
     }
     this.getScriptData.getSelectionModel().select(0);
     this.getScriptData();
 
-    for(int i = 0; i < 3; i++) {
-      this.getParty.getItems().add(i);
-    }
-    this.getParty.getSelectionModel().select(0);
-    this.getParty();
+    this.initParty();
 
     this.textGold.setText(String.valueOf(gameState_800babc8.gold_94));
     this.textChapter.setText(String.valueOf(gameState_800babc8.chapterIndex_98));
@@ -120,8 +112,8 @@ public class GameStateEditorController {
     this.textSubmapScene.setText(String.valueOf(gameState_800babc8.submapScene_a4));
     this.textSubmapCut.setText(String.valueOf(gameState_800babc8.submapCut_a8));
     this.textScriptEngine1.setText(String.format("%#x", gameState_800babc8._b0));
-    this.textScriptEngine2.setText(String.format("%#x", gameState_800babc8._b4));
-    this.textScriptEngine3.setText(String.format("%#x", gameState_800babc8._b8));
+    this.textScriptEngine2.setText(String.format("%#x", gameState_800babc8.battleCount_b4));
+    this.textScriptEngine3.setText(String.format("%#x", gameState_800babc8.turnCount_b8));
 
     for(int i = 0; i < 0x20; i++) {
       this.getScriptFlags1.getItems().add(i);
@@ -228,16 +220,6 @@ public class GameStateEditorController {
   }
 
   @FXML
-  public void getData1() {
-    this.textData1.setText(String.format("%#x", gameState_800babc8._04));
-  }
-
-  @FXML
-  public void setData1() {
-    gameState_800babc8._04 = this.parseHexOrDec(this.textData1.getText(), gameState_800babc8._04);
-  }
-
-  @FXML
   public void getScriptData() {
     this.textScriptData.setText(String.format("%#x", gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()]));
   }
@@ -247,14 +229,47 @@ public class GameStateEditorController {
     gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()] = this.parseHexOrDec(this.textScriptData.getText(), gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()]);
   }
 
+  private void initParty() {
+    this.getParty.getItems().clear();
+
+    for(int i = 0; i < gameState_800babc8.charIds_88.size(); i++) {
+      this.getParty.getItems().add(i);
+    }
+
+    this.getParty.getSelectionModel().select(0);
+    this.getParty();
+  }
+
   @FXML
   public void getParty() {
-    this.textParty.setText(String.valueOf(gameState_800babc8.charIds_88[this.getParty.getSelectionModel().getSelectedIndex()]));
+    if(this.getParty.getSelectionModel().getSelectedIndex() == -1) {
+      this.textParty.setText("");
+      return;
+    }
+
+    this.textParty.setText(String.valueOf(gameState_800babc8.charIds_88.getInt(this.getParty.getSelectionModel().getSelectedIndex())));
   }
 
   @FXML
   public void setParty() {
-    gameState_800babc8.charIds_88[this.getParty.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textParty.getText());
+    final int charSlot = this.getParty.getSelectionModel().getSelectedIndex();
+    final int charId = Integer.parseInt(this.textParty.getText());
+    gameState_800babc8.charIds_88.set(charSlot, charId);
+  }
+
+  @FXML
+  public void addParty() {
+    gameState_800babc8.charIds_88.add(0);
+    this.initParty();
+    this.getParty.getSelectionModel().select(this.getParty.getItems().size() - 1);
+    this.getParty();
+  }
+
+  @FXML
+  public void removeParty() {
+    final int charSlot = this.getParty.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.charIds_88.removeInt(charSlot);
+    this.initParty();
   }
 
   @FXML
@@ -329,22 +344,22 @@ public class GameStateEditorController {
 
   @FXML
   public void getScriptEngine2() {
-    this.textScriptEngine2.setText(String.format("%#x", gameState_800babc8._b4));
+    this.textScriptEngine2.setText(String.format("%#x", gameState_800babc8.battleCount_b4));
   }
 
   @FXML
   public void setScriptEngine2() {
-    gameState_800babc8._b4 = this.parseHexOrDec(this.textScriptEngine2.getText(), gameState_800babc8._b4);
+    gameState_800babc8.battleCount_b4 = this.parseHexOrDec(this.textScriptEngine2.getText(), gameState_800babc8.battleCount_b4);
   }
 
   @FXML
   public void getScriptEngine3() {
-    this.textScriptEngine3.setText(String.format("%#x", gameState_800babc8._b8));
+    this.textScriptEngine3.setText(String.format("%#x", gameState_800babc8.turnCount_b8));
   }
 
   @FXML
   public void setScriptEngine3() {
-    gameState_800babc8._b8 = this.parseHexOrDec(this.textScriptEngine3.getText(), gameState_800babc8._b8);
+    gameState_800babc8.turnCount_b8 = this.parseHexOrDec(this.textScriptEngine3.getText(), gameState_800babc8.turnCount_b8);
   }
 
   @FXML

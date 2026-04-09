@@ -170,7 +170,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
     final float z = perspectiveTransform(effect.worldCoords, effect.screenCoords);
     if(z >= 80) {
-      effect.zDepths.add(z);
+      effect.zDepths.add(z * 4.0f);
 
       //LAB_801163c4
       // Intified and jankily rounded values to make Down Burst particles look retail-ish due to the effect

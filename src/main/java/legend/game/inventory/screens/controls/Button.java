@@ -13,7 +13,7 @@ import legend.game.inventory.screens.TextColour;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
@@ -87,13 +87,13 @@ public class Button extends Control {
   }
 
   @Override
-  protected void hoverIn() {
+  public void hoverIn() {
     super.hoverIn();
     this.hover.show();
   }
 
   @Override
-  protected void hoverOut() {
+  public void hoverOut() {
     super.hoverOut();
     this.hover.hide();
   }
@@ -105,7 +105,7 @@ public class Button extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }

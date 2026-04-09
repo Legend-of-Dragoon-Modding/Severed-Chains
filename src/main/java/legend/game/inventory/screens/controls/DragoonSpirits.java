@@ -5,6 +5,9 @@ import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.screens.Control;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
+
+import java.util.List;
 
 import static legend.game.Menus.uploadRenderable;
 import static legend.lodmod.LodGoods.BLUE_DRAGOON_SPIRIT;
@@ -35,10 +38,30 @@ public class DragoonSpirits extends Control {
     this.setGoods(goods);
   }
 
+  public DragoonSpirits(final List<RegistryId> goods) {
+    this.setGoods(goods);
+  }
+
   public void setGoods(final GoodsInventory goods) {
     for(int spiritIndex = 0; spiritIndex < dragoonSpiritGoodsBits_800fbabc.length; spiritIndex++) {
       final RegistryDelegate<Good> bit = dragoonSpiritGoodsBits_800fbabc[spiritIndex];
       if(goods.has(bit)) {
+        final Renderable58 renderable = bit.get().renderManualIcon(spiritIndex * 12, 0, Renderable58.FLAG_NO_ANIMATION);
+
+        if(renderable != null) {
+          renderable.z_3c = 33;
+          this.renderables[spiritIndex] = renderable;
+        }
+      } else {
+        this.renderables[spiritIndex] = null;
+      }
+    }
+  }
+
+  public void setGoods(final List<RegistryId> goods) {
+    for(int spiritIndex = 0; spiritIndex < dragoonSpiritGoodsBits_800fbabc.length; spiritIndex++) {
+      final RegistryDelegate<Good> bit = dragoonSpiritGoodsBits_800fbabc[spiritIndex];
+      if(goods.contains(bit.getId())) {
         final Renderable58 renderable = bit.get().renderManualIcon(spiritIndex * 12, 0, Renderable58.FLAG_NO_ANIMATION);
 
         if(renderable != null) {

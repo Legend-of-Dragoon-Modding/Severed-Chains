@@ -3,6 +3,9 @@ package legend.core;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActionRegistry;
 import legend.core.platform.input.InputActionRegistryEvent;
+import legend.game.EngineStateType;
+import legend.game.EngineStateTypeRegistry;
+import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.additions.Addition;
 import legend.game.additions.AdditionRegistry;
 import legend.game.additions.AdditionRegistryEvent;
@@ -24,6 +27,9 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.encounters.EncounterRegistry;
 import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.postbattleactions.PostBattleAction;
+import legend.game.combat.postbattleactions.PostBattleActionRegistry;
+import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleActionRegistry;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
@@ -41,9 +47,12 @@ import legend.game.inventory.ShopRegistryEvent;
 import legend.game.inventory.Spell;
 import legend.game.inventory.SpellRegistry;
 import legend.game.inventory.SpellRegistryEvent;
+import legend.game.saves.CampaignType;
+import legend.game.saves.CampaignTypeRegistry;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistry;
 import legend.game.saves.ConfigRegistryEvent;
+import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.types.Shop;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.events.registries.RegistryEvent;
@@ -55,6 +64,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
+  public final Registry<CampaignType> campaignTypes = this.addRegistry(new CampaignTypeRegistry(), RegisterCampaignTypesEvent::new);
+  public final Registry<EngineStateType<?>> engineStateTypes = this.addRegistry(new EngineStateTypeRegistry(), RegisterEngineStateTypesEvent::new);
   public final Registry<InputAction> inputActions = this.addRegistry(new InputActionRegistry(), InputActionRegistryEvent::new);
   public final Registry<StatType<?>> statTypes = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
   public final Registry<StatModType<?, ?, ?>> statModTypes = this.addRegistry(new StatModTypeRegistry(), StatModTypeRegistryEvent::new);
@@ -70,6 +81,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
   public final Registry<Addition> additions = this.addRegistry(new AdditionRegistry(), AdditionRegistryEvent::new);
   public final Registry<BattleAction> battleActions = this.addRegistry(new BattleActionRegistry(), RegisterBattleActionsEvent::new);
+  public final Registry<PostBattleAction<?, ?>> postBattleActions = this.addRegistry(new PostBattleActionRegistry(), RegisterPostBattleActionsEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

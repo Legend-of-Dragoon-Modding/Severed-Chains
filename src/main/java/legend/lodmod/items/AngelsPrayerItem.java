@@ -45,7 +45,7 @@ public class AngelsPrayerItem extends BattleItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 2;
+    return 34;
   }
 
   @Override

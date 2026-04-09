@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Test-time log4j2 config. Automatically picked up by log4j2 in preference to
+  the root log4j2.xml when running from the test classpath.
+
+  Adds an e2e-test.log appender (no marker filters, immediateFlush) so all E2E
+  test output goes into its own file next to debug.log.
+-->
+<Configuration status="info" name="Severed Chains Tests" monitorInterval="5">
+  <Appenders>
+    <!-- ── Game-engine console (same filters as production) ── -->
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t %c:%L] %highlight{%-5level}: %msg%n%throwable" />
+      <Filters>
+        <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="DISASSEMBLY" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="BATTLE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+      </Filters>
+    </Console>
+
+    <!-- ── Game-engine debug.log (same as production) ── -->
+    <File name="file" fileName="debug.log" immediateFlush="false" append="false">
+      <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t %c:%L] %-5level: %msg%n%throwable"/>
+      <Filters>
+        <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="DISASSEMBLY" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="BATTLE" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+      </Filters>
+    </File>
+
+    <!-- ── E2E test log: no marker filters, immediateFlush so nothing is lost ── -->
+    <File name="e2e" fileName="e2e-test.log" immediateFlush="true" append="false">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %c{1}: %msg%n%throwable"/>
+    </File>
+
+    <!-- ── E2E console: plain format, no marker filters ── -->
+    <Console name="e2e-console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [E2E] %-5level: %msg%n%throwable"/>
+    </Console>
+  </Appenders>
+
+  <Loggers>
+    <!-- E2E test loggers → own file + own console line, NOT the game appenders -->
+    <Logger name="legend.game.EngineBootTest" level="debug" additivity="false">
+      <AppenderRef ref="e2e"/>
+      <AppenderRef ref="e2e-console"/>
+    </Logger>
+    <Logger name="legend.game.Wait" level="debug" additivity="false">
+      <AppenderRef ref="e2e"/>
+      <AppenderRef ref="e2e-console"/>
+    </Logger>
+    <Logger name="legend.game.Harness" level="debug" additivity="false">
+      <AppenderRef ref="e2e"/>
+      <AppenderRef ref="e2e-console"/>
+    </Logger>
+    <Logger name="legend.game.Bootstrapper" level="debug" additivity="false">
+      <AppenderRef ref="e2e"/>
+      <AppenderRef ref="e2e-console"/>
+    </Logger>
+
+    <!-- Everything else → game engine appenders -->
+    <Root level="info" additivity="false">
+      <AppenderRef ref="console"/>
+      <AppenderRef ref="file"/>
+    </Root>
+  </Loggers>
+</Configuration>

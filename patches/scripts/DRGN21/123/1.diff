@@ -29,4 +29,4 @@ Dart
  data 0xa0ff
  data 0x14
  data 0x2
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt

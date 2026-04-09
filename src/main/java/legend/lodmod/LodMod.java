@@ -11,6 +11,7 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.additions.AdditionRegistryEvent;
 import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
@@ -26,7 +27,9 @@ import legend.game.characters.UnaryStat;
 import legend.game.characters.UnaryStatMod;
 import legend.game.characters.UnaryStatModConfig;
 import legend.game.characters.UnaryStatModType;
+import legend.game.characters.UnaryStatType;
 import legend.game.characters.VitalsStat;
+import legend.game.characters.VitalsStatType;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
@@ -34,10 +37,10 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
+import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.GatherBattleActionsEvent;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
-import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.GoodsRegistryEvent;
 import legend.game.inventory.IconMapEvent;
@@ -58,13 +61,13 @@ import legend.game.modding.coremod.elements.ThunderElement;
 import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
-import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigRegistryEvent;
+import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.scripting.ScriptState;
-import legend.game.types.EquipmentSlot;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Loader;
 import org.legendofdragoon.modloader.Mod;
@@ -73,11 +76,14 @@ import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.SItem.chapterNames_80114248;
+import static legend.game.SItem.submapNames_8011c108;
+import static legend.game.SItem.worldMapNames_8011c1ec;
+import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
@@ -91,6 +97,10 @@ public class LodMod {
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
   }
+
+  private static final Registrar<CampaignType, RegisterCampaignTypesEvent> CAMPAIGN_TYPE_REGISTRAR = new Registrar<>(REGISTRIES.campaignTypes, MOD_ID);
+
+  public static final RegistryDelegate<CampaignType> RETAIL_CAMPAIGN_TYPE = CAMPAIGN_TYPE_REGISTRAR.register("retail", RetailCampaignType::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
@@ -126,18 +136,18 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_OPTIONS = INPUT_ACTION_REGISTRAR.register("bttl_options", InputAction::editable);
 
   private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
-  public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
-  public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_TYPE_REGISTRAR.register("mp", () -> new StatType<>(VitalsStat::new));
-  public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
+  public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", VitalsStatType::new);
+  public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_TYPE_REGISTRAR.register("mp", VitalsStatType::new);
+  public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", VitalsStatType::new);
 
-  public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_TYPE_REGISTRAR.register("speed", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_STAT = STAT_TYPE_REGISTRAR.register("attack", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", () -> new StatType<>(UnaryStat::new));
-  public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", () -> new StatType<>(UnaryStat::new));
+  public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_TYPE_REGISTRAR.register("speed", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_STAT = STAT_TYPE_REGISTRAR.register("attack", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", UnaryStatType::new);
 
   private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statModTypes, MOD_ID);
   public static final RegistryDelegate<StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig>> UNARY_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("unary", UnaryStatModType::new);
@@ -262,6 +272,37 @@ public class LodMod {
     }
 
     return -1;
+  }
+
+  public static String getLocationName(final int locationType, final int locationIndex) {
+    final String[] locationNames;
+    if(locationType == 1) {
+      //LAB_80108b5c
+      locationNames = worldMapNames_8011c1ec;
+    } else if(locationType == 3) {
+      //LAB_80108b78
+      locationNames = chapterNames_80114248;
+    } else {
+      //LAB_80108b90
+      locationNames = submapNames_8011c108;
+    }
+
+    //LAB_80108ba0
+    if(locationIndex >= locationNames.length) {
+      return "Unknown location";
+    }
+
+    return locationNames[locationIndex];
+  }
+
+  @EventListener
+  public static void registerCampaignTypes(final RegisterCampaignTypesEvent event) {
+    CAMPAIGN_TYPE_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerEngineStates(final RegisterEngineStateTypesEvent event) {
+    LodEngineStateTypes.register(event);
   }
 
   @EventListener
@@ -424,6 +465,11 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerPostBattleActions(final RegisterPostBattleActionsEvent event) {
+    LodPostBattleActions.register(event);
+  }
+
+  @EventListener
   public static void gatherBattleActions(final GatherBattleActionsEvent event) {
     final PlayerBattleEntity player = event.player;
     int sort = 100;
@@ -441,8 +487,11 @@ public class LodMod {
       sort += 100;
       event.actions.put(LodBattleActions.ITEMS.get(), sort);
       sort += 100;
-      event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
-      sort += 100;
+
+      if(CHARACTER_ADDITIONS[player.charId_272].length != 0) {
+        event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
+        sort += 100;
+      }
     }
 
     if(player.isDragoon()) {
@@ -527,7 +576,7 @@ public class LodMod {
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40.get(i);
 
       // not dead or petrified
       if(player.hasFlag(BattleEntity27c.FLAG_DEAD) || (player.innerStruct_00.status_0e & 0x1) != 0) {
@@ -536,7 +585,7 @@ public class LodMod {
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40[i];
+      final ScriptState<PlayerBattleEntity> player = battleState_8006e398.playerBents_e40.get(i);
       final int sp = player.innerStruct_00.stats.getStat(SP_STAT.get()).getCurrent();
       final int dlevel = player.innerStruct_00.dlevel_06;
 
@@ -547,13 +596,13 @@ public class LodMod {
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      if(battleState_8006e398.playerBents_e40[i].innerStruct_00.isDragoon()) {
+      if(battleState_8006e398.playerBents_e40.get(i).innerStruct_00.isDragoon()) {
         return false;
       }
     }
 
     for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
-      if(!battleState_8006e398.playerBents_e40[i].innerStruct_00.canBecomeDragoon()) {
+      if(!battleState_8006e398.playerBents_e40.get(i).innerStruct_00.canBecomeDragoon()) {
         return false;
       }
     }
@@ -599,78 +648,6 @@ public class LodMod {
     event.add(new ItemStack(LodItems.MOON_SERENADE.get()));
     event.add(new ItemStack(LodItems.HEALING_RAIN.get()));
     event.add(new ItemStack(LodItems.HEALING_BREEZE.get()));
-  }
-
-  @EventListener
-  public static void newGame(final NewGameEvent event) {
-    event.gameState.items_2e9.give(LodItems.BURN_OUT.get());
-    event.gameState.items_2e9.give(LodItems.HEALING_POTION.get());
-    event.gameState.items_2e9.give(LodItems.HEALING_POTION.get());
-
-    final Map<EquipmentSlot, Equipment> dart = event.gameState.charData_32c[0].equipment_14;
-    dart.put(EquipmentSlot.WEAPON, LodEquipment.BROAD_SWORD.get());
-    dart.put(EquipmentSlot.HELMET, LodEquipment.BANDANA.get());
-    dart.put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_ARMOR.get());
-    dart.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_BOOTS.get());
-    dart.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> lavitz = event.gameState.charData_32c[1].equipment_14;
-    lavitz.put(EquipmentSlot.WEAPON, LodEquipment.SPEAR.get());
-    lavitz.put(EquipmentSlot.HELMET, LodEquipment.SALLET.get());
-    lavitz.put(EquipmentSlot.ARMOUR, LodEquipment.SCALE_ARMOR.get());
-    lavitz.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_BOOTS.get());
-    lavitz.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> shana = event.gameState.charData_32c[2].equipment_14;
-    shana.put(EquipmentSlot.WEAPON, LodEquipment.SHORT_BOW.get());
-    shana.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
-    shana.put(EquipmentSlot.ARMOUR, LodEquipment.CLOTHES.get());
-    shana.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
-    shana.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> rose = event.gameState.charData_32c[3].equipment_14;
-    rose.put(EquipmentSlot.WEAPON, LodEquipment.RAPIER.get());
-    rose.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
-    rose.put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_JACKET.get());
-    rose.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
-    rose.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> haschel = event.gameState.charData_32c[4].equipment_14;
-    haschel.put(EquipmentSlot.WEAPON, LodEquipment.IRON_KNUCKLE.get());
-    haschel.put(EquipmentSlot.HELMET, LodEquipment.ARMET.get());
-    haschel.put(EquipmentSlot.ARMOUR, LodEquipment.DISCIPLE_VEST.get());
-    haschel.put(EquipmentSlot.BOOTS, LodEquipment.IRON_KNEEPIECE.get());
-    haschel.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> albert = event.gameState.charData_32c[5].equipment_14;
-    albert.put(EquipmentSlot.WEAPON, LodEquipment.SPEAR.get());
-    albert.put(EquipmentSlot.HELMET, LodEquipment.SALLET.get());
-    albert.put(EquipmentSlot.ARMOUR, LodEquipment.SCALE_ARMOR.get());
-    albert.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_BOOTS.get());
-    albert.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> meru = event.gameState.charData_32c[6].equipment_14;
-    meru.put(EquipmentSlot.WEAPON, LodEquipment.MACE.get());
-    meru.put(EquipmentSlot.HELMET, LodEquipment.TIARA.get());
-    meru.put(EquipmentSlot.ARMOUR, LodEquipment.SILVER_VEST.get());
-    meru.put(EquipmentSlot.BOOTS, LodEquipment.SOFT_BOOTS.get());
-    meru.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> kongol = event.gameState.charData_32c[7].equipment_14;
-    kongol.put(EquipmentSlot.WEAPON, LodEquipment.AXE.get());
-    kongol.put(EquipmentSlot.HELMET, LodEquipment.ARMET.get());
-    kongol.put(EquipmentSlot.ARMOUR, LodEquipment.LION_FUR.get());
-    kongol.put(EquipmentSlot.BOOTS, LodEquipment.IRON_KNEEPIECE.get());
-    kongol.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    final Map<EquipmentSlot, Equipment> miranda = event.gameState.charData_32c[8].equipment_14;
-    miranda.put(EquipmentSlot.WEAPON, LodEquipment.SHORT_BOW.get());
-    miranda.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
-    miranda.put(EquipmentSlot.ARMOUR, LodEquipment.CLOTHES.get());
-    miranda.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
-    miranda.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
-
-    event.gameState.gold_94 = 20;
   }
 
   @EventListener

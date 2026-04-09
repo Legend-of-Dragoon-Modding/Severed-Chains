@@ -29,4 +29,4 @@ Shana
  call 101, stor[0], 0x1f4, 0xffffea80, 0x0
  call 102, stor[0], stor[8], stor[9], stor[10]
  return
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt

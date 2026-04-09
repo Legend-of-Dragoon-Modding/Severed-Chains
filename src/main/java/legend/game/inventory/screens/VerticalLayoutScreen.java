@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -174,13 +174,13 @@ public class VerticalLayoutScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox(x, y, this.highlight.getX(), 30 + i * 13, this.highlight.getWidth(), 13) && this.highlightedRow != this.scroll + i) {
+      if(MathHelper.inBox((int)x, (int)y, this.highlight.getX(), 30 + i * 13, this.highlight.getWidth(), 13) && this.highlightedRow != this.scroll + i) {
         playMenuSound(1);
         this.highlightRow(this.scroll + i);
         return InputPropagation.HANDLED;
@@ -380,7 +380,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
     if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       final Control control = this.configControls.get(this.highlightedRow);
-      if(control != null) {
+      if(control != null && !control.isDisabled()) {
         if(control instanceof final Button button) {
           this.deferAction(button::press);
         } else {

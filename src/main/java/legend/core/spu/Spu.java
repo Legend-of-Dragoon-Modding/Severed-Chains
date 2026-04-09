@@ -23,7 +23,6 @@ public class Spu {
   private GenericSource source;
 
   private final short[] spuOutput = new short[SAMPLES_PER_TICK * 2];
-  private final byte[] ram = new byte[512 * 1024]; // 0x8_0000
   private final float[] reverbWorkArea = new float[0x4_0000];
   public final Voice[] voices = new Voice[24];
 
@@ -48,11 +47,6 @@ public class Spu {
   public Spu() {
     for(int i = 0; i < this.voices.length; i++) {
       this.voices[i] = new Voice(i);
-    }
-
-    // Initialize silent loop, voices start pointing to this
-    for(int i = 0x1010; i < 0x1020; i++) {
-      this.ram[i] = 0x7;
     }
 
     for(int i = 0; i < interpolationWeights.length; i++) {
@@ -310,7 +304,7 @@ public class Spu {
 
     //Decode samples if its empty / next block
     if(!voice.hasSamples) {
-      voice.decodeSamples(this.ram);
+      voice.decodeSamples();
       voice.hasSamples = true;
 
       final byte flags = this.voices[v].spuAdpcm[1];
@@ -364,8 +358,6 @@ public class Spu {
 
       if(loopEnd) {
         if(loopRepeat) {
-          assert voice.adpcmRepeatAddress >= 0 : "Negative address";
-          assert voice.adpcmRepeatAddress < this.ram.length : "Address overflow";
           voice.currentAddress = voice.adpcmRepeatAddress;
         } else {
           voice.adsrPhase = Phase.Off;
@@ -375,14 +367,6 @@ public class Spu {
     }
 
     return (short)interpolated;
-  }
-
-  public void directWrite(final int spuRamOffset, final byte[] dma) {
-    LOGGER.info("Performing direct write from stack to SPU @ %04x (%d bytes)", spuRamOffset, dma.length);
-
-    synchronized(Spu.class) {
-      System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
-    }
   }
 
   public void setMainVolume(final int left, final int right) {

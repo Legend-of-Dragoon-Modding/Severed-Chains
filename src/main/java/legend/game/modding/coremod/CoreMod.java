@@ -13,12 +13,15 @@ import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.game.RegisterEngineStateTypesEvent;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
+import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.inventory.IconSetConfigEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortModeConfigEntry;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.screens.GatherShopExtensionsEvent;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlaySizeConfigEntry;
@@ -55,9 +58,11 @@ import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
 import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
 import legend.game.modding.coremod.config.ShowAdvancedOptionsConfigEntry;
-import legend.game.modding.coremod.config.ShowTurnOrderConfig;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
+import legend.game.modding.coremod.shops.EquipmentShopExtension;
+import legend.game.modding.coremod.shops.GoodShopExtension;
+import legend.game.modding.coremod.shops.ItemShopExtension;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.saves.BoolConfigEntry;
@@ -118,6 +123,7 @@ public class CoreMod {
   public static final RegistryDelegate<ControllerKeybindsConfigEntry> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
   public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
+  public static final RegistryDelegate<EnabledModsConfigEntry> KNOWN_MODS_CONFIG = CONFIG_REGISTRAR.register("known_mods", EnabledModsConfigEntry::new);
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
   public static final RegistryDelegate<InventorySizeConfigEntry> INVENTORY_SIZE_CONFIG = CONFIG_REGISTRAR.register("inventory_size", InventorySizeConfigEntry::new);
   public static final RegistryDelegate<EncounterRateConfigEntry> ENCOUNTER_RATE_CONFIG = CONFIG_REGISTRAR.register("encounter_rate", EncounterRateConfigEntry::new);
@@ -139,7 +145,6 @@ public class CoreMod {
   public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
-  public static final RegistryDelegate<ShowTurnOrderConfig> SHOW_TURN_ORDER = CONFIG_REGISTRAR.register("show_turn_order", ShowTurnOrderConfig::new);
   public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
@@ -171,6 +176,8 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN = INPUT_ACTION_REGISTRAR.register("general_toggle_fullscreen", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SPEED_UP = INPUT_ACTION_REGISTRAR.register("general_speed_up", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_SLOW_DOWN = INPUT_ACTION_REGISTRAR.register("general_slow_down", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TOGGLE_SPEED = INPUT_ACTION_REGISTRAR.register("general_toggle_speed", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_TURBO = INPUT_ACTION_REGISTRAR.register("general_turbo", InputAction::editable);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_TOGGLE = INPUT_ACTION_REGISTRAR.register("freecam_toggle", InputAction::hidden);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_FREECAM_FORWARD = INPUT_ACTION_REGISTRAR.register("freecam_forward", InputAction::hidden);
@@ -201,6 +208,11 @@ public class CoreMod {
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
+  }
+
+  @EventListener
+  public static void registerEngineStates(final RegisterEngineStateTypesEvent event) {
+    CoreEngineStateTypes.register(event);
   }
 
   @EventListener
@@ -292,6 +304,18 @@ public class CoreMod {
       .add(INPUT_ACTION_DEBUG_TOGGLE_WIREFRAME.get(), new KeyInputActivation(InputKey.F2))
       .add(INPUT_ACTION_DEBUG_RELOAD_SHADERS.get(), new KeyInputActivation(InputKey.F5))
     ;
+  }
+
+  @EventListener
+  public static void registerPostBattleActions(final RegisterPostBattleActionsEvent event) {
+    CorePostBattleActions.register(event);
+  }
+
+  @EventListener
+  public static void gatherShopExtensions(final GatherShopExtensionsEvent event) {
+    event.addExtension(new ItemShopExtension(), 1000);
+    event.addExtension(new EquipmentShopExtension(), 1000);
+    event.addExtension(new GoodShopExtension(), 1000);
   }
 
   @EventListener

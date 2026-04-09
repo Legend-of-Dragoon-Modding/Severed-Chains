@@ -1,11 +1,8 @@
 package legend.core.spu;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import legend.game.unpacker.FileData;
 
 public class Voice {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Voice.class);
-
   private static final int[] positiveXaAdpcmTable = {0, 60, 115, 98, 122};
   private static final int[] negativeXaAdpcmTable = {0, 0, -52, -55, -60};
 
@@ -15,7 +12,8 @@ public class Voice {
   public final Volume volumeRight = new Volume();          //2
 
   public int pitch = 0x1000;                //4
-  public int startAddress = 0x1010;         //6
+  public FileData data;
+  public int startAddress;         //6
   public int currentAddress;       //6 Internal
 
   public final ADSR adsr = new ADSR();
@@ -47,7 +45,6 @@ public class Voice {
     this.hasSamples = false;
     this.old = 0;
     this.older = 0;
-    assert this.startAddress >= 0 : "Negative address";
     this.currentAddress = this.startAddress;
     this.adsrCounter = 0;
     this.adsrVolume = 0;
@@ -63,18 +60,19 @@ public class Voice {
   public byte[] spuAdpcm = new byte[16];
   public short[] decodedSamples = new short[28];
 
-  public void decodeSamples(final byte[] ram) {
+  private static final byte[] SILENT = {0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7};
+
+  public void decodeSamples() {
     //save the last 3 samples from the last decoded block
     //this are needed for interpolation in case the index is 0 1 or 2
     this.lastBlockSample28 = this.decodedSamples[this.decodedSamples.length - 1];
     this.lastBlockSample27 = this.decodedSamples[this.decodedSamples.length - 2];
     this.lastBlockSample26 = this.decodedSamples[this.decodedSamples.length - 3];
 
-    try {
-      System.arraycopy(ram, this.currentAddress * 8, this.spuAdpcm, 0, 16);
-    } catch(final ArrayIndexOutOfBoundsException e) {
-      LOGGER.warn("SPU voice %d overflow", this.voiceIndex);
-      this.currentAddress = 0;
+    if(this.data != null) {
+      this.data.read(this.currentAddress * 8, this.spuAdpcm, 0, 16);
+    } else {
+      System.arraycopy(SILENT, 0, this.spuAdpcm, 0, SILENT.length);
     }
 
     final int shift = 12 - (this.spuAdpcm[0] & 0x0f);

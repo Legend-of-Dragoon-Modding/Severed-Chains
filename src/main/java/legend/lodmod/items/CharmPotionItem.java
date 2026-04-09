@@ -1,6 +1,7 @@
 package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.i18n.I18n;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
@@ -53,13 +54,12 @@ public class CharmPotionItem extends BattleItem {
       smap.encounterAccumulator_800c6ae8 = 0;
     }
 
-    response.success = true;
-    response.text = this.getTranslationKey("use");
+    response.success(I18n.translate(this.getTranslationKey("use")));
   }
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 2;
+    return 34;
   }
 
   @Override

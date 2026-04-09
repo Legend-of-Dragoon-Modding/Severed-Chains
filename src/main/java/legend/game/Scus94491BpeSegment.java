@@ -51,17 +51,10 @@ import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.Audio._800bf0cf;
-import static legend.game.Audio.initSound;
-import static legend.game.Audio.loadMenuSounds;
-import static legend.game.Audio.startQueuedSounds;
-import static legend.game.Audio.stopSound;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.EngineStates.FUN_80020ed8;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
-import static legend.game.EngineStates.engineState_8004dd20;
 import static legend.game.EngineStates.loadQueuedOverlay;
 import static legend.game.FullScreenEffects.handleFullScreenEffects;
 import static legend.game.Graphics.InitGeom;
@@ -78,16 +71,16 @@ import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zShift_1f8003c4;
-import static legend.game.Menus.FUN_800e6d60;
+import static legend.game.Menus.clearRenderables;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.loadAndRenderMenus;
 import static legend.game.Menus.renderUi;
+import static legend.game.Menus.uploadRenderables;
 import static legend.game.Models.loadModelAndAnimation;
 import static legend.game.SItem.addGold;
 import static legend.game.SItem.clearCharacterStats;
 import static legend.game.SItem.giveEquipment;
-import static legend.game.SItem.giveItem;
 import static legend.game.SItem.takeEquipmentId;
-import static legend.game.SItem.takeItem;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
@@ -96,7 +89,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -105,6 +97,11 @@ import static legend.game.Text.initTextboxes;
 import static legend.game.Text.renderTextboxes;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.SBtld.tickAndRenderTransitionIntoBattle;
+import static legend.game.sound.Audio._800bf0cf;
+import static legend.game.sound.Audio.initSound;
+import static legend.game.sound.Audio.loadMenuSounds;
+import static legend.game.sound.Audio.startQueuedSounds;
+import static legend.game.sound.Audio.stopSound;
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Scus94491BpeSegment {
@@ -139,7 +136,7 @@ public final class Scus94491BpeSegment {
 
     GPU.startFrame();
 
-    if(engineState_8004dd20.isInGame()) {
+    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.advancesTime()) {
       gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8;
     }
 
@@ -159,6 +156,8 @@ public final class Scus94491BpeSegment {
     EVENTS.postEvent(RENDER_EVENT);
 
     loadAndRenderMenus();
+    // TODO temporary until everything is moved over to controls and no longer uses the LOD system
+    uploadRenderables();
 
     final boolean scriptsTicked = SCRIPTS.tick();
 
@@ -191,15 +190,7 @@ public final class Scus94491BpeSegment {
   public static void bindRendererEvents() {
     RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
       if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.W && currentEngineState_8004dd04 instanceof final Battle battle) {
-        battle.endBattle();
-      }
-
-      if(mods.contains(InputMod.CTRL) && !repeat && key == InputKey.Q) {
-        if(Config.getGameSpeedMultiplier() == 1) {
-          Config.setGameSpeedMultiplier(Config.getLoadedGameSpeedMultiplier());
-        } else {
-          Config.setGameSpeedMultiplier(1);
-        }
+        battle.allMonstersDead();
       }
     });
 
@@ -431,11 +422,6 @@ public final class Scus94491BpeSegment {
     GPU.uploadData15(new Rect4i(x, y, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
   }
 
-  @Method(0x80018998L)
-  public static void nextLoadingStage() {
-    pregameLoadingStage_800bb10c++;
-  }
-
   @ScriptDescription("Not implemented in retail")
   @Method(0x8001c5fcL)
   public static FlowControl FUN_8001c5fc(final RunningScript<?> script) {
@@ -474,7 +460,7 @@ public final class Scus94491BpeSegment {
         if(itemId < 0xc0) {
           yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff;
         }
-        yield giveItem(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff;
+        yield gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()).isEmpty() ? 0 : 0xff;
       }
     };
 
@@ -495,7 +481,7 @@ public final class Scus94491BpeSegment {
     if(itemId < 0xc0) {
       script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff);
     } else {
-      script.params_20[1].set(takeItem(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()) ? 0 : 0xff);
+      script.params_20[1].set(gameState_800babc8.items_2e9.take(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()).isEmpty() ? 0 : 0xff);
     }
 
     return FlowControl.CONTINUE;
@@ -586,6 +572,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8002a9c0L)
   public static void resetSubmapToNewGame() {
+    deallocateRenderables(0xff);
     submapCut_80052c30 = 675; // Opening
     submapScene_80052c34 = 4;
     collidedPrimitiveIndex_80052c38 = 0;
@@ -634,15 +621,13 @@ public final class Scus94491BpeSegment {
     setProjectionPlaneDistance(640);
     initSound();
 
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
-    pregameLoadingStage_800bb10c = 0;
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc = 0;
 
     loadSystemFont();
     SCRIPTS.clear();
     loadShadow();
-    FUN_800e6d60();
+    clearRenderables();
     initFmvs();
   }
 

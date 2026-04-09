@@ -1,7 +1,5 @@
 package legend.game.types;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.game.additions.CharacterAdditionStats;
 import legend.game.inventory.Equipment;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -11,13 +9,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CharacterData2c {
+  public static final int IN_PARTY = 0x1;
+  /** can be put in main party (without this flag a char can only appear in secondary and can't be put into main) */
+  public static final int CAN_BE_IN_PARTY = 0x2;
+  /** Used by char_utils.txt. Characters who are temporarily removed from the party can be assigned this flag to be restored later. */
+  public static final int TEMPORARILY_REMOVED_FROM_PARTY = 0x4;
+  /** don't select, can't be taken out of main party */
+  public static final int CANT_REMOVE = 0x20;
+  public static final int HAS_ULTIMATE_ADDITION = 0x40;
+
   public int xp_00;
   /**
    * <ul>
-   *   <li>0x1 - in party</li>
-   *   <li>0x2 - can be put in main party (without this flag a char can only appear in secondary and can't be put into main)</li>
-   *   <li>0x20 - can't remove (don't select, can't be taken out of main party)</li>
-   *   <li>0x40 - ultimate addition unlocked</li>
+   *   <li>0x1 - {@link #IN_PARTY}</li>
+   *   <li>0x2 - {@link #CAN_BE_IN_PARTY}</li>
+   *   <li>0x4 - {@link #TEMPORARILY_REMOVED_FROM_PARTY}</li>
+   *   <li>0x20 - {@link #CANT_REMOVE}</li>
+   *   <li>0x40 - {@link #HAS_ULTIMATE_ADDITION}</li>
    * </ul>
    */
   public int partyFlags_04;
@@ -29,10 +37,6 @@ public class CharacterData2c {
   public int status_10;
   public int level_12;
   public int dlevel_13;
-  /** Only used during loading */
-  public final Object2IntMap<EquipmentSlot> equipmentIds_14 = new Object2IntOpenHashMap<>();
-  /** Only used during loading */
-  public final Map<EquipmentSlot, RegistryId> equipmentRegistryIds_14 = new EnumMap<>(EquipmentSlot.class);
   public final Map<EquipmentSlot, Equipment> equipment_14 = new EnumMap<>(EquipmentSlot.class);
   public RegistryId selectedAddition_19;
   public final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();

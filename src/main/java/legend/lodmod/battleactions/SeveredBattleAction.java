@@ -10,6 +10,7 @@ import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.ui.BattleHud.ICON_SIZE;
@@ -18,9 +19,12 @@ public abstract class SeveredBattleAction extends BattleAction {
   private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
 
   private final int iconIndex;
+  private final int frameCount;
+  private int frameIndex;
 
-  protected SeveredBattleAction(final int iconIndex) {
+  protected SeveredBattleAction(final int iconIndex, final int frameCount) {
     this.iconIndex = iconIndex;
+    this.frameCount = frameCount;
   }
 
   protected String getTextTranslationKey() {
@@ -29,6 +33,10 @@ public abstract class SeveredBattleAction extends BattleAction {
 
   @Override
   public void draw(final Battle battle, final int index, final boolean selected) {
+    if(!selected) {
+      this.frameIndex = 0;
+    }
+
     final BattleMenuStruct58 menu = battle.hud.battleMenu_800c6c34;
     final int menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + index * 19;
     final int menuElementBaseY = menu.y_08 - 16;
@@ -36,9 +44,13 @@ public abstract class SeveredBattleAction extends BattleAction {
     menu.transforms.scaling(16.0f, 16.0f, 1.0f);
     menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.8f);
 
-    final int iconStride = battle.hud.battleIconsTexture.width / 16;
-    final float iconU = this.iconIndex % iconStride * ICON_SIZE / (float)battle.hud.battleIconsTexture.width;
-    final float iconV = this.iconIndex / iconStride * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
+    final float iconU = this.frameIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.width;
+    final float iconV = this.iconIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
+
+    if(tickCount_800bb0fc % 4 == 0) {
+      this.frameIndex++;
+      this.frameIndex %= this.frameCount;
+    }
 
     RENDERER.queueOrthoModel(battle.hud.battleIconQuad, menu.transforms, QueuedModelStandard.class)
       .uvOffset(iconU, iconV)

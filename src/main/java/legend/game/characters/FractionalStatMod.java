@@ -20,6 +20,11 @@ public class FractionalStatMod implements StatMod<FractionalStat> {
   }
 
   @Override
+  public StatMod<FractionalStat> copy() {
+    return new FractionalStatMod(this.amount, this.percentile, this.turns);
+  }
+
+  @Override
   public int apply(final StatCollection stats, final StatType<FractionalStat> type) {
     if(this.percentile) {
       return stats.getStat(type).getMaxRaw() * this.amount / 100;

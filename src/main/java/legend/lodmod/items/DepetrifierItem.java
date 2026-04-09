@@ -7,6 +7,6 @@ public class DepetrifierItem extends RecoverStatusItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 3;
+    return 35;
   }
 }

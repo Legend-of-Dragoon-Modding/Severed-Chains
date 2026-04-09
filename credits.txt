@@ -1,0 +1,72 @@
+# lod_core.ui.about.sc_credits_creator
+Monoxide
+
+# lod_core.ui.about.sc_credits_community
+Drewniverse
+
+# lod_core.ui.about.sc_credits_lead_developer
+Monoxide
+
+## lod_core.ui.about.sc_credits_developer
+theflyingzamboni
+Icarus
+
+## lod_core.ui.about.sc_credits_contributor
+Ink
+@ Bugfixes
+@ Modding API features
+@ Avid pull request reviewer
+Zychronix
+@ Modding API features
+milklizard/warblgarbl
+@ Widescreen/NoDart patches
+DooMMetaL
+@ File mapping
+@ Model/animation/texture tools
+Raver1357
+@ Severed Chains logo
+Mr.Scentless
+@ Title screen icons
+Senerio
+@ Turn Order UI
+@ The credits you are watching
+
+## lod_core.ui.about.sc_credits_thirdparty
+https://arks.itch.io/
+@ Controller button icons
+
+## lod_core.ui.about.sc_credits_tester
+Wulves
+interdimensional potato
+Kenorah
+Kritis
+Tommcq
+Dauerfrost
+Ekho4
+Leroy777
+AzorakZorai
+PlatinumSarge
+SarahSynergy
+arch_wolf
+
+## lod_core.ui.about.sc_credits_helpers
+TippinFedoraMan
+Chocolate
+Sonlen
+
+## lod_core.ui.about.sc_credits_canadians
+Monoxide
+Zychronix
+Ink
+Corvidaeka
+NovaDragoon
+interdimensional potato
+
+## lod_core.ui.about.sc_credits_honourary_canadians
+DrewUniverse
+
+### lod_core.ui.about.sc_credits_thanks
+Our Ko-Fi supporters for making this possible
+The Legend of Dragoon community as a whole
+Everyone else who helped out along the way
+And you, for playing the game

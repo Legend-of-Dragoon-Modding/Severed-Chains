@@ -13,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-
 public final class DrgnFiles {
   private DrgnFiles() { }
 
@@ -146,12 +144,5 @@ public final class DrgnFiles {
 
     LOGGER.info("No files loading");
     return FlowControl.PAUSE;
-  }
-
-  @Method(0x80018944L)
-  public static void waitForFilesToLoad() {
-    if(Loader.getLoadingFileCount() == 0) {
-      pregameLoadingStage_800bb10c++;
-    }
   }
 }

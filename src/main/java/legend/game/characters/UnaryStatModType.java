@@ -1,6 +1,8 @@
 package legend.game.characters;
 
+import legend.core.memory.types.IntRef;
 import legend.game.scripting.Param;
+import legend.game.unpacker.FileData;
 
 public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig> {
   @Override
@@ -11,6 +13,21 @@ public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, Unary
   @Override
   public UnaryStatModConfig makeConfig() {
     return new UnaryStatModConfig();
+  }
+
+  @Override
+  public void serialize(final UnaryStatMod mod, final FileData data, final IntRef offset) {
+    data.writeInt(offset, mod.amount);
+    data.writeBool(offset, mod.percentile);
+    data.writeInt(offset, mod.turns);
+  }
+
+  @Override
+  public UnaryStatMod deserialize(final FileData data, final IntRef offset) {
+    final int amount = data.readInt(offset);
+    final boolean percentile = data.readBool(offset);
+    final int turns = data.readInt(offset);
+    return new UnaryStatMod(amount, percentile, turns);
   }
 
   @Override

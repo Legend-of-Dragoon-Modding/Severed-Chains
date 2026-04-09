@@ -18,11 +18,15 @@ import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
+import legend.game.combat.encounters.Encounter;
+import legend.game.modding.events.submap.SubmapEncounterEvent;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
-import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SoundFileIndices;
+import legend.game.sound.Sshd;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdWithId;
@@ -35,6 +39,8 @@ import legend.game.types.NewRootStruct;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -56,15 +62,8 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.loadMusicPackage;
-import static legend.game.Audio.loadSubmapSounds;
-import static legend.game.Audio.musicLoaded_800bd782;
-import static legend.game.Audio.soundFiles_800bcf80;
-import static legend.game.Audio.startCurrentMusicSequence;
-import static legend.game.Audio.stopAndResetSoundsAndSequences;
-import static legend.game.Audio.stopCurrentMusicSequence;
-import static legend.game.Audio.unloadSoundFile;
 import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFile;
@@ -91,8 +90,17 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.combat.SBtld.startLegacyEncounter;
+import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.loadMusicPackage;
+import static legend.game.sound.Audio.loadSshdAndSoundbank;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.setSoundSequenceVolume;
+import static legend.game.sound.Audio.startCurrentMusicSequence;
+import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.sound.Audio.stopCurrentMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
@@ -170,7 +178,8 @@ public class RetailSubmap extends Submap {
   private Texture[] foregroundTextures;
   private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
-  public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
+  public RetailSubmap(final SMap smap, final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
+    super(smap);
     this.cut = cut;
     this.newRoot = newRoot;
 
@@ -276,13 +285,39 @@ public class RetailSubmap extends Submap {
     if(submapId_800bd808 != oldSubmapId) {
       stopAndResetSoundsAndSequences();
       unloadSoundFile(4);
-      loadSubmapSounds(submapId_800bd808);
+      this.loadSubmapSounds(submapId_800bd808);
     }
 
     if(submapId_800bd808 != oldSubmapId || previousSubmapCut_800bda08 != this.cut) {
       musicLoaded_800bd782 = false;
       this.startMusic();
     }
+  }
+
+  @Method(0x8001eadcL)
+  private void loadSubmapSounds(final int submapIndex) {
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x2);
+    loadDrgnDir(0, 5750 + submapIndex, this::submapSoundsLoaded);
+  }
+
+  @Method(0x8001eb38L)
+  private void submapSoundsLoaded(final List<FileData> files) {
+    final SoundFile soundFile = this.smap.submapSounds;
+    soundFile.indices_08 = SoundFileIndices.load(files.get(2));
+    soundFile.ptr_0c = files.get(1);
+    soundFile.id_02 = files.get(0).readShort(0);
+
+    final Sshd sshd = new Sshd(soundFile.name, files.get(3));
+    if(files.get(4).size() != sshd.soundBankSize_04) {
+      throw new RuntimeException("Size didn't match, need to resize array or something");
+    }
+
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), sshd);
+    setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
+    soundFile.used_00 = true;
+
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x2);
+    musicLoaded_800bd782 = true;
   }
 
   @Override
@@ -367,6 +402,12 @@ public class RetailSubmap extends Submap {
     38, // Prairie path near ocean - softlock
     47, // Cave stepping stones - softlock
     110, // Marshlands boat screen - boat is invisible
+    252, // Valley of Corrupted Gravity - Rocks bug
+    253, // Valley of Corrupted Gravity - Rocks bug
+    254, // Valley of Corrupted Gravity - Rocks bug
+    255, // Valley of Corrupted Gravity - Rocks bug
+    256, // Valley of Corrupted Gravity - Rocks bug
+    256, // Valley of Corrupted Gravity - Rocks bug
     327, // First map after starting chapter 3 - screen is black on load (GH#2204)
     381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
     580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
@@ -440,19 +481,19 @@ public class RetailSubmap extends Submap {
   @Override
   public int getEncounterRate() {
     final var encounterRate = encounterData_800f64c4[this.cut].rate_02;
-    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(encounterRate, this.cut));
+    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(this.smap, gameState_800babc8, this, encounterRate, this.cut));
 
     return encounterRateEvent.encounterRate;
   }
 
   @Override
-  public void prepareEncounter(final int encounterId, final boolean useBattleStage) {
-    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
-    final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
+  public void prepareEncounter(final Encounter encounter, final boolean useBattleStage) {
+    final int sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final int[] scene = sceneEncounterIds_800f74c4[sceneId];
+    final int battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
-    final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
-    startLegacyEncounter(generateEncounterEvent.encounterId, generateEncounterEvent.battleStageId);
+    final SubmapEncounterEvent event = EVENTS.postEvent(new SubmapEncounterEvent(this.smap, gameState_800babc8, this, encounter, battleStageId, this.cut, sceneId, scene));
+    startEncounter(event.encounter, event.battleStageId);
 
     if(Config.combatStage()) {
       battleStage_800bb0f4 = Config.getCombatStage();
@@ -461,10 +502,11 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void prepareEncounter(final boolean useBattleStage) {
-    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
-    final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var encounterId = scene[this.randomEncounterIndex()];
-    this.prepareEncounter(encounterId, useBattleStage);
+    final int sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final int[] scene = sceneEncounterIds_800f74c4[sceneId];
+    final int encounterId = scene[this.randomEncounterIndex()];
+    final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get();
+    this.prepareEncounter(encounter, useBattleStage);
   }
 
   @Override
@@ -583,7 +625,7 @@ public class RetailSubmap extends Submap {
 
   private void loadTextureOverrides() {
     this.sobjTextureOverrides.clear();
-    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);
+    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut)).textures);
   }
 
   private void calculateTextureLocations() {
@@ -755,7 +797,7 @@ public class RetailSubmap extends Submap {
       }
     }
 
-    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
+    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
 
     this.backgroundRect = Rect4i.bound(rects);
     final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
@@ -1411,19 +1453,9 @@ public class RetailSubmap extends Submap {
     //LAB_800eef0c
   }
 
-  @Method(0x8001b3e4L)
-  private int getSoundCharId() {
-    if(soundFiles_800bcf80[11].used_00) {
-      return soundFiles_800bcf80[11].id_02;
-    }
-
-    //LAB_8001b408
-    return AUDIO_THREAD.getSongId();
-  }
-
   @Method(0x8001c60cL)
   private int getSubmapMusicChange() {
-    final int soundCharId = this.getSoundCharId();
+    final int songId = AUDIO_THREAD.getSongId();
 
     final int musicIndex;
     jmp_8001c7a0:
@@ -1470,7 +1502,7 @@ public class RetailSubmap extends Submap {
           for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
             if(music.submapCuts_04[cutIndex] == this.cut) {
               //LAB_8001c7d8
-              return this.FUN_8001c84c(soundCharId, music.musicIndex_02);
+              return this.FUN_8001c84c(songId, music.musicIndex_02);
             }
           }
         }
@@ -1482,7 +1514,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7a0
-    final int v1 = this.FUN_8001c84c(soundCharId, musicIndex);
+    final int v1 = this.FUN_8001c84c(songId, musicIndex);
     if(v1 != -2) {
       return v1;
     }

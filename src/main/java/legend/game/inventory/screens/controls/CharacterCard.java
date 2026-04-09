@@ -40,6 +40,10 @@ public class CharacterCard extends Control {
     this.setCharId(charId);
   }
 
+  public int getCharId() {
+    return this.charId;
+  }
+
   public void setCharId(final int charId) {
     this.charId = charId;
 

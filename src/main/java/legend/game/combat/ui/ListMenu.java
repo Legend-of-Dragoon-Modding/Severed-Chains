@@ -18,7 +18,7 @@ import org.apache.logging.log4j.MarkerManager;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -430,7 +430,7 @@ public abstract class ListMenu {
         final int h = this.height_12 + 17;
 
         if(this.battleUiList == null) {
-          this.battleUiList = new UiBox("Battle UI List", this.x_04 - w / 2, this.y_06 - h, w, h);
+          this.battleUiList = new UiBox(this.x_04 - w / 2, this.y_06 - h, w, h);
         }
 
         this.battleUiList.render(CONFIG.getConfig(UI_COLOUR.get()));
@@ -532,11 +532,6 @@ public abstract class ListMenu {
     if(this.menuObj != null) {
       this.menuObj.delete();
       this.menuObj = null;
-    }
-
-    if(this.battleUiList != null) {
-      this.battleUiList.delete();
-      this.battleUiList = null;
     }
   }
 }

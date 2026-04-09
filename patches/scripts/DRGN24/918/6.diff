@@ -25,4 +25,4 @@ New: Stay on screen, rotate to face Kraken
  rewind
  data 0x140
  data 0x900ff9e
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt

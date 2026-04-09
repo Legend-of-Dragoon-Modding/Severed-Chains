@@ -26,4 +26,9 @@ public class ScriptFile {
   public void setOp(final int offset, final int value) {
     this.ops[offset] = value;
   }
+
+  @Override
+  public String toString() {
+    return "ScriptFile[" + this.name + ']';
+  }
 }

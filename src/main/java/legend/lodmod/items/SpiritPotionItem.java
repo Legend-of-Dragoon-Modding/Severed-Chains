@@ -2,7 +2,6 @@ package legend.lodmod.items;
 
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
-import legend.game.inventory.ItemStack;
 import legend.game.scripting.ScriptState;
 
 public class SpiritPotionItem extends RecoverSpItem {
@@ -12,7 +11,7 @@ public class SpiritPotionItem extends RecoverSpItem {
 
   @Override
   protected int getUseItemScriptEntrypoint() {
-    return 2;
+    return 34;
   }
 
   @Override

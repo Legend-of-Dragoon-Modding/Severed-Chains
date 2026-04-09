@@ -14,6 +14,7 @@ import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
@@ -24,14 +25,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.uiFile_800bdc3c;
 import static legend.game.Menus.unloadRenderable;
-import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.UI_TEXT_DISABLED_CENTERED;
@@ -39,7 +38,7 @@ import static legend.game.SItem.UI_TEXT_SELECTED_CENTERED;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
 import static legend.game.SItem.giveEquipment;
-import static legend.game.SItem.giveItem;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.renderEightDigitNumber;
@@ -52,6 +51,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class DabasScreen extends MenuScreen {
   private static final String DigDabas_8011d04c = "Diiig Dabas!";
@@ -99,7 +99,7 @@ public class DabasScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(dabasMenuGlyphs_80114228, 0, 0);
         this.renderable1 = allocateUiElement(0x9f, 0x9f, 60, this.getDabasMenuY(0));
-        FUN_80104b60(this.renderable1);
+        initHighlight(this.renderable1);
         this.renderDabasMenu(0);
 
         this.newDigEnabled = false;
@@ -259,7 +259,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.getSize() + itemCount > CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
-      menuStack.pushScreen(new MessageBoxScreen("Dabas has more items\nthan you can hold", 0, result -> {}));
+      menuStack.pushScreen(new MessageBoxScreen("Dabas has more items\nthan you can hold", MessageBoxType.ALERT, result -> {}));
       return;
     }
 
@@ -267,7 +267,7 @@ public class DabasScreen extends MenuScreen {
 
     for(final MenuEntryStruct04<? extends InventoryEntry<?>> entry : this.menuItems) {
       if(entry.item_00 instanceof final ItemStack item) {
-        giveItem(item);
+        gameState_800babc8.items_2e9.give(item);
       } else if(entry.item_00 instanceof final Equipment equipment) {
         giveEquipment(equipment);
       }
@@ -286,7 +286,7 @@ public class DabasScreen extends MenuScreen {
 
     dabasData.specialItem_2c = 0;
 
-    setMessageBoxText(this.messageBox_8011dc90, TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)], 0x1);
+    setMessageBoxText(this.messageBox_8011dc90, TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)], MessageBoxType.UNKNOWN);
     this.renderable2 = null;
     this.loadingStage = 3;
   }
@@ -305,7 +305,7 @@ public class DabasScreen extends MenuScreen {
     this.menuItems.clear();
     this.specialItem = null;
 
-    menuStack.pushScreen(new MessageBoxScreen(DISCARD_RESPONSES[ThreadLocalRandom.current().nextInt(DISCARD_RESPONSES.length)], 0, result -> this.loadingStage = 2));
+    menuStack.pushScreen(new MessageBoxScreen(DISCARD_RESPONSES[ThreadLocalRandom.current().nextInt(DISCARD_RESPONSES.length)], MessageBoxType.ALERT, result -> this.loadingStage = 2));
   }
 
   private void newDig() {
@@ -319,11 +319,11 @@ public class DabasScreen extends MenuScreen {
     dabasData.specialItem_2c = 0;
     this.newDigEnabled = false;
 
-    menuStack.pushScreen(new MessageBoxScreen(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)], 0, result -> this.loadingStage = 2));
+    menuStack.pushScreen(new MessageBoxScreen(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)], MessageBoxType.ALERT, result -> this.loadingStage = 2));
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -333,7 +333,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 3; i++) {
-      if(this.menuIndex != i && MathHelper.inBox(x, y, 52, this.getDabasMenuY(i), 85, 14)) {
+      if(this.menuIndex != i && MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(i), 85, 14)) {
         playMenuSound(1);
         this.menuIndex = i;
         this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
@@ -345,7 +345,7 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -355,11 +355,11 @@ public class DabasScreen extends MenuScreen {
     }
 
     if(button == PLATFORM.getMouseButton(0)) {
-      if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(0), 85, 14)) {
+      if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(0), 85, 14)) {
         if(this.hasItems || this.gold != 0) {
           playMenuSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen("Take items from Dabas?", 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Take items from Dabas?", MessageBoxType.CONFIRMATION, result -> {
             if(result == MessageBoxResult.YES) {
               this.takeItems();
             }
@@ -369,11 +369,13 @@ public class DabasScreen extends MenuScreen {
         }
 
         return InputPropagation.HANDLED;
-      } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(1), 85, 14)) {
+      }
+
+      if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(1), 85, 14)) {
         if(this.hasItems) {
           playMenuSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen("Discard items?", 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Discard items?", MessageBoxType.CONFIRMATION, result -> {
             if(result == MessageBoxResult.YES) {
               this.discardItems();
             }
@@ -383,11 +385,13 @@ public class DabasScreen extends MenuScreen {
         }
 
         return InputPropagation.HANDLED;
-      } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
+      }
+
+      if(MathHelper.inBox((int)x, (int)y, 52, this.getDabasMenuY(2), 85, 14)) {
         if(this.newDigEnabled) {
           playMenuSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen("Begin new expedition?", 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Begin new expedition?", MessageBoxType.CONFIRMATION, result -> {
             if(result == MessageBoxResult.YES) {
               this.newDig();
             }

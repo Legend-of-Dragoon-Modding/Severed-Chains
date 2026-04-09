@@ -1,13 +1,16 @@
 package legend.game.scripting;
 
 import com.opencsv.exceptions.CsvException;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.scripting.Compiler;
-import org.legendofdragoon.scripting.Lexer;
+import org.legendofdragoon.scripting.Disassembler;
+import org.legendofdragoon.scripting.Tokenizer;
 import org.legendofdragoon.scripting.meta.Meta;
 import org.legendofdragoon.scripting.meta.MetaManager;
 import org.legendofdragoon.scripting.meta.NoSuchVersionException;
@@ -18,16 +21,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.IoHelper.intsToBytes;
 import static legend.game.scripting.ScriptState.FLAG_1_0000;
-import static legend.game.scripting.ScriptState.FLAG_FILE_NOT_SET;
-import static legend.game.scripting.ScriptState.FLAG_TICKER_NOT_SET;
 import static legend.game.scripting.ScriptState.FLAG_DESTRUCTOR_NOT_SET;
+import static legend.game.scripting.ScriptState.FLAG_FILE_NOT_SET;
 import static legend.game.scripting.ScriptState.FLAG_RENDERER_NOT_SET;
+import static legend.game.scripting.ScriptState.FLAG_TICKER_NOT_SET;
 
 public class ScriptManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptManager.class);
@@ -166,7 +170,9 @@ public class ScriptManager {
 
   private Meta meta;
   private final Compiler compiler = new Compiler();
-  private Lexer lexer;
+  private Tokenizer tokenizer;
+  private Disassembler disassembler;
+  private final List<Path> includePaths;
   private final Path patchDir;
 
   private boolean stopped;
@@ -178,7 +184,8 @@ public class ScriptManager {
 
   private final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[108];
 
-  public ScriptManager(final Path patchDir) {
+  public ScriptManager(final List<Path> includePaths, final Path patchDir) {
+    this.includePaths = includePaths;
     this.patchDir = patchDir;
   }
 
@@ -413,15 +420,25 @@ public class ScriptManager {
         throw new RuntimeException("Failed to load script patches", e);
       }
 
-      this.lexer = new Lexer(this.meta);
+      this.tokenizer = new Tokenizer(this.meta);
+      this.disassembler = new Disassembler(this.meta);
     }
 
     return this.meta;
   }
 
-  public byte[] compile(final Path path, final String source) {
+  public byte[] compile(final String name, final String source) {
     this.meta();
-    final Script lexed = this.lexer.lex(path, source);
-    return intsToBytes(this.compiler.compile(lexed));
+    final Script tokenized = this.tokenizer.tokenize(name, this.includePaths, source);
+    return intsToBytes(this.compiler.compile(tokenized));
+  }
+
+  public Script disassemble(final String name, final byte[] data) {
+    return this.disassemble(name, data, new IntArrayList(), new Int2IntOpenHashMap());
+  }
+
+  public Script disassemble(final String name, final byte[] data, final List<Integer> extraBranches, final Map<Integer, Integer> tableLengths) {
+    this.meta();
+    return this.disassembler.disassemble(name, data, extraBranches, tableLengths);
   }
 }

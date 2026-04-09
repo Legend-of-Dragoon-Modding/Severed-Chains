@@ -88,6 +88,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FREECAM_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SLOW_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SPEED_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_SPEED;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TURBO;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
@@ -848,8 +850,8 @@ public class RenderEngine {
           entry.render(null, layer);
         }
 
-        // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (only applies to emulated VRAM)
-        if(!entry.texturesUsed && entry.hasTranslucency(layer)) {
+        // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives (note: does not apply to 24bpp textures)
+        if(entry.hasTranslucency(layer)) {
           for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
             final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
@@ -892,7 +894,7 @@ public class RenderEngine {
       final QueuedModel<?, ?> entry = pool.get(i);
 
       if(entry.hasTranslucency()) {
-        entry.useShader(modelIndex, entry.texturesUsed ? 0 : 2); // Don't discard if we aren't using the emulated VRAM texture
+        entry.useShader(modelIndex, 2);
         this.state.enableDepthTest(entry.translucentDepthComparator);
 
         this.state.scissor(entry, this.scissorBuffer, this.scissorUniform);
@@ -1355,8 +1357,18 @@ public class RenderEngine {
       Config.switchFullScreen();
     } else if(action == INPUT_ACTION_GENERAL_SPEED_UP.get()) {
       Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() + 1, 16));
+      Config.setLoadedGameSpeedMultiplier(Config.getGameSpeedMultiplier());
     } else if(action == INPUT_ACTION_GENERAL_SLOW_DOWN.get()) {
       Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() - 1, 1));
+      Config.setLoadedGameSpeedMultiplier(Config.getGameSpeedMultiplier());
+    } else if(action == INPUT_ACTION_GENERAL_TOGGLE_SPEED.get()) {
+      if(Config.getGameSpeedMultiplier() == 1) {
+        Config.setGameSpeedMultiplier(Config.getLoadedGameSpeedMultiplier());
+      } else {
+        Config.setGameSpeedMultiplier(1);
+      }
+    } else if(action == INPUT_ACTION_GENERAL_TURBO.get()) {
+      Config.setGameSpeedMultiplier(3);
     } else if(action == INPUT_ACTION_DEBUG_PAUSE.get()) {
       this.togglePause = !this.togglePause;
     } else if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE.get()) {
@@ -1395,6 +1407,8 @@ public class RenderEngine {
 
     if(action == INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD.get()) {
       this.frameAdvance = false;
+    } else if(action == INPUT_ACTION_GENERAL_TURBO.get()) {
+      Config.setGameSpeedMultiplier(1);
     }
   }
 

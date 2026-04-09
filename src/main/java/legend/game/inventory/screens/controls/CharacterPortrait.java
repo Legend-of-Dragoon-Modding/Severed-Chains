@@ -24,6 +24,10 @@ public class CharacterPortrait extends Control {
     this.renderable.z_3c = 33;
   }
 
+  public int getCharId() {
+    return this.renderable.glyph_04;
+  }
+
   public void setCharId(final int id) {
     this.renderable.glyph_04 = id;
   }

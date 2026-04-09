@@ -1,7 +1,7 @@
 package legend.game.additions;
 
 public class CharacterAdditionStats {
-  public boolean unlocked;
+  public UnlockState unlockState = UnlockState.UNLOCKABLE;
   public int level;
   public int xp;
 
@@ -9,7 +9,7 @@ public class CharacterAdditionStats {
   }
 
   public CharacterAdditionStats(final CharacterAdditionStats other) {
-    this.unlocked = other.unlocked;
+    this.unlockState = other.unlockState;
     this.level = other.level;
     this.xp = other.xp;
   }

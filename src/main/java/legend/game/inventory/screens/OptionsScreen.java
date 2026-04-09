@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Audio.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_ADVANCED;
@@ -94,7 +94,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
             final Label help = label.addControl(new Label("?"));
             help.setScale(0.4f);
             help.setPos(extrasX + 2, 1);
-            help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), this.mouseX, this.mouseY)));
+            help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), (int)this.mouseX, (int)this.mouseY)));
             this.helpLabels.put(label, help);
             this.helpEntries.put(label, configEntry);
             extrasX += help.getWidth();
@@ -105,7 +105,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
             final Label lock = label.addControl(new Label(I18n.translate("lod_core.ui.options.locked")));
             lock.setScale(0.4f);
             lock.setPos(extrasX + 2, 1);
-            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), this.mouseX, this.mouseY)));
+            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), (int)this.mouseX, (int)this.mouseY)));
           }
         }
       });
@@ -192,7 +192,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     try {
       return super.mouseMove(x, y);
     } catch(final Throwable ex) {

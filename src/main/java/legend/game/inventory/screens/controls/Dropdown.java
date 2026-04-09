@@ -14,15 +14,14 @@ import legend.game.inventory.screens.TextColour;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
-import static legend.game.Audio.playMenuSound;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class Dropdown<T> extends Control {
   private final Panel background;
@@ -34,17 +33,17 @@ public class Dropdown<T> extends Control {
   private boolean allowWrapY = true;
 
   private final List<T> options = new ArrayList<>();
-  private final Function<T, String> toString;
+  private final EntryToString<T> toString;
   private int hoverIndex = -1;
   private int selectedIndex = -1;
   private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   public Dropdown() {
-    this(String::valueOf);
+    this((i, e) -> e.toString());
   }
 
-  public Dropdown(final Function<T, String> toString) {
+  public Dropdown(final EntryToString<T> toString) {
     this.toString = toString;
     this.background = this.addControl(Panel.subtle());
 
@@ -58,7 +57,7 @@ public class Dropdown<T> extends Control {
 
     this.panel.onMouseMove((x, y) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
+        if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.hover(i);
           return InputPropagation.HANDLED;
         }
@@ -69,7 +68,7 @@ public class Dropdown<T> extends Control {
 
     this.panel.onMouseClick((x, y, button, mods) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
+        if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
           this.select(i);
           this.panel.getScreen().getStack().popScreen();
           return InputPropagation.HANDLED;
@@ -84,6 +83,13 @@ public class Dropdown<T> extends Control {
     this.downArrow.setZ(this.background.getZ() - 1);
 
     this.setSize(100, 16);
+  }
+
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+    this.background.setZ(z);
+    this.downArrow.setZ(z - 1);
   }
 
   public void setFont(final Font font) {
@@ -109,9 +115,30 @@ public class Dropdown<T> extends Control {
     }
   }
 
+  public void removeOption(final T option) {
+    this.options.remove(option);
+    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
+    this.setSelectedIndex(this.selectedIndex);
+  }
+
+  public void removeOption(final int index) {
+    this.options.remove(index);
+    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
+    this.setSelectedIndex(this.selectedIndex);
+  }
+
+  public void setOptions(final int index, final T option) {
+    this.options.set(index, option);
+  }
+
   public void setSelectedIndex(final int index) {
-    if(index < 0 || index >= this.options.size()) {
+    if(index < 0) {
       this.selectedIndex = -1;
+      return;
+    }
+
+    if(index >= this.options.size()) {
+      this.selectedIndex = this.options.size() - 1;
       return;
     }
 
@@ -152,7 +179,7 @@ public class Dropdown<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -209,7 +236,7 @@ public class Dropdown<T> extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(this.selectedIndex != -1) {
-      final String text = this.toString.apply(this.options.get(this.selectedIndex));
+      final String text = this.toString.toString(this.selectedIndex, this.options.get(this.selectedIndex));
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
@@ -251,14 +278,14 @@ public class Dropdown<T> extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.toString.apply(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
+        renderText(Dropdown.this.toString.toString(i, Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
       }
 
       textZ_800bdf00 = oldZ;
     }
 
     @Override
-    protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+    protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
       if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
         return InputPropagation.HANDLED;
       }
@@ -329,5 +356,10 @@ public class Dropdown<T> extends Control {
     protected boolean propagateRender() {
       return true;
     }
+  }
+
+  @FunctionalInterface
+  public interface EntryToString<T> {
+    String toString(final int index, final T entry);
   }
 }
