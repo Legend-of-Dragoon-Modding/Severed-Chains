@@ -134,7 +134,7 @@ public class FileBackedFileData extends FileData {
     synchronized(this.file) {
       try {
         this.file.seek(this.offset + offset);
-        MathHelper.set(this.buffer, 0, 2, val);
+        MathHelper.setShort(this.buffer, 0, (short)val);
         this.file.write(this.buffer, 0, 2);
       } catch(final IOException e) {
         throw new RuntimeException(e);
@@ -160,7 +160,7 @@ public class FileBackedFileData extends FileData {
     synchronized(this.file) {
       try {
         this.file.seek(this.offset + offset);
-        MathHelper.set(this.buffer, 0, 4, val);
+        MathHelper.setInt(this.buffer, 0, val);
         this.file.write(this.buffer, 0, 4);
       } catch(final IOException e) {
         throw new RuntimeException(e);

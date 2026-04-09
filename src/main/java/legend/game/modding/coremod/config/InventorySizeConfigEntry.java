@@ -40,7 +40,7 @@ public class InventorySizeConfigEntry extends ConfigEntry<Integer> implements Sc
 
   private static byte[] serializer(final int val) {
     final byte[] data = new byte[4];
-    MathHelper.set(data, 0, 4, val);
+    MathHelper.setInt(data, 0, val);
     return data;
   }
 

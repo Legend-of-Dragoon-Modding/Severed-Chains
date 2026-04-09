@@ -35,14 +35,14 @@ public class SoundfontWriter {
 
       for(int i = 0; i < 22; i++) {
         datas[i] = Files.readAllBytes(Paths.get("files/SECT/DRGN0.BIN/5820/3_%05d.wav".formatted(i)));
-        final int size = (int)MathHelper.get(datas[i], 0x2a, 4);
+        final int size = MathHelper.getInt(datas[i], 0x2a);
         totalSize += size;
       }
 
       final byte[] data = new byte[totalSize];
       int offset = 0;
       for(int i = 0; i < 22; i++) {
-        final int size = (int)MathHelper.get(datas[i], 0x2a, 4);
+        final int size = MathHelper.getInt(datas[i], 0x2a);
         System.arraycopy(datas[i], 0x2a, data, offset, size);
         offset += size;
       }
