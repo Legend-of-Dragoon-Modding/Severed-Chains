@@ -9,7 +9,7 @@ public class EncounterData38 {
 
   public EncounterData38(final byte[] data, int offset) {
     for(int i = 0; i < this.enemyIndices_00.length; i++) {
-      this.enemyIndices_00[i] = (short)MathHelper.get(data, offset, 2);
+      this.enemyIndices_00[i] = MathHelper.getShort(data, offset);
       offset += 2;
     }
 

@@ -5,6 +5,9 @@ import legend.game.types.Translucency;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.nio.ByteOrder;
 
 public final class MathHelper {
   private MathHelper() { }
@@ -104,6 +107,34 @@ public final class MathHelper {
     return val;
   }
 
+  private static final VarHandle SHORT_VIEW = MethodHandles.byteArrayViewVarHandle(short[].class, ByteOrder.nativeOrder());
+  private static final VarHandle INT_VIEW = MethodHandles.byteArrayViewVarHandle(int[].class, ByteOrder.nativeOrder());
+  private static final VarHandle LONG_VIEW = MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.nativeOrder());
+
+  public static short getShort(final byte[] data, final int offset) {
+    return (short)SHORT_VIEW.get(data, offset);
+  }
+
+  public static void setShort(final byte[] data, final int offset, final short value) {
+    SHORT_VIEW.set(data, offset, value);
+  }
+
+  public static int getInt(final byte[] data, final int offset) {
+    return (int)INT_VIEW.get(data, offset);
+  }
+
+  public static void setInt(final byte[] data, final int offset, final int value) {
+    INT_VIEW.set(data, offset, value);
+  }
+
+  public static long getLong(final byte[] data, final int offset) {
+    return (long)LONG_VIEW.get(data, offset);
+  }
+
+  public static void setLong(final byte[] data, final int offset, final long value) {
+    LONG_VIEW.set(data, offset, value);
+  }
+
   public static long get(final byte[] data, final int offset, final int size) {
     long value = 0;
 
@@ -128,16 +159,8 @@ public final class MathHelper {
     return data[index] & 0xff;
   }
 
-  public static short getShort(final byte[] data, final int index) {
-    return (short)((data[index + 1] & 0xff) << 8 | data[index] & 0xff);
-  }
-
   public static int getUshort(final byte[] data, final int index) {
     return (data[index + 1] & 0xff) << 8 | data[index] & 0xff;
-  }
-
-  public static int getInt(final byte[] data, final int index) {
-    return (data[index + 3] & 0xff) << 24 | (data[index + 2] & 0xff) << 16 | (data[index + 1] & 0xff) << 8 | data[index] & 0xff;
   }
 
   public static long sign(final long value, final int numberOfBytes) {
