@@ -3928,6 +3928,12 @@ jmp inl[:LABEL_433] ; addr
 
 ; SUBROUTINE
 LABEL_436:
+mov 0x0, stor[9] ; source, dest
+UNHIDE_PLAYER_BENTS_LOOP:
+mov var[34][stor[9]], stor[10] ; source, dest
+call Battle::scriptSetBentHidden, stor[10], 0x1 ; bentIndex, set
+incr stor[9] ; operand
+jmp_cmp !=, stor[9], var[35], inl[:UNHIDE_PLAYER_BENTS_LOOP] ; operator, left, right, addr
 mov 0x0, stor[8] ; source, dest
 LABEL_437:
 mov var[32][stor[8]], stor[28] ; source, dest
