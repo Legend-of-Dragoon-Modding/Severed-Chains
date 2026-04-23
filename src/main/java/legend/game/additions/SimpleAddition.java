@@ -18,10 +18,10 @@ public abstract class SimpleAddition extends Addition {
     float damage = 0;
 
     for(int hit = 0; hit < this.hits.length; hit++) {
-      damage += this.hits[hit].damageMultiplier_04 * multi;
+      damage += this.hits[hit].damageMultiplier_04;
     }
 
-    return (int)damage;
+    return (int)(damage * multi);
   }
 
   @Override
