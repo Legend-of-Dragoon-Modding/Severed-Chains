@@ -16,7 +16,7 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class DetonateArrowEquipment extends Equipment {
   public DetonateArrowEquipment(final int price) {
-    super(price, 0x8, EquipmentSlot.WEAPON, 0x2, LodMod.NO_ELEMENT.get(), new ElementSet(), new ElementSet(), 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, 0, 0, ItemIcon.BOW, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0);
+    super(price, 0x8, EquipmentSlot.WEAPON, 0x2, LodMod.NO_ELEMENT.get(), new ElementSet(), new ElementSet(), 0, 50, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, 0, 0, ItemIcon.BOW, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0);
   }
 
   @Override

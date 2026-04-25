@@ -11,7 +11,7 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class UltimateWargodEquipment extends Equipment {
   public UltimateWargodEquipment(final int price) {
-    super(price, 0, EquipmentSlot.ACCESSORY, 0xf5, LodMod.NO_ELEMENT.get(), new ElementSet(), new ElementSet(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, 0, 0, ItemIcon.AMULET, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    super(price, 0, EquipmentSlot.ACCESSORY, 0xf5, LodMod.NO_ELEMENT.get(), new ElementSet(), new ElementSet(), 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, 0, 0, ItemIcon.AMULET, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
 
   @Override
