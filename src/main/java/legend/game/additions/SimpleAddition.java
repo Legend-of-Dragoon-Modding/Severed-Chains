@@ -15,13 +15,13 @@ public abstract class SimpleAddition extends Addition {
   @Override
   public int getDamage(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
     final float multi = this.getDamageMultiplier(state, charData, additionStats);
-    float damage = 0;
+    int damage = 0;
 
     for(int hit = 0; hit < this.hits.length; hit++) {
-      damage += this.hits[hit].damageMultiplier_04 * multi;
+      damage += this.hits[hit].damageMultiplier_04;
     }
 
-    return (int)damage;
+    return (int)(damage * multi);
   }
 
   @Override
