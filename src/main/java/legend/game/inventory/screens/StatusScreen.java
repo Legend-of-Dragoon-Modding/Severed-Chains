@@ -18,7 +18,6 @@ import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
-import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterEquipment;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
@@ -117,7 +116,7 @@ public class StatusScreen extends MenuScreen {
 
   private void renderStatusMenu(final int charSlot, final int a1) {
     renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), null);
-    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff, null);
     this.renderCharacterSpells(characterIndices_800bdbb8.getInt(charSlot), a1 == 0xff);
   }
 

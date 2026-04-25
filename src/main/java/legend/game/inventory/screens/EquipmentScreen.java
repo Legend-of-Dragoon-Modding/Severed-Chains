@@ -169,11 +169,13 @@ public class EquipmentScreen extends MenuScreen {
     return this.menuItems.size();
   }
 
-  private void renderEquipmentScreen(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
+  private void renderEquipmentScreen(final int charSlot, final int slotIndex, final int slotScroll, final int a3) {
     final boolean allocate = a3 == 0xff;
 
-    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00);
-    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate);
+    final MenuEntryStruct04<Equipment> selected = slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll);
+
+    renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), selected == null ? null : selected.item_00);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? null : selected.item_00.slot);
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
@@ -189,8 +191,8 @@ public class EquipmentScreen extends MenuScreen {
 
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this.upArrow_800bdb9c, this.downArrow_800bdba0);
 
-    if(slotIndex + slotScroll < this.menuItems.size()) {
-      renderString(194, 178, I18n.translate(this.menuItems.get(slotIndex + slotScroll).item_00.getDescriptionTranslationKey()), allocate);
+    if(selected != null) {
+      renderString(194, 178, I18n.translate(selected.item_00.getDescriptionTranslationKey()), allocate);
     }
   }
 

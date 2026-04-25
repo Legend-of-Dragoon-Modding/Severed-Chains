@@ -1506,7 +1506,7 @@ public final class SItem {
   }
 
   @Method(0x80108e60L)
-  public static void renderCharacterEquipment(final int charIndex, final boolean allocate) {
+  public static void renderCharacterEquipment(final int charIndex, final boolean allocate, @Nullable final EquipmentSlot highlightSlot) {
     if(charIndex == -1) {
       return;
     }
@@ -1531,7 +1531,7 @@ public final class SItem {
       final Equipment equipment = charData.getEquipment(slot);
 
       if(equipment != null) {
-        renderText(I18n.translate(equipment), 220, 19 + slot.ordinal() * 14, UI_TEXT);
+        renderText(I18n.translate(equipment), 220, 19 + slot.ordinal() * 14, highlightSlot == slot ? UI_TEXT_SELECTED : UI_TEXT);
       }
     }
 
@@ -1565,7 +1565,7 @@ public final class SItem {
       final MenuEntryStruct04<?> menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
+      renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 1, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
       menuItem.item_00.renderIcon(x + 4, y + FUN_800fc814(i), 0x8);
 
       if(menuItem.getMaxSize() > 1) {
