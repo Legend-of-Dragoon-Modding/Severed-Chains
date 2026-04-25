@@ -53,6 +53,8 @@ import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -257,6 +259,8 @@ public final class SaveManager {
           engineState = LodEngineStateTypes.SUBMAP.get();
         } else {
           submapId_800bd808 = save.locationIndex;
+          collidedPrimitiveIndex_80052c38 = save.submapScene;
+          submapCut_80052c30 = save.submapCut;
           engineState = LodEngineStateTypes.SUBMAP.get();
         }
 

@@ -66,6 +66,8 @@ lod_core.ui.about.sc_credits_contributor=Contributors
 lod_core.ui.about.sc_credits_community=Community Manager
 lod_core.ui.about.sc_credits_tester=Notable Testers
 lod_core.ui.about.sc_credits_helpers=Community Helpers
+lod_core.ui.about.sc_credits_canadians=Canadians
+lod_core.ui.about.sc_credits_honourary_canadians=Honourary Canadians
 lod_core.ui.about.sc_credits_thanks=Special Thanks
 lod_core.ui.about.sc_credits_thirdparty=Third Party Assets
 

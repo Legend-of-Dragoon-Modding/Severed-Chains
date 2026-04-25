@@ -38,7 +38,7 @@ https://arks.itch.io/
 
 ## lod_core.ui.about.sc_credits_tester
 Wulves
-interdimentional potato
+interdimensional potato
 Kenorah
 Kritis
 Tommcq
@@ -54,6 +54,17 @@ arch_wolf
 TippinFedoraMan
 Chocolate
 Sonlen
+
+## lod_core.ui.about.sc_credits_canadians
+Monoxide
+Zychronix
+Ink
+Corvidaeka
+NovaDragoon
+interdimensional potato
+
+## lod_core.ui.about.sc_credits_honourary_canadians
+DrewUniverse
 
 ### lod_core.ui.about.sc_credits_thanks
 Our Ko-Fi supporters for making this possible

@@ -266,23 +266,26 @@ public class ShopScreen extends MenuScreen {
     renderText(I18n.translate("lod_core.ui.shop.category_leave"), 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
   }
 
+  private ShopExtension getExtension(@Nullable final ShopEntry<? extends InventoryEntry<?>> shopEntry) {
+    if(shopEntry == null) {
+      return this.unknownExtension;
+    }
+
+    return this.extensions.object2IntEntrySet().stream()
+      .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
+      .map(Object2IntMap.Entry::getKey)
+      .filter(extension -> extension.accepts(shopEntry))
+      .findFirst()
+      .orElse(this.unknownExtension)
+    ;
+  }
+
   private void setSelectedEntry(@Nullable final ShopEntry<? extends InventoryEntry<?>> shopEntry) {
     if(this.activeExtension != null) {
       this.activeExtension.deactivate(this, this.shop, gameState_800babc8);
     }
 
-    if(shopEntry == null) {
-      this.activeExtension = this.unknownExtension;
-    } else {
-      this.activeExtension = this.extensions.object2IntEntrySet().stream()
-        .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
-        .map(Object2IntMap.Entry::getKey)
-        .filter(extension -> extension.accepts(shopEntry))
-        .findFirst()
-        .orElse(this.unknownExtension)
-      ;
-    }
-
+    this.activeExtension = this.getExtension(shopEntry);
     this.selectedEntry = shopEntry;
     this.activeExtension.activate(this, this.shop, gameState_800babc8, shopEntry);
   }
@@ -351,7 +354,7 @@ public class ShopScreen extends MenuScreen {
     int i;
     for(i = 0; i < Math.min(6, list.size() - startItemIndex); i++) {
       final ShopEntry<? extends InventoryEntry<?>> item = list.get(startItemIndex + i);
-      this.activeExtension.drawShopRow(this, this.shop, gameState_800babc8, item, i, 148, this.menuEntryY(i));
+      this.getExtension(item).drawShopRow(this, this.shop, gameState_800babc8, item, i, 148, this.menuEntryY(i));
     }
 
     upArrow.setVisible(startItemIndex != 0);

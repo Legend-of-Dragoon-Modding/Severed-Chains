@@ -430,15 +430,15 @@ public class SMap extends EngineState<SMap> {
 
   @Override
   public FileData writeSaveData(final GameState52c gameState) {
-    gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
-    gameState_800babc8.submapCut_a8 = submapCut_80052c30;
+    gameState.submapScene_a4 = collidedPrimitiveIndex_80052c38;
+    gameState.submapCut_a8 = submapCut_80052c30;
 
     final FileData data = new ExpandableFileData(9);
     final IntRef offset = new IntRef();
     data.writeShort(offset, SMAP_SAVE_VERSION_1);
-    data.writeInt(offset, gameState_800babc8.submapScene_a4);
-    data.writeInt(offset, gameState_800babc8.submapCut_a8);
-    data.writeBool(offset, gameState_800babc8.indicatorsDisabled_4e3);
+    data.writeInt(offset, gameState.submapScene_a4);
+    data.writeInt(offset, gameState.submapCut_a8);
+    data.writeBool(offset, gameState.indicatorsDisabled_4e3);
     return data;
   }
 
@@ -446,8 +446,8 @@ public class SMap extends EngineState<SMap> {
   public void readSaveData(final GameState52c gameState, final FileData data) {
     // no data - legacy saves
     if(data.size() == 0) {
-      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+      submapScene_80052c34 = gameState.submapScene_a4;
+      submapCut_80052c30 = gameState.submapCut_a8;
       collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
       return;
     }
@@ -469,8 +469,8 @@ public class SMap extends EngineState<SMap> {
     gameState.submapCut_a8 = data.readInt(offset);
     gameState.indicatorsDisabled_4e3 = data.readBool(offset);
 
-    submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-    submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+    submapScene_80052c34 = gameState.submapScene_a4;
+    submapCut_80052c30 = gameState.submapCut_a8;
     collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
   }
 

@@ -680,8 +680,8 @@ public final class Unpacker {
   private static void drgn21_693_0_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x190];
     node.data.read(newData);
-    MathHelper.set(newData, 0x188, 4, 0xffffffffL);
-    MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
+    MathHelper.setInt(newData, 0x188, (int)0xffffffffL);
+    MathHelper.setInt(newData, 0x18c, (int)0xffffffffL);
     transformations.replaceNode(node, new FileData(newData));
   }
 
@@ -769,30 +769,30 @@ public final class Unpacker {
     final int subfunc273params1b = 0xffff_fffa;
 
     node.data.read(0, newData, 0, 0x47c0);
-    MathHelper.set(newData, 0x47c0, 4, jump);
+    MathHelper.setInt(newData, 0x47c0, jump);
     System.arraycopy(address1, 0, newData, 0x47c4, address1.length);
     node.data.read(0x47cd, newData, 0x47cd, 0x73f);
-    MathHelper.set(newData, 0x4f0c, 4, jump);
+    MathHelper.setInt(newData, 0x4f0c, jump);
     System.arraycopy(address2, 0, newData, 0x4f10, address2.length);
     node.data.read(0x4f15, newData, 0x4f15, 0x2307);
     System.arraycopy(subfunc160a, 0, newData, 0x721c, subfunc160a.length);
     System.arraycopy(subfunc160params12a, 0, newData, 0x7224, subfunc160params12a.length);
-    MathHelper.set(newData, 0x722c, 4, subfunc273);
-    MathHelper.set(newData, 0x7230, 4, subfunc273params0);
-    MathHelper.set(newData, 0x7234, 4, subfunc273params1a);
-    MathHelper.set(newData, 0x7238, 4, jump);
-    MathHelper.set(newData, 0x723c, 4, address3);
+    MathHelper.setInt(newData, 0x722c, subfunc273);
+    MathHelper.setInt(newData, 0x7230, subfunc273params0);
+    MathHelper.setInt(newData, 0x7234, subfunc273params1a);
+    MathHelper.setInt(newData, 0x7238, jump);
+    MathHelper.setInt(newData, 0x723c, address3);
     System.arraycopy(subfunc160b, 0, newData, 0x7240, subfunc160b.length);
     System.arraycopy(subfunc160params12b, 0, newData, 0x7248, subfunc160params12b.length);
     System.arraycopy(subfunc160b, 0, newData, 0x7250, subfunc160b.length);
     System.arraycopy(subfunc160params12c, 0, newData, 0x7258, subfunc160params12c.length);
     System.arraycopy(subfunc160b, 0, newData, 0x7260, subfunc160b.length);
     System.arraycopy(subfunc160params12a, 0, newData, 0x7268, subfunc160params12a.length);
-    MathHelper.set(newData, 0x7270, 4, subfunc273);
-    MathHelper.set(newData, 0x7274, 4, subfunc273params0);
-    MathHelper.set(newData, 0x7278, 4, subfunc273params1b);
-    MathHelper.set(newData, 0x727c, 4, jump);
-    MathHelper.set(newData, 0x7280, 4, address4);
+    MathHelper.setInt(newData, 0x7270, subfunc273);
+    MathHelper.setInt(newData, 0x7274, subfunc273params0);
+    MathHelper.setInt(newData, 0x7278, subfunc273params1b);
+    MathHelper.setInt(newData, 0x727c, jump);
+    MathHelper.setInt(newData, 0x7280, address4);
     transformations.replaceNode(node, new FileData(newData));
   }
 

@@ -189,7 +189,7 @@ public class FileData {
 
   public short readShort(final int offset) {
     this.checkBounds(offset, 2);
-    return (short)MathHelper.get(this.data, this.offset + offset, 2);
+    return MathHelper.getShort(this.data, this.offset + offset);
   }
 
   public short readShort(final IntRef offset) {
@@ -200,7 +200,7 @@ public class FileData {
 
   public void writeShort(final int offset, final int val) {
     this.checkBounds(offset, 2);
-    MathHelper.set(this.data, this.offset + offset, 2, val);
+    MathHelper.setShort(this.data, this.offset + offset, (short)val);
   }
 
   public void writeShort(final IntRef offset, final int val) {
@@ -240,7 +240,7 @@ public class FileData {
 
   public int readInt(final int offset) {
     this.checkBounds(offset, 4);
-    return (int)MathHelper.get(this.data, this.offset + offset, 4);
+    return MathHelper.getInt(this.data, this.offset + offset);
   }
 
   public int readInt(final IntRef offset) {
@@ -251,7 +251,7 @@ public class FileData {
 
   public void writeInt(final int offset, final int val) {
     this.checkBounds(offset, 4);
-    MathHelper.set(this.data, this.offset + offset, 4, val);
+    MathHelper.setInt(this.data, this.offset + offset, val);
   }
 
   public void writeInt(final IntRef offset, final int val) {
@@ -345,7 +345,7 @@ public class FileData {
 
   public void writeLong(final int offset, final long val) {
     this.checkBounds(offset, 8);
-    MathHelper.set(this.data, this.offset + offset, 8, val);
+    MathHelper.setLong(this.data, this.offset + offset, val);
   }
 
   public void writeLong(final IntRef offset, final long val) {
@@ -355,7 +355,7 @@ public class FileData {
 
   public long readLong(final int offset) {
     this.checkBounds(offset, 8);
-    return MathHelper.get(this.data, this.offset + offset, 8);
+    return MathHelper.getLong(this.data, this.offset + offset);
   }
 
   public long readLong(final IntRef offset) {
@@ -554,6 +554,14 @@ public class FileData {
     final MV read = this.readMv(offset.get(), mv);
     offset.add(0x18);
     return read;
+  }
+
+  public boolean isZero16(final int offset) {
+    this.checkBounds(offset, 16);
+    final long a =  MathHelper.getLong(this.data, this.offset + offset);
+    final long b =  MathHelper.getLong(this.data, this.offset + offset + 8);
+
+    return (a | b) == 0;
   }
 
   protected void checkBounds(final int offset, final int size) {
