@@ -174,6 +174,8 @@ public class EquipmentScreen extends MenuScreen {
 
     final MenuEntryStruct04<Equipment> selected = slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll);
 
+    this.characterCard.setEquipmentComparison(selected == null ? null : selected.item_00);
+
     renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), selected == null ? null : selected.item_00);
     renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? null : selected.item_00.slot);
 

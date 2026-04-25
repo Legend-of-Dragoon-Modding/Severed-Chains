@@ -1074,17 +1074,21 @@ public final class SItem {
     glyph.z_3c = 35;
   }
 
-  public static int renderNumberComparison(final int x, final int y, final int currentVal, int newVal, final int digitCount) {
-    int flags = 0;
-    final int clut;
+  public static int getStatComparisonClut(final int currentVal, final int newVal) {
     if(currentVal < newVal) {
-      clut = 0x7c6b;
-    } else if(currentVal > newVal) {
-      clut = 0x7c2b;
-    } else {
-      clut = 0;
+      return 0x7c6b;
     }
 
+    if(currentVal > newVal) {
+      return 0x7c2b;
+    }
+
+    return 0;
+  }
+
+  public static int renderNumberComparison(final int x, final int y, final int currentVal, int newVal, final int digitCount) {
+    int flags = 0;
+    final int clut = getStatComparisonClut(currentVal, newVal);
     final int max = (int)Math.pow(10, digitCount) - 1;
 
     if(newVal > max) {
@@ -1111,32 +1115,33 @@ public final class SItem {
   }
 
   public static void renderFraction(final int x, final int y, final int numerator, final int denominator) {
-    final int width = renderRightAlignedNumber(x, y, denominator, 0);
-    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= FLAG_DELETE_AFTER_RENDER;
-    renderRightAlignedNumber(x - width - 5, y, numerator, 0);
+    renderFraction(x, y, numerator, denominator, 0, 0);
   }
 
-  public static void renderHp(final int x, final int y, final int numerator, final int denominator) {
-    final int clut;
-    if(numerator <= denominator / 4) {
-      clut = 0x7c2b;
-      //LAB_80105090
-    } else if(numerator <= denominator / 2) {
-      clut = 0x7cab;
-    } else {
-      clut = 0;
+  public static void renderFraction(final int x, final int y, final int numerator, final int denominator, final int numeratorClut, final int denominatorClut) {
+    final int width = renderRightAlignedNumber(x, y, denominator, denominatorClut);
+    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= FLAG_DELETE_AFTER_RENDER;
+    renderRightAlignedNumber(x - width - 5, y, numerator, numeratorClut);
+  }
+
+  public static int getClutForHp(final int current, final int max) {
+    if(current <= max / 4) {
+      return 0x7c2b;
     }
 
-    final int width = renderRightAlignedNumber(x, y, denominator);
-    allocateUiElement(0xb, 0xb, x - width - 5, y).flags_00 |= FLAG_DELETE_AFTER_RENDER;
-    renderRightAlignedNumber(x - width - 5, y, numerator, clut);
+    if(current <= max / 2) {
+      return 0x7cab;
+    }
+
+    return 0;
+  }
+
+  public static void renderHp(final int x, final int y, final int current, final int max) {
+    renderFraction(x, y, current, max, getClutForHp(current, max), 0);
   }
 
   @Method(0x8010568cL)
   public static void renderFourDigitHp(final int x, final int y, int value, final int max, final int renderableFlags) {
-    int clut = 0;
-    int flags = 0;
-
     if(value >= 9999) {
       value = 9999;
     }
@@ -1146,15 +1151,8 @@ public final class SItem {
       value = 9999;
     }
 
-    //LAB_801056e0
-    if(value <= max / 2) {
-      clut = 0x7cab;
-    }
-
-    //LAB_801056f0
-    if(value <= max / 4) {
-      clut = 0x7c2b;
-    }
+    final int clut = getClutForHp(value, max);
+    int flags = 0;
 
     //LAB_80105714
     int s0 = value / 1_000 % 10;

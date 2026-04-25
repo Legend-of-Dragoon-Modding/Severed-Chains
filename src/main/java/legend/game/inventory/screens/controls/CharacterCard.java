@@ -1,18 +1,20 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.GameEngine;
-import legend.game.characters.VitalsStat;
-import legend.game.inventory.screens.Control;
 import legend.game.characters.CharacterData2c;
+import legend.game.characters.VitalsStat;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.screens.Control;
 import legend.game.types.Renderable58;
 
 import javax.annotation.Nullable;
 
 import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.allocateManualUiElement;
+import static legend.game.SItem.getClutForHp;
+import static legend.game.SItem.getStatComparisonClut;
 import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.renderFraction;
-import static legend.game.SItem.renderHp;
 import static legend.game.SItem.renderRightAlignedNumber;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
@@ -21,6 +23,8 @@ import static legend.lodmod.LodMod.SP_STAT;
 public class CharacterCard extends Control {
   private CharacterData2c character;
   private boolean dontSelect;
+
+  private @Nullable Equipment equipmentComparison;
 
   private final Glyph background;
   private final Glyph overlay;
@@ -79,17 +83,43 @@ public class CharacterCard extends Control {
     this.dontSelect = dontSelect;
   }
 
+  public void setEquipmentComparison(@Nullable final Equipment equipment) {
+    this.equipmentComparison = equipment;
+  }
+
   @Override
   protected void render(final int x, final int y) {
     if(this.character != null) {
       final VitalsStat hp = this.character.stats.getStat(HP_STAT.get());
       final VitalsStat mp = this.character.stats.getStat(MP_STAT.get());
       final VitalsStat sp = this.character.stats.getStat(SP_STAT.get());
+
+      final int oldHp = hp.getMax();
+      final int oldMp = mp.getMax();
+      final int oldSp = sp.getMax();
+      final int newHp;
+      final int newMp;
+      final int newSp;
+
+      if(this.equipmentComparison != null) {
+        final Equipment old = this.character.equip(this.equipmentComparison.slot, this.equipmentComparison);
+
+        newHp = hp.getMax();
+        newMp = mp.getMax();
+        newSp = sp.getMax();
+
+        this.character.equip(this.equipmentComparison.slot, old);
+      } else {
+        newHp = oldHp;
+        newMp = oldMp;
+        newSp = oldSp;
+      }
+
       renderRightAlignedNumber(x + this.getWidth(), y + 6, this.character.level_12);
       renderRightAlignedNumber(x + 123, y + 17, this.character.dlevel_13);
       renderRightAlignedNumber(x + this.getWidth(), y + 17, sp.getCurrent());
-      renderHp(x + this.getWidth(), y + 28, hp.getCurrent(), hp.getMax());
-      renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), mp.getMax());
+      renderFraction(x + this.getWidth(), y + 28, hp.getCurrent(), newHp, getClutForHp(hp.getCurrent(), newHp), getStatComparisonClut(oldHp, newHp));
+      renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), newMp, 0, getStatComparisonClut(oldMp, newMp));
       renderFraction(x + this.getWidth(), y + 50, this.character.xp_00, this.character.getXpToNextLevel());
 
       if(this.dontSelect) {
