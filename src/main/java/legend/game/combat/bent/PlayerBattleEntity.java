@@ -396,11 +396,19 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public int getAdditionSpMultiplier() {
+    if(this.addition == null) {
+      return 100;
+    }
+
     final float multiplier = this.addition.getSpMultiplier(this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
     return round(multiplier * 100);
   }
 
   public int getAdditionDamageMultiplier() {
+    if(this.addition == null) {
+      return 100;
+    }
+
     final float multiplier = this.addition.getDamageMultiplier(this.character, this.character.getAdditionInfo(this.addition.getRegistryId()));
     return round(multiplier * 100);
   }
