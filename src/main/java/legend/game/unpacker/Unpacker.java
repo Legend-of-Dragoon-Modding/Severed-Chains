@@ -126,6 +126,8 @@ public final class Unpacker {
     postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
 
     postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
+
+    postTransformers.add(new BranchTransformation("Submap Object deduplicator", SobjTransformer::transform));
   }
 
   private static final List<Replacement> replacements = new ArrayList<>();
