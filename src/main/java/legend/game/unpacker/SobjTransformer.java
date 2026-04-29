@@ -9,6 +9,7 @@ import org.lwjgl.util.xxhash.XXH3State;
 import org.lwjgl.util.xxhash.XXHash;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public final class SobjTransformer {
             final long modelHash = XXHash.XXH3_64bits_digest(xxhash);
 
             if (!models.containsKey(modelHash)) {
-              models.put(modelHash, new Model(Long.toHexString(modelHash), model.data));
+              models.put(modelHash, new Model(hashName(modelHash), model.data));
             }
 
             final PathNode textures = folder.children.get("textures");
@@ -109,6 +110,13 @@ public final class SobjTransformer {
                 }
               }
             }
+
+            if(modelHash == 0xcde376968929e010L ||
+              modelHash == 0x8b0b1d7e962202d7L ||
+              modelHash == 0x3558c02f033d9b6fL) {
+
+              folder.flags.add("ReplaceDart");
+            }
           }
         }
       }
@@ -135,6 +143,18 @@ public final class SobjTransformer {
         final PathNode animation = createChild(animations, animationEntry.name, animationEntry.file);
       }
     }
+  }
+
+  private static String hashName(final long hash) {
+    final Long2ObjectArrayMap<String> nameMap = new Long2ObjectArrayMap<>();
+
+    nameMap.put(0x2318c28acc7d59efL, "Dart (close up)");
+    nameMap.put(0xcde376968929e010L, "Dart (no soles)");
+    nameMap.put(0x8b0b1d7e962202d7L, "Dart (soles 1");
+    nameMap.put(0x3558c02f033d9b6fL, "Dart (soles 2)");
+
+
+    return nameMap.getOrDefault(hash, Long.toHexString(hash));
   }
 
   private static PathNode createChild(final PathNode parent, final String segment, final FileData data) {
