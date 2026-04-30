@@ -176,6 +176,7 @@ public final class SobjTransformer {
     nameMap.put(0x9d5f59959da80af2L, "Albert (captured)");
     nameMap.put(0x7e44e1f10695254cL, "Meru");
     nameMap.put(0x8f611ab5872306e6L, "Meru (Wingly wings)");
+    nameMap.put(0xfe68c4a41f7881e6L, "Kongol (child)");
     nameMap.put(0x3ca6e705c06299f7L, "Miranda");
     nameMap.put(0x5a2b32ffa4b0f5L, "Miranda 2");
     nameMap.put(0x6f54a9e7b320dc31L, "Miranda 3");
@@ -247,6 +248,7 @@ public final class SobjTransformer {
     nameMap.put(0x46e49ffb28ff5a29L, "Fletz Princess Lisa");
     nameMap.put(0x88ba7aba7348003bL, "Fletz Painting Bridge");
     nameMap.put(0x7bed628c7b769335L, "Tiberoa Innkeeper");
+    nameMap.put(0xfec05a2adaeea41cL, "Tiberoa Shopkeeper");
     nameMap.put(0x9aae80c3c65b4f43L, "Tiberoa NPC");
     nameMap.put(0x24e355705179851cL, "Tiberoa NPC 2");
     nameMap.put(0x27aa8c4f282a9debL, "Tiberoa NPC (old)");
@@ -288,6 +290,7 @@ public final class SobjTransformer {
     nameMap.put(0x9eb2462bd01287c1L, "Emperor Doel (mounted)");
     nameMap.put(0x6f0dd2657da78d67L, "Rogue NPC");
     nameMap.put(0x8a61482f3db3d047L, "Rogue NPC 2");
+    nameMap.put(0xfefd387ecca820dfL, "Rogue NPC 3");
     nameMap.put(0x7b2e31e749a9bceaL, "Zenebatos Lapto (2d)");
     nameMap.put(0x39b4d0c6f8d488a3L, "Zenebatos Lapto (2d big)");
     nameMap.put(0x7cfd4d9827c1968bL, "Zieg Unconscious");
