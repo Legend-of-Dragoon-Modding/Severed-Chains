@@ -4,6 +4,7 @@ import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
 import legend.game.additions.AdditionHits80;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.CanEquip;
 import legend.game.inventory.Equipment;
 import legend.game.saves.SavedCharacter;
 import legend.game.textures.Image;
@@ -44,7 +45,7 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract boolean hasDragoon(final CharacterData2c character);
   public abstract AdditionHits80 getDragoonAddition(final CharacterData2c character);
 
-  public abstract boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
+  public abstract CanEquip canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);
 
   public abstract Path getAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract Path getDragoonAttackSoundsPath(final CharacterData2c character, final PlayerBattleEntity bent);

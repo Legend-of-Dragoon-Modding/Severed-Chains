@@ -12,6 +12,7 @@ import legend.game.characters.Element;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.CanEquip;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.types.EquipmentSlot;
@@ -60,8 +61,8 @@ public class KongolTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public boolean canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
-    return (equipment.equipableFlags_03 & 0x20) != 0;
+  public CanEquip canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment) {
+    return CanEquip.NORMAL;
   }
 
   @Override

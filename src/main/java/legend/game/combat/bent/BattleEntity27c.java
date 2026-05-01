@@ -120,7 +120,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int specialEffectFlag_14;
 //  public int equipmentType_16;
 //  public int equipment_02_18;
-  public int equipmentEquipableFlags_1a;
+//  public int equipmentEquipableFlags_1a;
 
 //  public int equipment_05_1e;
   public final ElementSet equipmentElementalResistance_20 = new ElementSet();
@@ -457,7 +457,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case MAX_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getMax();
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14;
-      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a;
+//      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a;
 
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.pack();
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.pack();
@@ -530,7 +530,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case STATUS -> this.status_0e = value.get();
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14 = value.get();
-      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value.get();
+//      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value.get();
 
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value.get());
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value.get());

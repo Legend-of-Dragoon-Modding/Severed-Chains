@@ -8338,7 +8338,6 @@ public class Battle extends EngineState<Battle> {
           player.equipment_11e.put(slot, equipment);
 
           player.specialEffectFlag_14 |= equipment.flags_00;
-          player.equipmentEquipableFlags_1a |= equipment.equipableFlags_03;
           player.equipmentAttackElements_1c.addAll(equipment.attackElement_04);
           player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
           player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
@@ -8768,7 +8767,6 @@ public class Battle extends EngineState<Battle> {
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
-    monster.equipmentEquipableFlags_1a = 0;
     monster.element = statsEvent.elementFlag;
     monster.equipmentElementalImmunity_22.set(statsEvent.elementalImmunityFlag);
     monster.equipmentStatusResist_24 = statsEvent.statusResistFlag;

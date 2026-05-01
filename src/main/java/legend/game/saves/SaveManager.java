@@ -9,6 +9,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputBindings;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
+import legend.game.inventory.EquipmentTypes;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.types.GameState52c;
@@ -415,6 +416,8 @@ public final class SaveManager {
   public void loadGameState(final GameState52c state) {
     final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(state));
     gameState_800babc8 = event.gameState;
+
+    EquipmentTypes.loadEquipmentTypes();
 
     loadingNewGameState_800bdc34 = true;
     whichMenu_800bdc38 = WhichMenu.UNLOAD;

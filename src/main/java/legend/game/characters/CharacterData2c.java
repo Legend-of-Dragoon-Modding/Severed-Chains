@@ -3,7 +3,9 @@ package legend.game.characters;
 import legend.game.additions.AdditionHits80;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.i18n.I18n;
+import legend.game.inventory.CanEquip;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.EquipmentTypes;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -11,6 +13,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -109,7 +112,21 @@ public class CharacterData2c {
   }
 
   public boolean canEquip(final EquipmentSlot slot, final Equipment equipment) {
-    return this.template.canEquip(this, slot, equipment);
+    final CanEquip charEquip = this.template.canEquip(this, slot, equipment);
+    final CanEquip equipEquip = equipment.canEquip(this, slot);
+
+    if(charEquip == CanEquip.DENY || equipEquip == CanEquip.DENY) {
+      return false;
+    }
+
+    if(charEquip == CanEquip.FORCE || equipEquip == CanEquip.FORCE) {
+      return true;
+    }
+
+    final Set<String> characterTypes = EquipmentTypes.getEquipmentTypesForCharacter(this.template);
+    final Set<String> equipmentTypes = EquipmentTypes.getEquipmentTypesForEquipment(equipment);
+
+    return !Collections.disjoint(characterTypes, equipmentTypes);
   }
 
   /**
