@@ -4,18 +4,18 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.GameEngine;
 import legend.core.IoHelper;
+import legend.core.Latch;
 import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputBindings;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
-import legend.game.additions.UnlockState;
+import legend.game.inventory.EquipmentTypes;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
-import legend.game.types.ActiveStatsa0;
-import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Loader;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -33,14 +33,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -55,7 +52,6 @@ import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.EngineStates.engineStateData;
 import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.chapterNames_80114248;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
@@ -64,7 +60,6 @@ import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 
 public final class SaveManager {
@@ -83,17 +78,18 @@ public final class SaveManager {
   private final Path dir = Paths.get("saves");
   public static final PathMatcher SAVE_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.dsav");
 
-  private final Map<Function<FileData, FileData>, SaveDeserializer> deserializers = new HashMap<>();
-  private final int serializerMagic;
+  private final SaveVersion serializerVersion;
   private final SaveSerializer serializer;
 
-  public SaveManager(final int serializerMagic, final SaveSerializer serializer) {
-    this.serializerMagic = serializerMagic;
+  private final Latch<FileData> retailAtlas = new Latch<>(() -> Loader.loadFile("retail_atlas.png"));
+
+  public SaveManager(final SaveVersion serializerVersion, final SaveSerializer serializer) {
+    this.serializerVersion = serializerVersion;
     this.serializer = serializer;
   }
 
-  public void registerDeserializer(final Function<FileData, FileData> matcher, final SaveDeserializer deserializer) {
-    this.deserializers.put(matcher, deserializer);
+  public FileData getRetailAtlas() {
+    return this.retailAtlas.get();
   }
 
   public String generateCampaignName() {
@@ -271,16 +267,7 @@ public final class SaveManager {
 
         indices.mergeInt(save.locationName, 1, Integer::sum);
 
-        gameState_800babc8 = save.createGameState();
-
-        try {
-          loadCharacterStats();
-        } catch(final Exception e) {
-          LOGGER.error("Failed to convert save %d", i);
-          continue;
-        }
-
-        final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), campaignType, engineState.constructor_00.get(), gameState_800babc8, stats_800be5f8);
+        final Path file = this.newSave(save.locationName + ' ' + indices.getInt(save.locationName), campaignType, engineState.constructor_00.get(), save.createGameState());
         Files.setLastModifiedTime(file, FileTime.from(now.minus(saves.size() - i, ChronoUnit.SECONDS)));
 
         whichMenu_800bdc38 = oldMenu;
@@ -356,14 +343,14 @@ public final class SaveManager {
     return campaigns;
   }
 
-  public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+  public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
     try {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
 
       final FileData data = new ExpandableFileData(0x1);
       final IntRef offset = new IntRef();
-      data.writeInt(offset, this.serializerMagic);
-      this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState, activeStats);
+      data.writeInt(offset, this.serializerVersion.code);
+      this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState);
 
       final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
@@ -375,17 +362,21 @@ public final class SaveManager {
     }
   }
 
-  public Path newSave(final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) throws SaveFailedException {
-    return this.overwriteSave(IoHelper.slugName(saveName), saveName, campaignType, engineState, gameState, activeStats);
+  public Path newSave(final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
+    return this.overwriteSave(IoHelper.slugName(saveName), saveName, campaignType, engineState, gameState);
   }
 
   public SavedGame loadData(final Campaign campaign, final String filename, final FileData data) throws InvalidSaveException {
     //LAB_80109e38
-    for(final var entry : this.deserializers.entrySet()) {
-      final FileData slice = entry.getKey().apply(data);
+    for(final SaveVersion version : SaveVersion.values()) {
+      final FileData slice = version.match(data);
 
       if(slice != null) {
-        return entry.getValue().deserialize(campaign, filename, slice);
+        try {
+          return version.deserialize(campaign, filename, slice);
+        } catch(final Throwable e) {
+          throw new InvalidSaveException("Failed to load " + version + " saved game " + filename, e);
+        }
       }
     }
 
@@ -423,19 +414,10 @@ public final class SaveManager {
   }
 
   public void loadGameState(final GameState52c state) {
-    for(final CharacterData2c character : state.charData_32c) {
-      // Remove any addition stats for additions that no longer exist
-      character.additionStats.keySet().removeIf(id -> !REGISTRIES.additions.hasEntry(id));
-
-      for(final var entry : character.additionStats.entrySet()) {
-        if(REGISTRIES.additions.getEntry(entry.getKey()).get().isUnlocked(state, character, entry.getValue())) {
-          entry.getValue().unlockState = UnlockState.UNLOCKED;
-        }
-      }
-    }
-
     final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(state));
     gameState_800babc8 = event.gameState;
+
+    EquipmentTypes.loadEquipmentTypes();
 
     loadingNewGameState_800bdc34 = true;
     whichMenu_800bdc38 = WhichMenu.UNLOAD;

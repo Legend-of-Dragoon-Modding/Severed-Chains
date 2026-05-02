@@ -3,16 +3,17 @@ package legend.game.debugger;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import legend.game.additions.Addition;
-import legend.game.additions.CharacterAdditionStats;
 import legend.game.additions.UnlockState;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.VitalsStat;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
@@ -20,27 +21,60 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.characterNames_801142dc;
-import static legend.game.SItem.checkForNewlyUnlockedAddition;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
-import static legend.game.types.CharacterData2c.CANT_REMOVE;
-import static legend.game.types.CharacterData2c.CAN_BE_IN_PARTY;
-import static legend.game.types.CharacterData2c.HAS_ULTIMATE_ADDITION;
-import static legend.game.types.CharacterData2c.IN_PARTY;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.characters.CharacterData2c.CANT_REMOVE;
+import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.characters.CharacterData2c.IN_PARTY;
+import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
+import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
+import static legend.lodmod.LodMod.ATTACK_STAT;
+import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_DEFENSE_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.DRAGOON_MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MAGIC_ATTACK_STAT;
+import static legend.lodmod.LodMod.MAGIC_AVOID_STAT;
+import static legend.lodmod.LodMod.MAGIC_DEFENSE_STAT;
+import static legend.lodmod.LodMod.MAGIC_HIT_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharacterEditorController {
   public Label name;
   public CheckBox inParty;
   public CheckBox canBeInParty;
   public CheckBox cantRemove;
-  public CheckBox hasUltimate;
-  public TextField hp;
-  public TextField mp;
-  public TextField sp;
-  public TextField level;
-  public TextField xp;
-  public TextField dlevel;
-  public TextField dxp;
+  public Spinner<Integer> hp;
+  public Spinner<Integer> mp;
+  public Spinner<Integer> sp;
+  public Spinner<Integer> maxHp;
+  public Spinner<Integer> maxMp;
+  public Spinner<Integer> maxSp;
+  public Label hpMods;
+  public Label mpMods;
+  public Label spMods;
+  public Spinner<Integer> level;
+  public Spinner<Integer> xp;
+  public Spinner<Integer> dlevel;
+  public Spinner<Integer> dxp;
+  public Spinner<Integer> atk;
+  public Spinner<Integer> matk;
+  public Spinner<Integer> datk;
+  public Spinner<Integer> dmatk;
+  public Spinner<Integer> def;
+  public Spinner<Integer> mdef;
+  public Spinner<Integer> ddef;
+  public Spinner<Integer> dmdef;
+  public Spinner<Integer> ahit;
+  public Spinner<Integer> mhit;
+  public Spinner<Integer> aav;
+  public Spinner<Integer> mav;
+  public Spinner<Integer> spd;
+  public Spinner<Integer> heal;
   public CheckBox petrified;
   public CheckBox bewitched;
   public CheckBox confused;
@@ -57,13 +91,37 @@ public class CharacterEditorController {
   public TextField additionLevel;
   public TextField additionXp;
 
-  private int charId;
   private CharacterData2c charData;
 
   private final Map<EquipmentSlot, Equipment> equipped = new EnumMap<>(EquipmentSlot.class);
-  private final Map<RegistryId, CharacterAdditionStats> additionStats = new HashMap<>();
+  private final Map<RegistryId, CharacterAdditionInfo> additionInfo = new HashMap<>();
 
   public void initialize() {
+    this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.sp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
+    this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.maxSp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
+    this.xp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999_999_999));
+    this.dxp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.atk.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.matk.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.datk.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.dmatk.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.def.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.mdef.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.ddef.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.dmdef.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.ahit.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.mhit.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.aav.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.mav.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.spd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+    this.heal.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999_999_999));
+
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       this.equipmentSlots.getItems().add(slot);
     }
@@ -73,38 +131,55 @@ public class CharacterEditorController {
     }
   }
 
-  public void setChar(final int id, final CharacterData2c data) {
-    this.charId = id;
+  public void setChar(final CharacterData2c data) {
     this.charData = data;
     this.refresh();
   }
 
   private void refresh() {
-    checkForNewlyUnlockedAddition(this.charId);
-
     this.selectedAddition.getItems().clear();
     this.additionList.getItems().clear();
 
-    for(final RegistryDelegate<Addition> addition : CHARACTER_ADDITIONS[this.charId]) {
-      this.selectedAddition.getItems().add(addition.getId());
-      this.additionList.getItems().add(addition.getId());
+    for(final RegistryId id : this.charData.getAllAdditions()) {
+      this.selectedAddition.getItems().add(id);
+      this.additionList.getItems().add(id);
     }
 
-    this.name.setText(characterNames_801142dc[this.charId]);
+    this.name.setText(this.charData.getName() + " (" + this.charData.template.getRegistryId() + ')');
 
     this.inParty.setSelected((this.charData.partyFlags_04 & IN_PARTY) != 0);
     this.canBeInParty.setSelected((this.charData.partyFlags_04 & CAN_BE_IN_PARTY) != 0);
     this.cantRemove.setSelected((this.charData.partyFlags_04 & CANT_REMOVE) != 0);
-    this.hasUltimate.setSelected((this.charData.partyFlags_04 & HAS_ULTIMATE_ADDITION) != 0);
 
-    this.hp.setText(String.valueOf(this.charData.hp_08));
-    this.mp.setText(String.valueOf(this.charData.mp_0a));
-    this.sp.setText(String.valueOf(this.charData.sp_0c));
+    this.hp.getValueFactory().setValue(this.charData.stats.getStat(HP_STAT.get()).getCurrent());
+    this.mp.getValueFactory().setValue(this.charData.stats.getStat(MP_STAT.get()).getCurrent());
+    this.sp.getValueFactory().setValue(this.charData.stats.getStat(SP_STAT.get()).getCurrent());
+    this.maxHp.getValueFactory().setValue(this.charData.stats.getStat(HP_STAT.get()).getMaxRaw());
+    this.maxMp.getValueFactory().setValue(this.charData.stats.getStat(MP_STAT.get()).getMaxRaw());
+    this.maxSp.getValueFactory().setValue(this.charData.stats.getStat(SP_STAT.get()).getMaxRaw());
+    this.hpMods.setText("+ " + (this.charData.stats.getStat(HP_STAT.get()).getMax() - this.charData.stats.getStat(HP_STAT.get()).getMaxRaw()));
+    this.mpMods.setText("+ " + (this.charData.stats.getStat(MP_STAT.get()).getMax() - this.charData.stats.getStat(MP_STAT.get()).getMaxRaw()));
+    this.spMods.setText("+ " + (this.charData.stats.getStat(SP_STAT.get()).getMax() - this.charData.stats.getStat(SP_STAT.get()).getMaxRaw()));
 
-    this.level.setText(String.valueOf(this.charData.level_12));
-    this.xp.setText(String.valueOf(this.charData.xp_00));
-    this.dlevel.setText(String.valueOf(this.charData.dlevel_13));
-    this.dxp.setText(String.valueOf(this.charData.dlevelXp_0e));
+    this.level.getValueFactory().setValue(this.charData.level_12);
+    this.xp.getValueFactory().setValue(this.charData.xp_00);
+    this.dlevel.getValueFactory().setValue(this.charData.dlevel_13);
+    this.dxp.getValueFactory().setValue(this.charData.dlevelXp_0e);
+
+    this.atk.getValueFactory().setValue(this.charData.stats.getStat(ATTACK_STAT.get()).getRaw());
+    this.matk.getValueFactory().setValue(this.charData.stats.getStat(MAGIC_ATTACK_STAT.get()).getRaw());
+    this.datk.getValueFactory().setValue(this.charData.stats.getStat(DRAGOON_ATTACK_STAT.get()).getRaw());
+    this.dmatk.getValueFactory().setValue(this.charData.stats.getStat(DRAGOON_MAGIC_ATTACK_STAT.get()).getRaw());
+    this.def.getValueFactory().setValue(this.charData.stats.getStat(DEFENSE_STAT.get()).getRaw());
+    this.mdef.getValueFactory().setValue(this.charData.stats.getStat(MAGIC_DEFENSE_STAT.get()).getRaw());
+    this.ddef.getValueFactory().setValue(this.charData.stats.getStat(DRAGOON_DEFENSE_STAT.get()).getRaw());
+    this.dmdef.getValueFactory().setValue(this.charData.stats.getStat(DRAGOON_MAGIC_DEFENSE_STAT.get()).getRaw());
+    this.ahit.getValueFactory().setValue(this.charData.stats.getStat(ATTACK_HIT_STAT.get()).getRaw());
+    this.mhit.getValueFactory().setValue(this.charData.stats.getStat(MAGIC_HIT_STAT.get()).getRaw());
+    this.aav.getValueFactory().setValue(this.charData.stats.getStat(ATTACK_AVOID_STAT.get()).getRaw());
+    this.mav.getValueFactory().setValue(this.charData.stats.getStat(MAGIC_AVOID_STAT.get()).getRaw());
+    this.spd.getValueFactory().setValue(this.charData.stats.getStat(SPEED_STAT.get()).getRaw());
+    this.heal.getValueFactory().setValue(this.charData.stats.getStat(GUARD_HEAL_STAT.get()).getRaw());
 
     this.petrified.setSelected((this.charData.status_10 & 0x1) != 0);
     this.bewitched.setSelected((this.charData.status_10 & 0x2) != 0);
@@ -120,10 +195,20 @@ public class CharacterEditorController {
     this.additionList.getSelectionModel().select(0);
 
     this.equipped.clear();
-    this.equipped.putAll(this.charData.equipment_14);
 
-    this.additionStats.clear();
-    this.additionStats.putAll(this.charData.additionStats);
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final Equipment equipment = this.charData.getEquipment(slot);
+
+      if(equipment != null) {
+        this.equipped.put(slot, equipment);
+      }
+    }
+
+    this.additionInfo.clear();
+
+    for(final RegistryId additionId : this.charData.getAllAdditions()) {
+      this.additionInfo.put(additionId, this.charData.getAdditionInfo(additionId));
+    }
 
     this.refreshEquipment();
     this.refreshAddition();
@@ -144,10 +229,10 @@ public class CharacterEditorController {
     final RegistryId id = this.additionList.getValue();
 
     if(id != null) {
-      final CharacterAdditionStats stats = this.additionStats.get(id);
-      this.additionUnlockState.getSelectionModel().select(stats.unlockState);
-      this.additionLevel.setText(String.valueOf(stats.level));
-      this.additionXp.setText(String.valueOf(stats.xp));
+      final CharacterAdditionInfo info = this.additionInfo.get(id);
+      this.additionUnlockState.getSelectionModel().select(info.getUnlockState());
+      this.additionLevel.setText(String.valueOf(info.level));
+      this.additionXp.setText(String.valueOf(info.xp));
     } else {
       this.additionUnlockState.getSelectionModel().clearSelection();
       this.additionLevel.setText("");
@@ -163,18 +248,35 @@ public class CharacterEditorController {
     this.charData.partyFlags_04 =
       (this.inParty.isSelected() ? IN_PARTY : 0) |
       (this.canBeInParty.isSelected() ? CAN_BE_IN_PARTY : 0) |
-      (this.cantRemove.isSelected() ? CANT_REMOVE : 0) |
-      (this.hasUltimate.isSelected() ? HAS_ULTIMATE_ADDITION : 0)
+      (this.cantRemove.isSelected() ? CANT_REMOVE : 0)
     ;
 
-    this.charData.hp_08 = Integer.parseInt(this.hp.getText());
-    this.charData.mp_0a = Integer.parseInt(this.mp.getText());
-    this.charData.sp_0c = Integer.parseInt(this.sp.getText());
+    this.charData.stats.getStat(HP_STAT.get()).setCurrent(this.hp.getValue());
+    this.charData.stats.getStat(MP_STAT.get()).setCurrent(this.mp.getValue());
+    this.charData.stats.getStat(SP_STAT.get()).setCurrent(this.sp.getValue());
+    this.charData.stats.getStat(HP_STAT.get()).setMaxRaw(this.maxHp.getValue());
+    this.charData.stats.getStat(MP_STAT.get()).setMaxRaw(this.maxMp.getValue());
+    this.charData.stats.getStat(SP_STAT.get()).setMaxRaw(this.maxSp.getValue());
 
-    this.charData.level_12 = Integer.parseInt(this.level.getText());
-    this.charData.xp_00 = Integer.parseInt(this.xp.getText());
-    this.charData.dlevel_13 = Integer.parseInt(this.dlevel.getText());
-    this.charData.dlevelXp_0e = Integer.parseInt(this.dxp.getText());
+    this.charData.level_12 = this.level.getValue();
+    this.charData.xp_00 = this.xp.getValue();
+    this.charData.dlevel_13 = this.dlevel.getValue();
+    this.charData.dlevelXp_0e = this.dxp.getValue();
+
+    this.charData.stats.getStat(ATTACK_STAT.get()).setRaw(this.atk.getValue());
+    this.charData.stats.getStat(MAGIC_ATTACK_STAT.get()).setRaw(this.matk.getValue());
+    this.charData.stats.getStat(DRAGOON_ATTACK_STAT.get()).setRaw(this.datk.getValue());
+    this.charData.stats.getStat(DRAGOON_MAGIC_ATTACK_STAT.get()).setRaw(this.dmatk.getValue());
+    this.charData.stats.getStat(DEFENSE_STAT.get()).setRaw(this.def.getValue());
+    this.charData.stats.getStat(MAGIC_DEFENSE_STAT.get()).setRaw(this.mdef.getValue());
+    this.charData.stats.getStat(DRAGOON_DEFENSE_STAT.get()).setRaw(this.ddef.getValue());
+    this.charData.stats.getStat(DRAGOON_MAGIC_DEFENSE_STAT.get()).setRaw(this.dmdef.getValue());
+    this.charData.stats.getStat(ATTACK_HIT_STAT.get()).setRaw(this.ahit.getValue());
+    this.charData.stats.getStat(MAGIC_HIT_STAT.get()).setRaw(this.mhit.getValue());
+    this.charData.stats.getStat(ATTACK_AVOID_STAT.get()).setRaw(this.aav.getValue());
+    this.charData.stats.getStat(MAGIC_AVOID_STAT.get()).setRaw(this.mav.getValue());
+    this.charData.stats.getStat(SPEED_STAT.get()).setRaw(this.spd.getValue());
+    this.charData.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(this.heal.getValue());
 
     this.charData.status_10 =
       (this.petrified.isSelected() ? 0x1 : 0) |
@@ -188,19 +290,54 @@ public class CharacterEditorController {
     ;
 
     if(this.additionList.getValue() != null) {
-      final CharacterAdditionStats additionStats = this.additionStats.get(this.additionList.getValue());
-      additionStats.unlockState = this.additionUnlockState.getValue();
-      additionStats.level = Integer.parseInt(this.additionLevel.getText());
-      additionStats.xp = Integer.parseInt(this.additionXp.getText());
+      final CharacterAdditionInfo info = this.additionInfo.get(this.additionList.getValue());
+
+      if(info.getUnlockState() != this.additionUnlockState.getValue()) {
+        info.setUnlockState(this.additionUnlockState.getValue(), gameState_800babc8.timestamp_a0);
+      }
+
+      info.level = Integer.parseInt(this.additionLevel.getText());
+      info.xp = Integer.parseInt(this.additionXp.getText());
     }
 
-    this.charData.equipment_14.clear();
-    this.charData.equipment_14.putAll(this.equipped);
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final Equipment current = this.charData.getEquipment(slot);
+      final Equipment equip = this.equipped.get(slot);
+
+      if(current != equip) {
+        this.charData.equip(slot, equip);
+      }
+    }
 
     this.charData.selectedAddition_19 = this.selectedAddition.getValue();
+  }
 
-    this.charData.additionStats.clear();
-    this.charData.additionStats.putAll(this.additionStats);
+  public void onHpRestoreClick() {
+    final VitalsStat stat = this.charData.stats.getStat(HP_STAT.get());
+    stat.restore();
+    this.hp.getValueFactory().setValue(stat.getCurrent());
+  }
+
+  public void onMpRestoreClick() {
+    final VitalsStat stat = this.charData.stats.getStat(MP_STAT.get());
+    stat.restore();
+    this.mp.getValueFactory().setValue(stat.getCurrent());
+  }
+
+  public void onSpRestoreClick() {
+    final VitalsStat stat = this.charData.stats.getStat(SP_STAT.get());
+    stat.restore();
+    this.sp.getValueFactory().setValue(stat.getCurrent());
+  }
+
+  public void onLevelUpClick() {
+    this.charData.applyLevelUp(null);
+    this.refresh();
+  }
+
+  public void onDlevelUpClick() {
+    this.charData.applyDragoonLevelUp(null);
+    this.refresh();
   }
 
   public void onEquipmentSlotSelect() {

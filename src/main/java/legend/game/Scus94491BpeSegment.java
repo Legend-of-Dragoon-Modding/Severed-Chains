@@ -11,7 +11,6 @@ import legend.core.platform.input.InputMod;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.modding.events.RenderEvent;
-import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.inventory.ScriptFlags1ChangedEvent;
 import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
 import legend.game.scripting.FlowControl;
@@ -25,7 +24,6 @@ import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.BattleUiParts;
 import legend.game.types.CContainer;
-import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
 import legend.game.types.TmdAnimationFile;
@@ -78,7 +76,6 @@ import static legend.game.Menus.renderUi;
 import static legend.game.Menus.uploadRenderables;
 import static legend.game.Models.loadModelAndAnimation;
 import static legend.game.SItem.addGold;
-import static legend.game.SItem.clearCharacterStats;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.takeEquipmentId;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
@@ -102,7 +99,6 @@ import static legend.game.sound.Audio.initSound;
 import static legend.game.sound.Audio.loadMenuSounds;
 import static legend.game.sound.Audio.startQueuedSounds;
 import static legend.game.sound.Audio.stopSound;
-import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -328,16 +324,6 @@ public final class Scus94491BpeSegment {
 
     gameState_800babc8.scriptFlags2_bc.set(packedIndex, set);
 
-    //LAB_800174a4
-    if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-      final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
-      if(!divineEvent.bypassOverride) {
-        final CharacterData2c charData = gameState_800babc8.charData_32c[0];
-        charData.dlevelXp_0e = 0x7fff;
-        charData.dlevel_13 = 5;
-      }
-    }
-
     //LAB_800174d0
     return FlowControl.CONTINUE;
   }
@@ -374,15 +360,6 @@ public final class Scus94491BpeSegment {
     } else {
       //LAB_800175fc
       script.params_20[0].array(index).and(~(1 << shift));
-    }
-
-    //LAB_80017614
-    final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
-    if(!divineEvent.bypassOverride) {
-      if(gameState_800babc8.goods_19c.has(DIVINE_DRAGOON_SPIRIT)) {
-        gameState_800babc8.charData_32c[0].dlevel_13 = 5;
-        gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
-      }
     }
 
     //LAB_80017640
@@ -566,7 +543,6 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, 6669, Scus94491BpeSegment::basicUiTexturesLoaded);
 
     textZ_800bdf00 = 13;
-    clearCharacterStats();
     initTextboxes();
   }
 
@@ -679,21 +655,5 @@ public final class Scus94491BpeSegment {
   @Method(0x800e6e6cL)
   public static void initFmvs() {
     _800bf0cf = 0;
-  }
-
-  public static String getCharacterName(final int id) {
-    return switch(id) {
-      case 0 -> "Dart";
-      case 1 -> "Lavitz";
-      case 2 -> "Shana";
-      case 3 -> "Rose";
-      case 4 -> "Haschel";
-      case 5 -> "Albert";
-      case 6 -> "Meru";
-      case 7 -> "Kongol";
-      case 8 -> "Miranda";
-      case 9, 10 -> "Divine";
-      default -> throw new IllegalArgumentException("Invalid character ID " + id);
-    };
   }
 }

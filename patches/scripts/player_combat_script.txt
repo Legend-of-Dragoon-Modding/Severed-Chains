@@ -34,6 +34,7 @@ entrypoint :ENTRYPOINT_31_NOOP
 
 
 #include lookup_tables.txt
+#include shadow.txt
 
 
 data 0x10c
@@ -506,22 +507,6 @@ data 0x5000033
 data 0x200000d
 data 0x900ffed
 data 0x49
-
-
-
-; SUBROUTINE
-; @param int s8 shadow size
-SET_CHAR_BENT_SHADOW_SIZE:
-call Battle::scriptGetBentStat, stor[8], FOOT_MODEL_PART, inl[:SET_CHAR_BENT_SHADOW_SIZE_FOOT_MODEL_PART_INDEX]
-call Battle::scriptGetBentStat, stor[8], SHADOW_SIZE, inl[:SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE]
-call Battle::scriptAttachShadowToBentModelPart, stor[8], inl[:SET_CHAR_BENT_SHADOW_SIZE_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
-call Battle::scriptSetBentShadowSize, stor[8], inl[:SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE], inl[:SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE] ; bentIndex, x, z
-return
-
-SET_CHAR_BENT_SHADOW_SIZE_FOOT_MODEL_PART_INDEX:
-data 0
-SET_CHAR_BENT_SHADOW_SIZE_SHADOW_SIZE:
-data 0
 
 
 
@@ -2157,7 +2142,7 @@ rel :JMP_5f58_0
 JMP_5f58_0:
 wait stor[9] ; frames
 gosub inl[:LABEL_265] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 call Battle::allocateBillboardSpriteEffect, stor[22], 0xfff17 ; effectIndex, flags
 call SEffe::scriptSetRelativePosition, stor[22], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[22], stor[0], 0x1000, 0x1000, 0x1000 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2209,7 +2194,7 @@ deallocate
 JMP_5f58_1:
 wait stor[9] ; frames
 gosub inl[:LABEL_265] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 call Battle::allocateBillboardSpriteEffect, stor[18], 0xfff40 ; effectIndex, flags
 call SEffe::scriptAttachEffectToBobj, stor[18], stor[0], 0xffffffff ; effectIndex, scriptIndex, coord2Index
 call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2259,7 +2244,7 @@ gosub inl[:LABEL_259] ; addr
 mov 0x24, stor[23] ; source, dest
 wait stor[23] ; frames
 gosub inl[:LABEL_255] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 call SEffe::scriptAllocateParticleEffect, stor[19], 0xffffffff, 0xfff26, 0x18, 0xa, 0x1, 0x800, 0xd087f00, 0x27 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 call SEffe::scriptAttachEffectToBobj, stor[19], stor[0], 0xffffffff ; effectIndex, scriptIndex, coord2Index
 call SEffe::scriptSetRelativePosition, stor[19], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2367,7 +2352,7 @@ JMP_5f58_2:
 mov 0x9, stor[10] ; source, dest
 wait stor[9] ; frames
 gosub inl[:LABEL_265] ; addr
-gosub inl[:LABEL_270] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
 gosub inl[:LABEL_264] ; addr
 call SEffe::scriptSetRelativeRotation, stor[18], 0xffffffff, 0x0, 0x500, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x1000, 0x1000, 0x1000 ; bobjIndex1, bobjIndex2, x, y, z
@@ -2444,57 +2429,76 @@ call SEffe::scriptAddLifespanAttachment, stor[18], 0xf ; effectIndex, ticks
 jmp inl[:LABEL_267] ; addr
 data 0x49
 
+
+
 ; SUBROUTINE
-LABEL_270:
-gosub inl[:LABEL_273] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_271] ; operand, left, right, addr
+ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY:
+gosub inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY] ; addr
+jmp_cmp ==, 0x0, stor[8], inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_NOPE] ; operand, left, right, addr
 call Battle::scriptGetBobjModelPartCount, stor[28], stor[8] ; bobjIndex, partCount
 call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff18, stor[8], 0x0, 0x4, 0x0, 0x7084000, 0x40 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x40, 0x600, 0x600 ; bobjIndex1, bobjIndex2, x, y, z
-gosub inl[:LABEL_272] ; addr
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT] ; addr
 call Battle::scriptGetBobjModelPartCount, stor[28], stor[8] ; bobjIndex, partCount
 call SEffe::scriptAllocateParticleEffect, stor[18], stor[28], 0xfff18, stor[8], 0x0, 0x4, 0x0, 0x7084000, 0x40 ; effectIndex, parentIndex, type, count, p4, p5, p6, p7, type2
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x1800, 0x40, 0x1800 ; bobjIndex1, bobjIndex2, x, y, z
-gosub inl[:LABEL_272] ; addr
-LABEL_271:
+gosub inl[:ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT] ; addr
+ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT_IF_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_NOPE:
 return
 
+
+
+PARTICLE_R:
+data 0
+PARTICLE_G:
+data 0
+PARTICLE_B:
+data 0
+
+LOAD_PARTICLE_COLOUR:
+call Battle::scriptGetBentStat, stor[30], PARTICLE_COLOUR, stor[40] ; s40 = packed rgb
+
+; Unpack rgb
+mov stor[40], inl[:PARTICLE_R]
+mov stor[40], inl[:PARTICLE_G]
+mov stor[40], inl[:PARTICLE_B]
+shr 16, inl[:PARTICLE_R]
+shr  8, inl[:PARTICLE_G]
+and 0xff, inl[:PARTICLE_R]
+and 0xff, inl[:PARTICLE_G]
+and 0xff, inl[:PARTICLE_B]
+return
+
+
+
 ; SUBROUTINE
-LABEL_272:
+ALLOCATE_ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_EFFECT:
 call SEffe::scriptSetRelativeRotation, stor[18], 0xffffffff, 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
-call Battle::scriptGetCharOrMonsterId, stor[30], stor[8] ; bentIndex, id
-call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:LABEL_684[stor[8]]], inl[:LABEL_685[stor[8]]], inl[:LABEL_686[stor[8]]] ; bobjIndex1, bobjIndex2, r, g, b
+gosub inl[:LOAD_PARTICLE_COLOUR]
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, inl[:PARTICLE_R], inl[:PARTICLE_G], inl[:PARTICLE_B] ; bobjIndex1, bobjIndex2, r, g, b
 call SEffe::scriptSetEffectZ, stor[18], 0xffffff00 ; effectIndex, z
 call Battle::scriptGetBobjModelPartCount, stor[28], stor[8] ; bobjIndex, partCount
 call SEffe::scriptAddLifespanAttachment, stor[18], stor[8] ; effectIndex, ticks
 return
 
+
+
 ; SUBROUTINE
-LABEL_273:
+ATTACK_ELEMENT_STRONG_AGAINST_ENEMY:
 call Battle::scriptGetBentStat, stor[30], EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT, stor[8] ; bentIndex, statIndex, value
 call Battle::scriptGetBentStat, stor[28], MONSTER_ELEMENT, stor[9] ; bentIndex, statIndex, value
 add stor[9], stor[8] ; amount, operand
-jmp_cmp ==, 0x81, stor[8], inl[:LABEL_274] ; operand, left, right, addr
-jmp_cmp ==, 0x42, stor[8], inl[:LABEL_274] ; operand, left, right, addr
-jmp_cmp ==, 0x24, stor[8], inl[:LABEL_274] ; operand, left, right, addr
+jmp_cmp ==, 0x81, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
+jmp_cmp ==, 0x42, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
+jmp_cmp ==, 0x24, stor[8], inl[:ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP] ; operand, left, right, addr
 mov 0x0, stor[8] ; source, dest
-LABEL_274:
+ATTACK_ELEMENT_STRONG_AGAINST_ENEMY_YUP:
 return
-data 0x80
-data 0x40
-data 0x20
-data 0x4
-data 0x10
-data 0x40
-data 0x1
-data 0x2
-data 0x20
-data 0x80
 
 
 
 ; SUBROUTINE
-JMP_bf38_0:
+ADDITION_HANDLER_STANDARD:
 mov 0xffffffff, var[45][241] ; source, dest
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
 gosub inl[:LABEL_346] ; addr
@@ -2528,8 +2532,10 @@ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_277] ; operand, left, right, addr
 call SEffe::scriptSetEffectErrorFlag, stor[18], 0x0 ; effectIndex, clear
 LABEL_277:
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x8 ; bentIndex, animIndex
-mov 0x5, stor[23] ; source, dest
+
+call Battle::scriptPrepareAttack, stor[23]
 wait stor[23] ; frames
+
 mov 0x0, stor[8] ; source, dest
 LABEL_278:
 mov var[34][stor[8]], stor[9] ; source, dest
@@ -2591,8 +2597,8 @@ mov 0xe2, var[44] ; source, dest
 call Battle::scriptMoveCameraProjectionPlane, 0x2, 0x152, 0x11, 0x0 ; mode, newDistance, frames, stepZ1
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x1b ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
-call Battle::scriptGetBentStat, stor[0], FOOT_MODEL_PART, inl[:JMP_bf38_0_FOOT_MODEL_PART_INDEX]
-call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:JMP_bf38_0_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
+call Battle::scriptGetBentStat, stor[0], FOOT_MODEL_PART, inl[:ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX]
+call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
 call Battle::scriptSetBentPos, stor[0], stor[10], stor[11], stor[12] ; bentIndex, x, y, z
 call Battle::FUN_800cbde0, stor[0], 0xffffffff, 0xa, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
 call Battle::FUN_800cbb00, stor[28], 0xffffffff, 0xa, stor[stor[stor[0], 28], 24], stor[stor[stor[0], 28], 25], stor[stor[stor[0], 28], 26] ; bentIndex0, bentIndex1, ticks, x, y, z
@@ -2642,7 +2648,7 @@ mov 0xe2, var[44] ; source, dest
 call Battle::scriptMoveCameraProjectionPlane, 0x2, 0x152, 0x11, 0x0 ; mode, newDistance, frames, stepZ1
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x6 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
-call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:JMP_bf38_0_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
+call Battle::scriptGetBobjLocalWorldMatrixTranslation, stor[0], inl[:ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX], stor[10], stor[11], stor[12] ; effectIndex, partIndex, x, y, z
 call Battle::scriptSetBentPos, stor[0], stor[10], 0x0, stor[12] ; bentIndex, x, y, z
 yield
 call Battle::FUN_800cbb00, stor[0], 0xffffffff, 0x6, stor[24], stor[25], stor[26] ; bentIndex0, bentIndex1, ticks, x, y, z
@@ -2683,7 +2689,7 @@ fork_reenter stor[28], 0x4, stor[8] ; index, entrypoint, p2
 gosub inl[:LABEL_144] ; addr
 return
 
-JMP_bf38_0_FOOT_MODEL_PART_INDEX:
+ADDITION_HANDLER_STANDARD_FOOT_MODEL_PART_INDEX:
 data 0
 
 
@@ -2886,7 +2892,6 @@ return
 
 ; SUBROUTINE
 ; @return bool stor[8] True if (windigo || melbu stage index 1) && var[45][50] != 0
-;TODO this is most likely broken due to encounter ID refactor
 IS_CHARACTER_SUCCD:
 mov 0x0, stor[8] ; source, dest
 
@@ -2933,7 +2938,7 @@ LABEL_319:
 return
 
 ; SUBROUTINE
-JMP_bf60_2:
+ADDITION_HANDLER_ARCHER:
 mov 0x1, stor[8] ; source, dest
 gosub_table stor[8], inl[:LABEL_90] ; index, table
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
@@ -2955,16 +2960,10 @@ LABEL_320:
 
 call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x10 ; bentIndex, animIndex
 call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
-gosub inl[:LABEL_348] ; addr
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x0, 0x0, 0x0, inl[:LABEL_352[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x4, 0x0, 0x0, inl[:LABEL_353[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x5, 0x0, 0x0, inl[:LABEL_354[stor[8]]], 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
 
-call Battle::scriptPrepareAttack
-
-gosub inl[:LABEL_348] ; addr
-mov inl[:LABEL_352[stor[8]]], stor[23] ; source, dest
+call Battle::scriptPrepareAttack, stor[23]
 wait stor[23] ; frames
+
 mov stor[0], stor[30] ; source, dest
 mov 0x0, stor[9] ; source, dest
 mov 0xfffffc00, stor[10] ; source, dest
@@ -3205,36 +3204,6 @@ call Battle::scriptSetBentRotationY, stor[0], stor[26] ; bentIndex, y
 deallocate_other stor[18] ; index
 deallocate_other stor[19] ; index
 return
-
-; SUBROUTINE
-LABEL_348:
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp ==, 0x8, stor[8], inl[:LABEL_349] ; operand, left, right, addr
-mov 0x0, stor[8] ; source, dest
-jmp inl[:LABEL_350] ; addr
-LABEL_349:
-mov 0x2, stor[8] ; source, dest
-LABEL_350:
-gosub inl[:IS_DRAGOON] ; addr
-jmp_cmp ==, 0x0, stor[31], inl[:LABEL_351] ; operand, left, right, addr
-incr stor[8] ; operand
-LABEL_351:
-return
-LABEL_352:
-data 0x2c
-data 0x2c
-data 0x2e
-data 0x26
-LABEL_353:
-data 0x10
-data 0x10
-data 0x16
-data 0x12
-LABEL_354:
-data 0x2e
-data 0x2e
-data 0x30
-data 0x28
 
 ; SUBROUTINE
 LABEL_356:
@@ -3743,19 +3712,19 @@ data 0x49
 data 0x49
 
 ; SUBROUTINE
-JMP_bf60_0:
+ADDITION_HANDLER_DRAGOON:
 gosub inl[:LABEL_93] ; addr
 call Battle::scriptGetBentPos, stor[0], stor[24], stor[25], stor[26] ; bentIndex, x, y, z
 call Battle::scriptSetBattleHudVisibility, 0x0 ; visible
 gosub inl[:LOAD_D_ATTACK_SOUNDS] ; addr
-call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_DEFF, inl[:JMP_bf60_0_DEFF]
-call Battle::scriptLoadDragoonDeffSync, inl[:JMP_bf60_0_DEFF], stor[0], stor[28], 0x0 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
+call Battle::scriptGetBentStat, stor[0], DRAGOON_ATTACK_DEFF, inl[:ADDITION_HANDLER_DRAGOON_DEFF]
+call Battle::scriptLoadDragoonDeffSync, inl[:ADDITION_HANDLER_DRAGOON_DEFF], stor[0], stor[28], 0x0 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint
 yield
 call Audio::scriptUnloadSoundFile, 0x6 ; soundType
 yield
 return
 
-JMP_bf60_0_DEFF:
+ADDITION_HANDLER_DRAGOON_DEFF:
 data 0
 
 ; SUBROUTINE
@@ -3959,6 +3928,12 @@ jmp inl[:LABEL_433] ; addr
 
 ; SUBROUTINE
 LABEL_436:
+mov 0x0, stor[9] ; source, dest
+UNHIDE_PLAYER_BENTS_LOOP:
+mov var[34][stor[9]], stor[10] ; source, dest
+call Battle::scriptSetBentHidden, stor[10], 0x1 ; bentIndex, set
+incr stor[9] ; operand
+jmp_cmp !=, stor[9], var[35], inl[:UNHIDE_PLAYER_BENTS_LOOP] ; operator, left, right, addr
 mov 0x0, stor[8] ; source, dest
 LABEL_437:
 mov var[32][stor[8]], stor[28] ; source, dest
@@ -4510,33 +4485,15 @@ return
 
 ; SUBROUTINE TABLE
 ; Indexed by character ID
-;TODO addition handler for each character, need to externalize this to support new chars
-LABEL_479:
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf60_2
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf38_0
-rel :JMP_bf60_2
-rel :JMP_bf38_0
+ADDITION_HANDLER_TABLE:
+rel :ADDITION_HANDLER_STANDARD
+rel :ADDITION_HANDLER_ARCHER
 
 ; SUBROUTINE TABLE
 ; Indexed by character ID
-;TODO dragoon addition handler for each character, need to externalize this to support new chars
-LABEL_480:
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_2
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_0
-rel :JMP_bf60_2
-rel :JMP_bf60_0
+DRAGOON_ADDITION_HANDLER_TABLE:
+rel :ADDITION_HANDLER_DRAGOON
+rel :ADDITION_HANDLER_ARCHER
 
 data 0xfffff98c
 data 0xfffff98c
@@ -4836,7 +4793,7 @@ ACTION_DRAGOON_MAGIC:
 call Battle::scriptInitSpellAndItemMenu, stor[0], 0x1 ; bentIndex, menuType
 LABEL_520:
 yield
-call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], stor[29] ; selectionState, targetBentIndex, itemOrSpellId
+call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], reg[0] ; selectionState, targetBentIndex, itemOrSpellId
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_520] ; operand, left, right, addr
 jmp_cmp ==, 0xffffffff, stor[8], inl[:LABEL_526] ; operand, left, right, addr
 mov 0x2, stor[8] ; source, dest
@@ -4851,10 +4808,10 @@ call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
 gosub inl[:LABEL_670] ; addr
 or 0x2, var[45][245] ; right, left
 gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_521] ; don't need to change stages
+jmp_cmp ==, -1, stor[8], inl[:LABEL_521] ; don't need to change stages
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 LABEL_521:
-call Battle::scriptLoadDeff, stor[29], stor[0], stor[28], 0x0, 0x1000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
+call Battle::scriptLoadDeff, reg[0], stor[0], stor[28], 0x0, 0x1000000 ; flagsAndIndex, bentIndex, p2, scriptEntrypoint, type
 mov 0x1, var[45][248] ; source, dest
 LABEL_522:
 mov var[45][248], stor[8] ; source, dest
@@ -4863,16 +4820,23 @@ jmp_cmp !=, 0x2, var[45][248], inl[:LABEL_522] ; operand, left, right, addr
 call Battle::scriptTickDeffLoadingStage, 0x2 ; loadingStage
 call Battle::scriptTickDeffLoadingStage, 0x3 ; loadingStage
 call DrgnFiles::scriptWaitForFilesToLoad ; index
+
 gosub inl[:GET_DRAGON_SUMMON_SPECIAL_STAGE] ; addr
-jmp_cmp ==, 0x0, stor[8], inl[:LABEL_525] ; don't need to change stages
+jmp_cmp ==, -1, stor[8], inl[:LABEL_525] ; don't need to change stages
+
 mov var[45][76], stor[8] ; source, dest
+
 jmp_cmp >, 0x0, stor[8], inl[:LABEL_523] ; operand, left, right, addr
-mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[8] ; source, dest
+gosub inl[:GET_BENT_FOR_CHAR]
+call Battle::scriptGetBentStat, stor[42], SPECIAL_TRANSFORM_STAGE, stor[8]
 jmp inl[:LABEL_524] ; addr
+
 LABEL_523:
 mov var[47], stor[8] ; source, dest
+
 LABEL_524:
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
+
 LABEL_525:
 and 0xfffffffd, var[45][245] ; right, left
 mov var[45][118], stor[8] ; source, dest
@@ -4885,31 +4849,25 @@ gosub inl[:LABEL_64] ; addr
 return
 data 0x49
 
+
+
 ; SUBROUTINE
 ; If the spell is a dragon summon spell, returns the special stage to switch to
-; @param int stor[29] spell id
-; @return int stor[8] the special stage to switch to if any, or 0 if not a dragon summon or already on that stage
+; @param int reg[0] spell id
+; @return int stor[8] the special stage to switch to if any, or -1 if not a dragon summon or we don't need to change the stage
 GET_DRAGON_SUMMON_SPECIAL_STAGE:
-mov 0x0, stor[23] ; source, dest
+call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:spells], reg[0], 0, stor[23] ; read battle stage from spell
+jmp_cmp ==, stor[23], -1, inl[:LABEL_528] ; no battle stage
+
+; if we're in special, we don't need to change the stage
 gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp !=, stor[29], inl[:DRAGON_SUMMON_SPELL_INDICES[stor[8]]], inl[:LABEL_528] ; operand, left, right, addr
-jmp_cmp ==, stor[8], var[45][76], inl[:LABEL_528] ; operand, left, right, addr
-mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[23] ; source, dest
+jmp_cmp !=, stor[8], var[45][76], inl[:LABEL_528] ; operand, left, right, addr
+
+mov -1, stor[23] ; source, dest
+
 LABEL_528:
 mov stor[23], stor[8] ; source, dest
 return
-
-DRAGON_SUMMON_SPELL_INDICES:
-data 0x3
-data 0x8
-data 0xd
-data 0x13
-data 0x17
-data 0x8
-data 0x1c
-data 0x1f
-data 0xd
-data 0xffffffff
 
 
 
@@ -4925,8 +4883,9 @@ wait stor[23] ; frames
 
 gosub inl[:LABEL_471] ; addr
 
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_531] ; operand, left, right, addr
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+jmp_cmp ==, 1, stor[8], inl[:LABEL_531] ; operand, left, right, addr
+
 ; audio file
 call Battle::scriptGetHitProperty, stor[0], 0x0, 0x6, stor[8] ; bentIndex, hitNum, hitPropertyIndex, value
 call Battle::scriptLoadCharacterAttackSounds, stor[8] ; charId
@@ -4937,11 +4896,12 @@ call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x10000, stor[31], inl[:ACTION_ATTACK_WAIT_FOR_SOUND_TO_LOAD] ; operand, left, right, addr
 
 LABEL_531:
-gosub inl[:GET_MY_CHAR_ID] ; addr
-gosub_table stor[8], inl[:LABEL_479] ; index, table
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+gosub_table stor[8], inl[:ADDITION_HANDLER_TABLE] ; index, table
 call Audio::scriptStopSound, 0xa, 0x0, 0x3 ; soundFileIndex, soundIndex, mode
-gosub inl[:GET_MY_CHAR_ID] ; addr
-jmp_cmp ==, 0x0, inl[:LABEL_586[stor[8]]], inl[:LABEL_532] ; operand, left, right, addr
+
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+jmp_cmp ==, 1, stor[8], inl[:LABEL_532] ; operand, left, right, addr
 call Audio::scriptUnloadSoundFile, 0x7 ; soundType
 LABEL_532:
 call Battle::scriptSetBentRotationY, stor[0], 0x400 ; bentIndex, y
@@ -4969,7 +4929,7 @@ call Battle::scriptInitSpellAndItemMenu, stor[0], 0x0 ; bentIndex, menuType
 ; wait for selection
 WAIT_FOR_ITEM_SELECTION:
 yield
-call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], stor[29], reg[0] ; selectionState, targetBentIndex, itemOrSpellId
+call Battle::scriptGetItemOrSpellTargetingInfo, stor[8], stor[28], reg[0] ; selectionState, targetBentIndex, itemOrSpellId
 jmp_cmp ==, 0x0, stor[8], inl[:WAIT_FOR_ITEM_SELECTION] ; operand, left, right, addr
 
 ; menu was canceled
@@ -5083,7 +5043,7 @@ call Audio::scriptGetLoadedSoundFiles, stor[31] ; flags
 jmp_cmp &, 0x8, stor[31], inl[:LABEL_542] ; operand, left, right, addr
 gosub inl[:GET_MY_CHAR_ID] ; addr
 call Battle::scriptSetDragoonSpaceElementIndex, stor[8] ; charId
-mov inl[:SPECIAL_TRANSFORM_STAGE[stor[8]]], stor[8] ; source, dest
+call Battle::scriptGetBentStat, stor[0], SPECIAL_TRANSFORM_STAGE, stor[8]
 mov stor[8], var[45][187] ; source, dest
 gosub inl[:CHANGE_BATTLE_STAGE] ; addr
 mov var[45][118], stor[8] ; source, dest
@@ -5124,7 +5084,6 @@ gosub inl[:CLEAR_BENT_STATUS] ; addr
 call Battle::scriptDisableBentShadow, stor[29] ; bentIndex
 call Battle::FUN_800ccba4, stor[29], 0x1 ; bentIndex, isDragoon
 call DrgnFiles::scriptWaitForFilesToLoad ; index
-gosub inl[:LABEL_712] ; addr
 call Battle::scriptGetBentStat, stor[29], FOOT_MODEL_PART, inl[:LABEL_546_FOOT_MODEL_PART_INDEX]
 call Battle::scriptAttachShadowToBentModelPart, stor[29], inl[:LABEL_546_FOOT_MODEL_PART_INDEX] ; bentIndex, modelPartAttachmentIndex
 call Battle::scriptSetLoadingBentAnimationIndex, stor[29], 0x0 ; bentIndex, animIndex
@@ -5164,7 +5123,6 @@ mov var[45][118], stor[8] ; source, dest
 mul 0x41, stor[8] ; amount, operand
 div 0x64, stor[8] ; amount, operand
 call Audio::scriptChangeSequenceVolumeOverTime, 0x3c, stor[8] ; fadeTime, volume
-gosub inl[:GET_MY_CHAR_ID] ; addr
 gosub inl[:GET_TRANSFORM_MODE] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:LABEL_547] ; is short transform
 call Battle::scriptGetBentStat, stor[0], DRAGOON_TRANSFORM_DEFF, stor[27]
@@ -5305,34 +5263,28 @@ return
 
 
 
+GET_TRANSFORM_MODE_BENT_STATUS:
+data 0
+
 ; SUBROUTINE
 ; @param int stor[8] char id
-; @return bool stor[9] has transformed before (and not divine dragoon)
+; @return bool stor[9] is divine dragoon
 ; @return bool stor[31] use short transform
 GET_TRANSFORM_MODE:
 mov 0x0, stor[9] ; source, dest
-call Scus94491BpeSegment::scriptReadGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], stor[31] ; flag, value
+call Battle::scriptGetBentStat, stor[0], HAS_TRANSFORMED_BEFORE, stor[31]
 jmp_cmp ==, 0x0, stor[31], inl[:LABEL_572] ; has not transformed before
 jmp_cmp !=, 0x0, var[38], inl[:LABEL_573] ; short transform mode
 mov 0x0, stor[31] ; source, dest
-jmp_cmp !=, 0x9, stor[8], inl[:LABEL_572] ; not divine dragoon
+
+call Battle::scriptGetBentStat, stor[0], STATUS, inl[:GET_TRANSFORM_MODE_BENT_STATUS] ; bentIndex, statIndex, value
+jmp_cmp !&, 0x4000, inl[:GET_TRANSFORM_MODE_BENT_STATUS], inl[:LABEL_572] ; operand, left, right, addr
 mov 0x1, stor[9] ; source, dest
+
 LABEL_572:
-call Scus94491BpeSegment::scriptSetGlobalFlag2, inl[:CHAR_HAS_TRANSFORMED_BEFORE_FLAGS[stor[8]]], 0x1 ; flag, value
+call Battle::scriptSetBentStat, stor[0], 1, HAS_TRANSFORMED_BEFORE
 LABEL_573:
 return
-
-CHAR_HAS_TRANSFORMED_BEFORE_FLAGS:
-data 0x1b8
-data 0x1ba
-data 0x1b9
-data 0x1bb
-data 0x1bc
-data 0x1bd
-data 0x1be
-data 0x1bf
-data 0x1c0
-data 0x1c1
 
 
 
@@ -5445,8 +5397,10 @@ call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlo
 add 0xbd, stor[8] ; amount, operand
 mov var[45][stor[8]], var[45][227] ; source, dest
 mov 0x0, var[45][stor[8]] ; source, dest
-gosub inl[:GET_MY_CHAR_ID] ; addr
-gosub_table stor[8], inl[:LABEL_480] ; index, table
+
+call Battle::scriptGetBentStat, stor[0], IS_ARCHER, stor[8]
+gosub_table stor[8], inl[:DRAGOON_ADDITION_HANDLER_TABLE] ; index, table
+
 call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
 add 0xbd, stor[8] ; amount, operand
 mov var[45][227], var[45][stor[8]] ; source, dest
@@ -6454,7 +6408,6 @@ mov 0xa, stor[23] ; source, dest
 wait stor[23] ; frames
 call SEffe::scriptAddConstantColourScalerAttachment, stor[18], 0xffffffff, 0x19, 0x0, 0x0, 0x0 ; effectIndex, parentIndex, ticks, destR, destG, destB
 call SEffe::scriptAddLifespanAttachment, stor[18], 0x19 ; effectIndex, ticks
-gosub inl[:GET_BENT_CHAR_ID] ; s8 = bent s30's char id
 call SEffe::allocateDeffTmd, stor[20], 0xfff0d ; effectIndex, flags
 call SEffe::scriptSetRelativePosition, stor[20], stor[30], 0x0, 0xfffffc00, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeScale, stor[20], 0xffffffff, 0x4000, 0x4000, 0x4000 ; bobjIndex1, bobjIndex2, x, y, z
@@ -6758,42 +6711,36 @@ return
 ; @param int s0 my id
 ; @return int s8 char id
 GET_MY_CHAR_ID:
-
-; if divine dragoon return 9
-call Battle::scriptGetBentStat, stor[0], STATUS, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x4000, stor[8], inl[:GET_MY_CHAR_ID_NOT_DIVINE] ; operand, left, right, addr
-mov 0x9, stor[8] ; source, dest
-return
-GET_MY_CHAR_ID_NOT_DIVINE:
-
-; otherwise get char id
 call Battle::scriptGetCharOrMonsterId, stor[0], stor[8] ; bentIndex, id
 return
 
 
 
-; SUBROUTINE
-GET_BENT_CHAR_ID:
-call Battle::scriptGetBentStat, stor[30], STATUS, stor[8] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x4000, stor[8], inl[:GET_BENT_CHAR_ID_NOT_DIVINE] ; operand, left, right, addr
-mov 0x9, stor[8] ; source, dest
-return
-GET_BENT_CHAR_ID_NOT_DIVINE:
+; gets the bent script index for the passed in char index
+; @param int stor[8] char index
+; @return int stor[42] bent script index, or -1 if not found
+GET_BENT_FOR_CHAR:
+mov 0, stor[40]
+mov var[35], stor[41]
 
-call Battle::scriptGetCharOrMonsterId, stor[30], stor[8] ; bentIndex, id
+GET_BENT_FOR_CHAR_LOOP:
+mov var[34][stor[40]], stor[42] ; get player bent index
+call Battle::scriptGetCharOrMonsterId, stor[42], stor[43] ; bentIndex, id
+
+jmp_cmp !=, stor[43], stor[8], inl[:GET_BENT_FOR_CHAR_NOT_SAME]
+return ; we found it, return stor[42]
+
+GET_BENT_FOR_CHAR_NOT_SAME:
+incr stor[40]
+jmp_cmp <, stor[40], stor[41], inl[:GET_BENT_FOR_CHAR_LOOP]
+
+; loop is over, did not find, return -1
+mov -1, stor[42]
 return
 
 
 
-; SUBROUTINE
-LABEL_712:
-call Battle::scriptGetBentStat, stor[29], STATUS, stor[23] ; bentIndex, statIndex, value
-jmp_cmp !&, 0x4000, stor[23], inl[:LABEL_713] ; operand, left, right, addr
-mov 0x9, stor[23] ; source, dest
-return
-LABEL_713:
-call Battle::scriptGetCharOrMonsterId, stor[29], stor[23] ; bentIndex, id
-return
+
 data 0xa90338
 data 0x200001e
 data 0x5

@@ -126,7 +126,7 @@ public class CombatDebuggerController {
     this.statusCondition.getSelectionModel().select(0);
 
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
-    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
+    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
     this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
     this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE));
     this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
@@ -194,10 +194,22 @@ public class CombatDebuggerController {
     this.def.getValueFactory().setValue(bent.stats.getStat(LodMod.DEFENSE_STAT.get()).get());
     this.matk.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get());
     this.mdef.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get());
-    this.ahit.getValueFactory().setValue(bent.attackHit_3c);
-    this.mhit.getValueFactory().setValue(bent.magicHit_3e);
-    this.aavd.getValueFactory().setValue(bent.stats.getStat(LodMod.AVOID_STAT.get()).get());
-    this.mavd.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get());
+
+    if(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()) != null) {
+      this.ahit.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).get());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()) != null) {
+      this.mhit.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).get());
+    }
+
+    if(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()) != null) {
+      this.aavd.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).get());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()) != null) {
+      this.mavd.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get());
+    }
 
     this.statusCondition.getSelectionModel().select(this.getStatusIndexFromFlags(bent.status_0e) + 1);
   }
@@ -261,10 +273,22 @@ public class CombatDebuggerController {
     bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(this.matk.getValue());
     bent.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(this.def.getValue());
     bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(this.mdef.getValue());
-    bent.attackHit_3c = this.ahit.getValue().shortValue();
-    bent.magicHit_3e = this.mhit.getValue().shortValue();
-    bent.stats.getStat(LodMod.AVOID_STAT.get()).setRaw(this.aavd.getValue());
-    bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(this.mavd.getValue());
+
+    if(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(this.ahit.getValue().shortValue());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(this.mhit.getValue().shortValue());
+    }
+
+    if(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(this.aavd.getValue());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(this.mavd.getValue());
+    }
   }
 
   public void getStatusCondition(final ActionEvent event) {

@@ -21,8 +21,8 @@ public class UnaryStat extends Stat {
   }
 
   @Override
-  public UnaryStat copy() {
-    final UnaryStat stat = new UnaryStat((StatType<UnaryStat>)this.type, this.stats, this.validator);
+  public UnaryStat copy(final StatCollection stats) {
+    final UnaryStat stat = new UnaryStat((StatType<UnaryStat>)this.type, stats, this.validator);
     stat.set(this);
     return stat;
   }

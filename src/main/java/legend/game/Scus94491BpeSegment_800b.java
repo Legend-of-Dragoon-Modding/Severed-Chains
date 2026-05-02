@@ -1,10 +1,11 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.gte.MV;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.postbattleactions.PostBattleActionInstance;
@@ -13,7 +14,6 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.ItemStack;
 import legend.game.saves.CampaignType;
 import legend.game.submap.SobjPos14;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
@@ -42,7 +42,7 @@ public final class Scus94491BpeSegment_800b {
   public static final List<ItemStack> itemOverflow = new ArrayList<>();
   public static final List<Equipment> equipmentOverflow = new ArrayList<>();
   public static boolean battleLoaded_800bc94c;
-  public static final Int2IntMap spGained_800bc950 = new Int2IntOpenHashMap();
+  public static final Object2IntMap<CharacterData2c> spGained_800bc950 = new Object2IntOpenHashMap<>();
   public static int totalXpFromCombat_800bc95c;
   /**
    * <ul>
@@ -61,7 +61,7 @@ public final class Scus94491BpeSegment_800b {
   public static int battleFlags_800bc960;
   public static final AtomicInteger loadingMonsterModels = new AtomicInteger();
 
-  public static final IntList livingCharIds_800bc968 = new IntArrayList();
+  public static final List<CharacterData2c> livingChars_800bc968 = new ArrayList<>();
 
   /**
    * <ol>
@@ -92,18 +92,13 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static final int[] characterIndices_800bdbb8 = new int[9];
-  public static final int[] secondaryCharIds_800bdbf8 = new int[9];
+  public static final IntList characterIndices_800bdbb8 = new IntArrayList();
+  public static final IntList secondaryCharIds_800bdbf8 = new IntArrayList();
 
   public static RegistryDelegate<CampaignType> campaignType;
   public static boolean loadingNewGameState_800bdc34;
 
   public static boolean characterStatsLoaded_800be5d0;
-
-  public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
-  static {
-    Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
-  }
 
   // These are outside of SMAP because they have to persist between engine states
   public static final MV playerPositionBeforeBattle_800bed30 = new MV();

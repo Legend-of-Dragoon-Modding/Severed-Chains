@@ -1,6 +1,6 @@
 package legend.game.modding.events.characters;
 
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 import org.legendofdragoon.modloader.events.Event;
 
 public class CharacterLevelUpEvent extends Event {

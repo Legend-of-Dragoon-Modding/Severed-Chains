@@ -10,5 +10,8 @@ public class BattleReportOverlay0e {
 
 //  public int u_0b;
   public int letterIndex;
-  public int clutAndTranslucency_0c;
+  public int clut_0c;
+  public int state_0d;
+  public int flash_0d;
+  public Translucency translucency_0d;
 }

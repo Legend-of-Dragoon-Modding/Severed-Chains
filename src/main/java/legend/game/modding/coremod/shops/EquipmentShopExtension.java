@@ -1,6 +1,8 @@
 package legend.game.modding.coremod.shops;
 
+import legend.core.GameEngine;
 import legend.core.platform.input.InputAction;
+import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
@@ -8,9 +10,8 @@ import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
-import legend.game.inventory.screens.controls.CharacterPortrait;
+import legend.game.inventory.screens.controls.AtlasIcon;
 import legend.game.inventory.screens.controls.Glyph;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
@@ -18,28 +19,21 @@ import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.canEquip;
-import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.initArrowRenderable;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderFraction;
-import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.SItem.renderThreeDigitNumberComparison;
+import static legend.game.SItem.renderNumber;
+import static legend.game.SItem.renderNumberComparison;
 import static legend.game.SItem.setRandomRepeatGlyph;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -50,7 +44,7 @@ import static legend.game.sound.Audio.playMenuSound;
 public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private static final int PORTRAIT_COUNT = 7;
 
-  private final CharacterPortrait[] portraits;
+  private final AtlasIcon[] portraits;
 
   private int selectedCharSlot;
   private int charScroll;
@@ -68,12 +62,14 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     initHighlight(this.charHighlight.getRenderable());
     this.charHighlight.hide();
 
-    this.portraits = new CharacterPortrait[characterIndices_800bdbb8.length];
+    this.portraits = new AtlasIcon[characterIndices_800bdbb8.size()];
 
     for(int i = 0; i < this.portraits.length; i++) {
-      this.portraits[i] = new CharacterPortrait();
+      this.portraits[i] = new AtlasIcon();
       this.portraits[i].setPos(9 + i * 50, 174);
-      this.portraits[i].setCharId(characterIndices_800bdbb8[i]);
+      this.portraits[i].setSize(48, 48);
+      this.portraits[i].setZ(31);
+      this.portraits[i].setIcon(GameEngine.getTextureAtlas().getIcon(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)).template.getRegistryId()));
       this.portraits[i].hide();
 
       final int finalI = i;
@@ -81,7 +77,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
         if(this.selectedCharSlot != finalI) {
           playMenuSound(1);
           this.selectedCharSlot = finalI;
-          final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+          final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
           this.charHighlight.setX(portrait.getX() + 8);
           return InputPropagation.HANDLED;
         }
@@ -92,7 +88,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       final int finalI1 = i;
       this.portraits[i].onMouseClick((x, y, button, mods) -> {
         this.selectedCharSlot = finalI1;
-        final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+        final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
         this.charHighlight.setX(portrait.getX() + 8);
         this.menuSelectChar5Select();
         return InputPropagation.HANDLED;
@@ -123,8 +119,9 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   public void activate(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.returnControl = false;
 
-    for(int i = 0; i < characterCount_8011d7c4; i++) {
-      this.portraits[i].setVisibility(characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      final CharacterData2c character = gameState.charData_32c.get(characterIndices_800bdbb8.getInt(i));
+      this.portraits[i].setVisibility(character.canEquip(entry.item.slot, entry.item));
     }
 
     this.selectedCharSlot = this.getFirstEquippableCharSlot();
@@ -160,40 +157,70 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   public void drawShopDetails(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry) {
     this.drawArrows();
 
-    final int charId = this.selectedCharSlot != -1 ? characterIndices_800bdbb8[this.selectedCharSlot] : -1;
+    final int charId = this.selectedCharSlot != -1 ? characterIndices_800bdbb8.getInt(this.selectedCharSlot) : -1;
 
     if(charId != -1) {
-      final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charId]);
+      final CharacterData2c character = gameState.charData_32c.get(charId);
+      final CharacterData2c clone = character.template.make(gameState);
+      clone.set(character);
 
-      final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState.charData_32c[charId].equipment_14);
+      int equipmentAttack = 0;
+      int equipmentDefense = 0;
+      int equipmentMagicAttack = 0;
+      int equipmentMagicDefense = 0;
+
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        final Equipment equipped = character.getEquipment(slot);
+
+        if(equipped != null) {
+          equipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+          equipmentDefense += equipped.defence_12;
+          equipmentMagicAttack += equipped.magicAttack_11;
+          equipmentMagicDefense += equipped.magicDefence_13;
+        }
+      }
 
       if(equipItem(entry.item, charId).success) {
+        int newEquipmentAttack = 0;
+        int newEquipmentDefense = 0;
+        int newEquipmentMagicAttack = 0;
+        int newEquipmentMagicDefense = 0;
+
+        for(final EquipmentSlot slot : EquipmentSlot.values()) {
+          final Equipment equipped = character.getEquipment(slot);
+
+          if(equipped != null) {
+            newEquipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+            newEquipmentDefense += equipped.defence_12;
+            newEquipmentMagicAttack += equipped.magicAttack_11;
+            newEquipmentMagicDefense += equipped.magicDefence_13;
+          }
+        }
+
         allocateOneFrameGlyph(0x67, 210, 127);
         allocateOneFrameGlyph(0x68, 210, 137);
         allocateOneFrameGlyph(0x69, 210, 147);
         allocateOneFrameGlyph(0x6a, 210, 157);
-        final ActiveStatsa0 newStats = stats_800be5f8[charId];
-        renderThreeDigitNumber(246, 127, newStats.equipmentAttack_88, 0x2);
-        renderThreeDigitNumber(246, 137, newStats.equipmentDefence_8c, 0x2);
-        renderThreeDigitNumber(246, 147, newStats.equipmentMagicAttack_8a, 0x2);
-        renderThreeDigitNumber(246, 157, newStats.equipmentMagicDefence_8e, 0x2);
+
         allocateOneFrameGlyph(0x6b, 274, 127);
         allocateOneFrameGlyph(0x6b, 274, 137);
         allocateOneFrameGlyph(0x6b, 274, 147);
         allocateOneFrameGlyph(0x6b, 274, 157);
-        loadCharacterStats();
-        renderThreeDigitNumberComparison(284, 127, oldStats.equipmentAttack_88, newStats.equipmentAttack_88);
-        renderThreeDigitNumberComparison(284, 137, oldStats.equipmentDefence_8c, newStats.equipmentDefence_8c);
-        renderThreeDigitNumberComparison(284, 147, oldStats.equipmentMagicAttack_8a, newStats.equipmentMagicAttack_8a);
-        renderThreeDigitNumberComparison(284, 157, oldStats.equipmentMagicDefence_8e, newStats.equipmentMagicDefence_8e);
+
+        renderNumber(246, 127, equipmentAttack, 0x2, 4);
+        renderNumber(246, 137, equipmentDefense, 0x2, 4);
+        renderNumber(246, 147, equipmentMagicAttack, 0x2, 4);
+        renderNumber(246, 157, equipmentMagicDefense, 0x2, 4);
+
+        renderNumberComparison(284, 127, equipmentAttack, newEquipmentAttack, 4);
+        renderNumberComparison(284, 137, equipmentDefense, newEquipmentDefense, 4);
+        renderNumberComparison(284, 147, equipmentMagicAttack, newEquipmentMagicAttack, 4);
+        renderNumberComparison(284, 157, equipmentMagicDefense, newEquipmentMagicDefense, 4);
       } else {
         renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
       }
 
-      gameState.charData_32c[charId].equipment_14.clear();
-      gameState.charData_32c[charId].equipment_14.putAll(oldEquipment);
-
-      loadCharacterStats();
+      character.set(clone);
     } else {
       renderText(I18n.translate("lod_core.ui.shop.cannot_equip"), 228, 137, UI_TEXT);
     }
@@ -218,7 +245,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       }
     }
 
-    if(characterCount_8011d7c4 - this.charScroll > PORTRAIT_COUNT) {
+    if(characterIndices_800bdbb8.size() - this.charScroll > PORTRAIT_COUNT) {
       if(this.rightArrowRenderable == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 350, 173);
         renderable.repeatStartGlyph_18 = 0x25;
@@ -251,7 +278,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     }
 
     if(this.selectedCharSlot != -1) {
-      final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+      final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
       this.charHighlight.setPos(portrait.getX() + 8, portrait.getY());
       this.charHighlight.show();
     } else {
@@ -314,8 +341,9 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
       this.charScroll = 0;
     }
 
-    for(int i = 0; i < characterCount_8011d7c4; i++) {
-      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && characterIndices_800bdbb8[i] != -1 && canEquip(entry.item, characterIndices_800bdbb8[i]));
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i));
+      this.portraits[i].setVisibility(i >= this.charScroll && i < PORTRAIT_COUNT + this.charScroll && character.canEquip(entry.item.slot, entry.item));
       this.portraits[i].setX(9 + (i - this.charScroll) * 50);
     }
   }
@@ -326,25 +354,25 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     if(this.selectedCharSlot > 0) {
       this.selectedCharSlot--;
     } else {
-      this.selectedCharSlot = characterCount_8011d7c4 - 1;
+      this.selectedCharSlot = characterIndices_800bdbb8.size() - 1;
     }
 
     this.scrollSelectedIntoView(entry);
-    final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+    final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
     this.charHighlight.setX(portrait.getX() + 8);
   }
 
   private void menuSelectChar5NavigateRight(final ShopScreen.ShopEntry<Equipment> entry) {
     playMenuSound(1);
 
-    if(this.selectedCharSlot < characterCount_8011d7c4 - 1) {
+    if(this.selectedCharSlot < characterIndices_800bdbb8.size() - 1) {
       this.selectedCharSlot++;
     } else {
       this.selectedCharSlot = 0;
     }
 
     this.scrollSelectedIntoView(entry);
-    final CharacterPortrait portrait = this.portraits[this.selectedCharSlot];
+    final AtlasIcon portrait = this.portraits[this.selectedCharSlot];
     this.charHighlight.setX(portrait.getX() + 8);
   }
 
@@ -359,30 +387,33 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
 
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
-        if(this.selectedCharSlot != -1 && canEquip(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot])) {
-          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result1 -> {
-            if(result1 == MessageBoxResult.YES) {
-              final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8[this.selectedCharSlot]);
+        if(this.selectedCharSlot != -1) {
+          final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
-              if(equipResult.previousEquipment != null) {
-                if(equipResult.success) {
-                  if(giveEquipment(equipResult.previousEquipment)) {
-                    gameState_800babc8.gold_94 -= this.entry.price;
-                  } else {
-                    equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.selectedCharSlot]);
-                    this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
-                  }
-                } else {
-                  equipItem(equipResult.previousEquipment, characterIndices_800bdbb8[this.selectedCharSlot]);
+          if(character.canEquip(this.entry.item.slot, this.entry.item)) {
+            menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result1 -> {
+              if(result1 == MessageBoxResult.YES) {
+                final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+
+                if(!equipResult.success) {
+                  gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot)).equip(this.entry.item.slot, null);
                   this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.failed_to_equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.ALERT, onResult -> {})));
+                } else if(equipResult.previousEquipment != null && !giveEquipment(equipResult.previousEquipment)) {
+                  equipItem(equipResult.previousEquipment, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
+                  this.screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, onResult -> {})));
+                } else {
+                  gameState_800babc8.gold_94 -= this.entry.price;
                 }
+              } else {
+                this.giveUnequipped(this.screen, this.entry);
               }
-            } else {
-              this.giveUnequipped(this.screen, this.entry);
-            }
 
+              this.returnControl = true;
+            }));
+          } else {
+            this.giveUnequipped(this.screen, this.entry);
             this.returnControl = true;
-          }));
+          }
         } else {
           this.giveUnequipped(this.screen, this.entry);
           this.returnControl = true;

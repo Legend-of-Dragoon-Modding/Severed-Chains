@@ -5,14 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import legend.game.types.CharacterData2c;
+import legend.game.characters.CharacterData2c;
 
 public class CharacterEditor extends Application {
-  private final int charId;
   private final CharacterData2c charData;
 
-  public CharacterEditor(final int id, final CharacterData2c data) {
-    this.charId = id;
+  public CharacterEditor(final CharacterData2c data) {
     this.charData = data;
   }
 
@@ -23,7 +21,7 @@ public class CharacterEditor extends Application {
     final Scene scene = new Scene(root);
 
     final CharacterEditorController controller = loader.getController();
-    controller.setChar(this.charId, this.charData);
+    controller.setChar(this.charData);
 
     stage.setTitle("Character Editor");
     stage.setScene(scene);

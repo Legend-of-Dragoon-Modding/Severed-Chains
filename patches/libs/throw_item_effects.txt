@@ -11,8 +11,11 @@ call SEffe::scriptSetRelativePosition, stor[18], stor[1], 0x20, 0x90, 0x0 ; bobj
 call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x300, 0x300, 0x300 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptSetRelativeRotation, stor[18], stor[0], 0x0, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
 call SEffe::scriptAddLifespanAttachment, stor[18], 0x34 ; effectIndex, ticks
-mov inl[:ALLOCATE_THROW_POTION_EFFECT_CHAR_WAITS[stor[22]]], stor[23] ; source, dest
+
+call Battle::scriptGetBentStat, stor[0], CURRENT_ANIMATION_LENGTH, stor[23]
+decr stor[23]
 wait stor[23] ; frames
+
 call SEffe::scriptGetEffectTranslationRelativeToParent, stor[18], 0xffffffff, stor[9], stor[10], stor[11] ; effectIndex, parentIndex, x, y, z
 call SEffe::scriptAttachEffectToBobj, stor[18], 0xffffffff, 0xffffffff ; effectIndex, scriptIndex, coord2Index
 call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[9], stor[10], stor[11] ; bobjIndex1, bobjIndex2, x, y, z
@@ -27,18 +30,6 @@ return
 
 ALLOCATE_THROW_POTION_EFFECT_HAND_MODEL_PART_INDEX:
 data 0
-
-; For some reason different characters have different wait times
-ALLOCATE_THROW_POTION_EFFECT_CHAR_WAITS:
-data 0x10
-data 0x10
-data 0x10
-data 0x10
-data 0x11
-data 0x10
-data 0xe
-data 0x10
-data 0x10
 
 ; variables to hold unpacked colours below
 UNPACKED_THROW_POTION_COLOURS_R:

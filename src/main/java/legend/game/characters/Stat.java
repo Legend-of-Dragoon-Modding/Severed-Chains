@@ -16,7 +16,7 @@ public abstract class Stat {
     this.stats = stats;
   }
 
-  public abstract Stat copy();
+  public abstract Stat copy(final StatCollection stats);
 
   protected static void copyMods(final Stat source, final Stat dest) {
     dest.mods.clear();

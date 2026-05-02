@@ -20,7 +20,6 @@ import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
 
 public class BattleMenuStruct58 {
   private static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = new BattleMenuHighlightMetrics12(0, 0, 24, 24, 232, 120, 23, 23, 0);
-  private static final int[] dragoonSpiritIconClutOffsets_800c71d0 = {152, 153, 154, 155, 156, 153, 157, 158, 154, 159};
 
   private static final BattleItemMenuArrowUvMetrics06[] battleMenuBackgroundMetrics_800fb5dc = {
     new BattleItemMenuArrowUvMetrics06(184, 72, 7, 7, 0),
@@ -94,6 +93,7 @@ public class BattleMenuStruct58 {
 //  public final int[] iconFlags_10 = new int[9];
   public final List<BattleAction> actions = new ArrayList<>();
   public final Set<BattleAction> disabledActions = new HashSet<>();
+  public BattleAction currentAction;
   public short selectedIcon_22;
   public short currentIconStateTick_24;
   public short iconStateIndex_26;
@@ -116,10 +116,8 @@ public class BattleMenuStruct58 {
   public final MV transforms = new MV();
   public Obj menuObj;
   public int actionDisabledObjOffset;
-  public int divineSpiritObjOffset;
   public int actionIconObjOffset;
   public int actionIconTextObjOffset;
-  public int actionDragoonIconObjOffset;
   public int actionMenuBackgroundObjOffset;
   public int highlightObjOffset;
   public int targetArrowsObjOffset;
@@ -152,6 +150,7 @@ public class BattleMenuStruct58 {
     //LAB_800f60fc
     this.actions.clear();
     this.disabledActions.clear();
+    this.currentAction = null;
 
     //LAB_800f611c
     this.countHighlightMovementStep_30 = 0;
@@ -177,12 +176,6 @@ public class BattleMenuStruct58 {
       this.actionDisabledObjOffset = builder.currentQuadIndex() * 4;
       this.hud.buildBattleMenuElement(builder, 0, 0, 96, 112, 16, 16, 0x19);
 
-      // Divine dragoon spirit overlay
-      this.divineSpiritObjOffset = builder.currentQuadIndex() * 4;
-      for(int i = 0; i < 2; i++) {
-        this.hud.buildBattleMenuElement(builder, 4, 0, 80 + i * 8, 112, 8, 16, 0x98);
-      }
-
       // Combat menu icons
       this.actionIconObjOffset = builder.currentQuadIndex() * 4;
       for(int iconId = 0; iconId < 9; iconId++) {
@@ -203,21 +196,6 @@ public class BattleMenuStruct58 {
       for(int iconId = 0; iconId < 9; iconId++) {
         final BattleMenuTextMetrics08 textMetrics = battleMenuTextMetrics_800fb72c[iconId];
         this.hud.buildBattleMenuElement(builder, -textMetrics.w_04 / 2 + 8, -24, textMetrics.u_00, textMetrics.v_02, textMetrics.w_04, 8, textMetrics.clutOffset_06);
-      }
-
-      // Combat menu dragoon icons
-      this.actionDragoonIconObjOffset = builder.currentQuadIndex() * 4;
-      for(int spiritId = 0; spiritId < 10; spiritId++) {
-        final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674[1];
-
-        final int iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0[spiritId];
-
-        for(int iconState = 0; iconState < 3; iconState++) {
-          final int vOffset = battleMenuIconVOffsets_800fb6f4[1][iconState];
-          final int iconH = battleMenuIconHeights_800fb6bc[1][iconState];
-
-          this.hud.buildBattleMenuElement(builder, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset);
-        }
       }
 
       this.actionMenuBackgroundObjOffset = builder.currentQuadIndex() * 4;

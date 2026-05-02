@@ -1,20 +1,22 @@
 package legend.game.additions;
 
-import legend.game.types.CharacterData2c;
-import legend.game.types.GameState52c;
+import legend.game.characters.CharacterAdditionInfo;
+import legend.game.characters.CharacterData2c;
 
 public abstract class SimpleAddition extends Addition {
+  public final boolean countsTowardsMastery;
   private final LevelMultipliers[] levelMultipliers;
   private final AdditionHitProperties10[] hits;
 
-  public SimpleAddition(final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
+  public SimpleAddition(final boolean countsTowardsMastery, final LevelMultipliers[] levelMultipliers, final AdditionHitProperties10[] hits) {
+    this.countsTowardsMastery = countsTowardsMastery;
     this.levelMultipliers = levelMultipliers;
     this.hits = hits;
   }
 
   @Override
-  public int getDamage(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
-    final float multi = this.getDamageMultiplier(state, charData, additionStats);
+  public int getDamage(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    final float multi = this.getDamageMultiplier(character, additionInfo);
     int damage = 0;
 
     for(int hit = 0; hit < this.hits.length; hit++) {
@@ -25,8 +27,8 @@ public abstract class SimpleAddition extends Addition {
   }
 
   @Override
-  public int getSp(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
-    final float multi = this.getSpMultiplier(state, charData, additionStats);
+  public int getSp(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    final float multi = this.getSpMultiplier(character, additionInfo);
     int sp = 0;
 
     for(int hit = 0; hit < this.hits.length; hit++) {
@@ -37,22 +39,42 @@ public abstract class SimpleAddition extends Addition {
   }
 
   @Override
-  public float getDamageMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
-    return this.levelMultipliers[additionStats.level].damage;
+  public float getDamageMultiplier(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.levelMultipliers[additionInfo.level - 1].damage;
   }
 
   @Override
-  public float getSpMultiplier(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
-    return this.levelMultipliers[additionStats.level].sp;
+  public float getSpMultiplier(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.levelMultipliers[additionInfo.level - 1].sp;
   }
 
   @Override
-  public int getHitCount(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats) {
+  public int getXpToNextLevel(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return additionInfo.level * 20;
+  }
+
+  @Override
+  public int getMaxLevel(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.levelMultipliers.length;
+  }
+
+  @Override
+  public boolean isComplete(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return additionInfo.level >= this.getMaxLevel(character, additionInfo);
+  }
+
+  @Override
+  public boolean countsTowardsMastery(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return this.countsTowardsMastery;
+  }
+
+  @Override
+  public int getHitCount(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
     return this.hits.length;
   }
 
   @Override
-  public AdditionHitProperties10 getHit(final GameState52c state, final CharacterData2c charData, final CharacterAdditionStats additionStats, final int index) {
+  public AdditionHitProperties10 getHit(final CharacterData2c character, final CharacterAdditionInfo additionInfo, final int index) {
     return this.hits[index];
   }
 

@@ -14,6 +14,7 @@ import legend.core.platform.input.InputMod;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
 import legend.game.RegisterEngineStateTypesEvent;
+import legend.game.characters.CharacterTemplate;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
@@ -71,11 +72,15 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+
+import static legend.core.GameEngine.REGISTRIES;
 
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID, version = "^3.0.0")
@@ -167,6 +172,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_TEXTBOX_CONFIRM = INPUT_ACTION_REGISTRAR.register("menu_textbox_confirm", InputAction::fixed);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_UNEQUIP = INPUT_ACTION_REGISTRAR.register("menu_unequip", InputAction::hidden);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_UPDATE = INPUT_ACTION_REGISTRAR.register("title_update", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_TITLE_CONVERT_MEMCARD = INPUT_ACTION_REGISTRAR.register("title_convert_memcard", InputAction::fixed);
@@ -274,6 +280,8 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new KeyInputActivation(InputKey.Q))
 
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new KeyInputActivation(InputKey.U))
@@ -321,5 +329,14 @@ public class CoreMod {
   @EventListener
   public static void onLoadGameSetInventorySize(final GameLoadedEvent event) {
     event.gameState.items_2e9.setMaxSize(GameEngine.CONFIG.getConfig(INVENTORY_SIZE_CONFIG.get()));
+  }
+
+  @EventListener
+  public static void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
+    for(final RegistryId id : REGISTRIES.characterTemplates) {
+      final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(id).get();
+      final Image icon = template.loadPortrait();
+      event.add(id, icon);
+    }
   }
 }

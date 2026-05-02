@@ -102,6 +102,11 @@ lod_core.ui.shop.you_have_nothing_to_sell=You have nothing\nto sell
 
 lod_core.ui.additions.no_additions=No additions available
 
+lod_core.ui.equipment.unequip=Unequip
+
+lod_core.ui.post_battle.addition_unlocked=Addition Unlocked
+lod_core.ui.post_battle.spell_unlocked=Spell Unlocked
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
@@ -261,6 +266,7 @@ lod_core.input_actions.menu_sort.name=Menu: sort
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
 lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm
+lod_core.input_actions.menu_unequip.name=Menu: unequip
 
 lod_core.input_actions.title_update.name=Title: download update
 lod_core.input_actions.title_convert_memcard.name=Title: convert memcard
