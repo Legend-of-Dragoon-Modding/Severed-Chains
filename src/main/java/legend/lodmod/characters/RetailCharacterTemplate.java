@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.getTextureAtlas;
 import static legend.lodmod.LodLevelUpActions.UNLOCK_ADDITION;
@@ -184,7 +185,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    final CharacterLevelUpEvent event = new CharacterLevelUpEvent(character);
+    CharacterLevelUpEvent event = new CharacterLevelUpEvent(character);
 
     event.statsToAdd.put(HP_STAT.get(), this.getHpToAdd(character.level_12));
     event.statsToAdd.put(ATTACK_STAT.get(), this.getAttackToAdd(character.level_12));
@@ -192,6 +193,8 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     event.statsToAdd.put(MAGIC_ATTACK_STAT.get(), this.getMagicAttackToAdd(character.level_12));
     event.statsToAdd.put(MAGIC_DEFENSE_STAT.get(), this.getMagicDefenseToAdd(character.level_12));
     event.statsToAdd.put(SPEED_STAT.get(), this.getSpeedToAdd(character.level_12));
+
+    event = EVENTS.postEvent(event);
 
     for(final var entry : event.statsToAdd.object2IntEntrySet()) {
       this.addToStat(character, entry.getKey(), entry.getIntValue());
@@ -204,7 +207,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    final CharacterDragoonLevelUpEvent event = new CharacterDragoonLevelUpEvent(character);
+    CharacterDragoonLevelUpEvent event = new CharacterDragoonLevelUpEvent(character);
 
     event.statsToAdd.put(MP_STAT.get(), this.getMpToAdd(character.dlevel_13));
     event.statsToAdd.put(SP_STAT.get(), this.getSpToAdd(character.dlevel_13));
@@ -212,6 +215,8 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     event.statsToAdd.put(DRAGOON_DEFENSE_STAT.get(), this.getDragoonDefenseToAdd(character.dlevel_13));
     event.statsToAdd.put(DRAGOON_MAGIC_ATTACK_STAT.get(), this.getDragoonMagicAttackToAdd(character.dlevel_13));
     event.statsToAdd.put(DRAGOON_MAGIC_DEFENSE_STAT.get(), this.getDragoonMagicDefenseToAdd(character.dlevel_13));
+
+    event = EVENTS.postEvent(event);
 
     for(final var entry : event.statsToAdd.object2IntEntrySet()) {
       this.addToStat(character, entry.getKey(), entry.getIntValue());
