@@ -13,6 +13,8 @@ import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Good;
+import legend.game.modding.events.characters.CharacterDragoonLevelUpEvent;
+import legend.game.modding.events.characters.CharacterLevelUpEvent;
 import legend.game.saves.SavedCharacter;
 import legend.game.saves.SeveredSavedCharacterV2;
 import legend.game.textures.Image;
@@ -182,28 +184,40 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    this.addToStat(character, HP_STAT.get(), this.getHpToAdd(character.level_12));
-    this.addToStat(character, ATTACK_STAT.get(), this.getAttackToAdd(character.level_12));
-    this.addToStat(character, DEFENSE_STAT.get(), this.getDefenseToAdd(character.level_12));
-    this.addToStat(character, MAGIC_ATTACK_STAT.get(), this.getMagicAttackToAdd(character.level_12));
-    this.addToStat(character, MAGIC_DEFENSE_STAT.get(), this.getMagicDefenseToAdd(character.level_12));
-    this.addToStat(character, SPEED_STAT.get(), this.getSpeedToAdd(character.level_12));
+    final CharacterLevelUpEvent event = new CharacterLevelUpEvent(character);
 
-    character.level_12++;
+    event.statsToAdd.put(HP_STAT.get(), this.getHpToAdd(character.level_12));
+    event.statsToAdd.put(ATTACK_STAT.get(), this.getAttackToAdd(character.level_12));
+    event.statsToAdd.put(DEFENSE_STAT.get(), this.getDefenseToAdd(character.level_12));
+    event.statsToAdd.put(MAGIC_ATTACK_STAT.get(), this.getMagicAttackToAdd(character.level_12));
+    event.statsToAdd.put(MAGIC_DEFENSE_STAT.get(), this.getMagicDefenseToAdd(character.level_12));
+    event.statsToAdd.put(SPEED_STAT.get(), this.getSpeedToAdd(character.level_12));
+
+    for(final var entry : event.statsToAdd.object2IntEntrySet()) {
+      this.addToStat(character, entry.getKey(), entry.getIntValue());
+    }
+
+    character.level_12 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
   }
 
   @Override
   public void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    this.addToStat(character, MP_STAT.get(), 20);
-    this.addToStat(character, SP_STAT.get(), 100);
-    this.addToStat(character, DRAGOON_ATTACK_STAT.get(), this.getDragoonAttackToAdd(character.dlevel_13));
-    this.addToStat(character, DRAGOON_DEFENSE_STAT.get(), this.getDragoonDefenseToAdd(character.dlevel_13));
-    this.addToStat(character, DRAGOON_MAGIC_ATTACK_STAT.get(), this.getDragoonMagicAttackToAdd(character.dlevel_13));
-    this.addToStat(character, DRAGOON_MAGIC_DEFENSE_STAT.get(), this.getDragoonMagicDefenseToAdd(character.dlevel_13));
+    final CharacterDragoonLevelUpEvent event = new CharacterDragoonLevelUpEvent(character);
 
-    character.dlevel_13++;
+    event.statsToAdd.put(MP_STAT.get(), this.getMpToAdd(character.dlevel_13));
+    event.statsToAdd.put(SP_STAT.get(), this.getSpToAdd(character.dlevel_13));
+    event.statsToAdd.put(DRAGOON_ATTACK_STAT.get(), this.getDragoonAttackToAdd(character.dlevel_13));
+    event.statsToAdd.put(DRAGOON_DEFENSE_STAT.get(), this.getDragoonDefenseToAdd(character.dlevel_13));
+    event.statsToAdd.put(DRAGOON_MAGIC_ATTACK_STAT.get(), this.getDragoonMagicAttackToAdd(character.dlevel_13));
+    event.statsToAdd.put(DRAGOON_MAGIC_DEFENSE_STAT.get(), this.getDragoonMagicDefenseToAdd(character.dlevel_13));
+
+    for(final var entry : event.statsToAdd.object2IntEntrySet()) {
+      this.addToStat(character, entry.getKey(), entry.getIntValue());
+    }
+
+    character.dlevel_13 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
   }
@@ -275,6 +289,15 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   protected abstract Good getDragoonSpirit();
 
   protected abstract int getHpToAdd(final int level);
+
+  protected int getMpToAdd(final int level) {
+    return 10;
+  }
+
+  protected int getSpToAdd(final int level) {
+    return 100;
+  }
+
   protected abstract int getSpeedToAdd(final int level);
   protected abstract int getAttackToAdd(final int level);
   protected abstract int getDefenseToAdd(final int level);
