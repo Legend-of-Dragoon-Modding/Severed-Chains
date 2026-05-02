@@ -26,6 +26,15 @@ public class GatherCharacterEquipmentTypesEvent extends Event {
     this.equipmentTypeToCharacters.computeIfAbsent(equipmentType, k -> new HashSet<>()).add(character);
   }
 
+  public void remove(final CharacterTemplate character, final String equipmentType) {
+    this.remove(character.getRegistryId(), equipmentType);
+  }
+
+  public void remove(final RegistryId character, final String equipmentType) {
+    this.characterToEquipmentTypes.computeIfAbsent(character, k -> new HashSet<>()).remove(equipmentType);
+    this.equipmentTypeToCharacters.computeIfAbsent(equipmentType, k -> new HashSet<>()).remove(character);
+  }
+
   public void add(final CharacterTemplate character, final String... equipmentTypes) {
     for(final String equipmentType : equipmentTypes) {
       this.add(character.getRegistryId(), equipmentType);
@@ -35,6 +44,18 @@ public class GatherCharacterEquipmentTypesEvent extends Event {
   public void add(final RegistryId character, final String... equipmentTypes) {
     for(final String equipmentType : equipmentTypes) {
       this.add(character, equipmentType);
+    }
+  }
+
+  public void remove(final CharacterTemplate character, final String... equipmentTypes) {
+    for(final String equipmentType : equipmentTypes) {
+      this.remove(character.getRegistryId(), equipmentType);
+    }
+  }
+
+  public void remove(final RegistryId character, final String... equipmentTypes) {
+    for(final String equipmentType : equipmentTypes) {
+      this.remove(character, equipmentType);
     }
   }
 }

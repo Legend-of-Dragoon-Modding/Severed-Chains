@@ -25,6 +25,15 @@ public class GatherEquipmentTypesEvent extends Event {
     this.equipmentTypeToEquipment.computeIfAbsent(equipmentType, k -> new HashSet<>()).add(equipment);
   }
 
+  public void remove(final Equipment equipment, final String equipmentType) {
+    this.remove(equipment.getRegistryId(), equipmentType);
+  }
+
+  public void remove(final RegistryId equipment, final String equipmentType) {
+    this.equipmentToEquipmentTypes.computeIfAbsent(equipment, k -> new HashSet<>()).remove(equipmentType);
+    this.equipmentTypeToEquipment.computeIfAbsent(equipmentType, k -> new HashSet<>()).remove(equipment);
+  }
+
   public void add(final Equipment equipment, final String... equipmentTypes) {
     for(final String equipmentType : equipmentTypes) {
       this.add(equipment.getRegistryId(), equipmentType);
@@ -34,6 +43,18 @@ public class GatherEquipmentTypesEvent extends Event {
   public void add(final RegistryId equipment, final String... equipmentTypes) {
     for(final String equipmentType : equipmentTypes) {
       this.add(equipment, equipmentType);
+    }
+  }
+
+  public void remove(final Equipment equipment, final String... equipmentTypes) {
+    for(final String equipmentType : equipmentTypes) {
+      this.remove(equipment.getRegistryId(), equipmentType);
+    }
+  }
+
+  public void remove(final RegistryId equipment, final String... equipmentTypes) {
+    for(final String equipmentType : equipmentTypes) {
+      this.remove(equipment, equipmentType);
     }
   }
 }
