@@ -101,6 +101,7 @@ import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
+import static legend.lodmod.LodConfig.MAX_DRAGOON_LEVEL;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
@@ -480,7 +481,7 @@ public final class SItem {
     sp.restore(spToAdd);
     character.dlevelXp_0e += dxpToAdd;
 
-    if(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
+    while(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < CONFIG.getConfig(MAX_DRAGOON_LEVEL.get())) {
       character.applyDragoonLevelUp(null);
     }
 
