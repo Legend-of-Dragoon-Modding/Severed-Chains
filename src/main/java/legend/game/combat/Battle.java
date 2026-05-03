@@ -108,6 +108,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SetBentStatEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -4151,7 +4152,20 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-    bent.setStat(stat, script.params_20[1]);
+    final SetBentStatEvent event;
+
+    if(script.params_20[1].isRegistryId()) {
+      event = EVENTS.postEvent(new SetBentStatEvent(this, bent, stat, script.params_20[1].getRegistryId()));
+      if(stat == BattleEntityStat.ITEM_ID) {
+        bent.item_d4 = new ItemStack(REGISTRIES.items.getEntry(event.registryValue).get());
+      }
+    } else {
+      event = EVENTS.postEvent(new SetBentStatEvent(this, bent, stat, script.params_20[1].get()));
+      script.params_20[1].set(event.value);
+
+      bent.setStat(stat, script.params_20[1]);
+    }
+
     return FlowControl.CONTINUE;
   }
 
