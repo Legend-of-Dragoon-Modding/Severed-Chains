@@ -123,12 +123,15 @@ public final class Unpacker {
     postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
 
     postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
+
+    postTransformers.add(new BranchTransformation("Submap Object deduplicator", SobjTransformer::transform));
   }
 
   private static final List<Replacement> replacements = new ArrayList<>();
   static {
     // Guy in Bale library with face/chest swapped
     replacements.add(new Replacement("Replace Chester texture", Unpacker::drgn21_260_textures_4_chesterTextureReplacementPatcher));
+    replacements.add(new Replacement("Replace Dart Models", Unpacker::replaceDartModels));
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -840,6 +843,24 @@ public final class Unpacker {
 
       if(drgn21 != null) {
         transformations.replaceWithFile(drgn21.children.get("260").children.get("textures").children.get("4"), REPLACEMENTS.resolve("chester.tim"));
+      }
+    }
+  }
+
+  private static void replaceDartModels(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    final PathNode folder = root.children.get("SECT").children.get("DRGN23.BIN").children.get("101");
+    final FileData model = folder.children.get("0").data;
+    final FileData texture = folder.children.get("textures").children.get("0").data;
+
+
+    for(int drgnIndex = 1; drgnIndex <= 4; drgnIndex++) {
+      final PathNode drgn = root.children.get("SECT").children.get("DRGN2" + drgnIndex + ".BIN");
+
+      for(final PathNode node : drgn.children.values()) {
+        if(node.flags.contains("ReplaceDart")) {
+          transformations.replaceNode(node.children.get("0"), model);
+          transformations.replaceNode(node.children.get("textures").children.get("0"), texture);
+        }
       }
     }
   }
