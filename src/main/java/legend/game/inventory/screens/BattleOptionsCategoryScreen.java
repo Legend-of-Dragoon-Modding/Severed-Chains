@@ -4,6 +4,7 @@ import legend.game.SItem;
 import legend.game.inventory.screens.controls.Panel;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
+import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
 import java.util.Set;
@@ -20,6 +21,11 @@ public class BattleOptionsCategoryScreen extends OptionsCategoryScreen {
     this.panel = this.addControl(Panel.panel());
     this.panel.setPos(12, 20);
     this.panel.setSize(296, 140);
+  }
+
+  @Override
+  protected boolean configIsVisible(final ConfigEntry<?> entry, final ConfigCategory category, final Set<ConfigStorageLocation> validLocations) {
+    return entry.availableInBattle() && super.configIsVisible(entry, category, validLocations);
   }
 
   @Override

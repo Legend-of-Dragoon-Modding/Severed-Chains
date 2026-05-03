@@ -35,7 +35,7 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
       for(final RegistryId configId : GameEngine.REGISTRIES.config) {
         final ConfigEntry<?> entry = GameEngine.REGISTRIES.config.getEntry(configId).get();
 
-        if(entry.category == category && validLocations.contains(entry.storageLocation) && entry.hasEditControl()) {
+        if(this.configIsVisible(entry, category, validLocations)) {
           count++;
         }
       }
@@ -56,6 +56,10 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
     }
 
     this.addHotkey(I18n.translate("lod_core.ui.options_category.back"), INPUT_ACTION_MENU_BACK, this::back);
+  }
+
+  protected boolean configIsVisible(final ConfigEntry<?> entry, final ConfigCategory category, final Set<ConfigStorageLocation> validLocations) {
+    return entry.category == category && validLocations.contains(entry.storageLocation) && entry.hasEditControl();
   }
 
   protected void init() {
