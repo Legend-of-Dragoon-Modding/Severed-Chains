@@ -128,7 +128,7 @@ public class CharacterCard extends Control {
         uploadRenderable(dontSelect, 0, 0);
       }
 
-      this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.character));
+      this.name.setVisibility(!renderCharacterStatusEffect(x + 57, y + 3, this.character));
     }
   }
 }
