@@ -1,6 +1,7 @@
 package legend.lodmod.items;
 
 import legend.core.memory.Method;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
@@ -36,7 +37,9 @@ public class RecoverSpItem extends BattleItem {
   @Override
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
     for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
-      if(!gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)).stats.getStat(SP_STAT.get()).isFull()) {
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i));
+
+      if(character.hasDragoon() && !character.stats.getStat(SP_STAT.get()).isFull()) {
         return true;
       }
     }
