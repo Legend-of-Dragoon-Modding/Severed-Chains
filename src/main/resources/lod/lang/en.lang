@@ -5,10 +5,23 @@ lod.name=Legend of Dragoon
 lod.campaign_type.retail.name=Legend of Dragoon
 
 # Config
+lod.config.max_level.label=Max Level
+lod.config.max_dragoon_level.label=Max Dragoon Level
 lod.config.item_stack_size.label=Item Stack Size
-lod.config.extended_dragoon_actions.label=Extended dragoon actions
+lod.config.extended_dragoon_actions.label=Extended Dragoon Actions
 lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
 lod.config.ui_colour.label=UI Colour
+
+# Characters
+lod.character_templates.dart.name=Dart
+lod.character_templates.lavitz.name=Lavitz
+lod.character_templates.shana.name=Shana
+lod.character_templates.rose.name=Rose
+lod.character_templates.haschel.name=Haschel
+lod.character_templates.albert.name=Albert
+lod.character_templates.meru.name=Meru
+lod.character_templates.kongol.name=Kongol
+lod.character_templates.miranda.name=Miranda
 
 # Equipment
 lod.equipment.broad_sword.name=Broad Sword
@@ -579,12 +592,16 @@ lod.spells.moon_light.name=Moon Light
 lod.spells.moon_light.description=Ally 50%% Rev, 100%% Rec, Cure
 lod.spells.gates_of_heaven.name=Gates of Heaven
 lod.spells.gates_of_heaven.description=Ally All 50%% Rev & Rec, Cure
-lod.spells.w_silver_dragon.name=W Silver Dragon
-lod.spells.w_silver_dragon.description=Light STR 75%% & Allies 100%% Rec
+lod.spells.white_silver_dragon.name=W Silver Dragon
+lod.spells.white_silver_dragon.description=Light STR 75%% & Allies 100%% Rec
+lod.spells.albert_wing_blaster.name=Wing Blaster
+lod.spells.albert_wing_blaster.description=Wind STR 25%% All
 lod.spells.astral_drain.name=Astral Drain
 lod.spells.astral_drain.description=Dark STR 50%% Single & HP
 lod.spells.death_dimension.name=Death Dimension
 lod.spells.death_dimension.description=Dark STR 25%% All & Fear
+lod.spells.albert_gaspless.name=Gaspless
+lod.spells.albert_gaspless.description=Wind STR 75%% Single
 lod.spells.demons_gate.name=Demon's Gate
 lod.spells.demons_gate.description=Drags minor enemies to Hell
 lod.spells.dark_dragon.name=Dark Dragon
@@ -613,6 +630,12 @@ lod.spells.meteor_strike.name=Meteor Strike
 lod.spells.meteor_strike.description=Earth STR 50%% All
 lod.spells.golden_dragon.name=Golden Dragon
 lod.spells.golden_dragon.description=Earth STR 75%% All
+lod.spells.miranda_star_children.name=Star Children
+lod.spells.miranda_star_children.description=Light STR 25%% All
+lod.spells.miranda_moon_light.name=Moon Light
+lod.spells.miranda_moon_light.description=Ally 50%% Rev, 100%% Rec, Cure
+lod.spells.miranda_gates_of_heaven.name=Gates of Heaven
+lod.spells.miranda_gates_of_heaven.description=Ally All 50%% Rev & Rec, Cure
 
 # Additions
 lod.additions.double_slash.name=Double Slash

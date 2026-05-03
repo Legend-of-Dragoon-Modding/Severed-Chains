@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
@@ -13,12 +14,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="729.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.CharacterEditorController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="690.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.CharacterEditorController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="6.0" prefWidth="600.0">
          <children>
-            <Label fx:id="name" text="Character Name" />
+            <Label fx:id="name" text="Character Name">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
                   <Button onAction="#onRefreshClick" text="Refresh" />
@@ -48,7 +53,6 @@
                   <Insets right="8.0" />
                </FlowPane.margin>
             </CheckBox>
-            <CheckBox fx:id="hasUltimate" mnemonicParsing="false" text="Has ultimate addition" />
          </children>
          <VBox.margin>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -57,36 +61,90 @@
       <Separator prefWidth="200.0" />
       <FlowPane alignment="CENTER_LEFT" prefHeight="16.0" prefWidth="644.0">
          <VBox.margin>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+            <Insets left="8.0" right="8.0" top="8.0" />
          </VBox.margin>
          <children>
-            <Label text="HP">
+            <Label minWidth="24.0" text="HP">
                <FlowPane.margin>
                   <Insets right="4.0" />
                </FlowPane.margin>
             </Label>
-            <TextField fx:id="hp">
+            <Spinner fx:id="hp" editable="true">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Label text="/" />
+            <Spinner fx:id="maxHp" editable="true">
+               <FlowPane.margin>
+                  <Insets left="4.0" right="4.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Label fx:id="hpMods" text="+ 0">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
-            </TextField>
-            <Label text="MP">
-               <FlowPane.margin>
-                  <Insets right="4.0" />
-               </FlowPane.margin>
             </Label>
-            <TextField fx:id="mp">
-               <FlowPane.margin>
-                  <Insets right="8.0" />
-               </FlowPane.margin>
-            </TextField>
-            <Label text="SP">
-               <FlowPane.margin>
-                  <Insets right="4.0" />
-               </FlowPane.margin>
-            </Label>
-            <TextField fx:id="sp" />
+            <Button mnemonicParsing="false" onAction="#onHpRestoreClick" text="Restore" />
          </children>
+      </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" prefHeight="16.0" prefWidth="644.0">
+         <children>
+            <Label minWidth="24.0" text="MP">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Label>
+            <Spinner fx:id="mp" editable="true">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Label text="/" />
+            <Spinner fx:id="maxMp" editable="true">
+               <FlowPane.margin>
+                  <Insets left="4.0" right="4.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Label fx:id="mpMods" text="+ 0">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#onMpRestoreClick" text="Restore" />
+         </children>
+         <VBox.margin>
+            <Insets left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+      </FlowPane>
+      <FlowPane alignment="CENTER_LEFT" layoutX="18.0" layoutY="134.0" prefHeight="16.0" prefWidth="644.0">
+         <children>
+            <Label minWidth="24.0" text="SP">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Label>
+            <Spinner fx:id="sp" editable="true">
+               <FlowPane.margin>
+                  <Insets right="4.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Label text="/" />
+            <Spinner fx:id="maxSp" editable="true">
+               <FlowPane.margin>
+                  <Insets left="4.0" right="4.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Label fx:id="spMods" text="+ 0">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#onSpRestoreClick" text="Restore" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
       </FlowPane>
       <Separator prefWidth="200.0" />
       <FlowPane prefHeight="21.0" prefWidth="644.0">
@@ -95,31 +153,92 @@
          </VBox.margin>
          <children>
             <Label prefWidth="50.0" text="Level" />
-            <TextField fx:id="level">
+            <Spinner fx:id="level" editable="true">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
-            </TextField>
+            </Spinner>
             <Label prefWidth="36.0" text="XP" />
-            <TextField fx:id="xp" />
+            <Spinner editable="true" fx:id="xp">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Button mnemonicParsing="false" onAction="#onLevelUpClick" text="Level Up" />
          </children>
       </FlowPane>
       <FlowPane prefHeight="21.0" prefWidth="644.0">
          <children>
             <Label prefWidth="50.0" text="D'Level" />
-            <TextField fx:id="dlevel">
+            <Spinner fx:id="dlevel" editable="true">
                <FlowPane.margin>
                   <Insets right="8.0" />
                </FlowPane.margin>
-            </TextField>
+            </Spinner>
             <Label prefWidth="36.0" text="D'XP" />
-            <TextField fx:id="dxp" />
+            <Spinner fx:id="dxp" editable="true">
+               <FlowPane.margin>
+                  <Insets right="8.0" />
+               </FlowPane.margin>
+            </Spinner>
+            <Button mnemonicParsing="false" onAction="#onDlevelUpClick" text="Level Up" />
          </children>
          <VBox.margin>
             <Insets bottom="8.0" left="8.0" right="8.0" top="4.0" />
          </VBox.margin>
       </FlowPane>
       <Separator prefWidth="200.0" />
+      <GridPane hgap="8.0" vgap="8.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="6.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="7.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="ATK" textOverrun="CLIP" />
+            <Label text="DEF" textOverrun="CLIP" GridPane.rowIndex="1" />
+            <Label text="AHIT" textOverrun="CLIP" GridPane.rowIndex="2" />
+            <Label prefWidth="9.99999999E8" text="MATK" GridPane.columnIndex="2" />
+            <Label text="MDEF" textOverrun="CLIP" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="MHIT" textOverrun="CLIP" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label text="DATK" textOverrun="CLIP" GridPane.columnIndex="4" />
+            <Label text="DDEF" textOverrun="CLIP" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Label text="AAV" textOverrun="CLIP" GridPane.rowIndex="3" />
+            <Label text="MAV" textOverrun="CLIP" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label text="SPD" textOverrun="CLIP" GridPane.rowIndex="4" />
+            <Label text="HEAL" textOverrun="CLIP" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Spinner fx:id="atk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" />
+            <Spinner fx:id="def" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Spinner fx:id="ahit" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Spinner fx:id="aav" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Spinner fx:id="spd" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Spinner fx:id="matk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" />
+            <Spinner fx:id="mdef" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Spinner fx:id="mhit" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Spinner fx:id="mav" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Spinner fx:id="heal" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Spinner fx:id="datk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" />
+            <Spinner fx:id="ddef" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Label text="DMATK" textOverrun="CLIP" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <Label text="DMDEF" textOverrun="CLIP" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <Spinner fx:id="dmatk" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+            <Spinner fx:id="dmdef" editable="true" prefWidth="9.99999999E8" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </VBox.margin>
+      </GridPane>
+      <Separator layoutX="10.0" layoutY="285.0" prefWidth="200.0" />
       <GridPane>
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -242,4 +361,7 @@
          </children>
       </VBox>
    </children>
+   <padding>
+      <Insets right="8.0" />
+   </padding>
 </VBox>

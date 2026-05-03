@@ -21,7 +21,7 @@ import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.Menus;
 import legend.game.SItem;
-import legend.game.additions.CharacterAdditionStats;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
@@ -48,14 +48,12 @@ import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdObjTable1c;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
-import legend.game.types.CharacterData2c;
 import legend.game.types.ClutAnimations;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
@@ -71,6 +69,8 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodCharacterTemplates;
+import legend.lodmod.LodConfig;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
@@ -142,12 +142,10 @@ import static legend.game.Models.initObjTable2;
 import static legend.game.Models.loadModelStandardAnimation;
 import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.shopId_8007a3b4;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.srand;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -161,7 +159,6 @@ import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
@@ -184,6 +181,7 @@ import static legend.game.sound.Audio.musicLoaded_800bd782;
 import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
+import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
@@ -193,6 +191,8 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_INTERACT;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -1060,21 +1060,17 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800d9b08L)
   private void restoreCharDataVitals(final int charId) {
-    loadCharacterStats();
-
     if(charId >= 0) {
-      final ActiveStatsa0 stats = stats_800be5f8[charId];
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
-      charData.hp_08 = stats.maxHp_66;
-      charData.mp_0a = stats.maxMp_6e;
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+      charData.stats.getStat(HP_STAT.get()).restore();
+      charData.stats.getStat(MP_STAT.get()).restore();
     } else {
       //LAB_800d9b70
       //LAB_800d9b84
-      for(int charSlot = 0; charSlot < 9; charSlot++) {
-        final ActiveStatsa0 stats = stats_800be5f8[charSlot];
-        final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
-        charData.hp_08 = stats.maxHp_66;
-        charData.mp_0a = stats.maxMp_6e;
+      for(int charSlot = 0; charSlot < gameState_800babc8.charData_32c.size(); charSlot++) {
+        final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
+        charData.stats.getStat(HP_STAT.get()).restore();
+        charData.stats.getStat(MP_STAT.get()).restore();
       }
     }
   }
@@ -1091,7 +1087,7 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptClearStatusEffects(final RunningScript<?> script) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
-      gameState_800babc8.charData_32c[i].status_10 = 0;
+      gameState_800babc8.charData_32c.get(i).status_10 = 0;
     }
 
     return FlowControl.CONTINUE;
@@ -1104,24 +1100,10 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptCloneCharacterData(final RunningScript<?> script) {
     final int id0 = script.params_20[0].get();
     final int id1 = script.params_20[1].get();
-    final CharacterData2c char0 = gameState_800babc8.charData_32c[id0];
-    final CharacterData2c char1 = gameState_800babc8.charData_32c[id1];
+    final CharacterData2c char0 = gameState_800babc8.charData_32c.get(id0);
+    final CharacterData2c char1 = gameState_800babc8.charData_32c.get(id1);
 
-    //LAB_800d9c78
     char1.set(char0);
-
-    // When cloning Albert -> Lavitz we need to swap addition IDs
-    if(id0 == 1 && id1 == 5) {
-      char1.additionStats.clear();
-
-      for(int i = 0; i < CHARACTER_ADDITIONS[id0].length; i++) {
-        char1.additionStats.put(CHARACTER_ADDITIONS[id1][i].getId(), new CharacterAdditionStats(char0.additionStats.get(CHARACTER_ADDITIONS[id0][i].getId())));
-
-        if(char1.selectedAddition_19.equals(CHARACTER_ADDITIONS[id0][i].getId())) {
-          char1.selectedAddition_19 = CHARACTER_ADDITIONS[id1][i].getId();
-        }
-      }
-    }
 
     this.restoreCharDataVitals(script.params_20[1].get());
     return FlowControl.CONTINUE;
@@ -1133,7 +1115,7 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800d9ce4L)
   private FlowControl scriptSetCharAddition(final RunningScript<?> script) {
     final int charId = script.params_20[0].get();
-    gameState_800babc8.charData_32c[charId].selectedAddition_19 = script.params_20[1].getRegistryId();
+    gameState_800babc8.charData_32c.get(charId).selectedAddition_19 = script.params_20[1].getRegistryId();
     return FlowControl.CONTINUE;
   }
 
@@ -1142,7 +1124,7 @@ public class SMap extends EngineState<SMap> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "additionId", description = "The addition ID")
   @Method(0x800d9d20L)
   private FlowControl scriptGetCharAddition(final RunningScript<?> script) {
-    script.params_20[1].set(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19);
+    script.params_20[1].set(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19);
     return FlowControl.CONTINUE;
   }
 
@@ -1152,12 +1134,14 @@ public class SMap extends EngineState<SMap> {
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
-      if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
-        gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
+      for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+        if(character.template == LodCharacterTemplates.DART.get()) {
+          while(character.dlevel_13 < Math.min(5, CONFIG.getConfig(LodConfig.MAX_DRAGOON_LEVEL.get()))) {
+            character.dlevelXp_0e = character.getDxpToNextLevel();
+            character.template.applyDragoonLevelUp(character, null);
+          }
+        }
       }
-
-      //LAB_800d9d90
-      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
     }
 
     this.restoreVitalsAndSp(0);
@@ -1166,7 +1150,7 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800d9dc0L)
   private void restoreVitalsAndSp(final int charIndex) {
-    gameState_800babc8.charData_32c[charIndex].sp_0c = 500;
+    gameState_800babc8.charData_32c.get(charIndex).stats.getStat(SP_STAT.get()).restore();
     this.restoreCharDataVitals(-1);
   }
 
@@ -3899,7 +3883,6 @@ public class SMap extends EngineState<SMap> {
     SCRIPTS.pause();
 
     if(newScene == 0x3fa) {
-      loadCharacterStats();
       cacheCharacterSlots();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;

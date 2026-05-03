@@ -1,6 +1,14 @@
 --- original
 +++ modified
-@@ -94,6 +94,10 @@
+@@ -7,7 +7,6 @@
+ call 372
+ yield
+ yield
+-gosub inl[:LABEL_13]
+ yield
+ call 714
+ yield
+@@ -94,6 +93,10 @@
  data 0xd
  data 0x45
  data 0x3c
@@ -11,7 +19,7 @@
  data 0x0
  data 0x0
  data 0x0
-@@ -110,10 +114,6 @@
+@@ -110,10 +113,6 @@
  data 0x0
  data 0x0
  data 0x0
@@ -22,7 +30,7 @@
  data 0x3
  data 0x1
  data 0x0
-@@ -549,7 +549,7 @@
+@@ -549,7 +548,7 @@
  LABEL_1:
  call 600, stor[23]
  mov 0x0, stor[stor[stor[0], 23], 14]

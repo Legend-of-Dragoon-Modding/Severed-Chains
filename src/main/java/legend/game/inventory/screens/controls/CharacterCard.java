@@ -1,27 +1,37 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.GameEngine;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.VitalsStat;
+import legend.game.inventory.Equipment;
 import legend.game.inventory.screens.Control;
-import legend.game.types.ActiveStatsa0;
+import legend.game.types.Renderable58;
 
-import static legend.game.SItem.characterNames_801142dc;
-import static legend.game.SItem.getXpToNextLevel;
+import javax.annotation.Nullable;
+
+import static legend.game.Menus.uploadRenderable;
+import static legend.game.SItem.allocateManualUiElement;
+import static legend.game.SItem.getClutForHp;
+import static legend.game.SItem.getStatComparisonClut;
 import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.renderFraction;
-import static legend.game.SItem.renderHp;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.SItem.renderRightAlignedNumber;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharacterCard extends Control {
-  private int charId;
+  private CharacterData2c character;
+  private boolean dontSelect;
+
+  private @Nullable Equipment equipmentComparison;
 
   private final Glyph background;
   private final Glyph overlay;
   private final Label name;
-  private final CharacterPortrait portrait;
+  private final AtlasIcon portrait;
 
-  public CharacterCard(final int charId) {
-    this.charId = charId;
-
+  public CharacterCard() {
     this.setSize(174, 64);
 
     this.overlay = this.addControl(Glyph.uiElement(74, 74));
@@ -34,44 +44,91 @@ public class CharacterCard extends Control {
     this.name = this.addControl(new Label(""));
     this.name.setPos(57, 3);
 
-    this.portrait = this.addControl(new CharacterPortrait());
+    this.portrait = this.addControl(new AtlasIcon());
     this.portrait.setPos(8, 8);
-
-    this.setCharId(charId);
+    this.portrait.setSize(48, 48);
   }
 
-  public int getCharId() {
-    return this.charId;
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+    this.background.setZ(z);
+    this.overlay.setZ(z - 1);
+    this.name.setZ(z);
+    this.portrait.setZ(z);
   }
 
-  public void setCharId(final int charId) {
-    this.charId = charId;
+  public CharacterData2c getCharacter() {
+    return this.character;
+  }
 
-    this.portrait.setCharId(charId);
+  public void setCharacter(@Nullable final CharacterData2c character) {
+    this.character = character;
 
-    final boolean visible = charId != -1;
+    final boolean visible = character != null;
+
+    this.portrait.setIcon(visible ? GameEngine.getTextureAtlas().getIcon(character.template.getRegistryId()) : null);
+
     this.background.setVisibility(visible);
     this.overlay.setVisibility(visible);
     this.name.setVisibility(visible);
     this.portrait.setVisibility(visible);
 
     if(visible) {
-      this.name.setText(characterNames_801142dc[this.charId]);
+      this.name.setText(this.character.getName());
     }
+  }
+
+  public void setDontSelect(final boolean dontSelect) {
+    this.dontSelect = dontSelect;
+  }
+
+  public void setEquipmentComparison(@Nullable final Equipment equipment) {
+    this.equipmentComparison = equipment;
   }
 
   @Override
   protected void render(final int x, final int y) {
-    if(this.charId != -1) {
-      final ActiveStatsa0 stats = stats_800be5f8[this.charId];
-      this.renderNumber(x + 162, y + 6, stats.level_0e, 2);
-      this.renderNumber(x + 120, y + 17, stats.dlevel_0f, 2);
-      this.renderNumber(x + 156, y + 17, stats.sp_08, 3);
-      renderHp(x + this.getWidth(), y + 28, stats.hp_04, stats.maxHp_66);
-      renderFraction(x + this.getWidth(), y + 39, stats.mp_06, stats.maxMp_6e);
-      renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c[this.charId].xp_00, getXpToNextLevel(this.charId));
+    if(this.character != null) {
+      final VitalsStat hp = this.character.stats.getStat(HP_STAT.get());
+      final VitalsStat mp = this.character.stats.getStat(MP_STAT.get());
+      final VitalsStat sp = this.character.stats.getStat(SP_STAT.get());
 
-      this.name.setVisibility(!renderCharacterStatusEffect(x + 54, y + 3, this.charId));
+      final int oldHp = hp.getMax();
+      final int oldMp = mp.getMax();
+      final int oldSp = sp.getMax();
+      final int newHp;
+      final int newMp;
+      final int newSp;
+
+      if(this.equipmentComparison != null) {
+        final Equipment old = this.character.equip(this.equipmentComparison.slot, this.equipmentComparison);
+
+        newHp = hp.getMax();
+        newMp = mp.getMax();
+        newSp = sp.getMax();
+
+        this.character.equip(this.equipmentComparison.slot, old);
+      } else {
+        newHp = oldHp;
+        newMp = oldMp;
+        newSp = oldSp;
+      }
+
+      renderRightAlignedNumber(x + this.getWidth(), y + 6, this.character.level_12);
+      renderRightAlignedNumber(x + 123, y + 17, this.character.dlevel_13);
+      renderRightAlignedNumber(x + this.getWidth(), y + 17, sp.getCurrent());
+      renderFraction(x + this.getWidth(), y + 28, hp.getCurrent(), newHp, getClutForHp(hp.getCurrent(), newHp), getStatComparisonClut(oldHp, newHp));
+      renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), newMp, 0, getStatComparisonClut(oldMp, newMp));
+      renderFraction(x + this.getWidth(), y + 50, this.character.xp_00, this.character.getXpToNextLevel());
+
+      if(this.dontSelect) {
+        final Renderable58 dontSelect = allocateManualUiElement(113, 113, x + 65, y + 24);
+        dontSelect.z_3c = this.getZ() - 2;
+        uploadRenderable(dontSelect, 0, 0);
+      }
+
+      this.name.setVisibility(!renderCharacterStatusEffect(x + 57, y + 3, this.character));
     }
   }
 }

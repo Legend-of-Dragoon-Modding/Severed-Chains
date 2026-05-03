@@ -89,7 +89,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
 
     //LAB_8010633c
     //LAB_80106374
-    final int hitCount = this.getHitCount(s5.charSlot_276, autoCompleteType) - 1;
+    final int hitCount = this.getHitCount(s5.typeBentSlot_276, autoCompleteType) - 1;
     this.count_30 = hitCount;
     this.attackerScriptIndex_00 = attackerScriptIndex;
     this.targetScriptIndex_04 = targetScriptIndex;
@@ -103,7 +103,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     Arrays.setAll(hitArray, AdditionOverlaysHit20::new);
     this.hitOverlays_40 = hitArray;
     additionHitCompletionState_8011a014 = new byte[hitCount + 1];
-    int overlayDisplayDelay = this.getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xff;
+    int overlayDisplayDelay = this.getHitProperty(s5.typeBentSlot_276, 0, 15, autoCompleteType) & 0xff;
     this.unused_36 = overlayDisplayDelay;
 
     //LAB_801063f0
@@ -116,12 +116,12 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       hitOverlay.borderColoursArrayIndex_02 = 3;
       hitOverlay.isCounter_1c = false;
       additionHitCompletionState_8011a014[hitNum] = 0;
-      int hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff;
+      int hitProperty = this.getHitProperty(s5.typeBentSlot_276, hitNum, 1, autoCompleteType) & 0xff;
       overlayDisplayDelay += hitProperty; // Display delay for each hit
       hitOverlay.totalHitFrames_0a = (short)hitProperty;
-      hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 2, autoCompleteType) & 0xff;
+      hitProperty = this.getHitProperty(s5.typeBentSlot_276, hitNum, 2, autoCompleteType) & 0xff;
       hitOverlay.frameBeginDisplay_0c = (short)hitProperty;
-      hitProperty = this.getHitProperty(s5.charSlot_276, hitNum, 3, autoCompleteType) & 0xff;
+      hitProperty = this.getHitProperty(s5.typeBentSlot_276, hitNum, 3, autoCompleteType) & 0xff;
       hitOverlay.numSuccessFrames_0e = (short)hitProperty;
       final int successFrameTarget = hitOverlay.frameSuccessLowerBound_10 + hitOverlay.frameBeginDisplay_0c;
       hitOverlay.frameSuccessLowerBound_10 = (short)(successFrameTarget - hitOverlay.numSuccessFrames_0e / 2 + 1);

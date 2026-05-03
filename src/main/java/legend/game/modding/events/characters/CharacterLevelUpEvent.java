@@ -1,14 +1,18 @@
 package legend.game.modding.events.characters;
 
-import legend.game.types.CharacterData2c;
-import org.legendofdragoon.modloader.events.Event;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import legend.game.characters.CharacterData2c;
+import legend.game.characters.StatType;
+import org.legendofdragoon.modloader.events.CancelableEvent;
 
-public class CharacterLevelUpEvent extends Event {
-  public final CharacterData2c charData;
-  public final int charId;
+public class CharacterLevelUpEvent extends CancelableEvent {
+  public final CharacterData2c character;
 
-  public CharacterLevelUpEvent(final int charId, final CharacterData2c charData) {
-    this.charData = charData;
-    this.charId = charId;
+  public final Object2IntMap<StatType<?>> statsToAdd = new Object2IntOpenHashMap<>();
+  public int levelsToAdd = 1;
+
+  public CharacterLevelUpEvent(final CharacterData2c character) {
+    this.character = character;
   }
 }

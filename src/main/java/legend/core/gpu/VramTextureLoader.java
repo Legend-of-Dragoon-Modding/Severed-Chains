@@ -11,7 +11,7 @@ public final class VramTextureLoader {
 
   public static final VramTexture EMPTY = new VramTextureSingle(Bpp.BITS_15, new Rect4i(0, 0, 0, 0), new int[0]);
 
-  public static VramTexture textureFromTim(final Tim tim) {
+  public static VramTextureSingle textureFromTim(final Tim tim) {
     if(!tim.hasClut()) {
       throw new RuntimeException("Not yet supported");
     }
@@ -124,7 +124,7 @@ public final class VramTextureLoader {
     return new VramTextureSingle(textures[0].bpp, new Rect4i(minVramX, minVramY, newWidth, newHeight), newData);
   }
 
-  public static VramTexture[] palettesFromTim(final Tim tim) {
+  public static VramTextureSingle[] palettesFromTim(final Tim tim) {
     if(!tim.hasClut()) {
       throw new RuntimeException("Not yet supported");
     }
@@ -134,7 +134,7 @@ public final class VramTextureLoader {
     final int paletteCount = clutSize.h;
     final int width = clutSize.w;
 
-    final VramTexture[] palettes = new VramTexture[paletteCount];
+    final VramTextureSingle[] palettes = new VramTextureSingle[paletteCount];
 
     for(int paletteIndex = 0; paletteIndex < paletteCount; paletteIndex++) {
       final int[] data = new int[width];

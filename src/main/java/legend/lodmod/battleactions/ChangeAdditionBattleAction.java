@@ -2,9 +2,7 @@ package legend.lodmod.battleactions;
 
 import legend.game.combat.Battle;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.ui.BattleActionFlowControl;
-
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
+import legend.game.combat.ui.BattleActionUseFlowControl;
 
 public class ChangeAdditionBattleAction extends SeveredBattleAction {
   public ChangeAdditionBattleAction() {
@@ -12,12 +10,12 @@ public class ChangeAdditionBattleAction extends SeveredBattleAction {
   }
 
   @Override
-  public BattleActionFlowControl use(final Battle battle, final PlayerBattleEntity player) {
-    if(CHARACTER_ADDITIONS[battle.currentTurnBent_800c66c8.innerStruct_00.charId_272].length == 0) {
-      return BattleActionFlowControl.FAIL;
+  public BattleActionUseFlowControl use(final Battle battle, final PlayerBattleEntity player) {
+    if(player.character.getUnlockedAdditions().isEmpty()) {
+      return BattleActionUseFlowControl.FAIL;
     }
 
-    battle.hud.initListMenu((PlayerBattleEntity)battle.currentTurnBent_800c66c8.innerStruct_00, 2);
-    return BattleActionFlowControl.PAUSE_SCRIPT;
+    battle.hud.initListMenu(player, 2);
+    return BattleActionUseFlowControl.PAUSE_SCRIPT;
   }
 }

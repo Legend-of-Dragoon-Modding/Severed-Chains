@@ -491,7 +491,7 @@
 "Battle::scriptGetItemOrSpellTargetingInfo","Unknown, this might handle players selecting an attack target"
 "Battle::scriptGetItemOrSpellAttackTarget","Gets the item/spell attack target"
 "Battle::scriptDragoonMagicStatusItemAttack","Perform a battle entity's magic or status attack against another battle entity"
-"Battle::scriptSetTempSpellStats","Caches selected spell's stats on a battle entity"
+"Battle::scriptSetTempSpellStats","Caches selected spell's stats on a battle entity (no longer does anything)"
 "Battle::scriptRenderRecover","Render recovery amount for a battle entity"
 "Battle::scriptItemMagicAttack","Perform a battle entity's item attack against another battle entity"
 "Battle::scriptSetTempItemMagicStats","Caches selected spell's stats on a battle entity"

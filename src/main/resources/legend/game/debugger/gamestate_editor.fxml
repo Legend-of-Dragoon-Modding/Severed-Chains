@@ -346,7 +346,9 @@
             <Insets top="2.0" />
          </GridPane.margin>
          <children>
-            <Button fx:id="editCharacter" onAction="#editCharacter" prefHeight="25.0" prefWidth="999999.0" text="Edit" />
+            <Button onAction="#editCharacter" prefHeight="25.0" prefWidth="999999.0" text="Edit" />
+            <Button onAction="#addCharacter" prefHeight="25.0" prefWidth="999999.0" text="Add" />
+            <Button onAction="#removeCharacter" prefHeight="25.0" prefWidth="999999.0" text="Rem" />
          </children>
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="22">

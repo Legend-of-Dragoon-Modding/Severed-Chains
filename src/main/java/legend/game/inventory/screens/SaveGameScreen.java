@@ -25,7 +25,6 @@ import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Text.renderText;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
@@ -146,7 +145,7 @@ public class SaveGameScreen extends MenuScreen {
       }
 
       try {
-        SAVES.newSave(name, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
+        SAVES.newSave(name, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", MessageBoxType.ALERT, r -> { }));
@@ -158,7 +157,7 @@ public class SaveGameScreen extends MenuScreen {
   private void onOverwriteResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
       try {
-        SAVES.overwriteSave(save.fileName, save.saveName, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8, stats_800be5f8);
+        SAVES.overwriteSave(save.fileName, save.saveName, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8);
         this.unload.run();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen("Failed to save game", MessageBoxType.ALERT, r -> { }));

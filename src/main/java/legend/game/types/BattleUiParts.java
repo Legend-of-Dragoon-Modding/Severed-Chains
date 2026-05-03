@@ -235,8 +235,8 @@ public class BattleUiParts {
       this.levelUpVert + overlay.letterIndex * 4,
       overlay.x_00, overlay.y_02,
       7, 16,
-      overlay.clutAndTranslucency_0c,
-      Translucency.of((overlay.clutAndTranslucency_0c >>> 12 & 0x7) - 1),
+      overlay.clut_0c,
+      overlay.translucency_0d,
       0xff,
       overlay.widthScale_04 / (float)0x1000 + 1.0f,
       overlay.heightScale_06 / (float)0x1000 + 1.0f);
@@ -307,8 +307,8 @@ public class BattleUiParts {
     final float offsetX = w * widthScale / 2.0f;
     final float offsetY = h * heightScale / 2.0f;
 
-    final int clutOffsetX = packedClut / 16;
-    final int clutOffsetY = packedClut % 16;
+    final int clutOffsetX = packedClut >>> 4 & 0xf;
+    final int clutOffsetY = packedClut & 0xf;
     final int clutX;
     final int clutY;
     if(clutOffsetX >= 4) {

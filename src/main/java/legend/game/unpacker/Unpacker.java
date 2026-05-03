@@ -39,8 +39,6 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static legend.game.Scus94491BpeSegment.getCharacterName;
-
 public final class Unpacker {
   private Unpacker() { }
 
@@ -58,7 +56,7 @@ public final class Unpacker {
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 4;
+  private static final int VERSION = 5;
 
   public static Path ROOT = Path.of(".", "files");
   public static Path REPLACEMENTS = Path.of(".", "patches", "replacements");
@@ -89,8 +87,6 @@ public final class Unpacker {
 
     // Spells, XP, and TIMs from lod_engine
     transformers.add(new LeafTransformation("LOD engine", Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor));
-    transformers.add(new LeafTransformation("XP", Unpacker::xpDiscriminator, Unpacker::xpExtractor));
-    transformers.add(new LeafTransformation("Spells", Unpacker::spellsDiscriminator, Unpacker::spellsExtractor));
 
     // Savepoint etc. from SMAP
     transformers.add(new LeafTransformation("SMAP assets", Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor));
@@ -110,6 +106,7 @@ public final class Unpacker {
     transformers.add(new LeafTransformation("Skip party permutations", Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer));
     transformers.add(new LeafTransformation("BTLD data extractor", Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer));
     transformers.add(new LeafTransformation("UI patcher", Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer));
+    transformers.add(new LeafTransformation("Portrait extractor", SaveCardTextureExtractor::portraitExtractorDiscriminator, SaveCardTextureExtractor::portraitExtractorTransformer));
     transformers.add(new LeafTransformation("CTMD converter", CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer));
 
     // Remove damage caps from scripts
@@ -563,6 +560,22 @@ public final class Unpacker {
     transformations.decrementRemaining();
   }
 
+  private static String getCharacterName(final int id) {
+    return switch(id) {
+      case 0 -> "Dart";
+      case 1 -> "Lavitz";
+      case 2 -> "Shana";
+      case 3 -> "Rose";
+      case 4 -> "Haschel";
+      case 5 -> "Albert";
+      case 6 -> "Meru";
+      case 7 -> "Kongol";
+      case 8 -> "Miranda";
+      case 9, 10 -> "Divine";
+      default -> throw new IllegalArgumentException("Invalid character ID " + id);
+    };
+  }
+
   private static boolean decompressDiscriminator(final PathNode node, final Set<String> flags) {
     if(ROOT_MRG.matcher(node.fullPath).matches()) {
       final int dirNum = Integer.parseInt(node.fullPath.substring(15, 19));
@@ -697,39 +710,6 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     transformations.replaceNode(node, new FileData(newData));
-  }
-
-  private static boolean xpDiscriminator(final PathNode node, final Set<String> flags) {
-    return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
-  }
-
-  private static void xpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    flags.add(node.fullPath);
-
-    transformations.addNode(node);
-    transformations.addNode("characters/kongol/xp", node.data.slice(0x17d78, 61 * 4));
-    transformations.addNode("characters/dart/xp", node.data.slice(0x17e6c, 61 * 4));
-    transformations.addNode("characters/haschel/xp", node.data.slice(0x17f60, 61 * 4));
-    transformations.addNode("characters/meru/xp", node.data.slice(0x18054, 61 * 4));
-    transformations.addNode("characters/lavitz/xp", node.data.slice(0x18148, 61 * 4));
-    transformations.addNode("characters/albert/xp", node.data.slice(0x18148, 61 * 4));
-    transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
-    transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
-    transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
-  }
-
-  private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {
-    return "OVL/BTTL.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
-  }
-
-  private static void spellsExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    flags.add(node.fullPath);
-
-    transformations.addNode(node);
-
-    for(int i = 0; i < 128; i++) {
-      transformations.addNode("spells/" + i + ".dspl", node.data.slice(0x33a30 + i * 0xc, 0xc));
-    }
   }
 
   private static boolean smapAssetDiscriminator(final PathNode node, final Set<String> flags) {

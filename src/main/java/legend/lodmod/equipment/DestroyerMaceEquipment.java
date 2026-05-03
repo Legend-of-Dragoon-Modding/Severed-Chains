@@ -11,11 +11,11 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class DestroyerMaceEquipment extends Equipment {
   public DestroyerMaceEquipment(final int price) {
-    super(price, 0, EquipmentSlot.WEAPON, 0x80, 0x10, LodMod.NO_ELEMENT.get(), 0, new ElementSet(), new ElementSet(), 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, 0, 0, ItemIcon.KNUCKLE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    super(price, 0, EquipmentSlot.WEAPON, LodMod.NO_ELEMENT.get(), new ElementSet(), new ElementSet(), 0, 55, 0, 0, 0, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, 0, 0, ItemIcon.KNUCKLE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
 
   @Override
   public void applyEffect(final BattleEntity27c wearer) {
-    battleState_8006e398.additionExtra_474[wearer.bentSlot_274].flag_00 |= 0x1;
+    battleState_8006e398.additionExtra_474[wearer.allBentSlot_274].flag_00 |= 0x1;
   }
 }
