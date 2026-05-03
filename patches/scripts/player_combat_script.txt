@@ -1404,6 +1404,10 @@ call Battle::scriptGetHitProperty, stor[0], stor[14], 0xb, stor[9] ; bentIndex, 
 add stor[8], stor[9] ; amount, operand
 add var[45][123], stor[9] ; amount, operand
 mov 0x0, stor[8] ; source, dest
+jmp_cmp <=, 0x0, stor[9], inl[:LABEL_208] ; operand, left, right, addr
+mov stor[9], stor[8] ; source, dest
+mov 0x0, stor[9] ; source, dest
+LABEL_208:
 mov stor[8], var[45][123] ; source, dest
 LABEL_209:
 mul 0x64, stor[9] ; amount, operand
@@ -1435,6 +1439,10 @@ call Battle::scriptGetHitProperty, stor[0], stor[14], 0xb, stor[9] ; bentIndex, 
 add stor[8], stor[9] ; amount, operand
 add var[45][123], stor[9] ; amount, operand
 mov 0x0, stor[8] ; source, dest
+jmp_cmp <=, 0x0, stor[9], inl[:LABEL_213] ; operand, left, right, addr
+mov stor[9], stor[8] ; source, dest
+mov 0x0, stor[9] ; source, dest
+LABEL_213:
 mov stor[8], var[45][123] ; source, dest
 LABEL_214:
 mul 0x64, stor[9] ; amount, operand
