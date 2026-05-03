@@ -70,6 +70,7 @@ import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodCharacterTemplates;
+import legend.lodmod.LodConfig;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
@@ -1135,7 +1136,7 @@ public class SMap extends EngineState<SMap> {
     if(!divineEvent.bypassOverride) {
       for(final CharacterData2c character : gameState_800babc8.charData_32c) {
         if(character.template == LodCharacterTemplates.DART.get()) {
-          while(character.dlevel_13 < 5) {
+          while(character.dlevel_13 < Math.min(5, CONFIG.getConfig(LodConfig.MAX_DRAGOON_LEVEL.get()))) {
             character.dlevelXp_0e = character.getDxpToNextLevel();
             character.template.applyDragoonLevelUp(character, null);
           }
