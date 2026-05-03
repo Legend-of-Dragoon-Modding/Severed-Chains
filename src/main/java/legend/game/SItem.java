@@ -465,11 +465,20 @@ public final class SItem {
       return -2;
     }
 
-    final int spToAdd = amount == -1 ? sp.getMax() - sp.getCurrent() : Math.min(amount, sp.getMax() - sp.getCurrent());
+    final int spToAdd;
+    final int dxpToAdd;
+    if(amount == -1) {
+      spToAdd = sp.getMax() - sp.getCurrent();
+      dxpToAdd = spToAdd;
+    } else {
+      spToAdd = Math.min(amount, sp.getMax() - sp.getCurrent());
+      dxpToAdd = amount;
+    }
+
     final int responseType = amount == -1 || spToAdd < amount ? -1 : amount;
 
     sp.restore(spToAdd);
-    character.dlevelXp_0e += amount == -1 ? spToAdd : amount;
+    character.dlevelXp_0e += dxpToAdd;
 
     if(character.dlevelXp_0e >= character.getDxpToNextLevel() && character.dlevel_13 < 5) {
       character.applyDragoonLevelUp(null);
