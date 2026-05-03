@@ -58,6 +58,7 @@ import static legend.lodmod.LodMod.SP_STAT;
 
 public abstract class RetailCharacterTemplate extends CharacterTemplate {
   private final Latch<Image> portrait = new Latch<>(() -> Image.load(Loader.resolve("characters/" + this.getRegistryId().entryId() + "/portrait.png")));
+  private final int[][] spBarColours = {{16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}};
 
   @Override
   public CharacterData2c make(final GameState52c gameState) {
@@ -356,5 +357,10 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
       character.removeSpell(from);
       character.addSpell(to, info);
     }
+  }
+
+  @Override
+  public int[][] getDragoonSpBar() {
+    return this.spBarColours;
   }
 }

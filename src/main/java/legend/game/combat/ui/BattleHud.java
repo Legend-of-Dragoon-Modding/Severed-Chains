@@ -114,7 +114,6 @@ public class BattleHud {
     new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
   };
 
-  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}};
   private static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
@@ -679,7 +678,8 @@ public class BattleHud {
               final int right = left + Math.max(0, spBarW * 35 / 100);
               final int bottom = top + 3;
 
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex % spBarColours_800c6f04.length];
+              final int[][] playerSpBarColours = player.character.template.getDragoonSpBar();
+              final int[] spBarColours = playerSpBarColours[spBarIndex % playerSpBarColours.length];
 
               this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f + i * 0.1f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
