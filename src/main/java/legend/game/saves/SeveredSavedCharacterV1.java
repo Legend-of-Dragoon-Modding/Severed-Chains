@@ -86,11 +86,8 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
     }
 
     hpStat.setCurrent(this.hp);
-    hpStat.setMaxRaw(this.maxHp);
     mpStat.setCurrent(this.mp);
-    mpStat.setMaxRaw(this.maxMp);
     spStat.setCurrent(this.sp);
-    spStat.setMaxRaw(this.dlevel * 100);
 
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       if(this.equipmentIds.containsKey(slot)) {
