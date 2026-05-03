@@ -74,7 +74,8 @@ public class OptionsScreen extends VerticalLayoutScreen {
             //noinspection unchecked
             editControl = configEntry.makeEditControl(config.getConfig(configEntry), config);
           } catch(final Throwable ex) {
-            editControl = this.createErrorLabel("Error creating control", ex, false);
+            LOGGER.error("Error creating control", ex);
+            editControl = this.createErrorLabel();
             error = true;
           }
 
@@ -124,28 +125,26 @@ public class OptionsScreen extends VerticalLayoutScreen {
     return false;
   }
 
-  private Label createErrorLabel(final String log, final Throwable ex, final boolean setSize) {
-    LOGGER.warn(log, ex);
+  private Label createErrorLabel() {
     final Label l = new Label(I18n.translate("lod_core.ui.options.error"));
     l.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
-
-    if(setSize) {
-      l.setSize(140, 11);
-      l.setPos(this.getWidth() - 64 - l.getWidth(), 0);
-      l.setScale(0.66f);
-    }
+    l.setSize(140, 11);
+    l.setPos(this.getWidth() - 64 - l.getWidth(), 0);
+    l.setScale(0.66f);
 
     return l;
   }
 
   private void replaceControlWithErrorLabel(final String log, final Throwable ex) {
+    LOGGER.warn(log, ex);
+
     final Label row = this.getHighlightedRow();
     if(row != null) {
       row.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
       for(int i = row.getControls().size() - 1; i > -1; i--) {
         row.removeControl(row.getControl(i));
       }
-      row.addControl(this.createErrorLabel(log, ex, true));
+      row.addControl(this.createErrorLabel());
     }
   }
 
