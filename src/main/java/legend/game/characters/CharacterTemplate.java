@@ -97,4 +97,6 @@ public abstract class CharacterTemplate extends RegistryEntry {
       throw new RuntimeException("Can't add to stat " + stat.getClass().getSimpleName());
     }
   }
+
+  public abstract int[][] getDragoonSpBar();
 }
