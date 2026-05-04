@@ -296,7 +296,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   protected abstract int getHpToAdd(final int level);
 
   protected int getMpToAdd(final int level) {
-    return 10;
+    return 20;
   }
 
   protected int getSpToAdd(final int level) {
