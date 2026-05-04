@@ -46,6 +46,7 @@ import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
+import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -53,6 +54,8 @@ import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -68,6 +71,7 @@ import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.getTextureAtlas;
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.DrgnFiles.loadDrgnFileSync;
@@ -1097,7 +1101,6 @@ public final class SItem {
   }
 
   public static int renderNumberComparison(final int x, final int y, final int currentVal, int newVal, final int digitCount) {
-    int flags = 0;
     final int clut = getStatComparisonClut(currentVal, newVal);
     final int max = (int)Math.pow(10, digitCount) - 1;
 
@@ -1105,22 +1108,7 @@ public final class SItem {
       newVal = max;
     }
 
-    for(int i = 0; i < digitCount; i++) {
-      final int digit = newVal / (int)Math.pow(10, digitCount - (i + 1)) % 10;
-
-      if(digit != 0 || i == digitCount - 1 || (flags & 0x1) != 0) {
-        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-        renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION | FLAG_DELETE_AFTER_RENDER;
-        renderable.glyph_04 = digit;
-        renderable.tpage_2c = 0x19;
-        renderable.clut_30 = clut;
-        renderable.z_3c = 33;
-        renderable.x_40 = x + i * 6;
-        renderable.y_44 = y;
-        flags |= 0x1;
-      }
-    }
-
+    renderNumber(x, y, newVal, 0x2, digitCount, clut);
     return clut;
   }
 
@@ -1263,14 +1251,25 @@ public final class SItem {
     renderNumber(x, y, value, flags, digitCount, 0);
   }
 
+  private static final Matrix4f negativeTransforms = new Matrix4f();
+
   /**
    * @param flags Bitset - 0x1: render leading zeros, 0x2: unload at end of frame
    */
   public static void renderNumber(final int x, final int y, int value, int flags, final int digitCount, final int clut) {
+    final boolean negative;
+    if(value < 0) {
+      value = -value;
+      negative = true;
+    } else {
+      negative = false;
+    }
+
     if(value >= Math.pow(10, digitCount)) {
       value = (int)Math.pow(10, digitCount) - 1;
     }
 
+    int renderedDigits = 0;
     for(int i = 0; i < digitCount; i++) {
       final int digit = value / (int)Math.pow(10, digitCount - (i + 1)) % 10;
 
@@ -1284,7 +1283,18 @@ public final class SItem {
         struct.x_40 = x + 6 * i;
         struct.y_44 = y;
         flags |= 0x1;
+
+        renderedDigits++;
       }
+    }
+
+    if(negative) {
+      final float dashX = x + (digitCount - renderedDigits - 1) * 6 - 5;
+      final float dashY = y + 4.5f;
+      RENDERER.queueLine(negativeTransforms, 33 * 4.0f, new Vector2f(dashX, dashY), new Vector2f(dashX + 3, dashY))
+        .colour(0.4f, 0.4f, 0.4f)
+        .translucency(Translucency.B_MINUS_F)
+      ;
     }
   }
 
