@@ -30,15 +30,9 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
   int sequence;
   final Matrix4f transforms = new Matrix4f();
   final Vector3f screenspaceOffset = new Vector3f();
-  final Vector3f colour = new Vector3f();
-  final Vector2f clutOverride = new Vector2f();
-  final Vector2f tpageOverride = new Vector2f();
-  final Vector2f uvOffset = new Vector2f();
 
   final Rect4i worldScissor = new Rect4i();
   final Rect4i modelScissor = new Rect4i();
-
-  private final Vector3f tempColour = new Vector3f();
 
   int startVertex;
   int vertexCount;
@@ -71,42 +65,6 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
 
   public T depthOffset(final float z) {
     this.screenspaceOffset.z = z;
-    //noinspection unchecked
-    return (T)this;
-  }
-
-  public T colour(final Vector3f colour) {
-    this.colour.set(colour);
-    //noinspection unchecked
-    return (T)this;
-  }
-
-  public T colour(final float r, final float g, final float b) {
-    this.colour.set(r, g, b);
-    //noinspection unchecked
-    return (T)this;
-  }
-
-  public T monochrome(final float shade) {
-    this.colour.set(shade);
-    //noinspection unchecked
-    return (T)this;
-  }
-
-  public T clutOverride(final float x, final float y) {
-    this.clutOverride.set(x, y);
-    //noinspection unchecked
-    return (T)this;
-  }
-
-  public T tpageOverride(final float x, final float y) {
-    this.tpageOverride.set(x, y);
-    //noinspection unchecked
-    return (T)this;
-  }
-
-  public T uvOffset(final float x, final float y) {
-    this.uvOffset.set(x, y);
     //noinspection unchecked
     return (T)this;
   }
@@ -173,10 +131,6 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     this.obj = obj;
     this.sequence = sequence;
     this.screenspaceOffset.zero();
-    this.colour.set(1.0f, 1.0f, 1.0f);
-    this.clutOverride.zero();
-    this.tpageOverride.zero();
-    this.uvOffset.zero();
     this.modelScissor.set(0, 0, 0, 0);
     this.vertexCount = 0;
     Arrays.fill(this.textures, null);
@@ -226,9 +180,6 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
     this.shader.use();
     this.shaderOptions.discardMode(discardMode);
     this.shaderOptions.modelIndex(modelIndex);
-    this.shaderOptions.clut(this.clutOverride);
-    this.shaderOptions.tpage(this.tpageOverride);
-    this.shaderOptions.uvOffset(this.uvOffset);
   }
 
   public boolean shouldRender(@Nullable final Translucency translucency) {
@@ -237,13 +188,6 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
 
   public boolean shouldRender(@Nullable final Translucency translucency, final int layer) {
     return this.obj.shouldRender(translucency, layer);
-  }
-
-  protected void updateColours(@Nullable final Translucency translucency) {
-    switch(translucency) {
-      case B_PLUS_QUARTER_F -> this.shaderOptions.colour(this.colour.mul(0.25f, this.tempColour));
-      case null, default -> this.shaderOptions.colour(this.colour);
-    }
   }
 
   void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer) {
@@ -256,7 +200,6 @@ public abstract class QueuedModel<Options extends ShaderOptionsBase<Options>, T 
   }
 
   void render(@Nullable final Translucency translucency, final int layer) {
-    this.updateColours(translucency);
     this.obj.render(translucency, layer, this.startVertex, this.vertexCount);
   }
 

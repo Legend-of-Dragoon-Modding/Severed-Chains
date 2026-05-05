@@ -67,6 +67,7 @@ public class RenderBatch {
     pool.addType(QueuedModelStandard.class, () -> new QueuedModelStandard(this, this.engine.standardShader, this.engine.standardShaderOptions, lightingBuffer));
     pool.addType(QueuedModelTmd.class, () -> new QueuedModelTmd(this, this.engine.tmdShader, this.engine.tmdShaderOptions, lightingBuffer));
     pool.addType(QueuedModelBattleTmd.class, () -> new QueuedModelBattleTmd(this, this.engine.battleTmdShader, this.engine.battleTmdShaderOptions, lightingBuffer));
+    pool.addType(QueuedModelParchment.class, () -> new QueuedModelParchment(this, this.engine.parchmentShader, this.engine.parchmentShaderOptions));
     return pool;
   }
 

@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
-import legend.core.QueuedModel;
+import legend.core.QueuedModelPsx;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.gpu.Bpp;
@@ -387,7 +387,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) {
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModelPsx model) {
     for(int n = 0; n < this.submapWorldMapExits_800f7f74.length; n++) {
       final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
 

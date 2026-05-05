@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.QueuedModel;
+import legend.core.QueuedModelPsx;
 import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
 import legend.game.scripting.ScriptFile;
@@ -53,7 +53,7 @@ public abstract class Submap {
   public abstract void storeStateBeforeBattle();
   public abstract boolean isReturningToSameMapAfterBattle();
 
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) { }
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModelPsx model) { }
 
   public abstract SubmapSavable canSave();
 

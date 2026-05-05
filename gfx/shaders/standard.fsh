@@ -20,6 +20,7 @@ layout(std140) uniform projectionInfo {
   float zfar;
   float zdiffInv;
   float projectionMode;
+  vec2 screenSize;
 };
 
 layout(std140) uniform scissor {

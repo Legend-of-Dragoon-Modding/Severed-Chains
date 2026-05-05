@@ -11,6 +11,7 @@ import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
+import legend.core.opengl.ShaderOptionsParchment;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.RenderState;
@@ -144,7 +145,7 @@ public class RenderEngine {
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
-  private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
+  private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(6);
   final FloatBuffer scissorBuffer = BufferUtils.createFloatBuffer(4);
   private final FloatBuffer clutAnimationBuffer = BufferUtils.createFloatBuffer(2 * 2 * 1024); // 2 sets of 2 vectors
   private int clutAnimationBufferIndex;
@@ -246,6 +247,21 @@ public class RenderEngine {
 
   public static final ShaderType<VoidShaderOptions> SCREEN_SHADER = new ShaderType<>(options -> loadShader("post", "screen", options), shader -> () -> VoidShaderOptions.INSTANCE);
 
+  public static final ShaderType<ShaderOptionsParchment> PARCHMENT_SHADER = new ShaderType<>(
+    options -> loadShader("parchment", "parchment", "parchment", options),
+    shader -> {
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      shader.bindUniformBlock("scissor", Shader.UniformBuffer.SCISSOR);
+      final Shader<ShaderOptionsParchment>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
+      final Shader<ShaderOptionsParchment>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
+      final Shader<ShaderOptionsParchment>.UniformVec4 lightColour = shader.new UniformVec4("lightColour");
+      final Shader<ShaderOptionsParchment>.UniformVec4 darkColour = shader.new UniformVec4("darkColour");
+      return () -> new ShaderOptionsParchment(modelIndex, discardTranslucency, lightColour, darkColour);
+    }
+  );
+
   private static final int RENDER_BUFFER_COUNT = 2;
   Shader<ShaderOptionsStandard> standardShader;
   ShaderOptionsStandard standardShaderOptions;
@@ -253,6 +269,8 @@ public class RenderEngine {
   ShaderOptionsTmd tmdShaderOptions;
   Shader<ShaderOptionsBattleTmd> battleTmdShader;
   ShaderOptionsBattleTmd battleTmdShaderOptions;
+  Shader<ShaderOptionsParchment> parchmentShader;
+  ShaderOptionsParchment parchmentShaderOptions;
   private final FrameBuffer[] renderBuffers = new FrameBuffer[RENDER_BUFFER_COUNT];
   private final Texture[] renderTextures = new Texture[RENDER_BUFFER_COUNT];
   private Texture depthTexture;
@@ -505,6 +523,8 @@ public class RenderEngine {
     this.tmdShaderOptions = this.tmdShader.makeOptions();
     this.battleTmdShader = ShaderManager.addShader(BATTLE_TMD_SHADER);
     this.battleTmdShaderOptions = this.battleTmdShader.makeOptions();
+    this.parchmentShader = ShaderManager.addShader(PARCHMENT_SHADER);
+    this.parchmentShaderOptions = this.parchmentShader.makeOptions();
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
@@ -1069,6 +1089,9 @@ public class RenderEngine {
         }
       }
     }
+
+    this.projectionBuffer.put(4, this.getNativeWidth());
+    this.projectionBuffer.put(5, this.getNativeHeight());
 
     this.projectionUniform.set(this.projectionBuffer);
   }

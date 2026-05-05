@@ -1,6 +1,10 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.core.QueuedModelParchment;
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.i18n.I18n;
@@ -32,6 +36,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -143,6 +148,24 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       this.state.campaign.loadConfigInto(CONFIG);
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
     }
+
+    final Obj obj = new QuadBuilder("obj")
+      .uvSize(1.0f, 1.0f)
+      .posSize(1.0f, 1.0f)
+      .monochrome(1.0f)
+      .build()
+    ;
+
+    obj.delete();
+
+    final MV transforms = new MV();
+    transforms.scaling(100.0f, 100.0f, 1.0f);
+    transforms.transfer.z = 10.0f;
+
+    RENDERER.queueOrthoModel(obj, transforms, QueuedModelParchment.class)
+      .lightColour(0.71f, 0.612f, 0.388f)
+      .darkColour(0.71f, 0.549f, 0.349f)
+    ;
   }
 
   private void menuEscape() {

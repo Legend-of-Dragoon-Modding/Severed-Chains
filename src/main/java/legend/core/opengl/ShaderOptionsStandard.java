@@ -2,7 +2,7 @@ package legend.core.opengl;
 
 import legend.game.types.Translucency;
 
-public class ShaderOptionsStandard extends ShaderOptionsBase<ShaderOptionsStandard> {
+public class ShaderOptionsStandard extends ShaderOptionsPsx<ShaderOptionsStandard> {
   private final Shader<ShaderOptionsStandard>.UniformFloat translucency;
   private final Shader<ShaderOptionsStandard>.UniformFloat alpha;
   private final Shader<ShaderOptionsStandard>.UniformFloat useTextureAlpha;

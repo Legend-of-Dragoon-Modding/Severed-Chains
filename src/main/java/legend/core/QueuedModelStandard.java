@@ -13,7 +13,7 @@ import org.joml.Vector4f;
 import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 
-public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, QueuedModelStandard> implements LitModel {
+public class QueuedModelStandard extends QueuedModelPsx<ShaderOptionsStandard, QueuedModelStandard> implements LitModel {
   private Translucency translucency;
   private boolean hasTranslucencyOverride;
   private float alpha;
@@ -106,7 +106,7 @@ public class QueuedModelStandard extends QueuedModel<ShaderOptionsStandard, Queu
   }
 
   @Override
-  public void setLightTransforms(MV light) {
+  public void setLightTransforms(final MV light) {
     this.lightTransforms.set(light).setTranslation(light.transfer);
   }
 

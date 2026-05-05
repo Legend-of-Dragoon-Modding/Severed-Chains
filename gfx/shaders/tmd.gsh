@@ -49,6 +49,7 @@ layout(std140) uniform projectionInfo {
   float zdiffInv;
   /** 0: ortho, 1: PS1 perspective, 2: modern perspective */
   float projectionMode;
+  vec2 screenSize;
 };
 
 uniform int usePs1Depth;

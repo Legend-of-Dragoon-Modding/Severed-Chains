@@ -2,7 +2,7 @@ package legend.core.opengl;
 
 import org.joml.Vector3f;
 
-public class ShaderOptionsBattleTmd extends ShaderOptionsBase<ShaderOptionsBattleTmd> {
+public class ShaderOptionsBattleTmd extends ShaderOptionsPsx<ShaderOptionsBattleTmd> {
   private final Shader<ShaderOptionsBattleTmd>.UniformInt tmdTranslucency;
   private final Shader<ShaderOptionsBattleTmd>.UniformInt usePs1Depth;
   private final Shader<ShaderOptionsBattleTmd>.UniformInt ctmdFlags;

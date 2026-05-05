@@ -1,6 +1,6 @@
 package legend.core.opengl;
 
-public class ShaderOptionsTmd extends ShaderOptionsBase<ShaderOptionsTmd> {
+public class ShaderOptionsTmd extends ShaderOptionsPsx<ShaderOptionsTmd> {
   private final Shader<ShaderOptionsTmd>.UniformInt tmdTranslucency;
   private final Shader<ShaderOptionsTmd>.UniformInt usePs1Depth;
 

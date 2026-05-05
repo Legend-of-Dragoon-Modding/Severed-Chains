@@ -13,7 +13,7 @@ import org.joml.Vector4f;
 import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 
-public class QueuedModelBattleTmd extends QueuedModel<ShaderOptionsBattleTmd, QueuedModelBattleTmd> implements LitModel {
+public class QueuedModelBattleTmd extends QueuedModelPsx<ShaderOptionsBattleTmd, QueuedModelBattleTmd> implements LitModel {
   private final Matrix4f lightTransforms = new Matrix4f();
   private final FloatBuffer lightingBuffer;
 
