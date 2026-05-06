@@ -159,7 +159,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     obj.delete();
 
     final MV transforms = new MV();
-    transforms.scaling(100.0f, 100.0f, 1.0f);
+    transforms.scaling(150.0f, 150.0f, 1.0f);
     transforms.transfer.z = 10.0f;
 
     RENDERER.queueOrthoModel(obj, transforms, QueuedModelParchment.class)
