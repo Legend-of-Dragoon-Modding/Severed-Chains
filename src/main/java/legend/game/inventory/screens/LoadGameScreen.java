@@ -138,6 +138,7 @@ public class LoadGameScreen extends MenuScreen {
     synchronized(this.saveList) {
       if(this.updateSave) {
         this.onHighlight(this.saveList.getSelected());
+        this.updateSave = false;
       }
     }
 

@@ -2,12 +2,21 @@ package legend.game.inventory;
 
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.characters.FractionalStatModConfig;
+import legend.game.characters.UnaryStatModConfig;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.scripting.ScriptReadable;
 import legend.game.scripting.ScriptState;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
+
+import static legend.lodmod.LodMod.FRACTIONAL_STAT_MOD_TYPE;
+import static legend.lodmod.LodMod.HP_STAT;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SPEED_STAT;
+import static legend.lodmod.LodMod.UNARY_STAT_MOD_TYPE;
 
 public class Equipment extends RegistryEntry implements InventoryEntry<Equipment>, ScriptReadable {
   public final int price;
@@ -15,21 +24,20 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
   /**
    * <ul>
    *   <li>0x4 - can't be discarded</li>
+   *   <li>0x40 - instakill</li>
+   *   <li>0x80 - resist instakill</li>
    * </ul>
    */
   public final int flags_00;
   public final EquipmentSlot slot;
-  public final int _02;
-  /**
-   * Which characters can wear this (bitset)
-   */
-  public final int equipableFlags_03;
+//  public final int _02;
+//  public final int equipableFlags_03;
   public final ElementSet attackElement_04 = new ElementSet();
-  public final int _05;
+//  public final int _05;
   public final ElementSet elementalResistance_06 = new ElementSet();
   public final ElementSet elementalImmunity_07 = new ElementSet();
   public final int statusResist_08;
-  public final int _09;
+//  public final int _09;
   public final int attack1_0a;
 
   public final int mpPerPhysicalHit;
@@ -63,18 +71,15 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
   public final int attackAvoid_16;
   public final int magicAvoid_17;
   public final int onHitStatusChance_18;
-  public final int _19;
-  public final int _1a;
+//  public final int _19;
+//  public final int _1a;
   public final int onHitStatus_1b;
 
-  public Equipment(final int price, final int flags, final EquipmentSlot slot, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
+  public Equipment(final int price, final int flags, final EquipmentSlot slot, final Element element, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int onHitStatus) {
     this.price = price;
     this.slot = slot;
     this.flags_00 = flags;
-    this._02 = _02;
-    this.equipableFlags_03 = equipableFlags;
     this.attackElement_04.add(element);
-    this._05 = _05;
     this.mpPerPhysicalHit = mpPerPhysicalHit;
     this.spPerPhysicalHit = spPerPhysicalHit;
     this.mpPerMagicalHit = mpPerMagicalHit;
@@ -94,7 +99,6 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
     this.elementalResistance_06.set(elementalResistance);
     this.elementalImmunity_07.set(elementalImmunity);
     this.statusResist_08 = statusResist;
-    this._09 = _09;
     this.attack1_0a = atk;
     this.icon_0e = icon;
     this.speed_0f = spd;
@@ -107,8 +111,6 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
     this.attackAvoid_16 = aAv;
     this.magicAvoid_17 = mAv;
     this.onHitStatusChance_18 = onStatusChance;
-    this._19 = _19;
-    this._1a = _1a;
     this.onHitStatus_1b = onHitStatus;
   }
 
@@ -170,5 +172,39 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
 
   public EquipmentAttackType attack(final ScriptState<PlayerBattleEntity> player) {
     return EquipmentAttackType.NORMAL;
+  }
+
+  public CanEquip canEquip(final CharacterData2c character, final EquipmentSlot slot) {
+    return CanEquip.NORMAL;
+  }
+
+  /** Called when this equipment is equipped to a character (including on game load) */
+  public void onEquip(final CharacterData2c character) {
+    if(this.hpMultiplier != 0) {
+      character.stats.getStat(HP_STAT.get()).addMod(this.getRegistryId(), FRACTIONAL_STAT_MOD_TYPE.get().make(new FractionalStatModConfig().percent(this.hpMultiplier).permanent()));
+    }
+
+    if(this.mpMultiplier != 0) {
+      character.stats.getStat(MP_STAT.get()).addMod(this.getRegistryId(), FRACTIONAL_STAT_MOD_TYPE.get().make(new FractionalStatModConfig().percent(this.mpMultiplier).permanent()));
+    }
+
+    if(this.speed_0f != 0) {
+      character.stats.getStat(SPEED_STAT.get()).addMod(this.getRegistryId(), UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().flat(this.speed_0f).permanent()));
+    }
+  }
+
+  /** Called when this equipment is removed from a character */
+  public void onUnequip(final CharacterData2c character) {
+    if(this.hpMultiplier != 0) {
+      character.stats.getStat(HP_STAT.get()).removeMod(this.getRegistryId());
+    }
+
+    if(this.mpMultiplier != 0) {
+      character.stats.getStat(MP_STAT.get()).removeMod(this.getRegistryId());
+    }
+
+    if(this.speed_0f != 0) {
+      character.stats.getStat(SPEED_STAT.get()).removeMod(this.getRegistryId());
+    }
   }
 }

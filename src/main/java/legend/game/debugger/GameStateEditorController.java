@@ -1,20 +1,19 @@
 package legend.game.debugger;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import legend.game.i18n.I18n;
+import legend.game.characters.CharacterTemplate;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
+import legend.game.characters.CharacterData2c;
 import legend.game.types.Flags;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.Comparator;
 
@@ -25,7 +24,6 @@ public class GameStateEditorController {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(GameStateEditorController.class);
 
-  private final String[] characters = {"Dart", "Lavitz", "Shana", "Rose", "Haschel", "Albert", "Meru", "Kongol", "???"};
   @FXML
   public ComboBox<Integer> getScriptData;
   @FXML
@@ -83,7 +81,7 @@ public class GameStateEditorController {
   @FXML
   public ComboBox<Item> itemList;
   @FXML
-  public ComboBox<String> getCharacter;
+  public ComboBox<CharacterData2c> getCharacter;
   @FXML
   public TextField textPathIndex;
   @FXML
@@ -94,7 +92,6 @@ public class GameStateEditorController {
   public TextField textFacing;
   @FXML
   public TextField textAreaIndex;
-  public Button editCharacter;
 
   public void initialize() {
     for(int i = 0; i < 0x20; i++) {
@@ -183,7 +180,8 @@ public class GameStateEditorController {
       this.itemList.getSelectionModel().select(0);
     }
 
-    for(final String character : this.characters) {
+    this.getCharacter.setConverter(new CharacterConverter());
+    for(final CharacterData2c character : gameState_800babc8.charData_32c) {
       this.getCharacter.getItems().add(character);
     }
     this.getCharacter.getSelectionModel().select(0);
@@ -499,8 +497,32 @@ public class GameStateEditorController {
   @FXML
   public void editCharacter() throws Exception {
     final int id = this.getCharacter.getSelectionModel().getSelectedIndex();
-    final CharacterEditor charEditor = new CharacterEditor(id, gameState_800babc8.charData_32c[id]);
+    final CharacterEditor charEditor = new CharacterEditor(gameState_800babc8.charData_32c.get(id));
     charEditor.start(new Stage());
+  }
+
+  @FXML
+  public void addCharacter() throws Exception {
+    final RegistrySelector selector = new RegistrySelector(REGISTRIES.characterTemplates, this::characterSelectorOnSelect, this::characterSelectorOnCancel);
+    selector.start(new Stage());
+  }
+
+  @FXML
+  public void removeCharacter() {
+    final int index = this.getCharacter.getSelectionModel().getSelectedIndex();
+    gameState_800babc8.charData_32c.remove(index);
+    this.getCharacter.getItems().remove(index);
+  }
+
+  private void characterSelectorOnSelect(final CharacterTemplate template) {
+    final CharacterData2c character = template.make(gameState_800babc8);
+    gameState_800babc8.addCharacter(character);
+    this.getCharacter.getItems().add(character);
+    this.getCharacter.getSelectionModel().select(this.getCharacter.getItems().size() - 1);
+  }
+
+  private void characterSelectorOnCancel() {
+
   }
 
   @FXML
@@ -553,19 +575,20 @@ public class GameStateEditorController {
     gameState_800babc8.directionalPathIndex_4de = this.parseHexOrDec(this.textAreaIndex.getText(), gameState_800babc8.directionalPathIndex_4de);
   }
 
-  private static class RegistryEntryConverter<T extends RegistryEntry> extends StringConverter<T> {
+  private static class CharacterConverter extends StringConverter<CharacterData2c> {
     @Override
-    public String toString(final T t) {
+    public String toString(final CharacterData2c t) {
       if(t == null) {
         return "";
       }
 
-      return t.getRegistryId() + " - " + I18n.translate(t);
+      return t.getName();
     }
 
     @Override
-    public T fromString(final String s) {
+    public CharacterData2c fromString(final String s) {
       return null;
     }
   }
+
 }

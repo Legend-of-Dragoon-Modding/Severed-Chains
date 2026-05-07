@@ -20,6 +20,7 @@ import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.EngineStates;
+import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreEngineStateTypes;
@@ -490,8 +491,14 @@ public class WMap extends EngineState<WMap> {
   @Override
   public void loadSaveFromMenu(final SavedGame save) {
     this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
-    this.engineStateData = save.engineStateData;
-    this.wmapState_800bb10c = this.is(this.engineStateToTransitionTo) ? WmapState.INIT : WmapState.TRANSITION_TO_ENGINE_STATE;
+
+    if(this.is(this.engineStateToTransitionTo)) {
+      this.wmapState_800bb10c = WmapState.INIT;
+    } else {
+      this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
+      this.engineStateData = save.engineStateData;
+    }
+
     this.encounterAccumulator_800c6ae8 = 0;
   }
 
@@ -1852,14 +1859,21 @@ public class WMap extends EngineState<WMap> {
   }
 
   @Method(0x800d5a30L)
-  private void loadPlayerCharModelFiles(final List<FileData> files, final int fileOffset) {
-    this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[0].extendedTmd_00 = new CContainer("Player model", files.get(fileOffset));
+  private void loadPlayerCharModelFiles(final List<FileData> files) {
+    this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[0].extendedTmd_00 = new CContainer("Player model", files.get(0));
 
-    for(int i = 1; i < 4; i++) {
-      if(files.get(fileOffset + i).size() != 0) {
-        this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[0].tmdAnim_08[i - 1] = new TmdAnimationFile(files.get(fileOffset + i));
-      }
+    for(int i = 0; i < 3; i++) {
+      this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[0].tmdAnim_08[i] = new TmdAnimationFile(files.get(2 + i));
     }
+
+    final UvAdjustmentMetrics14 vramSlot = tmdUvAdjustmentMetrics_800eee48[playerAvatarVramSlots_800ef694[0]];
+    final Tim tim = new Tim(files.get(1));
+    final Rect4i originalImage = tim.getImageRect();
+    final Rect4i originalClut = tim.getClutRect();
+    final Rect4i image = new Rect4i(vramSlot.tpageX, vramSlot.tpageY, originalImage.w, originalImage.h);
+    final Rect4i clut = new Rect4i(vramSlot.clutX, vramSlot.clutY, originalClut.w, originalClut.h);
+    GPU.uploadData15(image, tim.getImageData());
+    GPU.uploadData15(clut, tim.getClutData());
 
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x10);
   }
@@ -3018,42 +3032,6 @@ public class WMap extends EngineState<WMap> {
     coord2.coord.rotationXYZ(rotation);
   }
 
-  private static final String[] charModelDirs = {
-    "SECT/DRGN22.BIN/836", // Dart
-    "SECT/DRGN21.BIN/290", // Lavitz
-    "SECT/DRGN22.BIN/836", // Shana
-    "SECT/DRGN22.BIN/836", // Rose
-    "SECT/DRGN22.BIN/836", // Haschel
-    "SECT/DRGN22.BIN/836", // Albert
-    "SECT/DRGN22.BIN/836", // Meru
-    "SECT/DRGN22.BIN/836", // Kongol
-    "SECT/DRGN22.BIN/836", // Miranda
-  };
-
-  private static final String[] charTextureFiles = {
-    "SECT/DRGN22.BIN/836/textures/8", // Dart
-    "SECT/DRGN21.BIN/290/textures/1", // Lavitz
-    "SECT/DRGN22.BIN/836/textures/1", // Shana
-    "SECT/DRGN22.BIN/836/textures/3", // Rose
-    "SECT/DRGN22.BIN/836/textures/5", // Haschel
-    "SECT/DRGN22.BIN/836/textures/4", // Albert
-    "SECT/DRGN22.BIN/836/textures/2", // Meru
-    "SECT/DRGN22.BIN/836/textures/6", // Kongol
-    "SECT/DRGN22.BIN/836/textures/7", // Miranda
-  };
-
-  private static final int[] charModelFileOffsets = {
-    264, // Dart
-    33, // Lavitz
-    33, // Shana
-    99, // Rose
-    165, // Haschel
-    132, // Albert
-    66, // Meru
-    198, // Kongol
-    231, // Miranda
-  };
-
   @Method(0x800dfa70L)
   private void loadPlayerAvatarTextureAndModelFiles() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x2a8);
@@ -3095,22 +3073,8 @@ public class WMap extends EngineState<WMap> {
   private void loadPlayerModelAndAnimsForFirstChar() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x10);
 
-    final int charId = gameState_800babc8.charIds_88.getInt(0);
-    final String model = charModelDirs[charId];
-    final String texture = charTextureFiles[charId];
-    final int offset = charModelFileOffsets[charId];
-    final UvAdjustmentMetrics14 vramSlot = tmdUvAdjustmentMetrics_800eee48[playerAvatarVramSlots_800ef694[0]];
-    Loader.loadDirectory(model, files -> this.loadPlayerCharModelFiles(files, offset));
-
-    Loader.loadFile(texture, data -> {
-      final Tim tim = new Tim(data);
-      final Rect4i originalImage = tim.getImageRect();
-      final Rect4i originalClut = tim.getClutRect();
-      final Rect4i image = new Rect4i(vramSlot.tpageX, vramSlot.tpageY, originalImage.w, originalImage.h);
-      final Rect4i clut = new Rect4i(vramSlot.clutX, vramSlot.clutY, originalClut.w, originalClut.h);
-      GPU.uploadData15(image, tim.getImageData());
-      GPU.uploadData15(clut, tim.getClutData());
-    });
+    final CharacterData2c character = gameState_800babc8.getCharacterBySlot(0);
+    character.template.loadWorldMapModel(character, this::loadPlayerCharModelFiles);
   }
 
   @Method(0x800dfbd8L)

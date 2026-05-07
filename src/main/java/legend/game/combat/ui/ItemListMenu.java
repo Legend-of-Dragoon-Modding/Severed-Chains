@@ -95,8 +95,7 @@ public class ItemListMenu extends ListMenu {
     }
 
     script.params_20[1].set(this.hud.battleMenu_800c6c34.target_48);
-    script.params_20[2].set(-1); // Used to be item ID
-    script.params_20[3].set(this.player_08.item_d4.getItem().getRegistryId());
+    script.params_20[2].set(this.player_08.item_d4.getItem().getRegistryId());
 
     // If it's a target all item, -1 the target
     if(this.selectionState_a0 == 1 && this.player_08.item_d4.canTarget(Item.TargetType.ALL)) {

@@ -6,11 +6,13 @@ import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -83,6 +85,16 @@ public class FileData {
     srcOffset.add(size);
   }
 
+  public void read(final int srcOffset, final ByteBuffer dest, final int destOffset, final int size) {
+    this.checkBounds(srcOffset, size);
+    dest.put(destOffset, this.data, this.offset + srcOffset, size);
+  }
+
+  public void read(final IntRef srcOffset, final ByteBuffer dest, final int destOffset, final int size) {
+    this.read(srcOffset.get(), dest, destOffset, size);
+    srcOffset.add(size);
+  }
+
   public void read(final int srcOffset, final FileData dest, final int destOffset, final int size) {
     this.read(srcOffset, dest.data, dest.offset + destOffset, size);
   }
@@ -101,6 +113,16 @@ public class FileData {
   }
 
   public void write(final int srcOffset, final byte[] src, final IntRef destOffset, final int size) {
+    this.write(srcOffset, src, destOffset.get(), size);
+    destOffset.add(size);
+  }
+
+  public void write(final int srcOffset, final ByteBuffer src, final int destOffset, final int size) {
+    this.checkBounds(destOffset, size);
+    src.get(srcOffset, this.data, this.offset + destOffset, size);
+  }
+
+  public void write(final int srcOffset, final ByteBuffer src, final IntRef destOffset, final int size) {
     this.write(srcOffset, src, destOffset.get(), size);
     destOffset.add(size);
   }
@@ -404,6 +426,14 @@ public class FileData {
     this.writeAscii(offset, id != null ? id.toString() : "");
   }
 
+  public void writeRegistryId(final int offset, @Nullable final RegistryEntry entry) {
+    this.writeRegistryId(offset, entry != null ? entry.getRegistryId() : null);
+  }
+
+  public void writeRegistryId(final IntRef offset, @Nullable final RegistryEntry entry) {
+    this.writeRegistryId(offset, entry != null ? entry.getRegistryId() : null);
+  }
+
   public RegistryId readRegistryId(final int offset) {
     // Replace the old core mod ID with the new one. Dunno how long we'll keep this. Maybe forever.
     return new RegistryId(this.readAscii(offset).replace("lod-core", "lod_core"));
@@ -417,6 +447,22 @@ public class FileData {
     }
 
     return new RegistryId(id);
+  }
+
+  public void writeEnum(final int offset, final Enum<?> val) {
+    this.writeAscii(offset, val.name(), 2);
+  }
+
+  public void writeEnum(final IntRef offset, final Enum<?> val) {
+    this.writeAscii(offset, val.name(), 2);
+  }
+
+  public <T extends Enum<T>> T readEnum(final int offset, final Class<T> cls) {
+    return Enum.valueOf(cls, this.readAscii(offset, 2));
+  }
+
+  public <T extends Enum<T>> T readEnum(final IntRef offset, final Class<T> cls) {
+    return Enum.valueOf(cls, this.readAscii(offset, 2));
   }
 
   public Rect4i readRect(final int offset, final Rect4i rect) {

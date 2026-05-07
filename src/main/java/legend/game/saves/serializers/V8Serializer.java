@@ -5,61 +5,57 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.ReflectionAccessFilter;
+import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
-import legend.game.EngineState;
-import legend.game.additions.CharacterAdditionStats;
-import legend.game.inventory.Equipment;
-import legend.game.inventory.Good;
-import legend.game.inventory.ItemStack;
 import legend.game.saves.Campaign;
-import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
+import legend.game.saves.SeveredSavedCharacterV1;
 import legend.game.saves.SeveredSavedGame;
-import legend.game.types.ActiveStatsa0;
-import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
-import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
-import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.SAVES;
+import static legend.lodmod.Legacy.CHAR_IDS;
 
 public final class V8Serializer {
   private V8Serializer() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(V7Serializer.class);
-
-  public static final int MAGIC_V8 = 0x38615344; // DSa8
+  private static final Logger LOGGER = LogManager.getFormatterLogger(V8Serializer.class);
 
   private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
-  public static FileData fromV8Matcher(final FileData data) {
-    if(data.readInt(0) == MAGIC_V8) {
-      return data.slice(0x4);
-    }
+  private static final int[] transformFlags = {
+    0x1b8,
+    0x1ba,
+    0x1b9,
+    0x1bb,
+    0x1bc,
+    0x1bd,
+    0x1be,
+    0x1bf,
+    0x1c0,
+    0x1c1,
+  };
 
-    return null;
-  }
-
-  public static SavedGame fromV8(final Campaign campaign, final String filename, final FileData data) {
+  public static SavedGame fromV8(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
     final String name = data.readAscii(offset);
     final RegistryId campaignTypeId = data.readRegistryId(offset);
     final String locationName = data.readAscii(offset);
 
     final ConfigCollection config = new ConfigCollection();
-    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, "V8", filename, name, campaignTypeId, config);
+    final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, SAVES.getRetailAtlas(), 512, 64);
 
     for(int i = 0; i < savedGame.scriptData.length; i++) {
       savedGame.scriptData[i] = data.readInt(offset);
@@ -68,7 +64,7 @@ public final class V8Serializer {
     final int charSlotCount = data.readByte(offset);
 
     for(int i = 0; i < charSlotCount; i++) {
-      savedGame.charIds.add(data.readShort(offset));
+      savedGame.activeParty.add(data.readShort(offset));
     }
 
     savedGame.gold = data.readInt(offset);
@@ -139,13 +135,14 @@ public final class V8Serializer {
     }
 
     final int charDataCount = data.readUShort(offset);
-    final List<SeveredSavedGame.CharStats> charStats = new ArrayList<>();
 
     for(int charIndex = 0; charIndex < charDataCount; charIndex++) {
+      final RegistryId templateId = CHAR_IDS[charIndex];
       final int maxHp = data.readInt(offset);
       final int maxMp = data.readInt(offset);
-      final SeveredSavedGame.CharStats charData = new SeveredSavedGame.CharStats(maxHp, maxMp);
-      charStats.add(charData);
+      final SeveredSavedCharacterV1 charData = new SeveredSavedCharacterV1(templateId, charIndex, maxHp, maxMp);
+      savedGame.characters.add(charData);
+      savedGame.charPortraits.add(new Rect4i(charIndex * 48, 0, 48, 48));
 
       charData.xp = data.readInt(offset);
       charData.flags = data.readInt(offset);
@@ -156,6 +153,7 @@ public final class V8Serializer {
       charData.status = data.readInt(offset);
       charData.level = data.readUShort(offset);
       charData.dlevel = data.readUShort(offset);
+      charData.hasTransformed = savedGame.scriptFlags2.get(transformFlags[charIndex]);
 
       final int equipmentSlotCount = data.readByte(offset);
 
@@ -173,13 +171,9 @@ public final class V8Serializer {
 
       for(int additionIndex = 0; additionIndex < additionCount; additionIndex++) {
         final RegistryId id = data.readRegistryId(offset);
-        final int level = data.readShort(offset);
+        final int level = data.readShort(offset) + 1;
         final int xp = data.readInt(offset);
-
-        final CharacterAdditionStats stats = new CharacterAdditionStats();
-        stats.level = level;
-        stats.xp = xp;
-        charData.additionStats.put(id, stats);
+        charData.additionInfo.put(id, new SeveredSavedCharacterV1.AdditionInfo(level, xp));
       }
     }
 
@@ -198,140 +192,9 @@ public final class V8Serializer {
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset.get()));
 
     savedGame.locationName = locationName;
-    savedGame.charStats.addAll(charStats);
     savedGame.engineState = engineStateId;
     savedGame.engineStateData = engineStateData;
 
     return savedGame;
-  }
-
-  public static void toV8(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState, final ActiveStatsa0[] activeStats) {
-    data.writeAscii(offset, name);
-    data.writeRegistryId(offset, campaignType.getRegistryId());
-    data.writeAscii(offset, engineState.getLocation(gameState));
-
-    for(final int scriptData : gameState.scriptData_08) {
-      data.writeInt(offset, scriptData);
-    }
-
-    data.writeByte(offset, gameState.charIds_88.size());
-
-    for(final int charIndex : gameState.charIds_88) {
-      data.writeShort(offset, charIndex);
-    }
-
-    data.writeInt(offset, gameState.gold_94);
-    data.writeInt(offset, gameState.chapterIndex_98);
-    data.writeInt(offset, gameState.stardust_9c);
-    data.writeInt(offset, gameState.timestamp_a0);
-
-    data.writeInt(offset, gameState._b0);
-    data.writeInt(offset, gameState.battleCount_b4);
-    data.writeInt(offset, gameState.turnCount_b8);
-
-    for(int i = 0; i < gameState.scriptFlags2_bc.count(); i++) {
-      data.writeInt(offset, gameState.scriptFlags2_bc.getRaw(i));
-    }
-
-    for(int i = 0; i < gameState.scriptFlags1_13c.count(); i++) {
-      data.writeInt(offset, gameState.scriptFlags1_13c.getRaw(i));
-    }
-
-    for(int i = 0; i < gameState.wmapFlags_15c.count(); i++) {
-      data.writeInt(offset, gameState.wmapFlags_15c.getRaw(i));
-    }
-
-    for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {
-      data.writeInt(offset, gameState.visitedLocations_17c.getRaw(i));
-    }
-
-    for(final int _1a4 : gameState._1a4) {
-      data.writeInt(offset, _1a4);
-    }
-
-    for(final int chestFlag : gameState.chestFlags_1c4) {
-      data.writeInt(offset, chestFlag);
-    }
-
-    data.writeShort(offset, gameState.equipment_1e8.size());
-    data.writeShort(offset, gameState.items_2e9.getSize());
-    data.writeShort(offset, gameState.goods_19c.size());
-
-    for(final Equipment equipment : gameState.equipment_1e8) {
-      data.writeRegistryId(offset, equipment.getRegistryId());
-    }
-
-    for(final ItemStack stack : gameState.items_2e9) {
-      data.writeRegistryId(offset, stack.getItem().getRegistryId());
-      data.writeInt(offset, stack.getSize());
-      data.writeInt(offset, stack.getCurrentDurability());
-
-      final JsonObject extraData = stack.getExtraData();
-
-      if(extraData == null) {
-        data.writeInt(offset, 0);
-        continue;
-      }
-
-      final byte[] serialized = jsonSerializer.toJson(extraData).getBytes(StandardCharsets.UTF_8);
-      data.writeInt(offset, serialized.length);
-      data.write(0, serialized, offset, serialized.length);
-    }
-
-    for(final Good good : gameState.goods_19c) {
-      data.writeRegistryId(offset, good.getRegistryId());
-    }
-
-    data.writeShort(offset, gameState.charData_32c.length);
-
-    for(int i = 0; i < gameState.charData_32c.length; i++) {
-      final CharacterData2c charData = gameState.charData_32c[i];
-      final ActiveStatsa0 stats = activeStats[i];
-      data.writeInt(offset, stats.maxHp_66);
-      data.writeInt(offset, stats.maxMp_6e);
-
-      data.writeInt(offset, charData.xp_00);
-      data.writeInt(offset, charData.partyFlags_04);
-      data.writeInt(offset, charData.hp_08);
-      data.writeInt(offset, charData.mp_0a);
-      data.writeInt(offset, charData.sp_0c);
-      data.writeInt(offset, charData.dlevelXp_0e);
-      data.writeInt(offset, charData.status_10);
-      data.writeShort(offset, charData.level_12);
-      data.writeShort(offset, charData.dlevel_13);
-
-      data.writeByte(offset, charData.equipment_14.size());
-
-      for(final var entry : charData.equipment_14.entrySet()) {
-        final EquipmentSlot slot = entry.getKey();
-        final Equipment equipment = entry.getValue();
-        data.writeAscii(offset, slot.name());
-        data.writeRegistryId(offset, equipment.getRegistryId());
-      }
-
-      data.writeRegistryId(offset, charData.selectedAddition_19);
-      data.writeShort(offset, charData.additionStats.size());
-
-      for(final var entry : charData.additionStats.entrySet()) {
-        data.writeRegistryId(offset, entry.getKey());
-        data.writeShort(offset, entry.getValue().level);
-        data.writeInt(offset, entry.getValue().xp);
-      }
-    }
-
-    data.writeInt(offset, gameState.characterInitialized_4e6);
-
-    data.writeRegistryId(offset, engineState.type.getRegistryId());
-
-    final FileData engineStateData = engineState.writeSaveData(gameState);
-
-    if(engineStateData != null) {
-      data.writeInt(offset, engineStateData.size());
-      data.write(0, engineStateData, offset, engineStateData.size());
-    } else {
-      data.writeInt(offset, 0);
-    }
-
-    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data, offset);
   }
 }

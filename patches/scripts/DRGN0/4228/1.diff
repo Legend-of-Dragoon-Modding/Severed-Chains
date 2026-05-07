@@ -1,0 +1,14 @@
+--- original
++++ modified
+@@ -909,9 +909,10 @@
+ data 0x49
+ LABEL_2:
+ memcpy 0x2, stor[8], inl[:LABEL_7]
+-gosub inl[:LABEL_3]
++gosub inl[:SET_CHAR_BENT_SHADOW_SIZE]
+ memcpy 0x2, inl[:LABEL_7], stor[8]
+ return
++#include shadow.txt
+ LABEL_3:
+ call 169, stor[8], STATUS, stor[9]
+ jmp_cmp !&, 0x4000, stor[9], inl[:LABEL_4]

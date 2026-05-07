@@ -23,8 +23,9 @@ milklizard/warblgarbl
 DooMMetaL
 @ File mapping
 @ Model/animation/texture tools
-Raver1357
+Tyler Frenette
 @ Severed Chains logo
+@ YouTube video intro
 Mr.Scentless
 @ Title screen icons
 Senerio

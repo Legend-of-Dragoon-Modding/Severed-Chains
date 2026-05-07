@@ -30,7 +30,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.uploadRenderable;
-import static legend.game.SItem.renderManualCharacterPortrait;
+import static legend.game.SItem.renderCharacterPortrait;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -168,6 +168,7 @@ public class TurnOrderMod {
 
         final float y = 14.0f + bentIndex * 8.0f;
         renderText(DEFAULT_FONT, turn.bent.getName(), x + 9.5f - xOffset, y, FONT);
+
         final int xIconPos = (int)(x - xOffset) + 5;
         final int yIconPos = (int)y - 6;
         this.renderTurnIcon(turn, xIconPos, yIconPos);
@@ -201,12 +202,7 @@ public class TurnOrderMod {
   private void renderTurnIcon(final TurnOrder turn, final int xPos, final int yPos) {
     final float zIndex = textZ_800bdf00;
     if(turn.bent instanceof final PlayerBattleEntity player) {
-      final Renderable58 portrait = renderManualCharacterPortrait(player.charId_272, xPos, yPos, 0);
-      portrait.clut_30 = (500 + player.charId_272 & 0x1ff) << 6 | 0x2b;
-      portrait.z_3c = zIndex;
-      portrait.widthScale = 0.45f;
-      portrait.heightScale_38 = 0.45f;
-      uploadRenderable(portrait, 0, 0);
+      renderCharacterPortrait(player.charId_272, xPos - 3.5f, yPos + 4.5f, zIndex * 4.0f, 7.0f, 7.0f);
     } else {
       final Renderable58 skull = ItemIcon.SKULL.renderManual(xPos, yPos, 0);
       skull.z_3c = zIndex;

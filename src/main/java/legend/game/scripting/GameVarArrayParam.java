@@ -82,7 +82,7 @@ public class GameVarArrayParam extends Param {
       case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40.set(this.arrIndex, SCRIPTS.getState(val, PlayerBattleEntity.class));
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).set(val);
-      case 45 -> this.writeCombatVar(this.arrIndex, val);
+      case 45 -> this.writeBattleVar(this.arrIndex, val);
       case 46 -> encounter.set(this.arrIndex, val);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78.set(this.arrIndex, SCRIPTS.getState(val, BattleEntity27c.class));
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac.set(this.arrIndex, SCRIPTS.getState(val, PlayerBattleEntity.class));
@@ -310,7 +310,7 @@ public class GameVarArrayParam extends Param {
       case 184 -> Scus94491BpeSegment_8006.battleState_8006e398._460[0];
       case 185 -> Scus94491BpeSegment_8006.battleState_8006e398._460[1];
       case 186 -> Scus94491BpeSegment_8006.battleState_8006e398._460[2];
-      case 187 -> Scus94491BpeSegment_8006.battleState_8006e398._46c;
+      case 187 -> Scus94491BpeSegment_8006.battleState_8006e398.battleStage_46c;
       case 188 -> Scus94491BpeSegment_8006.battleState_8006e398._470;
       case 189 -> Scus94491BpeSegment_8006.battleState_8006e398.additionExtra_474[0].pack();
       case 190 -> Scus94491BpeSegment_8006.battleState_8006e398.additionExtra_474[1].pack();
@@ -384,7 +384,7 @@ public class GameVarArrayParam extends Param {
     };
   }
 
-  private void writeCombatVar(final int index, final int val) {
+  private void writeBattleVar(final int index, final int val) {
     switch(index) {
       case 0 -> Scus94491BpeSegment_8006.battleState_8006e398._180 = val;
       case 1 -> Scus94491BpeSegment_8006.battleState_8006e398.combatantBentIndex_184 = val;
@@ -573,7 +573,7 @@ public class GameVarArrayParam extends Param {
       case 184 -> Scus94491BpeSegment_8006.battleState_8006e398._460[0] = val;
       case 185 -> Scus94491BpeSegment_8006.battleState_8006e398._460[1] = val;
       case 186 -> Scus94491BpeSegment_8006.battleState_8006e398._460[2] = val;
-      case 187 -> Scus94491BpeSegment_8006.battleState_8006e398._46c = val;
+      case 187 -> Scus94491BpeSegment_8006.battleState_8006e398.battleStage_46c = val;
       case 188 -> Scus94491BpeSegment_8006.battleState_8006e398._470 = val;
       case 189 -> Scus94491BpeSegment_8006.battleState_8006e398.additionExtra_474[0].unpack(val);
       case 190 -> Scus94491BpeSegment_8006.battleState_8006e398.additionExtra_474[1].unpack(val);

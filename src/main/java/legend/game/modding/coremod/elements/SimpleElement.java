@@ -1,7 +1,6 @@
 package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
-import legend.game.combat.types.AttackType;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
@@ -14,28 +13,17 @@ public class SimpleElement extends Element {
   }
 
   @Override
-  public int adjustAttackingElementalDamage(final AttackType attackType, final int damage, final Element targetElement) {
-    if(targetElement == this.opposed.get()) {
-      return damage * 150 / 100;
-    }
-
-    if(targetElement == this) {
-      return damage * 50 / 100;
-    }
-
-    return damage;
+  public boolean isStrongAgainst(final Element other) {
+    return other == this.opposed.get();
   }
 
   @Override
-  public int adjustDragoonSpaceDamage(final AttackType attackType, final int damage, final Element attackingElement) {
-    if(attackingElement == this) {
-      return damage * 150 / 100;
-    }
+  public boolean isWeakAgainst(final Element other) {
+    return other == this;
+  }
 
-    if(attackingElement == this.opposed.get()) {
-      return damage * 50 / 100;
-    }
-
-    return damage;
+  @Override
+  public boolean boostsElement(final Element other) {
+    return other == this;
   }
 }

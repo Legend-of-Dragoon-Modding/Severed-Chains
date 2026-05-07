@@ -41,7 +41,6 @@ import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
-import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
@@ -615,7 +614,7 @@ public class DabasScreen extends MenuScreen {
     renderText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? UI_TEXT_SELECTED_CENTERED : !this.hasItems ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
     renderText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? UI_TEXT_SELECTED_CENTERED : !this.newDigEnabled ? UI_TEXT_DISABLED_CENTERED : UI_TEXT_CENTERED);
     renderMenuItems(194, 37, this.menuItems, 0, 6, null, null);
-    renderEightDigitNumber(100, 147, this.gold, 0x2);
+    this.renderNumber(100, 147, this.gold, 8);
 
     if(this.specialItem != null) {
       this.specialItem.item_00.renderIcon(198, 192, 0x8);

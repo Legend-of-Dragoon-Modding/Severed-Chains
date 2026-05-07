@@ -11,7 +11,6 @@ import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
@@ -35,13 +34,12 @@ import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
@@ -138,19 +136,13 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
       Scus94491BpeSegment_800b.campaignType.get().setUpNewCampaign(this.state);
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
-      final GameLoadedEvent gameLoadedEvent = EVENTS.postEvent(new GameLoadedEvent(newGameEvent.gameState));
 
-      gameState_800babc8 = gameLoadedEvent.gameState;
+      playMenuSound(2);
+      SAVES.loadGameState(newGameEvent.gameState);
 
       this.state.campaign.loadConfigInto(CONFIG);
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
-
-      loadingNewGameState_800bdc34 = true;
-      playMenuSound(2);
-      whichMenu_800bdc38 = WhichMenu.UNLOAD;
     }
-
-
   }
 
   private void menuEscape() {

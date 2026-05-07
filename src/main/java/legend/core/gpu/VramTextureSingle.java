@@ -6,6 +6,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
@@ -105,6 +106,19 @@ public class VramTextureSingle extends VramTexture {
     }
 
     return newData;
+  }
+
+  public void applyPalette(final VramTextureSingle palette, final Rect4i region, final IntBuffer output) {
+    final int[] paletteData = palette.getData();
+    final int[] data = this.getData();
+    int i = 0;
+
+    for(int y = 0; y < region.h; y++) {
+      for(int x = 0; x < region.w; x++) {
+        output.put(i, paletteData[data[(region.y + y) * this.rect.w + region.x + x]]);
+        i++;
+      }
+    }
   }
 
   public Texture createOpenglTexture(final VramTextureSingle palette, final Rect4i region) {

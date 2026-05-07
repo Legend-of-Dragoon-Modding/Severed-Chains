@@ -32,20 +32,16 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
-import legend.game.saves.serializers.RetailSerializer;
-import legend.game.saves.serializers.V1Serializer;
-import legend.game.saves.serializers.V2Serializer;
-import legend.game.saves.serializers.V3Serializer;
-import legend.game.saves.serializers.V4Serializer;
-import legend.game.saves.serializers.V5Serializer;
-import legend.game.saves.serializers.V6Serializer;
-import legend.game.saves.serializers.V7Serializer;
-import legend.game.saves.serializers.V8Serializer;
+import legend.game.saves.SaveVersion;
+import legend.game.saves.serializers.V9Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
+import legend.game.textures.TextureAtlas;
+import legend.game.textures.TexturePacker;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
-import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
@@ -56,33 +52,26 @@ import org.joml.Vector3f;
 import org.legendofdragoon.modloader.ModManager;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.i18n.LangManager;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import static legend.game.sound.Audio.startSound;
 import static legend.game.SItem.UI_WHITE;
-import static legend.game.SItem.albertXpTable_801138c0;
-import static legend.game.SItem.dartXpTable_801135e4;
-import static legend.game.SItem.haschelXpTable_801136d8;
-import static legend.game.SItem.kongolXpTable_801134f0;
-import static legend.game.SItem.lavitzXpTable_801138c0;
 import static legend.game.SItem.loadMenuAssets;
-import static legend.game.SItem.meruXpTable_801137cc;
-import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.renderMenuCentredText;
-import static legend.game.SItem.roseXpTable_801139b4;
-import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.bindRendererEvents;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Text.initTextboxGeometry;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
+import static legend.game.sound.Audio.startSound;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -108,7 +97,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V8Serializer.MAGIC_V8, V8Serializer::toV8);
+  public static final SaveManager SAVES = new SaveManager(SaveVersion.V9, V9Serializer::toV9);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
@@ -116,6 +105,7 @@ public final class GameEngine {
   public static final FontManager FONTS = new FontManager();
   public static Font DEFAULT_FONT = FONTS.get(Path.of("./gfx/fonts/default.json"));
 
+  private static TextureAtlas TEXTURE_ATLAS;
   private static Texture UI_TEXTURE;
 
   public static final Gte GTE;
@@ -205,15 +195,6 @@ public final class GameEngine {
         RENDERER.setRenderCallback(GameEngine::loadGfx);
 
         Files.createDirectories(Path.of("saves"));
-        SAVES.registerDeserializer(RetailSerializer::fromRetailMatcher, RetailSerializer::fromRetail);
-        SAVES.registerDeserializer(V1Serializer::fromV1Matcher, V1Serializer::fromV1);
-        SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
-        SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
-        SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
-        SAVES.registerDeserializer(V5Serializer::fromV5Matcher, V5Serializer::fromV5);
-        SAVES.registerDeserializer(V6Serializer::fromV6Matcher, V6Serializer::fromV6);
-        SAVES.registerDeserializer(V7Serializer::fromV7Matcher, V7Serializer::fromV7);
-        SAVES.registerDeserializer(V8Serializer::fromV8Matcher, V8Serializer::fromV8);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);
@@ -239,8 +220,6 @@ public final class GameEngine {
           }
 
           statusText = "";
-
-          loadXpTables();
 
           synchronized(UPDATER_LOCK) {
             if(!UPDATE_CHECK_FINISHED) {
@@ -291,6 +270,10 @@ public final class GameEngine {
     }
   }
 
+  public static TextureAtlas getTextureAtlas() {
+    return TEXTURE_ATLAS;
+  }
+
   public static Texture getUiTexture() {
     return UI_TEXTURE;
   }
@@ -331,6 +314,9 @@ public final class GameEngine {
     REGISTRY_ACCESS.initialize(REGISTRIES.campaignTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.engineStateTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
+    REGISTRY_ACCESS.initialize(REGISTRIES.characterTemplates);
+    REGISTRY_ACCESS.initialize(REGISTRIES.statTypes);
+    REGISTRY_ACCESS.initialize(REGISTRIES.statModTypes);
 
     // We need to boot the goods registry for save cards on the title screen
     REGISTRY_ACCESS.initialize(REGISTRIES.goods);
@@ -346,54 +332,23 @@ public final class GameEngine {
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
     ItemIcon.loadIconMap();
-  }
 
-  private static void loadXpTables() throws IOException {
-    final FileData dart = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
-    final FileData lavitz = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
-    final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
-    final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
-    final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
-    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
-    final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
-    final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
-    final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
+    LOGGER.info("Creating texture atlas...");
+    final long t = System.nanoTime();
 
-    for(int i = 0; i < dartXpTable_801135e4.length; i++) {
-      dartXpTable_801135e4[i] = dart.readInt(i * 4);
+    if(TEXTURE_ATLAS != null) {
+      TEXTURE_ATLAS.delete();
     }
 
-    for(int i = 0; i < lavitzXpTable_801138c0.length; i++) {
-      lavitzXpTable_801138c0[i] = lavitz.readInt(i * 4);
-    }
+    final Map<RegistryId, Image> images = new HashMap<>();
+    EVENTS.postEvent(new RegisterAtlasTexturesEvent(images));
 
-    for(int i = 0; i < albertXpTable_801138c0.length; i++) {
-      albertXpTable_801138c0[i] = albert.readInt(i * 4);
-    }
+    final TexturePacker packer = new TexturePacker();
+    images.forEach(packer::add);
 
-    for(int i = 0; i < shanaXpTable_80113aa8.length; i++) {
-      shanaXpTable_80113aa8[i] = shana.readInt(i * 4);
-    }
+    TEXTURE_ATLAS = packer.pack(512, 512);
 
-    for(int i = 0; i < mirandaXpTable_80113aa8.length; i++) {
-      mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
-    }
-
-    for(int i = 0; i < roseXpTable_801139b4.length; i++) {
-      roseXpTable_801139b4[i] = rose.readInt(i * 4);
-    }
-
-    for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
-      haschelXpTable_801136d8[i] = haschel.readInt(i * 4);
-    }
-
-    for(int i = 0; i < kongolXpTable_801134f0.length; i++) {
-      kongolXpTable_801134f0[i] = kongol.readInt(i * 4);
-    }
-
-    for(int i = 0; i < meruXpTable_801137cc.length; i++) {
-      meruXpTable_801137cc[i] = meru.readInt(i * 4);
-    }
+    LOGGER.info("Texture atlas created in %.02fs", (System.nanoTime() - t) / 1_000_000_000.0f);
   }
 
   private static void transitionToGame() {

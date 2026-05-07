@@ -18,4 +18,9 @@ public class AddRegistryEvent extends Event {
   public <Type extends RegistryEntry> void addRegistry(final Registry<Type> registry, final Function<MutableRegistry<Type>, RegistryEvent.Register<Type>> registryEvent) {
     this.registries.addRegistry(registry, registryEvent);
   }
+
+  @Override
+  protected boolean isCritical() {
+    return true;
+  }
 }

@@ -9,6 +9,7 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.lodmod.LodMod;
@@ -20,7 +21,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.applyBuffOrDebuff;
 import static legend.game.combat.Battle.applyMagicDamageMultiplier;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.transformToScreenSpace;
 
 public class MonsterBattleEntity extends BattleEntity27c {
@@ -33,20 +33,20 @@ public class MonsterBattleEntity extends BattleEntity27c {
    * </ul>
    */
   public int damageReductionFlags_6e;
-  public int _70;
+//  public int _70;
 
   public final ElementSet monsterElementalImmunity_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
   public final Vector3f targetArrowPos_78 = new Vector3f();
 
-  public MonsterBattleEntity(final Battle battle, final String name) {
-    super(LodMod.MONSTER_TYPE.get(), battle, name);
+  public MonsterBattleEntity(final Battle battle, final String name, final int charId) {
+    super(LodMod.MONSTER_TYPE.get(), battle, name, charId);
   }
 
   @Override
   public String getName() {
     final Battle battle = ((Battle)currentEngineState_8004dd04);
-    return battle.currentEnemyNames_800c69d0[this.charSlot_276];
+    return battle.currentEnemyNames_800c69d0[this.typeBentSlot_276];
   }
 
   @Override
@@ -56,7 +56,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
 
   @Override
   public ElementSet getAttackElements() {
-    return new ElementSet().add(spellStats_800fa0b8[this.spellId_4e].element_08.get());
+    return new ElementSet().add(this.spell_94.element_08.get());
   }
 
   @Override
@@ -85,7 +85,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   @Override
   @Method(0x800f2d48L)
   public int calculatePhysicalDamage(final BattleEntity27c target) {
-    final int atk = this.stats.getStat(LodMod.ATTACK_STAT.get()).get() + spellStats_800fa0b8[this.spellId_4e].multi_04;
+    final int atk = this.stats.getStat(LodMod.ATTACK_STAT.get()).get() + this.spell_94.multi_04;
 
     //LAB_800f2e28
     //LAB_800f2e88
@@ -100,7 +100,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
     int matk = this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
     if(magicType == 1) {
-      matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
+      matk += this.spell_94.multi_04;
     }
 
     //LAB_800f87d0
@@ -159,33 +159,63 @@ public class MonsterBattleEntity extends BattleEntity27c {
   }
 
   @Override
-  public int getStat(final BattleEntityStat statIndex) {
-    return switch(statIndex) {
-      case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT, MONSTER_ELEMENT -> this.element.flag;
-
-      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e;
-      case _54 -> this._70;
-      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.pack();
-      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76;
-      case MONSTER_TARGET_ARROW_POSITION_X -> Math.round(this.targetArrowPos_78.x);
-      case MONSTER_TARGET_ARROW_POSITION_Y -> Math.round(this.targetArrowPos_78.y);
-      case MONSTER_TARGET_ARROW_POSITION_Z -> Math.round(this.targetArrowPos_78.z);
-
-      default -> super.getStat(statIndex);
+  public int getStatusEffectChance(final AttackType attackType) {
+    return switch(attackType) {
+      case PHYSICAL, DRAGOON_MAGIC_STATUS_ITEMS -> this.spell_94.statusChance_07;
+      case ITEM_MAGIC -> this.onHitStatusChance_44;
     };
   }
 
   @Override
-  public void setStat(final BattleEntityStat statIndex, final int value) {
+  public int getStatusEffectStatus(final AttackType attackType) {
+    return switch(attackType) {
+      case PHYSICAL, DRAGOON_MAGIC_STATUS_ITEMS -> this.spell_94.statusType_09;
+      default -> throw new RuntimeException("Not implemented");
+    };
+  }
+
+  @Override
+  public int getSpecialEffectStat(final AttackType attackType) {
+    return switch(attackType) {
+      case PHYSICAL, DRAGOON_MAGIC_STATUS_ITEMS -> this.spell_94.flags_01;
+      default -> throw new RuntimeException("Not implemented");
+    };
+  }
+
+  @Override
+  public int getSpecialEffectMask(final AttackType attackType) {
+    return switch(attackType) {
+      case PHYSICAL, DRAGOON_MAGIC_STATUS_ITEMS -> 0xf0;
+      case ITEM_MAGIC -> 0x80;
+    };
+  }
+
+  @Override
+  public void getStat(final BattleEntityStat statIndex, final Param out) {
     switch(statIndex) {
-      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value;
-      case _54 -> this._70 = value;
-      case MONSTER_ELEMENT -> this.element = Element.fromFlag(value).get();
-      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value);
-      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value;
-      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.x = value;
-      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.y = value;
-      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.z = value;
+      case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT, MONSTER_ELEMENT -> out.set(this.element.flag);
+
+      case MONSTER_DAMAGE_REDUCTION -> out.set(this.damageReductionFlags_6e);
+      case MONSTER_ELEMENTAL_IMMUNITY -> out.set(this.monsterElementalImmunity_74.pack());
+      case MONSTER_STATUS_RESIST_FLAGS -> out.set(this.monsterStatusResistFlag_76);
+      case MONSTER_TARGET_ARROW_POSITION_X -> out.set(Math.round(this.targetArrowPos_78.x));
+      case MONSTER_TARGET_ARROW_POSITION_Y -> out.set(Math.round(this.targetArrowPos_78.y));
+      case MONSTER_TARGET_ARROW_POSITION_Z -> out.set(Math.round(this.targetArrowPos_78.z));
+
+      default -> super.getStat(statIndex, out);
+    };
+  }
+
+  @Override
+  public void setStat(final BattleEntityStat statIndex, final Param value) {
+    switch(statIndex) {
+      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value.get();
+      case MONSTER_ELEMENT -> this.element = Element.fromFlag(value.get()).get();
+      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value.get());
+      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value.get();
+      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.x = value.get();
+      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.y = value.get();
+      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.z = value.get();
 
       default -> super.setStat(statIndex, value);
     }

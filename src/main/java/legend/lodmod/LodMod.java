@@ -1,6 +1,8 @@
 package legend.lodmod;
 
-import legend.core.GameEngine;
+import legend.core.gpu.Rect4i;
+import legend.core.gpu.VramTextureLoader;
+import legend.core.gpu.VramTextureSingle;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
@@ -19,6 +21,8 @@ import legend.game.characters.FractionalStat;
 import legend.game.characters.FractionalStatMod;
 import legend.game.characters.FractionalStatModConfig;
 import legend.game.characters.FractionalStatModType;
+import legend.game.characters.RegisterCharacterTemplatesEvent;
+import legend.game.characters.RegisterLevelUpActionsEvent;
 import legend.game.characters.StatModType;
 import legend.game.characters.StatModTypeRegistryEvent;
 import legend.game.characters.StatType;
@@ -42,6 +46,9 @@ import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.GatherBattleActionsEvent;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.game.inventory.EquipmentRegistryEvent;
+import legend.game.inventory.EquipmentTypes;
+import legend.game.inventory.GatherCharacterEquipmentTypesEvent;
+import legend.game.inventory.GatherEquipmentTypesEvent;
 import legend.game.inventory.GoodsRegistryEvent;
 import legend.game.inventory.IconMapEvent;
 import legend.game.inventory.IconSet;
@@ -68,25 +75,38 @@ import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.scripting.ScriptState;
-import legend.game.types.SpellStats0c;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
+import legend.game.tim.Tim;
+import legend.game.types.EquipmentSlot;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import org.apache.commons.lang3.stream.Streams;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
+import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
-import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
@@ -102,7 +122,7 @@ public class LodMod {
 
   public static final RegistryDelegate<CampaignType> RETAIL_CAMPAIGN_TYPE = CAMPAIGN_TYPE_REGISTRAR.register("retail", RetailCampaignType::new);
 
-  private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
+  private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(REGISTRIES.inputActions, MOD_ID);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_OPEN_INVENTORY = INPUT_ACTION_REGISTRAR.register("general_open_inventory", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_GENERAL_MOVE_UP = INPUT_ACTION_REGISTRAR.register("general_move_up", InputAction.make().visible().editable().useMovementDeadzone().build());
@@ -135,7 +155,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPELLS = INPUT_ACTION_REGISTRAR.register("bttl_spells", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_OPTIONS = INPUT_ACTION_REGISTRAR.register("bttl_options", InputAction::editable);
 
-  private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statTypes, MOD_ID);
+  private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_TYPE_REGISTRAR = new Registrar<>(REGISTRIES.statTypes, MOD_ID);
   public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_TYPE_REGISTRAR.register("hp", VitalsStatType::new);
   public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_TYPE_REGISTRAR.register("mp", VitalsStatType::new);
   public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_TYPE_REGISTRAR.register("sp", VitalsStatType::new);
@@ -145,15 +165,21 @@ public class LodMod {
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("magic_attack", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("defense", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("magic_defense", UnaryStatType::new);
-  public static final RegistryDelegate<StatType<UnaryStat>> AVOID_STAT = STAT_TYPE_REGISTRAR.register("avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_HIT_STAT = STAT_TYPE_REGISTRAR.register("attack_hit", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_HIT_STAT = STAT_TYPE_REGISTRAR.register("magic_hit", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> ATTACK_AVOID_STAT = STAT_TYPE_REGISTRAR.register("attack_avoid", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> MAGIC_AVOID_STAT = STAT_TYPE_REGISTRAR.register("magic_avoid", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> DRAGOON_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("dragoon_attack", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> DRAGOON_MAGIC_ATTACK_STAT = STAT_TYPE_REGISTRAR.register("dragoon_magic_attack", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> DRAGOON_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("dragoon_defense", UnaryStatType::new);
+  public static final RegistryDelegate<StatType<UnaryStat>> DRAGOON_MAGIC_DEFENSE_STAT = STAT_TYPE_REGISTRAR.register("dragoon_magic_defense", UnaryStatType::new);
   public static final RegistryDelegate<StatType<UnaryStat>> GUARD_HEAL_STAT = STAT_TYPE_REGISTRAR.register("guard_heal", UnaryStatType::new);
 
-  private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.statModTypes, MOD_ID);
+  private static final Registrar<StatModType<?, ?, ?>, StatModTypeRegistryEvent> STAT_MOD_TYPE_REGISTRAR = new Registrar<>(REGISTRIES.statModTypes, MOD_ID);
   public static final RegistryDelegate<StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig>> UNARY_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("unary", UnaryStatModType::new);
   public static final RegistryDelegate<StatModType<FractionalStat, FractionalStatMod, FractionalStatModConfig>> FRACTIONAL_STAT_MOD_TYPE = STAT_MOD_TYPE_REGISTRAR.register("fractional", FractionalStatModType::new);
 
-  private static final Registrar<Element, ElementRegistryEvent> ELEMENT_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.elements, MOD_ID);
+  private static final Registrar<Element, ElementRegistryEvent> ELEMENT_REGISTRAR = new Registrar<>(REGISTRIES.elements, MOD_ID);
   public static final RegistryDelegate<Element> NO_ELEMENT = ELEMENT_REGISTRAR.register("none", NoElement::new);
   public static final RegistryDelegate<Element> WATER_ELEMENT = ELEMENT_REGISTRAR.register("water", WaterElement::new);
   public static final RegistryDelegate<Element> EARTH_ELEMENT = ELEMENT_REGISTRAR.register("earth", EarthElement::new);
@@ -164,7 +190,7 @@ public class LodMod {
   public static final RegistryDelegate<Element> WIND_ELEMENT = ELEMENT_REGISTRAR.register("wind", WindElement::new);
   public static final RegistryDelegate<Element> FIRE_ELEMENT = ELEMENT_REGISTRAR.register("fire", FireElement::new);
 
-  private static final Registrar<BattleEntityType, BattleEntityTypeRegistryEvent> BENT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.battleEntityTypes, MOD_ID);
+  private static final Registrar<BattleEntityType, BattleEntityTypeRegistryEvent> BENT_TYPE_REGISTRAR = new Registrar<>(REGISTRIES.battleEntityTypes, MOD_ID);
   public static final RegistryDelegate<BattleEntityType> PLAYER_TYPE = BENT_TYPE_REGISTRAR.register("player", BattleEntityType::new);
   public static final RegistryDelegate<BattleEntityType> MONSTER_TYPE = BENT_TYPE_REGISTRAR.register("monster", BattleEntityType::new);
 
@@ -220,14 +246,14 @@ public class LodMod {
 
   public static final String[] SPELL_IDS = {
     "flameshot", "explosion", "final_burst", "red_eyed_dragon", "divine_dg_cannon", "wing_blaster", "gaspless", "blossom_storm",
-    "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "w_silver_dragon", "wing_blaster", "astral_drain",
+    "jade_dragon", "divine_dg_ball", "star_children", "moon_light", "gates_of_heaven", "white_silver_dragon", "wing_blaster", "astral_drain",
     "death_dimension", "gaspless", "demons_gate", "dark_dragon", "atomic_mind", "thunder_kid", "thunder_god", "violet_dragon",
     "freezing_ring", "rainbow_breath", "rose_storm", "diamond_dust", "blue_sea_dragon", "grand_stream", "meteor_strike", "golden_dragon",
     "spell32", "spell33", "spell34", "spell35", "spell36", "spell37", "spell38", "spell39",
     "spell40", "spell41", "spell42", "spell43", "spell44", "spell45", "spell46", "spell47",
     "spell48", "spell49", "spell50", "spell51", "spell52", "spell53", "spell54", "spell55",
     "spell56", "spell57", "spell58", "spell59", "spell60", "spell61", "spell62", "spell63",
-    "spell64", "star_children", "moon_light", "gates_of_heaven", "spell68", "spell69", "spell70", "spell71",
+    "spell64", "spell65", "spell66", "spell67", "spell68", "spell69", "spell70", "spell71",
     "spell72", "spell73", "spell74", "spell75", "spell76", "spell77", "spell78", "spell79",
     "spell80", "spell81", "spell82", "spell83", "spell84", "spell85", "spell86", "spell87",
     "spell88", "spell89", "spell90", "spell91", "spell92", "spell93", "spell94", "spell95",
@@ -377,6 +403,16 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerCharacterTemplates(final RegisterCharacterTemplatesEvent event) {
+    LodCharacterTemplates.register(event);
+  }
+
+  @EventListener
+  public static void registerLevelUpActions(final RegisterLevelUpActionsEvent event) {
+    LodLevelUpActions.register(event);
+  }
+
+  @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     LodItems.register(event);
   }
@@ -403,11 +439,7 @@ public class LodMod {
 
   @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
-    for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
-      if(spellStats_800fa0b8[spellId] == null) {
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(id(SPELL_IDS[spellId]), Loader.loadFile("spells/" + spellId + ".dspl"));
-      }
-    }
+    LodSpells.register(event);
   }
 
   @EventListener
@@ -445,7 +477,7 @@ public class LodMod {
     event.addStat(MAGIC_ATTACK_STAT.get());
     event.addStat(DEFENSE_STAT.get());
     event.addStat(MAGIC_DEFENSE_STAT.get());
-    event.addStat(AVOID_STAT.get());
+    event.addStat(ATTACK_AVOID_STAT.get());
     event.addStat(MAGIC_AVOID_STAT.get());
   }
 
@@ -470,6 +502,171 @@ public class LodMod {
   }
 
   @EventListener
+  public static void gatherEquipmentTypes(final GatherEquipmentTypesEvent event) {
+    event.add(LodEquipment.ACTIVE_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.AMULET.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.ANGEL_ROBE.get(), EquipmentTypes.LIGHT);
+    event.add(LodEquipment.ANGEL_SCARF.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.ARMET.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.ARMOR_OF_LEGEND.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.ARMOR_OF_YORE.get(), EquipmentTypes.ARMOR_OF_YORE);
+    event.add(LodEquipment.ARROW_OF_FORCE.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.ATTACK_BADGE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.AXE.get(), EquipmentTypes.AXE);
+    event.add(LodEquipment.BANDANA.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.BANDITS_RING.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.BANDITS_SHOES.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.BASHER.get(), EquipmentTypes.HAMMER);
+    event.add(LodEquipment.BASTARD_SWORD.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.BATTLE_AXE.get(), EquipmentTypes.AXE);
+    event.add(LodEquipment.BEAST_FANG.get(), EquipmentTypes.HAND);
+    event.add(LodEquipment.BEMUSING_ARROW.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.BLUE_DG_ARMOR.get(), EquipmentTypes.MERU);
+    event.add(LodEquipment.BLUE_SEA_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.BRACELET.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.BRASS_KNUCKLE.get(), EquipmentTypes.HAND);
+    event.add(LodEquipment.BRAVERY_AMULET.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.BREAST_PLATE.get(), EquipmentTypes.KONGOL);
+    event.add(LodEquipment.BROAD_SWORD.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.CAPE.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.CHAIN_MAIL.get(), EquipmentTypes.HEAVY);
+    event.add(LodEquipment.CLAYMORE.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.CLOTHES.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.COMBAT_SHOES.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.DANCERS_RING.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.DANCERS_SHOES.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.DANCING_DAGGER.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.DARK_DG_ARMOR.get(), EquipmentTypes.ROSE);
+    event.add(LodEquipment.DARKNESS_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.DEMON_STILETTO.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.DESTONE_AMULET.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.DESTROYER_MACE.get(), EquipmentTypes.HAND);
+    event.add(LodEquipment.DETONATE_ARROW.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.DIAMOND_CLAW.get(), EquipmentTypes.HAND);
+    event.add(LodEquipment.DISCIPLE_VEST.get(), EquipmentTypes.HASCHEL);
+    event.add(LodEquipment.DRAGON_BUSTER.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.DRAGON_HELM.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.DRAGON_SHIELD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.ELUDE_CLOAK.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.EMERALD_EARRING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.ENERGY_GIRDLE.get(), EquipmentTypes.HASCHEL);
+    event.add(LodEquipment.FAIRY_SWORD.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.FAKE_POWER_WRIST.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.FAKE_SHIELD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.FALCHION.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.FELT_HAT.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.FLAMBERGE.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.GIGANTO_ARMOR.get(), EquipmentTypes.KONGOL);
+    event.add(LodEquipment.GIGANTO_HELM.get(), EquipmentTypes.KONGOL);
+    event.add(LodEquipment.GIGANTO_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.GLADIUS.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.GLAIVE.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.GOLD_DG_ARMOR.get(), EquipmentTypes.KONGOL);
+    event.add(LodEquipment.GOLDEN_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.GREAT_AXE.get(), EquipmentTypes.AXE);
+    event.add(LodEquipment.GUARD_BADGE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.HALBERD.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.HEAT_BLADE.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.HEAVY_MACE.get(), EquipmentTypes.HAMMER);
+    event.add(LodEquipment.HOLY_ANKH.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.INDORAS_AXE.get(), EquipmentTypes.AXE);
+    event.add(LodEquipment.IRON_KNEEPIECE.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.IRON_KNUCKLE.get(), EquipmentTypes.HAND);
+    event.add(LodEquipment.JADE_DG_ARMOR.get(), EquipmentTypes.LAVITZ, EquipmentTypes.ALBERT);
+    event.add(LodEquipment.JADE_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.JEWELED_CROWN.get(), EquipmentTypes.LIGHT);
+    event.add(LodEquipment.KNIGHT_HELM.get(), EquipmentTypes.HEAVY);
+    event.add(LodEquipment.KNIGHT_SHIELD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.LANCE.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.LEATHER_ARMOR.get(), EquipmentTypes.HEAVY);
+    event.add(LodEquipment.LEATHER_BOOTS.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.LEATHER_JACKET.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.LEATHER_SHOES.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.LEGEND_CASQUE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.LION_FUR.get(), EquipmentTypes.KONGOL);
+    event.add(LodEquipment.LONG_BOW.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.MACE.get(), EquipmentTypes.HAMMER);
+    event.add(LodEquipment.MAGE_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.MAGIC_EGO_BELL.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.MAGICAL_GREAVES.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.MAGICAL_HAT.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.MAGICAL_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.MASTERS_VEST.get(), EquipmentTypes.HASCHEL);
+    event.add(LodEquipment.MIND_CRUSH.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.MORNING_STAR.get(), EquipmentTypes.HAMMER);
+    event.add(LodEquipment.PANIC_GUARD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.PARTISAN.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.PHANTOM_SHIELD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.PHOENIX_PLUME.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.PHYSICAL_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.PLATE_MAIL.get(), EquipmentTypes.HEAVY);
+    event.add(LodEquipment.PLATINUM_COLLAR.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.POISON_GUARD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.POWER_WRIST.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.PRETTY_HAMMER.get(), EquipmentTypes.HAMMER);
+    event.add(LodEquipment.PROTECTOR.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.RAINBOW_DRESS.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.RAINBOW_EARRING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.RAPIER.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.RED_DG_ARMOR.get(), EquipmentTypes.DART);
+    event.add(LodEquipment.RED_EYE_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.ROBE.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.ROSES_HAIR_BAND.get(), EquipmentTypes.ROSE);
+    event.add(LodEquipment.RUBY_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.SAGES_CLOAK.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.SAINT_ARMOR.get(), EquipmentTypes.HEAVY);
+    event.add(LodEquipment.SALLET.get(), EquipmentTypes.MALE);
+    event.add(LodEquipment.SAPPHIRE_PIN.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.SATORI_VEST.get(), EquipmentTypes.HASCHEL);
+    event.add(LodEquipment.SCALE_ARMOR.get(), EquipmentTypes.HEAVY);
+    event.add(LodEquipment.SHADOW_CUTTER.get(), EquipmentTypes.SHORTSWORD);
+    event.add(LodEquipment.SHORT_BOW.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.SILVER_DG_ARMOR.get(), EquipmentTypes.SHANA, EquipmentTypes.MIRANDA);
+    event.add(LodEquipment.SILVER_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.SILVER_VEST.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.SOFT_BOOTS.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.SOUL_EATER.get(), EquipmentTypes.LONGSWORD);
+    event.add(LodEquipment.SOUL_HEADBAND.get(), EquipmentTypes.HASCHEL);
+    event.add(LodEquipment.SPARKLE_ARROW.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.SPARKLE_DRESS.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.SPEAR.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.SPEAR_OF_TERROR.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.SPIRIT_CLOAK.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.SPIRIT_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.SPIRITUAL_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.STARDUST_BOOTS.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.STUN_GUARD.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.TALISMAN.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.THERAPY_RING.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.THUNDER_FIST.get(), EquipmentTypes.HAND);
+    event.add(LodEquipment.TIARA.get(), EquipmentTypes.MEDIUM, EquipmentTypes.FEMALE);
+    event.add(LodEquipment.TOMAHAWK.get(), EquipmentTypes.AXE);
+    event.add(LodEquipment.TWISTER_GLAIVE.get(), EquipmentTypes.POLEARM);
+    event.add(LodEquipment.ULTIMATE_WARGOD.get(), EquipmentTypes.ADDITIONS);
+    event.add(LodEquipment.VIOLET_DG_ARMOR.get(), EquipmentTypes.HASCHEL);
+    event.add(LodEquipment.VIOLET_STONE.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.VIRULENT_ARROW.get(), EquipmentTypes.BOW);
+    event.add(LodEquipment.WAR_HAMMER.get(), EquipmentTypes.HAMMER);
+    event.add(LodEquipment.WARGOD_CALLING.get(), EquipmentTypes.ADDITIONS);
+    event.add(LodEquipment.WARGODS_AMULET.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.WARGODS_SASH.get(), EquipmentTypes.NEUTRAL);
+    event.add(LodEquipment.WARRIOR_DRESS.get(), EquipmentTypes.HASCHEL);
+  }
+
+  @EventListener
+  public static void gatherCharacterEquipmentTypes(final GatherCharacterEquipmentTypesEvent event) {
+    event.add(LodCharacterTemplates.DART.get(), EquipmentTypes.DART, EquipmentTypes.LONGSWORD, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS, EquipmentTypes.HEAVY, EquipmentTypes.ARMOR_OF_YORE);
+    event.add(LodCharacterTemplates.LAVITZ.get(), EquipmentTypes.LAVITZ, EquipmentTypes.POLEARM, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS, EquipmentTypes.HEAVY, EquipmentTypes.ARMOR_OF_YORE);
+    event.add(LodCharacterTemplates.SHANA.get(), EquipmentTypes.SHANA, EquipmentTypes.BOW, EquipmentTypes.NEUTRAL, EquipmentTypes.FEMALE, EquipmentTypes.MEDIUM, EquipmentTypes.LIGHT);
+    event.add(LodCharacterTemplates.ROSE.get(), EquipmentTypes.ROSE, EquipmentTypes.SHORTSWORD, EquipmentTypes.NEUTRAL, EquipmentTypes.FEMALE, EquipmentTypes.ADDITIONS, EquipmentTypes.MEDIUM);
+    event.add(LodCharacterTemplates.HASCHEL.get(), EquipmentTypes.HASCHEL, EquipmentTypes.HAND, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS);
+    event.add(LodCharacterTemplates.ALBERT.get(), EquipmentTypes.ALBERT, EquipmentTypes.POLEARM, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS, EquipmentTypes.HEAVY, EquipmentTypes.ARMOR_OF_YORE);
+    event.add(LodCharacterTemplates.MERU.get(), EquipmentTypes.MERU, EquipmentTypes.HAMMER, EquipmentTypes.NEUTRAL, EquipmentTypes.FEMALE, EquipmentTypes.ADDITIONS);
+    event.add(LodCharacterTemplates.KONGOL.get(), EquipmentTypes.KONGOL, EquipmentTypes.AXE, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS, EquipmentTypes.ARMOR_OF_YORE);
+    event.add(LodCharacterTemplates.MIRANDA.get(), EquipmentTypes.MIRANDA, EquipmentTypes.BOW, EquipmentTypes.NEUTRAL, EquipmentTypes.FEMALE, EquipmentTypes.MEDIUM, EquipmentTypes.LIGHT);
+  }
+
+  @EventListener
   public static void gatherBattleActions(final GatherBattleActionsEvent event) {
     final PlayerBattleEntity player = event.player;
     int sort = 100;
@@ -488,7 +685,7 @@ public class LodMod {
       event.actions.put(LodBattleActions.ITEMS.get(), sort);
       sort += 100;
 
-      if(CHARACTER_ADDITIONS[player.charId_272].length != 0) {
+      if(!player.character.getUnlockedAdditions().isEmpty()) {
         event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
         sort += 100;
       }
@@ -518,7 +715,7 @@ public class LodMod {
       }
     }
 
-    final int legacyFlags = battleState_8006e398.statusConditions_00[player.bentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
+    final int legacyFlags = battleState_8006e398.statusConditions_00[player.allBentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
     disableRetailBattleActions(legacyFlags, event.disabledActions);
 
     if((player.status_0e & 0x20) != 0) {
@@ -648,6 +845,53 @@ public class LodMod {
     event.add(new ItemStack(LodItems.MOON_SERENADE.get()));
     event.add(new ItemStack(LodItems.HEALING_RAIN.get()));
     event.add(new ItemStack(LodItems.HEALING_BREEZE.get()));
+  }
+
+  private static final String[] DRAGOON_SPIRIT_ICONS = {
+    FIRE_ELEMENT.getId().entryId(),
+    WIND_ELEMENT.getId().entryId(),
+    LIGHT_ELEMENT.getId().entryId(),
+    DARK_ELEMENT.getId().entryId(),
+    THUNDER_ELEMENT.getId().entryId(),
+    WATER_ELEMENT.getId().entryId(),
+    EARTH_ELEMENT.getId().entryId(),
+    DIVINE_ELEMENT.getId().entryId(),
+  };
+
+  @EventListener
+  public static void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
+    // Dragoon spirit icons
+    final List<FileData> files = Loader.loadDirectory("SECT/DRGN0.BIN/4113");
+    final Tim tim0 = new Tim(files.get(0));
+    final Tim tim5 = new Tim(files.get(5));
+    final VramTextureSingle tex = VramTextureLoader.textureFromTim(tim0);
+    final VramTextureSingle[] cluts = VramTextureLoader.palettesFromTim(tim5);
+
+    try(final MemoryStack stack = stackPush()) {
+      final ByteBuffer buffer = stack.malloc(16 * 48 * 4);
+      buffer.order(ByteOrder.LITTLE_ENDIAN);
+      final IntBuffer intBuffer = buffer.asIntBuffer();
+
+      // Spirits
+      for(int spiritIndex = 0; spiritIndex < 8; spiritIndex++) {
+        tex.applyPalette(cluts[8 + spiritIndex], new Rect4i(80, 64, 16, 48), intBuffer);
+
+        for(int frameIndex = 0; frameIndex < 3; frameIndex++) {
+          final byte[] frame = new byte[16 * 16 * 4];
+          buffer.get(frameIndex * frame.length, frame, 0, frame.length);
+          event.add(id(DRAGOON_SPIRIT_ICONS[spiritIndex] + '_' + frameIndex), new Image(frame, 16, 16));
+        }
+      }
+
+      // DD overlay
+      for(int i = 0; i < 2; i++) {
+        tex.applyPalette(cluts[8], new Rect4i(80 + i * 8, 112, 8, 16), intBuffer);
+
+        final byte[] frame = new byte[8 * 16 * 4];
+        buffer.get(0, frame);
+        event.add(id(DIVINE_ELEMENT.getId().entryId() + "_overlay_" + i), new Image(frame, 8, 16));
+      }
+    }
   }
 
   @EventListener
