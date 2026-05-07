@@ -824,10 +824,16 @@ public class PostBattleScreen extends MenuScreen {
 
     this.drawTwoDigitNumber(x + 108, y + 16, character.level_12);
 
-    final int xp = character.getXpToNextLevel();
-    this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, character.xp_00);
-    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-    this.drawNextLevelXp(x + 84, y + 40, xp);
+    final int nextLevelXp;
+    if(character.level_12 < CONFIG.getConfig(MAX_LEVEL.get())) {
+      nextLevelXp = character.getXpToNextLevel();
+    } else {
+      nextLevelXp = 0;
+    }
+
+    this.drawSixDigitNumber(x + 76 - this.getXpWidth(nextLevelXp), y + 40, character.xp_00);
+    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(nextLevelXp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawNextLevelXp(x + 84, y + 40, nextLevelXp);
 
     if(character.hasDragoon()) {
       this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
@@ -838,10 +844,16 @@ public class PostBattleScreen extends MenuScreen {
 
       this.drawTwoDigitNumber(x + 108, y + 28, character.dlevel_13);
 
-      final int dxp = character.getDxpToNextLevel();
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
-      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawNextLevelXp(x + 84, y + 52, dxp);
+      final int nextLevelDxp;
+      if(character.dlevel_13 < CONFIG.getConfig(MAX_DRAGOON_LEVEL.get())) {
+        nextLevelDxp = character.getDxpToNextLevel();
+      } else {
+        nextLevelDxp = 0;
+      }
+
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(nextLevelDxp), y + 52, character.dlevelXp_0e);
+      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(nextLevelDxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawNextLevelXp(x + 84, y + 52, nextLevelDxp);
     }
   }
 
