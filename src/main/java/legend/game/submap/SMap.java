@@ -3837,7 +3837,8 @@ public class SMap extends EngineState<SMap> {
    */
   @Method(0x800e5534L)
   public void mapTransition(final int newCut, final int newScene) {
-    if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
+    // Some maps bring up screens like the char swap screen using this method as soon as the map script loads, so we need to allow transitioning when still fading in
+    if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) {
       return;
     }
 
