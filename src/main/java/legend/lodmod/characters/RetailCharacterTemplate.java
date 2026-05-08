@@ -194,13 +194,13 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     event.statsToAdd.put(MAGIC_DEFENSE_STAT.get(), this.getMagicDefenseToAdd(character.level_12));
     event.statsToAdd.put(SPEED_STAT.get(), this.getSpeedToAdd(character.level_12));
 
+    character.level_12 += event.levelsToAdd;
+
     EVENTS.postEvent(event);
 
     for(final var entry : event.statsToAdd.object2IntEntrySet()) {
       this.addToStat(character, entry.getKey(), entry.getIntValue());
     }
-
-    character.level_12 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
   }
@@ -216,13 +216,13 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     event.statsToAdd.put(DRAGOON_MAGIC_ATTACK_STAT.get(), this.getDragoonMagicAttackToAdd(character.dlevel_13));
     event.statsToAdd.put(DRAGOON_MAGIC_DEFENSE_STAT.get(), this.getDragoonMagicDefenseToAdd(character.dlevel_13));
 
+    character.dlevel_13 += event.levelsToAdd;
+
     EVENTS.postEvent(event);
 
     for(final var entry : event.statsToAdd.object2IntEntrySet()) {
       this.addToStat(character, entry.getKey(), entry.getIntValue());
     }
-
-    character.dlevel_13 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
   }
