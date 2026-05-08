@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -188,6 +188,7 @@
+ yield
+ return
+ LABEL_11:
++jmp_cmp ==, var[49], 0x0, inl[:LABEL_19]
+ yield
+ mov var[49], stor[9]
+ mov 0x0, stor[10]
