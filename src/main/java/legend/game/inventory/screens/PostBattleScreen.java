@@ -447,11 +447,7 @@ public class PostBattleScreen extends MenuScreen {
             this.fadeToMenuState(MenuState.UNLOAD_18);
           } else {
             // Some items remaining
-            resizeDisplay(384, 240);
-            renderMode = EngineState.RenderMode.LEGACY;
-            deallocateRenderables(0xff);
-            menuStack.popScreen();
-            menuStack.pushScreen(new TooManyItemsScreen());
+            this.fadeToMenuState(MenuState.TRANSITION_TO_TOO_MANY_ITEMS);
           }
         }
 
@@ -479,6 +475,14 @@ public class PostBattleScreen extends MenuScreen {
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         menuStack.popScreen();
         this.deleteResultsScreenObjects();
+      }
+
+      case TRANSITION_TO_TOO_MANY_ITEMS -> {
+        resizeDisplay(384, 240);
+        renderMode = EngineState.RenderMode.LEGACY;
+        deallocateRenderables(0xff);
+        menuStack.popScreen();
+        menuStack.pushScreen(new TooManyItemsScreen());
       }
     }
 
@@ -993,5 +997,6 @@ public class PostBattleScreen extends MenuScreen {
     FADE_OUT_16,
     WAIT_FOR_FADE_OUT_17,
     UNLOAD_18,
+    TRANSITION_TO_TOO_MANY_ITEMS,
   }
 }
