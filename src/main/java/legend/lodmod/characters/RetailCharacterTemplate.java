@@ -360,7 +360,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public int[] getDragoonSpBar(final int index) {
+  public int[] getSpBarColours(final int index) {
     return this.spBarColours[index % this.spBarColours.length];
   }
 }

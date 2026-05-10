@@ -98,5 +98,5 @@ public abstract class CharacterTemplate extends RegistryEntry {
     }
   }
 
-  public abstract int[] getDragoonSpBar(final int index);
+  public abstract int[] getSpBarColours(final int index);
 }
