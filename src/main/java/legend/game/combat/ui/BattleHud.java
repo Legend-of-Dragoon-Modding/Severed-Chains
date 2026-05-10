@@ -678,8 +678,7 @@ public class BattleHud {
               final int right = left + Math.max(0, spBarW * 35 / 100);
               final int bottom = top + 3;
 
-              final int[][] playerSpBarColours = player.character.template.getDragoonSpBar();
-              final int[] spBarColours = playerSpBarColours[spBarIndex % playerSpBarColours.length];
+              final int[] spBarColours = player.character.template.getDragoonSpBar(spBarIndex);
 
               this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f + i * 0.1f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
