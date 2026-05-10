@@ -158,6 +158,7 @@ diff,SECT/DRGN21.BIN/543/1,scripts/DRGN21/543/1.diff,"Kazas Slums, fix Dart fall
 diff,SECT/DRGN21.BIN/585/1,scripts/DRGN21/585/1.diff,"Black Castle, use registry id for item shop, GH#2569"
 diff,SECT/DRGN21.BIN/597/1,scripts/DRGN21/597/1.diff,"Kazas Garbage Room, GH#1078"
 diff,SECT/DRGN21.BIN/651/1,scripts/DRGN21/651/1.diff,"Obstacle course keybind, GH#2681"
+diff,SECT/DRGN21.BIN/651/15,scripts/DRGN21/651/15.diff,"Obstacle course janky text, GH#2653"
 diff,SECT/DRGN21.BIN/687/6,scripts/DRGN21/687/6.diff,"Black Castle, Kongol pre-fight cutscene, widescreen patch, GH#2139"
 diff,SECT/DRGN21.BIN/693/5,scripts/DRGN21/693/5.diff,"Hoax aftermath cutscene, fallen knight, widescreen patch, GH#2136"
 diff,SECT/DRGN21.BIN/693/6,scripts/DRGN21/693/6.diff,"Hoax aftermath cutscene, reporting knight, widescreen patch, GH#2136"
