@@ -269,7 +269,7 @@ public class ScriptPatcher {
   }
 
   private byte[] recompile(final String name, final String patched) {
-    return SCRIPTS.compile(name, patched);
+    return SCRIPTS.assemble(name, patched);
   }
 
   private String resolvePatchConfigName(final String diffName) {
