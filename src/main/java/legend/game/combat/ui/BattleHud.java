@@ -88,7 +88,7 @@ import static legend.lodmod.LodBattleActions.ITEMS;
 import static legend.lodmod.LodBattleActions.SPECIAL;
 import static legend.lodmod.LodBattleActions.SPELLS;
 import static legend.lodmod.LodBattleActions.TRANSFORM;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ADDITIONS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ESCAPE;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_GUARD;
@@ -443,7 +443,7 @@ public class BattleHud {
           this.battleUiBackground = new UiBox(16, 182, 288, 40);
         }
 
-        this.battleUiBackground.render(CONFIG.getConfig(UI_COLOUR.get()));
+        this.battleUiBackground.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
       }
 
       if(this.nameAndPortraitObj == null) {

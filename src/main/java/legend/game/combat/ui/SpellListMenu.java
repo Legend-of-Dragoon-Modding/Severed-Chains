@@ -18,7 +18,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderText;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public class SpellListMenu extends ListMenu {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -125,7 +125,7 @@ public class SpellListMenu extends ListMenu {
           this.description = new UiBox(44, 156, 232, 14);
         }
 
-        this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
+        this.description.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);

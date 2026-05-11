@@ -153,6 +153,7 @@ diff,SECT/DRGN21.BIN/426/7,scripts/DRGN21/426/7.diff,"Lohan Entrance, wounded kn
 diff,SECT/DRGN21.BIN/429/7,scripts/DRGN21/429/7.diff,"Lohan Market, fix child stuck off-screen, GH#2137"
 diff,SECT/DRGN21.BIN/429/8,scripts/DRGN21/429/8.diff,"Lohan Market, fix adult stuck off-screen, GH#2137"
 diff,SECT/DRGN21.BIN/453/1,scripts/DRGN21/453/1.diff,"Lohan Hero Competition shop"
+diff,SECT/DRGN21.BIN/477/1,scripts/DRGN21/477/1.diff,"Widen selection textbox to make selection easier to see, GH#2658"
 diff,SECT/DRGN21.BIN/519/2,scripts/DRGN21/519/2.diff,"Kazas Entrance, fix warden rotation, GH#1853"
 diff,SECT/DRGN21.BIN/543/1,scripts/DRGN21/543/1.diff,"Kazas Slums, fix Dart falling down ladder hole, GH#1452"
 diff,SECT/DRGN21.BIN/585/1,scripts/DRGN21/585/1.diff,"Black Castle, use registry id for item shop, GH#2569"
