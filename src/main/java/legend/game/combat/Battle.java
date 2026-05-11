@@ -8708,7 +8708,7 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_800f7e98
     int effect = -1;
-    if(simpleRand() * 101 >> 16 < effectChance) {
+    if(seed_800fa754.nextInt(100) < effectChance) {
       final int statusType = attacker.getStatusEffectStatus(attackType);
 
       if((statusType & 0xff) != 0) {

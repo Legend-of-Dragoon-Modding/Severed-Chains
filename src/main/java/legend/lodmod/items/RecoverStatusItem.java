@@ -124,17 +124,15 @@ public class RecoverStatusItem extends BattleItem {
   @Override
   public int getSpecialEffect(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     int effect = -1;
-    if(simpleRand() * 101 >> 16 < 101) {
-      if((this.status & 0xff) != 0) {
-        int statusIndex;
-        for(statusIndex = 0; statusIndex < 8; statusIndex++) {
-          if((this.status & (0x80 >> statusIndex)) != 0) {
-            break;
-          }
+    if((this.status & 0xff) != 0) {
+      int statusIndex;
+      for(statusIndex = 0; statusIndex < 8; statusIndex++) {
+        if((this.status & (0x80 >> statusIndex)) != 0) {
+          break;
         }
-
-        effect = 0x80 >> statusIndex;
       }
+
+      effect = 0x80 >> statusIndex;
     }
 
     return effect;
