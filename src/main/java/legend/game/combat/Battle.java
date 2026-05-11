@@ -6251,9 +6251,9 @@ public class Battle extends EngineState<Battle> {
       final BttlLightStruct84 a1 = this.lights_800c692c[i];
       final BattleStruct14 a0 = ambiance._10[i];
       a1.light_00.direction_00.set(a0.lightDirection_00);
-      a1.light_00.r_0c = a0.lightColour_0a.x / (float)0x100;
-      a1.light_00.g_0d = a0.lightColour_0a.y / (float)0x100;
-      a1.light_00.b_0e = a0.lightColour_0a.z / (float)0x100;
+      a1.light_00.r_0c = a0.lightColour_0a.x / (float)0xff;
+      a1.light_00.g_0d = a0.lightColour_0a.y / (float)0xff;
+      a1.light_00.b_0e = a0.lightColour_0a.z / (float)0xff;
 
       if(a0.x_06 != 0 || a0.y_08 != 0) {
         a1._10.typeAndFlags_00 = 0x3;
@@ -6268,7 +6268,7 @@ public class Battle extends EngineState<Battle> {
       if(a0.y_12 != 0) {
         a1._4c.typeAndFlags_00 = 0x3;
         a1._4c.directionOrColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
-        a1._4c.directionOrColourSpeed_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
+        a1._4c.directionOrColourSpeed_10.set(a0._0d.x / (float)0xff, a0._0d.y / (float)0xff, a0._0d.z / (float)0xff);
         a1._4c.directionOrColourDest_28.x = a0.x_10;
         a1._4c.directionOrColourDest_28.y = a0.y_12;
       } else {
