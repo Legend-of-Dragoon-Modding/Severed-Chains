@@ -24,35 +24,28 @@ public class GoodsInventory implements Iterable<Good> {
 
   private final Set<Good> goods = new HashSet<>();
 
-  public Good give(final Good good) {
-    if(!this.has(good)) {
-      final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
+  public void give(final Good good) {
+    final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
 
-      if(!event.isCanceled()) {
-        this.goods.addAll(event.givenGoods);
-      }
+    if(!event.isCanceled()) {
+      this.goods.addAll(event.givenGoods);
     }
-
-    return good;
   }
 
-  public RegistryDelegate<Good> give(final RegistryDelegate<Good> good) {
+  public void give(final RegistryDelegate<Good> good) {
     if(!good.isValid()) {
       LOGGER.warn("Invalid good %s", good.getId());
-      return null;
+      return;
     }
 
     this.give(good.get());
-    return good;
   }
 
   public void take(final Good good) {
-    if(this.has(good)) {
-      final TakeGoodsEvent event = EVENTS.postEvent(new TakeGoodsEvent(this, good));
+    final TakeGoodsEvent event = EVENTS.postEvent(new TakeGoodsEvent(this, good));
 
-      if(!event.isCanceled()) {
-        event.takenGoods.forEach(this.goods::remove);
-      }
+    if(!event.isCanceled()) {
+      event.takenGoods.forEach(this.goods::remove);
     }
   }
 
@@ -90,10 +83,11 @@ public class GoodsInventory implements Iterable<Good> {
       final RegistryId id = id(GOODS_IDS[index * 32 + bit]);
       final RegistryDelegate<Good> good = REGISTRIES.goods.getEntry(id);
       final boolean set = (packed & 1 << bit) != 0;
+      final boolean has = this.has(good);
 
-      if(set) {
+      if(set && !has) {
         this.give(good);
-      } else {
+      } else if(!set && has) {
         this.take(good);
       }
     }
