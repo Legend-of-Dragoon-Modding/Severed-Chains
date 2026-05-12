@@ -8312,7 +8312,6 @@ public class Battle extends EngineState<Battle> {
       //LAB_800ef400
       player.stats.set(player.character.stats);
 
-      final UnaryStat speed = player.stats.getStat(SPEED_STAT.get());
       final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
       final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
       final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
@@ -8343,7 +8342,6 @@ public class Battle extends EngineState<Battle> {
           player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
           player.equipmentStatusResist_24 |= equipment.statusResist_08;
           player.equipmentAttack1_28 += equipment.attack1_0a;
-          speed.setRaw(speed.getRaw() + equipment.speed_0f);
           attack.setRaw(attack.getRaw() + equipment.attack2_10 + equipment.attack1_0a);
           magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
           defense.setRaw(defense.getRaw() + equipment.defence_12);
