@@ -26,6 +26,7 @@ import legend.game.types.Model124;
 import legend.lodmod.LodMod;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -523,95 +524,98 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Deprecated
-  public void setStat(final BattleEntityStat statIndex, final Param value) {
+  public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).setCurrent(value.get());
+      case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).setCurrent(value);
 
-      case STATUS -> this.status_0e = value.get();
+      case STATUS -> this.status_0e = value;
 
-      case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14 = value.get();
-//      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value.get();
+      case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14 = value;
+//      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value;
 
-      case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value.get());
-      case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value.get());
-      case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 = value.get();
-      case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value.get();
+      case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value);
+      case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value);
+      case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 = value;
+      case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value;
 
-      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value.get());
-      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value.get());
-      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value.get());
-      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value.get());
-      case ATTACK_HIT -> this.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(value.get());
-      case MAGIC_HIT -> this.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(value.get());
-      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(value.get());
-      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value.get());
-      case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value.get();
-      case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a = value.get();
-      case TURN_VALUE -> this.turnValue_4c = value.get();
-      case SPELL_ID -> {
-        if(value.isRegistryId()) {
-          this.spell_94 = REGISTRIES.spells.getEntry(value.getRegistryId()).get();
-        } else {
-          this.setActiveSpell(value.get());
-        }
-      }
-      case ITEM_ID -> this.item_d4 = new ItemStack(REGISTRIES.items.getEntry(value.getRegistryId()).get());
+      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value);
+      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value);
+      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value);
+      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value);
+      case ATTACK_HIT -> this.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(value);
+      case MAGIC_HIT -> this.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(value);
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(value);
+      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value);
+      case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value;
+      case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a = value;
+      case TURN_VALUE -> this.turnValue_4c = value;
+      case SPELL_ID -> this.setActiveSpell(value);
 
-      case GUARD -> this.guard_54 = value.get();
+      case GUARD -> this.guard_54 = value;
 
-      case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value.get();
-      case _62 -> this._80 = value.get();
-      case _63 -> this._82 = value.get();
-      case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value.get();
-      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value.get();
+      case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
+      case _62 -> this._80 = value;
+      case _63 -> this._82 = value;
+      case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value;
+      case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value;
 
       case POWER_ATTACK -> {
-        this.powerAttack_b4 = (byte)value.get();
-        this.powerAttackTurns_b5 = value.get() >>> 8 & 0xff;
+        this.powerAttack_b4 = (byte)value;
+        this.powerAttackTurns_b5 = value >>> 8 & 0xff;
       }
       case POWER_MAGIC_ATTACK -> {
-        this.powerMagicAttack_b6 = (byte)value.get();
-        this.powerMagicAttackTurns_b7 = value.get() >>> 8 & 0xff;
+        this.powerMagicAttack_b6 = (byte)value;
+        this.powerMagicAttackTurns_b7 = value >>> 8 & 0xff;
       }
       case POWER_DEFENCE -> {
-        this.powerDefence_b8 = (byte)value.get();
-        this.powerDefenceTurns_b9 = value.get() >>> 8 & 0xff;
+        this.powerDefence_b8 = (byte)value;
+        this.powerDefenceTurns_b9 = value >>> 8 & 0xff;
       }
       case POWER_MAGIC_DEFENCE -> {
-        this.powerMagicDefence_ba = (byte)value.get();
-        this.powerMagicDefenceTurns_bb = value.get() >>> 8 & 0xff;
+        this.powerMagicDefence_ba = (byte)value;
+        this.powerMagicDefenceTurns_bb = value >>> 8 & 0xff;
       }
       case TEMP_ATTACK_HIT -> {
-        this.tempAttackHit_bc = value.get() & 0xff;
-        this.tempAttackHitTurns_bd = value.get() >>> 8 & 0xff;
+        this.tempAttackHit_bc = value & 0xff;
+        this.tempAttackHitTurns_bd = value >>> 8 & 0xff;
       }
       case TEMP_MAGIC_HIT -> {
-        this.tempMagicHit_be = value.get() & 0xff;
-        this.tempMagicHitTurns_bf = value.get() >>> 8 & 0xff;
+        this.tempMagicHit_be = value & 0xff;
+        this.tempMagicHitTurns_bf = value >>> 8 & 0xff;
       }
       case TEMP_ATTACK_AVOID -> {
-        this.tempAttackAvoid_c0 = value.get() & 0xff;
-        this.tempAttackAvoidTurns_c1 = value.get() >>> 8 & 0xff;
+        this.tempAttackAvoid_c0 = value & 0xff;
+        this.tempAttackAvoidTurns_c1 = value >>> 8 & 0xff;
       }
       case TEMP_MAGIC_AVOID -> {
-        this.tempMagicAvoid_c2 = value.get() & 0xff;
-        this.tempMagicAvoidTurns_c3 = value.get() >>> 8 & 0xff;
+        this.tempMagicAvoid_c2 = value & 0xff;
+        this.tempMagicAvoidTurns_c3 = value >>> 8 & 0xff;
       }
       case TEMP_PHYSICAL_IMMUNITY -> {
-        this.tempPhysicalImmunity_c4 = value.get() & 0xff;
-        this.tempPhysicalImmunityTurns_c5 = value.get() >>> 8 & 0xff;
+        this.tempPhysicalImmunity_c4 = value & 0xff;
+        this.tempPhysicalImmunityTurns_c5 = value >>> 8 & 0xff;
       }
       case TEMP_MAGICAL_IMMUNITY -> {
-        this.tempMagicalImmunity_c6 = value.get() & 0xff;
-        this.tempMagicalImmunityTurns_c7 = value.get() >>> 8 & 0xff;
+        this.tempMagicalImmunity_c6 = value & 0xff;
+        this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
       }
 
-      case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value.get() != 0;
-      case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value.get() != 0;
-      case PHYSICAL_RESISTANCE -> this.physicalResistance_114 = value.get() != 0;
-      case MAGICAL_RESISTANCE -> this.magicalResistance_116 = value.get() != 0;
+      case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value != 0;
+      case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value != 0;
+      case PHYSICAL_RESISTANCE -> this.physicalResistance_114 = value != 0;
+      case MAGICAL_RESISTANCE -> this.magicalResistance_116 = value != 0;
 
-      case _159 -> this._142 = value.get();
+      case _159 -> this._142 = value;
+
+      default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
+    }
+  }
+
+  @Deprecated
+  public void setStat(final BattleEntityStat statIndex, final RegistryId value) {
+    switch(statIndex) {
+      case SPELL_ID -> this.spell_94 = REGISTRIES.spells.getEntry(value).get();
+      case ITEM_ID -> this.item_d4 = new ItemStack(REGISTRIES.items.getEntry(value).get());
 
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     }

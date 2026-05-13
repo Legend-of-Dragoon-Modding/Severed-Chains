@@ -36,6 +36,7 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.bent.SetBattleEntityStatEvent;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
@@ -4150,7 +4151,14 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-    bent.setStat(stat, script.params_20[1]);
+
+    if(script.params_20[1].isRegistryId()) {
+      bent.setStat(stat, script.params_20[1].getRegistryId());
+    } else {
+      final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, script.params_20[1].get()));
+      bent.setStat(stat, event.value);
+    }
+
     return FlowControl.CONTINUE;
   }
 
