@@ -116,7 +116,6 @@ import legend.game.scripting.ScriptEnum;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
-import legend.game.scripting.ScriptTempParam;
 import legend.game.scripting.ScriptedObject;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -8807,16 +8806,33 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800f9380L)
   public static void applyBuffOrDebuff(final BattleEntity27c attacker, final BattleEntity27c defender) {
-    final BattleEntityStat[] stats = {BattleEntityStat.POWER_DEFENCE, BattleEntityStat.POWER_MAGIC_DEFENCE, BattleEntityStat.POWER_ATTACK, BattleEntityStat.POWER_MAGIC_ATTACK};
-
-    for(int i = 0; i < 8; i++) {
+         for(int i = 0; i < 8; i++) {
       // This has been intentionally changed to attacker.buffType. Defender.buffType was always set to attacker.buffType anyway.
       if((attacker.spell_94.buffType_0a & (0x80 >> i)) != 0) {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        //TODO don't use setStat
-        defender.setStat(stats[i % 4], new ScriptTempParam(turnCount << 8 | (amount & 0xff)));
+        switch(i % 4) {
+          case 0 -> {
+            defender.powerDefence_b8 = amount;
+            defender.powerDefenceTurns_b9 = turnCount;
+          }
+
+          case 1 -> {
+            defender.powerMagicDefence_ba = amount;
+            defender.powerMagicDefenceTurns_bb = turnCount;
+          }
+
+          case 2 -> {
+            defender.powerAttack_b4 = amount;
+            defender.powerAttackTurns_b5 = turnCount;
+          }
+
+          case 3 -> {
+            defender.powerMagicAttack_b6 = amount;
+            defender.powerMagicAttackTurns_b7 = turnCount;
+          }
+        }
       }
     }
   }
