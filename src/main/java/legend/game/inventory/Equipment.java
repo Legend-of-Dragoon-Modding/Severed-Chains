@@ -38,7 +38,7 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
   public final ElementSet elementalImmunity_07 = new ElementSet();
   public final int statusResist_08;
 //  public final int _09;
-  public final int attack1_0a;
+//  public final int attack1_0a;
 
   public final int mpPerPhysicalHit;
   public final int spPerPhysicalHit;
@@ -62,7 +62,7 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
 
   public final ItemIcon icon_0e;
   public final int speed_0f;
-  public final int attack2_10;
+  public final int attack_10;
   public final int magicAttack_11;
   public final int defence_12;
   public final int magicDefence_13;
@@ -75,7 +75,12 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
 //  public final int _1a;
   public final int onHitStatus_1b;
 
-  public Equipment(final int price, final int flags, final EquipmentSlot slot, final Element element, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int onHitStatus) {
+  @Deprecated // use other constructor with only one attack param
+  public Equipment(final int price, final int flags, final EquipmentSlot slot, final Element element, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int atkLo, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int onHitStatus) {
+    this(price, flags, slot, element, elementalResistance, elementalImmunity, statusResist, mpPerPhysicalHit, spPerPhysicalHit, mpPerMagicalHit, spPerMagicalHit, hpMultiplier, mpMultiplier, spMultiplier, magicalResistance, physicalResistance, magicalImmunity, physicalImmunity, revive, hpRegen, mpRegen, spRegen, escapeBonus, icon, spd, atkLo + atkHi, matk, def, mdef, aHit, mHit, aAv, mAv, onStatusChance, onHitStatus);
+  }
+
+  public Equipment(final int price, final int flags, final EquipmentSlot slot, final Element element, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int escapeBonus, final ItemIcon icon, final int spd, final int atk, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int onHitStatus) {
     this.price = price;
     this.slot = slot;
     this.flags_00 = flags;
@@ -99,10 +104,9 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
     this.elementalResistance_06.set(elementalResistance);
     this.elementalImmunity_07.set(elementalImmunity);
     this.statusResist_08 = statusResist;
-    this.attack1_0a = atk;
     this.icon_0e = icon;
     this.speed_0f = spd;
-    this.attack2_10 = atkHi;
+    this.attack_10 = atk;
     this.magicAttack_11 = matk;
     this.defence_12 = def;
     this.magicDefence_13 = mdef;

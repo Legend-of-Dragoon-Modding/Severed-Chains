@@ -8341,8 +8341,8 @@ public class Battle extends EngineState<Battle> {
           player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
           player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
           player.equipmentStatusResist_24 |= equipment.statusResist_08;
-          player.equipmentAttack1_28 += equipment.attack1_0a;
-          attack.setRaw(attack.getRaw() + equipment.attack2_10 + equipment.attack1_0a);
+          player.equipmentAttack1_28 += equipment.attack_10;
+          attack.setRaw(attack.getRaw() + equipment.attack_10);
           magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
           defense.setRaw(defense.getRaw() + equipment.defence_12);
           magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);

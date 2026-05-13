@@ -1401,7 +1401,7 @@ public final class SItem {
         final Equipment equipped = character.getEquipment(slot);
 
         if(equipped != null) {
-          equipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+          equipmentAttack += equipped.attack_10;
           equipmentDefense += equipped.defence_12;
           equipmentMagicAttack += equipped.magicAttack_11;
           equipmentMagicDefense += equipped.magicDefence_13;
@@ -1427,7 +1427,7 @@ public final class SItem {
         final Equipment equipped = character.getEquipment(equipment.slot);
 
         if(equipped != null) {
-          newEquipmentAttack -= equipped.attack1_0a + equipped.attack2_10;
+          newEquipmentAttack -= equipped.attack_10;
           newEquipmentDefense -= equipped.defence_12;
           newEquipmentMagicAttack -= equipped.magicAttack_11;
           newEquipmentMagicDefense -= equipped.magicDefence_13;
@@ -1438,7 +1438,7 @@ public final class SItem {
           newEquipmentSpeed -= equipped.speed_0f;
         }
 
-        newEquipmentAttack += equipment.attack1_0a + equipment.attack2_10;
+        newEquipmentAttack += equipment.attack_10;
         newEquipmentDefense += equipment.defence_12;
         newEquipmentMagicAttack += equipment.magicAttack_11;
         newEquipmentMagicDefense += equipment.magicDefence_13;
