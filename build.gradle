@@ -59,7 +59,7 @@ repositories {
 }
 
 dependencies {
-  api 'org.legendofdragoon:mod-loader:4.2.4'
+  api 'org.legendofdragoon:mod-loader:4.2.5'
   api 'org.legendofdragoon:script-recompiler:0.7.0'
 
   api 'org.apache.logging.log4j:log4j-api:2.24.3'

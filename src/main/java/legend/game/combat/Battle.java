@@ -3216,7 +3216,6 @@ public class Battle extends EngineState<Battle> {
     }
 
     final int vramSlot;
-
     if(combatant != null) {
       vramSlot = combatant.vramSlot_1a0;
     } else {
@@ -3224,16 +3223,20 @@ public class Battle extends EngineState<Battle> {
     }
 
     //LAB_800ca7d0
-    this.loadCombatantTim2(combatant, vramSlot, timFile);
-  }
-
-  @Method(0x800ca7ecL)
-  public void loadCombatantTim2(@Nullable final CombatantStruct1a8 combatant, final int vramSlot, final FileData timFile) {
     final Tim tim = new Tim(timFile);
 
     if(vramSlot == -1) {
       combatant.tim = tim;
-    } else if(vramSlot != 0) {
+    } else if(vramSlot == 0) {
+      final Rect4i imageRect = tim.getImageRect();
+
+      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330b
+      if(imageRect.x == 0x41 && imageRect.y == 0 && imageRect.w == 0 && imageRect.h == 0) {
+        return;
+      }
+
+      tim.uploadToGpu();
+    } else {
       //LAB_800ca83c
       final Rect4i combatantTimRect = combatantTimRects_800fa6e0[vramSlot];
       GPU.uploadData15(combatantTimRect, tim.getImageData());
@@ -3246,15 +3249,6 @@ public class Battle extends EngineState<Battle> {
         //LAB_800ca884
         GPU.uploadData15(clutRect, tim.getClutData());
       }
-    } else {
-      final Rect4i imageRect = tim.getImageRect();
-
-      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330b
-      if(imageRect.x == 0x41 && imageRect.y == 0 && imageRect.w == 0 && imageRect.h == 0) {
-        return;
-      }
-
-      tim.uploadToGpu();
     }
 
     //LAB_800ca88c

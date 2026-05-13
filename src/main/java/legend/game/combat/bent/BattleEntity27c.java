@@ -731,6 +731,9 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cb23c
   }
 
+  private final MV lw = new MV();
+  private final MV ls = new MV();
+
   @Method(0x800ec974L)
   private void renderBttlModel(final Model124 model, final CombatantStruct1a8 combatant) {
     if(combatant.vramSlot_1a0 == -1 && combatant.texture == null) {
@@ -756,20 +759,17 @@ public abstract class BattleEntity27c extends BattleObject {
     tmdGp0Tpage_1f8003ec = model.tpage_108;
     zOffset_1f8003e8 = model.zOffset_a0;
 
-    final MV lw = new MV();
-    final MV ls = new MV();
-
     //LAB_800ec9d0
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 part = model.modelParts_00[i];
 
-        GsGetLws(part.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
+        GsGetLws(part.coord2_04, this.lw, this.ls);
+        GsSetLightMatrix(this.lw);
+        GTE.setTransforms(this.ls);
         Renderer.renderDobj2(part, true, 0);
 
-        final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
+        final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].tmd_08.getObj(), this.lw, QueuedModelBattleTmd.class)
           .depthOffset(model.zOffset_a0 * 4)
           .usePs1Depth(model.usePs1Depth)
           .lightDirection(lightDirectionMatrix_800c34e8)

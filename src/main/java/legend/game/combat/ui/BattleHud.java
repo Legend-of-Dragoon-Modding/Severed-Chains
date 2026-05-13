@@ -822,15 +822,11 @@ public class BattleHud {
     //LAB_800f16e4
     final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
 
-    final int[] digits = new int[digitCount];
-
     for(int i = 0; i < displayStats.digits_04[numberIndex].length; i++) {
       displayStats.digits_04[numberIndex][i].digitValue_00 = -1;
     }
 
     //LAB_800f171c
-    Arrays.fill(digits, -1);
-
     int divisor = 1;
 
     //LAB_800f1768
@@ -840,12 +836,6 @@ public class BattleHud {
 
     //LAB_800f1780
     //LAB_800f17b0
-    for(int i = 0; i < digitCount; i++) {
-      digits[i] = value / divisor;
-      value %= divisor;
-      divisor /= 10;
-    }
-
     //LAB_800f1800
     //LAB_800f1828
     final int rightAlignOffset = 4 - digitCount;
@@ -876,7 +866,9 @@ public class BattleHud {
 
       //LAB_800f1998
       //LAB_800f199c
-      digit.digitValue_00 = digits[i];
+      digit.digitValue_00 = value / divisor;
+      value %= divisor;
+      divisor /= 10;
     }
 
     //LAB_800f19e0
