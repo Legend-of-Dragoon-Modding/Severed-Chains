@@ -56,3 +56,9 @@ gradle-app.setting
 
 # JDK files
 /jdk*
+
+/files/**
+/isos/**
+/saves/**
+/mods/**
+
