@@ -1,0 +1,14 @@
+--- original
++++ modified
+@@ -1197,9 +1197,9 @@
+ rel :PTR_295c_13
+ rel :PTR_295c_14
+ PTR_2920_0:
+-data str[<sauto=1><line>1<line>2<line>3<line>4<line>5<line>?<line>]
++data str[<sauto=1><line>1<line>2<line>3<line>4<line>5<line>Cancel<line>]
+ PTR_295c_0:
+-data 0x1
++data 0x6
+ data 0x8
+ PTR_2920_1:
+ data str[<speed=0>The first number is....]

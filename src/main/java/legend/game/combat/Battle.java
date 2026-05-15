@@ -36,6 +36,7 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.bent.SetBattleEntityStatEvent;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
@@ -116,7 +117,6 @@ import legend.game.scripting.ScriptEnum;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
-import legend.game.scripting.ScriptTempParam;
 import legend.game.scripting.ScriptedObject;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -3216,7 +3216,6 @@ public class Battle extends EngineState<Battle> {
     }
 
     final int vramSlot;
-
     if(combatant != null) {
       vramSlot = combatant.vramSlot_1a0;
     } else {
@@ -3224,16 +3223,20 @@ public class Battle extends EngineState<Battle> {
     }
 
     //LAB_800ca7d0
-    this.loadCombatantTim2(combatant, vramSlot, timFile);
-  }
-
-  @Method(0x800ca7ecL)
-  public void loadCombatantTim2(@Nullable final CombatantStruct1a8 combatant, final int vramSlot, final FileData timFile) {
     final Tim tim = new Tim(timFile);
 
     if(vramSlot == -1) {
       combatant.tim = tim;
-    } else if(vramSlot != 0) {
+    } else if(vramSlot == 0) {
+      final Rect4i imageRect = tim.getImageRect();
+
+      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330b
+      if(imageRect.x == 0x41 && imageRect.y == 0 && imageRect.w == 0 && imageRect.h == 0) {
+        return;
+      }
+
+      tim.uploadToGpu();
+    } else {
       //LAB_800ca83c
       final Rect4i combatantTimRect = combatantTimRects_800fa6e0[vramSlot];
       GPU.uploadData15(combatantTimRect, tim.getImageData());
@@ -3246,15 +3249,6 @@ public class Battle extends EngineState<Battle> {
         //LAB_800ca884
         GPU.uploadData15(clutRect, tim.getClutData());
       }
-    } else {
-      final Rect4i imageRect = tim.getImageRect();
-
-      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330b
-      if(imageRect.x == 0x41 && imageRect.y == 0 && imageRect.w == 0 && imageRect.h == 0) {
-        return;
-      }
-
-      tim.uploadToGpu();
     }
 
     //LAB_800ca88c
@@ -4151,7 +4145,14 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-    bent.setStat(stat, script.params_20[1]);
+
+    if(script.params_20[1].isRegistryId()) {
+      bent.setStat(stat, script.params_20[1].getRegistryId());
+    } else {
+      final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, script.params_20[1].get()));
+      bent.setStat(stat, event.value);
+    }
+
     return FlowControl.CONTINUE;
   }
 
@@ -6251,9 +6252,9 @@ public class Battle extends EngineState<Battle> {
       final BttlLightStruct84 a1 = this.lights_800c692c[i];
       final BattleStruct14 a0 = ambiance._10[i];
       a1.light_00.direction_00.set(a0.lightDirection_00);
-      a1.light_00.r_0c = a0.lightColour_0a.x / (float)0x100;
-      a1.light_00.g_0d = a0.lightColour_0a.y / (float)0x100;
-      a1.light_00.b_0e = a0.lightColour_0a.z / (float)0x100;
+      a1.light_00.r_0c = a0.lightColour_0a.x / (float)0xff;
+      a1.light_00.g_0d = a0.lightColour_0a.y / (float)0xff;
+      a1.light_00.b_0e = a0.lightColour_0a.z / (float)0xff;
 
       if(a0.x_06 != 0 || a0.y_08 != 0) {
         a1._10.typeAndFlags_00 = 0x3;
@@ -6268,7 +6269,7 @@ public class Battle extends EngineState<Battle> {
       if(a0.y_12 != 0) {
         a1._4c.typeAndFlags_00 = 0x3;
         a1._4c.directionOrColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
-        a1._4c.directionOrColourSpeed_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
+        a1._4c.directionOrColourSpeed_10.set(a0._0d.x / (float)0xff, a0._0d.y / (float)0xff, a0._0d.z / (float)0xff);
         a1._4c.directionOrColourDest_28.x = a0.x_10;
         a1._4c.directionOrColourDest_28.y = a0.y_12;
       } else {
@@ -8312,7 +8313,6 @@ public class Battle extends EngineState<Battle> {
       //LAB_800ef400
       player.stats.set(player.character.stats);
 
-      final UnaryStat speed = player.stats.getStat(SPEED_STAT.get());
       final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
       final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
       final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
@@ -8342,9 +8342,8 @@ public class Battle extends EngineState<Battle> {
           player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
           player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
           player.equipmentStatusResist_24 |= equipment.statusResist_08;
-          player.equipmentAttack1_28 += equipment.attack1_0a;
-          speed.setRaw(speed.getRaw() + equipment.speed_0f);
-          attack.setRaw(attack.getRaw() + equipment.attack2_10 + equipment.attack1_0a);
+          player.equipmentAttack1_28 += equipment.attack_10;
+          attack.setRaw(attack.getRaw() + equipment.attack_10);
           magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
           defense.setRaw(defense.getRaw() + equipment.defence_12);
           magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);
@@ -8708,7 +8707,7 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_800f7e98
     int effect = -1;
-    if(simpleRand() * 101 >> 16 < effectChance) {
+    if(seed_800fa754.nextInt(100) < effectChance) {
       final int statusType = attacker.getStatusEffectStatus(attackType);
 
       if((statusType & 0xff) != 0) {
@@ -8809,16 +8808,33 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800f9380L)
   public static void applyBuffOrDebuff(final BattleEntity27c attacker, final BattleEntity27c defender) {
-    final BattleEntityStat[] stats = {BattleEntityStat.POWER_DEFENCE, BattleEntityStat.POWER_MAGIC_DEFENCE, BattleEntityStat.POWER_ATTACK, BattleEntityStat.POWER_MAGIC_ATTACK};
-
-    for(int i = 0; i < 8; i++) {
+         for(int i = 0; i < 8; i++) {
       // This has been intentionally changed to attacker.buffType. Defender.buffType was always set to attacker.buffType anyway.
       if((attacker.spell_94.buffType_0a & (0x80 >> i)) != 0) {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        //TODO don't use setStat
-        defender.setStat(stats[i % 4], new ScriptTempParam(turnCount << 8 | (amount & 0xff)));
+        switch(i % 4) {
+          case 0 -> {
+            defender.powerDefence_b8 = amount;
+            defender.powerDefenceTurns_b9 = turnCount;
+          }
+
+          case 1 -> {
+            defender.powerMagicDefence_ba = amount;
+            defender.powerMagicDefenceTurns_bb = turnCount;
+          }
+
+          case 2 -> {
+            defender.powerAttack_b4 = amount;
+            defender.powerAttackTurns_b5 = turnCount;
+          }
+
+          case 3 -> {
+            defender.powerMagicAttack_b6 = amount;
+            defender.powerMagicAttackTurns_b7 = turnCount;
+          }
+        }
       }
     }
   }

@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.legendofdragoon.scripting.Compiler;
+import org.legendofdragoon.scripting.Assembler;
 import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Tokenizer;
 import org.legendofdragoon.scripting.meta.Meta;
@@ -169,7 +169,7 @@ public class ScriptManager {
   }
 
   private Meta meta;
-  private final Compiler compiler = new Compiler();
+  private final Assembler assembler = new Assembler();
   private Tokenizer tokenizer;
   private Disassembler disassembler;
   private final List<Path> includePaths;
@@ -427,10 +427,10 @@ public class ScriptManager {
     return this.meta;
   }
 
-  public byte[] compile(final String name, final String source) {
+  public byte[] assemble(final String name, final String source) {
     this.meta();
     final Script tokenized = this.tokenizer.tokenize(name, this.includePaths, source);
-    return intsToBytes(this.compiler.compile(tokenized));
+    return intsToBytes(this.assembler.assemble(tokenized));
   }
 
   public Script disassemble(final String name, final byte[] data) {

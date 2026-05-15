@@ -6,13 +6,13 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.StatType;
 import org.legendofdragoon.modloader.events.CancelableEvent;
 
-public class CharacterDragoonLevelUpEvent extends CancelableEvent {
+public class PreCharacterDragoonLevelUpEvent extends CancelableEvent {
   public final CharacterData2c character;
 
   public final Object2IntMap<StatType<?>> statsToAdd = new Object2IntOpenHashMap<>();
   public int levelsToAdd = 1;
 
-  public CharacterDragoonLevelUpEvent(final CharacterData2c character) {
+  public PreCharacterDragoonLevelUpEvent(final CharacterData2c character) {
     this.character = character;
   }
 }

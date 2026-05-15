@@ -13,8 +13,10 @@ import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.Good;
-import legend.game.modding.events.characters.CharacterDragoonLevelUpEvent;
-import legend.game.modding.events.characters.CharacterLevelUpEvent;
+import legend.game.modding.events.characters.PostCharacterDragoonLevelUpEvent;
+import legend.game.modding.events.characters.PostCharacterLevelUpEvent;
+import legend.game.modding.events.characters.PreCharacterDragoonLevelUpEvent;
+import legend.game.modding.events.characters.PreCharacterLevelUpEvent;
 import legend.game.saves.SavedCharacter;
 import legend.game.saves.SeveredSavedCharacterV2;
 import legend.game.textures.Image;
@@ -58,6 +60,7 @@ import static legend.lodmod.LodMod.SP_STAT;
 
 public abstract class RetailCharacterTemplate extends CharacterTemplate {
   private final Latch<Image> portrait = new Latch<>(() -> Image.load(Loader.resolve("characters/" + this.getRegistryId().entryId() + "/portrait.png")));
+  private final int[][] spBarColours = {{16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}};
 
   @Override
   public CharacterData2c make(final GameState52c gameState) {
@@ -185,7 +188,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    final CharacterLevelUpEvent event = new CharacterLevelUpEvent(character);
+    final PreCharacterLevelUpEvent event = new PreCharacterLevelUpEvent(character);
 
     event.statsToAdd.put(HP_STAT.get(), this.getHpToAdd(character.level_12));
     event.statsToAdd.put(ATTACK_STAT.get(), this.getAttackToAdd(character.level_12));
@@ -203,11 +206,12 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     character.level_12 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
+    EVENTS.postEvent(new PostCharacterLevelUpEvent(character));
   }
 
   @Override
   public void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    final CharacterDragoonLevelUpEvent event = new CharacterDragoonLevelUpEvent(character);
+    final PreCharacterDragoonLevelUpEvent event = new PreCharacterDragoonLevelUpEvent(character);
 
     event.statsToAdd.put(MP_STAT.get(), this.getMpToAdd(character.dlevel_13));
     event.statsToAdd.put(SP_STAT.get(), this.getSpToAdd(character.dlevel_13));
@@ -225,6 +229,8 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     character.dlevel_13 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
+
+    EVENTS.postEvent(new PostCharacterDragoonLevelUpEvent(character));
   }
 
   @Override
@@ -356,5 +362,10 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
       character.removeSpell(from);
       character.addSpell(to, info);
     }
+  }
+
+  @Override
+  public int[] getSpBarColours(final int index) {
+    return this.spBarColours[index % this.spBarColours.length];
   }
 }

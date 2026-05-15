@@ -84,9 +84,9 @@ public final class AudioThread implements Runnable {
     LOGGER.info("Reinitializing audio");
 
     synchronized(this) {
-      final boolean[] playing = new boolean[this.sources.size()];
+      final boolean[] active = new boolean[this.sources.size()];
       for(int i = 0; i < this.sources.size(); i++) {
-        playing[i] = this.sources.get(i).isPlaying();
+        active[i] = this.sources.get(i).isActive();
       }
 
       this.destroyInternal();
@@ -97,8 +97,8 @@ public final class AudioThread implements Runnable {
           final AudioSource source = this.sources.get(i);
           source.init();
 
-          if(playing[i]) {
-            source.setPlaying(true);
+          if(active[i]) {
+            source.setActive(true);
           }
         }
       }
@@ -414,7 +414,7 @@ public final class AudioThread implements Runnable {
 
   public boolean isMusicPlaying() {
     synchronized(this) {
-      return this.sequencer.isPlaying();
+      return this.sequencer.isActive() && this.sequencer.isPlaying();
     }
   }
 

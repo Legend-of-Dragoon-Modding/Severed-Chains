@@ -506,56 +506,56 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   @Override
-  public void setStat(final BattleEntityStat statIndex, final Param value) {
+  public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case LEVEL -> this.level_04 = value.get();
-      case DLEVEL -> this.dlevel_06 = value.get();
+      case LEVEL -> this.level_04 = value;
+      case DLEVEL -> this.dlevel_06 = value;
 
-      case CURRENT_SP -> this.stats.getStat(SP_STAT.get()).setCurrent(value.get());
-      case CURRENT_MP -> this.stats.getStat(MP_STAT.get()).setCurrent(value.get());
+      case CURRENT_SP -> this.stats.getStat(SP_STAT.get()).setCurrent(value);
+      case CURRENT_MP -> this.stats.getStat(MP_STAT.get()).setCurrent(value);
 
-      case ADDITION_HITS -> this.additionHits_56 = value.get();
+      case ADDITION_HITS -> this.additionHits_56 = value;
 
-      case DRAGOON_ATTACK -> this.stats.getStat(DRAGOON_ATTACK_STAT.get()).setRaw(value.get());
-      case DRAGOON_MAGIC -> this.stats.getStat(DRAGOON_MAGIC_ATTACK_STAT.get()).setRaw(value.get());
-      case DRAGOON_DEFENCE -> this.stats.getStat(DRAGOON_DEFENSE_STAT.get()).setRaw(value.get());
-      case DRAGOON_MAGIC_DEFENCE -> this.stats.getStat(DRAGOON_MAGIC_DEFENSE_STAT.get()).setRaw(value.get());
+      case DRAGOON_ATTACK -> this.stats.getStat(DRAGOON_ATTACK_STAT.get()).setRaw(value);
+      case DRAGOON_MAGIC -> this.stats.getStat(DRAGOON_MAGIC_ATTACK_STAT.get()).setRaw(value);
+      case DRAGOON_DEFENCE -> this.stats.getStat(DRAGOON_DEFENSE_STAT.get()).setRaw(value);
+      case DRAGOON_MAGIC_DEFENCE -> this.stats.getStat(DRAGOON_MAGIC_DEFENSE_STAT.get()).setRaw(value);
 
       case TEMP_SP_PER_PHYSICAL_HIT -> {
-        this.tempSpPerPhysicalHit_cc = value.get() & 0xff;
-        this.tempSpPerPhysicalHitTurns_cd = value.get() >>> 8 & 0xff;
+        this.tempSpPerPhysicalHit_cc = value & 0xff;
+        this.tempSpPerPhysicalHitTurns_cd = value >>> 8 & 0xff;
       }
       case TEMP_MP_PER_PHYSICAL_HIT -> {
-        this.tempMpPerPhysicalHit_ce = value.get() & 0xff;
-        this.tempMpPerPhysicalHitTurns_cf = value.get() >>> 8 & 0xff;
+        this.tempMpPerPhysicalHit_ce = value & 0xff;
+        this.tempMpPerPhysicalHitTurns_cf = value >>> 8 & 0xff;
       }
       case TEMP_SP_PER_MAGICAL_HIT -> {
-        this.tempSpPerMagicalHit_d0 = value.get() & 0xff;
-        this.tempSpPerMagicalHitTurns_d1 = value.get() >>> 8 & 0xff;
+        this.tempSpPerMagicalHit_d0 = value & 0xff;
+        this.tempSpPerMagicalHitTurns_d1 = value >>> 8 & 0xff;
       }
       case TEMP_MP_PER_MAGICAL_HIT -> {
-        this.tempMpPerMagicalHit_d2 = value.get() & 0xff;
-        this.tempMpPerMagicalHitTurns_d3 = value.get() >>> 8 & 0xff;
+        this.tempMpPerMagicalHit_d2 = value & 0xff;
+        this.tempMpPerMagicalHitTurns_d3 = value >>> 8 & 0xff;
       }
 
-//      case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a = value.get();
-//      case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c = value.get();
-      case SP_MULTIPLIER -> this.spMultiplier_128 = value.get();
-      case SP_PER_PHYSICAL_HIT -> this.spPerPhysicalHit_12a = value.get();
-      case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c = value.get();
-      case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e = value.get();
-      case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130 = value.get();
-      case ESCAPE_BONUS_151 -> this.escapeBonus_132 = value.get();
-      case HP_REGEN -> this.hpRegen_134 = value.get();
-      case MP_REGEN -> this.mpRegen_136 = value.get();
-      case SP_REGEN -> this.spRegen_138 = value.get();
-      case REVIVE -> this.revive_13a = value.get();
-      case HP_MULTI -> this.hpMulti_13c = value.get();
-      case MP_MULTI -> this.mpMulti_13e = value.get();
+//      case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a = value;
+//      case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c = value;
+      case SP_MULTIPLIER -> this.spMultiplier_128 = value;
+      case SP_PER_PHYSICAL_HIT -> this.spPerPhysicalHit_12a = value;
+      case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c = value;
+      case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e = value;
+      case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130 = value;
+      case ESCAPE_BONUS_151 -> this.escapeBonus_132 = value;
+      case HP_REGEN -> this.hpRegen_134 = value;
+      case MP_REGEN -> this.mpRegen_136 = value;
+      case SP_REGEN -> this.spRegen_138 = value;
+      case REVIVE -> this.revive_13a = value;
+      case HP_MULTI -> this.hpMulti_13c = value;
+      case MP_MULTI -> this.mpMulti_13e = value;
 
-      case GUARD_HEAL_RAW -> this.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(value.get());
+      case GUARD_HEAL_RAW -> this.stats.getStat(GUARD_HEAL_STAT.get()).setRaw(value);
 
-      case HAS_TRANSFORMED_BEFORE -> this.character.hasTransformed = value.get() != 0;
+      case HAS_TRANSFORMED_BEFORE -> this.character.hasTransformed = value != 0;
 
       default -> super.setStat(statIndex, value);
     }

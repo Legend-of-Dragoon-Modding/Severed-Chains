@@ -12,12 +12,12 @@ public class GenericSource extends AudioSource {
 
   @Override
   protected void init() {
-    this.setPlaying(true);
+    this.setActive(true);
     super.init();
   }
 
   public void bufferOutput(final short[] buffer) {
-    this.setPlaying(true);
+    this.setActive(true);
     super.bufferOutput(this.format, buffer, this.sampleRate);
   }
 }

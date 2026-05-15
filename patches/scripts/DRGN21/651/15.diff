@@ -1,0 +1,17 @@
+--- original
++++ modified
+@@ -77,6 +77,14 @@
+ call 200, 0x1, 0x100, 0x0, 0x28, 0x5, 0x1, inl[:LABEL_7]
+ LABEL_5:
+ yield
++mov stor[18], stor[25]
++and 0x1, stor[25]
++jmp_cmp ==, 0x0, stor[25], inl[:LABEL_4123]
++call 201, 0x1
++jmp inl[:LABEL_5123]
++LABEL_4123:
++call 201, 0x2
++LABEL_5123:
+ jmp_cmp !=, 0x190, stor[18], inl[:LABEL_6]
+ mov 0x1, stor[stor[stor[0], 23], 22]
+ rewind

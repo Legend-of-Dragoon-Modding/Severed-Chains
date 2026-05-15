@@ -28,6 +28,7 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TextboxType;
 import legend.game.types.Translucency;
+import legend.lodmod.LodConfig;
 import legend.lodmod.LodEngineStateTypes;
 import org.joml.Math;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -263,7 +264,6 @@ public final class Text {
 
     textboxSelectionObj = new QuadBuilder("TextboxSelection")
       .translucency(Translucency.HALF_B_PLUS_HALF_F)
-      .rgb(0.5f, 0.19607843f, 0.39215687f)
       .size(1.0f, 12.0f)
       .build();
     textboxSelectionObj.persistent = true;
@@ -1792,7 +1792,9 @@ public final class Text {
 
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
     textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c * 4.0f);
-    RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms, QueuedModelStandard.class);
+    RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms, QueuedModelStandard.class)
+      .colour(CONFIG.getConfig(LodConfig.UI_SELECTION_COLOUR.get()))
+    ;
   }
 
   private static final MV textTransforms = new MV();

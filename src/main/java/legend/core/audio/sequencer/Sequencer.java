@@ -464,7 +464,7 @@ public final class Sequencer extends AudioSource {
   }
 
   public void fadeOut(final int time) {
-    if(!this.isPlaying()) {
+    if(!this.isActive()) {
       this.engineVolumeLeft = 0;
       this.engineVolumeRight = 0;
       return;
@@ -494,11 +494,15 @@ public final class Sequencer extends AudioSource {
     this.backgroundMusic = null;
   }
 
+  public boolean isPlaying() {
+    return !this.paused && this.backgroundMusic != null;
+  }
+
   public void startSequence() {
     this.paused = false;
 
-    if(!this.isPlaying()) {
-      this.setPlaying(true);
+    if(!this.isActive()) {
+      this.setActive(true);
       this.samplesToProcess = 0;
     }
   }

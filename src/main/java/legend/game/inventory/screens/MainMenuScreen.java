@@ -62,6 +62,8 @@ public class MainMenuScreen extends MenuScreen {
 
   private final CharacterCard[] charCards = new CharacterCard[3];
   private final List<Button> menuButtons = new ArrayList<>();
+  /** If it's stupid and it works, it ain't stupid */
+  private boolean playTickSound;
 
   private final Button saveButton;
   private final Button loadButton;
@@ -145,9 +147,14 @@ public class MainMenuScreen extends MenuScreen {
     });
     button.onGotFocus(() -> {
       button.hoverIn();
-      playMenuSound(1);
       button.setTextColour(TextColour.RED);
       this.lastSelectedButton = button;
+
+      if(this.playTickSound) {
+        playMenuSound(1);
+      }
+
+      this.playTickSound = true;
     });
 
     button.onPressed(onClick::run);

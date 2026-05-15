@@ -10,7 +10,8 @@ lod.config.max_dragoon_level.label=Max Dragoon Level
 lod.config.item_stack_size.label=Item Stack Size
 lod.config.extended_dragoon_actions.label=Extended Dragoon Actions
 lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
-lod.config.ui_colour.label=UI Colour
+lod.config.ui_background_colour.label=UI Background Colour
+lod.config.ui_selection_colour.label=UI Selection Colour
 
 # Characters
 lod.character_templates.dart.name=Dart

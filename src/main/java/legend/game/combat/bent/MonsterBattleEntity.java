@@ -207,15 +207,15 @@ public class MonsterBattleEntity extends BattleEntity27c {
   }
 
   @Override
-  public void setStat(final BattleEntityStat statIndex, final Param value) {
+  public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value.get();
-      case MONSTER_ELEMENT -> this.element = Element.fromFlag(value.get()).get();
-      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value.get());
-      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value.get();
-      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.x = value.get();
-      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.y = value.get();
-      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.z = value.get();
+      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value;
+      case MONSTER_ELEMENT -> this.element = Element.fromFlag(value).get();
+      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value);
+      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value;
+      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.x = value;
+      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.y = value;
+      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.z = value;
 
       default -> super.setStat(statIndex, value);
     }

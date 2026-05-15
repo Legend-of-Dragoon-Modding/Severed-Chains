@@ -3003,21 +3003,21 @@ public class SMap extends EngineState<SMap> {
         final GsF_LIGHT light = new GsF_LIGHT();
 
         light.direction_00.set(0.0f, 1.0f, 0.0f);
-        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
-        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
-        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0xff;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0xff;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0xff;
         GsSetFlatLight(0, light);
 
         light.direction_00.set(1.0f, 0.0f, 0.0f);
-        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
-        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
-        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0xff;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0xff;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0xff;
         GsSetFlatLight(1, light);
 
         light.direction_00.set(0.0f, 0.0f, 1.0f);
-        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
-        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
-        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0xff;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0xff;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0xff;
         GsSetFlatLight(2, light);
       }
 
