@@ -86,6 +86,10 @@ public class BigList<T> extends Control {
       } else {
         this.updateEntries();
         this.highlight(this.slot);
+
+        if(this.highlightHandler != null) {
+          this.highlightHandler.highlight(this.getSelected());
+        }
       }
     }
   }
