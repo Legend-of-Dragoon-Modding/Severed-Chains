@@ -124,6 +124,23 @@ jar {
   }
 }
 
+tasks.register('updaterJar', Jar) {
+  archiveBaseName = 'updater'
+  archiveVersion = ''
+  archiveClassifier = ''
+
+  manifest {
+    attributes(
+      'Main-Class': 'legend.core.UpdaterMain'
+    )
+  }
+
+  from(sourceSets.main.output) {
+    include 'legend/core/UpdaterMain.class'
+    include 'legend/core/UpdaterMain$*.class'
+  }
+}
+
 tasks.register('sourceJar', Jar) {
   from sourceSets.main.allJava
   archiveClassifier = "sources"
@@ -205,11 +222,12 @@ tasks.register('copySupportFiles', Copy) {
     from 'gamecontrollerdb.txt'
     from 'README.md'
     from 'LICENSE'
+    from(tasks.named('updaterJar'))
     from 'credits.txt'
   }
 }
 
-jar.dependsOn(clearOutput, copyLibs, copySupportFiles)
+jar.dependsOn(clearOutput, copyLibs, copySupportFiles, updaterJar)
 
 publishing {
   publications {
