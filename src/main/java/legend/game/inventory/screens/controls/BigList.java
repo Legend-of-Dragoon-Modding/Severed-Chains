@@ -29,7 +29,7 @@ public class BigList<T> extends Control {
   private final List<T> entries = new ArrayList<>();
 
   private int scroll;
-  private int slot;
+  private int slot = -1;
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapY = true;
@@ -54,14 +54,15 @@ public class BigList<T> extends Control {
     this.entries.add(entry);
     final Label label = this.addLabel();
     this.labels.add(label);
+
+    if(this.entries.size() == 1) {
+      this.highlight(0);
+    }
+
     this.updateEntries();
 
     if(entry instanceof final CompletionStage<?> future) {
       future.thenAcceptAsync(e -> label.setText(this.entryToString.apply(entry)));
-    }
-
-    if(this.entries.size() == 1) {
-      this.highlight(0);
     }
   }
 
@@ -85,6 +86,10 @@ public class BigList<T> extends Control {
       } else {
         this.updateEntries();
         this.highlight(this.slot);
+
+        if(this.highlightHandler != null) {
+          this.highlightHandler.highlight(this.getSelected());
+        }
       }
     }
   }
@@ -167,15 +172,18 @@ public class BigList<T> extends Control {
     }
 
     if(index != this.slot) {
-      playMenuSound(1);
+      if(this.slot != -1) {
+        playMenuSound(1);
+      }
+
+      this.slot = index;
+
+      if(this.highlightHandler != null) {
+        this.highlightHandler.highlight(this.getSelected());
+      }
     }
 
-    this.slot = index;
     this.highlight.setY(this.labels.get(index).getY());
-
-    if(this.highlightHandler != null) {
-      this.highlightHandler.highlight(this.getSelected());
-    }
   }
 
   @Override
@@ -238,54 +246,48 @@ public class BigList<T> extends Control {
   private void menuNavigateTop() {
     if(this.scroll == 0 && this.slot != 0) {
       playMenuSound(1);
-      this.slot = 0;
+      this.highlight(0);
     } else if(this.slot != this.scroll + MAX_VISIBLE_ENTRIES) {
       playMenuSound(1);
-      this.slot = this.scroll;
+      this.highlight(this.scroll);
     }
-    this.highlight(this.slot);
   }
 
   private void menuNavigateBottom() {
     final int count = this.entries.size();
     if(this.slot - this.scroll != Math.min(MAX_VISIBLE_ENTRIES, count) - 1) {
       playMenuSound(1);
-      this.slot = this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1;
+      this.highlight(this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1);
     }
-
-    this.highlight(this.slot);
   }
 
   private void menuNavigatePageUp() {
     if(this.scroll - MAX_VISIBLE_ENTRIES >= 0) {
       playMenuSound(1);
-      this.slot -= MAX_VISIBLE_ENTRIES;
+      this.highlight(this.slot - MAX_VISIBLE_ENTRIES);
       this.scroll -= MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     } else if(this.scroll != 0) {
       playMenuSound(1);
-      this.slot -= this.scroll;
+      this.highlight(this.slot - this.scroll);
       this.scroll = 0;
       this.updateEntries();
     }
-    this.highlight(this.slot);
   }
 
   private void menuNavigatePageDown() {
     final int count = this.entries.size();
     if(this.scroll + MAX_VISIBLE_ENTRIES < count - 1 - MAX_VISIBLE_ENTRIES) {
       playMenuSound(1);
-      this.slot += MAX_VISIBLE_ENTRIES;
+      this.highlight(this.slot + MAX_VISIBLE_ENTRIES);
       this.scroll += MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     } else if(count > MAX_VISIBLE_ENTRIES && this.scroll != count - MAX_VISIBLE_ENTRIES) {
       playMenuSound(1);
-      this.slot += count - MAX_VISIBLE_ENTRIES - this.scroll;
+      this.highlight(this.slot + (count - MAX_VISIBLE_ENTRIES - this.scroll));
       this.scroll = count - MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     }
-
-    this.highlight(this.slot);
   }
 
   private void menuNavigateHome() {

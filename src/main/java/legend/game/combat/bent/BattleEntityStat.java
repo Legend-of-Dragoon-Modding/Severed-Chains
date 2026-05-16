@@ -182,6 +182,10 @@ public enum BattleEntityStat {
   GUARD_HEAL_RAW,
   /** See {@link DetransformationMode} */
   DETRANSFORMATION_MODE,
+  IS_ARCHER,
+  CURRENT_ANIMATION_LENGTH,
+  PARTICLE_COLOUR,
+  HAS_TRANSFORMED_BEFORE,
   ;
 
   public static BattleEntityStat fromLegacy(final int statIndex) {

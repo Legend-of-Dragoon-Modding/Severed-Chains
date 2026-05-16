@@ -6,8 +6,8 @@ public class VitalsStat extends FractionalStat {
   }
 
   @Override
-  public VitalsStat copy() {
-    final VitalsStat stat = new VitalsStat((StatType<VitalsStat>)this.type, this.stats);
+  public VitalsStat copy(final StatCollection stats) {
+    final VitalsStat stat = new VitalsStat((StatType<VitalsStat>)this.type, stats);
     stat.set(this);
     return stat;
   }

@@ -12,7 +12,7 @@ public class UvAdjustmentMetrics14 {
     @Override
     public void apply(final TmdObjTable1c.Primitive primitive) {
       for(final byte[] data : primitive.data()) {
-        MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & 0x60_ffff | 0x180_0000); // 24bpp
+        MathHelper.setInt(data, 0x4, MathHelper.getInt(data, 0x4) & 0x60_ffff | 0x180_0000); // 24bpp
       }
     }
   };

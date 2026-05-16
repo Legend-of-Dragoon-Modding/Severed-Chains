@@ -40,7 +40,6 @@ import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
@@ -63,6 +62,8 @@ public class MainMenuScreen extends MenuScreen {
 
   private final CharacterCard[] charCards = new CharacterCard[3];
   private final List<Button> menuButtons = new ArrayList<>();
+  /** If it's stupid and it works, it ain't stupid */
+  private boolean playTickSound;
 
   private final Button saveButton;
   private final Button loadButton;
@@ -80,7 +81,6 @@ public class MainMenuScreen extends MenuScreen {
     this.unload = unload;
 
     loadingNewGameState_800bdc34 = false;
-    loadCharacterStats();
 
     this.addControl(new Background());
     this.addControl(Glyph.glyph(71)).setPos( 16,  16); // Chapter box
@@ -139,15 +139,22 @@ public class MainMenuScreen extends MenuScreen {
     button.setPos(21 + index / 7 * 74, 79 + (index % 7) * 13);
     button.setWidth(72);
 
-    button.onHoverIn(() -> {
-      playMenuSound(1);
-      button.focus();
-    });
+    button.onHoverIn(button::focus);
 
-    button.onLostFocus(() -> button.setTextColour(TextColour.BROWN));
+    button.onLostFocus(() -> {
+      button.hoverOut();
+      button.setTextColour(TextColour.BROWN);
+    });
     button.onGotFocus(() -> {
+      button.hoverIn();
       button.setTextColour(TextColour.RED);
       this.lastSelectedButton = button;
+
+      if(this.playTickSound) {
+        playMenuSound(1);
+      }
+
+      this.playTickSound = true;
     });
 
     button.onPressed(onClick::run);
@@ -158,7 +165,6 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             break;
           }
@@ -172,7 +178,6 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             break;
           }
@@ -204,7 +209,6 @@ public class MainMenuScreen extends MenuScreen {
           }
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             return InputPropagation.HANDLED;
           }
@@ -236,7 +240,6 @@ public class MainMenuScreen extends MenuScreen {
           }
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             return InputPropagation.HANDLED;
           }
@@ -253,12 +256,16 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void addCharCard(final int slot) {
-    final int id = slot < gameState_800babc8.charIds_88.size() ? gameState_800babc8.charIds_88.getInt(slot) : -1;
-    this.charCards[slot] = this.addControl(new CharacterCard(id));
+    this.charCards[slot] = this.addControl(new CharacterCard());
     this.charCards[slot].setPos(186, 16 + slot * 72);
+    this.charCards[slot].setZ(34);
+
+    if(slot < gameState_800babc8.charIds_88.size()) {
+      this.charCards[slot].setCharacter(gameState_800babc8.getCharacterBySlot(slot));
+    }
 
     this.charCards[slot].onHoverIn(() -> {
-      if(this.charCards[slot].getCharId() != -1) {
+      if(this.charCards[slot].getCharacter() != null) {
         this.charCards[slot].focus();
       }
     });
@@ -308,7 +315,6 @@ public class MainMenuScreen extends MenuScreen {
       }
 
       if(action == INPUT_ACTION_MENU_LEFT.get() || action == INPUT_ACTION_MENU_RIGHT.get()) {
-        playMenuSound(1);
         this.lastSelectedButton.focus();
       }
 
@@ -321,7 +327,7 @@ public class MainMenuScreen extends MenuScreen {
     });
 
     this.charCards[slot].onMouseClick((x, y, button, mods) -> {
-      if(this.charCards[slot].getCharId() != -1) {
+      if(this.charCards[slot].getCharacter() != null) {
         this.showStatusScreenForSelectedCharacter();
       }
 
@@ -343,8 +349,8 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showStatusScreenForSelectedCharacter() {
-    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
-      if(characterIndices_800bdbb8[i] == this.charCards[this.charIndex].getCharId()) {
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)) == this.charCards[this.charIndex].getCharacter()) {
         playMenuSound(2);
         this.showStatusScreen(i);
         return;
@@ -359,12 +365,11 @@ public class MainMenuScreen extends MenuScreen {
     this.charScroll = Math.max(0, scroll);
 
     for(int slot = 0; slot < this.charCards.length; slot++) {
-      final int charId = slot < gameState_800babc8.charIds_88.size() ? gameState_800babc8.charIds_88.getInt(this.charScroll + slot) : -1;
-      this.charCards[slot].setCharId(charId);
-
-      if(charId != -1) {
+      if(this.charScroll + slot < gameState_800babc8.charIds_88.size()) {
+        this.charCards[slot].setCharacter(gameState_800babc8.getCharacterBySlot(this.charScroll + slot));
         this.charCards[slot].acceptInput();
       } else {
+        this.charCards[slot].setCharacter(null);
         this.charCards[slot].ignoreInput();
       }
     }
@@ -390,9 +395,9 @@ public class MainMenuScreen extends MenuScreen {
 
         for(int i = 0; i < this.charCards.length; i++) {
           if(this.charScroll + i < gameState_800babc8.charIds_88.size()) {
-            this.charCards[i].setCharId(gameState_800babc8.charIds_88.getInt(this.charScroll + i));
+            this.charCards[i].setCharacter(gameState_800babc8.getCharacterBySlot(this.charScroll + i));
           } else {
-            this.charCards[i].setCharId(-1);
+            this.charCards[i].setCharacter(null);
           }
         }
 

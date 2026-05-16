@@ -65,6 +65,10 @@ public enum OpType {
   NOOP_97(97, "debug97"),
   NOOP_98(98, "debug98"),
   DEPTH(99, "depth"),
+
+  PUSH(101, "push"),
+  POP(102, "pop"),
+  CMP(103, "cmp")
   ;
 
   private static final OpType[] VALUES = OpType.values();

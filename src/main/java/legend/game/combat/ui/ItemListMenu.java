@@ -19,7 +19,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public class ItemListMenu extends ListMenu {
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
@@ -95,8 +95,7 @@ public class ItemListMenu extends ListMenu {
     }
 
     script.params_20[1].set(this.hud.battleMenu_800c6c34.target_48);
-    script.params_20[2].set(-1); // Used to be item ID
-    script.params_20[3].set(this.player_08.item_d4.getItem().getRegistryId());
+    script.params_20[2].set(this.player_08.item_d4.getItem().getRegistryId());
 
     // If it's a target all item, -1 the target
     if(this.selectionState_a0 == 1 && this.player_08.item_d4.canTarget(Item.TargetType.ALL)) {
@@ -146,7 +145,7 @@ public class ItemListMenu extends ListMenu {
           this.description = new UiBox(44, 156, 232, 14);
         }
 
-        this.description.render(CONFIG.getConfig(UI_COLOUR.get()));
+        this.description.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);

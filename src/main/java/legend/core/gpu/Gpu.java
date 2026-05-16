@@ -231,7 +231,9 @@ public class Gpu {
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
 
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+    if(LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+    }
 
     synchronized(this.vramLock) {
       int i = 0;
@@ -264,7 +266,9 @@ public class Gpu {
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
 
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+    if(LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+    }
 
     synchronized(this.vramLock) {
       int i = 0;
@@ -288,7 +292,9 @@ public class Gpu {
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
 
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+    if(LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+    }
 
     synchronized(this.vramLock) {
       int i = 0;
@@ -312,7 +318,9 @@ public class Gpu {
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
 
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+    if(LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+    }
 
     synchronized(this.vramLock) {
       int i = 0;
@@ -325,7 +333,9 @@ public class Gpu {
   }
 
   public void copyVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
-    LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
+    if(LOGGER.isDebugEnabled()) {
+      LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
+    }
 
     synchronized(this.vramLock) {
       for(int y = 0; y < height; y++) {

@@ -136,6 +136,10 @@ public final class Menus {
     //LAB_80022aec
   }
 
+  public static void addToManagedRenderables(final Renderable58 renderable) {
+    managedRenderables_800bdc5c.addFirst(renderable);
+  }
+
   @Method(0x80023b54L)
   public static Renderable58 allocateRenderable(final UiType uiType, @Nullable Renderable58 renderable) {
     renderable = allocateManualRenderable(uiType, renderable);
@@ -291,6 +295,10 @@ public final class Menus {
 
         //LAB_80023e94
         for(int metricsIndex = Math.min(metricses.length, renderable.metricsCount) - 1; metricsIndex >= 0; metricsIndex--) {
+          if(renderable.metricsBlacklist.contains(metricsIndex)) {
+            continue;
+          }
+
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
           final float x1;

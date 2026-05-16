@@ -110,7 +110,12 @@ public class ItemStack implements InventoryEntry<ItemStack> {
   }
 
   public ItemStack shrink(final int amount) {
-    return this.setSize(this.getSize() - amount);
+    if(this.isEmpty()) {
+      return EMPTY;
+    }
+
+    this.size -= amount;
+    return this;
   }
 
   public ItemStack take(final int amount) {

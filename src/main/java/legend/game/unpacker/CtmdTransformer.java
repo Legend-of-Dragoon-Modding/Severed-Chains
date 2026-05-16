@@ -152,16 +152,16 @@ public final class CtmdTransformer {
     }
 
     final byte[] tmdData = new byte[tmdSize];
-    MathHelper.set(tmdData, 0, 4, ctmdData.readInt(0));
-    MathHelper.set(tmdData, 4, 4, ctmd.flags & ~0x2);
-    MathHelper.set(tmdData, 8, 4, ctmd.objCount);
+    MathHelper.setInt(tmdData, 0, ctmdData.readInt(0));
+    MathHelper.setInt(tmdData, 4, ctmd.flags & ~0x2);
+    MathHelper.setInt(tmdData, 8, ctmd.objCount);
 
     int primitivesOffset = 0xc + ctmd.objCount * 0x1c;
     for(int i = 0; i < ctmd.objTables.length; i++) {
       final Ctmd.ObjTable objTable = ctmd.objTables[i];
 
-      MathHelper.set(tmdData, 0xc + i * 0x1c + 0x10, 4, primitivesOffset - 0xc);
-      MathHelper.set(tmdData, 0xc + i * 0x1c + 0x14, 4, objTable.primitiveCount_14);
+      MathHelper.setInt(tmdData, 0xc + i * 0x1c + 0x10, primitivesOffset - 0xc);
+      MathHelper.setInt(tmdData, 0xc + i * 0x1c + 0x14, objTable.primitiveCount_14);
 
       for(int groupIndex = 0; groupIndex < objTable.unpackedPrimitives.size(); groupIndex++) {
         final Ctmd.PrimitiveGroup group = objTable.unpackedPrimitives.get(groupIndex);
@@ -170,7 +170,7 @@ public final class CtmdTransformer {
 //        primitivesOffset += 0x4;
 
         for(final byte[] prims : group.data()) {
-          MathHelper.set(tmdData, primitivesOffset, 4, group.header());
+          MathHelper.setInt(tmdData, primitivesOffset, group.header());
           primitivesOffset += 0x4;
           System.arraycopy(prims, 0, tmdData, primitivesOffset, prims.length);
           primitivesOffset += prims.length;
@@ -182,14 +182,14 @@ public final class CtmdTransformer {
     for(int i = 0; i < ctmd.objTables.length; i++) {
       final Ctmd.ObjTable objTable = ctmd.objTables[i];
 
-      MathHelper.set(tmdData, 0xc + i * 0x1c, 4, verticesOffset - 0xc);
-      MathHelper.set(tmdData, 0xc + i * 0x1c + 0x4, 4, objTable.unpackedVertices.length);
+      MathHelper.setInt(tmdData, 0xc + i * 0x1c, verticesOffset - 0xc);
+      MathHelper.setInt(tmdData, 0xc + i * 0x1c + 0x4, objTable.unpackedVertices.length);
 
       for(int vertIndex = 0; vertIndex < objTable.unpackedVertices.length; vertIndex++) {
         final Vector3i vertex = objTable.unpackedVertices[vertIndex];
-        MathHelper.set(tmdData, verticesOffset, 2, vertex.x);
-        MathHelper.set(tmdData, verticesOffset + 0x2, 2, vertex.y);
-        MathHelper.set(tmdData, verticesOffset + 0x4, 2, vertex.z);
+        MathHelper.setShort(tmdData, verticesOffset, (short)vertex.x);
+        MathHelper.setShort(tmdData, verticesOffset + 0x2, (short)vertex.y);
+        MathHelper.setShort(tmdData, verticesOffset + 0x4, (short)vertex.z);
         verticesOffset += 0x8;
       }
     }
@@ -198,14 +198,14 @@ public final class CtmdTransformer {
     for(int i = 0; i < ctmd.objTables.length; i++) {
       final Ctmd.ObjTable objTable = ctmd.objTables[i];
 
-      MathHelper.set(tmdData, 0xc + i * 0x1c + 0x8, 4, normalsOffset - 0xc);
-      MathHelper.set(tmdData, 0xc + i * 0x1c + 0xc, 4, objTable.normalCount_0c);
+      MathHelper.setInt(tmdData, 0xc + i * 0x1c + 0x8, normalsOffset - 0xc);
+      MathHelper.setInt(tmdData, 0xc + i * 0x1c + 0xc, objTable.normalCount_0c);
 
       for(int normIndex = 0; normIndex  < objTable.normalCount_0c; normIndex++) {
         final Vector3i norm = objTable.unpackedNormals[normIndex];
-        MathHelper.set(tmdData, normalsOffset, 2, norm.x);
-        MathHelper.set(tmdData, normalsOffset + 0x2, 2, norm.y);
-        MathHelper.set(tmdData, normalsOffset + 0x4, 2, norm.z);
+        MathHelper.setShort(tmdData, normalsOffset, (short)norm.x);
+        MathHelper.setShort(tmdData, normalsOffset + 0x2, (short)norm.y);
+        MathHelper.setShort(tmdData, normalsOffset + 0x4, (short)norm.z);
         normalsOffset += 0x8;
       }
     }
@@ -222,29 +222,29 @@ public final class CtmdTransformer {
     containerData.read(0, newData, containerOffset, 0xc);
 
     // Adjust DEFF container pointers
-    final int deffContainerPtr10 = (int)MathHelper.get(newData, 0x10, 2);
+    final int deffContainerPtr10 = MathHelper.getShort(newData, 0x10);
     if(deffContainerPtr10 > containerOffset) {
-      MathHelper.set(newData, 0x10, 2, deffContainerPtr10 + containerSizeDifference);
+      MathHelper.setShort(newData, 0x10, (short)(deffContainerPtr10 + containerSizeDifference));
     }
 
     final int type = newData[3];
     if(type != 0x3) {
-      final int deffContainerPtr14 = (int)MathHelper.get(newData, 0x14, 2); // NOTE: for type 4 DEFF containers, this may be the 0xc container header, but that should be fine because 0xc will be < the offset
+      final int deffContainerPtr14 = MathHelper.getShort(newData, 0x14); // NOTE: for type 4 DEFF containers, this may be the 0xc container header, but that should be fine because 0xc will be < the offset
       if(deffContainerPtr14 > containerOffset) {
-        MathHelper.set(newData, 0x14, 2, deffContainerPtr14 + containerSizeDifference);
+        MathHelper.setShort(newData, 0x14, (short)(deffContainerPtr14 + containerSizeDifference));
       }
     }
 
     // Adjust 0xc container pointers
-    final int cContainerPtr4 = (int)MathHelper.get(newData, containerOffset + 0x4, 2);
-    final int cContainerPtr8 = (int)MathHelper.get(newData, containerOffset + 0x8, 2);
+    final int cContainerPtr4 = MathHelper.getShort(newData, containerOffset + 0x4);
+    final int cContainerPtr8 = MathHelper.getShort(newData, containerOffset + 0x8);
 
     if(cContainerPtr4 > 0xc) {
-      MathHelper.set(newData, containerOffset + 0x4, 2, cContainerPtr4 + tmdSizeDifference);
+      MathHelper.setShort(newData, containerOffset + 0x4, (short)(cContainerPtr4 + tmdSizeDifference));
     }
 
     if(cContainerPtr8 > 0xc) {
-      MathHelper.set(newData, containerOffset + 0x8, 2, cContainerPtr8 + tmdSizeDifference);
+      MathHelper.setShort(newData, containerOffset + 0x8, (short)(cContainerPtr8 + tmdSizeDifference));
     }
 
     // Copy new TMD data
@@ -343,7 +343,7 @@ public final class CtmdTransformer {
     //LAB_800de968
     //LAB_800de970
     for(int i = 0; i < unpackedCount; i++) {
-      MathHelper.set(unpackedData, i * 2, 2, unpackingData._10[unpackingData._04]);
+      MathHelper.setShort(unpackedData, i * 2, (short)unpackingData._10[unpackingData._04]);
       unpackingData._04++;
       unpackingData._04 &= 0x1f;
       unpackingData._0c--;

@@ -816,8 +816,8 @@ public class RetailSubmap extends Submap {
       for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
         if(tims[i] != null) {
           final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
-          final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[i]);
-          final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[i])[0];
+          final VramTextureSingle texture = VramTextureLoader.textureFromTim(tims[i]);
+          final VramTextureSingle palette = VramTextureLoader.palettesFromTim(tims[i])[0];
 
           final Rect4i rect = rects[i];
           final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
@@ -840,8 +840,8 @@ public class RetailSubmap extends Submap {
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
       if(this.foregroundTextures[i] == null && tims[this.envBackgroundTextureCount_800cb57c + i] != null) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
-        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
+        final VramTextureSingle texture = VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
+        final VramTextureSingle palette = VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
 
         final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
         final Rect4i appliedRect = new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h);

@@ -51,8 +51,6 @@ public final class Models {
     new UvAdjustmentMetrics14(17, 704, 240, 704,   0),
   };
 
-  public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
-
   @Method(0x80020468L)
   public static void adjustPartUvs(final ModelPart10 dobj2, final UvAdjustmentMetrics14 metrics) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
@@ -272,17 +270,17 @@ public final class Models {
   }
 
   @Method(0x80021520L)
-  public static void loadPlayerModelAndAnimation(final Model124 model, final CContainer tmd, final TmdAnimationFile anim, final int shadowSizeIndex) {
+  public static void loadPlayerModelAndAnimation(final Model124 model, final CContainer tmd, final TmdAnimationFile anim, final int shadowSize) {
     loadModelAndAnimation(model, tmd, anim);
     adjustModelUvs(model);
     model.modelPartWithShadowIndex_cd = -2;
 
-    setShadowSize(model, shadowSizeIndex);
+    setShadowSize(model, shadowSize);
   }
 
   @Method(0x8002155cL)
-  public static void setShadowSize(final Model124 model, final int shadowSizeIndex) {
-    final float scale = shadowScale_8005039c[shadowSizeIndex] / (float)0x1000;
+  public static void setShadowSize(final Model124 model, final int shadowSize) {
+    final float scale = shadowSize / (float)0x1000;
     model.shadowSize_10c.set(scale, scale, scale);
   }
 

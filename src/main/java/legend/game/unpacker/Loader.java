@@ -33,6 +33,10 @@ public final class Loader {
     return Unpacker.ROOT.resolve(fixPath(name));
   }
 
+  public static Path resolve(final Path name) {
+    return Unpacker.ROOT.resolve(name);
+  }
+
   public static FileData loadFile(final Path path) {
     LOGGER.info("Loading file %s", path);
 
@@ -76,6 +80,23 @@ public final class Loader {
     Async.run(() -> {
       final List<FileData> fileData = new ArrayList<>();
       for(final String file : files) {
+        final FileData data = loadFile(file);
+        fileData.add(data);
+      }
+
+      onCompletion.accept(fileData);
+      final int remaining = LOADING_COUNT.updateAndGet(i -> i - files.length);
+      LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
+    }).exceptionally(t -> onFileLoadingException(t, Arrays.toString(files)));
+  }
+
+  public static void loadFiles(final Consumer<List<FileData>> onCompletion, final Path... files) {
+    final int total = LOADING_COUNT.updateAndGet(i -> i + files.length);
+    LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
+
+    Async.run(() -> {
+      final List<FileData> fileData = new ArrayList<>();
+      for(final Path file : files) {
         final FileData data = loadFile(file);
         fileData.add(data);
       }

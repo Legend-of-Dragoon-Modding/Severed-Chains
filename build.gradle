@@ -59,8 +59,8 @@ repositories {
 }
 
 dependencies {
-  api 'org.legendofdragoon:mod-loader:4.2.2'
-  api 'org.legendofdragoon:script-recompiler:0.6.2'
+  api 'org.legendofdragoon:mod-loader:4.2.5'
+  api 'org.legendofdragoon:script-recompiler:0.7.0'
 
   api 'org.apache.logging.log4j:log4j-api:2.24.3'
   api 'org.apache.logging.log4j:log4j-core:2.24.3'
@@ -223,6 +223,7 @@ tasks.register('copySupportFiles', Copy) {
     from 'README.md'
     from 'LICENSE'
     from(tasks.named('updaterJar'))
+    from 'credits.txt'
   }
 }
 

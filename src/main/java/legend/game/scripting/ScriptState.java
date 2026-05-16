@@ -17,6 +17,7 @@ import org.legendofdragoon.scripting.tokens.Script;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -137,6 +138,7 @@ public class ScriptState<T extends ScriptedObject> {
   private final float[] storagef_44 = new float[STORAGE_COUNT];
   private final boolean[] isFloat = new boolean[STORAGE_COUNT];
   public final RegistryId[] registryIds = new RegistryId[REGISTRY_ID_COUNT];
+  private final Deque<Integer> stack = new LinkedList<>();
 
   private boolean paused;
   private int ticks;
@@ -646,6 +648,49 @@ public class ScriptState<T extends ScriptedObject> {
       return new ScriptStateVarRegistryIdParam(this, cmd0);
     }
 
+    if(type == 0x24) { // stor[inl?, inl]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int storIndex = this.frame().file.getOp(packed & 0xffff);
+
+      if(cmd0 == 2) {
+        final int scriptIndex = this.frame().file.getOp(packed >>> 16);
+        return new ScriptStorageParam(this.manager.getState(scriptIndex), storIndex);
+      }
+
+      return new ScriptStorageParam(this, storIndex);
+    }
+
+    if(type == 0x25) { // var[inl][inl?]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int varIndex1 = this.frame().file.getOp(packed & 0xffff);
+
+      if(cmd0 == 2) {
+        final int varIndex2 = this.frame().file.getOp(packed >>> 16);
+        return new GameVarArrayParam(varIndex1, varIndex2);
+      }
+
+      return new GameVarParam(varIndex1);
+    }
+
+    if(type == 0x26) { // reg[inl?, inl]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int regIndex = this.frame().file.getOp(packed & 0xffff);
+
+      if(cmd0 == 2) {
+        final int scriptIndex = this.frame().file.getOp(packed >>> 16);
+        return new ScriptStateRegistryIdParam(this.manager.getState(scriptIndex), regIndex);
+      }
+
+      return new ScriptStateRegistryIdParam(this, regIndex);
+    }
+
+    if(type == 0x27) { // inl[inl]
+      final int packed = this.frame().file.getOp(this.context.commandOffset_0c++);
+      final int offset = packed & 0xffff;
+      final int index = this.frame().file.getOp(packed >>> 16);
+      return new ScriptInlineParam(this, offset).array(index);
+    }
+
     // Treated as an immediate if not a valid op
     return new ScriptInlineParam(this, this.context.commandOffset_0c - 1);
   }
@@ -722,6 +767,10 @@ public class ScriptState<T extends ScriptedObject> {
       case NOOP_98 -> this.FUN_80017304();
       case DEPTH -> this.scriptGetCallStackDepth();
 
+      case PUSH -> this.scriptPush();
+      case POP -> this.scriptPop();
+      case CMP -> this.scriptCmp();
+
       default -> throw new IllegalArgumentException("Unknown script op " + op);
     };
   }
@@ -766,6 +815,8 @@ public class ScriptState<T extends ScriptedObject> {
         case 5 -> operandA.getFloat() > operandB.getFloat() || MathHelper.flEq(operandA.getFloat(), operandB.getFloat());
         case 6 -> (operandA.get() & operandB.get()) != 0;
         case 7 -> (operandA.get() & operandB.get()) == 0;
+        case 8 -> operandA.get() != 0 && operandB.get() != 0;
+        case 9 -> operandA.get() != 0 || operandB.get() != 0;
         default -> false;
       };
     }
@@ -780,6 +831,8 @@ public class ScriptState<T extends ScriptedObject> {
       case 5 -> operandA.get() >= operandB.get();
       case 6 -> (operandA.get() & operandB.get()) != 0;
       case 7 -> (operandA.get() & operandB.get()) == 0;
+      case 8 -> operandA.get() != 0 && operandB.get() != 0;
+      case 9 -> operandA.get() != 0 || operandB.get() != 0;
       default -> false;
     };
   }
@@ -825,6 +878,8 @@ public class ScriptState<T extends ScriptedObject> {
    *     <li>Greater than or equal to</li>
    *     <li>And</li>
    *     <li>Nand</li>
+   *     <li>Logical and</li>
+   *     <li>Logical or</li>
    *   </ol>
    * </p>
    *
@@ -1346,6 +1401,21 @@ public class ScriptState<T extends ScriptedObject> {
   @Method(0x8001730cL)
   public FlowControl scriptGetCallStackDepth() {
     this.context.params_20[0].set(this.callStackDepth());
+    return FlowControl.CONTINUE;
+  }
+
+  public FlowControl scriptPush() {
+    this.stack.push(this.context.params_20[0].get());
+    return FlowControl.CONTINUE;
+  }
+
+  public FlowControl scriptPop() {
+    this.context.params_20[0].set(this.stack.pop());
+    return FlowControl.CONTINUE;
+  }
+
+  public FlowControl scriptCmp() {
+    this.context.params_20[2].set(this.scriptCompare(this.context.params_20[0], this.context.params_20[1], this.context.opParam_18));
     return FlowControl.CONTINUE;
   }
 

@@ -98,7 +98,7 @@ final class OggPage {
     }
 
     final byte[] data = bos.toByteArray();
-    MathHelper.set(data, 0x16, 0x4, getCrc(data));
+    MathHelper.setInt(data, 0x16, getCrc(data));
     return data;
   }
 

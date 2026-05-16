@@ -25,7 +25,7 @@ public abstract class AudioSource {
   private int bufferIndex;
   private int sourceId;
 
-  private boolean playing;
+  private boolean active;
 
   private IntBuffer tmp;
 
@@ -46,7 +46,7 @@ public abstract class AudioSource {
   }
 
   protected void destroy() {
-    this.playing = false;
+    this.active = false;
     alSourceStop(this.sourceId);
 
     alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
@@ -69,13 +69,13 @@ public abstract class AudioSource {
 
   public void tick() {
     // Restart playback if stopped
-    if(this.isPlaying()) {
+    if(this.isActive()) {
       this.play();
     }
   }
 
   public boolean canBuffer() {
-    if(!this.playing || !this.isInitialized()) {
+    if(!this.active || !this.isInitialized()) {
       return false;
     }
 
@@ -121,18 +121,18 @@ public abstract class AudioSource {
   }
 
   protected void stop() {
-    this.playing = false;
+    this.active = false;
 
     if(this.isInitialized()) {
       alSourceStop(this.sourceId);
     }
   }
 
-  protected void setPlaying(final boolean playing) {
-    this.playing = playing;
+  protected void setActive(final boolean active) {
+    this.active = active;
   }
 
-  public boolean isPlaying() {
-    return this.playing;
+  public boolean isActive() {
+    return this.active;
   }
 }

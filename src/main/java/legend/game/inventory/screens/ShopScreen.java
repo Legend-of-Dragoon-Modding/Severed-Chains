@@ -30,13 +30,11 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
 import static legend.game.Menus.whichMenu_800bdc38;
-import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.UI_TEXT_DISABLED;
@@ -44,9 +42,8 @@ import static legend.game.SItem.UI_TEXT_SELECTED_CENTERED;
 import static legend.game.SItem.addGold;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.loadCharacterStats;
+import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderFiveDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.takeEquipment;
@@ -63,6 +60,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_TOP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class ShopScreen extends MenuScreen {
   private static final MenuGlyph06[] glyphs_80114510 = {
@@ -118,7 +116,6 @@ public class ShopScreen extends MenuScreen {
   protected void render() {
     switch(this.menuState) {
       case INIT_0 -> {
-        loadCharacterStats();
         cacheCharacterSlots();
 
         this.inv.clear();
@@ -269,23 +266,26 @@ public class ShopScreen extends MenuScreen {
     renderText(I18n.translate("lod_core.ui.shop.category_leave"), 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
   }
 
+  private ShopExtension getExtension(@Nullable final ShopEntry<? extends InventoryEntry<?>> shopEntry) {
+    if(shopEntry == null) {
+      return this.unknownExtension;
+    }
+
+    return this.extensions.object2IntEntrySet().stream()
+      .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
+      .map(Object2IntMap.Entry::getKey)
+      .filter(extension -> extension.accepts(shopEntry))
+      .findFirst()
+      .orElse(this.unknownExtension)
+    ;
+  }
+
   private void setSelectedEntry(@Nullable final ShopEntry<? extends InventoryEntry<?>> shopEntry) {
     if(this.activeExtension != null) {
       this.activeExtension.deactivate(this, this.shop, gameState_800babc8);
     }
 
-    if(shopEntry == null) {
-      this.activeExtension = this.unknownExtension;
-    } else {
-      this.activeExtension = this.extensions.object2IntEntrySet().stream()
-        .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
-        .map(Object2IntMap.Entry::getKey)
-        .filter(extension -> extension.accepts(shopEntry))
-        .findFirst()
-        .orElse(this.unknownExtension)
-      ;
-    }
-
+    this.activeExtension = this.getExtension(shopEntry);
     this.selectedEntry = shopEntry;
     this.activeExtension.activate(this, this.shop, gameState_800babc8, shopEntry);
   }
@@ -338,7 +338,7 @@ public class ShopScreen extends MenuScreen {
 
         if(equipment.canBeDiscarded()) {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(this.shop, equipment, equipment.getSellPrice()));
-          renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
+          this.renderNumber(322, this.menuEntryY(i) + 4, event.price, 6);
         } else {
           ItemIcon.WARNING.render(330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
         }
@@ -354,7 +354,7 @@ public class ShopScreen extends MenuScreen {
     int i;
     for(i = 0; i < Math.min(6, list.size() - startItemIndex); i++) {
       final ShopEntry<? extends InventoryEntry<?>> item = list.get(startItemIndex + i);
-      this.activeExtension.drawShopRow(this, this.shop, gameState_800babc8, item, i, 148, this.menuEntryY(i));
+      this.getExtension(item).drawShopRow(this, this.shop, gameState_800babc8, item, i, 148, this.menuEntryY(i));
     }
 
     upArrow.setVisible(startItemIndex != 0);

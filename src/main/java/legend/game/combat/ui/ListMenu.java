@@ -28,7 +28,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public abstract class ListMenu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ListMenu.class);
@@ -292,7 +292,7 @@ public abstract class ListMenu {
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           //LAB_800f5078
-          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
+          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.typeBentSlot_276;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
 
           if(!this.canUse()) {
@@ -433,7 +433,7 @@ public abstract class ListMenu {
           this.battleUiList = new UiBox(this.x_04 - w / 2, this.y_06 - h, w, h);
         }
 
-        this.battleUiList.render(CONFIG.getConfig(UI_COLOUR.get()));
+        this.battleUiList.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
 
         this.drawList();
 

@@ -23,13 +23,13 @@ public class IntConfigEntry extends ConfigEntry<Integer> {
 
   private static byte[] serialize(final int val) {
     final byte[] out = new byte[4];
-    MathHelper.set(out, 0, 4, val);
+    MathHelper.setInt(out, 0, val);
     return out;
   }
 
   private static int deserialize(final byte[] bytes, final int defaultValue) {
     if(bytes.length == 4) {
-      return (int)MathHelper.get(bytes, 0, 4);
+      return MathHelper.getInt(bytes, 0);
     }
 
     return defaultValue;

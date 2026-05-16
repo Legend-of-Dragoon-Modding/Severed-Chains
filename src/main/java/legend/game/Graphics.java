@@ -345,11 +345,12 @@ public final class Graphics {
     //LAB_8003c468
   }
 
+  private static final Matrix3f lightSource = new Matrix3f();
+
   @Method(0x8003c4a0L)
   public static void GsSetLightMatrix(final Matrix3f mp) {
-    final Matrix3f lightDirection = new Matrix3f();
-    lightDirectionMatrix_800c34e8.mul(mp, lightDirection);
-    GTE.setLightSourceMatrix(lightDirection);
+    lightDirectionMatrix_800c34e8.mul(mp, lightSource);
+    GTE.setLightSourceMatrix(lightSource);
   }
 
   @Method(0x8003c5e0L)

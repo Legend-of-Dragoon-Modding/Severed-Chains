@@ -28,11 +28,11 @@ import legend.core.platform.input.InputCodepoints;
 import legend.game.EngineState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.AboutScreen;
 import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.FullScreenInputScreen;
 import legend.game.inventory.screens.HorizontalAlign;
-import legend.game.inventory.screens.AboutScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
@@ -227,7 +227,6 @@ public class Ttle extends EngineState<Ttle> {
     setMainVolume(0x7f, 0x7f);
     AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
     FUN_8001aa90();
-    loadMusicPackage(1);
   }
 
   @Override
@@ -254,6 +253,8 @@ public class Ttle extends EngineState<Ttle> {
   private void initializeMainMenu() {
 //    SCREENS.pushScreen(new TitleScreen());
 //    GameEngine.legacyUi = false;
+
+    loadMusicPackage(1);
 
     this.menuLoadingStage = 0;
     this.menuTransitionState_800c6728 = 0;
@@ -599,7 +600,6 @@ public class Ttle extends EngineState<Ttle> {
       if(this.menuTransitionState_800c6728 == 3) {
         if(!transition.apply((U)this.asyncScreen)) {
           this.asyncScreen = null;
-          engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
           this.loadingStage = 0;
           vsyncMode_8007a3b8 = 2;
         }

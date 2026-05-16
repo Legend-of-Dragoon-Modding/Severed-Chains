@@ -2,7 +2,7 @@ package legend.lodmod.battleactions;
 
 import legend.game.combat.Battle;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.ui.BattleActionFlowControl;
+import legend.game.combat.ui.BattleActionUseFlowControl;
 
 public class SpellBattleAction extends RetailBattleAction {
   public SpellBattleAction() {
@@ -10,15 +10,15 @@ public class SpellBattleAction extends RetailBattleAction {
   }
 
   @Override
-  public BattleActionFlowControl use(final Battle battle, final PlayerBattleEntity player) {
+  public BattleActionUseFlowControl use(final Battle battle, final PlayerBattleEntity player) {
     //LAB_800f67b8
     //LAB_800f67d8
     //LAB_800f67f4
-    if(!battle.dragoonSpells_800c6960.get(player.charSlot_276).spellIndices_01.isEmpty()) {
+    if(!battle.dragoonSpells_800c6960.get(player.typeBentSlot_276).spells_01.isEmpty()) {
       return super.use(battle, player);
     }
 
     //LAB_800f681c
-    return BattleActionFlowControl.FAIL;
+    return BattleActionUseFlowControl.FAIL;
   }
 }

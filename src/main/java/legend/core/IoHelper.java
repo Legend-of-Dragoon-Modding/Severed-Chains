@@ -215,7 +215,7 @@ public final class IoHelper {
   }
 
   public static short readShort(final byte[] data, final int offset) {
-    return (short)MathHelper.get(data, offset, 2);
+    return MathHelper.getShort(data, offset);
   }
 
   public static int readInt(final ByteBuffer stream) {
@@ -223,7 +223,7 @@ public final class IoHelper {
   }
 
   public static int readInt(final byte[] data, final int offset) {
-    return (int)MathHelper.get(data, offset, 4);
+    return MathHelper.getInt(data, offset);
   }
 
   public static long readUInt(final ByteBuffer stream) {

@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
-import static legend.game.SItem.renderFiveDigitNumber;
+import static legend.game.SItem.renderNumber;
 import static legend.game.SItem.renderRightAlignedNumber;
 import static legend.game.SItem.renderString;
 import static legend.game.Text.renderText;
@@ -52,7 +52,7 @@ public abstract class ShopExtension<T extends InventoryEntry<T>> {
   /** Draw the entry row in the inventory list */
   public void drawShopRow(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<T> entry, final int index, final int x, final int y) {
     renderText(I18n.translate(entry.item.getNameTranslationKey()), x + 20, y + 2, UI_TEXT);
-    renderFiveDigitNumber(x + 176, y + 4, entry.price);
+    renderNumber(x + 176, y + 4, entry.price, 0x2, 6);
     entry.item.renderIcon(x + 3, y, 0x8);
   }
 

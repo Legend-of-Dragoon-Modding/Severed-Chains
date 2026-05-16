@@ -5,13 +5,13 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
-import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.addMp;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.lodmod.LodConfig.ITEM_STACK_SIZE;
+import static legend.lodmod.LodMod.MP_STAT;
 
 public class RecoverMpItem extends BattleItem {
   private final boolean targetAll;
@@ -35,8 +35,8 @@ public class RecoverMpItem extends BattleItem {
 
   @Override
   public boolean canBeUsedNow(final ItemStack stack, final UsageLocation location) {
-    for(int i = 0; i < characterIndices_800bdbb8.length; i++) {
-      if(stats_800be5f8[i].maxMp_6e > stats_800be5f8[i].mp_06) {
+    for(int i = 0; i < characterIndices_800bdbb8.size(); i++) {
+      if(!gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(i)).stats.getStat(MP_STAT.get()).isFull()) {
         return true;
       }
     }
@@ -56,7 +56,7 @@ public class RecoverMpItem extends BattleItem {
     if(this.percentage == 100) {
       amount = -1;
     } else {
-      amount = stats_800be5f8[charId].maxMp_6e * this.percentage / 100;
+      amount = gameState_800babc8.charData_32c.get(charId).stats.getStat(MP_STAT.get()).getMax() * this.percentage / 100;
     }
 
     this.recover(charId, amount);
@@ -75,7 +75,7 @@ public class RecoverMpItem extends BattleItem {
   @Override
   public int calculateStatMod(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     user.status_0e |= 0x800;
-    return target.stats.getStat(LodMod.MP_STAT.get()).getMax() * this.percentage / 100;
+    return target.stats.getStat(MP_STAT.get()).getMax() * this.percentage / 100;
   }
 
   @Override

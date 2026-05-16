@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Menus.addToManagedRenderables;
 import static legend.game.Menus.allocateManualRenderable;
-import static legend.game.Menus.allocateRenderable;
 import static legend.game.Menus.uiFile_800bdc3c;
 
 public class ItemIcon {
@@ -98,15 +98,8 @@ public class ItemIcon {
   }
 
   public Renderable58 render(final int x, final int y, final int flags) {
-    final Renderable58 renderable = allocateRenderable(this.getUiType(), null);
-    renderable.flags_00 |= flags | Renderable58.FLAG_NO_ANIMATION;
-    renderable.glyph_04 = this.resolve().icon;
-    renderable.startGlyph_10 = renderable.glyph_04;
-    renderable.endGlyph_14 = renderable.glyph_04;
-    renderable.tpage_2c = 0x19;
-    renderable.clut_30 = 0;
-    renderable.x_40 = x;
-    renderable.y_44 = y;
+    final Renderable58 renderable = this.renderManual(x, y, flags);
+    addToManagedRenderables(renderable);
     return renderable;
   }
 
