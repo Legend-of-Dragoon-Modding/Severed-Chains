@@ -123,6 +123,8 @@ public final class Unpacker {
     postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
 
     postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
+
+    postTransformers.add(new BranchTransformation("Submap Object deduplicator", SobjTransformer::transform));
   }
 
   private static final List<Replacement> replacements = new ArrayList<>();
@@ -833,13 +835,13 @@ public final class Unpacker {
    * Man in the Bale library with face/chest swapped
    */
   private static void drgn21_260_textures_4_chesterTextureReplacementPatcher(final PathNode root, final Transformations transformations, final Set<String> flags) {
-    final PathNode sect = root.children.get("SECT");
+    final PathNode sobj = root.children.get("sobj");
 
-    if(sect != null) {
-      final PathNode drgn21 = sect.children.get("DRGN21.BIN");
+    if(sobj != null) {
+      final PathNode chester = sobj.children.get("ec895499aa68078a");
 
-      if(drgn21 != null) {
-        transformations.replaceWithFile(drgn21.children.get("260").children.get("textures").children.get("4"), REPLACEMENTS.resolve("chester.tim"));
+      if(chester != null) {
+        transformations.replaceWithFile(chester.children.get("textures").children.get("55c85597ba28c221"), REPLACEMENTS.resolve("chester.tim"));
       }
     }
   }
