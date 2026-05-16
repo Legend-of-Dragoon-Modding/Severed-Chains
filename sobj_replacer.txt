@@ -15,3 +15,5 @@ e7996e5b153382e2    =   faab05ac76cb16d1    # Rose (low-res) (Uses the same text
 
 f2fc0aeb8a2b2c11    =   5db1b2d4eee8485d    # Albert 2
 822ec1940d5a6465    =   76d4a6141909e903    # Texture
+
+4c082765edc64286    =   4fc0041bf5678934    # Claire (Uses the same texture)

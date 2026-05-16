@@ -122,8 +122,6 @@ public final class Unpacker {
     // Convert submap PXLs into individual TIMs
     postTransformers.add(new BranchTransformation("Submap PXL converter", SubmapPxlTransformer::transform));
 
-    postTransformers.add(new BranchTransformation("Claire model fixer", Unpacker::replaceBrokenClaireModel));
-
     postTransformers.add(new BranchTransformation("Submap Object deduplicator", SobjTransformer::transform));
   }
 
@@ -864,30 +862,6 @@ public final class Unpacker {
 
     newData[0xc] = (byte)expectedObjects;
     return newData;
-  }
-
-  /** Replaces the disk 2 Claire model (broken face UVs) with the good model from disk 3 */
-  private static void replaceBrokenClaireModel(final PathNode root, final Transformations transformations, final Set<String> flags) {
-    if(!root.children.containsKey("SECT")) {
-      // Only doing a partial unpack, no SECT
-      return;
-    }
-
-    final PathNode sect = root.children.get("SECT");
-
-    // Not ideal because if DRGN23 isn't being unpacked, DRGN22's files won't be fixed, but not much we can do about that
-
-    if(sect.children.containsKey("DRGN22.BIN") && sect.children.containsKey("DRGN23.BIN")) {
-      final PathNode bad = sect.children.get("DRGN22.BIN").children.get("863").children.get("33");
-      final PathNode good = sect.children.get("DRGN23.BIN").children.get("506").children.get("33");
-      transformations.replaceNode(bad, good.data);
-    }
-
-    if(sect.children.containsKey("DRGN24.BIN") && sect.children.containsKey("DRGN23.BIN")) {
-      final PathNode bad = sect.children.get("DRGN24.BIN").children.get("260").children.get("33");
-      final PathNode good = sect.children.get("DRGN23.BIN").children.get("506").children.get("33");
-      transformations.replaceNode(bad, good.data);
-    }
   }
 
   /**
