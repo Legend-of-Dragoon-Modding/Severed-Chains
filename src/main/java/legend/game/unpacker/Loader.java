@@ -2,6 +2,8 @@ package legend.game.unpacker;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import legend.core.Async;
 import legend.core.DebugHelper;
 import org.apache.logging.log4j.LogManager;
@@ -225,6 +227,12 @@ public final class Loader {
       }
     }
 
+    final Path ref = dir.resolve("ref");
+
+    if(Files.exists(ref)) {
+      return processRef(dir, ref);
+    }
+
     try(final DirectoryStream<Path> ds = Files.newDirectoryStream(dir)) {
       final List<FileData> files = new ArrayList<>();
 
@@ -252,6 +260,86 @@ public final class Loader {
       return files;
     } catch(final IOException e) {
       throw new RuntimeException("Failed to load directory " + dir, e);
+    }
+  }
+
+  private static final Path FILES = Path.of(".", "files").normalize();
+
+  private static List<FileData> processRef(final Path dir, final Path ref) {
+    try(final BufferedReader reader = Files.newBufferedReader(ref)) {
+
+      final Int2ObjectMap<FileData> realFiles = new Int2ObjectArrayMap<>();
+      final Int2IntMap virtualFiles = new Int2IntArrayMap();
+
+      reader.lines().forEach(line -> {
+        final String[] parts = MRG_ENTRY.split(line);
+
+        if(parts.length != 3) {
+          throw new RuntimeException("Invalid REF entry! " + line);
+        }
+
+        final int currentIndex = Integer.parseInt(parts[0]);
+
+        final String rawPath = parts[1];
+
+        if(rawPath.isBlank()) {
+          return;
+        }
+
+        if(rawPath.startsWith("@")) {
+          virtualFiles.put(currentIndex, Integer.parseInt(rawPath.substring(1)));
+          return;
+        }
+
+        final Path resolved = rawPath.startsWith("/")
+          ? FILES.resolve(rawPath.substring(1))
+          : dir.resolve(rawPath);
+
+        final Path normalized = resolved.normalize();
+
+        if(!normalized.startsWith(FILES)) {
+          throw new RuntimeException("REF path escapes files directory! " + rawPath);
+        }
+
+        try {
+          if(Files.isRegularFile(normalized)) {
+            realFiles.put(currentIndex, new FileData(Files.readAllBytes(normalized)));
+          } else if (Files.isDirectory(normalized)) {
+            realFiles.put(currentIndex, new FileData(new byte[0]));
+          } else {
+            throw new RuntimeException("REF entry is not a file or directory! " + normalized);
+          }
+        } catch(final IOException e) {
+          throw new RuntimeException("Failed to load REF file " + normalized, e);
+        }
+      });
+
+      int maxKey = -1;
+
+      for(final int key : realFiles.keySet()) {
+        maxKey = Math.max(maxKey, key);
+      }
+
+      for(final int key : virtualFiles.keySet()) {
+        maxKey = Math.max(maxKey, key);
+      }
+
+      final FileData[] files = new FileData[maxKey + 1];
+
+      for(int i = 0; i < files.length; i++) {
+        if(realFiles.containsKey(i)) {
+          files[i] = realFiles.get(i);
+
+        } else if (virtualFiles.containsKey(i)){
+          final int fileIndex = virtualFiles.get(i);
+
+          files[i] = FileData.virtual(realFiles.get(fileIndex), 0, fileIndex);
+        }
+      }
+
+      return Arrays.stream(files).toList();
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load REF directory " + dir, e);
     }
   }
 

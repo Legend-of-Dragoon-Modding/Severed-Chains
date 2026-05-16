@@ -59,7 +59,12 @@ public class RoseTemplate extends RetailCharacterTemplate {
 
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
-    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/99", "SECT/DRGN22.BIN/836/textures/3", "SECT/DRGN22.BIN/836/100", "SECT/DRGN22.BIN/836/101", "SECT/DRGN22.BIN/836/102");
+    Loader.loadFiles(onLoad,
+      "sobj/Rose (Low-res?)/model",
+      "sobj/Rose (Low-res?)/textures/6c01ed63c50464",
+      "sobj/Rose (Low-res?)/animations/ee117b0bb0170d49",
+      "sobj/Rose (Low-res?)/animations/52233f01f3e4685b",
+      "sobj/Rose (Low-res?)/animations/e8a30c187327705c");
   }
 
   @Override

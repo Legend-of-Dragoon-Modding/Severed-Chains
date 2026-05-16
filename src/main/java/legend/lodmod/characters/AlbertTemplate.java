@@ -92,7 +92,12 @@ public class AlbertTemplate extends LavitzTemplate {
 
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
-    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/132", "SECT/DRGN22.BIN/836/textures/4", "SECT/DRGN22.BIN/836/133", "SECT/DRGN22.BIN/836/134", "SECT/DRGN22.BIN/836/135");
+    Loader.loadFiles(onLoad,
+      "sobj/Albert 2/model",
+      "sobj/Albert 2/textures/822ec1940d5a6465",
+      "sobj/Albert 2/animations/949ccd4fff2e7b79",
+      "sobj/Albert 2/animations/b41438b5711b843b",
+      "sobj/Albert 2/animations/a2d7fd8f03ca1538");
   }
 
   @Override
