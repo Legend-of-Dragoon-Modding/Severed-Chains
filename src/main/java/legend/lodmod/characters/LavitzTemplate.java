@@ -60,7 +60,12 @@ public class LavitzTemplate extends RetailCharacterTemplate {
 
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
-    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/290/33", "SECT/DRGN22.BIN/290/textures/1", "SECT/DRGN22.BIN/290/34", "SECT/DRGN22.BIN/290/35", "SECT/DRGN22.BIN/290/36");
+    Loader.loadFiles(onLoad,
+      "sobj/Lavitz/model",
+      "sobj/Lavitz/textures/8b781df2d56fc070",
+      "sobj/Lavitz/animations/cee84f415920ed24",
+      "sobj/Lavitz/animations/f7c8f34dc915fdcd",
+      "sobj/Lavitz/animations/689f37fbe348434e");
   }
 
   @Override

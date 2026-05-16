@@ -46,7 +46,12 @@ public class ShanaTemplate extends RetailCharacterTemplate {
 
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
-    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/33", "SECT/DRGN22.BIN/836/textures/1", "SECT/DRGN22.BIN/836/34", "SECT/DRGN22.BIN/836/35", "SECT/DRGN22.BIN/836/36");
+    Loader.loadFiles(onLoad,
+      "sobj/Shana 2/model",
+      "sobj/Shana 2/textures/2b46e254f937a5f9",
+      "sobj/Shana 2/animations/56dd42c5e783a9e8",
+      "sobj/Shana 2/animations/4381bf9814df0ed9",
+      "sobj/Shana 2/animations/588b49332d43c821");
   }
 
   @Override
