@@ -51,6 +51,7 @@ afc47eea48747922	=	Albert 4
 7e44e1f10695254c	=	Meru
 daf97eccc6084aa8	=	Meru 2
 986c7dcadee87e5d	=	Meru 3
+610b5b9c074cf34a	=	Meru 4
 4351b6b6fa274d0		=	Meru (with hammer)
 8f611ab5872306e6	=	Meru (Wingly wings)
 
