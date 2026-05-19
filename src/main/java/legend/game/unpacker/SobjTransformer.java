@@ -1,7 +1,13 @@
 package legend.game.unpacker;
 
-import it.unimi.dsi.fastutil.longs.Long2LongArrayMap;
-import it.unimi.dsi.fastutil.longs.Long2LongMap;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -10,11 +16,14 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.util.xxhash.XXH3State;
 import org.lwjgl.util.xxhash.XXHash;
 
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public final class SobjTransformer {
@@ -34,8 +43,8 @@ public final class SobjTransformer {
     }
 
     final Long2ObjectArrayMap<Model> models = new Long2ObjectArrayMap<>();
-    final Long2ObjectArrayMap<String> nameMap = hashNameMap();
-    final Long2LongArrayMap replacer = replacerMap();
+    final Long2ObjectArrayMap<String> namer = initNamer();
+    final Map<Long, ReplacementModel> replacer = initReplacer();
 
     final ByteBuffer buffer = BufferUtils.createByteBuffer(MAX_SIZE);
 
@@ -77,7 +86,7 @@ public final class SobjTransformer {
             XXHash.XXH3_64bits_reset(xxhash);
 
             buffer.clear();
-            buffer.put(model.data.data, model.data.offset, Math.min(model.data.size(), MAX_SIZE));
+            buffer.put(model.data.data, model.data.offset, model.data.size());
             buffer.flip();
 
             XXHash.XXH3_64bits_update(xxhash, buffer);
@@ -91,9 +100,7 @@ public final class SobjTransformer {
             modelHashes[modelIndex] = modelHash;
             modelMap[modelIndex] = modelIndex;
 
-            final long replacedModelHash = replacer.getOrDefault(modelHash, modelHash);
-            final String name = nameMap.getOrDefault(replacedModelHash, Long.toHexString(replacedModelHash));
-            refArchive.files.get(modelIndex * 33).ref = "/sobj/" + name + "/model";
+            refArchive.files.get(modelIndex * 33).ref = resolveModelReference(modelHash, replacer, namer);
             folder.children.remove(model.pathSegment);
           } else {
             // Linked to a model file (luckily this is always the case for virtual models)
@@ -106,36 +113,30 @@ public final class SobjTransformer {
         for(int modelIndex = 0; modelIndex < modelMap.length; modelIndex++) {
           final PathNode texture = textures.children.get(Integer.toString(modelIndex));
 
+          if(modelMap[modelIndex] >= modelHashes.length) {
+            continue;
+          }
+
+          final long modelHash = modelHashes[modelMap[modelIndex]];
+          @Nullable final ReplacementModel replacementModel = replacer.get(modelHash);
+
           if(texture != null) {
             XXHash.XXH3_64bits_reset(xxhash);
 
             buffer.clear();
-            buffer.put(texture.data.data, texture.data.offset, Math.min(texture.data.size(), MAX_SIZE));
+            buffer.put(texture.data.data, texture.data.offset, texture.data.size());
             buffer.flip();
 
             XXHash.XXH3_64bits_update(xxhash, buffer);
 
             final long textureHash = XXHash.XXH3_64bits_digest(xxhash);
 
-            final long modelHash = modelHashes[modelMap[modelIndex]];
             final Model m = models.get(modelHash);
             if(!m.textures.containsKey(textureHash)) {
               m.textures.put(textureHash, texture.data);
             }
 
-
-            final long replacedModelHash = replacer.getOrDefault(modelHash, modelHash);
-            final String modelName = nameMap.getOrDefault(replacedModelHash, Long.toHexString(replacedModelHash));
-
-            final long replacedTextureHash;
-            if(modelHash == replacedModelHash) {
-              replacedTextureHash = textureHash;
-            } else {
-              replacedTextureHash = replacer.getOrDefault(textureHash, textureHash);
-            }
-            final String textureName = nameMap.getOrDefault(replacedTextureHash, Long.toHexString(replacedTextureHash));
-
-            textureRefArchive.files.get(modelIndex).ref = "/sobj/" + modelName + "/textures/" + textureName;
+            textureRefArchive.files.get(modelIndex).ref = resolveTextureReference(modelHash, replacementModel, textureHash, namer);
             textures.children.remove(texture.pathSegment);
           }
 
@@ -154,18 +155,13 @@ public final class SobjTransformer {
 
               final long animationHash = XXHash.XXH3_64bits_digest(xxhash);
 
-              final Model m = models.get(modelHashes[modelMap[modelIndex]]);
+              final Model m = models.get(modelHash);
 
               if(!m.animations.containsKey(animationHash)) {
                 m.animations.put(animationHash, animation.data);
               }
 
-              // We're referencing the original model file here. It's a little janky, but works for the models we're targeting
-              final long modelHash = modelHashes[modelMap[modelIndex]];
-              final String modelName = nameMap.getOrDefault(modelHash, Long.toHexString(modelHash));
-              final long replacedAnimationHash = replacer.getOrDefault(animationHash, animationHash);
-              final String animationName = nameMap.getOrDefault(replacedAnimationHash, Long.toHexString(replacedAnimationHash));
-              refArchive.files.get(baseIndex + animationIndex).ref = "/sobj/" + modelName + "/animations/" + animationName;
+              refArchive.files.get(baseIndex + animationIndex).ref = resolveAnimationReference(modelHash, replacementModel, animationHash, namer);
               folder.children.remove(animation.pathSegment);
             }
           }
@@ -185,7 +181,7 @@ public final class SobjTransformer {
     for(final var entry : models.long2ObjectEntrySet()) {
 
       final long key = entry.getLongKey();
-      final String name = nameMap.getOrDefault(key, Long.toHexString(key));
+      final String name = namer.getOrDefault(key, String.format("%016x", key));
       final PathNode folder = createChild(sobjFolder, name, null);
 
       final PathNode model = createChild(folder, "model", entry.getValue().file);
@@ -194,7 +190,7 @@ public final class SobjTransformer {
 
       for(final var textureEntry : entry.getValue().textures.long2ObjectEntrySet()) {
         final long textureKey = textureEntry.getLongKey();
-        final String textureName = nameMap.getOrDefault(textureKey, Long.toHexString(textureKey));
+        final String textureName = namer.getOrDefault(textureKey, String.format("%016x", textureKey));
         final PathNode texture = createChild(textures, textureName, textureEntry.getValue());
       }
 
@@ -202,49 +198,72 @@ public final class SobjTransformer {
 
       for(final var animationEntry : entry.getValue().animations.long2ObjectEntrySet()) {
         final long animationKey = animationEntry.getLongKey();
-        final String animationName = nameMap.getOrDefault(animationKey, Long.toHexString(animationKey));
+        final String animationName = namer.getOrDefault(animationKey, String.format("%016x", animationKey));
         final PathNode animation = createChild(animations, animationName, animationEntry.getValue());
       }
     }
   }
 
-  private static Long2LongArrayMap replacerMap() {
-    final Long2LongArrayMap replacerMap = new Long2LongArrayMap();
+  private static class ReplacementConfig {
+    Map<Long, ReplacementModel> replacer = new HashMap<>();
 
-    try (final BufferedReader reader = Files.newBufferedReader(Path.of(".","sobj_replacer.txt"))) {
-      reader.lines().forEach(line -> {
-        line = line.trim();
-
-        if (line.isEmpty() || line.startsWith("#")) {
-          return;
-        }
-
-        // Remove trailing comments
-        final int commentIndex = line.indexOf('#');
-        if (commentIndex >= 0) {
-          line = line.substring(0, commentIndex).trim();
-        }
-
-        final String[] parts = line.split("=");
-
-        if (parts.length != 2) {
-          return;
-        }
-
-        final long base = Long.parseUnsignedLong(parts[0].trim(), 16);
-        final long replacement = Long.parseUnsignedLong(parts[1].trim(), 16);
-
-        replacerMap.put(base, replacement);
-      });
-    } catch(final IOException e) {
-      LOGGER.log(Level.ERROR, "Failed to load replacements file. Skipping replacements.", e);
+    public Map<Long, ReplacementModel> getReplacer() {
+      return this.replacer;
     }
 
-    return replacerMap;
+    public void setReplacer(final Map<Long, ReplacementModel> replacer) {
+      this.replacer = replacer;
+    }
   }
 
-  private static Long2ObjectArrayMap<String> hashNameMap() {
-    final Long2ObjectArrayMap<String> nameMap = new Long2ObjectArrayMap<>();
+  private static class HexLongDeserializer extends JsonDeserializer<Long> {
+    @Override
+    public Long deserialize(final JsonParser p, DeserializationContext ctxt) throws IOException {
+
+      final String text = p.getText().trim();
+
+      if (text.startsWith("0x") || text.startsWith("0X")) {
+        return Long.parseUnsignedLong(text.substring(2), 16);
+      }
+
+      return Long.parseLong(text);
+    }
+  }
+
+  private static  class HexLongKeyDeserializer extends KeyDeserializer {
+
+    @Override
+    public Object deserializeKey(final String key, final DeserializationContext ctxt) {
+
+      if (key.startsWith("0x") || key.startsWith("0X")) {
+        return Long.parseUnsignedLong(key.substring(2), 16);
+      }
+
+      return Long.parseLong(key);
+    }
+  }
+
+  private static Map<Long, ReplacementModel> initReplacer() {
+    try {
+      SimpleModule module = new SimpleModule();
+
+      module.addKeyDeserializer(Long.class, new HexLongKeyDeserializer());
+
+      final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+      mapper.registerModule(module);
+
+      final ReplacementConfig config = mapper.readValue(Path.of(".", "sob_replacer.yaml").toFile(), ReplacementConfig.class);
+
+      return config.replacer;
+    } catch(final IOException e) {
+      LOGGER.error("Failed to initialize model replacer. Skipping...");
+    }
+
+    return new HashMap<>();
+  }
+
+  private static Long2ObjectArrayMap<String> initNamer() {
+    final Long2ObjectArrayMap<String> namer = new Long2ObjectArrayMap<>();
 
     try (final BufferedReader reader = Files.newBufferedReader(Path.of(".","sobj_namer.txt"))) {
       reader.lines().forEach(line -> {
@@ -269,13 +288,13 @@ public final class SobjTransformer {
         final long hash = Long.parseUnsignedLong(parts[0].trim(), 16);
         final String name = parts[1].trim();
 
-        nameMap.put(hash, name);
+        namer.put(hash, name);
       });
     } catch(final IOException e) {
       LOGGER.log(Level.ERROR, "Failed to load names file. Skipping naming.", e);
     }
 
-    return nameMap;
+    return namer;
   }
 
   private static PathNode createChild(final PathNode parent, final String segment, final FileData data) {
@@ -319,5 +338,85 @@ public final class SobjTransformer {
     Model(final FileData file) {
       this.file = file;
     }
+  }
+
+  private static class ReplacementAsset {
+    @JsonDeserialize(using = HexLongDeserializer.class)
+    long modelHash;
+    @JsonDeserialize(using = HexLongDeserializer.class)
+    long assetHash;
+  }
+
+  private static class ReplacementModel {
+    @JsonDeserialize(using = HexLongDeserializer.class)
+    long replacement;
+
+    Map<Long, ReplacementAsset> textures = new HashMap<>();
+    Map<Long, ReplacementAsset> animations = new HashMap<>();
+
+    public Map<Long, ReplacementAsset> getTextures() {
+      return this.textures;
+    }
+
+    public void setTextures(final Map<Long, ReplacementAsset> textures) {
+      this.textures = textures;
+    }
+
+    public Map<Long, ReplacementAsset> getAnimations() {
+      return this.animations;
+    }
+
+    public void setAnimations(final Map<Long, ReplacementAsset> animations) {
+      this.animations = animations;
+    }
+  }
+
+  private static String resolveModelReference(final long hash, final Map<Long, ReplacementModel> replacer, final Long2ObjectArrayMap<String> namer) {
+    final ReplacementModel model = replacer.get(hash);
+
+    final long resolvedHash = model != null
+      ? model.replacement
+      : hash;
+
+    final String name = namer.getOrDefault(resolvedHash, String.format("%016x", resolvedHash));
+    return "/sobj/" + name + "/model";
+  }
+
+  private static String resolveTextureReference(final long modelHash, @Nullable final ReplacementModel replacementModel, final long textureHash, final Long2ObjectArrayMap<String> namer) {
+    final ReplacementAsset texture = replacementModel != null
+      ? replacementModel.textures.get(textureHash)
+      : null;
+
+    final long resolvedModelHash = texture != null
+      ? texture.modelHash
+      : modelHash;
+
+    final long resolvedTextureHash = texture != null
+      ? texture.assetHash
+      : textureHash;
+
+    final String modelName = namer.getOrDefault(resolvedModelHash, String.format("%016x", resolvedModelHash));
+    final String textureName = namer.getOrDefault(resolvedTextureHash, String.format("%016x", resolvedTextureHash));
+
+    return "/sobj/" + modelName + "/textures/" + textureName;
+  }
+
+  private static String resolveAnimationReference(final long modelHash, @Nullable final ReplacementModel replacementModel, final long animationHash, final Long2ObjectArrayMap<String> namer) {
+    final ReplacementAsset texture = replacementModel != null
+      ? replacementModel.animations.get(animationHash)
+      : null;
+
+    final long resolvedModelHash = texture != null
+      ? texture.modelHash
+      : modelHash;
+
+    final long resolvedTextureHash = texture != null
+      ? texture.assetHash
+      : animationHash;
+
+    final String modelName = namer.getOrDefault(resolvedModelHash, String.format("%016x", resolvedModelHash));
+    final String animationName = namer.getOrDefault(resolvedTextureHash, String.format("%016x", resolvedTextureHash));
+
+    return "/sobj/" + modelName + "/animations/" + animationName;
   }
 }

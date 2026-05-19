@@ -1,0 +1,200 @@
+replacer:
+  0xcde376968929e010: # Dart (no soles)
+    replacement: 0x2318c28acc7d59ef
+
+    textures:
+      0x6c8471b353c78f8b:
+        modelHash: 0x2318c28acc7d59ef
+        assetHash: 0x954e42e6b1cfe32e
+
+  0x8b0b1d7e962202d7: # Dart (soles 1)
+    replacement: 0x2318c28acc7d59ef
+
+    textures:
+      0xe83c77774de1b2d6:
+        modelHash: 0x2318c28acc7d59ef
+        assetHash: 0x954e42e6b1cfe32e
+
+  0x3558c02f033d9b6f: # Dart (soles 2)
+    replacement: 0x2318c28acc7d59ef
+
+    textures:
+      0x8ae7d40203a18275:
+        modelHash: 0x2318c28acc7d59ef
+        assetHash: 0x954e42e6b1cfe32e
+
+  0x118127e115867c2e: # Lavitz 2
+    replacement: 0x2daa60764ae0a13a
+
+    textures:
+      0x1079ce496321df2:
+        modelHash: 0x2daa60764ae0a13a
+        assetHash: 0x8b781df2d56fc070
+
+  0x87a6063f04ef20c4: # Shana 2
+    replacement: 0xfbe2b0112413a8e6
+
+    textures:
+      0x2b46e254f937a5f9:
+        modelHash: 0xfbe2b0112413a8e6
+        assetHash: 0x8b07876511bf4f28
+
+  0x3505a7a62bed0f4c: # Shana 4
+    replacement: 0xfbe2b0112413a8e6
+
+    textures:
+      0xc13a8e72e1c951e6:
+        modelHash: 0xfbe2b0112413a8e6
+        assetHash: 0x8b07876511bf4f28
+
+
+  0xaf326ecb8d1397c4: # Shana 5
+    replacement: 0xfbe2b0112413a8e6
+    
+    textures:
+      0x1079ce496321df2:
+        modelHash: 0x2daa60764ae0a13a
+        assetHash: 0x8b781df2d56fc070
+      
+
+  0xe7996e5b153382e2: # Rose (low-res)
+    replacement: 0xfaab05ac76cb16d1
+    
+    textures:
+      0x006c01ed63c50464:
+        modelHash: 0xfaab05ac76cb16d1
+        assetHash: 0x006c01ed63c50464
+
+  0xd370c61b04feccd4:
+    replacement: 0xd0ca9c218e8bbaa8
+    
+    textures:
+      0x006c01ed63c50464:
+        modelHash: 0xfaab05ac76cb16d1
+        assetHash: 0x987ed1f953d2118e
+
+  0x3f0d42bf15e02f5d: # Haschel
+    replacement: 0xd5833ecd66a888e3
+    
+    textures:
+      0x980ba3c6eef2f63d:
+        modelHash: 0xd5833ecd66a888e3
+        assetHash: 0xec6b075067ed550c
+
+  0x49d0132c58b16217: # Haschel 2
+    replacement: 0xd5833ecd66a888e3
+    
+    textures:
+      0xc4eb40bd994f14ba:
+        modelHash: 0xd5833ecd66a888e3
+        assetHash: 0xec6b075067ed550c
+
+  0x9465dcebb71d9476: # Hashel 3
+    replacement: 0xd5833ecd66a888e3
+    
+    textures:
+      0x8a424a4364ba9e05:
+        modelHash: 0xd5833ecd66a888e3
+        assetHash: 0xec6b075067ed550c
+
+  0xf2fc0aeb8a2b2c11: # Albert 2
+    replacement: 0x5db1b2d4eee8485d
+    
+    textures:
+      0x822ec1940d5a6465:
+        modelHash: 0x5db1b2d4eee8485d
+        assetHash: 0x76d4a6141909e903
+
+  0xafc47eea48747922:
+    replacement: 0x5db1b2d4eee8485d
+
+    textures:
+      0x822ec1940d5a6465:
+        modelHash: 0x5db1b2d4eee8485d
+        assetHash: 0x76d4a6141909e903
+      
+  0x7e44e1f10695254c: # Meru
+    replacement: 0x986c7dcadee87e5d
+    
+    textures:
+      0x8fcb5a2f95fcb4f5:
+        modelHash: 0x986c7dcadee87e5d
+        assetHash: 0xb4b7a8d727058826
+
+  0xdaf97eccc6084aa8: # Meru 2
+    replacement: 0x986c7dcadee87e5d
+    
+    textures:
+      0x458581378db6b3d9:
+        modelHash: 0x986c7dcadee87e5d
+        assetHash: 0xb4b7a8d727058826
+
+  0x610b5b9c074cf34a: # Meru 4
+    replacement: 0x986c7dcadee87e5d
+    
+    textures:
+      0x458581378db6b3d9:
+        modelHash: 0x986c7dcadee87e5d
+        assetHash: 0xb4b7a8d727058826
+    
+
+  0x4c082765edc64286: # Claire
+    replacement: 0x4fc0041bf5678934
+    
+    textures:
+      0x77ce0062c650c900:
+        modelHash: 0x4fc0041bf5678934
+        assetHash: 0x77ce0062c650c900
+      
+# Kamui Warriors
+  0x193a48e613cfe088: # Drake the Bandit
+    replacement: 0x8db85e8578f91219
+    
+    textures:
+      0x3fbf673137fb500a:
+        modelHash: 0x8db85e8578f91219
+        assetHash: 0xbdbc2b7eff4c71bf
+        
+    animations:
+      0x2622025bbcc21907:
+        modelHash: 0x8db85e8578f91219
+        assetHash: 0x19c08acea39dc693
+
+  0x648c025a55a5f92d: # Greham
+    replacement: 0x523dc892670fe253
+    
+    textures:
+      0xa137b679fed3c519:
+        modelHash: 0x523dc892670fe253
+        assetHash: 0x569036d549df6a0f
+        
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0x523dc892670fe253
+        assetHash: 0xe6239fd361c3a15e
+
+  0x767921311dbd0c05: # Danton
+    replacement: 0x96e63b15b68c9f13
+    
+    textures:
+      0xa98929d237a4cae7:
+        modelHash: 0x96e63b15b68c9f13
+        assetHash: 0x5dae81d810801758
+        
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0x96e63b15b68c9f13
+        assetHash: 0xfbc3b450f2fd91a4
+
+  0x92743ddd57e5d9f7: # Serfius
+    replacement: 0x0dc14543638f72c9
+    
+    textures:
+      0x3c360358c71ab0d2:
+        modelHash: 0x0dc14543638f72c9
+        assetHash: 0xbc761ce38dfc8c38
+    
+    animations:
+      0x2622025bbcc21907:
+        modelHash: 0x0dc14543638f72c9
+        assetHash: 0x42ac49855612054c
