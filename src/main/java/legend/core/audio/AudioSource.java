@@ -2,6 +2,7 @@ package legend.core.audio;
 
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
@@ -89,6 +90,16 @@ public abstract class AudioSource {
 
       for(int buffer = 0; buffer < processedBufferCount; buffer++) {
         this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
+      }
+    }
+  }
+
+  protected void bufferOutput(final int format, final ByteBuffer buffer, final int sampleRate) {
+    synchronized(this) {
+      if(this.bufferIndex >= 0) {
+        final int bufferId = this.buffers[this.bufferIndex--];
+        alBufferData(bufferId, format, buffer, sampleRate);
+        alSourceQueueBuffers(this.sourceId, bufferId);
       }
     }
   }

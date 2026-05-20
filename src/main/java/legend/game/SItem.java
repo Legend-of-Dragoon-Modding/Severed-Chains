@@ -1251,12 +1251,19 @@ public final class SItem {
     renderNumber(x, y, value, flags, digitCount, 0);
   }
 
+  /**
+   * @param flags Bitset - 0x1: render leading zeros, 0x2: unload at end of frame
+   */
+  public static void renderNumber(final int x, final int y, final int value, final int flags, final int digitCount, final int clut) {
+    renderNumber(x, y, 33, value, flags, digitCount, clut);
+  }
+
   private static final Matrix4f negativeTransforms = new Matrix4f();
 
   /**
    * @param flags Bitset - 0x1: render leading zeros, 0x2: unload at end of frame
    */
-  public static void renderNumber(final int x, final int y, int value, int flags, final int digitCount, final int clut) {
+  public static void renderNumber(final int x, final int y, final int z, int value, int flags, final int digitCount, final int clut) {
     final boolean negative;
     if(value < 0) {
       value = -value;
@@ -1279,7 +1286,7 @@ public final class SItem {
         struct.glyph_04 = digit;
         struct.tpage_2c = 0x19;
         struct.clut_30 = clut;
-        struct.z_3c = 33;
+        struct.z_3c = z;
         struct.x_40 = x + 6 * i;
         struct.y_44 = y;
         flags |= 0x1;
@@ -1291,7 +1298,7 @@ public final class SItem {
     if(negative) {
       final float dashX = x + (digitCount - renderedDigits - 1) * 6 - 5;
       final float dashY = y + 4.5f;
-      RENDERER.queueLine(negativeTransforms, 33 * 4.0f, new Vector2f(dashX, dashY), new Vector2f(dashX + 3, dashY))
+      RENDERER.queueLine(negativeTransforms, z * 4.0f, new Vector2f(dashX, dashY), new Vector2f(dashX + 3, dashY))
         .colour(0.4f, 0.4f, 0.4f)
         .translucency(Translucency.B_MINUS_F)
       ;
@@ -1674,7 +1681,7 @@ public final class SItem {
       case 3:
         textZ_800bdf00 = 31;
         final int leftPadding = 60;
-        final int topPadding = 14;
+        final int topPadding = messageBox.type_15 == MessageBoxType.CONFIRMATION ? 14 : 29;
         final int x = messageBox.x_1c + leftPadding;
         int y = messageBox.y_1e + topPadding;
 
@@ -1690,7 +1697,7 @@ public final class SItem {
             y += textHeight;
           }
 
-          if (messageBox.type_15 == MessageBoxType.CONFIRMATION) {
+          if(messageBox.type_15 == MessageBoxType.CONFIRMATION) {
             y -= (messageBox.text_00.length - 1) * 3;
           }
         }

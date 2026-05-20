@@ -1,39 +1,34 @@
 package legend.game;
 
-import legend.game.unpacker.FileData;
+import org.legendofdragoon.dabas.core.FileData;
+import org.legendofdragoon.dabas.core.memory.types.IntRef;
+import org.legendofdragoon.dabas.game.types.Save60;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import static legend.core.GameEngine.CONFIG;
+import static legend.lodmod.LodConfig.DABAS_SAVE_DATA;
 
 public final class DabasManager {
   private DabasManager() { }
 
-  private static final Path dir = Paths.get("saves");
-
-  private static String getFilename() {
-    return "dabas.ddab";
-  }
-
   public static boolean hasSave() {
-    return Files.exists(dir.resolve(getFilename()));
+    return CONFIG.hasConfig(DABAS_SAVE_DATA.get());
   }
 
-  public static FileData loadSave() {
-    final Path file = dir.resolve(getFilename());
+  public static Save60 load() {
+    final FileData data = new FileData(CONFIG.getConfig(DABAS_SAVE_DATA.get()));
+    final IntRef offset = new IntRef();
 
-    if(!Files.exists(file)) {
-      throw new RuntimeException("No saved diiig");
-    }
+    final Save60 save = new Save60();
+    save.load(data, offset);
+    return save;
+  }
 
-    final byte[] data;
-    try {
-      data = Files.readAllBytes(file);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load diiig", e);
-    }
+  public static void save(final Save60 save) {
+    final FileData data = new FileData(CONFIG.getConfig(DABAS_SAVE_DATA.get()));
+    final IntRef offset = new IntRef();
 
-    return new FileData(data, 0, 0x80);
+    save.save(data, offset);
+
+    CONFIG.setConfig(DABAS_SAVE_DATA.get(), data.getBytes());
   }
 }
