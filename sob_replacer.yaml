@@ -58,19 +58,35 @@ replacer:
       
 
   0xe7996e5b153382e2: # Rose (low-res)
-    replacement: 0xfaab05ac76cb16d1
+    replacement: 0x410cc35cadfa0da6
     
     textures:
       0x006c01ed63c50464:
-        modelHash: 0xfaab05ac76cb16d1
-        assetHash: 0x006c01ed63c50464
+        modelHash: 0x410cc35cadfa0da6
+        assetHash: 0x987ed1f953d2118e
 
-  0xd370c61b04feccd4:
+  0xfaab05ac76cb16d1: # Rose 4
+    replacement: 0x410cc35cadfa0da6
+    
+    textures:
+      0x006c01ed63c50464:
+        modelHash: 0x410cc35cadfa0da6
+        assetHash: 0x987ed1f953d2118e
+
+  0x528cc47bcc55ac1d: # Rose 5
+    replacement: 0x410cc35cadfa0da6
+    
+    textures:
+      0x6eafd2adf93a4b60:
+        modelHash: 0x410cc35cadfa0da6
+        assetHash: 0x987ed1f953d2118e
+
+  0xd370c61b04feccd4: # Rose (Mid-res?)
     replacement: 0xd0ca9c218e8bbaa8
     
     textures:
       0x006c01ed63c50464:
-        modelHash: 0xfaab05ac76cb16d1
+        modelHash: 0xd0ca9c218e8bbaa8
         assetHash: 0x987ed1f953d2118e
 
   0x3f0d42bf15e02f5d: # Haschel
@@ -105,11 +121,19 @@ replacer:
         modelHash: 0x5db1b2d4eee8485d
         assetHash: 0x76d4a6141909e903
 
-  0xafc47eea48747922:
+  0xafc47eea48747922: # Albert 4
     replacement: 0x5db1b2d4eee8485d
 
     textures:
       0x822ec1940d5a6465:
+        modelHash: 0x5db1b2d4eee8485d
+        assetHash: 0x76d4a6141909e903
+
+  0xc4ed3e0a782ef6ed: # Albert 5
+    replacement: 0x5db1b2d4eee8485d
+
+    textures:
+      0xc5e60e2df34cf73f:
         modelHash: 0x5db1b2d4eee8485d
         assetHash: 0x76d4a6141909e903
       
@@ -136,7 +160,38 @@ replacer:
       0x458581378db6b3d9:
         modelHash: 0x986c7dcadee87e5d
         assetHash: 0xb4b7a8d727058826
+
+  0xc1eb6a95b143ffd7: # Meru 5
+    replacement: 0x986c7dcadee87e5d
     
+    textures:
+      0x678dbda1781a7095:
+        modelHash: 0x986c7dcadee87e5d
+        assetHash: 0xb4b7a8d727058826
+        
+  0x3ca6e705c06299f7: # Miranda
+    replacement: 0x1207cce034994961
+    
+    textures:
+      0xbe89a2c9ca1c8546:
+        modelHash: 0x1207cce034994961
+        assetHash: 0x8f1cd85df07dc28c
+
+  0x005a2b32ffa4b0f5: # Miranda 2
+    replacement: 0x1207cce034994961
+    
+    textures:
+      0x8f1cd85df07dc28c:
+        modelHash: 0x1207cce034994961
+        assetHash: 0x8f1cd85df07dc28c
+
+  0x7d9aaf9ec7ed9bfc: # Miranda 4
+    replacement: 0x1207cce034994961
+    
+    textures:
+      0x8f1cd85df07dc28c:
+        modelHash: 0x1207cce034994961
+        assetHash: 0x8f1cd85df07dc28c
 
   0x4c082765edc64286: # Claire
     replacement: 0x4fc0041bf5678934
