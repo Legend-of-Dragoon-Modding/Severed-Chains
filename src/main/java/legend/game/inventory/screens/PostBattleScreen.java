@@ -349,7 +349,7 @@ public class PostBattleScreen extends MenuScreen {
             final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
             final List<Addition> unlocks = this.additionsUnlocked_8011e1b8.get(character);
 
-            if(unlocks != null) {
+            if(unlocks != null && !unlocks.isEmpty()) {
               unlocks.removeFirst();
             }
           }
@@ -406,7 +406,7 @@ public class PostBattleScreen extends MenuScreen {
             final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
             final List<SpellStats0c> unlocks = this.spellsUnlocked_8011e1a8.get(character);
 
-            if(unlocks != null) {
+            if(unlocks != null && !unlocks.isEmpty()) {
               unlocks.removeFirst();
             }
           }
