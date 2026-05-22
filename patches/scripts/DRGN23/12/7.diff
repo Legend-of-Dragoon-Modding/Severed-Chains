@@ -1,0 +1,19 @@
+--- original
++++ modified
+@@ -232,7 +232,7 @@
+ call 294, 0x1, 0x1
+ call 101, stor[0], 0x92, 0xffffff9c, 0xae
+ call 103, stor[0], 0x0, 0xa80, 0x0
+-call 309, stor[0], 0x1c00, 0x1c00, 0x1c00
++call 309, stor[0], 0xA2F, 0xA2F, 0xA2F
+ gosub_table stor[stor[stor[0], 23], 31], inl[:LABEL_3]
+ return
+ JMP_3e8_0:
+@@ -259,7 +259,6 @@
+ rel :JMP_4e0_4
+ rel :JMP_4e0_5
+ LABEL_7:
+-gosub_table stor[stor[stor[0], 23], 31], inl[:LABEL_6]
+ return
+ JMP_4e0_0:
+ mov 0x32, stor[24]
