@@ -242,10 +242,16 @@ diff,SECT/DRGN22.BIN/1137/1,scripts/DRGN22/1137/1.diff,"Twin Castle Balcony Lisa
 diff,SECT/DRGN22.BIN/1137/2,scripts/DRGN22/1137/2.diff,"Twin Castle Balcony Lisa Cutscenes, Lisa, widescreen patch"
 diff,SECT/DRGN22.BIN/1137/7,scripts/DRGN22/1137/7.diff,"Twin Castle Balcony Lisa Cutscenes, Rose, widescreen patch"
 diff,SECT/DRGN22.BIN/1137/8,scripts/DRGN22/1137/8.diff,"Twin Castle Balcony Lisa Cutscenes, Libria, widescreen patch"
+diff,SECT/DRGN22.BIN/1146/9,scripts/DRGN22/1146/9.diff,"Fletz, Scenes, 2d Sprite"
+diff,SECT/DRGN22.BIN/1146/10,scripts/DRGN22/1146/10.diff,"Fletz, Scenes, 2d Sprite"
+diff,SECT/DRGN22.BIN/1146/14,scripts/DRGN22/1146/14.diff,"Fletz, Scenes, 2d Sprite"
 diff,SECT/DRGN22.BIN/1173/2,scripts/DRGN22/1173/2.diff,"Fletz, Return from HoG, Albert, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/3,scripts/DRGN22/1173/3.diff,"Fletz, Return from HoG, Meru, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/5,scripts/DRGN22/1173/5.diff,"Fletz, Return from HoG, Rose, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/7,scripts/DRGN22/1173/7.diff,"Fletz, Return from HoG, Kongol, don't hide body parts, GH#2208"
+diff,SECT/DRGN22.BIN/1173/9,scripts/DRGN22/1173/9.diff,"Fletz, Return from HoG, 2d sprite"
+diff,SECT/DRGN22.BIN/1173/10,scripts/DRGN22/1173/10.diff,"Fletz, Return from HoG, 2d sprite"
+diff,SECT/DRGN22.BIN/1173/11,scripts/DRGN22/1173/11.diff,"Fletz, Return from HoG, 2d sprite"
 diff,SECT/DRGN23.BIN/12/1,scripts/DRGN23/12/1.diff,"Furni retail dialogue fix, GH#1484"
 diff,SECT/DRGN23.BIN/12/6,scripts/DRGN23/12/6.diff,Furni unflatten Kamuy Warrior Serfius
 diff,SECT/DRGN23.BIN/12/7,scripts/DRGN23/12/7.diff,Furni unflatten Kamuy Warrior Serfius 2
