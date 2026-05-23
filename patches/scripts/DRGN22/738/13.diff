@@ -1,0 +1,9 @@
+--- original
++++ modified
+@@ -21,6 +21,5 @@
+ call 96, 0x8
+ call 101, stor[0], 0xffffff29, 0x0, 0xffffff43
+ call 103, stor[0], 0x0, 0x800, 0x0
+-call 309, stor[0], 0x1000, 0x1000, 0x1000
+ call 106, 0x0
+ rewind

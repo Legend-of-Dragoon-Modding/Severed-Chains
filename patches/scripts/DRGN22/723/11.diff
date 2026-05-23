@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -11,7 +11,6 @@
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_0]
+ call 101, stor[0], 0xffffff5a, 0x0, 0xffffff04
+ call 103, stor[0], 0x0, 0x880, 0x0
+-call 309, stor[0], 0x1000, 0x1000, 0x1000
+ rewind
+ LABEL_0:
+ call 106, 0x1
