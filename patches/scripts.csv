@@ -185,6 +185,7 @@ diff,SECT/DRGN22.BIN/453/1,scripts/DRGN22/453/1.diff,Lohan Hero Competition shop
 diff,SECT/DRGN22.BIN/519/2,scripts/DRGN22/519/2.diff,"Kazas Entrance, fix civilian rotation, GH#1853"
 diff,SECT/DRGN22.BIN/543/1,scripts/DRGN22/543/1.diff,"Kazas Slums, fix Dart falling down ladder hole, GH#1452"
 diff,SECT/DRGN22.BIN/597/1,scripts/DRGN22/597/1.diff,"Kazas Garbage Room, GH#1078"
+diff,SECT/DRGN22.BIN/666/9,scripts/dRGN22/666/9.diff,"Fletz, Fake Princess Emily scene, 2d sprite"
 diff,SECT/DRGN22.BIN/669/6,scripts/DRGN22/669/6.diff,"Twin Castle, left balcony knight, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/669/7,scripts/DRGN22/669/7.diff,"Twin Castle, right balcony knight, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/669/8,scripts/DRGN22/669/8.diff,"Twin Castle, add daytime entrance knight, widescreen patch, GH#2027"
