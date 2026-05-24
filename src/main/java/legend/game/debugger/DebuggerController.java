@@ -16,7 +16,6 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.submap.SMap;
-import legend.game.submap.SubmapState;
 import legend.game.types.GsRVIEW2;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
@@ -36,6 +35,7 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.combat.SBtld.startLegacyEncounter;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
@@ -122,6 +122,8 @@ public class DebuggerController {
   @FXML
   public Spinner<Double> refpointZ;
 
+  public Spinner<Integer> soundIndex;
+
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -149,6 +151,8 @@ public class DebuggerController {
     this.refpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
     this.refpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
     this.refpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
+
+    this.soundIndex.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
 
     EVENTS.register(this);
   }
@@ -251,8 +255,7 @@ public class DebuggerController {
 
   @FXML
   private void warpToMap(final ActionEvent event) {
-    submapCut_80052c30 = this.mapId.getValue();
-    ((SMap)currentEngineState_8004dd04).smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
+    ((SMap)currentEngineState_8004dd04).mapTransition(this.mapId.getValue(), 0);
   }
 
   @FXML
@@ -435,5 +438,9 @@ public class DebuggerController {
         GsSetRefView2L(camera);
       }
     }
+  }
+
+  public void playSound(final ActionEvent actionEvent) {
+    playMenuSound(this.soundIndex.getValue());
   }
 }
