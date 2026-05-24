@@ -387,7 +387,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) {
+  protected void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) {
     for(int n = 0; n < this.submapWorldMapExits_800f7f74.length; n++) {
       final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
 
