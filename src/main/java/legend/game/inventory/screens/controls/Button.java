@@ -26,6 +26,8 @@ public class Button extends Control {
   private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
 
+  private boolean enableSounds = true;
+
   public Button(final String text) {
     this.hover = this.addControl(new Highlight());
     this.hover.setZ(this.getZ());
@@ -78,8 +80,18 @@ public class Button extends Control {
     this.textHeight = this.font.textHeight(this.text) * this.getScale();
   }
 
+  public void enableSounds() {
+    this.enableSounds = true;
+  }
+
+  public void disableSounds() {
+    this.enableSounds = false;
+  }
+
   public void press() {
-    playMenuSound(2);
+    if(this.enableSounds) {
+      playMenuSound(2);
+    }
 
     if(this.pressedHandler != null) {
       this.pressedHandler.pressed();
