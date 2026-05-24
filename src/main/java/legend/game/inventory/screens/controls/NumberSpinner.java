@@ -84,6 +84,16 @@ public class NumberSpinner<T extends Number> extends Control {
     this.setStep(step, bigStep);
   }
 
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+
+    this.label.setZ(z);
+    this.upArrow.setZ(z);
+    this.downArrow.setZ(z);
+    this.highlight.setZ(z - 1);
+  }
+
   public void setFont(final Font font) {
     this.label.setFont(font);
   }
