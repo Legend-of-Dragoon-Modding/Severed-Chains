@@ -131,8 +131,8 @@ public abstract class ControlHost implements Iterable<Control> {
       return null;
     }
 
-    controls.sort(Comparator.comparingInt(Control::getZ).reversed());
-    return controls.get(0);
+    controls.sort(Comparator.comparingInt(Control::getZ));
+    return controls.getFirst();
   }
 
   protected InputPropagation mouseMove(final double x, final double y) {
