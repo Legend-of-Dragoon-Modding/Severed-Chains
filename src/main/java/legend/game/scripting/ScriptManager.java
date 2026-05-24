@@ -430,7 +430,11 @@ public class ScriptManager {
   public byte[] assemble(final String name, final String source) {
     this.meta();
     final Script tokenized = this.tokenizer.tokenize(name, this.includePaths, source);
-    return intsToBytes(this.assembler.assemble(tokenized));
+    return this.assemble(tokenized);
+  }
+
+  public byte[] assemble(final Script source) {
+    return intsToBytes(this.assembler.assemble(source));
   }
 
   public Script disassemble(final String name, final byte[] data) {
