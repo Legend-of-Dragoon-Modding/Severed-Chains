@@ -899,13 +899,16 @@ public class Ttle extends EngineState<Ttle> {
     this.updateProgress = new SelfUpdater.UpdateProgress(SelfUpdater.UpdateState.LAUNCHING_UPDATER, "Launching updater...");
     LOGGER.info("Starting auto update from %s", downloadUrl);
 
-    //launch the external updater jar and exit the game
-    SelfUpdater.launchUpdaterAndExit(downloadUrl, progress -> {
+    final boolean launched = SelfUpdater.launchUpdater(downloadUrl, progress -> {
       this.updateProgress = progress;
       if(progress.state() == SelfUpdater.UpdateState.FAILED) {
         this.updateInProgress = false;
       }
     });
+
+    if(launched) {
+      RENDERER.window().close();
+    }
   }
 
   private static void removeInputHandlers() {

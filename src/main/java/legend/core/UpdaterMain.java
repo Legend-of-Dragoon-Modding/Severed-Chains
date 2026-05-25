@@ -3,6 +3,7 @@ package legend.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.AccessDeniedException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -142,6 +143,18 @@ public final class UpdaterMain {
       System.out.println("[Updater] Cleaning up orphaned files...");
       cleanupOrphanedFiles(gameDir.resolve("libs"), newLibsFiles, cleanedUpFiles);
       cleanupOrphanedRootJars(gameDir, newRootJars, cleanedUpFiles);
+
+      // stage the new updater jar so the game can swap it in on next boot
+      // (can't overwrite the running updater.jar directly locked on Windows)
+      final Path stagedUpdaterJar = sourceDir.resolve("updater.jar");
+      if(Files.exists(stagedUpdaterJar)) {
+        try {
+          Files.copy(stagedUpdaterJar, gameDir.resolve("updater.jar.new"), StandardCopyOption.REPLACE_EXISTING);
+          System.out.println("[Updater] Staged updater.jar.new will be applied on next game launch.");
+        } catch(final IOException e) {
+          System.err.println("[Updater] Warning: could not stage new updater: " + e.getMessage());
+        }
+      }
 
       // clean up staging
       deleteRecursive(staging);
@@ -301,8 +314,6 @@ public final class UpdaterMain {
       final var optProcess = ProcessHandle.of(pid);
       if(optProcess.isEmpty() || !optProcess.get().isAlive()) {
         System.out.println("[Updater] Game process has exited.");
-        // Brief extra pause to let file handles release
-        Thread.sleep(1000);
         return;
       }
       Thread.sleep(500);
@@ -561,7 +572,7 @@ public final class UpdaterMain {
         } catch(final Exception ignored) { }
 
         Files.createDirectories(target.getParent());
-        Files.copy(file, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+        copyWithRetry(file, target);
 
         // tracking for update log never interrupts the copy
         try {
@@ -692,7 +703,19 @@ public final class UpdaterMain {
     }
   }
 
-  // Utility 
+  // Utility
+
+  private static void copyWithRetry(final Path source, final Path target) throws IOException {
+    for(int attempt = 0; attempt < 5; attempt++) {
+      try {
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+        return;
+      } catch(final AccessDeniedException e) {
+        if(attempt == 4) throw e;
+        try { Thread.sleep(200); } catch(final InterruptedException ignored) { Thread.currentThread().interrupt(); }
+      }
+    }
+  }
 
   private static void deleteRecursive(final Path path) throws IOException {
     if(!Files.exists(path)) {

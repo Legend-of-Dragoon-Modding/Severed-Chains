@@ -47,7 +47,7 @@ public final class SelfUpdater {
    * @param downloadUrl      the direct download URL for the platform archive
    * @param progressCallback receives status updates (called from the current thread)
    */
-  public static void launchUpdaterAndExit(final String downloadUrl, final Consumer<UpdateProgress> progressCallback) {
+  public static boolean launchUpdater(final String downloadUrl, final Consumer<UpdateProgress> progressCallback) {
     try {
       final Path gameDir = Path.of(".").toAbsolutePath().normalize();
       final Path updaterJar = gameDir.resolve("updater.jar");
@@ -55,7 +55,7 @@ public final class SelfUpdater {
       if(!Files.exists(updaterJar)) {
         LOGGER.error("updater.jar not found at %s", updaterJar);
         progressCallback.accept(new UpdateProgress(UpdateState.FAILED, "updater.jar not found. Please re-download Severed Chains."));
-        return;
+        return false;
       }
 
       // find the Java executable prefer the bundled JDK fall back to system
@@ -63,10 +63,10 @@ public final class SelfUpdater {
       if(javaExe == null) {
         LOGGER.error("Could not find a Java executable to launch the updater");
         progressCallback.accept(new UpdateProgress(UpdateState.FAILED, "Java not found. Cannot launch updater."));
-        return;
+        return false;
       }
 
-      // pass the current PID so the updater can wait to exit
+      // pass the current PID so the updater can wait for the game to exit
       final long pid = ProcessHandle.current().pid();
 
       progressCallback.accept(new UpdateProgress(UpdateState.LAUNCHING_UPDATER, "Launching updater..."));
@@ -86,17 +86,13 @@ public final class SelfUpdater {
       pb.start();
 
       progressCallback.accept(new UpdateProgress(UpdateState.DONE, "Updater launched. Game will close now."));
-
-      // give the updater a moment to start
-      try { Thread.sleep(1000); } catch(final InterruptedException ignored) { }
-
-      // exit the game so the updater can overwrite files
-      LOGGER.info("Exiting game for update...");
-      System.exit(0);
+      LOGGER.info("Updater launched, closing game...");
+      return true;
 
     } catch(final IOException e) {
       LOGGER.error("Failed to launch updater", e);
       progressCallback.accept(new UpdateProgress(UpdateState.FAILED, "Failed to launch updater: " + e.getMessage()));
+      return false;
     }
   }
 
@@ -104,6 +100,15 @@ public final class SelfUpdater {
    * finds the Java executable preferring the bundled JDK.
    */
   private static Path findJavaExecutable(final Path gameDir) {
+    // prefer the JVM that launched the game its guaranteed compatible
+    final var command = ProcessHandle.current().info().command();
+    if(command.isPresent()) {
+      final Path current = Path.of(command.get());
+      if(Files.exists(current)) {
+        return current;
+      }
+    }
+
     final String os = System.getProperty("os.name", "").toLowerCase(Locale.US);
     final String exeName = os.contains("win") ? "java.exe" : "java";
 
