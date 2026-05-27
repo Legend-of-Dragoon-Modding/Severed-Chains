@@ -172,7 +172,7 @@ public final class RetailSerializer {
       }
 
       for(int i = 0; i < 8; i++) {
-        final int level = charSlice.readUByte(0x1a + i);
+        final int level = Math.max(1, charSlice.readUByte(0x1a + i));
         final int xp = charSlice.readUByte(0x22 + i);
 
         if(i < CHARACTER_ADDITIONS[charSlot].length) {
