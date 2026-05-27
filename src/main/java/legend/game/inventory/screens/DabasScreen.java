@@ -193,6 +193,7 @@ public class DabasScreen extends MenuScreen {
 
         if(!DabasManager.hasSave()) {
           this.dabasData_8011d7c0 = new Save60();
+          this.enableButtons();
           this.loadingStage = LoadingStage.DISPLAY_DATA_2;
           return;
         }
