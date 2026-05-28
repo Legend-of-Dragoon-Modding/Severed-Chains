@@ -136,15 +136,17 @@ public class SeveredSaveCard extends BlankSaveCard {
       renderText(this.savedGame.version, x - 3, y + 2, TINY);
       renderText(this.savedGame.locationName, x + 258, y + 47, UI_TEXT_CENTERED);
 
-      final int charIndex = this.charIndices.getInt(this.selectedCharacter);
-      this.savedGame.characters.get(charIndex).render(this.savedGame, x, y);
-      this.renderNumber(245, y + 17, this.savedGame.gold, 8);
-      this.renderNumber(306, y + 17, getTimestampPart(this.savedGame.timestamp, 0), 3);
-      this.renderCharacter(324, y + 17, 10);
-      this.renderNumber(330, y + 17, getTimestampPart(this.savedGame.timestamp, 1), 2, 0x1);
-      this.renderCharacter(342, y + 17, 10);
-      this.renderNumber(348, y + 17, getTimestampPart(this.savedGame.timestamp, 2), 2, 0x1);
-      this.renderNumber(348, y + 34, this.savedGame.stardust, 2);
+      if(this.selectedCharacter < this.charIndices.size()) {
+        final int charIndex = this.charIndices.getInt(this.selectedCharacter);
+        this.savedGame.characters.get(charIndex).render(this.savedGame, x, y);
+        this.renderNumber(245, y + 17, this.savedGame.gold, 8);
+        this.renderNumber(306, y + 17, getTimestampPart(this.savedGame.timestamp, 0), 3);
+        this.renderCharacter(324, y + 17, 10);
+        this.renderNumber(330, y + 17, getTimestampPart(this.savedGame.timestamp, 1), 2, 0x1);
+        this.renderCharacter(342, y + 17, 10);
+        this.renderNumber(348, y + 17, getTimestampPart(this.savedGame.timestamp, 2), 2, 0x1);
+        this.renderNumber(348, y + 34, this.savedGame.stardust, 2);
+      }
     }
   }
 }
