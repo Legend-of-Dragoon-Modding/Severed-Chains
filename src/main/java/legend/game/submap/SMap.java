@@ -2672,12 +2672,12 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e0b34L)
   private FlowControl scriptSwapShadowTexture(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
-      new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
+      new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b68
     if(script.params_20[0].get() == 1) {
-      new Tim(Loader.loadFile("SUBMAP/darker_shadow.tim")).uploadToGpu();
+      new Tim(Loader.loadFileSync("SUBMAP/darker_shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b8c
@@ -3051,7 +3051,7 @@ public class SMap extends EngineState<SMap> {
   private void executeSubmapMediaLoadingStage(final int collisionPrimitiveIndexForInitialPlayerPosition) {
     switch(this.mediaLoadingStage_800c68e4) {
       case LOAD_SHADOW_AND_RESET_LIGHTING_0 -> {
-        new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
+        new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
 
         //LAB_800e1440
         this.GsF_LIGHT_0_800c66d8.direction_00.set(0.0f, 1.0f, 0.0f);
@@ -3204,7 +3204,7 @@ public class SMap extends EngineState<SMap> {
 
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
-        new Tim(Loader.loadFile("SUBMAP/alert.tim")).uploadToGpu();
+        new Tim(Loader.loadFileSync("SUBMAP/alert.tim")).uploadToGpu();
         this.resetTriangleIndicators();
 
         //LAB_800e1ecc
@@ -3324,7 +3324,7 @@ public class SMap extends EngineState<SMap> {
     this.submapEffectsState_800f9eac = -1;
     this.reloadSubmapEffects();
     this.triangleIndicator_800c69fc = null;
-    new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
+    new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
     this.mapIndicator.destroy();
   }
 
@@ -3961,8 +3961,8 @@ public class SMap extends EngineState<SMap> {
       }
 
       case LOAD_NEWROOT_1 -> {
-        loadFile("\\SUBMAP\\NEWROOT.RDT", data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
-        loadDir("\\SUBMAP\\savepoint", files -> {
+        loadFile("\\SUBMAP\\NEWROOT.RDT").thenAccept(data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
+        loadDir("\\SUBMAP\\savepoint").thenAccept(files -> {
           this.savepointAnm1 = new AnmFile(files.get(0));
           this.savepointAnm2 = new AnmFile(files.get(1));
           this.savepointTmd = new CContainer("Savepoint", files.get(2));
@@ -3987,7 +3987,7 @@ public class SMap extends EngineState<SMap> {
         this.submap = new RetailSubmap(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
-        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
+        this.submap.loadEnv().thenAccept(v -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
       }
 
       case CHANGE_SUBMAP_4 -> {
@@ -5639,7 +5639,7 @@ public class SMap extends EngineState<SMap> {
   private void loadMiscTextures(final int textureCount) {
     //LAB_800f47f0
     for(int textureIndex = 0; textureIndex < textureCount; textureIndex++) {
-      final Tim tim = new Tim(Loader.loadFile("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
+      final Tim tim = new Tim(Loader.loadFileSync("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
       GPU.uploadData15(tim.getImageRect(), tim.getImageData());
 
       this.texPages_800d6050[textureIndex] = GetTPage(Bpp.values()[tim.getFlags() & 0b11], this.miscTextureTransModes_800d6cf0[textureIndex], tim.getImageRect().x, tim.getImageRect().y);

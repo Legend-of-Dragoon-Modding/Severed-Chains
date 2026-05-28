@@ -20,6 +20,7 @@ import legend.lodmod.LodSpells;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static legend.game.DrgnFiles.loadDrgnDir;
@@ -92,7 +93,10 @@ public class AlbertTemplate extends LavitzTemplate {
 
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
-    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/132", "SECT/DRGN22.BIN/836/textures/4", "SECT/DRGN22.BIN/836/133", "SECT/DRGN22.BIN/836/134", "SECT/DRGN22.BIN/836/135");
+    Loader
+      .loadFiles("SECT/DRGN22.BIN/836/132", "SECT/DRGN22.BIN/836/textures/4", "SECT/DRGN22.BIN/836/133", "SECT/DRGN22.BIN/836/134", "SECT/DRGN22.BIN/836/135")
+      .thenAccept(onLoad)
+    ;
   }
 
   @Override
@@ -116,8 +120,8 @@ public class AlbertTemplate extends LavitzTemplate {
   }
 
   @Override
-  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
-    loadDrgnDir(0, 4108, onLoad);
+  public CompletableFuture<List<FileData>> loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return loadDrgnDir(0, 4108);
   }
 
   @Override

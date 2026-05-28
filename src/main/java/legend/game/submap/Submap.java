@@ -10,6 +10,7 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Submap {
   public final SMap smap;
@@ -22,7 +23,7 @@ public abstract class Submap {
     this.smap = smap;
   }
 
-  public abstract void loadEnv(final Runnable onLoaded);
+  public abstract CompletableFuture<Void> loadEnv();
   public abstract void loadAssets(final Runnable onLoaded);
 
   public abstract void loadMusicAndSounds();

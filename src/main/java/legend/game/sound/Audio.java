@@ -678,7 +678,7 @@ public final class Audio {
   @Method(0x8001e5ecL)
   public static void loadMenuSounds() {
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x1);
-    loadDrgnFiles(0, Audio::menuSoundsLoaded, "5739/0", "5739/1", "5739/2", "5739/3");
+    loadDrgnFiles(0, "5739/0", "5739/1", "5739/2", "5739/3").thenAccept(Audio::menuSoundsLoaded);
   }
 
   /**
@@ -732,7 +732,7 @@ public final class Audio {
     unloadSoundFile(8);
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
     final int fileIndex = 5815 + index * 5;
-    loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, true));
+    loadDrgnDir(0, fileIndex).thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, true));
   }
 
   @ScriptDescription("Load a music package")
@@ -744,7 +744,7 @@ public final class Audio {
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
     final int fileIndex = 5815 + script.params_20[0].get() * 5;
     final boolean playSequence = script.params_20[1].get() == 0;
-    loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, playSequence));
+    loadDrgnDir(0, fileIndex).thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, playSequence));
     return FlowControl.CONTINUE;
   }
 
@@ -758,7 +758,7 @@ public final class Audio {
 
     unloadSoundFile(8);
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, true));
+    loadDrgnDir(0, fileIndex).thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, true));
   }
 
   @ScriptDescription("Load some kind of audio package")
@@ -875,7 +875,7 @@ public final class Audio {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
 
       //LAB_8002c448
-      AUDIO_THREAD.loadXa(Loader.loadFile("XA/LODXA0%d.XA/%d.opus".formatted(xaArchiveIndex, xaFileIndex)));
+      AUDIO_THREAD.loadXa(Loader.loadFileSync("XA/LODXA0%d.XA/%d.opus".formatted(xaArchiveIndex, xaFileIndex)));
       _800bf0cf = 4;
     }
 

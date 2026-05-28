@@ -7,7 +7,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.unpacker.FileData;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 import static legend.game.DrgnFiles.loadDrgnDir;
 
@@ -20,7 +20,7 @@ public class RetailAddition extends SimpleAddition {
   }
 
   @Override
-  public void loadAnimations(final CharacterData2c character, final CharacterAdditionInfo additionInfo, final Consumer<List<FileData>> onLoad) {
-    loadDrgnDir(0, this.additionFile, onLoad);
+  public CompletableFuture<List<FileData>> loadAnimations(final CharacterData2c character, final CharacterAdditionInfo additionInfo) {
+    return loadDrgnDir(0, this.additionFile);
   }
 }

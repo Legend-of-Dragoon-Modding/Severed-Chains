@@ -216,7 +216,10 @@ public class CreditsScreen extends MenuScreen {
       // Load TIMs
       case 0 -> {
         this.loadingStage++;
-        Loader.loadFiles(this::menuTexturesMrgLoaded, "SECT/DRGN0.BIN/5718/0", "SECT/DRGN0.BIN/5718/1");
+        Loader
+          .loadFiles("SECT/DRGN0.BIN/5718/0", "SECT/DRGN0.BIN/5718/1")
+          .thenAccept(this::menuTexturesMrgLoaded)
+        ;
       }
 
       // State 1 is waiting for the textures to load

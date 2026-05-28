@@ -279,8 +279,8 @@ public class Ttle extends EngineState<Ttle> {
 
     vsyncMode_8007a3b8 = 2;
 
-    loadDrgnDir(0, 5718, this::menuTexturesMrgLoaded);
-    loadDrgnFile(0, 5719, file -> this.menuFireTmdLoaded("DRGN0/5719", file));
+    loadDrgnDir(0, 5718).thenAccept(this::menuTexturesMrgLoaded);
+    loadDrgnFile(0, 5719).thenAccept(file -> this.menuFireTmdLoaded("DRGN0/5719", file));
 
     // Prepare fire animation struct
     //LAB_800c7d30

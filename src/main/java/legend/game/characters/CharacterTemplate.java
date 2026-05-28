@@ -16,6 +16,7 @@ import org.legendofdragoon.modloader.registries.RegistryEntry;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public abstract class CharacterTemplate extends RegistryEntry {
@@ -69,7 +70,7 @@ public abstract class CharacterTemplate extends RegistryEntry {
     return false;
   }
 
-  public abstract void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad);
+  public abstract CompletableFuture<List<FileData>> loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent);
 
   public abstract int getWeaponTrailColour(final CharacterData2c character, final PlayerBattleEntity bent);
   public abstract int getSpellRingColour(final CharacterData2c character, final PlayerBattleEntity bent);

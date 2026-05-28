@@ -722,7 +722,7 @@ public final class SItem {
   public static void loadMenuAssets() {
     loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
     loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
-    loadDrgnDir(0, 5815, SItem::menuMusicLoaded);
+    loadDrgnDir(0, 5815).thenAccept(SItem::menuMusicLoaded);
   }
 
   @Method(0x800fc944L)

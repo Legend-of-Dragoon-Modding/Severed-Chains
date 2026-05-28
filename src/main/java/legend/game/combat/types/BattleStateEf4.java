@@ -791,7 +791,7 @@ public class BattleStateEf4 {
   public int loadGlobalAsset(final int drgnIndex, final int fileIndex) {
     final int index = this.getFreeGlobalAssetIndex();
 
-    loadDrgnFile(drgnIndex, fileIndex, data -> this.globalAssetLoaded(data, index));
+    loadDrgnFile(drgnIndex, fileIndex).thenAccept(data -> this.globalAssetLoaded(data, index));
 
     //LAB_800cac98
     return index;

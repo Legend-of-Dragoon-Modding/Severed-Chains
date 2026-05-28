@@ -24,6 +24,7 @@ import legend.lodmod.LodSpells;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static legend.game.DrgnFiles.loadDrgnDir;
@@ -59,7 +60,10 @@ public class RoseTemplate extends RetailCharacterTemplate {
 
   @Override
   public void loadWorldMapModel(final CharacterData2c character, final Consumer<List<FileData>> onLoad) {
-    Loader.loadFiles(onLoad, "SECT/DRGN22.BIN/836/99", "SECT/DRGN22.BIN/836/textures/3", "SECT/DRGN22.BIN/836/100", "SECT/DRGN22.BIN/836/101", "SECT/DRGN22.BIN/836/102");
+    Loader
+      .loadFiles("SECT/DRGN22.BIN/836/99", "SECT/DRGN22.BIN/836/textures/3", "SECT/DRGN22.BIN/836/100", "SECT/DRGN22.BIN/836/101", "SECT/DRGN22.BIN/836/102")
+      .thenAccept(onLoad)
+    ;
   }
 
   @Override
@@ -190,8 +194,8 @@ public class RoseTemplate extends RetailCharacterTemplate {
   }
 
   @Override
-  public void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
-    loadDrgnDir(0, 4106, onLoad);
+  public CompletableFuture<List<FileData>> loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return loadDrgnDir(0, 4106);
   }
 
   @Override

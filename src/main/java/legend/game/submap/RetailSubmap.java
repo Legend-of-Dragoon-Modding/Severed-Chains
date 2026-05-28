@@ -53,10 +53,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static legend.core.Async.allLoaded;
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -191,7 +190,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  public void loadEnv(final Runnable onLoaded) {
+  public CompletableFuture<Void> loadEnv() {
     LOGGER.info("Loading submap cut %d environment", this.cut);
 
     final IntRef drgnIndex = new IntRef();
@@ -200,10 +199,10 @@ public class RetailSubmap extends Submap {
     this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
 
     drgnBinIndex_800bc058 = drgnIndex.get();
-    loadDrgnDir(2, fileIndex.get(), files -> {
-      this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files);
-      onLoaded.run();
-    });
+
+    return
+      loadDrgnDir(2, fileIndex.get())
+      .thenAccept(files -> this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files));
   }
 
   @Override
@@ -225,55 +224,78 @@ public class RetailSubmap extends Submap {
     if(drgnIndex.get() == 1 || drgnIndex.get() == 2 || drgnIndex.get() == 3 || drgnIndex.get() == 4) {
       final int cutFileIndex = smapFileIndices_800f982c[this.cut];
 
-      final AtomicInteger loadedCount = new AtomicInteger();
-      final int expectedCount = cutFileIndex == 0 ? 1 : 2;
-
       // Load sobj assets
       final List<FileData> assets = new ArrayList<>();
       final List<FileData> scripts = new ArrayList<>();
       final List<FileData> textures = new ArrayList<>();
-      final AtomicInteger assetsCount = new AtomicInteger();
 
-      final Runnable prepareSobjs = () -> this.prepareSobjs(assets, scripts, textures);
-      final Runnable prepareSobjsAndComplete = () -> allLoaded(loadedCount, expectedCount, prepareSobjs, onLoaded);
+      final CompletableFuture<Void> assetsFuture = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1).thenAccept(assets::addAll);
+      final CompletableFuture<Void> scriptsFuture = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2).thenAccept(scripts::addAll);
+      final CompletableFuture<Void> texturesFuture = Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures").thenAccept(textures::addAll);
 
-      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> allLoaded(assetsCount, 3, () -> assets.addAll(files), prepareSobjsAndComplete));
-      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> allLoaded(assetsCount, 3, () -> scripts.addAll(files), prepareSobjsAndComplete));
-      Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
+      final CompletableFuture<Void> future = CompletableFuture
+        .allOf(assetsFuture, scriptsFuture, texturesFuture)
+        .thenAccept(v -> this.prepareSobjs(assets, scripts, textures))
+        .exceptionally(t -> {
+          LOGGER.error("", t);
+          return null;
+        })
+      ;
+
+      if(cutFileIndex == 0) {
+        future
+          .thenRun(onLoaded)
+          .exceptionally(t -> {
+            LOGGER.error("", t);
+            return null;
+          })
+        ;
+
+        return;
+      }
 
       // Load 3D overlay
-      if(cutFileIndex != 0) {
-        // Using arrays here to have a constant pointer for the callbacks
-        final Tim[] submapCutTexture = new Tim[1];
-        final MV[] submapCutMatrix = new MV[1];
-        final AtomicInteger cutCount = new AtomicInteger();
-        final int expectedCutCount = this.cut == 673 ? 3 : 2;
 
-        final Runnable prepareMap = () -> this.prepareMap(submapCutTexture[0], submapCutMatrix[0]);
-        final Runnable prepareMapAndComplete = () -> allLoaded(loadedCount, expectedCount, prepareMap, onLoaded);
+      // Using arrays here to have a constant pointer for the callbacks
+      final Tim[] submapCutTexture = new Tim[1];
+      final MV[] submapCutMatrix = new MV[1];
 
-        if(this.cut == 673) { // End cutscene, loads "The End" TIM
-          loadDrgnFile(0, 7610, file -> allLoaded(cutCount, expectedCutCount, () -> {
-            LOGGER.info("Submap cut %d the end texture loaded", this.cut);
-            this.theEnd_800d4bd0.setTim(new Tim(file));
-          }, prepareMapAndComplete));
-        }
+      final CompletableFuture<?>[] overlayFutures;
+      if(this.cut == 673) { // End cutscene, loads "The End" TIM
+        overlayFutures = new CompletableFuture[3];
 
-        // File example: 7508
-        LOGGER.info("Loading submap cut %d overlay model file %d", this.cut, cutFileIndex);
-        loadDrgnDir(0, cutFileIndex, files -> allLoaded(cutCount, expectedCutCount, () -> {
-          LOGGER.info("Submap cut %d overlay model loaded", this.cut);
-          this.submapCutModel = new CContainer("DRGN0/" + cutFileIndex, files.get(0));
-          this.submapCutAnim = new TmdAnimationFile(files.get(1));
-        }, prepareMapAndComplete));
-
-        LOGGER.info("Loading submap cut %d overlay texture and matrix file %d", this.cut, cutFileIndex + 1);
-        loadDrgnDir(0, cutFileIndex + 1, files -> allLoaded(cutCount, expectedCutCount, () -> {
-          LOGGER.info("Submap cut %d overlay texture and matrix loaded", this.cut);
-          submapCutTexture[0] = new Tim(files.get(0));
-          submapCutMatrix[0] = files.get(1).readMv(0, new MV());
-        }, prepareMapAndComplete));
+        overlayFutures[2] = loadDrgnFile(0, 7610).thenAccept(file -> {
+          LOGGER.info("Submap cut %d the end texture loaded", this.cut);
+          this.theEnd_800d4bd0.setTim(new Tim(file));
+        });
+      } else {
+        overlayFutures = new CompletableFuture[2];
       }
+
+      // File example: 7508
+      LOGGER.info("Loading submap cut %d overlay model file %d", this.cut, cutFileIndex);
+      overlayFutures[0] = loadDrgnDir(0, cutFileIndex).thenAccept(files -> {
+        LOGGER.info("Submap cut %d overlay model loaded", this.cut);
+        this.submapCutModel = new CContainer("DRGN0/" + cutFileIndex, files.get(0));
+        this.submapCutAnim = new TmdAnimationFile(files.get(1));
+      });
+
+      LOGGER.info("Loading submap cut %d overlay texture and matrix file %d", this.cut, cutFileIndex + 1);
+      overlayFutures[1] = loadDrgnDir(0, cutFileIndex + 1).thenAccept(files -> {
+        LOGGER.info("Submap cut %d overlay texture and matrix loaded", this.cut);
+        submapCutTexture[0] = new Tim(files.get(0));
+        submapCutMatrix[0] = files.get(1).readMv(0, new MV());
+      });
+
+      CompletableFuture
+        .allOf(overlayFutures)
+        .thenAccept(v -> this.prepareMap(submapCutTexture[0], submapCutMatrix[0]))
+        .runAfterBoth(future, onLoaded)
+        .exceptionally(t -> {
+          LOGGER.error("", t);
+          return null;
+        })
+      ;
     }
   }
 
@@ -297,7 +319,7 @@ public class RetailSubmap extends Submap {
   @Method(0x8001eadcL)
   private void loadSubmapSounds(final int submapIndex) {
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x2);
-    loadDrgnDir(0, 5750 + submapIndex, this::submapSoundsLoaded);
+    loadDrgnDir(0, 5750 + submapIndex).thenAccept(this::submapSoundsLoaded);
   }
 
   @Method(0x8001eb38L)

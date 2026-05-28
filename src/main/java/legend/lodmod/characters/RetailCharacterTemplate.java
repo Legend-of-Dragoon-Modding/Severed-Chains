@@ -33,7 +33,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
@@ -266,19 +266,15 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public void loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
-    if(!bent.isDragoon()) {
-      this.loadHumanAttackAnimations(character, bent, onLoad);
-    } else {
-      this.loadDragoonAttackAnimations(character, bent, onLoad);
-    }
+  public CompletableFuture<List<FileData>> loadAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent) {
+    return bent.isDragoon() ? this.loadDragoonAttackAnimations(character, bent) : this.loadHumanAttackAnimations(character, bent);
   }
 
-  public void loadHumanAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad) {
-    REGISTRIES.additions.getEntry(character.selectedAddition_19).get().loadAnimations(character, character.getAdditionInfo(character.selectedAddition_19), onLoad);
+  public CompletableFuture<List<FileData>> loadHumanAttackAnimations(final CharacterData2c character, final  PlayerBattleEntity bent) {
+    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().loadAnimations(character, character.getAdditionInfo(character.selectedAddition_19));
   }
 
-  public abstract void loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent, final Consumer<List<FileData>> onLoad);
+  public abstract CompletableFuture<List<FileData>> loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent);
 
   @Override
   public Path getBattleModelPath(final CharacterData2c character, final PlayerBattleEntity bent) {
