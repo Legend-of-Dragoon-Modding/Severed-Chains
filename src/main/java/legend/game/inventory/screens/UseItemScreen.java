@@ -479,6 +479,7 @@ public class UseItemScreen extends MenuScreen {
       playMenuSound(40);
       return;
     }
+
     playMenuSound(2);
 
     final ItemStack stack = this.menuItems.get(this.itemSlot + this.itemScroll).item_00;
