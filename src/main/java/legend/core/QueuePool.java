@@ -1,7 +1,6 @@
 package legend.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +14,7 @@ public class QueuePool<T> {
   boolean ignoreQueues;
 
   private T[] sortArray = (T[])new Object[100];
+  private T[] workArray = (T[])new Object[this.sortArray.length];
 
   public <U extends T> void addType(final Class<U> cls, final Supplier<U> constructor) {
     this.pools.put(cls, new QueueType<>(constructor));
@@ -59,10 +59,11 @@ public class QueuePool<T> {
 
     if(this.sortArray.length < this.size()) {
       this.sortArray = (T[])new Object[(int)(this.size() * 1.5f)];
+      this.workArray = (T[])new Object[this.sortArray.length];
     }
 
     this.queue.toArray(this.sortArray);
-    Arrays.sort(this.sortArray, 0, this.size(), comparator);
+    Sort.sort(this.sortArray, 0, this.size(), comparator, this.workArray, 0, this.workArray.length);
 
     final ListIterator<T> it = this.queue.listIterator();
     for(int i = 0; i < this.size(); i++) {

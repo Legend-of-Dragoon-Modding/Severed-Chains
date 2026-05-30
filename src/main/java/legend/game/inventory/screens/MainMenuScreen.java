@@ -62,6 +62,8 @@ public class MainMenuScreen extends MenuScreen {
 
   private final CharacterCard[] charCards = new CharacterCard[3];
   private final List<Button> menuButtons = new ArrayList<>();
+  /** If it's stupid and it works, it ain't stupid */
+  private boolean playTickSound;
 
   private final Button saveButton;
   private final Button loadButton;
@@ -137,15 +139,22 @@ public class MainMenuScreen extends MenuScreen {
     button.setPos(21 + index / 7 * 74, 79 + (index % 7) * 13);
     button.setWidth(72);
 
-    button.onHoverIn(() -> {
-      playMenuSound(1);
-      button.focus();
-    });
+    button.onHoverIn(button::focus);
 
-    button.onLostFocus(() -> button.setTextColour(TextColour.BROWN));
+    button.onLostFocus(() -> {
+      button.hoverOut();
+      button.setTextColour(TextColour.BROWN);
+    });
     button.onGotFocus(() -> {
+      button.hoverIn();
       button.setTextColour(TextColour.RED);
       this.lastSelectedButton = button;
+
+      if(this.playTickSound) {
+        playMenuSound(1);
+      }
+
+      this.playTickSound = true;
     });
 
     button.onPressed(onClick::run);
@@ -156,7 +165,6 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             break;
           }
@@ -170,7 +178,6 @@ public class MainMenuScreen extends MenuScreen {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             break;
           }
@@ -202,7 +209,6 @@ public class MainMenuScreen extends MenuScreen {
           }
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             return InputPropagation.HANDLED;
           }
@@ -234,7 +240,6 @@ public class MainMenuScreen extends MenuScreen {
           }
 
           if(!otherButton.isDisabled() && otherButton.isVisible()) {
-            playMenuSound(1);
             otherButton.focus();
             return InputPropagation.HANDLED;
           }
@@ -310,7 +315,6 @@ public class MainMenuScreen extends MenuScreen {
       }
 
       if(action == INPUT_ACTION_MENU_LEFT.get() || action == INPUT_ACTION_MENU_RIGHT.get()) {
-        playMenuSound(1);
         this.lastSelectedButton.focus();
       }
 

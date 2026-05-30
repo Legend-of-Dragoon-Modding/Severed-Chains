@@ -11,7 +11,7 @@ import org.joml.Vector3f;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderTextboxBackground;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public class UiBox {
   private final MV transforms = new MV();
@@ -74,7 +74,7 @@ public class UiBox {
   }
 
   public void render() {
-    this.render(CONFIG.getConfig(UI_COLOUR.get()));
+    this.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
   }
 
   public void render(final Vector3f colour) {

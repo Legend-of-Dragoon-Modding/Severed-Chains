@@ -1,5 +1,6 @@
 package legend.turnorder;
 
+import legend.core.Random;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
@@ -31,8 +32,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.renderCharacterPortrait;
-import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
@@ -52,6 +51,8 @@ public class TurnOrderMod {
 
   private UiBox background;
   private boolean visible;
+
+  private final Random random = new Random();
 
   private final List<TurnOrder> sortedBents = new ArrayList<>();
   private final List<TurnOrder> turns = new ArrayList<>();
@@ -87,7 +88,7 @@ public class TurnOrderMod {
       this.turns.add(new TurnOrder(battleState_8006e398.aliveBents_e78.get(bentIndex).innerStruct_00));
     }
 
-    final int oldSeed = simpleRandSeed_8004dd44;
+    this.random.setSeed(battleState_8006e398.getTurnOrderSeed());
 
     while(!this.turns.isEmpty() && processedBents < 6) {
       int highestTurnValue = 0;
@@ -111,11 +112,9 @@ public class TurnOrderMod {
 
       for(int i = 0; i < this.turns.size(); i++) {
         final TurnOrder turnOrder = this.turns.get(i);
-        turnOrder.turnValue += Math.round(turnOrder.bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
+        turnOrder.turnValue += Math.round(turnOrder.bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (this.random.nextFloat() * 0.2f + 0.9f));
       }
     }
-
-    simpleRandSeed_8004dd44 = oldSeed;
 
     for(int bentIndex = 0; bentIndex < battleState_8006e398.getAliveBentCount(); bentIndex++) {
       final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78.get(bentIndex);

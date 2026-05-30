@@ -224,7 +224,6 @@ public class Ttle extends EngineState<Ttle> {
     setMainVolume(0x7f, 0x7f);
     AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
     FUN_8001aa90();
-    loadMusicPackage(1);
   }
 
   @Override
@@ -252,6 +251,8 @@ public class Ttle extends EngineState<Ttle> {
 //    SCREENS.pushScreen(new TitleScreen());
 //    GameEngine.legacyUi = false;
 
+    loadMusicPackage(1);
+
     this.menuLoadingStage = 0;
     this.menuTransitionState_800c6728 = 0;
     this.menuState_800c672c = 0;
@@ -278,8 +279,8 @@ public class Ttle extends EngineState<Ttle> {
 
     vsyncMode_8007a3b8 = 2;
 
-    loadDrgnDir(0, 5718, this::menuTexturesMrgLoaded);
-    loadDrgnFile(0, 5719, file -> this.menuFireTmdLoaded("DRGN0/5719", file));
+    loadDrgnDir(0, 5718).thenAccept(this::menuTexturesMrgLoaded);
+    loadDrgnFile(0, 5719).thenAccept(file -> this.menuFireTmdLoaded("DRGN0/5719", file));
 
     // Prepare fire animation struct
     //LAB_800c7d30
@@ -596,7 +597,6 @@ public class Ttle extends EngineState<Ttle> {
       if(this.menuTransitionState_800c6728 == 3) {
         if(!transition.apply((U)this.asyncScreen)) {
           this.asyncScreen = null;
-          engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
           this.loadingStage = 0;
           vsyncMode_8007a3b8 = 2;
         }

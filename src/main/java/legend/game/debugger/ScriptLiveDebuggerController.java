@@ -192,7 +192,7 @@ public class ScriptLiveDebuggerController {
   private void runCode() {
     this.runningDebugCode = true;
 
-    final byte[] compiled = SCRIPTS.compile("Live debugger", this.txtRun.getText() + "\nreturn");
+    final byte[] compiled = SCRIPTS.assemble("Live debugger", this.txtRun.getText() + "\nreturn");
     final ScriptFile script = new ScriptFile("Injected code", compiled);
 
     final ScriptState<?> state = SCRIPTS.getState(this.index);

@@ -50,7 +50,7 @@ public final class BackgroundMusic {
       final int bankCount = files.get(1).readUShort(0x0);
 
       for(int i = 1; i < bankCount; i++) {
-        final FileData extraBank = Loader.loadFile("SECT/DRGN0.BIN/" + (fileId + i));
+        final FileData extraBank = Loader.loadFileSync("SECT/DRGN0.BIN/" + (fileId + i));
         extraBank.read(0, soundBankData, offset, extraBank.size());
         offset += extraBank.size();
       }

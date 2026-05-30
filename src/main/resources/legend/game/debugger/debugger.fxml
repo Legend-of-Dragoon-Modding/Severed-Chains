@@ -135,6 +135,17 @@
                </VBox>
             </children>
          </VBox>
+         <VBox prefHeight="386.0" prefWidth="232.0">
+            <children>
+               <Label text="Sound" />
+               <HBox prefHeight="29.0" prefWidth="232.0">
+                  <children>
+                     <Spinner fx:id="soundIndex" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                     <Button mnemonicParsing="false" onAction="#playSound" text="Play" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
       </HBox>
    </AnchorPane>
 </VBox>

@@ -12,6 +12,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.UseItemResponse;
+import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -22,6 +23,7 @@ import legend.lodmod.LodMod;
 import java.util.List;
 import java.util.Set;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.downArrow_800bdb98;
@@ -479,7 +481,13 @@ public class UseItemScreen extends MenuScreen {
     }
 
     playMenuSound(2);
-    takeItemFromSlot(this.menuItems.get(this.itemSlot + this.itemScroll).itemSlot_01, 1);
+
+    final ItemStack stack = this.menuItems.get(this.itemSlot + this.itemScroll).item_00;
+    final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(stack, stack.isRepeat()));
+
+    if(!repeatItemReturnEvent.returnItem) {
+      takeItemFromSlot(this.menuItems.get(this.itemSlot + this.itemScroll).itemSlot_01, 1);
+    }
     this.itemCount = this.getUsableItemsInMenu();
 
     if(this.itemScroll == 0 && this.itemSlot > this.itemCount - 1) {

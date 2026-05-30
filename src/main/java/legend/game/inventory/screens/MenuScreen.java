@@ -145,6 +145,10 @@ public abstract class MenuScreen extends ControlHost {
     SItem.renderNumber(x, y, value, flags | 0x2, digitCount, clut);
   }
 
+  protected void renderNumber(final int x, final int y, final int z, final int value, final int digitCount, final int flags, final int clut) {
+    SItem.renderNumber(x, y, z, value, flags | 0x2, digitCount, clut);
+  }
+
   final void renderScreen() {
     this.runDeferredActions();
     this.render();

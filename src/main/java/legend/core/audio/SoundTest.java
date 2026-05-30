@@ -16,7 +16,7 @@ public final class SoundTest {
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");
 
-    final BackgroundMusic bgm = new BackgroundMusic(Loader.loadDirectory("SECT/DRGN0.BIN/" + FILE_INDEX), FILE_INDEX);
+    final BackgroundMusic bgm = new BackgroundMusic(Loader.loadDirectorySync("SECT/DRGN0.BIN/" + FILE_INDEX), FILE_INDEX);
 
     spuThread.start();
 

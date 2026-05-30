@@ -349,7 +349,7 @@ public class PostBattleScreen extends MenuScreen {
             final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
             final List<Addition> unlocks = this.additionsUnlocked_8011e1b8.get(character);
 
-            if(unlocks != null) {
+            if(unlocks != null && !unlocks.isEmpty()) {
               unlocks.removeFirst();
             }
           }
@@ -406,7 +406,7 @@ public class PostBattleScreen extends MenuScreen {
             final CharacterData2c character = gameState_800babc8.getCharacterBySlot(i);
             final List<SpellStats0c> unlocks = this.spellsUnlocked_8011e1a8.get(character);
 
-            if(unlocks != null) {
+            if(unlocks != null && !unlocks.isEmpty()) {
               unlocks.removeFirst();
             }
           }
@@ -447,11 +447,7 @@ public class PostBattleScreen extends MenuScreen {
             this.fadeToMenuState(MenuState.UNLOAD_18);
           } else {
             // Some items remaining
-            resizeDisplay(384, 240);
-            renderMode = EngineState.RenderMode.LEGACY;
-            deallocateRenderables(0xff);
-            menuStack.popScreen();
-            menuStack.pushScreen(new TooManyItemsScreen());
+            this.fadeToMenuState(MenuState.TRANSITION_TO_TOO_MANY_ITEMS);
           }
         }
 
@@ -479,6 +475,14 @@ public class PostBattleScreen extends MenuScreen {
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         menuStack.popScreen();
         this.deleteResultsScreenObjects();
+      }
+
+      case TRANSITION_TO_TOO_MANY_ITEMS -> {
+        resizeDisplay(384, 240);
+        renderMode = EngineState.RenderMode.LEGACY;
+        deallocateRenderables(0xff);
+        menuStack.popScreen();
+        menuStack.pushScreen(new TooManyItemsScreen());
       }
     }
 
@@ -824,10 +828,16 @@ public class PostBattleScreen extends MenuScreen {
 
     this.drawTwoDigitNumber(x + 108, y + 16, character.level_12);
 
-    final int xp = character.getXpToNextLevel();
-    this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, character.xp_00);
-    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-    this.drawNextLevelXp(x + 84, y + 40, xp);
+    final int nextLevelXp;
+    if(character.level_12 < CONFIG.getConfig(MAX_LEVEL.get())) {
+      nextLevelXp = character.getXpToNextLevel();
+    } else {
+      nextLevelXp = 0;
+    }
+
+    this.drawSixDigitNumber(x + 76 - this.getXpWidth(nextLevelXp), y + 40, character.xp_00);
+    this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(nextLevelXp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+    this.drawNextLevelXp(x + 84, y + 40, nextLevelXp);
 
     if(character.hasDragoon()) {
       this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
@@ -838,10 +848,16 @@ public class PostBattleScreen extends MenuScreen {
 
       this.drawTwoDigitNumber(x + 108, y + 28, character.dlevel_13);
 
-      final int dxp = character.getDxpToNextLevel();
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, character.dlevelXp_0e);
-      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawNextLevelXp(x + 84, y + 52, dxp);
+      final int nextLevelDxp;
+      if(character.dlevel_13 < CONFIG.getConfig(MAX_DRAGOON_LEVEL.get())) {
+        nextLevelDxp = character.getDxpToNextLevel();
+      } else {
+        nextLevelDxp = 0;
+      }
+
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(nextLevelDxp), y + 52, character.dlevelXp_0e);
+      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(nextLevelDxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawNextLevelXp(x + 84, y + 52, nextLevelDxp);
     }
   }
 
@@ -981,5 +997,6 @@ public class PostBattleScreen extends MenuScreen {
     FADE_OUT_16,
     WAIT_FOR_FADE_OUT_17,
     UNLOAD_18,
+    TRANSITION_TO_TOO_MANY_ITEMS,
   }
 }

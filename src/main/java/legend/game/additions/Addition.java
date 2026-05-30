@@ -8,7 +8,7 @@ import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Addition extends RegistryEntry {
   public String getName() {
@@ -29,5 +29,5 @@ public abstract class Addition extends RegistryEntry {
   public abstract int getHitCount(final CharacterData2c character, final CharacterAdditionInfo additionInfo);
   public abstract AdditionHitProperties10 getHit(final CharacterData2c character, final CharacterAdditionInfo additionInfo, final int index);
 
-  public abstract void loadAnimations(final CharacterData2c character, final CharacterAdditionInfo additionInfo, Consumer<List<FileData>> onLoad);
+  public abstract CompletableFuture<List<FileData>> loadAnimations(final CharacterData2c character, final CharacterAdditionInfo additionInfo);
 }

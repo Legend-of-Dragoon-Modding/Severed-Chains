@@ -263,7 +263,7 @@ public class Credits extends EngineState<Credits> {
     this.creditIndex_800d1af0 = 0;
 
     this.creditTimsLoaded_800d1ae8 = false;
-    loadDrgnDir(0, 5720, this::creditsLoaded);
+    loadDrgnDir(0, 5720).thenAccept(this::creditsLoaded);
 
     this.gradient = new PolyBuilder("CreditsGradient", GL_TRIANGLE_STRIP)
       .translucency(Translucency.B_MINUS_F)

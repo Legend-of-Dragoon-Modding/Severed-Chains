@@ -86,6 +86,10 @@ public class BigList<T> extends Control {
       } else {
         this.updateEntries();
         this.highlight(this.slot);
+
+        if(this.highlightHandler != null) {
+          this.highlightHandler.highlight(this.getSelected());
+        }
       }
     }
   }
@@ -242,54 +246,48 @@ public class BigList<T> extends Control {
   private void menuNavigateTop() {
     if(this.scroll == 0 && this.slot != 0) {
       playMenuSound(1);
-      this.slot = 0;
+      this.highlight(0);
     } else if(this.slot != this.scroll + MAX_VISIBLE_ENTRIES) {
       playMenuSound(1);
-      this.slot = this.scroll;
+      this.highlight(this.scroll);
     }
-    this.highlight(this.slot);
   }
 
   private void menuNavigateBottom() {
     final int count = this.entries.size();
     if(this.slot - this.scroll != Math.min(MAX_VISIBLE_ENTRIES, count) - 1) {
       playMenuSound(1);
-      this.slot = this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1;
+      this.highlight(this.scroll + Math.min(MAX_VISIBLE_ENTRIES, count) - 1);
     }
-
-    this.highlight(this.slot);
   }
 
   private void menuNavigatePageUp() {
     if(this.scroll - MAX_VISIBLE_ENTRIES >= 0) {
       playMenuSound(1);
-      this.slot -= MAX_VISIBLE_ENTRIES;
+      this.highlight(this.slot - MAX_VISIBLE_ENTRIES);
       this.scroll -= MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     } else if(this.scroll != 0) {
       playMenuSound(1);
-      this.slot -= this.scroll;
+      this.highlight(this.slot - this.scroll);
       this.scroll = 0;
       this.updateEntries();
     }
-    this.highlight(this.slot);
   }
 
   private void menuNavigatePageDown() {
     final int count = this.entries.size();
     if(this.scroll + MAX_VISIBLE_ENTRIES < count - 1 - MAX_VISIBLE_ENTRIES) {
       playMenuSound(1);
-      this.slot += MAX_VISIBLE_ENTRIES;
+      this.highlight(this.slot + MAX_VISIBLE_ENTRIES);
       this.scroll += MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     } else if(count > MAX_VISIBLE_ENTRIES && this.scroll != count - MAX_VISIBLE_ENTRIES) {
       playMenuSound(1);
-      this.slot += count - MAX_VISIBLE_ENTRIES - this.scroll;
+      this.highlight(this.slot + (count - MAX_VISIBLE_ENTRIES - this.scroll));
       this.scroll = count - MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     }
-
-    this.highlight(this.slot);
   }
 
   private void menuNavigateHome() {

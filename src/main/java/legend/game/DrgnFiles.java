@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class DrgnFiles {
@@ -20,7 +21,7 @@ public final class DrgnFiles {
 
   public static int drgnBinIndex_800bc058;
 
-  public static void loadFile(final String file, final Consumer<FileData> onCompletion) {
+  public static CompletableFuture<FileData> loadFile(final String file) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -28,10 +29,10 @@ public final class DrgnFiles {
 
     LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Loader.loadFile(file, onCompletion);
+    return Loader.loadFile(file);
   }
 
-  public static void loadDir(final String dir, final Consumer<List<FileData>> onCompletion) {
+  public static CompletableFuture<List<FileData>> loadDir(final String dir) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -39,10 +40,10 @@ public final class DrgnFiles {
 
     LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Loader.loadDirectory(dir, onCompletion);
+    return Loader.loadDirectory(dir);
   }
 
-  public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<FileData>> onCompletion, final String... files) {
+  public static CompletableFuture<List<FileData>> loadDrgnFiles(int drgnBinIndex, final String... files) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
@@ -55,18 +56,18 @@ public final class DrgnFiles {
       paths[i] = "SECT/DRGN" + drgnBinIndex + ".BIN/" + files[i];
     }
 
-    Loader.loadFiles(onCompletion, paths);
+    return Loader.loadFiles(paths);
   }
 
-  public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
-    loadDrgnFile(drgnBinIndex, String.valueOf(file), onCompletion);
+  public static CompletableFuture<FileData> loadDrgnFile(final int drgnBinIndex, final int file) {
+    return loadDrgnFile(drgnBinIndex, String.valueOf(file));
   }
 
   public static void loadDrgnFileSync(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
     loadDrgnFileSync(drgnBinIndex, String.valueOf(file), onCompletion);
   }
 
-  public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
+  public static CompletableFuture<FileData> loadDrgnFile(int drgnBinIndex, final String file) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
@@ -74,7 +75,7 @@ public final class DrgnFiles {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file, onCompletion);
+    return Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file);
   }
 
   public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
@@ -85,10 +86,10 @@ public final class DrgnFiles {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Loader.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
+    onCompletion.accept(Loader.loadFileSync("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
   }
 
-  public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
+  public static CompletableFuture<List<FileData>> loadDrgnDir(int drgnBinIndex, final int directory) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
@@ -96,7 +97,7 @@ public final class DrgnFiles {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
+    return Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory);
   }
 
   public static void loadDrgnDirSync(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
@@ -107,7 +108,7 @@ public final class DrgnFiles {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
+    onCompletion.accept(Loader.loadDirectorySync("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
   }
 
   public static void loadDrgnDirSync(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
@@ -118,10 +119,10 @@ public final class DrgnFiles {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
+    onCompletion.accept(Loader.loadDirectorySync("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
   }
 
-  public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
+  public static CompletableFuture<List<FileData>> loadDrgnDir(int drgnBinIndex, final String directory) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
@@ -129,7 +130,7 @@ public final class DrgnFiles {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
+    return Loader.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory);
   }
 
   @Method(0x80017564L)

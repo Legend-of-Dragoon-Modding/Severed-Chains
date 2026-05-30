@@ -203,7 +203,7 @@ public class ChapterTitleCard {
     switch(this.chapterTitleState_800c6708) {
       case LOAD:
         //LAB_800e26c0
-        loadDrgnDir(0, this.chapterCardDirs[this.chapterTitleNum_800c6738 - 1], files -> this.submapAssetsLoadedCallback(files, 0x10));
+        loadDrgnDir(0, this.chapterCardDirs[this.chapterTitleNum_800c6738 - 1]).thenAccept(files -> this.submapAssetsLoadedCallback(files, 0x10));
 
         //LAB_800e27a4
         this.chapterTitleState_800c6708 = ChapterTitleState.WAIT;

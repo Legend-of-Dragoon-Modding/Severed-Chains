@@ -551,7 +551,7 @@ public class WMap extends EngineState<WMap> {
   @Method(0x8001eea8L)
   private void loadWorldMapLocationMenuSoundEffects(final int index) {
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index, this::worldMapLocationMenuSoundEffectsLoaded);
+    loadDrgnDir(0, 5740 + index).thenAccept(this::worldMapLocationMenuSoundEffectsLoaded);
   }
 
   @Method(0x8001eefcL)
@@ -1962,7 +1962,7 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800d6880L)
   private void loadWmapTextures() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_efff);
-    loadDrgnDir(0, 5695, files -> this.timsLoaded(files, 0x1_1000));
+    loadDrgnDir(0, 5695).thenAccept(files -> this.timsLoaded(files, 0x1_1000));
     this.modelAndAnimData_800c66a8.mapTextureBrightness_20 = 0.0f;
   }
 
@@ -2164,8 +2164,8 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800d8e4cL)
   private void loadMapModelAndTexture(final int index) {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffd);
-    loadDrgnDir(0, 5697 + index, files -> this.timsLoaded(files, 0x2));
-    loadDrgnFile(0, 5705 + index, files -> this.loadTmdCallback("Map model DRGN0/" + (5705 + index), files));
+    loadDrgnDir(0, 5697 + index).thenAccept(files -> this.timsLoaded(files, 0x2));
+    loadDrgnFile(0, 5705 + index).thenAccept(files -> this.loadTmdCallback("Map model DRGN0/" + (5705 + index), files));
   }
 
   @Method(0x800d8efcL)
@@ -3036,7 +3036,7 @@ public class WMap extends EngineState<WMap> {
   private void loadPlayerAvatarTextureAndModelFiles() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x2a8);
 
-    loadDrgnDir(0, 5713, files -> {
+    loadDrgnDir(0, 5713).thenAccept(files -> {
       for(int i = 1; i < 4; i++) {
         final FileData file = files.get(i);
 
@@ -3061,7 +3061,7 @@ public class WMap extends EngineState<WMap> {
 
     for(int i = 1; i < 4; i++) {
       final int finalI = i;
-      loadDrgnDir(0, 5714 + i, files -> this.loadPlayerAvatarModelFiles(files, finalI));
+      loadDrgnDir(0, 5714 + i).thenAccept(files -> this.loadPlayerAvatarModelFiles(files, finalI));
     }
 
     this.loadPlayerModelAndAnimsForFirstChar();
@@ -4024,7 +4024,7 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800e4e1cL)
   private void loadMapMcq() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffe);
-    loadDrgnFile(0, 5696, this::loadMapMcqToVram);
+    loadDrgnFile(0, 5696).thenAccept(this::loadMapMcqToVram);
     this.mcqColour_800c6794 = 0.0f;
   }
 

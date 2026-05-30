@@ -43,7 +43,7 @@ public class RetailSpell extends SpellStats0c {
     for(int i = 0; i < dragoonDeffsWithExtraTims_800fb040.length; i++) {
       if(dragoonDeffsWithExtraTims_800fb040[i] == this.index) {
         if(Loader.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
-          loadDrgnDir(0, 4115 + i, battle::uploadTims);
+          loadDrgnDir(0, 4115 + i).thenAccept(battle::uploadTims);
         }
       }
     }

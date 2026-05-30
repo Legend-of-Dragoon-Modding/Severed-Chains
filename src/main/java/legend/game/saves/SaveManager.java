@@ -11,6 +11,7 @@ import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.inventory.EquipmentTypes;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
@@ -81,7 +82,7 @@ public final class SaveManager {
   private final SaveVersion serializerVersion;
   private final SaveSerializer serializer;
 
-  private final Latch<FileData> retailAtlas = new Latch<>(() -> Loader.loadFile("retail_atlas.png"));
+  private final Latch<FileData> retailAtlas = new Latch<>(() -> Loader.loadFileSync("retail_atlas.png"));
 
   public SaveManager(final SaveVersion serializerVersion, final SaveSerializer serializer) {
     this.serializerVersion = serializerVersion;
@@ -273,6 +274,9 @@ public final class SaveManager {
         whichMenu_800bdc38 = oldMenu;
       }
 
+      campaign.config.setConfig(CoreMod.CAMPAIGN_NAME.get(), campaignName);
+      ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
+
       if(deleteFile) {
         for(final Path memcard : memcards) {
           Files.delete(memcard);
@@ -345,8 +349,6 @@ public final class SaveManager {
 
   public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
     try {
-      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, gameState_800babc8.campaign.path.resolve("campaign_config.dcnf"));
-
       final FileData data = new ExpandableFileData(0x1);
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerVersion.code);

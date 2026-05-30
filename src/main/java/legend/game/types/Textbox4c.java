@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public class Textbox4c {
   public static final int ANIMATING = 0x1;
@@ -63,7 +63,7 @@ public class Textbox4c {
   public int oldScaleH;
   public boolean updateBorder;
 
-  public final Vector3f colour = new Vector3f(CONFIG.getConfig(UI_COLOUR.get()));
+  public final Vector3f colour = new Vector3f(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
 
   public Textbox4c() {
     Arrays.setAll(this.borderTransforms, i -> new MV());
@@ -86,6 +86,6 @@ public class Textbox4c {
     this.stepY_34 = 0;
     this._38 = 0;
     this._3c = 0;
-    this.colour.set(CONFIG.getConfig(UI_COLOUR.get()));
+    this.colour.set(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
   }
 }

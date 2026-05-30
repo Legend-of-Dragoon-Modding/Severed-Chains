@@ -47,19 +47,17 @@ public class CauseStatusItem extends BattleItem {
   @Override
   public int getSpecialEffect(final ItemStack stack, final BattleEntity27c user, final BattleEntity27c target) {
     int effect = -1;
-    if(simpleRand() * 101 >> 16 < 101) {
-      final int statusType = this.status;
+    final int statusType = this.status;
 
-      if((statusType & 0xff) != 0) {
-        int statusIndex;
-        for(statusIndex = 0; statusIndex < 8; statusIndex++) {
-          if((statusType & (0x80 >> statusIndex)) != 0) {
-            break;
-          }
+    if((statusType & 0xff) != 0) {
+      int statusIndex;
+      for(statusIndex = 0; statusIndex < 8; statusIndex++) {
+        if((statusType & (0x80 >> statusIndex)) != 0) {
+          break;
         }
-
-        effect = 0x80 >> statusIndex;
       }
+
+      effect = 0x80 >> statusIndex;
     }
 
     return effect;

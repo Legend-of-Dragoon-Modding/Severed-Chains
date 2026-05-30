@@ -257,7 +257,7 @@ public final class Fmv {
 
     submapId_800bd808 = -1;
 
-    rumbleData = RumbleData.load(Loader.loadFile("SECT/DRGN0.BIN/5721/" + fmvIndex));
+    rumbleData = RumbleData.load(Loader.loadFileSync("SECT/DRGN0.BIN/5721/" + fmvIndex));
     rumbleFrames = 0;
 
     isPlaying = true;
@@ -319,7 +319,7 @@ public final class Fmv {
     final ByteBuffer demuxed = ByteBuffer.wrap(demuxedRaw);
     final FrameHeader frameHeader = new FrameHeader(demuxedRaw);
 
-    final FileData fileData = Loader.loadFile(file);
+    final FileData fileData = Loader.loadFileSync(file);
     sector = 0;
     frame = 0;
     skipText = null;

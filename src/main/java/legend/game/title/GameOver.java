@@ -102,7 +102,7 @@ public class GameOver extends EngineState<GameOver> {
 
       case 1 -> {
         this.loadingStage = 2;
-        loadDrgnFile(0, 6667, this::gameOverLoaded);
+        loadDrgnFile(0, 6667).thenAccept(this::gameOverLoaded);
       }
 
       case 3 -> {

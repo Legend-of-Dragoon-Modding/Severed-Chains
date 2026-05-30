@@ -88,7 +88,7 @@ import static legend.lodmod.LodBattleActions.ITEMS;
 import static legend.lodmod.LodBattleActions.SPECIAL;
 import static legend.lodmod.LodBattleActions.SPELLS;
 import static legend.lodmod.LodBattleActions.TRANSFORM;
-import static legend.lodmod.LodConfig.UI_COLOUR;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ADDITIONS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ESCAPE;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_GUARD;
@@ -114,7 +114,6 @@ public class BattleHud {
     new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
   };
 
-  private static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}};
   private static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
@@ -444,7 +443,7 @@ public class BattleHud {
           this.battleUiBackground = new UiBox(16, 182, 288, 40);
         }
 
-        this.battleUiBackground.render(CONFIG.getConfig(UI_COLOUR.get()));
+        this.battleUiBackground.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
       }
 
       if(this.nameAndPortraitObj == null) {
@@ -679,7 +678,7 @@ public class BattleHud {
               final int right = left + Math.max(0, spBarW * 35 / 100);
               final int bottom = top + 3;
 
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex % spBarColours_800c6f04.length];
+              final int[] spBarColours = player.character.template.getSpBarColours(spBarIndex);
 
               this.spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 120.0f + i * 0.1f);
               this.spBarTransforms.scaling(right - left, bottom - top, 1.0f);
@@ -823,15 +822,11 @@ public class BattleHud {
     //LAB_800f16e4
     final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
 
-    final int[] digits = new int[digitCount];
-
     for(int i = 0; i < displayStats.digits_04[numberIndex].length; i++) {
       displayStats.digits_04[numberIndex][i].digitValue_00 = -1;
     }
 
     //LAB_800f171c
-    Arrays.fill(digits, -1);
-
     int divisor = 1;
 
     //LAB_800f1768
@@ -841,12 +836,6 @@ public class BattleHud {
 
     //LAB_800f1780
     //LAB_800f17b0
-    for(int i = 0; i < digitCount; i++) {
-      digits[i] = value / divisor;
-      value %= divisor;
-      divisor /= 10;
-    }
-
     //LAB_800f1800
     //LAB_800f1828
     final int rightAlignOffset = 4 - digitCount;
@@ -877,7 +866,9 @@ public class BattleHud {
 
       //LAB_800f1998
       //LAB_800f199c
-      digit.digitValue_00 = digits[i];
+      digit.digitValue_00 = value / divisor;
+      value %= divisor;
+      divisor /= 10;
     }
 
     //LAB_800f19e0

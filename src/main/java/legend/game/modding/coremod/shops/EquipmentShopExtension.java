@@ -173,7 +173,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
         final Equipment equipped = character.getEquipment(slot);
 
         if(equipped != null) {
-          equipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+          equipmentAttack += equipped.attack_10;
           equipmentDefense += equipped.defence_12;
           equipmentMagicAttack += equipped.magicAttack_11;
           equipmentMagicDefense += equipped.magicDefence_13;
@@ -190,7 +190,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
           final Equipment equipped = character.getEquipment(slot);
 
           if(equipped != null) {
-            newEquipmentAttack += equipped.attack1_0a + equipped.attack2_10;
+            newEquipmentAttack += equipped.attack_10;
             newEquipmentDefense += equipped.defence_12;
             newEquipmentMagicAttack += equipped.magicAttack_11;
             newEquipmentMagicDefense += equipped.magicDefence_13;

@@ -855,7 +855,7 @@ public class LodMod {
   @EventListener
   public static void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
     // Dragoon spirit icons
-    final List<FileData> files = Loader.loadDirectory("SECT/DRGN0.BIN/4113");
+    final List<FileData> files = Loader.loadDirectorySync("SECT/DRGN0.BIN/4113");
     final Tim tim0 = new Tim(files.get(0));
     final Tim tim5 = new Tim(files.get(5));
     final VramTextureSingle tex = VramTextureLoader.textureFromTim(tim0);

@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.Random;
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
@@ -25,6 +26,9 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 
 public class BattleStateEf4 {
+  private long turnOrderSeed;
+  private final Random turnOrderRng = new Random();
+
   public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];
 
   public int _180;
@@ -647,8 +651,15 @@ public class BattleStateEf4 {
     return null;
   }
 
+  public long getTurnOrderSeed() {
+    return this.turnOrderSeed;
+  }
+
   @Method(0x800c7ea0L)
   public ScriptState<? extends BattleEntity27c> getCurrentTurnBent() {
+    this.turnOrderSeed = gameState_800babc8.timestamp_a0;
+    this.turnOrderRng.setSeed(this.turnOrderSeed);
+
     //LAB_800c7ee4
     for(int s4 = 0; s4 < 32; s4++) {
       //LAB_800c7ef0
@@ -683,7 +694,7 @@ public class BattleStateEf4 {
       for(int combatantIndex = 0; combatantIndex < this.aliveBents_e78.size(); combatantIndex++) {
         final BattleEntity27c bent = this.aliveBents_e78.get(combatantIndex).innerStruct_00;
         // Generate a random number between 0.0..0.2 and add 0.9 to bring it to 0.9..1.1
-        bent.turnValue_4c += Math.round(bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
+        bent.turnValue_4c += Math.round(bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (this.turnOrderRng.nextFloat() * 0.2f + 0.9f));
       }
 
       //LAB_800c8028
@@ -780,7 +791,7 @@ public class BattleStateEf4 {
   public int loadGlobalAsset(final int drgnIndex, final int fileIndex) {
     final int index = this.getFreeGlobalAssetIndex();
 
-    loadDrgnFile(drgnIndex, fileIndex, data -> this.globalAssetLoaded(data, index));
+    loadDrgnFile(drgnIndex, fileIndex).thenAccept(data -> this.globalAssetLoaded(data, index));
 
     //LAB_800cac98
     return index;
