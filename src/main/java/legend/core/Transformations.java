@@ -14,6 +14,8 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.GsGetLw;
 import static legend.game.Graphics.GsMulCoord2;
+import static legend.game.Graphics.PopMatrix;
+import static legend.game.Graphics.PushMatrix;
 import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 
 public final class Transformations {
@@ -27,9 +29,11 @@ public final class Transformations {
     if(RENDERER.getRenderMode() == EngineState.RenderMode.LEGACY) {
       toScreenTempMv.set(transforms);
       GsMulCoord2(worldToScreenMatrix_800c3548, toScreenTempMv);
+      PushMatrix();
       GTE.setTransforms(toScreenTempMv);
       GTE.perspectiveTransform(worldspaceCoord.x, worldspaceCoord.y, worldspaceCoord.z);
       out.set(GTE.getScreenX(2), GTE.getScreenY(2));
+      PopMatrix();
       return;
     }
 
