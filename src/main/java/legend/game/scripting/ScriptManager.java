@@ -11,6 +11,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.scripting.Assembler;
 import org.legendofdragoon.scripting.Disassembler;
 import org.legendofdragoon.scripting.Tokenizer;
+import org.legendofdragoon.scripting.compiler.FateCompiler;
 import org.legendofdragoon.scripting.meta.Meta;
 import org.legendofdragoon.scripting.meta.MetaManager;
 import org.legendofdragoon.scripting.meta.NoSuchVersionException;
@@ -19,6 +20,7 @@ import org.legendofdragoon.scripting.tokens.Script;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.IoHelper.intsToBytes;
 import static legend.game.scripting.ScriptState.FLAG_1_0000;
 import static legend.game.scripting.ScriptState.FLAG_DESTRUCTOR_NOT_SET;
@@ -169,6 +172,7 @@ public class ScriptManager {
   }
 
   private Meta meta;
+  private FateCompiler compiler;
   private final Assembler assembler = new Assembler();
   private Tokenizer tokenizer;
   private Disassembler disassembler;
@@ -420,11 +424,25 @@ public class ScriptManager {
         throw new RuntimeException("Failed to load script patches", e);
       }
 
+      this.compiler = new FateCompiler(this.meta);
       this.tokenizer = new Tokenizer(this.meta);
       this.disassembler = new Disassembler(this.meta);
     }
 
     return this.meta;
+  }
+
+  public byte[] compile(final String name, final String source) {
+    this.meta();
+
+    final List<String> errors = new ArrayList<>();
+    final String asm = this.compiler.compile(source, errors);
+
+    if(!errors.isEmpty()) {
+      throw new RuntimeException(String.join("\n", errors));
+    }
+
+    return SCRIPTS.assemble(name, asm);
   }
 
   public byte[] assemble(final String name, final String source) {
