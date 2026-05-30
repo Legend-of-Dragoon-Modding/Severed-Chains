@@ -15,6 +15,7 @@ import legend.game.combat.encounters.Encounter;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
+import legend.game.sound.Audio;
 import legend.game.submap.SMap;
 import legend.game.types.GsRVIEW2;
 import legend.game.wmap.DirectionalPathSegmentData08;
@@ -35,7 +36,7 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.combat.SBtld.startLegacyEncounter;
-import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.getSoundFileFromIndex;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
@@ -122,6 +123,7 @@ public class DebuggerController {
   @FXML
   public Spinner<Double> refpointZ;
 
+  public Spinner<Integer> soundFileIndex;
   public Spinner<Integer> soundIndex;
 
   public void initialize() {
@@ -152,6 +154,7 @@ public class DebuggerController {
     this.refpointY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
     this.refpointZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
 
+    this.soundFileIndex.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0));
     this.soundIndex.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
 
     EVENTS.register(this);
@@ -441,6 +444,6 @@ public class DebuggerController {
   }
 
   public void playSound(final ActionEvent actionEvent) {
-    playMenuSound(this.soundIndex.getValue());
+    Audio.playSound(getSoundFileFromIndex(this.soundFileIndex.getValue()), this.soundIndex.getValue(), 0, 0);
   }
 }

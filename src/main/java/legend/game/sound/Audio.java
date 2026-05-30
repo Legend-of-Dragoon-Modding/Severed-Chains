@@ -347,7 +347,7 @@ public final class Audio {
     return FlowControl.CONTINUE;
   }
 
-  private static SoundFile getSoundFileFromIndex(final int index) {
+  public static SoundFile getSoundFileFromIndex(final int index) {
     return switch(index) {
       case 0 -> menuSoundFile;
       case 4 -> ((Battle)currentEngineState_8004dd04).deffSounds;

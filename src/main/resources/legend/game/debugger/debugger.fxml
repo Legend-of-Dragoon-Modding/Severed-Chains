@@ -140,6 +140,7 @@
                <Label text="Sound" />
                <HBox prefHeight="29.0" prefWidth="232.0">
                   <children>
+                     <Spinner fx:id="soundFileIndex" editable="true" prefHeight="26.0" prefWidth="90.0" />
                      <Spinner fx:id="soundIndex" editable="true" prefHeight="26.0" prefWidth="90.0" />
                      <Button mnemonicParsing="false" onAction="#playSound" text="Play" />
                   </children>
