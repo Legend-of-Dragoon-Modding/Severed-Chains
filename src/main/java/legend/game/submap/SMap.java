@@ -5,6 +5,7 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
@@ -229,7 +230,7 @@ public class SMap extends EngineState<SMap> {
    */
   public final int[] randomStuff_800c6970 = new int[32];
 
-  private TriangleIndicator140 triangleIndicator_800c69fc;
+  private final TriangleIndicator140 triangleIndicators_800c69fc = new TriangleIndicator140();
 
   private final Vector3f cameraPos_800c6aa0 = new Vector3f();
 
@@ -724,7 +725,7 @@ public class SMap extends EngineState<SMap> {
     functions[297] = this::scriptAddTriangleIndicators;
     functions[298] = this::scriptShowAlertIndicator;
     functions[299] = this::scriptHideAlertIndicator;
-    functions[300] = this::FUN_800dfd48;
+    functions[300] = this::scriptRemoveTriangleIndicatorType;
     functions[301] = this::FUN_800e05c8;
     functions[302] = this::FUN_800e05f0;
     functions[303] = this::scriptEnableSobjFlatLight;
@@ -788,10 +789,10 @@ public class SMap extends EngineState<SMap> {
     functions[775] = this::scriptReinitializeSmokePlumeForIntermittentBursts;
     functions[776] = this::scriptInitSnowParticleData;
     functions[777] = this::FUN_800f1eb8;
-    functions[778] = this::scriptAllocateTriangleIndicatorArray;
-    functions[779] = this::FUN_800f1b64;
-    functions[780] = this::FUN_800f26c8;
-    functions[781] = this::FUN_800f1d0c;
+    functions[778] = this::scriptAddTriangleIndicators2d;
+    functions[779] = this::scriptAddTriangleIndicatorsWithOffset;
+    functions[780] = this::scriptAddTriangleIndicator2d;
+    functions[781] = this::scriptAddTriangleIndicatorWithOffset;
     functions[782] = this::scriptAllocateSmokeCloudData;
     functions[783] = this::scriptDeallocateSmokeCloudDataAndEffect;
     functions[784] = this::scriptSetSmokeCloudEffectStateToDontTick;
@@ -1215,7 +1216,7 @@ public class SMap extends EngineState<SMap> {
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           // Fix for chest shadow rendering on top of lid (GH#1408)
           .translucentDepthComparator(GL_LESS)
-        ;
+          ;
 
         if(texture != null) {
           queue.texture(texture);
@@ -1330,71 +1331,72 @@ public class SMap extends EngineState<SMap> {
     return FlowControl.CONTINUE;
   }
 
+  public void addIndicator(final int type, final float x, final float y) {
+    for(int index = 0; index < 20; index++) {
+      if(this.triangleIndicators_800c69fc.indicatorType_18[index] == -1) {
+        this.setIndicator(index, type, x, y);
+        break;
+      }
+    }
+  }
+
+  public void addIndicator3d(final int type, final GsCOORDINATE2 coord2, final float screenspaceOffsetX, final float screenspaceOffsetY) {
+    for(int index = 0; index < 20; index++) {
+      if(this.triangleIndicators_800c69fc.indicatorType_18[index] == -1) {
+        this.setIndicator3d(index, type, coord2, screenspaceOffsetX, screenspaceOffsetY);
+        break;
+      }
+    }
+  }
+
+  public void setIndicator(final int index, final int type, final float x, final float y) {
+    final TriangleIndicator140 indicator = this.triangleIndicators_800c69fc;
+    indicator.indicatorType_18[index] = (short)type;
+    indicator.x_40[index] = x;
+    indicator.y_68[index] = y;
+    indicator.screenOffsetX_90[index] = this.screenOffset_800cb568.x;
+    indicator.screenOffsetY_e0[index] = this.screenOffset_800cb568.y;
+  }
+
+  public void setIndicator3d(final int index, final int type, final GsCOORDINATE2 coord2, final float screenspaceOffsetX, final float screenspaceOffsetY) {
+    final MV lw = new MV();
+    final Vector2f screenspace = new Vector2f();
+    GsGetLw(coord2, lw);
+    Transformations.toScreenspace(new Vector3f(), lw, screenspace);
+    this.setIndicator(index, type, screenspace.x + screenspaceOffsetX, screenspace.y + screenspaceOffsetY);
+  }
+
   @ScriptDescription("Adds a triangle indicator at a collision primitive")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
   @Method(0x800de334L)
   private FlowControl scriptAddTriangleIndicator(final RunningScript<?> script) {
-    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), this.playerModel_800c6748.coord2_14.coord.transfer);
+    final GsCOORDINATE2 coord2 = this.playerModel_800c6748.coord2_14;
 
-    final MV ls = new MV();
-    GsGetLs(this.playerModel_800c6748.coord2_14, ls);
-    GTE.setTransforms(ls);
-    GTE.perspectiveTransform(0, 0, 0);
-    final float x = GTE.getScreenX(2);
-    final float y = GTE.getScreenY(2);
+    final int collisionIndex = script.params_20[0].get();
+    final int indicatorType = script.params_20[1].get();
 
-    //LAB_800de438
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-    for(int i = 0; i < 20; i++) {
-      if(indicator.indicatorType_18[i] == -1) {
-        indicator.x_40[i] = x;
-        indicator.y_68[i] = y;
-        indicator.indicatorType_18[i] = (short)script.params_20[1].get();
-        indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-        indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
-        break;
-      }
-    }
-
-    //LAB_800de49c
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+    this.addIndicator3d(indicatorType, coord2, 0.0f, 0.0f);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Adds one or more triangle indicators")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "dataStream", description = "Param-encoded indicator structures")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "stream", description = "A stream of [collisionPrimitiveIndex, indicatorType]s terminated by -1")
   @Method(0x800de4b4L)
   private FlowControl scriptAddTriangleIndicators(final RunningScript<?> script) {
-    final MV ls = new MV();
+    final GsCOORDINATE2 coord2 = this.playerModel_800c6748.coord2_14;
 
-    final Param ints = script.params_20[0];
-    int s0 = 0;
+    final Param stream = script.params_20[0];
+    int dataIndex = 0;
 
     //LAB_800de4f8
-    while(ints.array(s0).get() != -1) {
-      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(ints.array(s0++).get(), this.playerModel_800c6748.coord2_14.coord.transfer);
+    while(stream.array(dataIndex).get() != -1) {
+      final int collisionIndex = stream.array(dataIndex++).get();
+      final int indicatorType = stream.array(dataIndex++).get();
 
-      GsGetLs(this.playerModel_800c6748.coord2_14, ls);
-      GTE.setTransforms(ls);
-      GTE.perspectiveTransform(0, 0, 0);
-      final float x = GTE.getScreenX(2);
-      final float y = GTE.getScreenY(2);
-
-      //LAB_800de5d4
-      for(int i = 0; i < 20; i++) {
-        final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
-        if(indicator.indicatorType_18[i] == -1) {
-          indicator.x_40[i] = x;
-          indicator.y_68[i] = y;
-          indicator.indicatorType_18[i] = (short)ints.array(s0).get();
-          indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-          indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
-          break;
-        }
-      }
-
-      s0++;
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+      this.addIndicator3d(indicatorType, coord2, 0.0f, 0.0f);
     }
 
     //LAB_800de644
@@ -2146,10 +2148,18 @@ public class SMap extends EngineState<SMap> {
   }
 
   @ScriptDescription("Unknown, related to triangle indicators")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
   @Method(0x800dfd48L)
-  private FlowControl FUN_800dfd48(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+  private FlowControl scriptRemoveTriangleIndicatorType(final RunningScript<?> script) {
+    final int indicatorType = script.params_20[0].get();
+
+    for(int index = 0; index < 20; index++) {
+      if(this.triangleIndicators_800c69fc.indicatorType_18[index] == indicatorType) {
+        this.triangleIndicators_800c69fc.indicatorType_18[index] = -1;
+      }
+    }
+
+    return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Show the triangle indicator for this submap object")
@@ -3200,8 +3210,6 @@ public class SMap extends EngineState<SMap> {
         //LAB_800e1d88
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.DONE;
 
-        this.triangleIndicator_800c69fc = new TriangleIndicator140();
-
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
         new Tim(Loader.loadFileSync("SUBMAP/alert.tim")).uploadToGpu();
@@ -3323,7 +3331,6 @@ public class SMap extends EngineState<SMap> {
 
     this.submapEffectsState_800f9eac = -1;
     this.reloadSubmapEffects();
-    this.triangleIndicator_800c69fc = null;
     new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
     this.mapIndicator.destroy();
   }
@@ -3700,8 +3707,8 @@ public class SMap extends EngineState<SMap> {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-       final Vector2f transformed = new Vector2f();
-       final Vector3f middle = new Vector3f();
+      final Vector2f transformed = new Vector2f();
+      final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();
@@ -3715,7 +3722,7 @@ public class SMap extends EngineState<SMap> {
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
-        ;
+          ;
 
         if(!primitiveInfo.flatEnoughToWalkOn_01) {
           model.colour(0.5f, 0.0f, 0.0f);
@@ -4794,82 +4801,47 @@ public class SMap extends EngineState<SMap> {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, adds triangle indicators (possibly for doors)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
+  @ScriptDescription("Adds one or more triangle indicators at a collision primitive, with screenspace offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "stream", description = "A stream of [collisionPrimitiveIndex, indicatorType, screenspaceOffsetX, screenspaceOffsetY]s terminated by -1")
   @Method(0x800f1b64L)
-  private FlowControl FUN_800f1b64(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
-    final GsCOORDINATE2 sp0x18 = new GsCOORDINATE2();
-    final MV sp0x70 = new MV();
-
-    GsInitCoordinate2(null, sp0x18);
-
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
+  private FlowControl scriptAddTriangleIndicatorsWithOffset(final RunningScript<?> script) {
+    final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+    GsInitCoordinate2(null, coord2);
 
     //LAB_800f1ba8
-    final Param ints = script.params_20[0];
-    int s0 = 0;
-    for(int i = 0; ints.array(s0).get() != -1; i++) {
-      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(ints.array(s0++).get(), sp0x10);
+    final Param stream = script.params_20[0];
+    int dataIndex = 0;
+    for(int indicatorIndex = 0; stream.array(dataIndex).get() != -1; indicatorIndex++) {
+      final int collisionIndex = stream.array(dataIndex++).get();
+      final int indicatorType = stream.array(dataIndex++).get();
+      final int screenspaceOffsetX = stream.array(dataIndex++).get();
+      final int screenspaceOffsetY = stream.array(dataIndex++).get();
 
-      sp0x18.coord.transfer.set(sp0x10);
-      GsGetLs(sp0x18, sp0x70);
-
-      PushMatrix();
-      GTE.setTransforms(sp0x70);
-      GTE.perspectiveTransform(0, 0, 0);
-      final float sx = GTE.getScreenX(2);
-      final float sy = GTE.getScreenY(2);
-      PopMatrix();
-
-      indicator.indicatorType_18[i] = (short)ints.array(s0++).get();
-      indicator.x_40[i] = sx + ints.array(s0++).get();
-      indicator.y_68[i] = sy + ints.array(s0++).get();
-      indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-      indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+      this.setIndicator3d(indicatorIndex, indicatorType, coord2, screenspaceOffsetX, screenspaceOffsetY);
     }
 
     //LAB_800f1cf0
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, adds a triangle indicator (possibly for a door)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y")
+  @ScriptDescription("Adds a triangle indicator at a collision primitive, with screenspace offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "screenspaceOffsetX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "screenspaceOffsetY")
   @Method(0x800f1d0cL)
-  private FlowControl FUN_800f1d0c(final RunningScript<?> script) {
-    final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
-    GsInitCoordinate2(null, sp0x40);
-    final Vector3f sp0x10 = new Vector3f();
-    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), sp0x10);
-    sp0x40.coord.transfer.set(sp0x10);
-    final MV sp0x20 = new MV();
-    GsGetLs(sp0x40, sp0x20);
+  private FlowControl scriptAddTriangleIndicatorWithOffset(final RunningScript<?> script) {
+    final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+    GsInitCoordinate2(null, coord2);
 
-    PushMatrix();
-    GTE.setTransforms(sp0x20);
-    GTE.perspectiveTransform(0, 0, 0);
-    final float sx = GTE.getScreenX(2);
-    final float sy = GTE.getScreenY(2);
-    PopMatrix();
+    final int collisionIndex = script.params_20[0].get();
+    final int indicatorType = script.params_20[1].get();
+    final float screenspaceOffsetX = script.params_20[2].getFloat();
+    final float screenspaceOffsetY = script.params_20[3].getFloat();
 
-    //LAB_800f1e20
-    for(int i = 0; i < 20; i++) {
-      final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
-      if(indicator.indicatorType_18[i] == -1) {
-        indicator.indicatorType_18[i] = (short)script.params_20[1].get();
-        indicator.x_40[i] = sx + script.params_20[2].getFloat();
-        indicator.y_68[i] = sy + script.params_20[3].getFloat();
-        indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-        indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
-        break;
-      }
-    }
-
-    //LAB_800f1ea0
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+    this.addIndicator3d(indicatorType, coord2, screenspaceOffsetX, screenspaceOffsetY);
     return FlowControl.CONTINUE;
   }
 
@@ -5116,34 +5088,37 @@ public class SMap extends EngineState<SMap> {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates triangle indicators from an array of struct data")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
+  @ScriptDescription("Adds one or more triangle indicators at screenspace coordinates")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "stream", description = "A stream of [indicatorType, screenspaceX, screenspaceY]s terminated by -1")
   @Method(0x800f2618L)
-  private FlowControl scriptAllocateTriangleIndicatorArray(final RunningScript<?> script) {
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
+  private FlowControl scriptAddTriangleIndicators2d(final RunningScript<?> script) {
     //LAB_800f266c
-    int i = 0;
-    final Param a0 = script.params_20[0];
-    for(int a1 = 0; a0.array(i).get() != -1; a1++) {
-      indicator.indicatorType_18[a1] = (short)a0.array(i++).get();
-      indicator.x_40[a1] = a0.array(i++).get() + this.screenOffset_800cb568.x;
-      indicator.y_68[a1] = a0.array(i++).get() + this.screenOffset_800cb568.y;
-      indicator.screenOffsetX_90[a1] = this.screenOffset_800cb568.x;
-      indicator.screenOffsetY_e0[a1] = this.screenOffset_800cb568.y;
+    int dataIndex = 0;
+    final Param stream = script.params_20[0];
+    for(int indicatorIndex = 0; stream.array(dataIndex).get() != -1; indicatorIndex++) {
+      final int indicatorType = stream.array(dataIndex++).get();
+      final int screenspaceX = stream.array(dataIndex++).get();
+      final int screenspaceY = stream.array(dataIndex++).get();
+
+      this.setIndicator(indicatorIndex, indicatorType, screenspaceX + this.screenOffset_800cb568.x, screenspaceY + this.screenOffset_800cb568.y);
     }
 
     //LAB_800f26b4
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptDescription("Adds a triangle indicator at screenspace coordinates")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "screenspaceX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "screenspaceY")
   @Method(0x800f26c8L)
-  private FlowControl FUN_800f26c8(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+  private FlowControl scriptAddTriangleIndicator2d(final RunningScript<?> script) {
+    final int indicatorType = script.params_20[0].get();
+    final float screenspaceX = script.params_20[1].getFloat();
+    final float screenspaceY = script.params_20[2].getFloat();
+
+    this.addIndicator(indicatorType, screenspaceX, screenspaceY);
+    return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("No-op")
@@ -5316,10 +5291,12 @@ public class SMap extends EngineState<SMap> {
     }
   }
 
+  private final MV indicatorLs = new MV();
+
   @Method(0x800f31bcL)
   private void handleTriangleIndicators() {
-    this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
-    this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
+    this.triangleIndicators_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
+    this.triangleIndicators_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
     if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_ENGINE_STATE_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
       return;
@@ -5347,11 +5324,10 @@ public class SMap extends EngineState<SMap> {
       return;
     }
 
-    final MV ls = new MV();
-    GsGetLs(this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, ls);
+    GsGetLs(this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, this.indicatorLs);
 
     PushMatrix();
-    GTE.setTransforms(ls);
+    GTE.setTransforms(this.indicatorLs);
 
     GTE.perspectiveTransform(this.bottom_800d6cb8);
     final float bottomY = GTE.getScreenY(2);
@@ -5360,8 +5336,8 @@ public class SMap extends EngineState<SMap> {
     final float topY = GTE.getScreenY(2);
 
     GTE.perspectiveTransform(0, -(topY - bottomY) - 48, 0);
-    this.triangleIndicator_800c69fc.playerX_08 = GTE.getScreenX(2);
-    this.triangleIndicator_800c69fc.playerY_0c = GTE.getScreenY(2);
+    this.triangleIndicators_800c69fc.playerX_08 = GTE.getScreenX(2);
+    this.triangleIndicators_800c69fc.playerY_0c = GTE.getScreenY(2);
 
     PopMatrix();
 
@@ -5380,7 +5356,7 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800f352cL)
   private void renderTriangleIndicators() {
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
+    final TriangleIndicator140 indicator = this.triangleIndicators_800c69fc;
 
     //LAB_800f35b0
     for(int indicatorIndex = 0; indicatorIndex < 21; indicatorIndex++) {
@@ -5498,11 +5474,9 @@ public class SMap extends EngineState<SMap> {
     }
 
     //LAB_800f3b14
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
     //LAB_800f3b24
     for(int i = 0; i < 20; i++) {
-      indicator.indicatorType_18[i] = -1;
+      this.triangleIndicators_800c69fc.indicatorType_18[i] = -1;
     }
   }
 
