@@ -129,6 +129,8 @@ tasks.register('updaterJar', Jar) {
   archiveBaseName = 'updater'
   archiveVersion = ''
   archiveClassifier = ''
+  // Stage the updater jar outside build/libs so copySupportFiles doesn't copy it onto itself (which truncates it to 0 bytes)
+  destinationDirectory = layout.buildDirectory.dir("updater")
 
   manifest {
     attributes(
