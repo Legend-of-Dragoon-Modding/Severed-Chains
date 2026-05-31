@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -43,6 +44,22 @@ public final class Main {
   private Main() { }
 
   public static void main(final String[] args) {
+    // swap in a staged updater jar if the previous update prepared one.
+    final Path gameDir = Path.of(".").toAbsolutePath().normalize();
+    final Path updaterNew = gameDir.resolve("updater.jar.new");
+    if(Files.exists(updaterNew)) {
+      try {
+        try {
+          Files.move(updaterNew, gameDir.resolve("updater.jar"), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch(final AtomicMoveNotSupportedException ignored) {
+          Files.move(updaterNew, gameDir.resolve("updater.jar"), StandardCopyOption.REPLACE_EXISTING);
+        }
+        LOGGER.info("Applied staged updater.jar");
+      } catch(final IOException e) {
+        LOGGER.warn("Could not apply staged updater.jar: %s", e.getMessage());
+      }
+    }
+
     try {
       LOGGER.info("Initialising LWJGL version %s", org.lwjgl.Version.getVersion());
       GameEngine.start();
