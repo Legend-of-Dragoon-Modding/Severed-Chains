@@ -97,8 +97,28 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e675cL)
-  public void setCollisionAndTransitionInfo(final int a0) {
-    this.collisionAndTransitions_800cb460[(a0 >> 8 & 0xfc) / 4] = a0;
+  public void setCollisionAndTransitionInfo(final int packed) {
+    this.collisionAndTransitions_800cb460[(packed >> 8 & 0xfc) / 4] = packed;
+  }
+
+  public void setCollisionAndTransitionInfo(final int index, final int value) {
+    this.collisionAndTransitions_800cb460[index] = value & ~0xff00 | index * 4 << 8;
+  }
+
+  public void addBlocker(final int index) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) | 0x8);
+  }
+
+  public void removeBlocker(final int index) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) & ~0x8);
+  }
+
+  public void addDoor(final int index, final int cut, final int scene) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) | 0x10 | scene << 16 | cut << 22);
+  }
+
+  public void removeDoor(final int index) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) & ~0xffff_0010);
   }
 
   @Method(0x800e866cL)
