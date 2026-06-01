@@ -1,0 +1,20 @@
+Reads cached collision primitive
+--- original
++++ modified
+@@ -492,6 +492,7 @@
+ rel :JMP_10f8_0
+ JMP_10f8_0:
+ call 681, var[64][0], stor[8]
++mov 0xa, stor[19]
+ jmp_cmp !=, stor[8], 0x3c, inl[:LABEL_40]
+ mov 0x40, stor[24]
+ mov 0x91, stor[25]
+@@ -506,7 +507,7 @@
+ JMP_1170_0:
+ call 3, 0xa, stor[8]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_42]
+-call 681, var[64][0], stor[8]
++mov stor[stor[stor[0], 19], 19], stor[8]
+ jmp_cmp ==, stor[8], 0x1a, inl[:LABEL_48]
+ jmp_cmp ==, stor[8], 0x1d, inl[:LABEL_49]
+ jmp_cmp ==, stor[8], 0x10, inl[:LABEL_50]

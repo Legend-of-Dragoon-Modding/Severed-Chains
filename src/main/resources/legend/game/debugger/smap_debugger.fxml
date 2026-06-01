@@ -14,9 +14,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.SmapDebuggerController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.SmapDebuggerController">
     <AnchorPane VBox.vgrow="ALWAYS">
-        <HBox prefHeight="400.0" prefWidth="640.0">
+        <HBox prefHeight="427.0" prefWidth="640.0">
          <children>
             <VBox prefHeight="378.0" prefWidth="182.0">
                <children>
@@ -154,6 +154,28 @@
                            </HBox.margin>
                         </Button>
                      </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+                     <children>
+                        <Label text="Depth offset">
+                           <HBox.margin>
+                              <Insets right="4.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Spinner fx:id="depthOffset" editable="true" prefHeight="26.0" prefWidth="90.0">
+                           <HBox.margin>
+                              <Insets right="8.0" />
+                           </HBox.margin>
+                        </Spinner>
+                        <Button mnemonicParsing="false" onAction="#updateDepthOffset" prefHeight="26.0" prefWidth="55.0" text="Update">
+                           <HBox.margin>
+                              <Insets right="8.0" />
+                           </HBox.margin></Button>
+                        <CheckBox fx:id="usePs1Depth" mnemonicParsing="false" onAction="#usePs1DepthClick" text="Use PS1 depth" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="8.0" />
+                     </VBox.margin>
                   </HBox>
                   <Separator prefWidth="200.0">
                      <VBox.margin>

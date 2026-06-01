@@ -1,6 +1,5 @@
 package legend.game.combat.ui;
 
-import legend.core.Config;
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -10,10 +9,16 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.scripting.RunningScript;
 import legend.game.types.Translucency;
+import legend.game.ui.UiBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
@@ -23,8 +28,12 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public abstract class ListMenu {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ListMenu.class);
+  private static final Marker BATTLE = MarkerManager.getMarker("BATTLE");
+
   private static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = new BattleMenuBackgroundUvMetrics04(224, 8, 16, 8);
 
   protected int menuState_00;
@@ -283,7 +292,7 @@ public abstract class ListMenu {
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
           //LAB_800f5078
-          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.charSlot_276;
+          this.hud.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.player_08.typeBentSlot_276;
           this.onSelection(this.listScroll_1e + this.listIndex_24);
 
           if(!this.canUse()) {
@@ -361,6 +370,7 @@ public abstract class ListMenu {
         //LAB_800f5410
         final int ret = this.handleTargeting();
         if(ret == 1) { // Pressed X
+          LOGGER.info(BATTLE, "Player selected index %d", this.listScroll_1e + this.listIndex_24);
           this.onUse(this.listScroll_1e + this.listIndex_24);
 
           //LAB_800f5488
@@ -368,10 +378,12 @@ public abstract class ListMenu {
           this.selectionState_a0 = 1;
           this.menuState_00 = 9;
         } else if(ret == 2) { // Instant confirm, no sound
+          LOGGER.info(BATTLE, "Player selected index %d", this.listScroll_1e + this.listIndex_24);
           this.onUse(this.listScroll_1e + this.listIndex_24);
           this.selectionState_a0 = 1;
           this.menuState_00 = 9;
         } else if(ret == -1) { // Pressed O
+          LOGGER.info(BATTLE, "Player cancelled menu");
           //LAB_800f54b4
           playMenuSound(0);
           playMenuSound(4);
@@ -418,10 +430,10 @@ public abstract class ListMenu {
         final int h = this.height_12 + 17;
 
         if(this.battleUiList == null) {
-          this.battleUiList = new UiBox("Battle UI List", this.x_04 - w / 2, this.y_06 - h, w, h);
+          this.battleUiList = new UiBox(this.x_04 - w / 2, this.y_06 - h, w, h);
         }
 
-        this.battleUiList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.battleUiList.render(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
 
         this.drawList();
 
@@ -520,11 +532,6 @@ public abstract class ListMenu {
     if(this.menuObj != null) {
       this.menuObj.delete();
       this.menuObj = null;
-    }
-
-    if(this.battleUiList != null) {
-      this.battleUiList.delete();
-      this.battleUiList = null;
     }
   }
 }

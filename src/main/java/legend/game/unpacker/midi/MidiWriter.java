@@ -27,7 +27,7 @@ public class MidiWriter {
         IoHelper.write(header, 6); // Header size (always 6)
         IoHelper.write(header, (short)0); // Format
         IoHelper.write(header, (short)1); // Number of tracks
-        IoHelper.write(header, (short)MathHelper.get(sssqRaw, 2, 2)); // Ticks per beat (+0x2 in SSSQ)
+        IoHelper.write(header, MathHelper.getShort(sssqRaw, 2)); // Ticks per beat (+0x2 in SSSQ)
         header.flip();
         channel.write(header);
 
@@ -39,7 +39,14 @@ public class MidiWriter {
         IoHelper.write(track, 0); // Will get replaced with chunk size
         IoHelper.write(track, (byte)0); // Delta time - first event, so 0 (varint)
 
-        byte previousCommand = 0;
+        // Write initial tempo
+        track.put((byte)0xff); // Meta
+        track.put((byte)0x51); // Tempo change
+        track.put((byte)3); // Data length
+        IoHelper.write3(track, 60_000_000 / MathHelper.getShort(sssqRaw, 4));
+        track.put((byte)0); // No elapsed time
+
+        byte previousCommand = (byte)0xff;
 
         outer:
         while(sssq.hasRemaining()) {

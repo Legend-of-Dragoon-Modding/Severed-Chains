@@ -1,12 +1,13 @@
 package legend.game.types;
 
+import legend.core.QueuedModelStandard;
 import legend.game.unpacker.FileData;
 
-public final class RenderableMetrics14 {
+public class RenderableMetrics14 {
   /** ubyte */
-  public final int u_00;
+  public final float u_00;
   /** ubyte */
-  public final int v_01;
+  public final float v_01;
   /** ubyte */
   public final int x_02;
   /** ubyte */
@@ -19,14 +20,14 @@ public final class RenderableMetrics14 {
   public final int width_08;
   /** ushort */
   public final int height_0a;
-  public final int textureWidth;
-  public final int textureHeight;
+  public final float textureWidth;
+  public final float textureHeight;
   public final float widthScale_10;
   public final float heightScale_12;
 
   public int vertexStart;
 
-  public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight, final float widthScale, final float heightScale) {
+  public RenderableMetrics14(final float u, final float v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final float textureWidth, final float textureHeight, final float widthScale, final float heightScale) {
     this.u_00 = u;
     this.v_01 = v;
     this.x_02 = x;
@@ -57,7 +58,11 @@ public final class RenderableMetrics14 {
     return new RenderableMetrics14(u, v, x, y, clut, tpage, width, height, width, height, widthScale, heightScale);
   }
 
-  public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight) {
+  public RenderableMetrics14(final float u, final float v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final float textureWidth, final float textureHeight) {
     this(u, v, x, y, clut, tpage, width, height, textureWidth, textureHeight, 1.0f, 1.0f);
+  }
+
+  public void useTexture(final QueuedModelStandard model) {
+
   }
 }

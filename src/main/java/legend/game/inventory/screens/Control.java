@@ -2,6 +2,8 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
@@ -10,8 +12,8 @@ import legend.game.types.Renderable58;
 
 import java.util.Set;
 
-import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.Menus.allocateRenderable;
+import static legend.game.Menus.uiFile_800bdc3c;
 
 public abstract class Control extends ControlHost {
   private MenuScreen screen;
@@ -30,6 +32,9 @@ public abstract class Control extends ControlHost {
   private boolean hovered;
   private boolean focused;
 
+  private boolean forwardInputToChildren;
+  boolean alwaysReceiveInput;
+
   @Override
   public MenuScreen getScreen() {
     return this.screen;
@@ -42,6 +47,10 @@ public abstract class Control extends ControlHost {
 
   void setScreen(final MenuScreen screen) {
     this.screen = screen;
+
+    for(final Control control : this.getControls()) {
+      control.setScreen(screen);
+    }
   }
 
   void setParent(final ControlHost parent) {
@@ -149,6 +158,14 @@ public abstract class Control extends ControlHost {
     this.acceptsInput = false;
   }
 
+  public void forwardInputToChildren() {
+    this.forwardInputToChildren = true;
+  }
+
+  public void alwaysReceiveInput() {
+    this.alwaysReceiveInput = true;
+  }
+
   public boolean isDisabled() {
     return this.disabled;
   }
@@ -158,7 +175,7 @@ public abstract class Control extends ControlHost {
   }
 
   public void enable() {
-    this.disabled = true;
+    this.disabled = false;
   }
 
   public void setDisabled(final boolean disabled) {
@@ -174,7 +191,11 @@ public abstract class Control extends ControlHost {
   }
 
   public void unfocus() {
-    this.screen.setFocus(null);
+    if(this.screen.getFocus() == this) {
+      this.screen.setFocus(null);
+    } else {
+      this.lostFocus();
+    }
   }
 
   protected void onResize() {
@@ -247,7 +268,7 @@ public abstract class Control extends ControlHost {
     return this.hovered;
   }
 
-  protected void hoverIn() {
+  public void hoverIn() {
     if(this.parent instanceof final Control control) {
       control.hoverIn();
     }
@@ -259,7 +280,7 @@ public abstract class Control extends ControlHost {
     }
   }
 
-  protected void hoverOut() {
+  public void hoverOut() {
     this.hovered = false;
 
     if(this.hoverOutHandler != null) {
@@ -284,9 +305,17 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mouseMove(x, y) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
@@ -301,9 +330,67 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mousePress(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    if(super.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.mousePressHandler != null) {
+      return this.mousePressHandler.mouseClick(x, y, button, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseRelease(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    if(super.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.mouseReleaseHandler != null) {
+      return this.mouseReleaseHandler.mouseClick(x, y, button, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
@@ -323,6 +410,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -338,6 +433,14 @@ public abstract class Control extends ControlHost {
   protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
@@ -357,6 +460,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -372,6 +483,14 @@ public abstract class Control extends ControlHost {
   protected InputPropagation keyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.keyRelease(key, scancode, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.keyRelease(key, scancode, mods) == InputPropagation.HANDLED) {
@@ -391,6 +510,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.buttonPress(button, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.buttonPress(button, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -408,6 +535,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.buttonRelease(button) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.buttonRelease(button) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -420,9 +555,42 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
+  protected InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    if(super.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.axisHandler != null) {
+      return this.axisHandler.axis(axis, direction, menuValue, movementValue);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
   protected InputPropagation charPress(final int codepoint) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.charPress(codepoint) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.charPress(codepoint) == InputPropagation.HANDLED) {
@@ -442,6 +610,14 @@ public abstract class Control extends ControlHost {
       return InputPropagation.PROPAGATE;
     }
 
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -457,6 +633,14 @@ public abstract class Control extends ControlHost {
   protected InputPropagation inputActionReleased(final InputAction action) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
+    }
+
+    if(this.forwardInputToChildren) {
+      for(final Control control : this) {
+        if(control.inputActionReleased(action) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(super.inputActionReleased(action) == InputPropagation.HANDLED) {
@@ -490,6 +674,14 @@ public abstract class Control extends ControlHost {
     this.mouseMoveHandler = handler;
   }
 
+  public void onMousePress(final MouseClick handler) {
+    this.mousePressHandler = handler;
+  }
+
+  public void onMouseRelease(final MouseClick handler) {
+    this.mouseReleaseHandler = handler;
+  }
+
   public void onMouseClick(final MouseClick handler) {
     this.mouseClickHandler = handler;
   }
@@ -518,6 +710,10 @@ public abstract class Control extends ControlHost {
     this.buttonReleaseHandler = handler;
   }
 
+  public void onAxis(final Axis handler) {
+    this.axisHandler = handler;
+  }
+
   public void onCharPress(final CharPress handler) {
     this.charPressHandler = handler;
   }
@@ -535,6 +731,8 @@ public abstract class Control extends ControlHost {
   private GotFocus gotFocusHandler;
   private LostFocus lostFocusHandler;
   private MouseMove mouseMoveHandler;
+  private MouseClick mousePressHandler;
+  private MouseClick mouseReleaseHandler;
   private MouseClick mouseClickHandler;
   private MouseScroll mouseScrollHandler;
   private MouseScrollHighRes mouseScrollHighResHandler;
@@ -542,6 +740,7 @@ public abstract class Control extends ControlHost {
   private KeyRelease keyReleaseHandler;
   private ButtonPress buttonPressHandler;
   private ButtonRelease buttonReleaseHandler;
+  private Axis axisHandler;
   private CharPress charPressHandler;
   private InputActionPressed inputActionPressedHandler;
   private InputActionReleased inputActionReleasedHandler;
@@ -550,14 +749,15 @@ public abstract class Control extends ControlHost {
   @FunctionalInterface public interface HoverOut { void hoverOut(); }
   @FunctionalInterface public interface GotFocus { void gotFocus(); }
   @FunctionalInterface public interface LostFocus { void lostFocus(); }
-  @FunctionalInterface public interface MouseMove { InputPropagation mouseMove(final int x, final int y); }
-  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods); }
+  @FunctionalInterface public interface MouseMove { InputPropagation mouseMove(final double x, final double y); }
+  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods); }
   @FunctionalInterface public interface MouseScroll { InputPropagation mouseScroll(final int deltaX, final int deltaY); }
   @FunctionalInterface public interface MouseScrollHighRes { InputPropagation mouseScroll(final double deltaX, final double deltaY); }
   @FunctionalInterface public interface KeyPress { InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat); }
   @FunctionalInterface public interface KeyRelease { InputPropagation keyRelease(final InputKey key, final InputKey scancode, final Set<InputMod> mods); }
   @FunctionalInterface public interface ButtonPress { InputPropagation buttonPress(final InputButton button, final boolean repeat); }
   @FunctionalInterface public interface ButtonRelease { InputPropagation buttonRelease(final InputButton button); }
+  @FunctionalInterface public interface Axis { InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue); }
   @FunctionalInterface public interface CharPress { InputPropagation charPress(final int codepoint); }
   @FunctionalInterface public interface InputActionPressed { InputPropagation pressed(final InputAction action, final boolean repeat); }
   @FunctionalInterface public interface InputActionReleased { InputPropagation release(final InputAction action); }

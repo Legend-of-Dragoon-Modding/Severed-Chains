@@ -6,10 +6,11 @@ import legend.game.types.MessageBoxResult;
 
 import java.util.function.BiConsumer;
 
+import static legend.core.GameEngine.DEFAULT_FONT;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 
 public class FullScreenInputScreen extends MenuScreen {
   private final String prompt;
@@ -28,6 +29,6 @@ public class FullScreenInputScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderMenuCentredText(this.prompt, 188, 25, 240, UI_TEXT);
+    SItem.renderMenuCentredText(DEFAULT_FONT, this.prompt, 188, 25, 240, UI_TEXT);
   }
 }

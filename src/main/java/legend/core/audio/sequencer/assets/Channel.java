@@ -10,7 +10,7 @@ public final class Channel {
   private int modulation;
   private int pitchBend;
   private int priority;
-  private int breath;
+  private long breath;
   private float adjustedVolume;
 
   private final SoundFont soundFont;
@@ -32,7 +32,7 @@ public final class Channel {
     this.pitchBend = (data.readUByte(0x0a) - 0x40) * 2;
     // TODO this should probably be converted to an Enum
     this.priority = data.readUByte(0x0b);
-    this.breath = data.readUByte(0x0c);
+    this.breath = Breath.convert(data.readUByte(0x0c));
 
 //    this.adjustedVolume = data.readUByte(0x0e) / 128f;
   }
@@ -89,11 +89,11 @@ public final class Channel {
     this.priority = priority;
   }
 
-  public int getBreath() {
+  public long getBreath() {
     return this.breath;
   }
 
-  public void setBreath(final int breath) {
+  public void setBreath(final long breath) {
     this.breath = breath;
   }
 

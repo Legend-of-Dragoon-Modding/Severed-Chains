@@ -4,8 +4,8 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.TmdWithId;
+import legend.game.tmd.TmdObjTable1c;
+import legend.game.tmd.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.game.unpacker.FileData;
@@ -17,7 +17,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.MathHelper.flEq;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
+import static legend.game.Graphics.GsInitCoordinate2;
 
 public class CollisionGeometry {
   private static final Logger LOGGER = LogManager.getFormatterLogger(CollisionGeometry.class);
@@ -97,8 +97,28 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e675cL)
-  public void setCollisionAndTransitionInfo(final int a0) {
-    this.collisionAndTransitions_800cb460[(a0 >> 8 & 0xfc) / 4] = a0;
+  public void setCollisionAndTransitionInfo(final int packed) {
+    this.collisionAndTransitions_800cb460[(packed >> 8 & 0xfc) / 4] = packed;
+  }
+
+  public void setCollisionAndTransitionInfo(final int index, final int value) {
+    this.collisionAndTransitions_800cb460[index] = value & ~0xff00 | index * 4 << 8;
+  }
+
+  public void addBlocker(final int index) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) | 0x8);
+  }
+
+  public void removeBlocker(final int index) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) & ~0x8);
+  }
+
+  public void addDoor(final int index, final int cut, final int scene) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) | 0x10 | scene << 16 | cut << 22);
+  }
+
+  public void removeDoor(final int index) {
+    this.setCollisionAndTransitionInfo(index, this.getCollisionAndTransitionInfo(index) & ~0xffff_0010);
   }
 
   @Method(0x800e866cL)
@@ -116,7 +136,9 @@ public class CollisionGeometry {
    * @return Collision primitive index that this model is within
    */
   @Method(0x800e88a0L)
-  public int checkCollision(final boolean isNpc, final Vector3f position, final Vector3f movement, final boolean updatePlayerRotationInterpolation) {
+  public int checkCollision(final boolean isNpc, final GsCOORDINATE2 coords, final Vector3f movement, final boolean updatePlayerRotationInterpolation) {
+    final Vector3f position = coords.coord.transfer;
+
     if(isNpc) {
       return this.handleCollision(position.x, position.y, position.z, movement);
     }
@@ -131,9 +153,10 @@ public class CollisionGeometry {
       this.collidedPrimitiveIndex_800cbd94 = this.handleCollision(position.x, position.y, position.z, movement);
       this.cachedPlayerMovement_800cbd98.set(movement);
 
-      if(this.collidedPrimitiveIndex_800cbd94 != -1 && this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
+      if(this.playerRotationWasUpdated_800d1a8c == 0 && updatePlayerRotationInterpolation) {
         this.playerRotationWasUpdated_800d1a8c = this.smap.tickMultiplier();
-        this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+        // Cos on X makes rotation calculation use player's local rotation (otherwise rotates when X is non-zero, GH#2316)
+        this.playerRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, Math.cos(coords.transforms.rotate.x) * movement.z) + MathHelper.PI, MathHelper.TWO_PI);
       }
     } else {
       //LAB_800e8954
@@ -532,39 +555,39 @@ public class CollisionGeometry {
       //LAB_800e9ff4
       // Adjust approach angle until new destination is in-bounds
       // Stop movement if +/- 39.375 degrees would still place the sObj out-of-bounds
-      int s2 = -1;
+      int slidingPrimitiveIndex = -1;
       float offsetX = 0.0f;
       float offsetZ = 0.0f;
-      for(int i = 0; i < 8 && s2 == -1; i++) {
+      for(int i = 0; i < 8 && slidingPrimitiveIndex == -1; i++) {
         final float sin = MathHelper.sin(angle2);
         final float cos = MathHelper.cosFromSin(sin, angle2);
         offsetX = x + cos * distanceMultiplier;
         offsetZ = z + sin * distanceMultiplier;
 
-        s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
+        slidingPrimitiveIndex = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true, true);
         angle2 += angleStep;
 
         //LAB_800ea22c
       }
 
       //LAB_800ea254
-      if(s2 < 0) {
+      if(slidingPrimitiveIndex < 0) {
         return -1;
       }
 
       //LAB_800ea234
-      final Vector3f normal = this.normals_08[s2];
+      final Vector3f normal = this.normals_08[slidingPrimitiveIndex];
 
       // Stop movement up/down a steep slope
-      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
+      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[slidingPrimitiveIndex]._08) / normal.y) >= 50) {
         return -1;
       }
 
       movement.x = offsetX - x;
       movement.z = offsetZ - z;
-      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
+      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[slidingPrimitiveIndex]._08) / normal.y;
 
-      return s2;
+      return slidingPrimitiveIndex;
     }
 
     if(destinationPrimitiveIndex < 0) {

@@ -2,7 +2,7 @@ Like what you see? Send me a tip! You can also subscribe to our [YouTube channel
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W4HFVW9)
 
-# Legend of Dragoon Java
+# Severed Chains
 
 A project to reverse engineer Legend of Dragoon into a high-level language with a modding API. This is not an emulator, but assembly code disassembled and rewritten in Java.
 
@@ -54,6 +54,32 @@ To set up a controller, simply connect it before or after starting the game,
 and select it from the controller dropdown in the in-game options menu.
 
 **NOTE**: There are known issues with using DS4windows, and possibly other controller emulators. Severed Chains supports 1800+ controllers out of the box so it's very likely you can just plug in your controller, set it up, and play. If you find a controller that isn't in our controller database, please contact us and we'll work with you to get it added. If you do use DS4windows, make sure your controller isn't hidden and close DS4windows.
+
+### Updating
+
+When a new version is available, an "Update Available" button appears on the title screen. Clicking it downloads and applies the update automatically if a platform-specific release is available, otherwise it opens the release page in your browser for manual download.
+
+The automatic updater preserves your saves, mods, ISOs, extracted files, and config. After the update completes, restart the game. A log of each update is written to `update_log.txt` in the game directory.
+### GPU Selection
+
+Severed Chains supports GPU preference settings for systems with multiple graphics cards (laptops with integrated and discrete GPUs).
+
+**Linux/Steam Deck**: GPU preference is applied automatically based on your `launch.conf` setting. No additional setup required.
+
+**Windows**: GPU preference requires one-time configuration. You have two options:
+
+1. **Easy Setup (Recommended)**: After running launch.bat Run `gpu-optional-setup.bat` and follow the prompts. This is optional but makes GPU selection automatic.
+   
+2. **Manual Setup**: Add Severed Chains to Windows Graphics Settings:
+   - Open Windows Settings > Display > Graphics
+   - Click "Add desktop app" or "Browse"
+   - Navigate to your Severed Chains folder and select `jdk25\bin\java.exe`
+   - Click "Options" and choose your preferred GPU (Power saving or High performance)
+
+To configure GPU preference in UNIX systems, edit `launch.conf` in your game folder:
+- `GPU_PREFERENCE=0` - Auto (let the system decide)
+- `GPU_PREFERENCE=1` - Discrete GPU (NVIDIA/AMD dedicated graphics)
+- `GPU_PREFERENCE=2` - Integrated GPU (Intel/AMD integrated graphics)
 
 ### Copyright Information
 

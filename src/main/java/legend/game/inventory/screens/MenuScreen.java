@@ -1,12 +1,19 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputCodepoints;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.SItem;
 import legend.game.i18n.I18n;
+import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Checkbox;
+import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
@@ -19,8 +26,7 @@ import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.sound.Audio.playMenuSound;
 
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
@@ -30,11 +36,61 @@ public abstract class MenuScreen extends ControlHost {
   private Control hover;
   private Control focus;
 
-  private final FontOptions fontOptions = new FontOptions().size(0.66f).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
   private final List<Hotkey> hotkeys = new ArrayList<>();
+  private int hotkeyX = 8;
 
   public void addHotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
-    this.hotkeys.add(new Hotkey(label, action, handler));
+    final Button button = this.addControl(new Button(I18n.translate("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
+    button.setScale(0.66f);
+    button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
+    button.setPos(this.hotkeyX, 227);
+    button.onPressed(handler::run);
+    button.onHoverIn(() -> playMenuSound(1));
+    this.hotkeyX += button.getWidth();
+
+    this.hotkeys.add(new Hotkey(label, action, handler, button));
+  }
+
+  public void addToggleHotkey(final String label, final RegistryDelegate<InputAction> action, final boolean checked, final BooleanConsumer handler) {
+    final Checkbox checkbox = this.addControl(new Checkbox());
+    checkbox.setSize(10, 10);
+    checkbox.setPos(this.hotkeyX, 226);
+    checkbox.onToggled(handler);
+    checkbox.setChecked(checked);
+    this.hotkeyX += checkbox.getWidth() + 3;
+
+    final Label checkboxLabel = this.addControl(new Label(I18n.translate("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
+    checkboxLabel.setScale(0.66f);
+    checkboxLabel.setSize((int)(checkboxLabel.getFont().textWidth(checkboxLabel.getText()) * checkboxLabel.getFontOptions().getSize() + 10), 10);
+    checkboxLabel.setPos(this.hotkeyX, 228);
+    this.hotkeyX += checkboxLabel.getWidth() - 5;
+
+    this.hotkeys.add(new Hotkey(label, action, () -> {
+      playMenuSound(2);
+      checkbox.setChecked(!checkbox.isChecked());
+    }, checkbox, checkboxLabel));
+  }
+
+  private void updateHotkeys() {
+    this.hotkeyX = 8;
+    for(int hotkeyIndex = 0; hotkeyIndex < this.hotkeys.size(); hotkeyIndex++) {
+      final Hotkey hotkey = this.hotkeys.get(hotkeyIndex);
+      for(int controlIndex = 0; controlIndex < hotkey.controls.length; controlIndex++) {
+        final Control control = hotkey.controls[controlIndex];
+        control.setX(this.hotkeyX);
+        this.hotkeyX += control.getWidth();
+
+        if(control instanceof final Button button) {
+          button.setText(I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
+          button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
+        } else if(control instanceof Checkbox) {
+          this.hotkeyX += 3;
+        } else if(control instanceof final Label label) {
+          label.setText(I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
+          this.hotkeyX -= 5;
+        }
+      }
+    }
   }
 
   void setStack(@Nullable final MenuStack stack) {
@@ -85,38 +141,88 @@ public abstract class MenuScreen extends ControlHost {
     SItem.renderNumber(x, y, value, flags | 0x2, digitCount);
   }
 
+  protected void renderNumber(final int x, final int y, final int value, final int digitCount, final int flags, final int clut) {
+    SItem.renderNumber(x, y, value, flags | 0x2, digitCount, clut);
+  }
+
+  protected void renderNumber(final int x, final int y, final int z, final int value, final int digitCount, final int flags, final int clut) {
+    SItem.renderNumber(x, y, z, value, flags | 0x2, digitCount, clut);
+  }
+
   final void renderScreen() {
     this.runDeferredActions();
     this.render();
     this.renderControls(0, 0);
-
-    float offsetX = 0.0f;
-    for(int i = 0; i < this.hotkeys.size(); i++) {
-      final Hotkey hotkey = this.hotkeys.get(i);
-      final String string = I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get()));
-      renderText(string, 8 + offsetX, 228, this.fontOptions);
-      offsetX += (textWidth(string) + 12.0f) * this.fontOptions.getSize();
-    }
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    this.updateHover(x, y);
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseMove(x, y) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    this.updateHover((int)x, (int)y);
     return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mousePress(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(super.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mousePress(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseRelease(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(super.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseRelease(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
       return InputPropagation.HANDLED;
     }
 
-    this.updateHover(x, y);
-    this.updateFocus(x, y);
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    this.updateHover((int)x, (int)y);
+    this.updateFocus((int)x, (int)y);
 
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
@@ -129,6 +235,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation keyPress(final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
     if(super.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.keyPress(key, scancode, mods, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -144,6 +258,14 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.keyRelease(key, scancode, mods) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.keyRelease(key, scancode, mods);
     }
@@ -155,6 +277,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation buttonPress(final InputButton button, final boolean repeat) {
     if(super.buttonPress(button, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.buttonPress(button, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -170,8 +300,37 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.buttonRelease(button) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.buttonRelease(button);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    if(super.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.axis(axis, direction, menuValue, movementValue) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
+    if(this.focus != null && !this.focus.isDisabled()) {
+      return this.focus.axis(axis, direction, menuValue, movementValue);
     }
 
     return InputPropagation.PROPAGATE;
@@ -181,6 +340,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation charPress(final int codepoint) {
     if(super.charPress(codepoint) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.charPress(codepoint) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -194,6 +361,14 @@ public abstract class MenuScreen extends ControlHost {
   protected InputPropagation inputActionPressed(final InputAction action, final boolean repeat) {
     if(super.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
+    }
+
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.inputActionPressed(action, repeat) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
     }
 
     if(this.focus != null && !this.focus.isDisabled()) {
@@ -222,8 +397,33 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
+    for(final Control control : this) {
+      if(control.alwaysReceiveInput) {
+        if(control.inputActionReleased(action) == InputPropagation.HANDLED) {
+          return InputPropagation.HANDLED;
+        }
+      }
+    }
+
     if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.inputActionReleased(action);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation inputClassChanged(final InputClass type) {
+    this.updateHotkeys();
+
+    if(super.inputClassChanged(type) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(int i = 0; i < this.getControls().size(); i++) {
+      if(this.getControls().get(i).inputClassChanged(type) == InputPropagation.HANDLED) {
+        return InputPropagation.HANDLED;
+      }
     }
 
     return InputPropagation.PROPAGATE;
@@ -282,7 +482,7 @@ public abstract class MenuScreen extends ControlHost {
     return false;
   }
 
-  protected void deferAction(final Runnable action) {
+  public void deferAction(final Runnable action) {
     synchronized(this.deferredActions) {
       this.deferredActions.add(action);
     }
@@ -301,11 +501,13 @@ public abstract class MenuScreen extends ControlHost {
     private final String label;
     private final RegistryDelegate<InputAction> action;
     private final Runnable handler;
+    private final Control[] controls;
 
-    private Hotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
+    private Hotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler, final Control... controls) {
       this.label = label;
       this.action = action;
       this.handler = handler;
+      this.controls = controls;
     }
   }
 }

@@ -3,26 +3,54 @@ package legend.game.characters;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 
 public class FractionalStat extends Stat {
-  private final Int2IntFunction validator;
-  private int value;
-  private int max;
+  protected final Int2IntFunction validator;
+  protected int value;
+  protected int max;
 
   public FractionalStat(final StatType<? extends FractionalStat> type, final StatCollection stats, final Int2IntFunction validator) {
     super(type, stats);
     this.validator = validator;
   }
 
+  public void set(final FractionalStat other) {
+    this.value = other.value;
+    this.max = other.max;
+    copyMods(other, this);
+  }
+
+  @Override
+  public FractionalStat copy(final StatCollection stats) {
+    final FractionalStat stat = new FractionalStat((StatType<? extends FractionalStat>)this.type, stats, this.validator);
+    stat.set(this);
+    return stat;
+  }
+
   public int getCurrent() {
     // We could do this in setCurrent, but then you'd have to set the max first or it'd end up clamping to the old maximum
-    if(this.value > this.max) {
-      this.value = this.max;
+    final int actualMax = this.getMax();
+    if(this.value > actualMax) {
+      this.value = actualMax;
     }
 
     return this.value;
   }
 
+  public boolean isFull() {
+    return this.getCurrent() == this.getMax();
+  }
+
   public void setCurrent(final int value) {
     this.value = this.validator.applyAsInt(value);
+  }
+
+  /** Adds to the current value of this vital */
+  public void restore(final int value) {
+    this.setCurrent(this.getCurrent() + value);
+  }
+
+  /** Restore this vital to max */
+  public void restore() {
+    this.setCurrent(this.getMax());
   }
 
   public int getMaxRaw() {
@@ -31,10 +59,6 @@ public class FractionalStat extends Stat {
 
   public void setMaxRaw(final int value) {
     this.max = this.validator.applyAsInt(value);
-
-    if(this.value > this.max) {
-      this.value = this.max;
-    }
   }
 
   public int getMax() {

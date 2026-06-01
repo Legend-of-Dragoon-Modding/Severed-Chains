@@ -1,0 +1,12 @@
+--- original
++++ modified
+@@ -412,8 +412,7 @@
+ call 207, stor[24], 0x2, 0x3
+ gosub inl[:LABEL_23]
+ jmp_cmp ==, 0x0, stor[24], inl[:LABEL_54]
+-mov 0x1, var[125]
+-call 256, 0xffffffff, 0x3fe
++call 791, id[lod:black_castle_item_shop]
+ LABEL_54:
+ call 2, 0xff, 0x0
+ mov 0xfe, stor[24]

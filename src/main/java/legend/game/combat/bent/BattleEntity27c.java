@@ -1,6 +1,7 @@
 package legend.game.combat.bent;
 
 import legend.core.QueuedModelBattleTmd;
+import legend.core.gpu.Gpu;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -13,39 +14,42 @@ import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.inventory.Item;
+import legend.game.inventory.ItemStack;
+import legend.game.inventory.SpellStats0c;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
-import legend.game.modding.events.battle.SpellStatsEvent;
+import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.SoundFile;
 import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
-import legend.game.types.SpellStats0c;
 import legend.lodmod.LodMod;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8005.vramSlots_8005027c;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsSetLightMatrix;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.vramSlots_8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.Battle.FUN_800ca194;
+import static legend.game.combat.Battle.combatantTimRects_800fa6e0;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
-import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
@@ -67,20 +71,20 @@ public abstract class BattleEntity27c extends BattleObject {
   public static final int FLAG_ANIMATE_ONCE = 0x80;
   /** Unknown */
   public static final int FLAG_100 = 0x100;
-  /** Unknown */
-  public static final int FLAG_200 = 0x200;
+  /** This monster is a piece of a whole monster */
+  public static final int FLAG_MONSTER_SUB_PART = 0x200;
   /** Unknown */
   public static final int FLAG_400 = 0x400;
   /** Don't load script (used by cutscene bents controlled by other scripts) */
   public static final int FLAG_NO_SCRIPT = 0x800;
-  /** Unknown */
-  public static final int FLAG_1000 = 0x1000;
+  /** When set, the battle actions menu will be refreshed */
+  public static final int FLAG_RELOAD_BATTLE_ACTIONS = 0x1000;
   /** Don't drop loot (set when monster has died to prevent duplicate drops) */
   public static final int FLAG_NO_LOOT = 0x2000;
   /** Bent cannot be targeted */
   public static final int FLAG_CANT_TARGET = 0x4000;
-  /** Unknown */
-  public static final int FLAG_8000 = 0x8000;
+  /** This monster is the main part of a multi-part monster */
+  public static final int FLAG_MONSTER_MAIN_PART = 0x8000;
 
   private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
 
@@ -116,10 +120,10 @@ public abstract class BattleEntity27c extends BattleObject {
    */
   public int specialEffectFlag_14;
 //  public int equipmentType_16;
-  public int equipment_02_18;
-  public int equipmentEquipableFlags_1a;
+//  public int equipment_02_18;
+//  public int equipmentEquipableFlags_1a;
 
-  public int equipment_05_1e;
+//  public int equipment_05_1e;
   public final ElementSet equipmentElementalResistance_20 = new ElementSet();
   public final ElementSet equipmentElementalImmunity_22 = new ElementSet();
   /**
@@ -135,27 +139,21 @@ public abstract class BattleEntity27c extends BattleObject {
    * </ul>
    */
   public int equipmentStatusResist_24;
-  public int equipment_09_26;
+//  public int equipment_09_26;
   public int equipmentAttack1_28;
 
-  public int _2e;
-  public int equipmentIcon_30;
-  public int attack_34;
-  public int magicAttack_36;
-  public int defence_38;
-  public int magicDefence_3a;
-  public int attackHit_3c;
-  public int magicHit_3e;
-  public int attackAvoid_40;
-  public int magicAvoid_42;
+//  public int _2e;
+//  public int equipmentIcon_30;
+//  public int attackHit_3c;
+//  public int magicHit_3e;
   /**
    * Player only - if you have a weapon that inflicts a status, this will be a %
    * <p>
    * Also used if specialEffect has one-hit-KO enabled
    */
   public int onHitStatusChance_44;
-  public int equipment_19_46;
-  public int equipment_1a_48;
+//  public int equipment_19_46;
+//  public int equipment_1a_48;
   /**
    * Player only - if you have a weapon that inflicts a status, this will be set of statuses
    *
@@ -173,7 +171,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int equipmentOnHitStatus_4a;
   /** Determines turn order */
   public int turnValue_4c;
-  public int spellId_4e;
+//  public int spellId_4e;
 
 //  public int itemId_52;
   public int guard_54;
@@ -186,8 +184,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public int middleOffsetX_84;
   /** Y offset for archer/item throw target, status ailment effect, 1/100 scale */
   public int middleOffsetY_86;
-  public int _88;
-  public int _8a;
+//  public int _88;
+//  public int _8a;
 
   public SpellStats0c spell_94;
 
@@ -212,7 +210,7 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
 
-  public Item item_d4;
+  public ItemStack item_d4;
 //  public int _ec;
 //  public int _ee;
 //  public int _f0;
@@ -232,9 +230,9 @@ public abstract class BattleEntity27c extends BattleObject {
   /** Not 100% sure on this name */
   public int currentAnimIndex_270;
   /** Also monster ID */
-  public int charId_272;
-  public int bentSlot_274;
-  public int charSlot_276;
+  public final int charId_272;
+  public int allBentSlot_274;
+  public int typeBentSlot_276 = -1;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
@@ -254,14 +252,24 @@ public abstract class BattleEntity27c extends BattleObject {
   public final Rect4i scissor = new Rect4i();
   public boolean useScissor;
 
-  public BattleEntity27c(final BattleEntityType type, final String name) {
-    super(BattleObject.BOBJ);
+  public SoundFile soundFile;
+
+  public BattleEntity27c(final BattleEntityType type, final Battle battle, final String name, final int charId) {
+    super(battle, BattleObject.BOBJ);
     this.type = type;
     this.model_148 = new Model124(name);
+    this.charId_272 = charId;
 
     final Set<StatType> stats = new HashSet<>();
     EVENTS.postEvent(new RegisterBattleEntityStatsEvent(type, stats));
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
+  }
+
+  public abstract String getName();
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + '[' + this.getName() + ']';
   }
 
   public void scissor(final int x, final int y, final int w, final int h) {
@@ -274,11 +282,11 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public int getEffectiveDefence() {
-    return this.defence_38;
+    return this.stats.getStat(LodMod.DEFENSE_STAT.get()).get();
   }
 
   public int getEffectiveMagicDefence() {
-    return this.magicDefence_3a;
+    return this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get();
   }
 
   public abstract ElementSet getAttackElements();
@@ -335,16 +343,85 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public void turnFinished() {
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_ATTACK);
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_MAGIC_ATTACK);
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_DEFENCE);
-    this.tickTemporaryStatMod(this, BattleEntityStat.POWER_MAGIC_DEFENCE);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_ATTACK_HIT);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MAGIC_HIT);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_ATTACK_AVOID);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MAGIC_AVOID);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_PHYSICAL_IMMUNITY);
-    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MAGICAL_IMMUNITY);
+    if(this.powerAttackTurns_b5 > 0) {
+      this.powerAttackTurns_b5--;
+
+      if(this.powerAttackTurns_b5 == 0) {
+        this.powerAttack_b4 = 0;
+      }
+    }
+
+    if(this.powerMagicAttackTurns_b7 > 0) {
+      this.powerMagicAttackTurns_b7--;
+
+      if(this.powerMagicAttackTurns_b7 == 0) {
+        this.powerMagicAttack_b6 = 0;
+      }
+    }
+
+    if(this.powerDefenceTurns_b9 > 0) {
+      this.powerDefenceTurns_b9--;
+
+      if(this.powerDefenceTurns_b9 == 0) {
+        this.powerDefence_b8 = 0;
+      }
+    }
+
+    if(this.powerMagicDefenceTurns_bb > 0) {
+      this.powerMagicDefenceTurns_bb--;
+
+      if(this.powerMagicDefenceTurns_bb == 0) {
+        this.powerMagicDefence_ba = 0;
+      }
+    }
+
+    if(this.tempAttackHitTurns_bd > 0) {
+      this.tempAttackHitTurns_bd--;
+
+      if(this.tempAttackHitTurns_bd == 0) {
+        this.tempAttackHit_bc = 0;
+      }
+    }
+
+    if(this.tempMagicHitTurns_bf > 0) {
+      this.tempMagicHitTurns_bf--;
+
+      if(this.tempMagicHitTurns_bf == 0) {
+        this.tempMagicHit_be = 0;
+      }
+    }
+
+    if(this.tempAttackAvoidTurns_c1 > 0) {
+      this.tempAttackAvoidTurns_c1--;
+
+      if(this.tempAttackAvoidTurns_c1 == 0) {
+        this.tempAttackAvoid_c0 = 0;
+      }
+    }
+
+    if(this.tempMagicAvoidTurns_c3 > 0) {
+      this.tempMagicAvoidTurns_c3--;
+
+      if(this.tempMagicAvoidTurns_c3 == 0) {
+        this.tempMagicAvoid_c2 = 0;
+      }
+    }
+
+    if(this.tempPhysicalImmunityTurns_c5 > 0) {
+      this.tempPhysicalImmunityTurns_c5--;
+
+      if(this.tempPhysicalImmunityTurns_c5 == 0) {
+        this.tempPhysicalImmunity_c4 = 0;
+      }
+    }
+
+    if(this.tempMagicalImmunityTurns_c7 > 0) {
+      this.tempMagicalImmunityTurns_c7--;
+
+      if(this.tempMagicalImmunityTurns_c7 == 0) {
+        this.tempMagicalImmunity_c6 = 0;
+      }
+    }
 
     this.stats.turnFinished(this);
   }
@@ -354,55 +431,53 @@ public abstract class BattleEntity27c extends BattleObject {
 
   }
 
-  protected void tickTemporaryStatMod(final BattleEntity27c bent, final BattleEntityStat stat) {
-    if(bent.getStat(stat) != 0) {
-      if((bent.getStat(stat) & 0xff00) < 0x200) { // Turns is stored in upper byte
-        bent.setStat(stat, 0);
-      } else {
-        bent.setStat(stat, bent.getStat(stat) - 0x100); // Subtract one turn
-      }
-    }
-  }
+  public abstract int getStatusEffectChance(final AttackType attackType);
+  public abstract int getStatusEffectStatus(final AttackType attackType);
+  public abstract int getSpecialEffectStat(final AttackType attackType);
+  public abstract int getSpecialEffectMask(final AttackType attackType);
 
   @Deprecated
-  public int getStat(final BattleEntityStat statIndex) {
-    return switch(statIndex) {
+  public void getStat(final BattleEntityStat statIndex, final Param out) {
+    if(out.isRegistryId()) {
+      out.set(switch(statIndex) {
+        case SPELL_ID -> this.spell_94 != null ? this.spell_94.getRegistryId() : null;
+        case ITEM_ID -> this.item_d4.getItem().getRegistryId();
+        case ITEM_ELEMENT -> this.item_d4.getAttackElement().getRegistryId();
+        case ELEMENT -> this.getElement().getRegistryId();
+
+        default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
+      });
+
+      return;
+    }
+
+    out.set(switch(statIndex) {
       case CURRENT_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getCurrent();
 
       case STATUS -> this.status_0e;
       case MAX_HP -> this.stats.getStat(LodMod.HP_STAT.get()).getMax();
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14;
-//      case EQUIPMENT_TYPE -> this.equipmentType_16;
-      case EQUIPMENT_02 -> this.equipment_02_18;
-      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a;
+//      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a;
 
-      case EQUIPMENT_05 -> this.equipment_05_1e;
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.pack();
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.pack();
       case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24;
-      case EQUIPMENT_09 -> this.equipment_09_26;
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28;
 
-      case _21 -> this._2e;
-      case EQUIPMENT_ICON -> this.equipmentIcon_30;
       case SPEED -> this.stats.getStat(LodMod.SPEED_STAT.get()).get();
-      case ATTACK -> this.attack_34;
-      case MAGIC_ATTACK -> this.magicAttack_36;
-      case DEFENCE -> this.defence_38;
-      case MAGIC_DEFENCE -> this.magicDefence_3a;
-      case ATTACK_HIT -> this.attackHit_3c;
-      case MAGIC_HIT -> this.magicHit_3e;
-      case ATTACK_AVOID -> this.attackAvoid_40;
-      case MAGIC_AVOID -> this.magicAvoid_42;
+      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).get();
+      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get();
+      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).get();
+      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get();
+      case ATTACK_HIT -> this.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).get();
+      case MAGIC_HIT -> this.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).get();
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).get();
+      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get();
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44;
-      case EQUIPMENT_19 -> this.equipment_19_46;
-      case EQUIPMENT_1a -> this.equipment_1a_48;
       case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a;
       case TURN_VALUE -> this.turnValue_4c;
-      case SPELL_ID -> this.spellId_4e;
 
-//      case ITEM_ID -> this.itemId_52;
       case GUARD -> this.guard_54;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e;
@@ -410,8 +485,6 @@ public abstract class BattleEntity27c extends BattleObject {
       case _63 -> this._82;
       case MIDDLE_OFFSET_X -> this.middleOffsetX_84;
       case MIDDLE_OFFSET_Y -> this.middleOffsetY_86;
-      case _66 -> this._88;
-      case _67 -> this._8a;
 
       case SPELL_TARGET_TYPE -> this.spell_94.targetType_00;
       case SPELL_FLAGS -> this.spell_94.flags_01;
@@ -437,22 +510,6 @@ public abstract class BattleEntity27c extends BattleObject {
       case TEMP_PHYSICAL_IMMUNITY -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
       case TEMP_MAGICAL_IMMUNITY -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
 
-//      case ITEM_TARGET -> this.item_d4.target_00;
-//      case ITEM_ELEMENT -> this.item_d4.element_01.flag;
-//      case ITEM_DAMAGE_MULTIPLIER -> this.item_d4.damageMultiplier_02;
-
-//      case ITEM_DAMAGE -> this.item_d4.damage_05;
-
-//      case ITEM_ICON -> this.item_d4.icon_07;
-//      case ITEM_STATUS -> this.item_d4.status_08;
-//      case ITEM_PERCENTAGE -> this.item_d4.percentage_09;
-//      case ITEM_UU2 -> this.item_d4.uu2_0a;
-//      case ITEM_TYPE -> this.item_d4.type_0b;
-//      case _116 -> this._ec;
-//      case _117 -> this._ee;
-//      case _118 -> this._f0;
-//      case _119 -> this._f2;
-
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 ? 1 : 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 ? 1 : 0;
       case PHYSICAL_RESISTANCE -> this.physicalResistance_114 ? 1 : 0;
@@ -460,8 +517,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
       case _159 -> this._142;
 
+      case CURRENT_ANIMATION_LENGTH -> this.model_148.totalFrames_9a / 2;
+
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
-    };
+    });
   }
 
   @Deprecated
@@ -472,35 +531,26 @@ public abstract class BattleEntity27c extends BattleObject {
       case STATUS -> this.status_0e = value;
 
       case SPECIAL_EFFECT_FLAGS -> this.specialEffectFlag_14 = value;
-//      case EQUIPMENT_TYPE -> this.equipmentType_16 = value;
-      case EQUIPMENT_02 -> this.equipment_02_18 = value;
-      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value;
+//      case EQUIPMENT_EQUIPABLE_FLAGS -> this.equipmentEquipableFlags_1a = value;
 
-      case EQUIPMENT_05 -> this.equipment_05_1e = value;
       case EQUIPMENT_ELEMENTAL_RESISTANCE -> this.equipmentElementalResistance_20.unpack(value);
       case EQUIPMENT_ELEMENTAL_IMMUNITY -> this.equipmentElementalImmunity_22.unpack(value);
       case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 = value;
-      case EQUIPMENT_09 -> this.equipment_09_26 = value;
       case EQUIPMENT_ATTACK -> this.equipmentAttack1_28 = value;
 
-      case _21 -> this._2e = value;
-      case EQUIPMENT_ICON -> this.equipmentIcon_30 = value;
-      case ATTACK -> this.attack_34 = value;
-      case MAGIC_ATTACK -> this.magicAttack_36 = value;
-      case DEFENCE -> this.defence_38 = value;
-      case MAGIC_DEFENCE -> this.magicDefence_3a = value;
-      case ATTACK_HIT -> this.attackHit_3c = value;
-      case MAGIC_HIT -> this.magicHit_3e = value;
-      case ATTACK_AVOID -> this.attackAvoid_40 = value;
-      case MAGIC_AVOID -> this.magicAvoid_42 = value;
+      case ATTACK -> this.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(value);
+      case MAGIC_ATTACK -> this.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(value);
+      case DEFENCE -> this.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(value);
+      case MAGIC_DEFENCE -> this.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(value);
+      case ATTACK_HIT -> this.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(value);
+      case MAGIC_HIT -> this.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(value);
+      case ATTACK_AVOID -> this.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(value);
+      case MAGIC_AVOID -> this.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(value);
       case ON_HIT_STATUS_CHANCE -> this.onHitStatusChance_44 = value;
-      case EQUIPMENT_19 -> this.equipment_19_46 = value;
-      case EQUIPMENT_1a -> this.equipment_1a_48 = value;
       case EQUIPMENT_ON_HIT_STATUS -> this.equipmentOnHitStatus_4a = value;
       case TURN_VALUE -> this.turnValue_4c = value;
-      case SPELL_ID -> this.spellId_4e = value;
+      case SPELL_ID -> this.setActiveSpell(value);
 
-//      case ITEM_ID -> this.itemId_52 = value;
       case GUARD -> this.guard_54 = value;
 
       case HIT_COUNTER_FRAME_THRESHOLD -> this.hitCounterFrameThreshold_7e = value;
@@ -508,8 +558,6 @@ public abstract class BattleEntity27c extends BattleObject {
       case _63 -> this._82 = value;
       case MIDDLE_OFFSET_X -> this.middleOffsetX_84 = value;
       case MIDDLE_OFFSET_Y -> this.middleOffsetY_86 = value;
-      case _66 -> this._88 = value;
-      case _67 -> this._8a = value;
 
       case POWER_ATTACK -> {
         this.powerAttack_b4 = (byte)value;
@@ -552,17 +600,22 @@ public abstract class BattleEntity27c extends BattleObject {
         this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
       }
 
-//      case _116 -> this._ec = value;
-//      case _117 -> this._ee = value;
-//      case _118 -> this._f0 = value;
-//      case _119 -> this._f2 = value;
-
       case PHYSICAL_IMMUNITY -> this.physicalImmunity_110 = value != 0;
       case MAGICAL_IMMUNITY -> this.magicalImmunity_112 = value != 0;
       case PHYSICAL_RESISTANCE -> this.physicalResistance_114 = value != 0;
       case MAGICAL_RESISTANCE -> this.magicalResistance_116 = value != 0;
 
       case _159 -> this._142 = value;
+
+      default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
+    }
+  }
+
+  @Deprecated
+  public void setStat(final BattleEntityStat statIndex, final RegistryId value) {
+    switch(statIndex) {
+      case SPELL_ID -> this.spell_94 = REGISTRIES.spells.getEntry(value).get();
+      case ITEM_ID -> this.item_d4 = new ItemStack(REGISTRIES.items.getEntry(value).get());
 
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     }
@@ -593,7 +646,7 @@ public abstract class BattleEntity27c extends BattleObject {
     this._278 = 0;
 
     final int v1;
-    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
+    if(state.hasFlag(FLAG_MONSTER)) {
       v1 = battleFlags_800bc960 & 0x110;
     } else {
       //LAB_800cae94
@@ -603,13 +656,18 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cae98
     if(v1 != 0) {
       if(this.combatant_144.isModelLoaded()) {
-        this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
+        if(this.combatant_144.vramSlot_1a0 >= 0) {
+          this.model_148.uvAdjustments_9d = vramSlots_8005027c[vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0]];
+        } else {
+          this.model_148.uvAdjustments_9d = vramSlots_8005027c[1];
+        }
+
         this.loadingAnimIndex_26e = 0;
-        loadCombatantModelAndAnimation(this.model_148, this.combatant_144);
+        loadCombatantModelAndAnimation(this.battle, this, this.combatant_144);
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
-        if((state.storage_44[7] & FLAG_NO_SCRIPT) == 0) {
+        if(!state.hasFlag(FLAG_NO_SCRIPT)) {
           //LAB_800caf20
           state.loadScriptFile(this.getScript());
         }
@@ -633,10 +691,10 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cafb4L)
   protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
+    if(!state.hasAnyFlag(FLAG_MONSTER_SUB_PART | FLAG_HIDE | FLAG_1)) {
       applyModelRotationAndScale(this.model_148);
 
-      if((state.storage_44[7] & FLAG_ANIMATE_ONCE) == 0 || this.model_148.remainingFrames_9e != 0) {
+      if(!state.hasFlag(FLAG_ANIMATE_ONCE) || this.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
         animateModel(this.model_148);
       }
@@ -647,8 +705,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800cb024L)
   protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & (FLAG_200 | FLAG_HIDE | FLAG_1)) == 0) {
-      this.renderBttlModel(this.model_148);
+    if(!state.hasAnyFlag(FLAG_MONSTER_SUB_PART | FLAG_HIDE | FLAG_1)) {
+      this.renderBttlModel(this.model_148, bent.combatant_144);
     }
 
     //LAB_800cb048
@@ -660,10 +718,12 @@ public abstract class BattleEntity27c extends BattleObject {
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
     //LAB_800cb11c
-    if((state.storage_44[7] & FLAG_MONSTER) != 0) {
+    if(state.hasFlag(FLAG_MONSTER)) {
       battleState_8006e398.removeMonster((MonsterBattleEntity)this);
-    } else {
+    } else if(this.typeBentSlot_276 != -1) {
       battleState_8006e398.removePlayer((PlayerBattleEntity)this);
+    } else {
+      battleState_8006e398.removeGenericBent(this);
     }
 
     this.model_148.deleteModelParts();
@@ -671,37 +731,60 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cb23c
   }
 
+  private final MV lw = new MV();
+  private final MV ls = new MV();
+
   @Method(0x800ec974L)
-  private void renderBttlModel(final Model124 model) {
+  private void renderBttlModel(final Model124 model, final CombatantStruct1a8 combatant) {
+    if(combatant.vramSlot_1a0 == -1 && combatant.texture == null) {
+      // This isn't the dumbest thing I've ever done, but it's up there
+      combatant.texture = new Gpu();
+
+      final Rect4i combatantTimRect = combatantTimRects_800fa6e0[1];
+      combatant.texture.uploadData15(combatantTimRect, combatant.tim.getImageData());
+
+      if(combatant.tim.hasClut()) {
+        final Rect4i clutRect = combatant.tim.getClutRect();
+        clutRect.x = combatantTimRect.x;
+        clutRect.y = combatantTimRect.y + 240;
+
+        //LAB_800ca884
+        combatant.texture.uploadData15(clutRect, combatant.tim.getClutData());
+      }
+
+      combatant.texture.initVram();
+      combatant.texture.updateVramTexture();
+    }
+
     tmdGp0Tpage_1f8003ec = model.tpage_108;
     zOffset_1f8003e8 = model.zOffset_a0;
-
-    final MV lw = new MV();
-    final MV ls = new MV();
 
     //LAB_800ec9d0
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 part = model.modelParts_00[i];
 
-        GsGetLws(part.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
+        GsGetLws(part.coord2_04, this.lw, this.ls);
+        GsSetLightMatrix(this.lw);
+        GTE.setTransforms(this.ls);
         Renderer.renderDobj2(part, true, 0);
 
-        if(model.modelParts_00[i].obj != null) {
-          final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].obj, lw, QueuedModelBattleTmd.class)
-            .depthOffset(model.zOffset_a0 * 4)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+        final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].tmd_08.getObj(), this.lw, QueuedModelBattleTmd.class)
+          .depthOffset(model.zOffset_a0 * 4)
+          .usePs1Depth(model.usePs1Depth)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-          if(this.useScissor) {
-            queue.scissor(this.scissor);
-          }
+        if(this.useScissor) {
+          queue.scissor(this.scissor);
+        }
+
+        if(combatant.texture != null) {
+          queue.texture(combatant.texture.vramTexture15, 1);
         }
       }
     }
@@ -721,31 +804,13 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800f7a74L)
-  public void setActiveItem(final Item item) {
+  public void setActiveItem(final ItemStack item) {
     //LAB_800f7a98
     this.item_d4 = item;
-//    this._ec = 0;
-//    this._ee = 0;
-//    this._f0 = 0;
-//    this._f2 = 0;
-  }
-
-  @Method(0x800f7b68L)
-  public void setTempSpellStats() {
-    //LAB_800f7b8c
-    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
-    if(this.spellId_4e != -1 && this.spellId_4e <= 127) {
-      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this.spellId_4e, spellStats_800fa0b8[this.spellId_4e])).spell;
-    } else {
-      this.spell_94 = new SpellStats0c();
-    }
-
-    //LAB_800f7c54
   }
 
   @Method(0x800f9e50L)
   public void setActiveSpell(final int spellId) {
-    this.spellId_4e = spellId;
-    this.setTempSpellStats();
+    this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();
   }
 }

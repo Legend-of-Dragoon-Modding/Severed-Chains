@@ -6,10 +6,13 @@ import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -82,6 +85,16 @@ public class FileData {
     srcOffset.add(size);
   }
 
+  public void read(final int srcOffset, final ByteBuffer dest, final int destOffset, final int size) {
+    this.checkBounds(srcOffset, size);
+    dest.put(destOffset, this.data, this.offset + srcOffset, size);
+  }
+
+  public void read(final IntRef srcOffset, final ByteBuffer dest, final int destOffset, final int size) {
+    this.read(srcOffset.get(), dest, destOffset, size);
+    srcOffset.add(size);
+  }
+
   public void read(final int srcOffset, final FileData dest, final int destOffset, final int size) {
     this.read(srcOffset, dest.data, dest.offset + destOffset, size);
   }
@@ -104,8 +117,23 @@ public class FileData {
     destOffset.add(size);
   }
 
+  public void write(final int srcOffset, final ByteBuffer src, final int destOffset, final int size) {
+    this.checkBounds(destOffset, size);
+    src.get(srcOffset, this.data, this.offset + destOffset, size);
+  }
+
+  public void write(final int srcOffset, final ByteBuffer src, final IntRef destOffset, final int size) {
+    this.write(srcOffset, src, destOffset.get(), size);
+    destOffset.add(size);
+  }
+
   public void write(final int srcOffset, final FileData src, final int destOffset, final int size) {
     this.write(srcOffset + src.offset, src.data, destOffset, size);
+  }
+
+  public void write(final IntRef srcOffset, final FileData src, final int destOffset, final int size) {
+    this.write(srcOffset.get() + src.offset, src.data, destOffset, size);
+    srcOffset.add(size);
   }
 
   public void write(final int srcOffset, final FileData src, final IntRef destOffset, final int size) {
@@ -143,9 +171,25 @@ public class FileData {
     return read;
   }
 
+  public void writeBool(final int offset, final boolean val) {
+    this.writeByte(offset, val ? 1 : 0);
+  }
+
+  public void writeBool(final IntRef offset, final boolean val) {
+    this.writeByte(offset, val ? 1 : 0);
+  }
+
+  public boolean readBool(final int offset) {
+    return this.readByte(offset) != 0;
+  }
+
+  public boolean readBool(final IntRef offset) {
+    return this.readByte(offset) != 0;
+  }
+
   public short readShort(final int offset) {
     this.checkBounds(offset, 2);
-    return (short)MathHelper.get(this.data, this.offset + offset, 2);
+    return MathHelper.getShort(this.data, this.offset + offset);
   }
 
   public short readShort(final IntRef offset) {
@@ -156,7 +200,7 @@ public class FileData {
 
   public void writeShort(final int offset, final int val) {
     this.checkBounds(offset, 2);
-    MathHelper.set(this.data, this.offset + offset, 2, val);
+    MathHelper.setShort(this.data, this.offset + offset, (short)val);
   }
 
   public void writeShort(final IntRef offset, final int val) {
@@ -174,9 +218,29 @@ public class FileData {
     return read;
   }
 
+  public char readChar(final int offset) {
+    this.checkBounds(offset, 2);
+    return (char)this.readUShort(offset);
+  }
+
+  public char readChar(final IntRef offset) {
+    this.checkBounds(offset.get(), 2);
+    return (char)this.readUShort(offset);
+  }
+
+  public void writeChar(final int offset, final char val) {
+    this.checkBounds(offset, 2);
+    MathHelper.set(this.data, this.offset + offset, 2, val);
+  }
+
+  public void writeChar(final IntRef offset, final char val) {
+    this.writeShort(offset.get(), val);
+    offset.add(2);
+  }
+
   public int readInt(final int offset) {
     this.checkBounds(offset, 4);
-    return (int)MathHelper.get(this.data, this.offset + offset, 4);
+    return MathHelper.getInt(this.data, this.offset + offset);
   }
 
   public int readInt(final IntRef offset) {
@@ -187,7 +251,7 @@ public class FileData {
 
   public void writeInt(final int offset, final int val) {
     this.checkBounds(offset, 4);
-    MathHelper.set(this.data, this.offset + offset, 4, val);
+    MathHelper.setInt(this.data, this.offset + offset, val);
   }
 
   public void writeInt(final IntRef offset, final int val) {
@@ -279,6 +343,27 @@ public class FileData {
     return read;
   }
 
+  public void writeLong(final int offset, final long val) {
+    this.checkBounds(offset, 8);
+    MathHelper.setLong(this.data, this.offset + offset, val);
+  }
+
+  public void writeLong(final IntRef offset, final long val) {
+    this.writeLong(offset.get(), val);
+    offset.add(8);
+  }
+
+  public long readLong(final int offset) {
+    this.checkBounds(offset, 8);
+    return MathHelper.getLong(this.data, this.offset + offset);
+  }
+
+  public long readLong(final IntRef offset) {
+    final long read = this.readLong(offset.get());
+    offset.add(8);
+    return read;
+  }
+
   public void writeAscii(final int offset, final String val) {
     this.writeAscii(offset, val, 3);
   }
@@ -333,12 +418,20 @@ public class FileData {
     return read;
   }
 
-  public void writeRegistryId(final int offset, final RegistryId id) {
-    this.writeAscii(offset, id.toString());
+  public void writeRegistryId(final int offset, @Nullable final RegistryId id) {
+    this.writeAscii(offset, id != null ? id.toString() : "");
   }
 
-  public void writeRegistryId(final IntRef offset, final RegistryId id) {
-    this.writeAscii(offset, id.toString());
+  public void writeRegistryId(final IntRef offset, @Nullable final RegistryId id) {
+    this.writeAscii(offset, id != null ? id.toString() : "");
+  }
+
+  public void writeRegistryId(final int offset, @Nullable final RegistryEntry entry) {
+    this.writeRegistryId(offset, entry != null ? entry.getRegistryId() : null);
+  }
+
+  public void writeRegistryId(final IntRef offset, @Nullable final RegistryEntry entry) {
+    this.writeRegistryId(offset, entry != null ? entry.getRegistryId() : null);
   }
 
   public RegistryId readRegistryId(final int offset) {
@@ -347,7 +440,29 @@ public class FileData {
   }
 
   public RegistryId readRegistryId(final IntRef offset) {
-    return new RegistryId(this.readAscii(offset));
+    final String id = this.readAscii(offset);
+
+    if(id.isEmpty()) {
+      return null;
+    }
+
+    return new RegistryId(id);
+  }
+
+  public void writeEnum(final int offset, final Enum<?> val) {
+    this.writeAscii(offset, val.name(), 2);
+  }
+
+  public void writeEnum(final IntRef offset, final Enum<?> val) {
+    this.writeAscii(offset, val.name(), 2);
+  }
+
+  public <T extends Enum<T>> T readEnum(final int offset, final Class<T> cls) {
+    return Enum.valueOf(cls, this.readAscii(offset, 2));
+  }
+
+  public <T extends Enum<T>> T readEnum(final IntRef offset, final Class<T> cls) {
+    return Enum.valueOf(cls, this.readAscii(offset, 2));
   }
 
   public Rect4i readRect(final int offset, final Rect4i rect) {
@@ -439,6 +554,14 @@ public class FileData {
     final MV read = this.readMv(offset.get(), mv);
     offset.add(0x18);
     return read;
+  }
+
+  public boolean isZero16(final int offset) {
+    this.checkBounds(offset, 16);
+    final long a =  MathHelper.getLong(this.data, this.offset + offset);
+    final long b =  MathHelper.getLong(this.data, this.offset + offset + 8);
+
+    return (a | b) == 0;
   }
 
   protected void checkBounds(final int offset, final int size) {

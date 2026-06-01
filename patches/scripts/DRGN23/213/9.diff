@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -91,6 +91,8 @@
+ call 291, stor[0], 0x1000, 0x0, 0x1000
+ call 309, stor[0], 0x800, 0x800, 0x800
+ call 106, 0x0
++call 293, stor[0], -5
++call 940, stor[0], 1
+ mov 0x5000, stor[25]
+ mov 0x0, stor[26]
+ LABEL_6:

@@ -14,6 +14,11 @@ public class MusicPitchResolutionConfigEntry extends EnumConfigEntry<PitchResolu
   }
 
   @Override
+  public boolean isAdvanced() {
+    return true;
+  }
+
+  @Override
   public void onChange(final ConfigCollection configCollection, final PitchResolution oldValue, final PitchResolution newValue) {
     AUDIO_THREAD.changePitchResolution(newValue);
   }

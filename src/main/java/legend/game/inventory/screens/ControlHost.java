@@ -1,7 +1,10 @@
 package legend.game.inventory.screens;
 
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
 import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
@@ -20,8 +23,8 @@ import static legend.core.GameEngine.PLATFORM;
 public abstract class ControlHost implements Iterable<Control> {
   private final List<Control> controls = new ArrayList<>();
 
-  protected int mouseX;
-  protected int mouseY;
+  protected double mouseX;
+  protected double mouseY;
 
   protected abstract MenuScreen getScreen();
   protected abstract ControlHost getParent();
@@ -79,6 +82,14 @@ public abstract class ControlHost implements Iterable<Control> {
       .findFirst();
   }
 
+  public <T extends Control> List<T> findControls(final Class<T> type, final Predicate<T> predicate) {
+    return this.controls.stream()
+      .filter(type::isInstance)
+      .map(type::cast)
+      .filter(predicate)
+      .toList();
+  }
+
   protected void renderControls(final int parentX, final int parentY) {
     this.controls.forEach(control -> control.renderControl(parentX, parentY));
   }
@@ -120,11 +131,11 @@ public abstract class ControlHost implements Iterable<Control> {
       return null;
     }
 
-    controls.sort(Comparator.comparingInt(Control::getZ).reversed());
-    return controls.get(0);
+    controls.sort(Comparator.comparingInt(Control::getZ));
+    return controls.getFirst();
   }
 
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
       return InputPropagation.HANDLED;
     }
@@ -132,7 +143,7 @@ public abstract class ControlHost implements Iterable<Control> {
     this.mouseX = x;
     this.mouseY = y;
 
-    final Control control = this.findControlAt(x, y);
+    final Control control = this.findControlAt((int)x, (int)y);
 
     if(control != null && !control.isDisabled()) {
       return control.mouseMove(x - control.getX(), y - control.getY());
@@ -141,12 +152,40 @@ public abstract class ControlHost implements Iterable<Control> {
     return InputPropagation.PROPAGATE;
   }
 
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final Set<InputMod> mods) {
+  protected InputPropagation mousePress(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
       return InputPropagation.HANDLED;
     }
 
-    final Control control = this.findControlAt(x, y);
+    final Control control = this.findControlAt((int)x, (int)y);
+
+    if(control != null && !control.isDisabled()) {
+      return control.mousePress(x - control.getX(), y - control.getY(), button, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation mouseRelease(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
+      return InputPropagation.HANDLED;
+    }
+
+    final Control control = this.findControlAt((int)x, (int)y);
+
+    if(control != null && !control.isDisabled()) {
+      return control.mouseRelease(x - control.getX(), y - control.getY(), button, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
+    if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
+      return InputPropagation.HANDLED;
+    }
+
+    final Control control = this.findControlAt((int)x, (int)y);
 
     if(control != null && !control.isDisabled()) {
       return control.mouseClick(x - control.getX(), y - control.getY(), button, mods);
@@ -160,7 +199,7 @@ public abstract class ControlHost implements Iterable<Control> {
       return InputPropagation.HANDLED;
     }
 
-    final Control control = this.findControlAt(this.mouseX, this.mouseY);
+    final Control control = this.findControlAt((int)this.mouseX, (int)this.mouseY);
 
     if(control != null && !control.isDisabled()) {
       return control.mouseScroll(deltaX, deltaY);
@@ -174,7 +213,7 @@ public abstract class ControlHost implements Iterable<Control> {
       return InputPropagation.HANDLED;
     }
 
-    final Control control = this.findControlAt(this.mouseX, this.mouseY);
+    final Control control = this.findControlAt((int)this.mouseX, (int)this.mouseY);
 
     if(control != null && !control.isDisabled()) {
       return control.mouseScrollHighRes(deltaX, deltaY);
@@ -199,6 +238,10 @@ public abstract class ControlHost implements Iterable<Control> {
     return InputPropagation.PROPAGATE;
   }
 
+  protected InputPropagation axis(final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    return InputPropagation.PROPAGATE;
+  }
+
   protected InputPropagation charPress(final int codepoint) {
     return InputPropagation.PROPAGATE;
   }
@@ -208,6 +251,10 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected InputPropagation inputActionReleased(final InputAction action) {
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation inputClassChanged(final InputClass type) {
     return InputPropagation.PROPAGATE;
   }
 }

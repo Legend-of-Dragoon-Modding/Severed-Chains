@@ -2,6 +2,7 @@ package legend.game.submap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.QueuedModel;
 import legend.core.QueuedModelStandard;
@@ -12,19 +13,23 @@ import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
+import legend.game.combat.encounters.Encounter;
+import legend.game.modding.events.submap.SubmapEncounterEvent;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
-import legend.game.modding.events.submap.SubmapGenerateEncounterEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SoundFileIndices;
+import legend.game.sound.Sshd;
 import legend.game.tim.Tim;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdWithId;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsRVIEW2;
@@ -34,6 +39,8 @@ import legend.game.types.NewRootStruct;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -46,53 +53,53 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static legend.core.Async.allLoaded;
 import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
-import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.DrgnFiles.loadDrgnFile;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsSetSmapRefView2L;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
+import static legend.game.Scus94491BpeSegment.rand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
-import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
-import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
-import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.game.sound.Audio.loadMusicPackage;
+import static legend.game.sound.Audio.loadSshdAndSoundbank;
+import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
+import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.setSoundSequenceVolume;
+import static legend.game.sound.Audio.startCurrentMusicSequence;
+import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
+import static legend.game.sound.Audio.stopCurrentMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
@@ -105,6 +112,19 @@ public class RetailSubmap extends Submap {
   private final CollisionGeometry collisionGeometry;
 
   private final List<Tim> pxls = new ArrayList<>();
+
+  private static final int[] submapMusic_80050068 = {
+    -1, -1, 23, 28, 44, 20, 22, -1,
+    29, 40, 30, 22, 24, 22, 31, 42,
+    -1, 32, 45, 29, 40, 27, 33, 21,
+    21, -1, 48, 46, -1, 22, 38, -1,
+    33, 23, 36, 49, 28, 39, 50, -1,
+    47, -1, 26, 27, 26, 42, 45, -1,
+    27, 39, 27, 52, -1, 38, 53, 54,
+    55, -1, -1, -1, -1, -1, -1, -1,
+  };
+
+  private int projectionPlaneDistance_800bd810;
 
   private final boolean hasRenderer_800c6968;
 
@@ -157,7 +177,8 @@ public class RetailSubmap extends Submap {
   private Texture[] foregroundTextures;
   private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
-  public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
+  public RetailSubmap(final SMap smap, final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
+    super(smap);
     this.cut = cut;
     this.newRoot = newRoot;
 
@@ -169,7 +190,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  public void loadEnv(final Runnable onLoaded) {
+  public CompletableFuture<Void> loadEnv() {
     LOGGER.info("Loading submap cut %d environment", this.cut);
 
     final IntRef drgnIndex = new IntRef();
@@ -178,10 +199,10 @@ public class RetailSubmap extends Submap {
     this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
 
     drgnBinIndex_800bc058 = drgnIndex.get();
-    loadDrgnDir(2, fileIndex.get(), files -> {
-      this.loadBackground("DRGN2" + drgnIndex.get() + "/" + fileIndex.get(), files);
-      onLoaded.run();
-    });
+
+    return
+      loadDrgnDir(2, fileIndex.get())
+      .thenAccept(files -> this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files));
   }
 
   @Override
@@ -203,55 +224,78 @@ public class RetailSubmap extends Submap {
     if(drgnIndex.get() == 1 || drgnIndex.get() == 2 || drgnIndex.get() == 3 || drgnIndex.get() == 4) {
       final int cutFileIndex = smapFileIndices_800f982c[this.cut];
 
-      final AtomicInteger loadedCount = new AtomicInteger();
-      final int expectedCount = cutFileIndex == 0 ? 1 : 2;
-
       // Load sobj assets
       final List<FileData> assets = new ArrayList<>();
       final List<FileData> scripts = new ArrayList<>();
       final List<FileData> textures = new ArrayList<>();
-      final AtomicInteger assetsCount = new AtomicInteger();
 
-      final Runnable prepareSobjs = () -> this.prepareSobjs(assets, scripts, textures);
-      final Runnable prepareSobjsAndComplete = () -> allLoaded(loadedCount, expectedCount, prepareSobjs, onLoaded);
+      final CompletableFuture<Void> assetsFuture = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1).thenAccept(assets::addAll);
+      final CompletableFuture<Void> scriptsFuture = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2).thenAccept(scripts::addAll);
+      final CompletableFuture<Void> texturesFuture = Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures").thenAccept(textures::addAll);
 
-      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> allLoaded(assetsCount, 3, () -> assets.addAll(files), prepareSobjsAndComplete));
-      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> allLoaded(assetsCount, 3, () -> scripts.addAll(files), prepareSobjsAndComplete));
-      Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
+      final CompletableFuture<Void> future = CompletableFuture
+        .allOf(assetsFuture, scriptsFuture, texturesFuture)
+        .thenAccept(v -> this.prepareSobjs(assets, scripts, textures))
+        .exceptionally(t -> {
+          LOGGER.error("", t);
+          return null;
+        })
+      ;
+
+      if(cutFileIndex == 0) {
+        future
+          .thenRun(onLoaded)
+          .exceptionally(t -> {
+            LOGGER.error("", t);
+            return null;
+          })
+        ;
+
+        return;
+      }
 
       // Load 3D overlay
-      if(cutFileIndex != 0) {
-        // Using arrays here to have a constant pointer for the callbacks
-        final Tim[] submapCutTexture = new Tim[1];
-        final MV[] submapCutMatrix = new MV[1];
-        final AtomicInteger cutCount = new AtomicInteger();
-        final int expectedCutCount = this.cut == 673 ? 3 : 2;
 
-        final Runnable prepareMap = () -> this.prepareMap(submapCutTexture[0], submapCutMatrix[0]);
-        final Runnable prepareMapAndComplete = () -> allLoaded(loadedCount, expectedCount, prepareMap, onLoaded);
+      // Using arrays here to have a constant pointer for the callbacks
+      final Tim[] submapCutTexture = new Tim[1];
+      final MV[] submapCutMatrix = new MV[1];
 
-        if(this.cut == 673) { // End cutscene, loads "The End" TIM
-          loadDrgnFile(0, 7610, file -> allLoaded(cutCount, expectedCutCount, () -> {
-            LOGGER.info("Submap cut %d the end texture loaded", this.cut);
-            this.theEnd_800d4bd0.setTim(new Tim(file));
-          }, prepareMapAndComplete));
-        }
+      final CompletableFuture<?>[] overlayFutures;
+      if(this.cut == 673) { // End cutscene, loads "The End" TIM
+        overlayFutures = new CompletableFuture[3];
 
-        // File example: 7508
-        LOGGER.info("Loading submap cut %d overlay model file %d", this.cut, cutFileIndex);
-        loadDrgnDir(0, cutFileIndex, files -> allLoaded(cutCount, expectedCutCount, () -> {
-          LOGGER.info("Submap cut %d overlay model loaded", this.cut);
-          this.submapCutModel = new CContainer("DRGN0/" + cutFileIndex, files.get(0));
-          this.submapCutAnim = new TmdAnimationFile(files.get(1));
-        }, prepareMapAndComplete));
-
-        LOGGER.info("Loading submap cut %d overlay texture and matrix file %d", this.cut, cutFileIndex + 1);
-        loadDrgnDir(0, cutFileIndex + 1, files -> allLoaded(cutCount, expectedCutCount, () -> {
-          LOGGER.info("Submap cut %d overlay texture and matrix loaded", this.cut);
-          submapCutTexture[0] = new Tim(files.get(0));
-          submapCutMatrix[0] = files.get(1).readMv(0, new MV());
-        }, prepareMapAndComplete));
+        overlayFutures[2] = loadDrgnFile(0, 7610).thenAccept(file -> {
+          LOGGER.info("Submap cut %d the end texture loaded", this.cut);
+          this.theEnd_800d4bd0.setTim(new Tim(file));
+        });
+      } else {
+        overlayFutures = new CompletableFuture[2];
       }
+
+      // File example: 7508
+      LOGGER.info("Loading submap cut %d overlay model file %d", this.cut, cutFileIndex);
+      overlayFutures[0] = loadDrgnDir(0, cutFileIndex).thenAccept(files -> {
+        LOGGER.info("Submap cut %d overlay model loaded", this.cut);
+        this.submapCutModel = new CContainer("DRGN0/" + cutFileIndex, files.get(0));
+        this.submapCutAnim = new TmdAnimationFile(files.get(1));
+      });
+
+      LOGGER.info("Loading submap cut %d overlay texture and matrix file %d", this.cut, cutFileIndex + 1);
+      overlayFutures[1] = loadDrgnDir(0, cutFileIndex + 1).thenAccept(files -> {
+        LOGGER.info("Submap cut %d overlay texture and matrix loaded", this.cut);
+        submapCutTexture[0] = new Tim(files.get(0));
+        submapCutMatrix[0] = files.get(1).readMv(0, new MV());
+      });
+
+      CompletableFuture
+        .allOf(overlayFutures)
+        .thenAccept(v -> this.prepareMap(submapCutTexture[0], submapCutMatrix[0]))
+        .runAfterBoth(future, onLoaded)
+        .exceptionally(t -> {
+          LOGGER.error("", t);
+          return null;
+        })
+      ;
     }
   }
 
@@ -263,13 +307,39 @@ public class RetailSubmap extends Submap {
     if(submapId_800bd808 != oldSubmapId) {
       stopAndResetSoundsAndSequences();
       unloadSoundFile(4);
-      loadSubmapSounds(submapId_800bd808);
+      this.loadSubmapSounds(submapId_800bd808);
     }
 
     if(submapId_800bd808 != oldSubmapId || previousSubmapCut_800bda08 != this.cut) {
       musicLoaded_800bd782 = false;
       this.startMusic();
     }
+  }
+
+  @Method(0x8001eadcL)
+  private void loadSubmapSounds(final int submapIndex) {
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x2);
+    loadDrgnDir(0, 5750 + submapIndex).thenAccept(this::submapSoundsLoaded);
+  }
+
+  @Method(0x8001eb38L)
+  private void submapSoundsLoaded(final List<FileData> files) {
+    final SoundFile soundFile = this.smap.submapSounds;
+    soundFile.indices_08 = SoundFileIndices.load(files.get(2));
+    soundFile.ptr_0c = files.get(1);
+    soundFile.id_02 = files.get(0).readShort(0);
+
+    final Sshd sshd = new Sshd(soundFile.name, files.get(3));
+    if(files.get(4).size() != sshd.soundBankSize_04) {
+      throw new RuntimeException("Size didn't match, need to resize array or something");
+    }
+
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(4), sshd);
+    setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
+    soundFile.used_00 = true;
+
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x2);
+    musicLoaded_800bd782 = true;
   }
 
   @Override
@@ -339,7 +409,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) {
+  protected void applyCollisionDebugColour(final int collisionPrimitiveIndex, final QueuedModel model) {
     for(int n = 0; n < this.submapWorldMapExits_800f7f74.length; n++) {
       final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
 
@@ -348,6 +418,34 @@ public class RetailSubmap extends Submap {
         break;
       }
     }
+  }
+
+  private static final IntList saveBlacklist = IntList.of(
+    38, // Prairie path near ocean - softlock
+    47, // Cave stepping stones - softlock
+    110, // Marshlands boat screen - boat is invisible
+    252, // Valley of Corrupted Gravity - Rocks bug
+    253, // Valley of Corrupted Gravity - Rocks bug
+    254, // Valley of Corrupted Gravity - Rocks bug
+    255, // Valley of Corrupted Gravity - Rocks bug
+    256, // Valley of Corrupted Gravity - Rocks bug
+    256, // Valley of Corrupted Gravity - Rocks bug
+    327, // First map after starting chapter 3 - screen is black on load (GH#2204)
+    381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
+    580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
+  );
+
+  @Override
+  public SubmapSavable canSave() {
+    if(standingInSavePoint_8005a368) {
+      return SubmapSavable.ALWAYS;
+    }
+
+    if(saveBlacklist.contains(this.cut)) {
+      return SubmapSavable.NEVER;
+    }
+
+    return SubmapSavable.SAVE_ANYWHERE;
   }
 
   @Override
@@ -405,20 +503,19 @@ public class RetailSubmap extends Submap {
   @Override
   public int getEncounterRate() {
     final var encounterRate = encounterData_800f64c4[this.cut].rate_02;
-    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(encounterRate, this.cut));
+    final var encounterRateEvent = EVENTS.postEvent(new SubmapEncounterRateEvent(this.smap, gameState_800babc8, this, encounterRate, this.cut));
 
     return encounterRateEvent.encounterRate;
   }
 
   @Override
-  public void prepareEncounter(final int encounterId, final boolean useBattleStage) {
-    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
-    final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
+  public void prepareEncounter(final Encounter encounter, final boolean useBattleStage) {
+    final int sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final int[] scene = sceneEncounterIds_800f74c4[sceneId];
+    final int battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
-    final var generateEncounterEvent = EVENTS.postEvent(new SubmapGenerateEncounterEvent(encounterId, battleStageId, this.cut, sceneId, scene));
-    encounterId_800bb0f8 = generateEncounterEvent.encounterId;
-    battleStage_800bb0f4 = generateEncounterEvent.battleStageId;
+    final SubmapEncounterEvent event = EVENTS.postEvent(new SubmapEncounterEvent(this.smap, gameState_800babc8, this, encounter, battleStageId, this.cut, sceneId, scene));
+    startEncounter(event.encounter, event.battleStageId);
 
     if(Config.combatStage()) {
       battleStage_800bb0f4 = Config.getCombatStage();
@@ -427,10 +524,11 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void prepareEncounter(final boolean useBattleStage) {
-    final var sceneId = encounterData_800f64c4[this.cut].scene_00;
-    final var scene = sceneEncounterIds_800f74c4[sceneId];
-    final var encounterId = scene[this.randomEncounterIndex()];
-    this.prepareEncounter(encounterId, useBattleStage);
+    final int sceneId = encounterData_800f64c4[this.cut].scene_00;
+    final int[] scene = sceneEncounterIds_800f74c4[sceneId];
+    final int encounterId = scene[this.randomEncounterIndex()];
+    final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get();
+    this.prepareEncounter(encounter, useBattleStage);
   }
 
   @Override
@@ -460,10 +558,10 @@ public class RetailSubmap extends Submap {
       this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
 
       final SubmapObject obj = new SubmapObject();
-      obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
+      obj.script = new ScriptFile("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
 
       if(submapModel.hasVirtualSize() && submapModel.real()) {
-        obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
+        obj.model = new CContainer("Submap object %d (DRGN2%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
       } else {
         obj.model = null;
       }
@@ -532,7 +630,7 @@ public class RetailSubmap extends Submap {
       .set(submapCutMatrix).setTranslation(submapCutMatrix.transfer)
       .mulLocal(inverseW2s);
 
-    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256, true);
+    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256);
     initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
   }
 
@@ -549,7 +647,7 @@ public class RetailSubmap extends Submap {
 
   private void loadTextureOverrides() {
     this.sobjTextureOverrides.clear();
-    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);
+    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut)).textures);
   }
 
   private void calculateTextureLocations() {
@@ -562,7 +660,7 @@ public class RetailSubmap extends Submap {
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
       // sobj 16 uses the submap overlay texture
       if(pxlIndex == 16) {
-        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256, true));
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256));
         continue;
       }
 
@@ -594,7 +692,7 @@ public class RetailSubmap extends Submap {
             if(this.sobjTextureOverrides.containsKey(pxlIndex)) {
               this.uvAdjustments.add(UvAdjustmentMetrics14.PNG);
             } else {
-              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y, pxlIndex != 17 && pxlIndex != 18));
+              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
             }
 
             continue outer;
@@ -602,9 +700,8 @@ public class RetailSubmap extends Submap {
         }
 
         throw new RuntimeException("Failed to find available texture slot for sobj texture " + pxlIndex);
-      } else {
-        this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
+      this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
     }
   }
 
@@ -722,7 +819,7 @@ public class RetailSubmap extends Submap {
       }
     }
 
-    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
+    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
 
     this.backgroundRect = Rect4i.bound(rects);
     final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
@@ -741,8 +838,8 @@ public class RetailSubmap extends Submap {
       for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
         if(tims[i] != null) {
           final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
-          final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[i]);
-          final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[i])[0];
+          final VramTextureSingle texture = VramTextureLoader.textureFromTim(tims[i]);
+          final VramTextureSingle palette = VramTextureLoader.palettesFromTim(tims[i])[0];
 
           final Rect4i rect = rects[i];
           final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
@@ -765,8 +862,8 @@ public class RetailSubmap extends Submap {
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
       if(this.foregroundTextures[i] == null && tims[this.envBackgroundTextureCount_800cb57c + i] != null) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
-        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
+        final VramTextureSingle texture = VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
+        final VramTextureSingle palette = VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
 
         final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
         final Rect4i appliedRect = new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h);
@@ -919,6 +1016,26 @@ public class RetailSubmap extends Submap {
       renderPacket.offsetX_1c = envTexture.textureOffsetX_10;
       renderPacket.offsetY_1e = envTexture.textureOffsetY_12;
 
+      // Fix misaligned cutout in marshlands boat area (GH#1201)
+      if(this.cut == 111 && i == 8) {
+        renderPacket.offsetY_1e++;
+      }
+
+      // Fix misaligned cutout on ghost ship (GH#2210)
+      if(this.cut == 288 && i == 17) {
+        renderPacket.offsetY_1e++;
+      }
+
+      // Fix misaligned cutout in Rouge training area (GH#2291)
+      if(this.cut == 595 && i == 5) {
+        renderPacket.offsetY_1e++;
+      }
+
+      // Fix misaligned cutout in Hellena (GH#2203)
+      if(this.cut == 642 && i == 2) {
+        renderPacket.w_18--;
+      }
+
       //LAB_800e7210
       renderPacket.zFlags_22 &= 0x3fff;
     }
@@ -942,9 +1059,14 @@ public class RetailSubmap extends Submap {
     }
   }
 
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.rview2_800cbd10;
+  }
+
   @Method(0x800e7328L)
   private void updateCamera() {
-    setProjectionPlaneDistance(projectionPlaneDistance_800bd810);
+    setProjectionPlaneDistance(this.projectionPlaneDistance_800bd810);
     GsSetSmapRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     rview2_800bd7e8.set(this.rview2_800cbd10);
@@ -956,7 +1078,7 @@ public class RetailSubmap extends Submap {
     this.rview2_800cbd10.refpoint_0c.set(refpoint);
     this.rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
     this.rview2_800cbd10.super_1c = null;
-    projectionPlaneDistance_800bd810 = projectionDistance;
+    this.projectionPlaneDistance_800bd810 = projectionDistance;
 
     this.updateCamera();
   }
@@ -1316,10 +1438,6 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
-    }
-
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
@@ -1345,9 +1463,10 @@ public class RetailSubmap extends Submap {
 
       GsGetLw(dobj2.coord2_04, lw);
 
-      RENDERER.queueModel(dobj2.obj, matrix, lw, QueuedModelTmd.class)
+      RENDERER.queueModel(dobj2.tmd_08.getObj(), matrix, lw, QueuedModelTmd.class)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .depthOffset(model.zOffset_a0 * 4)
+        .usePs1Depth(model.usePs1Depth)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
@@ -1356,48 +1475,37 @@ public class RetailSubmap extends Submap {
     //LAB_800eef0c
   }
 
-  @Method(0x8001b3e4L)
-  private int getSoundCharId() {
-    if(soundFiles_800bcf80[11].used_00) {
-      return soundFiles_800bcf80[11].id_02;
-    }
-
-    //LAB_8001b408
-    return AUDIO_THREAD.getSongId();
-  }
-
   @Method(0x8001c60cL)
   private int getSubmapMusicChange() {
-    final int soundCharId = this.getSoundCharId();
+    final int songId = AUDIO_THREAD.getSongId();
 
     final int musicIndex;
     jmp_8001c7a0:
     {
       //LAB_8001c63c
-      SubmapMusic08 a2;
-      int a3;
-      for(a3 = 0, a2 = _8004fb00[a3]; a2.submapId_00 != 99 || a2.musicIndex_02 != 99; a3++, a2 = _8004fb00[a3]) { // I think 99 is just a sentinel value that means "end of list"
+      for(int submapMusicIndex = 0; submapMusicIndex < _8004fb00.length; submapMusicIndex++) {
+        final SubmapMusic08 music = _8004fb00[submapMusicIndex];
         final int submapId = submapId_800bd808;
 
-        if(submapId == a2.submapId_00) {
+        if(submapId == music.submapId_00) {
           //LAB_8001c680
-          for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
+          for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
             if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
-              if(a2.submapCuts_04[v1] != this.cut) {
+              if(music.submapCuts_04[cutIndex] != this.cut) {
                 continue;
               }
 
               if((gameState_800babc8._1a4[0] & 0x1) == 0) {
                 //LAB_8001c7cc
-                musicIndex = a2.musicIndex_02;
+                musicIndex = music.musicIndex_02;
                 break jmp_8001c7a0;
               }
             }
 
             //LAB_8001c6ac
-            if(a2.submapCuts_04[v1] == this.cut && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
+            if(music.submapCuts_04[cutIndex] == this.cut && (gameState_800babc8._1a4[submapMusicIndex >>> 5] & 0x1 << (submapMusicIndex & 0x1f)) != 0) {
               //LAB_8001c7c0
-              musicIndex = a2.musicIndex_02;
+              musicIndex = music.musicIndex_02;
               break jmp_8001c7a0;
             }
 
@@ -1409,14 +1517,14 @@ public class RetailSubmap extends Submap {
       }
 
       //LAB_8001c728
-      SubmapMusic08 a0;
-      for(a3 = 0, a0 = _8004fa98[a3]; a0.submapId_00 != 99 || a0.musicIndex_02 != 99; a3++, a0 = _8004fa98[a3]) {
-        if(submapId_800bd808 == a0.submapId_00) {
+      for(int submapMusicIndex = 0; submapMusicIndex < _8004fa98.length; submapMusicIndex++) {
+        final SubmapMusic08 music = _8004fa98[submapMusicIndex];
+        if(submapId_800bd808 == music.submapId_00) {
           //LAB_8001c748
-          for(int v1 = 0; v1 < a0.submapCuts_04.length; v1++) {
-            if(a0.submapCuts_04[v1] == this.cut) {
+          for(int cutIndex = 0; cutIndex < music.submapCuts_04.length; cutIndex++) {
+            if(music.submapCuts_04[cutIndex] == this.cut) {
               //LAB_8001c7d8
-              return this.FUN_8001c84c(soundCharId, a0.musicIndex_02);
+              return this.FUN_8001c84c(songId, music.musicIndex_02);
             }
           }
         }
@@ -1428,7 +1536,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7a0
-    final int v1 = this.FUN_8001c84c(soundCharId, musicIndex);
+    final int v1 = this.FUN_8001c84c(songId, musicIndex);
     if(v1 != -2) {
       return v1;
     }

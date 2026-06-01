@@ -7,7 +7,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class MeshObj extends Obj {
-  private final Mesh[] meshes;
+  public final Mesh[] meshes;
   private final boolean backfaceCulling;
   private final boolean textured;
   private final boolean opaque;

@@ -6,8 +6,8 @@ import legend.core.memory.Method;
 import legend.game.combat.deff.Anim;
 import legend.game.unpacker.FileData;
 
-import static legend.game.Scus94491BpeSegment_8002.applyKeyframe;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
+import static legend.game.Models.applyKeyframe;
+import static legend.game.Models.loadModelStandardAnimation;
 
 public class TmdAnimationFile extends Anim {
   /** ushort */
@@ -16,6 +16,9 @@ public class TmdAnimationFile extends Anim {
   public final short totalFrames_0e;
   /** Arrays are [keyframe][part] */
   public final Keyframe0c[][] partTransforms_10;
+
+  /** See {@link Model124#interpolationScale} */
+  public float interpolationScale = 1.0f;
 
   public TmdAnimationFile(final FileData data) {
     super(data);
@@ -48,7 +51,7 @@ public class TmdAnimationFile extends Anim {
       return;
     }
 
-    final int framesPerKeyframe = 2;
+    final int framesPerKeyframe = Math.round(2 * model.interpolationScale);
 
     //LAB_800dd4fc
     final int totalFrames;

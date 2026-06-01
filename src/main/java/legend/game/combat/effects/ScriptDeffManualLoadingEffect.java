@@ -3,7 +3,7 @@ package legend.game.combat.effects;
 import legend.game.combat.Battle;
 import legend.game.scripting.ScriptState;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 
 public class ScriptDeffManualLoadingEffect extends ScriptDeffEffect {
   @Override

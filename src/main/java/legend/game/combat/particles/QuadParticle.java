@@ -23,8 +23,8 @@ import java.util.Arrays;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.GetClut;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.GetClut;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.ZERO;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.FUN_800cfc20;
@@ -269,7 +269,7 @@ public class QuadParticle extends ParticleEffectData98 {
 
       transforms.transfer.x = ref.x;
       transforms.transfer.y = ref.y;
-      transforms.scaling(horizontalScale * particle.w_5e, verticalScale * particle.h_5f, 1.0f).rotateZ(angle);
+      transforms.scaling(horizontalScale * particle.w_5e, verticalScale * particle.h_5f, 1.0f).rotateLocalZ(angle);
     }
 
     //LAB_800fcde0

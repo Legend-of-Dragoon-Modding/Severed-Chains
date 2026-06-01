@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
+import static legend.game.Graphics.GsGetLw;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 

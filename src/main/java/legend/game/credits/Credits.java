@@ -1,5 +1,6 @@
 package legend.game.credits;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
@@ -10,8 +11,10 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.tim.Tim;
+import legend.game.types.GameState52c;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
@@ -25,24 +28,27 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.sin;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.DrgnFiles.loadDrgnDir;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.EngineStates.postCreditsEngineState;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.orderingTableSize_1f8003c8;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.sound.Audio.playXaAudio;
+import static legend.game.sound.Audio.stopXaAudio;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class Credits extends EngineState {
+public class Credits extends EngineState<Credits> {
   public enum CreditsType {
     MAJOR_HEADER_0,
     MINOR_HEADER_1,
     NAME_2,
     DIRECTOR_3,
-    UNUSED_4, // May have been for "The End" originally
+    UNUSED_4, // May have been for "The End" originally,
+    LINK_5
   }
 
   public enum CreditState {
@@ -195,14 +201,34 @@ public class Credits extends EngineState {
   private Obj gradient;
   private Obj credits;
 
+  public Credits() {
+    super(CoreEngineStateTypes.CREDITS.get());
+  }
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    return null;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+
+  }
+
+  @Override
+  public boolean advancesTime() {
+    return false;
+  }
+
   @Override
   @Method(0x800eaa88L)
   public void tick() {
     super.tick();
 
-    if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
+    if(this.loadingStage >= 2 && (PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get()))) {
       this.loadingStage = 4;
     }
+
     this.creditsStates_800f9378[this.loadingStage].run();
   }
 
@@ -237,7 +263,7 @@ public class Credits extends EngineState {
     this.creditIndex_800d1af0 = 0;
 
     this.creditTimsLoaded_800d1ae8 = false;
-    loadDrgnDir(0, 5720, this::creditsLoaded);
+    loadDrgnDir(0, 5720).thenAccept(this::creditsLoaded);
 
     this.gradient = new PolyBuilder("CreditsGradient", GL_TRIANGLE_STRIP)
       .translucency(Translucency.B_MINUS_F)
@@ -689,9 +715,23 @@ public class Credits extends EngineState {
       this.credits.delete();
       this.credits = null;
     }
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+
+    stopXaAudio();
+
+    engineStateOnceLoaded_8004dd24 = postCreditsEngineState;
 
     //LAB_800eaf14
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    activity.setDetails("Watching the Credits");
+    activity.setState(null);
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return null;
   }
 
   public static class CreditHeader08 {

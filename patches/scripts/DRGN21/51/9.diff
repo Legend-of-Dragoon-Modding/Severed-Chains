@@ -76,4 +76,4 @@ Hellena Prison, cutscene after escaping Fruegel (I): Enable animation for Man in
  yield
  jmp inl[:LABEL_24]
  data 0x49
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt

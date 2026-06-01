@@ -1,0 +1,9 @@
+STATUS_AFFLICTION_FLAGS:
+data 0x1  ; petrified
+data 0x2  ; bewitched
+data 0x4  ; confused
+data 0x8  ; fearful
+data 0x10 ; stunned
+data 0x20 ; weapon blocked
+data 0x40 ; dispirited
+data 0x80 ; poisoned

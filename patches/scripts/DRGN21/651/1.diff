@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -1137,7 +1137,7 @@
+ data 0x1a
+ data 0x1
+ PTR_1a38_0:
+-data str[<speed=0>Man at Obstacle Course<line>Reach the goal before the top left<line>count hits 400.<line>There will be something good<line>waiting for you if you reach<line>the goal quickly!<line>Move with the direction key and<line>duck with the ` button to avoid<line>obstacles!]
++data str[<speed=0>Man at Obstacle Course<line>Reach the goal before the top left<line>count hits 400.<line>There will be something good<line>waiting for you if you reach<line>the goal quickly!<line>Move with the direction key and<line>duck with the <action=lod:smap_interact> button to avoid<line>obstacles!]
+ PTR_1a64_1:
+ data 0x22
+ data 0x9

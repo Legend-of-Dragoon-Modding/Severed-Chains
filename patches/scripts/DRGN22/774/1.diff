@@ -1,0 +1,38 @@
+--- original
++++ modified
+@@ -1924,9 +1924,15 @@
+ LABEL_208:
+ data 0x20
+ LABEL_209:
+-memcpy 0x2, var[17][1], var[73][0]
+-mov 0xffffffff, var[17][1]
+-mov 0xffffffff, var[17][2]
++mov 0, stor[24]
++REMOVING_CHARS_LOOP:
++jmp_cmp ==, -1, var[17][1], inl[:DONE_REMOVING_CHARS]
++mov var[17][1], var[73][stor[24]]
++mov -1, var[17][1]
++incr stor[24]
++jmp inl[:REMOVING_CHARS_LOOP]
++DONE_REMOVING_CHARS:
++mov -1, var[73][stor[24]]
+ andor 0x40, 0x23, var[115 + 0]
+ andor 0x40, 0x0, var[115 + 1]
+ andor 0x40, 0x0, var[115 + 2]
+@@ -1938,7 +1944,15 @@
+ andor 0x40, 0x0, var[115 + 8]
+ return
+ LABEL_210:
+-memcpy 0x2, var[73][0], var[17][1]
++mov 0, stor[24]
++mov 1, stor[25]
++RESTORING_CHARS_LOOP:
++jmp_cmp ==, -1, var[73][stor[24]], inl[:DONE_RESTORING_CHARS]
++mov var[73][stor[24]], var[17][stor[25]]
++incr stor[24]
++incr stor[25]
++jmp inl[:RESTORING_CHARS_LOOP]
++DONE_RESTORING_CHARS:
+ andor 0x40, 0x23, var[115 + 0]
+ andor 0x40, 0x0, var[115 + 1]
+ andor 0x40, 0x3, var[115 + 2]

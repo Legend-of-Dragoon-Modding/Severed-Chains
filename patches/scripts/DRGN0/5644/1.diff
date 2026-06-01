@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -2730,11 +2730,17 @@
+ mov 0x15, stor[stor[stor[0], 15], 8]
+ call 578, stor[15], 0xffffffff, 0x1
+ return
++ASPECT_MULTIPLIER:
++data 0x0
+ LABEL_50:
+ call 737, stor[15], 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x14
+ mov 0x14, stor[stor[stor[0], 15], 8]
+ call 578, stor[15], 0xffffffff, 0x1
+ call 606, stor[15], 0x14400
++call 960, inl[:ASPECT_MULTIPLIER]
++mul 0x800, inl[:ASPECT_MULTIPLIER]
++shr 12, inl[:ASPECT_MULTIPLIER]
++call 549, stor[15], 0xffffffff, inl[:ASPECT_MULTIPLIER], 0x1000, 0x1000
+ call 627, stor[15], 0x1c00
+ call 618, stor[15], inl[:LABEL_64]
+ call 606, stor[15], 0x2cb00

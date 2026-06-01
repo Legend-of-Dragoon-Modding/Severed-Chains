@@ -17,33 +17,35 @@ import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.core.GameEngine.CONFIG;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_ADVANCED;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
+import static legend.game.modding.coremod.CoreMod.SHOW_ADVANCED_OPTIONS_CONFIG;
 
 public class OptionsScreen extends VerticalLayoutScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(OptionsScreen.class);
   private final Runnable unload;
 
+  private final List<ConfigEntry<?>> configs = new ArrayList<>();
   private final Map<Control, Label> helpLabels = new HashMap<>();
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
 
-  private final FontOptions fontOptions = new FontOptions().size(0.66f).horizontalAlign(HorizontalAlign.RIGHT).colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
-
   public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
     deallocateRenderables(0xff);
-    startFadeEffect(2, 10);
 
     this.unload = unload;
-
-    this.addControl(new Background());
+    this.init();
 
     final Map<ConfigEntry<?>, String> translations = new HashMap<>();
 
@@ -62,7 +64,9 @@ public class OptionsScreen extends VerticalLayoutScreen {
         final ConfigEntry configEntry = entry.getKey();
         final String text = entry.getValue();
 
-        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
+        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl() && (!this.hideNonBattleEntries() || configEntry.availableInBattle())) {
+          this.configs.add(configEntry);
+
           Control editControl;
           boolean error = false;
 
@@ -70,9 +74,12 @@ public class OptionsScreen extends VerticalLayoutScreen {
             //noinspection unchecked
             editControl = configEntry.makeEditControl(config.getConfig(configEntry), config);
           } catch(final Throwable ex) {
-            editControl = this.createErrorLabel("Error creating control", ex, false);
+            LOGGER.error("Error creating control", ex);
+            editControl = this.createErrorLabel();
             error = true;
           }
+
+          final Set<String> locked = config.getLocked(configEntry);
 
           editControl.setZ(35);
 
@@ -82,49 +89,76 @@ public class OptionsScreen extends VerticalLayoutScreen {
             label.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
           }
 
+          int extrasX = (int)(label.getFont().textWidth(text) * label.getScale());
+
           if(configEntry.hasHelp()) {
             final Label help = label.addControl(new Label("?"));
             help.setScale(0.4f);
-            help.setPos((int)(textWidth(text) * label.getScale()) + 2, 1);
-            help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), this.mouseX, this.mouseY)));
+            help.setPos(extrasX + 2, 1);
+            help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), (int)this.mouseX, (int)this.mouseY)));
             this.helpLabels.put(label, help);
             this.helpEntries.put(label, configEntry);
+            extrasX += help.getWidth();
+          }
+
+          if(!locked.isEmpty()) {
+            editControl.disable();
+            final Label lock = label.addControl(new Label(I18n.translate("lod_core.ui.options.locked")));
+            lock.setScale(0.4f);
+            lock.setPos(extrasX + 2, 1);
+            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), (int)this.mouseX, (int)this.mouseY)));
           }
         }
       });
 
+    this.addToggleHotkey(I18n.translate("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, CONFIG.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
     this.addHotkey(I18n.translate("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
     this.addHotkey(I18n.translate("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
-  private Label createErrorLabel(final String log, final Throwable ex, final boolean setSize) {
-    LOGGER.warn(log, ex);
+  protected void init() {
+    startFadeEffect(2, 10);
+    this.addControl(new Background());
+  }
+
+  protected boolean hideNonBattleEntries() {
+    return false;
+  }
+
+  private Label createErrorLabel() {
     final Label l = new Label(I18n.translate("lod_core.ui.options.error"));
     l.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
-
-    if(setSize) {
-      l.setSize(140, 11);
-      l.setPos(this.getWidth() - 64 - l.getWidth(), 0);
-      l.setScale(0.66f);
-    }
+    l.setSize(140, 11);
+    l.setPos(this.getWidth() - 64 - l.getWidth(), 0);
+    l.setScale(0.66f);
 
     return l;
   }
 
   private void replaceControlWithErrorLabel(final String log, final Throwable ex) {
+    LOGGER.warn(log, ex);
+
     final Label row = this.getHighlightedRow();
     if(row != null) {
       row.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
       for(int i = row.getControls().size() - 1; i > -1; i--) {
         row.removeControl(row.getControl(i));
       }
-      row.addControl(this.createErrorLabel(log, ex, true));
+      row.addControl(this.createErrorLabel());
     }
   }
 
   private void back() {
     playMenuSound(3);
     this.unload.run();
+  }
+
+  private void advanced(final boolean advanced) {
+    CONFIG.setConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get(), advanced);
+
+    for(int i = 0; i < this.configs.size(); i++) {
+      this.setRowVisible(i, !this.configs.get(i).isAdvanced() || advanced);
+    }
   }
 
   private void help() {
@@ -157,7 +191,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
   }
 
   @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final double x, final double y) {
     try {
       return super.mouseMove(x, y);
     } catch(final Throwable ex) {

@@ -6,6 +6,10 @@ import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputAxis;
+import legend.core.platform.input.InputAxisDirection;
+import legend.core.platform.input.InputButton;
+import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;
@@ -20,7 +24,6 @@ import java.util.function.Predicate;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();
@@ -31,21 +34,26 @@ public class MenuStack {
   private WindowEvents.Scroll onMouseScroll;
   private WindowEvents.KeyPressed onKeyPress;
   private WindowEvents.Char onCharPress;
+  private WindowEvents.ButtonPressed onButtonPress;
+  private WindowEvents.ButtonReleased onButtonRelease;
+  private WindowEvents.Axis onAxis;
   private WindowEvents.InputActionPressed onInputActionPressed;
   private WindowEvents.InputActionReleased onInputActionReleased;
+  private WindowEvents.InputClassChanged onInputClassChanged;
 
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
   private double scrollAccumulatorX;
   private double scrollAccumulatorY;
 
-  public void pushScreen(final MenuScreen screen) {
+  public <T extends MenuScreen> T pushScreen(final T screen) {
     if(this.screens.isEmpty()) {
       this.registerInputHandlers();
     }
 
     screen.setStack(this);
     this.screens.push(screen);
+    return screen;
   }
 
   public void popScreen() {
@@ -99,9 +107,6 @@ public class MenuStack {
     if(it.hasNext()) {
       this.propagate(it, MenuScreen::renderScreen, MenuScreen::propagateRender, true);
     }
-
-    //TODO temporary until everything is moved over to controls and no longer uses the LOD system
-    uploadRenderables();
   }
 
   private void input(final Consumer<MenuScreen> method) {
@@ -136,8 +141,12 @@ public class MenuStack {
     this.onMouseScroll = RENDERER.events().onMouseScroll(this::mouseScroll);
     this.onKeyPress = RENDERER.events().onKeyPress(this::keyPress);
     this.onCharPress = RENDERER.events().onCharPress(this::charPress);
+    this.onButtonPress = RENDERER.events().onButtonPress(this::buttonPress);
+    this.onButtonRelease = RENDERER.events().onButtonRelease(this::buttonRelease);
+    this.onAxis = RENDERER.events().onAxis(this::axis);
     this.onInputActionPressed = RENDERER.events().onInputActionPressed(this::inputActionPressed);
     this.onInputActionReleased = RENDERER.events().onInputActionReleased(this::inputActionReleased);
+    this.onInputClassChanged = RENDERER.events().onInputClassChanged(this::inputClassChanged);
   }
 
   public void removeInputHandlers() {
@@ -147,48 +156,44 @@ public class MenuStack {
     RENDERER.events().removeMouseScroll(this.onMouseScroll);
     RENDERER.events().removeKeyPress(this.onKeyPress);
     RENDERER.events().removeCharPress(this.onCharPress);
+    RENDERER.events().removeButtonPress(this.onButtonPress);
+    RENDERER.events().removeButtonRelease(this.onButtonRelease);
+    RENDERER.events().removeAxis(this.onAxis);
     RENDERER.events().removeInputActionPressed(this.onInputActionPressed);
     RENDERER.events().removeInputActionReleased(this.onInputActionReleased);
+    RENDERER.events().removeInputClassChanged(this.onInputClassChanged);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
-    if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
-      this.input(screen -> screen.mouseMove((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight())));
-      return;
-    }
-
-    final float aspect = 4.0f / 3.0f;
-
-    float w = window.getWidth();
-    float h = w / aspect;
-
-    if(h > window.getHeight()) {
-      h = window.getHeight();
-      w = h * aspect;
-    }
-
-    final float left = (window.getWidth() - w) / 2;
-    final float top = (window.getHeight() - h) / 2;
-
-    final float scaleX = w / RENDERER.getNativeWidth();
-    final float scaleY = h / RENDERER.getNativeHeight();
-
-    this.input(screen -> screen.mouseMove((int)((x - left) / scaleX), (int)((y - top) / scaleY)));
+    final Point2D clickPos = this.getClickPos(window, x, y);
+    this.input(screen -> screen.mouseMove(clickPos.x, clickPos.y));
   }
 
   private void mousePress(final Window window, final double x, final double y, final int button, final Set<InputMod> mods) {
     this.mousePressCoords.put(button, new Point2D(x, y));
+
+    final Point2D clickPos = this.getClickPos(window, x, y);
+    this.input(screen -> screen.mousePress(clickPos.x, clickPos.y, button, mods));
   }
 
   private void mouseRelease(final Window window, final double x, final double y, final int button, final Set<InputMod> mods) {
+    final Point2D clickPos = this.getClickPos(window, x, y);
+    this.input(screen -> screen.mouseRelease(clickPos.x, clickPos.y, button, mods));
+
     final Point2D point = this.mousePressCoords.remove(button);
 
     if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
-      if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
-        this.input(screen -> screen.mouseClick((int)(x / window.getWidth() * RENDERER.getNativeWidth()), (int)(y / window.getHeight() * RENDERER.getNativeHeight()), button, mods));
-        return;
-      }
+      this.input(screen -> screen.mouseClick(clickPos.x, clickPos.y, button, mods));
+    }
+  }
 
+  private Point2D getClickPos(final Window window, final double x, final double y) {
+    final double clickX;
+    final double clickY;
+    if(CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+      clickX = x / window.getWidth() * RENDERER.getNativeWidth();
+      clickY = y / window.getHeight() * RENDERER.getNativeHeight();
+    } else {
       final float aspect = 4.0f / 3.0f;
 
       float w = window.getWidth();
@@ -205,8 +210,11 @@ public class MenuStack {
       final float scaleX = w / GPU.getDisplayTextureWidth();
       final float scaleY = h / GPU.getDisplayTextureHeight();
 
-      this.input(screen -> screen.mouseClick((int)((x - left) / scaleX), (int)((y - top) / scaleY), button, mods));
+      clickX = (x - left) / scaleX;
+      clickY = (y - top) / scaleY;
     }
+
+    return new Point2D(clickX, clickY);
   }
 
   private void mouseScroll(final Window window, final double deltaX, final double deltaY) {
@@ -232,12 +240,28 @@ public class MenuStack {
     this.input(screen -> screen.charPress(codepoint));
   }
 
+  private void buttonPress(final Window window, final InputButton button, final boolean repeat) {
+    this.input(screen -> screen.buttonPress(button, repeat));
+  }
+
+  private void buttonRelease(final Window window, final InputButton button) {
+    this.input(screen -> screen.buttonRelease(button));
+  }
+
+  private void axis(final Window window, final InputAxis axis, final InputAxisDirection direction, final float menuValue, final float movementValue) {
+    this.input(screen -> screen.axis(axis, direction, menuValue, movementValue));
+  }
+
   private void inputActionPressed(final Window window, final InputAction action, final boolean repeat) {
     this.input(screen -> screen.inputActionPressed(action, repeat));
   }
 
   private void inputActionReleased(final Window window, final InputAction action) {
     this.input(screen -> screen.inputActionReleased(action));
+  }
+
+  private void inputClassChanged(final Window window, final InputClass type) {
+    this.input(screen -> screen.inputClassChanged(type));
   }
 
   private record Point2D(double x, double y) { }

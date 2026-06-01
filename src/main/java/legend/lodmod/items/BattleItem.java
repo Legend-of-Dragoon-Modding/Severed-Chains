@@ -6,6 +6,7 @@ import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.effects.ScriptDeffManualLoadingEffect;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemIcon;
+import legend.game.inventory.ItemStack;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
@@ -17,9 +18,10 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.deffManager_800c693c;
 
 /** Convenience class for easily using vanilla item effects */
@@ -27,23 +29,27 @@ public abstract class BattleItem extends Item {
   private static final Logger LOGGER = LogManager.getFormatterLogger(BattleItem.class);
 
   private int deffLoadingStage;
+  private ScriptStackFrame stackFrame;
 
   public BattleItem(final ItemIcon icon, final int price) {
     super(icon, price);
   }
 
   @Override
-  public FlowControl useInBattle(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
+  public FlowControl useInBattle(final ItemStack stack, final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
     return switch(this.deffLoadingStage) {
       // Initial load
       case 0 -> {
         this.deffLoadingStage = 1;
         this.loadDeff(user, this.getDeffEntrypoint(), this.getDeffParam(targetBentIndex));
 
-        this.injectScript(user, this.getUseItemScriptPath(), this.getUseItemScriptEntrypoint(), () -> {
-          this.useItemScriptLoaded(user, targetBentIndex);
-          this.deffLoadingStage = 2;
-        });
+        this
+          .injectScript(user, this.getUseItemScriptPath(), this.getUseItemScriptEntrypoint())
+          .thenAccept(stackFrame -> {
+            this.stackFrame = stackFrame;
+            this.deffLoadingStage = 2;
+          })
+        ;
 
         yield FlowControl.PAUSE_AND_REWIND;
       }
@@ -53,6 +59,11 @@ public abstract class BattleItem extends Item {
 
       // Loaded, carry on
       default -> {
+        user.frame().offset = user.context.commandOffset_0c;
+        this.useItemScriptLoaded(user, targetBentIndex);
+        user.pushFrame(this.stackFrame);
+        user.context.commandOffset_0c = user.frame().offset;
+        this.stackFrame = null;
         this.deffLoadingStage = 0;
         yield FlowControl.CONTINUE;
       }
@@ -64,7 +75,7 @@ public abstract class BattleItem extends Item {
   }
 
   protected int getUseItemScriptEntrypoint() {
-    return 0;
+    return 32;
   }
 
   protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
@@ -98,12 +109,13 @@ public abstract class BattleItem extends Item {
     deffManager_800c693c.flags_20 |= 0x40_0000;
   }
 
-  protected void injectScript(final ScriptState<? extends BattleEntity27c> user, final Path path, final int entrypoint, final Runnable onLoad) {
-    Loader.loadFile(path, data -> {
-      final ScriptFile file = new ScriptFile("throw_item", data.getBytes());
-      user.pushFrame(new ScriptStackFrame(file, file.getEntry(entrypoint)));
-      user.context.commandOffset_0c = user.frame().offset;
-      onLoad.run();
-    });
+  protected CompletableFuture<ScriptStackFrame> injectScript(final ScriptState<? extends BattleEntity27c> user, final Path path, final int entrypoint) {
+    return Loader
+      .loadFile(path)
+      .thenApply(data -> {
+        final ScriptFile file = new ScriptFile("throw_item", data.getBytes());
+        return new ScriptStackFrame(file, file.getEntry(entrypoint));
+      })
+    ;
   }
 }

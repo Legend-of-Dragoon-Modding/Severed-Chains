@@ -16,6 +16,7 @@ import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glBufferData;
+import static org.lwjgl.opengl.GL15C.glBufferSubData;
 import static org.lwjgl.opengl.GL15C.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
 import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
@@ -28,6 +29,7 @@ public class Mesh {
   private static final Int2ObjectMap<Mesh> usedVaos = new Int2ObjectOpenHashMap<>();
   private static final Int2ObjectMap<Mesh> usedVbos = new Int2ObjectOpenHashMap<>();
 
+  public final float[] vertexData;
   public final boolean textured;
   public final boolean translucent;
   public final Translucency translucencyMode;
@@ -46,6 +48,11 @@ public class Mesh {
   }
 
   public Mesh(final int mode, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode) {
+    this(mode, vertexData, indices, textured, translucent, translucencyMode, GL_STATIC_DRAW);
+  }
+
+  public Mesh(final int mode, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final int usage) {
+    this.vertexData = vertexData;
     this.textured = textured;
     this.translucent = translucent;
     this.translucencyMode = translucencyMode;
@@ -58,11 +65,11 @@ public class Mesh {
 
     this.vbo = glGenBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexData, usage);
 
     this.ebo = glGenBuffers();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, usage);
 
     glBindVertexArray(0);
 
@@ -83,6 +90,7 @@ public class Mesh {
   }
 
   public Mesh(final int mode, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode) {
+    this.vertexData = vertexData;
     this.textured = textured;
     this.translucent = translucent;
     this.translucencyMode = translucencyMode;
@@ -111,6 +119,15 @@ public class Mesh {
 
     usedVaos.put(this.vao, this);
     usedVbos.put(this.vbo, this);
+  }
+
+  public void update() {
+    if(this.deleted) {
+      return;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0L, this.vertexData);
   }
 
   public void delete() {

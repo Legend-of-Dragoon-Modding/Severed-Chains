@@ -7,10 +7,10 @@ import legend.game.types.RenderableMetrics14;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 
+import static legend.game.Menus.allocateManualRenderable;
+import static legend.game.Menus.uploadRenderable;
 import static legend.game.SItem.buildUiRenderable;
 import static legend.game.SItem.initGlyph;
-import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 
 public class Highlight extends Control {
   private final Renderable58 background;
@@ -36,6 +36,7 @@ public class Highlight extends Control {
   @Override
   public void setZ(final int z) {
     super.setZ(z);
+    this.background.z_3c = z;
     this.brackets.z_3c = z;
   }
 
@@ -105,7 +106,7 @@ public class Highlight extends Control {
   }
 
   @Override
-  protected void delete() {
+  public void delete() {
     super.delete();
 
     if(this.background.uiType_20.obj != null) {
@@ -118,7 +119,7 @@ public class Highlight extends Control {
   }
 
   @Override
-  protected void render(final int x, final int y) {
+  public void render(final int x, final int y) {
     if(this.background.uiType_20.obj == null) {
       this.background.uiType_20.obj = buildUiRenderable(this.background.uiType_20, "Highlight Background");
     }

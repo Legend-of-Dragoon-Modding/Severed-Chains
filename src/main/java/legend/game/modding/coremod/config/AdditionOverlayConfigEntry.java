@@ -9,4 +9,9 @@ public class AdditionOverlayConfigEntry extends EnumConfigEntry<AdditionOverlayM
   public AdditionOverlayConfigEntry() {
     super(AdditionOverlayMode.class, AdditionOverlayMode.FULL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
   }
+
+  @Override
+  public boolean hasHelp() {
+    return true;
+  }
 }

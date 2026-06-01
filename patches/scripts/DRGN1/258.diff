@@ -1,0 +1,12 @@
+--- original
++++ modified
+@@ -2449,8 +2449,7 @@
+ wait_cmp &, 0x8, stor[7]
+ gosub inl[:LABEL_4]
+ jmp_cmp !=, 0x0, stor[8], inl[:LABEL_161]
+-mov var[43], stor[8]
+-jmp_cmp !=, stor[8], 0x180, inl[:LABEL_160]
++jmp_cmp !=, var[43], id[lod:seles_commander], inl[:LABEL_160]
+ mov var[53], stor[8]
+ jmp_cmp ==, stor[8], 0x3, inl[:LABEL_160]
+ call 200, 0x0, 0x1100, 0xa0, 0xbe, inl[:LABEL_163], inl[:LABEL_164], inl[:LABEL_165 + inl[:LABEL_165 + 0x0]]

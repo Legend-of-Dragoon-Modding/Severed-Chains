@@ -1,6 +1,9 @@
 package legend.game.types;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.inventory.screens.PostBattleScreen;
+import org.joml.Vector3f;
 
 /** Main menu renderable */
 public class Renderable58 {
@@ -35,8 +38,9 @@ public class Renderable58 {
   public int x_40;
   public int y_44;
 
-  public Renderable58 child_50;
-  public Renderable58 parent_54;
+  // No longer used, converted to a LinkedList
+//  public Renderable58 prev_50;
+//  public Renderable58 next_54;
 
   public int widthCut;
   public int heightCut;
@@ -46,9 +50,13 @@ public class Renderable58 {
 
   /** The max number of parts of this glyph to render (can be used to truncate parts of a glyph) */
   public int metricsCount = Integer.MAX_VALUE;
+  /** Used to blacklist certain indices from a renderable from rendering */
+  public final IntList metricsBlacklist = new IntArrayList();
 
   /** We moved the UI textures into the vram region that the render buffers used to use so they could stay loaded. Some UIs like {@link PostBattleScreen} use their own textures so we have to use the normal tpage that's passed in. */
   public boolean useOriginalTpage;
+
+  public final Vector3f colour = new Vector3f(1.0f);
 
   public Renderable58 setVisible(final boolean visible) {
     if(visible) {

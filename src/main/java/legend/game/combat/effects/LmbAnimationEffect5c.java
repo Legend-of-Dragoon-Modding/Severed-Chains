@@ -6,12 +6,10 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
@@ -19,6 +17,7 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
@@ -29,14 +28,13 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
+import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.Graphics.perspectiveTransform;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.SEffe.FUN_800e61e4;
 import static legend.game.combat.SEffe.FUN_800e62a8;
@@ -51,12 +49,11 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     renderers[0] = LmbAnimationEffect5c::renderLmbSpecial;
     renderers[1] = LmbAnimationEffect5c::renderLmbTmd;
     renderers[2] = LmbAnimationEffect5c::renderLmbPoly;
-  };
+  }
 
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
 
-  private int depthOffset;
   /** Needed to track queue depths for poly renderer */
   private final FloatList zDepths = new FloatArrayList();
   private final Vector3f worldCoords = new Vector3f();
@@ -89,13 +86,12 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   public int deffTmdFlags_48;
   public TmdObjTable1c deffTmdObjTable_4c;
-  public Obj obj;
   public int deffSpriteFlags_50;
   public final SpriteMetrics08 metrics_54 = new SpriteMetrics08();
 
   private static void renderLmbSpecial(final LmbAnimationEffect5c effect, final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final int objectIndex) {
     //LAB_80116790
-    final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
+    final ScriptState<EffectManagerData6c> state = SCRIPTS.getState(deffFlags, EffectManagerData6c.class);
     final EffectManagerData6c<?> manager2 = state.innerStruct_00;
     manager.params_10.trans_04.set(effect.transforms.transfer);
     getRotationAndScaleFromTransforms(manager.params_10.rot_10, manager.params_10.scale_16, effect.transforms);
@@ -138,18 +134,16 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       // Cache it
       effect.deffTmdFlags_48 = deffFlags;
       effect.deffTmdObjTable_4c = tmdObjTable;
-
-      if(effect.obj != null) {
-        effect.obj.delete();
-      }
-
-      effect.obj = TmdObjLoader.fromObjTable(manager.name, effect.deffTmdObjTable_4c);
     }
 
     //LAB_80116778
-    renderTmdSpriteEffect(tmdObjTable, effect.obj, manager.params_10, effect.transforms);
+    renderTmdSpriteEffect(tmdObjTable, effect.deffTmdObjTable_4c.getObj(), manager.params_10, effect.transforms);
   }
 
+  /**
+   * This method does not use manager.params_10.z_22 & zOffset_1f8003e8 by retail, using it caused GH#1715
+   * -- Used by Polter Armor Can't Combat
+   */
   private static void renderLmbPoly(final LmbAnimationEffect5c effect, final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final int objectIndex) {
     if(effect.deffSpriteFlags_50 != deffFlags) {
       //LAB_801162e8
@@ -176,7 +170,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
     final float z = perspectiveTransform(effect.worldCoords, effect.screenCoords);
     if(z >= 80) {
-      effect.zDepths.add(z);
+      effect.zDepths.add(z * 4.0f);
 
       //LAB_801163c4
       // Intified and jankily rounded values to make Down Burst particles look retail-ish due to the effect
@@ -309,14 +303,13 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     if(flags >= 0) { // No errors
       int tickFip12 = Math.max(0, manager.params_10.ticks_24) % (this.keyframeCount_08 * 2) << 12;
       tmdGp0Tpage_1f8003ec = flags >>> 23 & 0x60; // tpage
-      this.depthOffset = zOffset_1f8003e8 = manager.params_10.z_22;
       if((manager.params_10.flags_00 & 0x40) == 0) {
         FUN_800e61e4((manager.params_10.colour_1c.x << 5) / (float)0x1000, (manager.params_10.colour_1c.y << 5) / (float)0x1000, (manager.params_10.colour_1c.z << 5) / (float)0x1000);
       }
 
       //LAB_80117ac0
       //LAB_80117acc
-      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>("Temp 2", new EffectManagerParams.AnimType());
+      final EffectManagerData6c<EffectManagerParams.AnimType> anim = new EffectManagerData6c<>(manager.battle, "Temp 2", new EffectManagerParams.AnimType());
       anim.set(manager);
 
       final MV managerTransforms = new MV();
@@ -631,7 +624,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     final LmbType2 lmb = (LmbType2)this.lmb_0c;
     final LmbTransforms14[] originalTransforms = lmb.initialTransforms_10;
     final int keyframeIndex = tickFip12 / 0x2000;
-    final float lerpScale = (tickFip12 & 0x1fff) / (float)0x2000; // mod(tick, 2) / 2
+    float lerpScale = (tickFip12 & 0x1fff) / (float)0x2000; // mod(tick, 2) / 2
     final LmbTransforms14[] transformsLo = this.lmbTransforms_10;
     final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.objectCount_04, transformsLo.length);
     final int nextKeyframeIndex = (keyframeIndex + 1) % lmb.keyframeCount_0a;
@@ -735,6 +728,11 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
       //LAB_80117438
       if(nextKeyframeIndex == 0) {
+        // Lerp to end if LMB attachment was removed - no replaying
+        if(!manager.hasAttachment(5)) {
+          lerpScale = 1;
+        }
+
         //LAB_801176c0
         //LAB_801176e0
         for(int i = 0; i < lmb.objectCount_04; i++) {
@@ -891,20 +889,22 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     this.renderPolyObj();
   }
 
+  /**
+   * This method does not use manager.params_10.z_22 & zOffset_1f8003e8 by retail, using it caused GH#1715
+   * -- Used by Polter Armor Can't Combat
+   */
   private void renderPolyObj() {
     if(this.builder != null) {
-      this.obj = this.builder.build();
+      final Obj obj = this.builder.build();
 
       for(int i = 0; i < this.zDepths.size(); i++) {
         this.transforms.identity();
         this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.zDepths.getFloat(i));
-        RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
-          .depthOffset(this.depthOffset * 4)
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
           .vertices(i * 6, 6);
       }
 
-      this.obj.delete();
-      this.obj = null;
+      obj.delete();
       this.builder = null;
       this.zDepths.clear();
     }
@@ -912,9 +912,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
+    if(this.deffTmdObjTable_4c != null) {
+      this.deffTmdObjTable_4c.delete();
     }
   }
 }

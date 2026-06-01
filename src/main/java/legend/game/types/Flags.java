@@ -38,4 +38,8 @@ public class Flags {
   public void set(final int packedIndex, final boolean value) {
     this.set(packedIndex >>> 5, packedIndex & 0x1f, value);
   }
+
+  public void set(final Flags other) {
+    System.arraycopy(other.flags, 0, this.flags, 0, this.flags.length);
+  }
 }

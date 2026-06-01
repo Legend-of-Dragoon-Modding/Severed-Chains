@@ -272,7 +272,6 @@
         <HBox layoutX="1050.0" prefHeight="400.0" prefWidth="150.0">
             <VBox>
                 <children>
-                    <Label fx:id="dataI" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                     <Label fx:id="partyI" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                     <Label fx:id="partyII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                     <Label fx:id="partyIII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />

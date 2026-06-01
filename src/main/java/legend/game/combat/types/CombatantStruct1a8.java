@@ -1,8 +1,11 @@
 package legend.game.combat.types;
 
+import legend.core.gpu.Gpu;
 import legend.core.memory.Method;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
+import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.unpacker.FileData;
 
@@ -35,6 +38,8 @@ public class CombatantStruct1a8 {
    */
   public int flags_19e;
   public int vramSlot_1a0;
+  public Tim tim;
+  public Gpu texture;
   /**
    * Not just char index
    * <ul>
@@ -44,6 +49,16 @@ public class CombatantStruct1a8 {
   public int charIndex_1a2;
   public int _1a4;
   public int _1a6;
+
+  public PlayerBattleEntity playerBent;
+
+  public boolean isPlayer() {
+    return (this.flags_19e & 0x4) != 0;
+  }
+
+  public boolean isDragoon() {
+    return (this.charIndex_1a2 & 0x1) != 0;
+  }
 
   @Method(0x800c90b0L)
   public boolean isModelLoaded() {
@@ -66,6 +81,6 @@ public class CombatantStruct1a8 {
     return false;
   }
 
-  public record ItemDrop(int chance, InventoryEntry item) {
+  public record ItemDrop(int chance, InventoryEntry<?> item) {
   }
 }

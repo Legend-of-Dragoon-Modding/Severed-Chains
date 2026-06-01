@@ -1,55 +1,56 @@
 package legend.game.inventory.screens;
 
-import legend.core.GameEngine;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Label;
-import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
+import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.SItem.UI_TEXT_CENTERED;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_MODS;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class CampaignSelectionScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(MenuScreen.class);
 
   private final BigList<Campaign> campaignList;
+  private Control saveCard;
 
-  public CampaignSelectionScreen() {
+  private Campaign selectedCampaign;
+  private List<CompletableFuture<SavedGame>> savedGames;
+
+  private SavedGame selectedSave;
+
+  public CampaignSelectionScreen(final List<Campaign> campaigns) {
     deallocateRenderables(0xff);
-    startFadeEffect(2, 10);
+    startFadeEffect(2, 5);
 
     this.addControl(new Background());
 
@@ -58,24 +59,24 @@ public class CampaignSelectionScreen extends MenuScreen {
     title.setPos(0, 10);
     title.setWidth(this.getWidth());
 
-    final SaveCard saveCard = this.addControl(new SaveCard());
-    saveCard.setPos(16, 160);
-
     this.campaignList = this.addControl(new BigList<>(c -> c.name));
     this.campaignList.setPos(16, 16);
     this.campaignList.setSize(360, 144);
     this.campaignList.onHighlight(campaign -> {
-      if(campaign == null) {
-        this.menuEscape();
-        return;
+      if(this.saveCard != null) {
+        this.removeControl(this.saveCard);
       }
 
-      saveCard.setSaveData(campaign.latestSave);
+      if(campaign != null) {
+        this.saveCard = this.addControl(campaign.latestSave.createSaveCard());
+        this.saveCard.alwaysReceiveInput();
+        this.saveCard.setPos(16, 160);
+      }
     });
     this.campaignList.onSelection(this::onSelection);
     this.setFocus(this.campaignList);
 
-    for(final Campaign campaign : SAVES.loadAllCampaigns()) {
+    for(final Campaign campaign : campaigns) {
       this.campaignList.addEntry(campaign);
     }
 
@@ -84,59 +85,93 @@ public class CampaignSelectionScreen extends MenuScreen {
     this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
+  public SavedGame getSelectedSave() {
+    return this.selectedSave;
+  }
+
+  private boolean selectLock;
+
   private void onSelection(final Campaign campaign) {
+    if(this.selectLock) {
+      return;
+    }
+
+    this.selectLock = true;
     playMenuSound(2);
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     campaign.loadConfigInto(CONFIG);
 
+    final Set<String> currentMods = MODS.getAllModIds();
+    final Set<String> knownMods;
+    if(CONFIG.hasConfig(CoreMod.KNOWN_MODS_CONFIG.get())) {
+      knownMods = Set.of(CONFIG.getConfig(CoreMod.KNOWN_MODS_CONFIG.get()));
+    } else if(CONFIG.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
+      knownMods = Set.of(CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get()));
+    } else {
+      knownMods = currentMods;
+    }
+
+    if(!currentMods.equals(knownMods)) {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.installed_mods_changed"), MessageBoxType.CONFIRMATION, result -> {
+        if(result == MessageBoxResult.YES) {
+          this.changeMods(campaign, () -> this.bootModsAndLoadSaves(campaign));
+        } else {
+          this.bootModsAndLoadSaves(campaign);
+        }
+      }));
+    } else {
+      this.bootModsAndLoadSaves(campaign);
+    }
+  }
+
+  private void bootModsAndLoadSaves(final Campaign campaign) {
     final Set<String> missingMods;
     if(CONFIG.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
       missingMods = bootMods(Set.of(CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get())));
     } else {
       // Fallback for old saves from before the config key existed
       missingMods = bootMods(MODS.getAllModIds());
+      campaign.config.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), MODS.getAllModIds().toArray(String[]::new));
     }
 
-    final Runnable loadGameScreen = () -> menuStack.pushScreen(new LoadGameScreen(save -> {
-      menuStack.reset();
-
-      CONFIG.clearConfig(ConfigStorageLocation.SAVE);
-      CONFIG.copyConfigFrom(save.config);
-
-      GameEngine.bootRegistries();
-
-      final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state));
-
-      gameState_800babc8 = event.gameState;
-      gameState_800babc8.syncIds();
-
-      loadingNewGameState_800bdc34 = true;
-      whichMenu_800bdc38 = WhichMenu.UNLOAD;
-
-      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
-      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
-      submapCutForSave_800cb450 = submapCut_80052c30;
-      collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
-
-      if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-        submapScene_80052c34 = 53;
-      }
-    }, () -> {
-      menuStack.popScreen();
-      startFadeEffect(2, 10);
-      bootMods(MODS.getAllModIds());
-    }, campaign));
-
     if(missingMods.isEmpty()) {
-      loadGameScreen.run();
+      this.loadSaves(campaign);
     } else {
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.missing_mods_confirm"), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.missing_mods_confirm"), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
-          loadGameScreen.run();
+          this.loadSaves(campaign);
+        } else {
+          this.selectLock = false;
         }
       }));
     }
+  }
+
+  private void loadSaves(final Campaign campaign) {
+    startFadeEffect(1, 5);
+
+    campaign.config.setConfig(CoreMod.KNOWN_MODS_CONFIG.get(), MODS.getAllModIds().toArray(String[]::new));
+    ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
+
+    this.selectedCampaign = campaign;
+    this.savedGames = campaign.loadAllSaves();
+  }
+
+  private void showLoadGameScreen() {
+    startFadeEffect(2, 5);
+
+    menuStack.pushScreen(new LoadGameScreen(this.savedGames, this::onSavedGameSelected, () -> {
+      startFadeEffect(2, 5);
+      menuStack.popScreen();
+      bootMods(MODS.getAllModIds());
+      this.selectLock = false;
+    }, this.selectedCampaign));
+  }
+
+  private void onSavedGameSelected(final SavedGame save) {
+    this.selectedSave = save;
+    SAVES.loadGameState(save);
   }
 
   @Override
@@ -146,7 +181,11 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   @Override
   protected void render() {
-
+    if(this.savedGames != null && fullScreenEffect_800bb140.currentColour_28 == 0xff) {
+      this.showLoadGameScreen();
+      this.selectedCampaign = null;
+      this.savedGames = null;
+    }
   }
 
   private void menuMods() {
@@ -158,23 +197,28 @@ public class CampaignSelectionScreen extends MenuScreen {
     }
 
     playMenuSound(2);
+    this.changeMods(campaign, () -> {});
+  }
 
+  private void changeMods(final Campaign campaign, final Runnable onClose) {
     final Set<String> originalMods = Set.of(campaign.config.getConfig(CoreMod.ENABLED_MODS_CONFIG.get()));
     final Set<String> modIds = new HashSet<>(originalMods);
 
     menuStack.pushScreen(new ModsScreen(modIds, () -> {
       if(!originalMods.equals(modIds)) {
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.change_mods_confirm"), 2, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.change_mods_confirm"), MessageBoxType.CONFIRMATION, result -> {
           if(result == MessageBoxResult.YES) {
             campaign.config.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), modIds.toArray(String[]::new));
             ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
             startFadeEffect(2, 10);
             this.getStack().popScreen();
+            onClose.run();
           }
         }));
       } else {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
+        onClose.run();
       }
     }));
   }
@@ -183,14 +227,18 @@ public class CampaignSelectionScreen extends MenuScreen {
     playMenuSound(40);
 
     if(this.campaignList.getSelected() != null) {
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.delete_campaign_confirm"), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.delete_campaign_confirm"), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           try {
             this.campaignList.getSelected().delete();
             this.campaignList.removeEntry(this.campaignList.getSelected());
+
+            if(this.campaignList.size() == 0) {
+              this.menuEscape();
+            }
           } catch(final IOException e) {
             LOGGER.error(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), e);
-            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), 0, result1 -> {})));
+            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.failed_to_delete_campaign"), MessageBoxType.ALERT, result1 -> {})));
           }
         }
       }));

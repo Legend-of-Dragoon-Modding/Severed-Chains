@@ -25,7 +25,7 @@ public class ThunderArrowEffect1c implements ScriptedObject {
   }
 
   @Override
-  public void renderScriptDebug(final ScriptState<ScriptedObject> state) {
+  public void renderScriptDebug(final ScriptState<? extends ScriptedObject> state) {
     final Vector2f viewspace = new Vector2f(this._18[0][0].x_00, this._18[0][0].y_02);
     ScriptedObject.renderScriptDebug(viewspace, this.getColour());
     ScriptedObject.renderScriptDebugText(state, viewspace.x + GPU.getOffsetX() - 9.0f, viewspace.y + GPU.getOffsetY() - 9.0f);

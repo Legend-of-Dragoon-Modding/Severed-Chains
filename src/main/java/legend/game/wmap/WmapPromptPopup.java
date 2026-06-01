@@ -7,8 +7,6 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.TextBuilder;
-import legend.core.opengl.TextObj;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -16,6 +14,9 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
+import static legend.game.SItem.UI_WHITE_SHADOWED;
 
 public class WmapPromptPopup {
   public enum ObjFields {
@@ -34,16 +35,16 @@ public class WmapPromptPopup {
 
   private final MV transforms = new MV();
 
-  private TextObj prompt;
+  private String prompt;
   private final Vector3f promptTranslation = new Vector3f();
 
-  private final List<TextObj> options = new ArrayList<>();
+  private final List<String> options = new ArrayList<>();
   private int menuSelectorOptionIndex;
   private float optionSpacing = 20.0f;
   private final Vector3f optionsTranslation = new Vector3f();
 
   private boolean renderAltText;
-  private final List<TextObj> altText = new ArrayList<>();
+  private final List<String> altText = new ArrayList<>();
   private float altTextSpacing = 16.0f;
   private final Vector3f altTextTranslation = new Vector3f();
 
@@ -59,7 +60,7 @@ public class WmapPromptPopup {
   }
 
   public WmapPromptPopup(final String prompt, final float textZ) {
-    this.prompt = this.buildText(prompt);
+    this.prompt = prompt;
     final int lines = (int)prompt.lines().count();
     this.promptTranslation.set(240.0f, 140.0f - lines * 7, textZ);
     this.optionsTranslation.set(240.0f, 170.0f, textZ - 2.0f);
@@ -134,30 +135,18 @@ public class WmapPromptPopup {
     return this.selector;
   }
 
-  private TextObj buildText(final String text) {
-    return new TextBuilder(text)
-      .text(text)
-      .centred()
-      .shadowed()
-      .build();
-  }
-
   public WmapPromptPopup setPrompt(final String text) {
-    this.prompt = new TextBuilder(text)
-      .text(text)
-      .centred()
-      .shadowed()
-      .build();
+    this.prompt = text;
     return this;
   }
 
   public WmapPromptPopup addOptionText(final String text) {
-    this.options.add(this.buildText(text));
+    this.options.add(text);
     return this;
   }
 
   public WmapPromptPopup addAltText(final String text) {
-    this.altText.add(this.buildText(text));
+    this.altText.add(text);
     return this;
   }
 
@@ -284,58 +273,40 @@ public class WmapPromptPopup {
     }
 
     if(this.prompt != null) {
-      this.transforms.transfer.set(this.promptTranslation);
-      RENDERER.queueOrthoModel(this.prompt, this.transforms, QueuedModelStandard.class);
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = (int)(this.promptTranslation.z / 4);
+
+      renderText(this.prompt, this.promptTranslation.x, this.promptTranslation.y, UI_WHITE_SHADOWED);
+
+      textZ_800bdf00 = oldZ;
     }
 
     if(!this.options.isEmpty()) {
-      this.transforms.transfer.set(this.optionsTranslation);
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = (int)(this.optionsTranslation.z / 4);
+
       for(int i = 0; i < this.options.size(); i++) {
-        final TextObj option = this.options.get(i);
-        if(option != null) {
-          RENDERER.queueOrthoModel(option, this.transforms, QueuedModelStandard.class);
-          this.transforms.transfer.y += this.optionSpacing;
-        }
+        renderText(this.options.get(i), this.optionsTranslation.x, this.optionsTranslation.y + i * this.optionSpacing, UI_WHITE_SHADOWED);
       }
+
+      textZ_800bdf00 = oldZ;
     }
 
     if(this.renderAltText && !this.altText.isEmpty()) {
-      this.transforms.transfer.set(this.altTextTranslation);
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = (int)(this.altTextTranslation.z / 4);
+
       for(int i = 0; i < this.altText.size(); i++) {
-        final TextObj altText = this.altText.get(i);
-        if(altText != null) {
-          RENDERER.queueOrthoModel(altText, this.transforms, QueuedModelStandard.class);
-          this.transforms.transfer.y += this.altTextSpacing;
-        }
+        renderText(this.altText.get(i), this.altTextTranslation.x, this.altTextTranslation.y + i * this.altTextSpacing, UI_WHITE_SHADOWED);
       }
+
+      textZ_800bdf00 = oldZ;
     }
   }
 
   public void deallocate() {
-    if(this.prompt != null) {
-      this.prompt.delete();
-      this.prompt = null;
-    }
-
-    if(!this.options.isEmpty()) {
-      for(int i = 0; i < this.options.size(); i++) {
-        if(this.options.get(i) != null) {
-          this.options.get(i).delete();
-        }
-      }
-
-      this.options.clear();
-    }
-
-    if(!this.altText.isEmpty()) {
-      for(int i = 0; i < this.altText.size(); i++) {
-        if(this.altText.get(i) != null) {
-          this.altText.get(i).delete();
-        }
-      }
-
-      this.altText.clear();
-    }
+    this.options.clear();
+    this.altText.clear();
 
     if(this.thumbnail != null) {
       this.thumbnail.delete();

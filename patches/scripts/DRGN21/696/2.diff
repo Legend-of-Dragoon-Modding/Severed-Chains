@@ -1,0 +1,13 @@
+--- original
++++ modified
+@@ -229,7 +229,6 @@
+ yield
+ call 264, 0x2, 0x0, 0x0
+ call 258, 0xffffffb5, 0x10
+# remove call that moves the foreground to z:0
+-call 266, 0x2, 0x6, 0x0, 0x0
+# instead offset Feyrbrand further into the scene
++call 293, 12, 10000
+ yield
+ return
+ LABEL_12:

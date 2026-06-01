@@ -74,7 +74,7 @@ public class Gte {
       .mul(this.RT, this.positionTemp)
       .add(this.translation);
 
-    this.positionTemp.z = MathHelper.clamp(this.positionTemp.z, 0.0f, 65536.0f);
+    this.positionTemp.z = Math.clamp(this.positionTemp.z, 0.0f, 65536.0f);
 
     //SZ3 = MAC3 SAR ((1-sf)*12)                           ;ScreenZ FIFO 0..+FFFFh
     this.SZ[0] = this.SZ[1];
@@ -338,9 +338,9 @@ public class Gte {
       .mul(this.lightColour)
       .add(this.backgroundColour);
 
-    this.RGBC.r = (int)MathHelper.clamp(this.RGBC.r * this.colourTemp.x, 0, 0xff);
-    this.RGBC.g = (int)MathHelper.clamp(this.RGBC.g * this.colourTemp.y, 0, 0xff);
-    this.RGBC.b = (int)MathHelper.clamp(this.RGBC.b * this.colourTemp.z, 0, 0xff);
+    this.RGBC.r = (int)Math.clamp(this.RGBC.r * this.colourTemp.x, 0, 0xff);
+    this.RGBC.g = (int)Math.clamp(this.RGBC.g * this.colourTemp.y, 0, 0xff);
+    this.RGBC.b = (int)Math.clamp(this.RGBC.b * this.colourTemp.z, 0, 0xff);
 
     if(out != null) {
       out.x = this.RGBC.r;

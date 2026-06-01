@@ -42,3 +42,24 @@
  mov 0x0, stor[11]
  LABEL_7:
  jmp_cmp >=, 0x0, stor[20], inl[:LABEL_8]
+@@ -1931,6 +1937,8 @@
+ mov stor[26], var[13]
+ yield
+ jmp inl[:LABEL_71]
++ASPECT_MULTIPLIER:
++data 0x0
+ ENTRYPOINT_0:
+ gosub inl[:LABEL_14]
+ jmp_cmp ==, 0x0, stor[8], inl[:LABEL_72]
+@@ -2146,7 +2154,10 @@
+ call 606, stor[22], 0x32501
+ call 611, stor[22], 0xfffffffd, 0xffffffff
+ call 545, stor[22], 0xffffffff, 0x0, 0x0, 0x320
+-call 549, stor[22], 0xffffffff, 0x1e00, 0x1e00, 0x1e00
++call 960, inl[:ASPECT_MULTIPLIER]
++mul 0x1e00, inl[:ASPECT_MULTIPLIER]
++shr 12, inl[:ASPECT_MULTIPLIER]
++call 549, stor[22], 0xffffffff, inl[:ASPECT_MULTIPLIER], 0x1e00, 0x1e00
+ call 551, stor[22], 0xffffffff, 0x0, 0x0, 0x0
+ call 588, stor[22], 0x20
+ call 606, stor[stor[stor[0], 22], 9], 0x32502

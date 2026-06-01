@@ -58,7 +58,7 @@ public final class LodItems {
   public static final RegistryDelegate<Item> DETONATE_ROCK = ITEM_REGISTRAR.register("detonate_rock", () -> new AttackItem(ItemIcon.MAGIC, 5, true, LodMod.NO_ELEMENT.get(), 0));
   public static final RegistryDelegate<Item> DOWN_BURST = ITEM_REGISTRAR.register("down_burst", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.WIND_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> FATAL_BLIZZARD = ITEM_REGISTRAR.register("fatal_blizzard", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.WATER_ELEMENT.get(), 0));
-  public static final RegistryDelegate<Item> FLASH_HALL = ITEM_REGISTRAR.register("flash_hall", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.LIGHT_ELEMENT.get(), 0x10));
+  public static final RegistryDelegate<Item> FLASH_HALL = ITEM_REGISTRAR.register("flash_hall", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.THUNDER_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> FROZEN_JET = ITEM_REGISTRAR.register("frozen_jet", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.WATER_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> GRAVITY_GRABBER = ITEM_REGISTRAR.register("gravity_grabber", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.EARTH_ELEMENT.get(), 0x10));
   public static final RegistryDelegate<Item> GUSHING_MAGMA = ITEM_REGISTRAR.register("gushing_magma", () -> new AttackItem(ItemIcon.MAGIC, 10, true, LodMod.FIRE_ELEMENT.get(), 0));
@@ -80,12 +80,12 @@ public final class LodItems {
   public static final RegistryDelegate<Item> ATTACK_BALL = ITEM_REGISTRAR.register("attack_ball", AttackBallItem::new);
 
   // Buffs/debuffs
-  public static final RegistryDelegate<Item> POWER_DOWN = ITEM_REGISTRAR.register("power_down", () -> new BuffItem(1, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, -50, -50, -50, -50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> POWER_UP = ITEM_REGISTRAR.register("power_up", () -> new BuffItem(6, ItemIcon.UP, 200, Item.TargetType.ALLIES, 50, 50, 50, 50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> SPEED_DOWN = ITEM_REGISTRAR.register("speed_down", () -> new BuffItem(1, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, -50, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> SPEED_UP = ITEM_REGISTRAR.register("speed_up", () -> new BuffItem(6, ItemIcon.UP, 200, Item.TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 100, 0, 0, 0, 0, 0));
-  public static final RegistryDelegate<Item> MAGIC_SHIELD = ITEM_REGISTRAR.register("magic_shield", () -> new ShieldItem(7, false, true));
-  public static final RegistryDelegate<Item> MATERIAL_SHIELD = ITEM_REGISTRAR.register("material_shield", () -> new ShieldItem(8, true, false));
+  public static final RegistryDelegate<Item> POWER_DOWN = ITEM_REGISTRAR.register("power_down", () -> new BuffItem(33, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, -50, -50, -50, -50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> POWER_UP = ITEM_REGISTRAR.register("power_up", () -> new BuffItem(38, ItemIcon.UP, 200, Item.TargetType.ALLIES, 50, 50, 50, 50, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> SPEED_DOWN = ITEM_REGISTRAR.register("speed_down", () -> new BuffItem(33, ItemIcon.DOWN, 200, Item.TargetType.ENEMIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, -50, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> SPEED_UP = ITEM_REGISTRAR.register("speed_up", () -> new BuffItem(38, ItemIcon.UP, 200, Item.TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 100, 0, 0, 0, 0, 0));
+  public static final RegistryDelegate<Item> MAGIC_SHIELD = ITEM_REGISTRAR.register("magic_shield", () -> new ShieldItem(39, false, true));
+  public static final RegistryDelegate<Item> MATERIAL_SHIELD = ITEM_REGISTRAR.register("material_shield", () -> new ShieldItem(40, true, false));
 
   // Status items
   public static final RegistryDelegate<Item> CHARM_POTION = ITEM_REGISTRAR.register("charm_potion", CharmPotionItem::new);

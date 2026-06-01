@@ -10,18 +10,18 @@ public class FrameHeader {
   }
 
   public int getRunLengthCodesCount() {
-    return (int)MathHelper.get(this.data, 0, 2);
+    return MathHelper.getShort(this.data, 0);
   }
 
   public int getWidth() {
-    return (int)MathHelper.get(this.data, 4, 2);
+    return MathHelper.getShort(this.data, 4);
   }
 
   public int getHeight() {
-    return (int)MathHelper.get(this.data, 6, 2);
+    return MathHelper.getShort(this.data, 6);
   }
 
   public int getCompressedCodesSize() {
-    return (int)MathHelper.get(this.data, 8, 2);
+    return MathHelper.getShort(this.data, 8);
   }
 }

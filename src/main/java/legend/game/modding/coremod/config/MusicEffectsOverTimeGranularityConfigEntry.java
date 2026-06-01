@@ -10,7 +10,12 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 
 public class MusicEffectsOverTimeGranularityConfigEntry extends EnumConfigEntry<EffectsOverTimeGranularity> {
   public MusicEffectsOverTimeGranularityConfigEntry() {
-    super(EffectsOverTimeGranularity.class, EffectsOverTimeGranularity.Finer, ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO);
+    super(EffectsOverTimeGranularity.class, EffectsOverTimeGranularity.Double, ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO);
+  }
+
+  @Override
+  public boolean isAdvanced() {
+    return true;
   }
 
   @Override

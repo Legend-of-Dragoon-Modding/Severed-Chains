@@ -1,34 +1,42 @@
 package legend.game.submap;
 
+import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
+import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.input.InputAction;
 import legend.game.EngineState;
-import legend.game.EngineStateEnum;
+import legend.game.EngineStateType;
+import legend.game.Menus;
+import legend.game.SItem;
+import legend.game.characters.CharacterData2c;
+import legend.game.combat.encounters.Encounter;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
+import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
+import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -37,33 +45,43 @@ import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.scripting.ScriptedObject;
+import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
-import legend.game.types.ActiveStatsa0;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BackgroundType;
 import legend.game.types.CContainer;
-import legend.game.types.CharacterData2c;
+import legend.game.types.ClutAnimations;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
-import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.ExpandableFileData;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.lodmod.LodCharacterTemplates;
+import legend.lodmod.LodConfig;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -74,92 +92,97 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.DEFAULT_FONT;
+import static legend.core.GameEngine.DISCORD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
+import static legend.game.DrgnFiles.drgnBinIndex_800bc058;
+import static legend.game.DrgnFiles.loadDir;
+import static legend.game.DrgnFiles.loadFile;
+import static legend.game.EngineStates.FUN_800218f0;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
+import static legend.game.EngineStates.lastSavableEngineState;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Graphics.GetTPage;
+import static legend.game.Graphics.GsGetLs;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsInitCoordinate2;
+import static legend.game.Graphics.GsSetFlatLight;
+import static legend.game.Graphics.PopMatrix;
+import static legend.game.Graphics.PushMatrix;
+import static legend.game.Graphics.RotTransPers4;
+import static legend.game.Graphics.centreScreenX_1f8003dc;
+import static legend.game.Graphics.centreScreenY_1f8003de;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.perspectiveTransform;
+import static legend.game.Graphics.resizeDisplay;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Menus.initMenu;
+import static legend.game.Menus.whichMenu_800bdc38;
+import static legend.game.Models.FUN_8002246c;
+import static legend.game.Models.animateModel;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
+import static legend.game.Models.initObjTable2;
+import static legend.game.Models.loadModelStandardAnimation;
+import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
-import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
-import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
-import static legend.game.Scus94491BpeSegment_8002.initInventoryMenu;
-import static legend.game.Scus94491BpeSegment_8002.initMenu;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.resetSubmapToNewGame;
-import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
-import static legend.game.Scus94491BpeSegment_8002.srand;
-import static legend.game.Scus94491BpeSegment_8002.textboxFits;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
-import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.SItem.shopId_8007a3b4;
+import static legend.game.SItem.submapNames_8011c108;
+import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
+import static legend.game.Scus94491BpeSegment.srand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
-import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
-import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.environment.StageData.stageData_80109a98;
+import static legend.game.Text.calculateAppropriateTextboxBounds;
+import static legend.game.Text.clearTextbox;
+import static legend.game.Text.clearTextboxText;
+import static legend.game.Text.renderBorder_80052b68;
+import static legend.game.Text.renderText;
+import static legend.game.Text.scriptDeallocateAllTextboxes;
+import static legend.game.Text.textboxFits;
+import static legend.game.Text.textboxMode_80052b88;
+import static legend.game.Text.textboxTextType_80052ba8;
+import static legend.game.Text.textboxText_800bdf38;
+import static legend.game.Text.textboxes_800be358;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.sound.Audio.addSoundFile;
+import static legend.game.sound.Audio.getLoadedAudioFiles;
+import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.sssqResetStuff;
+import static legend.game.sound.Audio.stopMusicSequence;
+import static legend.game.sound.Audio.unloadSoundFile;
+import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_RIGHT;
@@ -169,22 +192,22 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_INTERACT;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
+import static legend.lodmod.LodMod.MP_STAT;
+import static legend.lodmod.LodMod.SP_STAT;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class SMap extends EngineState {
+public class SMap extends EngineState<SMap> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
 
   private int fmvIndex_800bf0dc;
 
-  private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
+  private EngineStateType<?> afterFmvLoadingStage_800bf0ec;
 
   private final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_2_800c66f8 = new GsF_LIGHT();
-
-  public int sobjCount_800c6730;
 
   public ScriptState<ScriptedObject> submapControllerState_800c6740;
 
@@ -199,10 +222,15 @@ public class SMap extends EngineState {
   private SubmapMediaState mediaLoadingStage_800c68e4;
   private final SubmapCaches80 caches_800c68e8 = new SubmapCaches80();
 
-  /** Index 31 tracks the current tick since indicator last enabled. Have not yet seen other elements set to anything but -1 */
-  public final int[] indicatorTickCountArray_800c6970 = new int[32];
+  /**
+   * <ul>
+   *   <li>0-2 - backup of current party char IDs when party is cleared out after killing VoCG virage</li>
+   *   <li>31 - tracks the current tick since indicator last enabled</li>
+   * </ul>
+   */
+  public final int[] randomStuff_800c6970 = new int[32];
 
-  private TriangleIndicator140 triangleIndicator_800c69fc;
+  private final TriangleIndicator140 triangleIndicators_800c69fc = new TriangleIndicator140();
 
   private final Vector3f cameraPos_800c6aa0 = new Vector3f();
 
@@ -381,22 +409,109 @@ public class SMap extends EngineState {
   private int inputRepeat;
   private int inputHeld;
 
+  public final SoundFile submapSounds = addSoundFile("Submap SFX");
+
+  private EngineStateType<?> engineStateToTransitionTo;
+
+  public SMap() {
+    super(LodEngineStateTypes.SUBMAP.get());
+  }
+
+  @Override
+  public void init() {
+    lastSavableEngineState = this.type;
+    sssqResetStuff();
+  }
+
+  @Override
+  public void destroy() {
+    sssqResetStuff();
+  }
+
+  private static final int SMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
+
+  @Override
+  public FileData writeSaveData(final GameState52c gameState) {
+    gameState.submapScene_a4 = collidedPrimitiveIndex_80052c38;
+    gameState.submapCut_a8 = submapCut_80052c30;
+
+    final FileData data = new ExpandableFileData(9);
+    final IntRef offset = new IntRef();
+    data.writeShort(offset, SMAP_SAVE_VERSION_1);
+    data.writeInt(offset, gameState.submapScene_a4);
+    data.writeInt(offset, gameState.submapCut_a8);
+    data.writeBool(offset, gameState.indicatorsDisabled_4e3);
+    return data;
+  }
+
+  @Override
+  public void readSaveData(final GameState52c gameState, final FileData data) {
+    // no data - legacy saves
+    if(data.size() == 0) {
+      submapScene_80052c34 = gameState.submapScene_a4;
+      submapCut_80052c30 = gameState.submapCut_a8;
+      collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
+      return;
+    }
+
+    if(data.size() < 2) {
+      LOGGER.warn("Failed to load SMAP data for save");
+      return;
+    }
+
+    final IntRef offset = new IntRef();
+    final int version = data.readUShort(offset);
+
+    if(version != SMAP_SAVE_VERSION_1) {
+      LOGGER.warn("Unknown SMAP save data version");
+      return;
+    }
+
+    gameState.submapScene_a4 = data.readInt(offset);
+    gameState.submapCut_a8 = data.readInt(offset);
+    gameState.indicatorsDisabled_4e3 = data.readBool(offset);
+
+    submapScene_80052c34 = gameState.submapScene_a4;
+    submapCut_80052c30 = gameState.submapCut_a8;
+    collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
+  }
+
   @Override
   public void restoreMusicAfterMenu() {
     this.submap.startMusic();
   }
 
   @Override
-  public void loadGameFromMenu(final GameState52c gameState) {
-    this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-    this.transitioning_800f7e4c = false;
+  public void loadSaveFromMenu(final SavedGame save) {
+    this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
 
-    if(gameState.isOnWorldMap_4e4) {
-      this.mapTransition(0, submapScene_80052c34);
-    } else {
+    this.encounterAccumulator_800c6ae8 = 0;
+
+    // Copied over from LAB_8001e160
+    stopMusicSequence();
+    unloadSoundFile(8);
+
+    if(this.is(this.engineStateToTransitionTo)) {
+      this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+      this.transitioning_800f7e4c = false;
+      this.loadingSave = true;
       this.mapTransition(submapCut_80052c30, submapScene_80052c34);
-      this.restoreMusicAfterMenu();
+    } else {
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
     }
+
+    this.restoreMusicAfterMenu();
+  }
+
+  @Override
+  public boolean canSave() {
+    final SubmapSavable saveMode = this.submap.canSave();
+
+    if(saveMode == SubmapSavable.ALWAYS) {
+      return true;
+    }
+
+    return saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get());
   }
 
   @Override
@@ -610,7 +725,7 @@ public class SMap extends EngineState {
     functions[297] = this::scriptAddTriangleIndicators;
     functions[298] = this::scriptShowAlertIndicator;
     functions[299] = this::scriptHideAlertIndicator;
-    functions[300] = this::FUN_800dfd48;
+    functions[300] = this::scriptRemoveTriangleIndicatorType;
     functions[301] = this::FUN_800e05c8;
     functions[302] = this::FUN_800e05f0;
     functions[303] = this::scriptEnableSobjFlatLight;
@@ -642,9 +757,9 @@ public class SMap extends EngineState {
     functions[680] = this::scriptSobjMoveAlongArc;
     functions[681] = this::scriptCheckSobjCollision;
     functions[682] = this::scriptGetSobjIgnoreCollision;
-    functions[683] = this::FUN_800e01bc;
+    functions[683] = this::scriptResetClutAnimations;
     functions[684] = this::scriptEnableTextureAnimation;
-    functions[685] = this::FUN_800e0204;
+    functions[685] = this::scriptDisableClutAnimation;
     functions[686] = this::scriptDisableTextureAnimation;
     functions[687] = this::scriptGetSobjMovementType;
     functions[688] = this::scriptAttachCameraToSobj;
@@ -674,10 +789,10 @@ public class SMap extends EngineState {
     functions[775] = this::scriptReinitializeSmokePlumeForIntermittentBursts;
     functions[776] = this::scriptInitSnowParticleData;
     functions[777] = this::FUN_800f1eb8;
-    functions[778] = this::scriptAllocateTriangleIndicatorArray;
-    functions[779] = this::FUN_800f1b64;
-    functions[780] = this::FUN_800f26c8;
-    functions[781] = this::FUN_800f1d0c;
+    functions[778] = this::scriptAddTriangleIndicators2d;
+    functions[779] = this::scriptAddTriangleIndicatorsWithOffset;
+    functions[780] = this::scriptAddTriangleIndicator2d;
+    functions[781] = this::scriptAddTriangleIndicatorWithOffset;
     functions[782] = this::scriptAllocateSmokeCloudData;
     functions[783] = this::scriptDeallocateSmokeCloudDataAndEffect;
     functions[784] = this::scriptSetSmokeCloudEffectStateToDontTick;
@@ -687,6 +802,10 @@ public class SMap extends EngineState {
     functions[788] = this::FUN_800f2554;
     functions[789] = this::scriptDeallocateLawPodTrail;
     functions[790] = this::scriptAllocateUnusedSmokeEffectData;
+    functions[791] = this::scriptOpenShop;
+
+    functions[940] = this::scriptSetSobjUsePs1Depth;
+
     return functions;
   }
 
@@ -776,13 +895,7 @@ public class SMap extends EngineState {
     textbox.currentY_2c = caches.bottomMiddle_70.y - offsetY;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
-
-    final int width;
-    if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
-      width = 320;
-    } else {
-      width = 360;
-    }
+    final int width = 360;
 
     //LAB_80028a20
     if(textboxText.chars_1c >= 17) {
@@ -948,21 +1061,17 @@ public class SMap extends EngineState {
 
   @Method(0x800d9b08L)
   private void restoreCharDataVitals(final int charId) {
-    loadCharacterStats();
-
     if(charId >= 0) {
-      final ActiveStatsa0 stats = stats_800be5f8[charId];
-      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
-      charData.hp_08 = stats.maxHp_66;
-      charData.mp_0a = stats.maxMp_6e;
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+      charData.stats.getStat(HP_STAT.get()).restore();
+      charData.stats.getStat(MP_STAT.get()).restore();
     } else {
       //LAB_800d9b70
       //LAB_800d9b84
-      for(int charSlot = 0; charSlot < 9; charSlot++) {
-        final ActiveStatsa0 stats = stats_800be5f8[charSlot];
-        final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
-        charData.hp_08 = stats.maxHp_66;
-        charData.mp_0a = stats.maxMp_6e;
+      for(int charSlot = 0; charSlot < gameState_800babc8.charData_32c.size(); charSlot++) {
+        final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
+        charData.stats.getStat(HP_STAT.get()).restore();
+        charData.stats.getStat(MP_STAT.get()).restore();
       }
     }
   }
@@ -979,7 +1088,7 @@ public class SMap extends EngineState {
   private FlowControl scriptClearStatusEffects(final RunningScript<?> script) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
-      gameState_800babc8.charData_32c[i].status_10 = 0;
+      gameState_800babc8.charData_32c.get(i).status_10 = 0;
     }
 
     return FlowControl.CONTINUE;
@@ -990,27 +1099,33 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destCharId", description = "The destination character")
   @Method(0x800d9c1cL)
   private FlowControl scriptCloneCharacterData(final RunningScript<?> script) {
-    //LAB_800d9c78
-    gameState_800babc8.charData_32c[script.params_20[1].get()].set(gameState_800babc8.charData_32c[script.params_20[0].get()]);
+    final int id0 = script.params_20[0].get();
+    final int id1 = script.params_20[1].get();
+    final CharacterData2c char0 = gameState_800babc8.charData_32c.get(id0);
+    final CharacterData2c char1 = gameState_800babc8.charData_32c.get(id1);
+
+    char1.set(char0);
+
     this.restoreCharDataVitals(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Set a character's addition")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "additionId", description = "The addition ID")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "additionId", description = "The addition ID")
   @Method(0x800d9ce4L)
   private FlowControl scriptSetCharAddition(final RunningScript<?> script) {
-    gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19 = script.params_20[1].get();
+    final int charId = script.params_20[0].get();
+    gameState_800babc8.charData_32c.get(charId).selectedAddition_19 = script.params_20[1].getRegistryId();
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Get a character's addition")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "additionId", description = "The addition ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.REG, name = "additionId", description = "The addition ID")
   @Method(0x800d9d20L)
   private FlowControl scriptGetCharAddition(final RunningScript<?> script) {
-    script.params_20[1].set(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19);
+    script.params_20[1].set(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19);
     return FlowControl.CONTINUE;
   }
 
@@ -1020,12 +1135,14 @@ public class SMap extends EngineState {
   private FlowControl scriptMaxOutDartDragoon(final RunningScript<?> script) {
     final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
     if(!divineEvent.bypassOverride) {
-      if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
-        gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
+      for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+        if(character.template == LodCharacterTemplates.DART.get()) {
+          while(character.dlevel_13 < Math.min(5, CONFIG.getConfig(LodConfig.MAX_DRAGOON_LEVEL.get()))) {
+            character.dlevelXp_0e = character.getDxpToNextLevel();
+            character.template.applyDragoonLevelUp(character, null);
+          }
+        }
       }
-
-      //LAB_800d9d90
-      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
     }
 
     this.restoreVitalsAndSp(0);
@@ -1034,9 +1151,11 @@ public class SMap extends EngineState {
 
   @Method(0x800d9dc0L)
   private void restoreVitalsAndSp(final int charIndex) {
-    gameState_800babc8.charData_32c[charIndex].sp_0c = 500;
+    gameState_800babc8.charData_32c.get(charIndex).stats.getStat(SP_STAT.get()).restore();
     this.restoreCharDataVitals(-1);
   }
+
+  private final MV smapShadowLw = new MV();
 
   @Method(0x800da524L)
   private void renderSmapShadow(final Model124 model) {
@@ -1059,11 +1178,10 @@ public class SMap extends EngineState {
     partCoord.coord.rotationZYX(partCoord.transforms.rotate);
     partCoord.coord.transfer.set(partCoord.transforms.trans);
 
-    final MV lw = new MV();
-    GsGetLw(partCoord, lw);
+    GsGetLw(partCoord, this.smapShadowLw);
 
     RENDERER
-      .queueModel(modelPart.obj, lw, QueuedModelTmd.class)
+      .queueModel(modelPart.tmd_08.getObj(), this.smapShadowLw, QueuedModelTmd.class)
       .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
       .depthOffset(shadowModel_800bda10.zOffset_a0 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
@@ -1073,6 +1191,8 @@ public class SMap extends EngineState {
     partCoord.flg--;
   }
 
+  private final MV smapModelLw = new MV();
+
   // TODO Clean this up
   @Method(0x800daa3cL)
   public void renderSmapModel(final Model124 model, @Nullable final Texture texture) {
@@ -1080,34 +1200,26 @@ public class SMap extends EngineState {
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     //LAB_800daaa8
-    final MV lw = new MV();
-    final MV ls = new MV();
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 dobj2 = model.modelParts_00[i];
 
-        GsGetLws(dobj2.coord2_04, lw, ls);
-//        GsSetLightMatrix(lw);
-//        GTE.setTransforms(ls);
-//        Renderer.renderDobj2(dobj2, false, 0);
+        GsGetLw(dobj2.coord2_04, this.smapModelLw);
 
-        if(dobj2.obj != null) { //TODO remove me
-          GsGetLw(dobj2.coord2_04, lw);
-
-          final QueuedModelTmd queue = RENDERER.queueModel(dobj2.obj, lw, QueuedModelTmd.class)
-            .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-            .depthOffset(model.zOffset_a0 * 4)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            // Fix for chest shadow rendering on top of lid (GH#1408)
-            .translucentDepthComparator(GL_LESS)
+        final QueuedModelTmd queue = RENDERER.queueModel(dobj2.tmd_08.getObj(), this.smapModelLw, QueuedModelTmd.class)
+          .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+          .depthOffset(model.zOffset_a0 * 4)
+          .usePs1Depth(model.usePs1Depth)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          // Fix for chest shadow rendering on top of lid (GH#1408)
+          .translucentDepthComparator(GL_LESS)
           ;
 
-          if(texture != null) {
-            queue.texture(texture);
-          }
+        if(texture != null) {
+          queue.texture(texture);
         }
       }
     }
@@ -1123,28 +1235,28 @@ public class SMap extends EngineState {
   @Override
   @Method(0x800de004L)
   public void modelLoaded(final Model124 model, final CContainer cContainer) {
-    if(cContainer.ext_04 == null) {
+    if(cContainer.clutAnimations_04 == null) {
       //LAB_800de120
-      model.smallerStructPtr_a4 = null;
+      model.clutAnimations_a4 = null;
       return;
     }
 
-    final SmallerStruct smallerStruct = new SmallerStruct();
-    model.smallerStructPtr_a4 = smallerStruct;
+    final ClutAnimations clutAnimations = new ClutAnimations();
+    model.clutAnimations_a4 = clutAnimations;
 
-    smallerStruct.tmdExt_00 = cContainer.ext_04;
+    clutAnimations.source_00 = cContainer.clutAnimations_04;
 
     //LAB_800de05c
     for(int i = 0; i < 4; i++) {
-      smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
+      clutAnimations.clutAnimation_20[i] = clutAnimations.source_00.clutAnimation_00[i];
 
-      if(smallerStruct.tmdSubExtensionArr_20[i] == null) {
-        smallerStruct.uba_04[i] = false;
+      if(clutAnimations.clutAnimation_20[i] == null) {
+        clutAnimations.used_04[i] = false;
       } else {
-        smallerStruct.sa_08[i] = 0;
-        smallerStruct.sa_10[i] = 0;
-        smallerStruct.sa_18[i] = smallerStruct.tmdSubExtensionArr_20[i].s_02;
-        smallerStruct.uba_04[i] = smallerStruct.sa_18[i] != -1;
+        clutAnimations.dataIndex_08[i] = 0;
+        clutAnimations.frameIndex_10[i] = 0;
+        clutAnimations.clutIndex_18[i] = clutAnimations.clutAnimation_20[i].clutIndex_02;
+        clutAnimations.used_04[i] = clutAnimations.clutIndex_18[i] != -1;
       }
 
       //LAB_800de108
@@ -1154,19 +1266,19 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800de138L)
-  private void FUN_800de138(final Model124 model, final int index) {
-    final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
+  private void initClutAnimation(final Model124 model, final int animIndex) {
+    final ClutAnimations clutAnimations = model.clutAnimations_a4;
 
-    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
-      smallerStruct.uba_04[index] = false;
+    if(clutAnimations.clutAnimation_20[animIndex] == null) {
+      clutAnimations.used_04[animIndex] = false;
       return;
     }
 
     //LAB_800de164
-    smallerStruct.sa_08[index] = 0;
-    smallerStruct.sa_10[index] = 0;
-    smallerStruct.sa_18[index] = smallerStruct.tmdSubExtensionArr_20[index].s_02;
-    smallerStruct.uba_04[index] = smallerStruct.sa_18[index] != -1;
+    clutAnimations.dataIndex_08[animIndex] = 0;
+    clutAnimations.frameIndex_10[animIndex] = 0;
+    clutAnimations.clutIndex_18[animIndex] = clutAnimations.clutAnimation_20[animIndex].clutIndex_02;
+    clutAnimations.used_04[animIndex] = clutAnimations.clutIndex_18[animIndex] != -1;
   }
 
   @ScriptDescription("Moves the player")
@@ -1191,7 +1303,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement, true);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(player.sobjIndex_12e != 0, playerModel.coord2_14, worldspaceDeltaMovement, true);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
           player.finishInterpolatedMovement();
@@ -1219,71 +1331,72 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
+  public void addIndicator(final int type, final float x, final float y) {
+    for(int index = 0; index < 20; index++) {
+      if(this.triangleIndicators_800c69fc.indicatorType_18[index] == -1) {
+        this.setIndicator(index, type, x, y);
+        break;
+      }
+    }
+  }
+
+  public void addIndicator3d(final int type, final GsCOORDINATE2 coord2, final float screenspaceOffsetX, final float screenspaceOffsetY) {
+    for(int index = 0; index < 20; index++) {
+      if(this.triangleIndicators_800c69fc.indicatorType_18[index] == -1) {
+        this.setIndicator3d(index, type, coord2, screenspaceOffsetX, screenspaceOffsetY);
+        break;
+      }
+    }
+  }
+
+  public void setIndicator(final int index, final int type, final float x, final float y) {
+    final TriangleIndicator140 indicator = this.triangleIndicators_800c69fc;
+    indicator.indicatorType_18[index] = (short)type;
+    indicator.x_40[index] = x;
+    indicator.y_68[index] = y;
+    indicator.screenOffsetX_90[index] = this.screenOffset_800cb568.x;
+    indicator.screenOffsetY_e0[index] = this.screenOffset_800cb568.y;
+  }
+
+  public void setIndicator3d(final int index, final int type, final GsCOORDINATE2 coord2, final float screenspaceOffsetX, final float screenspaceOffsetY) {
+    final MV lw = new MV();
+    final Vector2f screenspace = new Vector2f();
+    GsGetLw(coord2, lw);
+    Transformations.toScreenspace(new Vector3f(), lw, screenspace);
+    this.setIndicator(index, type, screenspace.x + screenspaceOffsetX, screenspace.y + screenspaceOffsetY);
+  }
+
   @ScriptDescription("Adds a triangle indicator at a collision primitive")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
   @Method(0x800de334L)
   private FlowControl scriptAddTriangleIndicator(final RunningScript<?> script) {
-    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), this.playerModel_800c6748.coord2_14.coord.transfer);
+    final GsCOORDINATE2 coord2 = this.playerModel_800c6748.coord2_14;
 
-    final MV ls = new MV();
-    GsGetLs(this.playerModel_800c6748.coord2_14, ls);
-    GTE.setTransforms(ls);
-    GTE.perspectiveTransform(0, 0, 0);
-    final float x = GTE.getScreenX(2);
-    final float y = GTE.getScreenY(2);
+    final int collisionIndex = script.params_20[0].get();
+    final int indicatorType = script.params_20[1].get();
 
-    //LAB_800de438
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-    for(int i = 0; i < 20; i++) {
-      if(indicator.indicatorType_18[i] == -1) {
-        indicator.x_40[i] = x;
-        indicator.y_68[i] = y;
-        indicator.indicatorType_18[i] = (short)script.params_20[1].get();
-        indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-        indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
-        break;
-      }
-    }
-
-    //LAB_800de49c
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+    this.addIndicator3d(indicatorType, coord2, 0.0f, 0.0f);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Adds one or more triangle indicators")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "dataStream", description = "Param-encoded indicator structures")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "stream", description = "A stream of [collisionPrimitiveIndex, indicatorType]s terminated by -1")
   @Method(0x800de4b4L)
   private FlowControl scriptAddTriangleIndicators(final RunningScript<?> script) {
-    final MV ls = new MV();
+    final GsCOORDINATE2 coord2 = this.playerModel_800c6748.coord2_14;
 
-    final Param ints = script.params_20[0];
-    int s0 = 0;
+    final Param stream = script.params_20[0];
+    int dataIndex = 0;
 
     //LAB_800de4f8
-    while(ints.array(s0).get() != -1) {
-      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(ints.array(s0++).get(), this.playerModel_800c6748.coord2_14.coord.transfer);
+    while(stream.array(dataIndex).get() != -1) {
+      final int collisionIndex = stream.array(dataIndex++).get();
+      final int indicatorType = stream.array(dataIndex++).get();
 
-      GsGetLs(this.playerModel_800c6748.coord2_14, ls);
-      GTE.setTransforms(ls);
-      GTE.perspectiveTransform(0, 0, 0);
-      final float x = GTE.getScreenX(2);
-      final float y = GTE.getScreenY(2);
-
-      //LAB_800de5d4
-      for(int i = 0; i < 20; i++) {
-        final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
-        if(indicator.indicatorType_18[i] == -1) {
-          indicator.x_40[i] = x;
-          indicator.y_68[i] = y;
-          indicator.indicatorType_18[i] = (short)ints.array(s0).get();
-          indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-          indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
-          break;
-        }
-      }
-
-      s0++;
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+      this.addIndicator3d(indicatorType, coord2, 0.0f, 0.0f);
     }
 
     //LAB_800de644
@@ -1292,17 +1405,17 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Moves a sobj to a position over a number of frames")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicks", description = "The number of frames over which to move")
   @Method(0x800de668L)
   private FlowControl scriptSobjMoveToPosition(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
-    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementDestination_138.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
     sobj.movementType_170 = 1;
@@ -1328,19 +1441,19 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Something to do with forced movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
   @Method(0x800de944L)
   private FlowControl scriptSobjMoveAlongArc(final RunningScript<?> script) {
     final int movementTicks = script.params_20[4].get();
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
-    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementDestination_138.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     sobj.movementTicks_144 = movementTicks * (3 - vsyncMode_8007a3b8);
 
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
@@ -1358,19 +1471,19 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Something to do with forced movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800deba0L)
   private FlowControl scriptSobjMoveAlongArc2(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.finishInterpolatedMovement();
-    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementDestination_138.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
-    sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
+    sobj.movementStepAccelerationY_18c = (script.params_20[5].getFloat() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
@@ -1393,6 +1506,10 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collidee", description = "The SubmapObject210 script index collided with, or -1 if not collided")
   @Method(0x800dee28L)
   private FlowControl scriptCheckPlayerCollision(final RunningScript<SubmapObject210> script) {
+    if(this.transitioning_800f7e4c) {
+      return FlowControl.CONTINUE;
+    }
+
     final Vector3f deltaMovement = new Vector3f();
     final Vector3f movement = new Vector3f();
 
@@ -1412,7 +1529,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
-      this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement, true);
+      this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14, movement, true);
 
       //LAB_800def08
       angle = MathHelper.positiveAtan2(movement.z, movement.x);
@@ -1432,7 +1549,7 @@ public class SMap extends EngineState {
     //LAB_800df00c
     //LAB_800df02c
     // Handle collision with other sobjs
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 struct = this.sobjs_800c6880[i].innerStruct_00;
 
       if(struct != sobj && (struct.flags_190 & 0x10_0000) != 0) {
@@ -1517,16 +1634,16 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Set a submap object's position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The new X coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The new X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The new Y coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The new Z coordinate")
   @Method(0x800df258L)
   private FlowControl scriptSetModelPosition(final RunningScript<SubmapObject210> script) {
-    final int x = script.params_20[1].get();
-    final int y = script.params_20[2].get();
-    final int z = script.params_20[3].get();
+    final float x = script.params_20[1].getFloat();
+    final float y = script.params_20[2].getFloat();
+    final float z = script.params_20[3].getFloat();
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
@@ -1548,12 +1665,12 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Get a submap object's position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z coordinate")
   @Method(0x800df2b8L)
   private FlowControl scriptReadModelPosition(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     final Vector3f pos;
     if(sobj.interpMovementTicksTotal != 0) {
@@ -1562,9 +1679,9 @@ public class SMap extends EngineState {
       pos = sobj.model_00.coord2_14.coord.transfer;
     }
 
-    script.params_20[1].set(Math.round(pos.x));
-    script.params_20[2].set(Math.round(pos.y));
-    script.params_20[3].set(Math.round(pos.z));
+    script.params_20[1].set(pos.x);
+    script.params_20[2].set(pos.y);
+    script.params_20[3].set(pos.z);
     return FlowControl.CONTINUE;
   }
 
@@ -1579,7 +1696,7 @@ public class SMap extends EngineState {
     final float y = MathHelper.psxDegToRad(script.params_20[2].get());
     final float z = MathHelper.psxDegToRad(script.params_20[3].get());
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     if(!flEq(model.coord2_14.transforms.rotate.x, x)) {
@@ -1638,7 +1755,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800df374L)
   private FlowControl scriptReadModelRotate(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
     script.params_20[1].set(MathHelper.radToPsxDeg(model.coord2_14.transforms.rotate.x));
     script.params_20[2].set(MathHelper.radToPsxDeg(model.coord2_14.transforms.rotate.y));
@@ -1776,8 +1893,8 @@ public class SMap extends EngineState {
   @ScriptDescription("Checks to see if the camera is attached to this submap object")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "attached", description = "True if attached, false otherwise")
   @Method(0x800df680L)
-  private FlowControl scriptSelfIsCameraAttached(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
+  private FlowControl scriptSelfIsCameraAttached(final RunningScript<SubmapObject210> script) {
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
     script.params_20[0].set(sobj.cameraAttached_178 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
@@ -1792,7 +1909,7 @@ public class SMap extends EngineState {
     this.setCameraPos(3 - vsyncMode_8007a3b8, new Vector3f().set(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())); // Retail bugfix - these were all 0
 
     //LAB_800df744
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 sobj = this.sobjs_800c6880[i].innerStruct_00;
       sobj.cameraAttached_178 = false;
     }
@@ -1814,7 +1931,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames before the rotation completes")
   @Method(0x800df788L)
   private FlowControl scriptRotateSobj(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     final int frames = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
     sobj.rotationFrames_188 = frames;
@@ -1849,7 +1966,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames before the rotation completes")
   @Method(0x800df890L)
   private FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.finishInterpolatedRotationX();
     sobj.finishInterpolatedRotationY();
@@ -1897,7 +2014,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y1", description = "Screen Y (feet?)")
   @Method(0x800df9a8L)
   private FlowControl FUN_800df9a8(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     final MV ls = new MV();
     GsGetLs(sobj.model_00.coord2_14, ls);
@@ -1962,7 +2079,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z scale (12-bit fixed-point)")
   @Method(0x800dfc00L)
   private FlowControl scriptScaleXyz(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.coord2_14.transforms.scale.set(
@@ -1979,7 +2096,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The new XYZ scale (12-bit fixed-point)")
   @Method(0x800dfc60L)
   private FlowControl scriptScaleUniform(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.coord2_14.transforms.scale.x = script.params_20[1].get() / (float)0x1000;
@@ -1993,8 +2110,18 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offset", description = "The new Z offset")
   @Method(0x800dfca0L)
   private FlowControl scriptSetModelZOffset(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.zOffset_a0 = script.params_20[1].get();
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Set whether or not a submap object uses PS1 depth (legacy average Z) or normal depth (modern per-fragment)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "usePs1Depth", description = "True to use PS1 depth, false to use modern depth")
+  @Method(0x800dfca0L)
+  private FlowControl scriptSetSobjUsePs1Depth(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+    sobj.model_00.usePs1Depth = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2021,10 +2148,18 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Unknown, related to triangle indicators")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
   @Method(0x800dfd48L)
-  private FlowControl FUN_800dfd48(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+  private FlowControl scriptRemoveTriangleIndicatorType(final RunningScript<?> script) {
+    final int indicatorType = script.params_20[0].get();
+
+    for(int index = 0; index < 20; index++) {
+      if(this.triangleIndicators_800c69fc.indicatorType_18[index] == indicatorType) {
+        this.triangleIndicators_800c69fc.indicatorType_18[index] = -1;
+      }
+    }
+
+    return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Show the triangle indicator for this submap object")
@@ -2032,7 +2167,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset for the indicator")
   @Method(0x800dfd8cL)
   private FlowControl scriptShowAlertIndicator(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.showAlertIndicator_194 = true;
     sobj.alertIndicatorOffsetY_198 = script.params_20[1].get();
     return FlowControl.CONTINUE;
@@ -2042,7 +2177,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800dfdd8L)
   private FlowControl scriptHideAlertIndicator(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.showAlertIndicator_194 = false;
     return FlowControl.CONTINUE;
   }
@@ -2052,7 +2187,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "objectIndex", description = "The map object index (0-n)")
   @Method(0x800dfe0cL)
   private FlowControl scriptLoadSobjModelAndAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
     model.deleteModelParts(); // Clear old model objs first
 
@@ -2079,7 +2214,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animIndex", description = "The anim index")
   @Method(0x800dfec8L)
   private FlowControl scriptLoadSobjAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.animIndex_132 = script.params_20[1].get();
@@ -2099,7 +2234,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animIndex", description = "The anim index")
   @Method(0x800dff68L)
   private FlowControl scriptGetSobjAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.animIndex_132);
     return FlowControl.CONTINUE;
   }
@@ -2109,7 +2244,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "disabled", description = "Whether or not the animation is disabled")
   @Method(0x800dffa4L)
   private FlowControl scriptToggleAnimationDisabled(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.disableAnimation_12a = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
@@ -2119,23 +2254,23 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "finished", description = "Whether or not the animation is finished")
   @Method(0x800dffdcL)
   private FlowControl scriptIsAnimationFinished(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.animationFinishedFrames_12c != 0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Rotates a submap object to face a point in 3D space")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position to face")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position to face (unused)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position to face")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The X position to face")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y position to face (unused)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z position to face")
   @Method(0x800e0018L)
   private FlowControl scriptFacePoint(final RunningScript<SubmapObject210> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
-    final float deltaX = script.params_20[1].get() - model.coord2_14.coord.transfer.x;
-    final float deltaZ = script.params_20[3].get() - model.coord2_14.coord.transfer.z;
+    final float deltaX = script.params_20[1].getFloat() - model.coord2_14.coord.transfer.x;
+    final float deltaZ = script.params_20[3].getFloat() - model.coord2_14.coord.transfer.z;
 
     if(deltaX != 0.0f || deltaZ != 0.0f) {
       final float destAngle = MathHelper.positiveAtan2(deltaZ, deltaX);
@@ -2164,9 +2299,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hidden", description = "True to hide, false otherwise")
   @Method(0x800e0094L)
-  private FlowControl scriptSetSobjHidden(final RunningScript<?> a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.hidden_128 = a0.params_20[1].get() != 0;
+  private FlowControl scriptSetSobjHidden(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+    sobj.hidden_128 = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2175,7 +2310,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index that the submap object is intersecting")
   @Method(0x800e00ccL)
   private FlowControl scriptCheckSobjCollision(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
     final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false, false);
     script.params_20[1].set(collisionPrimitiveIndex);
@@ -2188,7 +2323,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "Return value")
   @Method(0x800e0148L)
   private FlowControl scriptGetSobjIgnoreCollision(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.ignoreCollision_172);
     return FlowControl.CONTINUE;
   }
@@ -2198,28 +2333,28 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
   @Method(0x800e0184L)
   private FlowControl scriptSetSobjIgnoreCollision(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.ignoreCollision_172 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to texture animation")
+  @ScriptDescription("Resets a submap object's CLUT animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "clutAnimationIndex", description = "The CLUT animation index")
   @Method(0x800e01bcL)
-  private FlowControl FUN_800e01bc(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    this.FUN_800de138(sobj.model_00, script.params_20[1].get());
+  private FlowControl scriptResetClutAnimations(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+    this.initClutAnimation(sobj.model_00, script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to texture animation")
+  @ScriptDescription("Disables a submap object's CLUT animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "clutAnimationIndex", description = "The CLUT animation index")
   @Method(0x800e0204L)
-  private FlowControl FUN_800e0204(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.smallerStructPtr_a4.uba_04[script.params_20[1].get()] = false;
+  private FlowControl scriptDisableClutAnimation(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+    sobj.model_00.clutAnimations_a4.used_04[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2228,7 +2363,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
   @Method(0x800e0244L)
   private FlowControl scriptEnableTextureAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.animateTextures_ec[script.params_20[1].get()] = true;
     return FlowControl.CONTINUE;
   }
@@ -2238,7 +2373,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
   @Method(0x800e0284L)
   private FlowControl scriptDisableTextureAnimation(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.animateTextures_ec[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
@@ -2248,7 +2383,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x800e02c0L)
   private FlowControl scriptGetSobjMovementType(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.movementType_170);
     return FlowControl.CONTINUE;
   }
@@ -2258,13 +2393,13 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "attach", description = "True to attach, false to detach")
   @Method(0x800e02fcL)
   private FlowControl scriptAttachCameraToSobj(final RunningScript<?> script) {
-    final SubmapObject210 struct1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 struct1 = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     struct1.cameraAttached_178 = script.params_20[1].get() != 0;
 
     if(script.params_20[1].get() != 0) {
       //LAB_800e035c
-      for(int i = 0; i < this.sobjCount_800c6730; i++) {
+      for(int i = 0; i < this.submap.objects.size(); i++) {
         final SubmapObject210 struct2 = this.sobjs_800c6880[i].innerStruct_00;
 
         if(struct2.sobjIndex_130 != struct1.sobjIndex_130) {
@@ -2284,7 +2419,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "numberOfParts", description = "The number of model parts")
   @Method(0x800e03a8L)
   private FlowControl scriptGetSobjNobj(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.model_00.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
@@ -2294,7 +2429,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
   @Method(0x800e03e4L)
   private FlowControl scriptHideModelPart(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     final int shift = script.params_20[1].get();
@@ -2311,7 +2446,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
   @Method(0x800e0448L)
   private FlowControl scriptShowModelPart(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     final int shift = script.params_20[1].get();
@@ -2327,7 +2462,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e04b4L)
   private FlowControl scriptFaceCamera(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(this.cameraPos_800c6aa0.z, this.cameraPos_800c6aa0.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
@@ -2339,7 +2474,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800e0520L)
   private FlowControl scriptSetSobjFlag(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
     sobj.flags_190 = sobj.flags_190
       & ~(0x1 << script.params_20[1].get())
@@ -2379,7 +2514,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue colour")
   @Method(0x800e0614L)
   private FlowControl scriptEnableSobjFlatLight(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.flatLightingEnabled_1c4 = true;
     sobj.flatLightRed_1c5 = script.params_20[1].get() & 0xff;
     sobj.flatLightGreen_1c6 = script.params_20[2].get() & 0xff;
@@ -2391,7 +2526,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0684L)
   private FlowControl scriptDisableSobjFlatLight(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.flatLightingEnabled_1c4 = false;
     sobj.flatLightRed_1c5 = 0x80;
     sobj.flatLightGreen_1c6 = 0x80;
@@ -2440,7 +2575,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "reach", description = "The collision reach")
   @Method(0x800e0894L)
   private FlowControl scriptSetSobjCollision2(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.collisionSizeHorizontal_1ac = script.params_20[1].get();
     sobj.collisionSizeVertical_1b0 = script.params_20[2].get();
     sobj.collisionReach_1b4 = script.params_20[3].get();
@@ -2452,7 +2587,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collided", description = "True if the submap object is collided")
   @Method(0x800e08f4L)
   private FlowControl scriptGetSobjCollidedWith2(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     script.params_20[1].set(sobj.collidedWithSobjIndex_1a8);
     return FlowControl.CONTINUE;
   }
@@ -2464,7 +2599,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
   @Method(0x800e0930L)
   private FlowControl scriptSetAmbientColour(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.ambientColourEnabled_1c8 = true;
     sobj.ambientColour_1ca.set(
       (short)script.params_20[1].get() / 4096.0f,
@@ -2478,7 +2613,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e09a0L)
   private FlowControl scriptResetAmbientColour(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.ambientColour_1ca.set(0.5f, 0.5f, 0.5f);
     sobj.ambientColourEnabled_1c8 = false;
     return FlowControl.CONTINUE;
@@ -2488,7 +2623,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e09e0L)
   private FlowControl scriptEnableShadow(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.shadowType_cc = 1;
     return FlowControl.CONTINUE;
   }
@@ -2497,7 +2632,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0a14L)
   private FlowControl scriptDisableShadow(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.model_00.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
@@ -2508,7 +2643,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z size of the shadow")
   @Method(0x800e0a48L)
   private FlowControl scriptSetShadowSize(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     model.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
@@ -2518,27 +2653,27 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Sets the shadow offset of a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X offset of the shadow")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset of the shadow")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The X offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z offset of the shadow")
   @Method(0x800e0a94L)
   private FlowControl scriptSetShadowOffset(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
-    model.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    model.shadowOffset_118.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Gets the movement vector of the player submap object")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X movement")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y movement")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The X movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z movement")
   @Method(0x800e0af4L)
   private FlowControl scriptGetPlayerMovement(final RunningScript<?> script) {
-    script.params_20[0].set(Math.round(this.caches_800c68e8.playerMovement_0c.x));
-    script.params_20[1].set(Math.round(this.caches_800c68e8.playerMovement_0c.y));
-    script.params_20[2].set(Math.round(this.caches_800c68e8.playerMovement_0c.z));
+    script.params_20[0].set(this.caches_800c68e8.playerMovement_0c.x);
+    script.params_20[1].set(this.caches_800c68e8.playerMovement_0c.y);
+    script.params_20[2].set(this.caches_800c68e8.playerMovement_0c.z);
     return FlowControl.CONTINUE;
   }
 
@@ -2547,12 +2682,12 @@ public class SMap extends EngineState {
   @Method(0x800e0b34L)
   private FlowControl scriptSwapShadowTexture(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
-      new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
+      new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b68
     if(script.params_20[0].get() == 1) {
-      new Tim(Loader.loadFile("SUBMAP/darker_shadow.tim")).uploadToGpu();
+      new Tim(Loader.loadFileSync("SUBMAP/darker_shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b8c
@@ -2566,7 +2701,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "reach", description = "The collision reach")
   @Method(0x800e0ba0L)
   private FlowControl scriptSetSobjPlayerCollisionMetrics(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.playerCollisionSizeHorizontal_1b8 = script.params_20[1].get();
     sobj.playerCollisionSizeVertical_1bc = script.params_20[2].get();
     sobj.playerCollisionReach_1c0 = script.params_20[3].get();
@@ -2640,19 +2775,19 @@ public class SMap extends EngineState {
 
     Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
-    if(cContainer.ext_04 != null) {
-      final SmallerStruct smallerStruct = new SmallerStruct();
-      model.smallerStructPtr_a4 = smallerStruct;
-      smallerStruct.tmdExt_00 = cContainer.ext_04;
+    if(cContainer.clutAnimations_04 != null) {
+      final ClutAnimations clutAnimations = new ClutAnimations();
+      model.clutAnimations_a4 = clutAnimations;
+      clutAnimations.source_00 = cContainer.clutAnimations_04;
 
       //LAB_800e0e28
       for(int i = 0; i < 4; i++) {
-        smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
-        this.FUN_800de138(model, i);
+        clutAnimations.clutAnimation_20[i] = clutAnimations.source_00.clutAnimation_00[i];
+        this.initClutAnimation(model, i);
       }
     } else {
       //LAB_800e0e70
-      model.smallerStructPtr_a4 = null;
+      model.clutAnimations_a4 = null;
     }
 
     //LAB_800e0e74
@@ -2878,21 +3013,21 @@ public class SMap extends EngineState {
         final GsF_LIGHT light = new GsF_LIGHT();
 
         light.direction_00.set(0.0f, 1.0f, 0.0f);
-        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
-        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
-        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0xff;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0xff;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0xff;
         GsSetFlatLight(0, light);
 
         light.direction_00.set(1.0f, 0.0f, 0.0f);
-        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
-        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
-        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0xff;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0xff;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0xff;
         GsSetFlatLight(1, light);
 
         light.direction_00.set(0.0f, 0.0f, 1.0f);
-        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
-        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
-        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0xff;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0xff;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0xff;
         GsSetFlatLight(2, light);
       }
 
@@ -2926,7 +3061,7 @@ public class SMap extends EngineState {
   private void executeSubmapMediaLoadingStage(final int collisionPrimitiveIndexForInitialPlayerPosition) {
     switch(this.mediaLoadingStage_800c68e4) {
       case LOAD_SHADOW_AND_RESET_LIGHTING_0 -> {
-        new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
+        new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
 
         //LAB_800e1440
         this.GsF_LIGHT_0_800c66d8.direction_00.set(0.0f, 1.0f, 0.0f);
@@ -2959,7 +3094,7 @@ public class SMap extends EngineState {
       }
 
       case WAIT_FOR_MUSIC_2 -> {
-        if(musicLoaded_800bd782 && (getLoadedDrgnFiles() & 0x2) == 0) {
+        if(musicLoaded_800bd782 && (getLoadedAudioFiles() & 0x2) == 0) {
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_EFFECT_TEXTURES_3;
         }
       }
@@ -2993,10 +3128,10 @@ public class SMap extends EngineState {
       case FINALIZE_SUBMAP_LOADING_7 -> {
         FUN_800218f0();
 
-        // Removed setting of unused sobjCount static
-        this.sobjCount_800c6730 = this.submap.objects.size();
-
         this.firstMovement = true;
+
+        final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this, gameState_800babc8, this.submap, this.submap.script, this.submap.objects));
+        this.submap.script = loadedEvent.submapScript;
 
         //LAB_800e1914
         final ScriptState<ScriptedObject> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", null);
@@ -3007,11 +3142,11 @@ public class SMap extends EngineState {
 
         //LAB_800e1b20
         //LAB_800e1b54
-        for(int i = 0; i < this.sobjCount_800c6730; i++) {
+        for(int i = 0; i < this.submap.objects.size(); i++) {
           final SubmapObject obj = this.submap.objects.get(i);
 
           final String name = "Submap object " + i + " (file " + i * 33 + ')';
-          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, new SubmapObject210(name));
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, obj.constructor.apply(name));
           this.sobjs_800c6880[i] = state;
           state.setTicker(this::submapObjectTicker);
           state.setRenderer(this::submapObjectRenderer);
@@ -3075,16 +3210,14 @@ public class SMap extends EngineState {
         //LAB_800e1d88
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.DONE;
 
-        this.triangleIndicator_800c69fc = new TriangleIndicator140();
-
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
-        new Tim(Loader.loadFile("SUBMAP/alert.tim")).uploadToGpu();
+        new Tim(Loader.loadFileSync("SUBMAP/alert.tim")).uploadToGpu();
         this.resetTriangleIndicators();
 
         //LAB_800e1ecc
         for(int i = 0; i < 32; i++) {
-          this.indicatorTickCountArray_800c6970[i] = -1;
+          this.randomStuff_800c6970[i] = -1;
         }
 
         transitioningFromCombatToSubmap_800bd7b8 = false;
@@ -3126,7 +3259,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e2140
-      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement, false);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14, movement, false);
       if(collidedPrimitiveIndex >= 0 && this.isWalkable(collidedPrimitiveIndex)) {
         model.coord2_14.coord.transfer.x += movement.x / (2.0f / vsyncMode_8007a3b8);
         model.coord2_14.coord.transfer.y = movement.y;
@@ -3155,6 +3288,8 @@ public class SMap extends EngineState {
 
   @Method(0x800e2220L)
   private void unloadSmap() {
+    LOGGER.info("Unloading submap");
+
     this.collisionGeometry_800cbe08.unloadCollision();
     this.clearLatches();
 
@@ -3168,7 +3303,7 @@ public class SMap extends EngineState {
     submapFullyLoaded_800bd7b4 = false;
 
     //LAB_800e229c
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SobjPos14 pos = sobjPositions_800bd818[i];
 
       final ScriptState<SubmapObject210> sobjState = this.sobjs_800c6880[i];
@@ -3196,8 +3331,7 @@ public class SMap extends EngineState {
 
     this.submapEffectsState_800f9eac = -1;
     this.reloadSubmapEffects();
-    this.triangleIndicator_800c69fc = null;
-    new Tim(Loader.loadFile("shadow.tim")).uploadToGpu();
+    new Tim(Loader.loadFileSync("shadow.tim")).uploadToGpu();
     this.mapIndicator.destroy();
   }
 
@@ -3226,7 +3360,7 @@ public class SMap extends EngineState {
   @Method(0x800e3df4L)
   private void scriptDestructor(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     //LAB_800e3e24
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       if(this.sobjs_800c6880[i] == state) {
         this.sobjs_800c6880[i] = null;
       }
@@ -3277,7 +3411,7 @@ public class SMap extends EngineState {
       }
     } else if(this.indicatorDisabledForCutscene_800f64ac) {
       this.indicatorDisabledForCutscene_800f64ac = false;
-      this.indicatorTickCountArray_800c6970[31] = 0;
+      this.randomStuff_800c6970[31] = 0;
     }
   }
 
@@ -3295,7 +3429,7 @@ public class SMap extends EngineState {
     //LAB_800e43ec
     //LAB_800e43f0
     //LAB_800e4414
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 sobj2 = this.sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
@@ -3331,7 +3465,7 @@ public class SMap extends EngineState {
     //LAB_800e45d8
     //LAB_800e45dc
     //LAB_800e4600
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       final SubmapObject210 sobj2 = this.sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
@@ -3436,7 +3570,7 @@ public class SMap extends EngineState {
     final var encounterAccumulatorLimit = 0x1400;
     final var encounterAccumulatorStepModifier = 2.0f;
     final var encounterAccumulatorStep = this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / encounterAccumulatorStepModifier;
-    final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
+    final var submapEncounterAccumulatorEvent = EVENTS.postEvent(new SubmapEncounterAccumulatorEvent(this, gameState_800babc8, this.submap, this.encounterAccumulator_800c6ae8, encounterAccumulatorStep, this.encounterMultiplier_800c6abc, vsyncMode_8007a3b8, encounterAccumulatorLimit, encounterAccumulatorStepModifier));
     this.encounterAccumulator_800c6ae8 += submapEncounterAccumulatorEvent.encounterAccumulatedStep;
 
     return !(this.encounterAccumulator_800c6ae8 <= submapEncounterAccumulatorEvent.encounterAccumulatorLimit);
@@ -3493,6 +3627,8 @@ public class SMap extends EngineState {
     return latch;
   }
 
+  private boolean loadingSave;
+
   @Method(0x800e5104L)
   private void loadAndRenderSubmapModelAndEffects(final int collisionGeometryIndexForInitialPlayerPosition, final MapTransitionData4c mapTransitionData) {
     this.executeSubmapMediaLoadingStage(collisionGeometryIndexForInitialPlayerPosition);
@@ -3511,7 +3647,7 @@ public class SMap extends EngineState {
     this.resetLatches();
     this.collisionGeometry_800cbe08.tick();
 
-    if(submapFullyLoaded_800bd7b4) {
+    if(submapFullyLoaded_800bd7b4 && !this.loadingSave) {
       this.renderSubmap();
     }
   }
@@ -3519,8 +3655,8 @@ public class SMap extends EngineState {
   @Method(0x800e519cL)
   private void renderEnvironment() {
     //LAB_800e51e8
-    final MV[] matrices = new MV[this.sobjCount_800c6730];
-    for(int i = 0; i < this.sobjCount_800c6730; i++) {
+    final MV[] matrices = new MV[this.submap.objects.size()];
+    for(int i = 0; i < this.submap.objects.size(); i++) {
       if(!this.isScriptLoaded(i)) {
         return;
       }
@@ -3571,8 +3707,8 @@ public class SMap extends EngineState {
         this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      // final Vector2f transformed = new Vector2f();
-      // final Vector3f middle = new Vector3f();
+      final Vector2f transformed = new Vector2f();
+      final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
       final MV ls = new MV();
@@ -3586,7 +3722,7 @@ public class SMap extends EngineState {
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
-        ;
+          ;
 
         if(!primitiveInfo.flatEnoughToWalkOn_01) {
           model.colour(0.5f, 0.0f, 0.0f);
@@ -3616,7 +3752,7 @@ public class SMap extends EngineState {
           model.colour(0.0f, 1.0f, 1.0f);
         }
 
-        for(int sobjIndex = 0; sobjIndex < this.sobjCount_800c6730; sobjIndex++) {
+        for(int sobjIndex = 0; sobjIndex < this.submap.objects.size(); sobjIndex++) {
           if(this.sobjs_800c6880[sobjIndex].innerStruct_00.collidedPrimitiveIndex_16c == i) {
             model.colour(0.0f, 0.0f, sobjIndex == 0 ? 1.0f : 0.5f);
           }
@@ -3624,10 +3760,10 @@ public class SMap extends EngineState {
 
         this.submap.applyCollisionDebugColour(i, model);
 
-//        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
-//        this.transformVertex(transformed, middle);
-//        final LodString text = new LodString(Integer.toString(i));
-//        renderText(text, transformed.x + centreScreenX_1f8003dc - textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, TextColour.LIME, 0);
+        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
+        this.transformVertex(transformed, middle);
+        final String text = Integer.toString(i);
+        renderText(text, transformed.x + centreScreenX_1f8003dc - DEFAULT_FONT.textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, SItem.UI_WHITE_SMALL);
       }
 
       if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
@@ -3692,7 +3828,8 @@ public class SMap extends EngineState {
    */
   @Method(0x800e5534L)
   public void mapTransition(final int newCut, final int newScene) {
-    if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
+    // Some maps bring up screens like the char swap screen using this method as soon as the map script loads, so we need to allow transitioning when still fading in
+    if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) {
       return;
     }
 
@@ -3700,7 +3837,7 @@ public class SMap extends EngineState {
       return;
     }
 
-    if(this.transitioning_800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
+    if(this.transitioning_800f7e4c || (getLoadedAudioFiles() & 0x82) != 0) {
       return;
     }
 
@@ -3725,13 +3862,21 @@ public class SMap extends EngineState {
 
     if(newCut > 0x7ff) {
       this.fmvIndex_800bf0dc = newCut - 0x800;
-      this.afterFmvLoadingStage_800bf0ec = EngineStateEnum.values()[newScene];
+      this.afterFmvLoadingStage_800bf0ec = switch(newScene) {
+        case 2 -> CoreEngineStateTypes.TITLE.get();
+        case 5 -> LodEngineStateTypes.SUBMAP.get();
+        case 6 -> LodEngineStateTypes.BATTLE.get();
+        case 7 -> LodEngineStateTypes.GAME_OVER.get();
+        case 8 -> LodEngineStateTypes.WORLD_MAP.get();
+        default -> throw new IllegalArgumentException("Unknown engine state " + newScene);
+      };
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_FMV_21;
       return;
     }
 
     if(newCut >= 0 && newCut < 2) {
-      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_WORLD_MAP_18;
+      this.engineStateToTransitionTo = LodEngineStateTypes.WORLD_MAP.get();
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
       return;
     }
 
@@ -3739,19 +3884,16 @@ public class SMap extends EngineState {
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
-      submapCutForSave_800cb450 = newCut;
-      EVENTS.postEvent(new SubmapWarpEvent(submapCut_80052c30, gameState_800babc8));
+      EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, newCut));
       return;
     }
 
     SCRIPTS.pause();
 
     if(newScene == 0x3fa) {
-      loadCharacterStats();
       cacheCharacterSlots();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      submapCutForSave_800cb450 = submapCut_80052c30;
       return;
     }
 
@@ -3769,7 +3911,7 @@ public class SMap extends EngineState {
     if(newScene == 0x3fd) {
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
-      submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      submapCut_80052c30 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
       this.mapTransitionData_800cab24.clear();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
@@ -3777,31 +3919,29 @@ public class SMap extends EngineState {
     }
 
     if(newScene == 0x3fe) {
-      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, ShopScreen::new);
+      this.menuTransition = () -> initMenu(WhichMenu.RENDER_NEW_MENU, () -> new ShopScreen(REGISTRIES.shop.getEntry(shopId_8007a3b4).get()));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
     if(newScene == 0x3ff) {
-      submapCutForSave_800cb450 = submapCut_80052c30;
-      this.menuTransition = () -> initInventoryMenu();
+      this.menuTransition = Menus::initInventoryMenu;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
 
-    if(newScene != 0 && newScene >= stageData_80109a98.length) {
-      return;
+    if(newScene < 0x200) {
+      if(this.isScriptLoaded(0)) {
+        final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
+        screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
+        this.submap.storeStateBeforeBattle();
+        playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
+        shouldRestoreCameraPosition_80052c40 = true;
+      }
+
+      this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
     }
 
-    if(this.isScriptLoaded(0)) {
-      final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
-      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
-      this.submap.storeStateBeforeBattle();
-      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
-      shouldRestoreCameraPosition_80052c40 = true;
-    }
-
-    this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
   }
 
   @Override
@@ -3811,13 +3951,6 @@ public class SMap extends EngineState {
 
     //LAB_800e5a30
     //LAB_800e5a34
-    if(pregameLoadingStage_800bb10c == 0) {
-      pregameLoadingStage_800bb10c = 1;
-      this.currentSubmapScene_800caaf8 = submapScene_80052c34;
-      submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
-      this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
-    }
-
     //LAB_800e5ac4
     switch(this.smapLoadingStage_800cb430) {
       case INIT_0 -> {
@@ -3828,14 +3961,15 @@ public class SMap extends EngineState {
         resizeDisplay(384, 240);
 
         //LAB_800e5b2c
+        this.currentSubmapScene_800caaf8 = submapScene_80052c34;
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.encounterAccumulator_800c6ae8 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.LOAD_NEWROOT_1;
       }
 
       case LOAD_NEWROOT_1 -> {
-        loadFile("\\SUBMAP\\NEWROOT.RDT", data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
-        loadDir("\\SUBMAP\\savepoint", files -> {
+        loadFile("\\SUBMAP\\NEWROOT.RDT").thenAccept(data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
+        loadDir("\\SUBMAP\\savepoint").thenAccept(files -> {
           this.savepointAnm1 = new AnmFile(files.get(0));
           this.savepointAnm2 = new AnmFile(files.get(1));
           this.savepointTmd = new CContainer("Savepoint", files.get(2));
@@ -3857,10 +3991,10 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
-        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
+        this.submap = new RetailSubmap(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
-        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
+        this.submap.loadEnv().thenAccept(v -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
       }
 
       case CHANGE_SUBMAP_4 -> {
@@ -3882,6 +4016,7 @@ public class SMap extends EngineState {
       }
 
       case FINISH_LOADING_AND_FADE_IN_11 -> {
+        this.loadingSave = false;
         this.executeSubmapMediaLoadingStage(this.currentSubmapScene_800caaf8);
 
         // Wait for media to finish loading
@@ -3901,6 +4036,9 @@ public class SMap extends EngineState {
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_FADE_IN;
+
+        this.updateDiscordRichPresence(gameState_800babc8, DISCORD.activity);
+        DISCORD.updateActivity();
       }
 
       case WAIT_FOR_FADE_IN -> {
@@ -3976,10 +4114,6 @@ public class SMap extends EngineState {
         SCRIPTS.resume();
         this.transitioning_800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
-
-        if(loadingNewGameState_800bdc34) {
-          this.mapTransition(submapCut_80052c30, submapScene_80052c34);
-        }
       }
 
       case TRANSITION_TO_SUBMAP_17 -> {
@@ -4020,7 +4154,7 @@ public class SMap extends EngineState {
         this.transitioning_800f7e4c = false;
       }
 
-      case TRANSITION_TO_WORLD_MAP_18 -> {
+      case TRANSITION_TO_ENGINE_STATE_18 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         if(this.isScriptLoaded(0)) {
@@ -4043,8 +4177,8 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e62cc
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
-        pregameLoadingStage_800bb10c = 0;
+        engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+        this.engineStateToTransitionTo = null;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
@@ -4053,8 +4187,7 @@ public class SMap extends EngineState {
       case TRANSITION_TO_COMBAT_19 -> {
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
-        pregameLoadingStage_800bb10c = 0;
+        engineStateOnceLoaded_8004dd24 = LodEngineStateTypes.BATTLE.get();
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
       }
@@ -4079,8 +4212,7 @@ public class SMap extends EngineState {
 
         //LAB_800e6458
         resetSubmapToNewGame();
-        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        pregameLoadingStage_800bb10c = 0;
+        engineStateOnceLoaded_8004dd24 = CoreEngineStateTypes.TITLE.get();
 
         //LAB_800e6484
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
@@ -4111,9 +4243,10 @@ public class SMap extends EngineState {
         //LAB_800e63b0
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
-        pregameLoadingStage_800bb10c = 0;
         this.transitioning_800f7e4c = false;
         SCRIPTS.resume();
+
+        this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
       }
     }
   }
@@ -4155,8 +4288,9 @@ public class SMap extends EngineState {
   private FlowControl scriptMapTransition(final RunningScript<?> script) {
     final int scene = script.params_20[1].get();
 
-    if(script.params_20[0].get() == -1) {
-      this.submap.prepareEncounter(scene, true);
+    if(script.params_20[0].get() == -1 && scene < 0x200) {
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[scene]).get();
+      this.submap.prepareEncounter(encounter, true);
     }
 
     this.mapTransition(script.params_20[0].get(), scene);
@@ -4190,22 +4324,22 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Gets the camera offset")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set((int)this.screenOffsetDest.x);
-    script.params_20[1].set((int)this.screenOffsetDest.y);
+    script.params_20[0].set(this.screenOffsetDest.x);
+    script.params_20[1].set(this.screenOffsetDest.y);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Sets the camera offset (mode is based on the last call to scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The camera Y offset")
   @Method(0x800e6904L)
   private FlowControl scriptSetCameraOffset(final RunningScript<?> script) {
-    final int x = script.params_20[0].get();
-    final int y = script.params_20[1].get();
+    final float x = script.params_20[0].getFloat();
+    final float y = script.params_20[1].getFloat();
     final int mode = this.scriptSetOffsetMode_800f7e50;
 
     if(mode == 1 || mode == 2) {
@@ -4296,18 +4430,18 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Gets the middle of a collision primitive")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z position")
   @Method(0x800e6b64L)
   private FlowControl scriptGetCollisionPrimitivePos(final RunningScript<?> script) {
     if(script.params_20[0].get() >= 0) {
       final Vector3f pos = new Vector3f();
       this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
 
-      script.params_20[1].set(Math.round(pos.x));
-      script.params_20[2].set(Math.round(pos.y));
-      script.params_20[3].set(Math.round(pos.z));
+      script.params_20[1].set(pos.x);
+      script.params_20[2].set(pos.y);
+      script.params_20[3].set(pos.z);
     }
 
     //LAB_800e6bc8
@@ -4322,11 +4456,11 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Unknown usage, I think this calculates a Z sorting value for a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.FLOAT, name = "z", description = "The calculated Z value")
   @Method(0x800e6be0L)
   private FlowControl FUN_800e6be0(final RunningScript<?> script) {
     final MV coord = this.sobjs_800c6880[script.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
-    script.params_20[1].set(Math.round((worldToScreenMatrix_800c3548.m02 * coord.transfer.x + worldToScreenMatrix_800c3548.m12 * coord.transfer.y + worldToScreenMatrix_800c3548.m22 * coord.transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0)));
+    script.params_20[1].set((worldToScreenMatrix_800c3548.m02 * coord.transfer.x + worldToScreenMatrix_800c3548.m12 * coord.transfer.y + worldToScreenMatrix_800c3548.m22 * coord.transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0));
     return FlowControl.CONTINUE;
   }
 
@@ -4349,7 +4483,6 @@ public class SMap extends EngineState {
     this.mapTransition(script.params_20[0].get() + 0x800, script.params_20[1].get());
     submapCut_80052c30 = script.params_20[2].get();
     submapScene_80052c34 = script.params_20[3].get();
-    submapCutForSave_800cb450 = submapCut_80052c30;
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -4394,7 +4527,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalSize", description = "The vertical collision size")
   @Method(0x800e06c4L)
   private FlowControl scriptSetSobjCollision1(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.collisionSizeHorizontal_1a0 = script.params_20[1].get();
     sobj.collisionSizeVertical_1a4 = script.params_20[2].get();
     return FlowControl.CONTINUE;
@@ -4405,7 +4538,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collided", description = "True if the submap object is collided")
   @Method(0x800e0710L)
   private FlowControl scriptGetSobjCollidedWith1(final RunningScript<?> script) {
-    script.params_20[1].set(((SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).collidedWithSobjIndex_19c);
+    script.params_20[1].set(SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class).collidedWithSobjIndex_19c);
     return FlowControl.CONTINUE;
   }
 
@@ -4525,9 +4658,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lifecycleTicks", description = "Number of ticks an individual particle exists for.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "delayTicks", description = "Number of ticks to delay beginning particle instantiation.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "X-coordinate of particle.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Y-coordinate of particle.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Z-coordinate of particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "X-coordinate of particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "Y-coordinate of particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "Z-coordinate of particle.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalDistance", description = "Distance particle instance travels over lifecycle.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetRandomX", description = "Multiplication factor of randomized component of particle x-offset.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size", description = "Size of the particle.")
@@ -4543,12 +4676,12 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectState")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lifecycleTicks", description = "Number of ticks an individual particle exists for.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetBaseX", description = "Static base x-offset of particle instance.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetY", description = "Y-offset of particle instance.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "offsetBaseX", description = "Static base x-offset of particle instance.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "offsetY", description = "Y-offset of particle instance.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetRandomX", description = "Multiplication factor of randomized component of particle x-offset.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalDistance", description = "Distance particle instance travels over lifecycle.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size", description = "Size of the particle instance.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sizeChange", description = "Amount the size of the particle instance changes over lifecycle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "totalDistance", description = "Distance particle instance travels over lifecycle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "size", description = "Size of the particle instance.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "sizeChange", description = "Amount the size of the particle instance changes over lifecycle.")
   @Method(0x800f14f0L)
   private FlowControl scriptAllocateSmokeCloudData(final RunningScript<?> script) {
     this.smokeCloudEffect_800d4f50.allocateSmokeCloudEffect(script, this.texPages_800d6050[6], this.cluts_800d6068[6]);
@@ -4568,7 +4701,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b")
   @Method(0x800f1634L)
-  private FlowControl scriptInitLawPodTrail(final RunningScript<?> script) {
+  private FlowControl scriptInitLawPodTrail(final RunningScript<SubmapObject210> script) {
     this.attachedSobjEffect.initLawPodTrail(script);
 
     //LAB_800f1784
@@ -4577,9 +4710,9 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Adds a save point to the map")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hasSavePoint", description = "True to add a savepoint, false otherwise")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "z", description = "The Z position")
   @Method(0x800f179cL)
   private FlowControl scriptAddSavePoint(final RunningScript<?> script) {
     final Vector2f sp0x48 = new Vector2f();
@@ -4596,7 +4729,7 @@ public class SMap extends EngineState {
     this.hasSavePoint_800d5620 = script.params_20[0].get() != 0;
     GsInitCoordinate2(null, coord2);
 
-    coord2.coord.transfer.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    coord2.coord.transfer.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     this.savePointPos_800d5622.set(coord2.coord.transfer);
 
     final MV screenMatrix = new MV();
@@ -4668,82 +4801,47 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, adds triangle indicators (possibly for doors)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
+  @ScriptDescription("Adds one or more triangle indicators at a collision primitive, with screenspace offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "stream", description = "A stream of [collisionPrimitiveIndex, indicatorType, screenspaceOffsetX, screenspaceOffsetY]s terminated by -1")
   @Method(0x800f1b64L)
-  private FlowControl FUN_800f1b64(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
-    final GsCOORDINATE2 sp0x18 = new GsCOORDINATE2();
-    final MV sp0x70 = new MV();
-
-    GsInitCoordinate2(null, sp0x18);
-
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
+  private FlowControl scriptAddTriangleIndicatorsWithOffset(final RunningScript<?> script) {
+    final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+    GsInitCoordinate2(null, coord2);
 
     //LAB_800f1ba8
-    final Param ints = script.params_20[0];
-    int s0 = 0;
-    for(int i = 0; ints.array(s0).get() != -1; i++) {
-      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(ints.array(s0++).get(), sp0x10);
+    final Param stream = script.params_20[0];
+    int dataIndex = 0;
+    for(int indicatorIndex = 0; stream.array(dataIndex).get() != -1; indicatorIndex++) {
+      final int collisionIndex = stream.array(dataIndex++).get();
+      final int indicatorType = stream.array(dataIndex++).get();
+      final int screenspaceOffsetX = stream.array(dataIndex++).get();
+      final int screenspaceOffsetY = stream.array(dataIndex++).get();
 
-      sp0x18.coord.transfer.set(sp0x10);
-      GsGetLs(sp0x18, sp0x70);
-
-      PushMatrix();
-      GTE.setTransforms(sp0x70);
-      GTE.perspectiveTransform(0, 0, 0);
-      final float sx = GTE.getScreenX(2);
-      final float sy = GTE.getScreenY(2);
-      PopMatrix();
-
-      indicator.indicatorType_18[i] = (short)ints.array(s0++).get();
-      indicator.x_40[i] = sx + ints.array(s0++).get();
-      indicator.y_68[i] = sy + ints.array(s0++).get();
-      indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-      indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+      this.setIndicator3d(indicatorIndex, indicatorType, coord2, screenspaceOffsetX, screenspaceOffsetY);
     }
 
     //LAB_800f1cf0
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, adds a triangle indicator (possibly for a door)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptDescription("Adds a triangle indicator at a collision primitive, with screenspace offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "screenspaceOffsetX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLOAT, name = "screenspaceOffsetY")
   @Method(0x800f1d0cL)
-  private FlowControl FUN_800f1d0c(final RunningScript<?> script) {
-    final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
-    GsInitCoordinate2(null, sp0x40);
-    final Vector3f sp0x10 = new Vector3f();
-    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), sp0x10);
-    sp0x40.coord.transfer.set(sp0x10);
-    final MV sp0x20 = new MV();
-    GsGetLs(sp0x40, sp0x20);
+  private FlowControl scriptAddTriangleIndicatorWithOffset(final RunningScript<?> script) {
+    final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+    GsInitCoordinate2(null, coord2);
 
-    PushMatrix();
-    GTE.setTransforms(sp0x20);
-    GTE.perspectiveTransform(0, 0, 0);
-    final float sx = GTE.getScreenX(2);
-    final float sy = GTE.getScreenY(2);
-    PopMatrix();
+    final int collisionIndex = script.params_20[0].get();
+    final int indicatorType = script.params_20[1].get();
+    final float screenspaceOffsetX = script.params_20[2].getFloat();
+    final float screenspaceOffsetY = script.params_20[3].getFloat();
 
-    //LAB_800f1e20
-    for(int i = 0; i < 20; i++) {
-      final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
-      if(indicator.indicatorType_18[i] == -1) {
-        indicator.indicatorType_18[i] = (short)script.params_20[1].get();
-        indicator.x_40[i] = sx + script.params_20[2].get();
-        indicator.y_68[i] = sy + script.params_20[3].get();
-        indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
-        indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
-        break;
-      }
-    }
-
-    //LAB_800f1ea0
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionIndex, coord2.coord.transfer);
+    this.addIndicator3d(indicatorType, coord2, screenspaceOffsetX, screenspaceOffsetY);
     return FlowControl.CONTINUE;
   }
 
@@ -4842,11 +4940,10 @@ public class SMap extends EngineState {
   @ScriptDescription("Initializes footprints attached sobj effect when param 0 is 1 or 2.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldRender", description = "Whether effect should initialize/render (occurs on 1 or 2).")
   @Method(0x800f2264L)
-  private FlowControl scriptInitFootprints(final RunningScript<?> script) {
-    final ScriptState<?> sobj1 = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(sobj1, 0); // Unused? Why?
+  private FlowControl scriptInitFootprints(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> sobj1 = script.scriptState_04;
+    final SubmapObject210 sobj2 = sobj1.innerStruct_00;
 
-    final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00; // Storage 0 is my script index, isn't this just getting the same state?
     if((script.params_20[0].get() == 1 || script.params_20[0].get() == 2)) {
       sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
       sobj2.attachedEffectData_1d0.footprintMode_10 = 0;
@@ -4867,7 +4964,7 @@ public class SMap extends EngineState {
   @Method(0x800f22c4L)
   private FlowControl scriptChangeFootprintsMode(final RunningScript<?> script) {
     script.params_20[2] = new ScriptStorageParam(script.scriptState_04, 0);
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[2].get(), SubmapObject210.class);
 
     final int footprintMode = script.params_20[0].get();
     sobj.attachedEffectData_1d0.footprintMode_10 = footprintMode;
@@ -4906,10 +5003,8 @@ public class SMap extends EngineState {
   @ScriptDescription("Sets the frequency of footprint attached sobj effect particle instantiation.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationInterval", description = "Frequency of instantiating new particles.")
   @Method(0x800f23a0L)
-  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<?> script) {
-    script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
-
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
+  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<SubmapObject210> script) {
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
     sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = Math.max(1, script.params_20[0].get());
 
     //LAB_800f23e4
@@ -4922,10 +5017,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "Number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTicks", description = "Number of ticks for which particle exists.")
   @Method(0x800f23ecL)
-  private FlowControl scriptInitOrthoDust(final RunningScript<?> script) {
-    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); // Does nothing, why?
+  private FlowControl scriptInitOrthoDust(final RunningScript<SubmapObject210> script) {
     final int mode = script.params_20[0].get();
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
 
     if(mode == 1 || mode == 3) {
       //LAB_800f2430
@@ -4987,46 +5081,57 @@ public class SMap extends EngineState {
   @ScriptDescription("If param 0 is 1, deallocate the Zenebatos law pod trail effect.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
   @Method(0x800f25a8L)
-  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<?> script) {
+  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<SubmapObject210> script) {
     this.attachedSobjEffect.deallocateLawPodTrail(script);
 
     //LAB_800f2604
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates triangle indicators from an array of struct data")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
+  @ScriptDescription("Adds one or more triangle indicators at screenspace coordinates")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "stream", description = "A stream of [indicatorType, screenspaceX, screenspaceY]s terminated by -1")
   @Method(0x800f2618L)
-  private FlowControl scriptAllocateTriangleIndicatorArray(final RunningScript<?> script) {
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
+  private FlowControl scriptAddTriangleIndicators2d(final RunningScript<?> script) {
     //LAB_800f266c
-    int i = 0;
-    final Param a0 = script.params_20[0];
-    for(int a1 = 0; a0.array(i).get() != -1; a1++) {
-      indicator.indicatorType_18[a1] = (short)a0.array(i++).get();
-      indicator.x_40[a1] = a0.array(i++).get() + this.screenOffset_800cb568.x;
-      indicator.y_68[a1] = a0.array(i++).get() + this.screenOffset_800cb568.y;
-      indicator.screenOffsetX_90[a1] = this.screenOffset_800cb568.x;
-      indicator.screenOffsetY_e0[a1] = this.screenOffset_800cb568.y;
+    int dataIndex = 0;
+    final Param stream = script.params_20[0];
+    for(int indicatorIndex = 0; stream.array(dataIndex).get() != -1; indicatorIndex++) {
+      final int indicatorType = stream.array(dataIndex++).get();
+      final int screenspaceX = stream.array(dataIndex++).get();
+      final int screenspaceY = stream.array(dataIndex++).get();
+
+      this.setIndicator(indicatorIndex, indicatorType, screenspaceX + this.screenOffset_800cb568.x, screenspaceY + this.screenOffset_800cb568.y);
     }
 
     //LAB_800f26b4
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptDescription("Adds a triangle indicator at screenspace coordinates")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "screenspaceX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "screenspaceY")
   @Method(0x800f26c8L)
-  private FlowControl FUN_800f26c8(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+  private FlowControl scriptAddTriangleIndicator2d(final RunningScript<?> script) {
+    final int indicatorType = script.params_20[0].get();
+    final float screenspaceX = script.params_20[1].getFloat();
+    final float screenspaceY = script.params_20[2].getFloat();
+
+    this.addIndicator(indicatorType, screenspaceX, screenspaceY);
+    return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("No-op")
   @Method(0x800f2780L)
   private FlowControl FUN_800f2780(final RunningScript<?> script) {
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Opens a shop")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "shopId", description = "The shop ID")
+  private FlowControl scriptOpenShop(final RunningScript<?> script) {
+    final RegistryId shopId = script.params_20[0].getRegistryId();
+    initMenu(WhichMenu.RENDER_NEW_MENU, () -> new ShopScreen(REGISTRIES.shop.getEntry(shopId).get()));
     return FlowControl.CONTINUE;
   }
 
@@ -5186,12 +5291,14 @@ public class SMap extends EngineState {
     }
   }
 
+  private final MV indicatorLs = new MV();
+
   @Method(0x800f31bcL)
   private void handleTriangleIndicators() {
-    this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
-    this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
+    this.triangleIndicators_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
+    this.triangleIndicators_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
-    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_WORLD_MAP_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
+    if(gameState_800babc8.indicatorsDisabled_4e3 || fullScreenEffect_800bb140.currentColour_28 != 0 || this.smapLoadingStage_800cb430 == SubmapState.CHANGE_SUBMAP_4 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_SUBMAP_17 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_ENGINE_STATE_18 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_COMBAT_19 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_TITLE_20 || this.smapLoadingStage_800cb430 == SubmapState.TRANSITION_TO_FMV_21) {
       return;
     }
 
@@ -5217,11 +5324,10 @@ public class SMap extends EngineState {
       return;
     }
 
-    final MV ls = new MV();
-    GsGetLs(this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, ls);
+    GsGetLs(this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, this.indicatorLs);
 
     PushMatrix();
-    GTE.setTransforms(ls);
+    GTE.setTransforms(this.indicatorLs);
 
     GTE.perspectiveTransform(this.bottom_800d6cb8);
     final float bottomY = GTE.getScreenY(2);
@@ -5230,8 +5336,8 @@ public class SMap extends EngineState {
     final float topY = GTE.getScreenY(2);
 
     GTE.perspectiveTransform(0, -(topY - bottomY) - 48, 0);
-    this.triangleIndicator_800c69fc.playerX_08 = GTE.getScreenX(2);
-    this.triangleIndicator_800c69fc.playerY_0c = GTE.getScreenY(2);
+    this.triangleIndicators_800c69fc.playerX_08 = GTE.getScreenX(2);
+    this.triangleIndicators_800c69fc.playerY_0c = GTE.getScreenY(2);
 
     PopMatrix();
 
@@ -5250,7 +5356,7 @@ public class SMap extends EngineState {
 
   @Method(0x800f352cL)
   private void renderTriangleIndicators() {
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
+    final TriangleIndicator140 indicator = this.triangleIndicators_800c69fc;
 
     //LAB_800f35b0
     for(int indicatorIndex = 0; indicatorIndex < 21; indicatorIndex++) {
@@ -5368,11 +5474,9 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f3b14
-    final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
-
     //LAB_800f3b24
     for(int i = 0; i < 20; i++) {
-      indicator.indicatorType_18[i] = -1;
+      this.triangleIndicators_800c69fc.indicatorType_18[i] = -1;
     }
   }
 
@@ -5509,7 +5613,7 @@ public class SMap extends EngineState {
   private void loadMiscTextures(final int textureCount) {
     //LAB_800f47f0
     for(int textureIndex = 0; textureIndex < textureCount; textureIndex++) {
-      final Tim tim = new Tim(Loader.loadFile("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
+      final Tim tim = new Tim(Loader.loadFileSync("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
       GPU.uploadData15(tim.getImageRect(), tim.getImageData());
 
       this.texPages_800d6050[textureIndex] = GetTPage(Bpp.values()[tim.getFlags() & 0b11], this.miscTextureTransModes_800d6cf0[textureIndex], tim.getImageRect().x, tim.getImageRect().y);
@@ -5519,5 +5623,29 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f48a8
+  }
+
+  @Override
+  public void updateDiscordRichPresence(final GameState52c gameState, final Activity activity) {
+    super.updateDiscordRichPresence(gameState, activity);
+    activity.setState("Exploring");
+  }
+
+  @Override
+  public String getLocation(final GameState52c gameState) {
+    if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
+      return this.getChapter(gameState);
+    }
+
+    if(submapId_800bd808 > -1 && submapId_800bd808 < submapNames_8011c108.length) {
+      return submapNames_8011c108[submapId_800bd808];
+    }
+
+    return super.getLocation(gameState);
+  }
+
+  @Override
+  public GsRVIEW2 getCamera() {
+    return this.submap.getCamera();
   }
 }

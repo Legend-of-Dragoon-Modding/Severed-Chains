@@ -1,9 +1,11 @@
 package legend.game.combat.types;
 
+import legend.core.Random;
 import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.types.battlestate.AdditionExtra04;
 import legend.game.combat.types.battlestate.Status04;
 import legend.game.combat.types.battlestate.StatusConditions20;
@@ -12,16 +14,21 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.lodmod.LodMod;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_DEAD;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_MONSTER;
+import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 
 public class BattleStateEf4 {
+  private long turnOrderSeed;
+  private final Random turnOrderRng = new Random();
+
   public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];
 
   public int _180;
@@ -91,7 +98,8 @@ public class BattleStateEf4 {
   public int _23c;
   public int _240;
   public int _244;
-  public int _248;
+  /** Used by Windigo and Melbu when they succ a character. Script ID of {@link ModelEffect13c}. */
+  public int succCloneEffectId_248;
   public int _24c;
   public int _250;
   public int _254;
@@ -157,14 +165,15 @@ public class BattleStateEf4 {
   public int _2bc;
   public int _2c0;
   public int _2c4;
-  public int _2c8;
-  public int _2cc;
-  public int _2d0;
-  public int _2d4;
-  public int _2d8;
-  public int _2dc;
-  public int _2e0;
-  public int _2e4;
+  public int additionLoadingStage_2c8;
+  public int additionHitIndex_2cc;
+  public int additionTicks_2d0;
+  /** Copied from {@link #additionTotalSuccessFrames_2e0} */
+  public int additionRemainingSuccessFrames_2d4;
+  public int additionTotalFrames_2d8;
+  public int additionOverlayHitFrameOffset_2dc;
+  public int additionTotalSuccessFrames_2e0;
+  public int additionHitCount_2e4;
   /** Indexed by char slot */
   public final int[] _2e8 = new int[3];
   public int _2f4;
@@ -268,8 +277,8 @@ public class BattleStateEf4 {
   public int scriptsProcessingStatusAfflictions_45c;
   /** Indexed by char slot, something to do with bewitched (set to -1 if not bewitched) */
   public final int[] _460 = new int[3];
-  /** Combat stage ID is stored here when player combat script is initialized */
-  public int _46c;
+  /** Battle stage ID is stored here when player combat script is initialized, updated for special transformation stages */
+  public int battleStage_46c;
   /** Used in player combat script, one bit for each player bent slot */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];
@@ -362,12 +371,12 @@ public class BattleStateEf4 {
   // This was used for storing animation files in VRAM
 //  public final int[] y_d80 = new int[3];
   public final CompressedAsset08[] compressedAssets_d8c = new CompressedAsset08[16];
-  public final ScriptState<? extends BattleEntity27c>[] allBents_e0c = new ScriptState[13];
-  public final ScriptState<PlayerBattleEntity>[] playerBents_e40 = new ScriptState[4];
+  public final List<ScriptState<? extends BattleEntity27c>> allBents_e0c = new ArrayList<>();
+  public final List<ScriptState<PlayerBattleEntity>> playerBents_e40 = new ArrayList<>();
   public final ScriptState<MonsterBattleEntity>[] monsterBents_e50 = new ScriptState[10];
-  public final ScriptState<? extends BattleEntity27c>[] aliveBents_e78 = new ScriptState[13];
-  public final ScriptState<PlayerBattleEntity>[] alivePlayerBents_eac = new ScriptState[4];
-  public final ScriptState<MonsterBattleEntity>[] aliveMonsterBents_ebc = new ScriptState[10];
+  public final List<ScriptState<? extends BattleEntity27c>> aliveBents_e78 = new ArrayList<>();
+  public final List<ScriptState<PlayerBattleEntity>> alivePlayerBents_eac = new ArrayList<>();
+  public final List<ScriptState<MonsterBattleEntity>> aliveMonsterBents_ebc = new ArrayList<>();
   // Reads directly from gameState now
 //  public TransformationMode morphMode_ee4;
 
@@ -377,15 +386,9 @@ public class BattleStateEf4 {
   /** Only used in 800db8b0 inside DRGN1/401 */
   public int cameraControllerScriptTicksParam_ef0;
 
-  private int aliveBentCount_800c669c;
   private int currentAssetIndex_800c66b4;
 
-  private int allBentCount_800c66d0;
-  private int aliveMonsterCount_800c6758;
-  private int alivePlayerCount_800c6760;
   private int monsterCount_800c6768;
-  /** The number of player chars in combat (i.e. 1-3) */
-  private int playerCount_800c677c;
 
   public BattleStateEf4() {
     Arrays.setAll(this.statusConditions_00, i -> new StatusConditions20());
@@ -396,72 +399,70 @@ public class BattleStateEf4 {
   }
 
   public void clear() {
-    this.allBentCount_800c66d0 = 0;
     this.monsterCount_800c6768 = 0;
-    this.playerCount_800c677c = 0;
+    this.allBents_e0c.clear();
+    this.playerBents_e40.clear();
+    this.aliveBents_e78.clear();
+    this.alivePlayerBents_eac.clear();
+    this.aliveMonsterBents_ebc.clear();
   }
 
   public void addMonster(final ScriptState<MonsterBattleEntity> state) {
-    this.allBents_e0c[this.allBentCount_800c66d0] = state;
+    this.addGenericBent(state);
+    state.innerStruct_00.typeBentSlot_276 = this.monsterCount_800c6768;
     this.monsterBents_e50[this.monsterCount_800c6768] = state;
-    state.innerStruct_00.bentSlot_274 = this.allBentCount_800c66d0;
-    state.innerStruct_00.charSlot_276 = this.monsterCount_800c6768;
-    this.allBentCount_800c66d0++;
     this.monsterCount_800c6768++;
   }
 
   public void removeMonster(final MonsterBattleEntity monster) {
-    this.allBentCount_800c66d0--;
-
-    //LAB_800cb0d4
-    for(int i = monster.bentSlot_274; i < this.allBentCount_800c66d0; i++) {
-      this.allBents_e0c[i] = this.allBents_e0c[i + 1];
-      this.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
-    }
+    this.removeGenericBent(monster);
 
     //LAB_800cb11c
     this.monsterCount_800c6768--;
 
     //LAB_800cb168
-    for(int i = monster.charSlot_276; i < this.monsterCount_800c6768; i++) {
+    for(int i = monster.typeBentSlot_276; i < this.monsterCount_800c6768; i++) {
       this.monsterBents_e50[i] = this.monsterBents_e50[i + 1];
-      this.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
+      this.monsterBents_e50[i].innerStruct_00.typeBentSlot_276 = i;
     }
   }
 
   public void addPlayer(final ScriptState<PlayerBattleEntity> state) {
-    this.allBents_e0c[this.allBentCount_800c66d0] = state;
-    this.playerBents_e40[this.playerCount_800c677c] = state;
-    state.innerStruct_00.bentSlot_274 = this.allBentCount_800c66d0;
-    state.innerStruct_00.charSlot_276 = this.playerCount_800c677c;
-    this.allBentCount_800c66d0++;
-    this.playerCount_800c677c++;
+    this.addGenericBent(state);
+    state.innerStruct_00.typeBentSlot_276 = this.playerBents_e40.size();
+    this.playerBents_e40.add(state);
   }
 
   public void removePlayer(final PlayerBattleEntity player) {
-    this.allBentCount_800c66d0--;
-
-    //LAB_800cb0d4
-    for(int i = player.bentSlot_274; i < this.allBentCount_800c66d0; i++) {
-      this.allBents_e0c[i] = this.allBents_e0c[i + 1];
-      this.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
-    }
+    this.removeGenericBent(player);
 
     //LAB_800cb11c
     //LAB_800cb1b8
-    this.playerCount_800c677c--;
+    this.playerBents_e40.remove(player.typeBentSlot_276);
 
     //LAB_800cb1f4
-    for(int i = player.charSlot_276; i < this.playerCount_800c677c; i++) {
-      this.playerBents_e40[i] = this.playerBents_e40[i + 1];
-      this.playerBents_e40[i].innerStruct_00.charSlot_276 = i;
+    for(int i = player.typeBentSlot_276; i < this.playerBents_e40.size(); i++) {
+      this.playerBents_e40.get(i).innerStruct_00.typeBentSlot_276 = i;
+    }
+  }
+
+  public void addGenericBent(final ScriptState<? extends BattleEntity27c> state) {
+    state.innerStruct_00.allBentSlot_274 = this.allBents_e0c.size();
+    this.allBents_e0c.add(state);
+  }
+
+  public void removeGenericBent(final BattleEntity27c player) {
+    this.allBents_e0c.remove(player.allBentSlot_274);
+
+    for(int i = player.allBentSlot_274; i < this.allBents_e0c.size(); i++) {
+      this.allBents_e0c.get(i).innerStruct_00.allBentSlot_274 = i;
     }
   }
 
   public PlayerBattleEntity getPlayerById(final int charId) {
-    for(int i = 0; i < this.playerCount_800c677c; i++) {
-      if(this.playerBents_e40[i].innerStruct_00.charId_272 == charId) {
-        return this.playerBents_e40[i].innerStruct_00;
+    for(int i = 0; i < this.playerBents_e40.size(); i++) {
+      if(this.playerBents_e40.get(i).innerStruct_00.charId_272 == charId) {
+        return this.playerBents_e40.get(i).innerStruct_00;
       }
     }
 
@@ -483,38 +484,38 @@ public class BattleStateEf4 {
   }
 
   public int getAliveMonsterCount() {
-    return this.aliveMonsterCount_800c6758;
+    return this.aliveMonsterBents_ebc.size();
   }
 
   public int getPlayerCount() {
-    return this.playerCount_800c677c;
+    return this.playerBents_e40.size();
   }
 
   public int getAlivePlayerCount() {
-    return this.alivePlayerCount_800c6760;
+    return this.alivePlayerBents_eac.size();
   }
 
   public int getAllBentCount() {
-    return this.allBentCount_800c66d0;
+    return this.allBents_e0c.size();
   }
 
   public int getAliveBentCount() {
-    return this.aliveBentCount_800c669c;
+    return this.aliveBents_e78.size();
   }
 
   public boolean hasBents() {
-    return this.allBentCount_800c66d0 != 0;
+    return !this.allBents_e0c.isEmpty();
   }
 
   public boolean hasAlivePlayers() {
-    return this.alivePlayerCount_800c6760 != 0;
+    return !this.alivePlayerBents_eac.isEmpty();
   }
 
   public boolean hasAliveMonsters() {
-    return this.aliveMonsterCount_800c6758 != 0;
+    return !this.aliveMonsterBents_ebc.isEmpty();
   }
 
-  public ScriptState<? extends BattleEntity27c>[] getBentsForTargetType(final int targetType) {
+  public List<? extends ScriptState<? extends BattleEntity27c>> getBentsForTargetType(final int targetType) {
     if(targetType == 0) {
       return this.playerBents_e40;
     }
@@ -539,22 +540,22 @@ public class BattleStateEf4 {
   }
 
   public void disableBents() {
-    for(int i = 0; i < this.playerCount_800c677c; i++) {
-      this.playerBents_e40[i].loadScriptFile(null);
+    for(int i = 0; i < this.playerBents_e40.size(); i++) {
+      this.playerBents_e40.get(i).loadScriptFile(null);
     }
   }
 
   public void deallocateBents() {
-    while(this.allBentCount_800c66d0 > 0) {
-      this.allBents_e0c[0].deallocateWithChildren();
+    while(this.hasBents()) {
+      this.allBents_e0c.getFirst().deallocateWithChildren();
     }
   }
 
   @Method(0x800187ccL)
   public boolean areCharacterModelsLoaded() {
     //LAB_80018800
-    for(int charSlot = 0; charSlot < this.playerCount_800c677c; charSlot++) {
-      if(!this.playerBents_e40[charSlot].innerStruct_00.combatant_144.isModelLoaded()) {
+    for(int charSlot = 0; charSlot < this.playerBents_e40.size(); charSlot++) {
+      if(!this.playerBents_e40.get(charSlot).innerStruct_00.combatant_144.isModelLoaded()) {
         return false;
       }
     }
@@ -580,57 +581,50 @@ public class BattleStateEf4 {
 
   @Method(0x800c7304L)
   public void cacheLivingBents() {
-    int i;
-    int count;
     //LAB_800c7330
-    for(i = 0, count = 0; i < this.allBentCount_800c66d0; i++) {
-      final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c[i];
-      if((bentState.storage_44[7] & FLAG_DEAD) == 0) {
-        this.aliveBents_e78[count] = bentState;
-        count++;
+    this.aliveBents_e78.clear();
+    for(int i = 0; i < this.allBents_e0c.size(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c.get(i);
+      if(!bentState.hasFlag(FLAG_DEAD)) {
+        this.aliveBents_e78.add(bentState);
       }
 
       //LAB_800c736c
     }
 
     //LAB_800c737c
-    this.aliveBentCount_800c669c = count;
-
     //LAB_800c73b0
-    for(i = 0, count = 0; i < this.playerCount_800c677c; i++) {
-      final ScriptState<PlayerBattleEntity> playerState = this.playerBents_e40[i];
-      if((playerState.storage_44[7] & FLAG_DEAD) == 0) {
-        this.alivePlayerBents_eac[count] = playerState;
-        count++;
+    this.alivePlayerBents_eac.clear();
+    for(int i = 0; i < this.playerBents_e40.size(); i++) {
+      final ScriptState<PlayerBattleEntity> playerState = this.playerBents_e40.get(i);
+      if(!playerState.hasFlag(FLAG_DEAD)) {
+        this.alivePlayerBents_eac.add(playerState);
       }
 
       //LAB_800c73ec
     }
 
     //LAB_800c73fc
-    this.alivePlayerCount_800c6760 = count;
-
     //LAB_800c7430
-    for(i = 0, count = 0; i < this.monsterCount_800c6768; i++) {
+    this.aliveMonsterBents_ebc.clear();
+    for(int i = 0; i < this.monsterCount_800c6768; i++) {
       final ScriptState<MonsterBattleEntity> monsterState = this.monsterBents_e50[i];
-      if((monsterState.storage_44[7] & FLAG_DEAD) == 0) {
-        this.aliveMonsterBents_ebc[count] = monsterState;
-        count++;
+      if(!monsterState.hasFlag(FLAG_DEAD)) {
+        this.aliveMonsterBents_ebc.add(monsterState);
       }
 
       //LAB_800c746c
     }
 
     //LAB_800c747c
-    this.aliveMonsterCount_800c6758 = count;
   }
 
   public void calculateInitialTurnValues() {
-    for(int i = 0; i < this.allBentCount_800c66d0; i++) {
-      final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c[i];
+    for(int i = 0; i < this.allBents_e0c.size(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c.get(i);
       final BattleEntity27c bent = bentState.innerStruct_00;
 
-      if((bentState.storage_44[7] & FLAG_MONSTER) != 0) {
+      if(bentState.hasFlag(FLAG_MONSTER)) {
         bent.turnValue_4c = simpleRand() * 0xd9 / 0x10000;
       } else {
         //LAB_800c7b3c
@@ -644,9 +638,9 @@ public class BattleStateEf4 {
   @Method(0x800c7e24L)
   public ScriptState<? extends BattleEntity27c> getForcedTurnBent() {
     //LAB_800c7e54
-    for(int i = 0; i < this.aliveBentCount_800c669c; i++) {
-      final ScriptState<? extends BattleEntity27c> bentState = this.aliveBents_e78[i];
-      if(bentState != null && (bentState.storage_44[7] & FLAG_TAKE_FORCED_TURN) != 0) {
+    for(int i = 0; i < this.aliveBents_e78.size(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = this.aliveBents_e78.get(i);
+      if(bentState != null && bentState.hasFlag(FLAG_TAKE_FORCED_TURN)) {
         return bentState;
       }
 
@@ -657,15 +651,22 @@ public class BattleStateEf4 {
     return null;
   }
 
+  public long getTurnOrderSeed() {
+    return this.turnOrderSeed;
+  }
+
   @Method(0x800c7ea0L)
   public ScriptState<? extends BattleEntity27c> getCurrentTurnBent() {
+    this.turnOrderSeed = gameState_800babc8.timestamp_a0;
+    this.turnOrderRng.setSeed(this.turnOrderSeed);
+
     //LAB_800c7ee4
     for(int s4 = 0; s4 < 32; s4++) {
       //LAB_800c7ef0
       int highestTurnValue = 0;
       int highestCombatantindex = 0;
-      for(int combatantIndex = 0; combatantIndex < this.aliveBentCount_800c669c; combatantIndex++) {
-        final int turnValue = this.aliveBents_e78[combatantIndex].innerStruct_00.turnValue_4c;
+      for(int combatantIndex = 0; combatantIndex < this.aliveBents_e78.size(); combatantIndex++) {
+        final int turnValue = this.aliveBents_e78.get(combatantIndex).innerStruct_00.turnValue_4c;
 
         if(highestTurnValue <= turnValue) {
           highestTurnValue = turnValue;
@@ -677,11 +678,11 @@ public class BattleStateEf4 {
 
       //LAB_800c7f40
       if(highestTurnValue > 0xd9) {
-        final ScriptState<? extends BattleEntity27c> state = this.aliveBents_e78[highestCombatantindex];
+        final ScriptState<? extends BattleEntity27c> state = this.aliveBents_e78.get(highestCombatantindex);
         state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
 
-        if((state.storage_44[7] & FLAG_MONSTER) == 0) {
-          gameState_800babc8._b8++;
+        if(!state.hasFlag(FLAG_MONSTER)) {
+          gameState_800babc8.turnCount_b8++;
         }
 
         //LAB_800c7f9c
@@ -690,17 +691,17 @@ public class BattleStateEf4 {
 
       //LAB_800c7fa4
       //LAB_800c7fb0
-      for(int combatantIndex = 0; combatantIndex < this.aliveBentCount_800c669c; combatantIndex++) {
-        final BattleEntity27c bent = this.aliveBents_e78[combatantIndex].innerStruct_00;
+      for(int combatantIndex = 0; combatantIndex < this.aliveBents_e78.size(); combatantIndex++) {
+        final BattleEntity27c bent = this.aliveBents_e78.get(combatantIndex).innerStruct_00;
         // Generate a random number between 0.0..0.2 and add 0.9 to bring it to 0.9..1.1
-        bent.turnValue_4c += Math.round(bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (simpleRand() / (float)0xffff * 0.2f + 0.9f));
+        bent.turnValue_4c += Math.round(bent.stats.getStat(LodMod.SPEED_STAT.get()).get() * (this.turnOrderRng.nextFloat() * 0.2f + 0.9f));
       }
 
       //LAB_800c8028
     }
 
     //LAB_800c8040
-    return this.alivePlayerBents_eac[0];
+    return this.alivePlayerBents_eac.getFirst();
   }
 
   @Method(0x800ca31cL)
@@ -790,7 +791,7 @@ public class BattleStateEf4 {
   public int loadGlobalAsset(final int drgnIndex, final int fileIndex) {
     final int index = this.getFreeGlobalAssetIndex();
 
-    loadDrgnFile(drgnIndex, fileIndex, data -> this.globalAssetLoaded(data, index));
+    loadDrgnFile(drgnIndex, fileIndex).thenAccept(data -> this.globalAssetLoaded(data, index));
 
     //LAB_800cac98
     return index;

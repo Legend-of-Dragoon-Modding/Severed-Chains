@@ -1,0 +1,36 @@
+--- original
++++ modified
+@@ -2444,25 +2444,19 @@
+ ENTRYPOINT_15:
+ consume
+ LABEL_155:
+-call 160, 0x81, 0x0, stor[8]
+-mov inl[:LABEL_157[stor[8]]], stor[stor[stor[0], 32], 8]
+-jmp_cmp ==, 0x1, stor[stor[stor[0], 32], 8], inl[:LABEL_156]
++mov id[lod:attack], reg[0]
++mov id[lod:special], reg[1]
++call Battle::scriptOverrideBattleMenuActions, 2, reg[0]
++call 160, reg[0]
++mov 1, stor[stor[stor[0], 32], 8]
++jmp_cmp ==, reg[0], id[lod:special], inl[:ACTION_SPECIAL]
++mov 0, stor[stor[stor[0], 32], 8]
+ yield
+ call 491, 0x1, stor[stor[stor[0], 32], 28]
+ jmp_cmp >, 0x0, stor[stor[stor[0], 32], 28], inl[:LABEL_155]
+-LABEL_156:
++ACTION_SPECIAL:
+ mov 0x1, stor[stor[stor[0], 32], 9]
+ consume
+-LABEL_157:
+-data 0x0
+-data 0x0
+-data 0x0
+-data 0x0
+-data 0x0
+-data 0x0
+-data 0x1
+-data 0x0
+-data 0x0
+ LABEL_158:
+ mov 0x0, stor[8]
+ mov 0x0, stor[9]

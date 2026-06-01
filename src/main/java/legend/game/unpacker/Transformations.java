@@ -1,8 +1,16 @@
 package legend.game.unpacker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Queue;
 
 public class Transformations {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Transformations.class);
+
   private final PathNode root;
   private final Queue<PathNode> transformationQueue;
   private int remaining;
@@ -54,6 +62,14 @@ public class Transformations {
     this.addNode(node.fullPath, newData);
   }
 
+  public void replaceWithFile(final PathNode node, final Path filename) {
+    try {
+      this.replaceNode(node, new FileData(Files.readAllBytes(filename)));
+    } catch(final IOException e) {
+      throw new UnpackerException("Failed to find file " + filename, e);
+    }
+  }
+
   public PathNode addChild(final PathNode parent, final String pathSegment, final FileData data) {
     synchronized(this.transformationQueue) {
       this.remaining++;
@@ -73,13 +89,18 @@ public class Transformations {
     while((slash = path.indexOf('/', previousSlash + 1)) != -1) {
       final String pathSegment = path.substring(previousSlash == 0 ? 0 : previousSlash + 1, slash);
       final boolean finalSegment = slash == path.length() - 1; // Is this the final segment in the path?
+      final String fullPath = current.fullPath.isEmpty() ? "" : current.fullPath + '/';
 
-      if(!current.children.containsKey(pathSegment) || finalSegment) {
-        final String fullPath = current.fullPath.isEmpty() ? "" : current.fullPath + '/';
-        current = current.addChild(new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, current));
-      } else {
-        current = current.children.get(pathSegment);
-      }
+      // Java complains about non-final current in lambda
+      final PathNode currentRef = current;
+      current = current.children.compute(pathSegment, (k, existing) -> {
+        if(existing != null && !finalSegment) {
+          return existing;
+        }
+
+//        LOGGER.info("Inserting %s", fullPath + pathSegment);
+        return new PathNode(fullPath + pathSegment, pathSegment, finalSegment ? data : null, currentRef);
+      });
 
       previousSlash = slash;
     }

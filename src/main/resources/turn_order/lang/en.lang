@@ -1,0 +1,4 @@
+# Mod metadata
+turn_order.name=Turn Order Display
+
+turn_order.config.show_turn_order.label=Show turn order

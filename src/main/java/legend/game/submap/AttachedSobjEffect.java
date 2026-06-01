@@ -8,11 +8,10 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.TmdObjLoader;
 import legend.game.PoolList;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
-import legend.game.scripting.ScriptStorageParam;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
@@ -25,20 +24,19 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
-import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.GetTPage;
+import static legend.game.Graphics.GsGetLs;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.PopMatrix;
+import static legend.game.Graphics.PushMatrix;
+import static legend.game.Graphics.RotTransPers4;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.vsyncMode_8007a3b8;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Models.applyModelRotationAndScale;
+import static legend.game.Models.initModel;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -121,12 +119,10 @@ public class AttachedSobjEffect {
   }
 
   /** Script method to initialize law pod trail. */
-  public void initLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
+  public void initLawPodTrail(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> state = script.scriptState_04;
 
-    script.params_20[9] = new ScriptStorageParam(state, 0);
-
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
+    final SubmapObject210 sobj = state.innerStruct_00;
     if(script.params_20[0].get() == 0 || this.lawPodTrailCount_800f9e78 >= 8) {
       //LAB_800f1698
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
@@ -371,6 +367,7 @@ public class AttachedSobjEffect {
         RENDERER.queueModel(this.tmdDust, inst.transforms, QueuedModelTmd.class)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(this.tmdDustModel_800d4d40.zOffset_a0)
+          .usePs1Depth(this.tmdDustModel_800d4d40.usePs1Depth)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
@@ -524,13 +521,12 @@ public class AttachedSobjEffect {
   }
 
   /** Script method to deallocate law pod trail individually. */
-  public void deallocateLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(state, 0);
+  public void deallocateLawPodTrail(final RunningScript<SubmapObject210> script) {
+    final ScriptState<SubmapObject210> state = script.scriptState_04;
 
     if(script.params_20[0].get() == 1) {
       this.deallocateLawPodTrail();
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
+      final SubmapObject210 sobj = state.innerStruct_00;
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
     }
   }

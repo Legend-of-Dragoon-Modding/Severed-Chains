@@ -28,7 +28,7 @@ New: Walk off-screen first.
  mov 0x258, stor[26]
  gosub inl[:LABEL_45]
  return
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt
  LABEL_45:
  call 101, var[64][3], stor[24], stor[25], stor[26]
  sub 0x3, stor[24]

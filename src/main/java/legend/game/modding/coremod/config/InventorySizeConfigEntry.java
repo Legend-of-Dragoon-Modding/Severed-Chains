@@ -4,12 +4,14 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.game.inventory.screens.controls.NumberSpinner;
 import legend.game.saves.ConfigCategory;
+import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptReadable;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class InventorySizeConfigEntry extends ConfigEntry<Integer> implements ScriptReadable {
   public InventorySizeConfigEntry() {
@@ -23,13 +25,22 @@ public class InventorySizeConfigEntry extends ConfigEntry<Integer> implements Sc
   }
 
   @Override
+  public void onChange(final ConfigCollection configCollection, final Integer oldValue, final Integer newValue) {
+    super.onChange(configCollection, oldValue, newValue);
+
+    if(gameState_800babc8 != null) {
+      gameState_800babc8.items_2e9.setMaxSize(newValue);
+    }
+  }
+
+  @Override
   public void read(final int index, final Param out) {
     out.set(CONFIG.getConfig(this));
   }
 
   private static byte[] serializer(final int val) {
     final byte[] data = new byte[4];
-    MathHelper.set(data, 0, 4, val);
+    MathHelper.setInt(data, 0, val);
     return data;
   }
 

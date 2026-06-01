@@ -20,7 +20,6 @@ import javafx.util.StringConverter;
 import legend.game.Scus94491BpeSegment_8006;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -30,7 +29,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptTempParam;
 import legend.lodmod.LodMod;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 public class CombatDebuggerController {
@@ -95,7 +93,7 @@ public class CombatDebuggerController {
 
 
   public void initialize() {
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < battleState_8006e398.allBents_e0c.size(); i++) {
       this.bents.add(new ListItem(this::getCombatantName, i));
     }
 
@@ -128,7 +126,7 @@ public class CombatDebuggerController {
     this.statusCondition.getSelectionModel().select(0);
 
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
-    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
+    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
     this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
     this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE));
     this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
@@ -150,7 +148,7 @@ public class CombatDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     if(state == null) {
       return;
@@ -192,24 +190,32 @@ public class CombatDebuggerController {
     this.spdMod.setText(speedMod < 0 ? Integer.toString(speedMod) : "+" + speedMod);
 
     this.turn.getValueFactory().setValue(bent.turnValue_4c);
-    this.atk.getValueFactory().setValue(bent.attack_34);
-    this.def.getValueFactory().setValue(bent.defence_38);
-    this.matk.getValueFactory().setValue(bent.magicAttack_36);
-    this.mdef.getValueFactory().setValue(bent.magicDefence_3a);
-    this.ahit.getValueFactory().setValue(bent.attackHit_3c);
-    this.mhit.getValueFactory().setValue(bent.magicHit_3e);
-    this.aavd.getValueFactory().setValue(bent.attackAvoid_40);
-    this.mavd.getValueFactory().setValue(bent.magicAvoid_42);
+    this.atk.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_STAT.get()).get());
+    this.def.getValueFactory().setValue(bent.stats.getStat(LodMod.DEFENSE_STAT.get()).get());
+    this.matk.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).get());
+    this.mdef.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).get());
+
+    if(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()) != null) {
+      this.ahit.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).get());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()) != null) {
+      this.mhit.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).get());
+    }
+
+    if(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()) != null) {
+      this.aavd.getValueFactory().setValue(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).get());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()) != null) {
+      this.mavd.getValueFactory().setValue(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).get());
+    }
 
     this.statusCondition.getSelectionModel().select(this.getStatusIndexFromFlags(bent.status_0e) + 1);
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[combatantIndex];
-
-    if(state == null) {
-      return "unused";
-    }
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(combatantIndex);
 
     final BattleEntity27c bent = state.innerStruct_00;
     final CombatantStruct1a8 combatant = bent.combatant_144;
@@ -218,11 +224,7 @@ public class CombatDebuggerController {
       return "unused";
     }
 
-    if((combatant.flags_19e & 0x4) == 0) {
-      return ((Battle)currentEngineState_8004dd04).currentEnemyNames_800c69d0[bent.charSlot_276];
-    }
-
-    return bent.charId_272 == 8 ? "Who?" : BattleHud.playerNames_800fb378[bent.charId_272];
+    return bent.getName();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -230,7 +232,7 @@ public class CombatDebuggerController {
       return;
     }
 
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[this.bentList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(this.bentList.getSelectionModel().getSelectedIndex());
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());
@@ -242,7 +244,7 @@ public class CombatDebuggerController {
 
   public void updateStats(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     if(state == null) {
       return;
@@ -267,19 +269,31 @@ public class CombatDebuggerController {
 
     bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
     bent.turnValue_4c = this.turn.getValue().shortValue();
-    bent.attack_34 = this.atk.getValue();
-    bent.defence_38 = this.def.getValue();
-    bent.magicAttack_36 = this.matk.getValue();
-    bent.magicDefence_3a = this.mdef.getValue();
-    bent.attackHit_3c = this.ahit.getValue().shortValue();
-    bent.magicHit_3e = this.mhit.getValue().shortValue();
-    bent.attackAvoid_40 = this.aavd.getValue().shortValue();
-    bent.magicAvoid_42 = this.mavd.getValue().shortValue();
+    bent.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(this.atk.getValue());
+    bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(this.matk.getValue());
+    bent.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(this.def.getValue());
+    bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(this.mdef.getValue());
+
+    if(bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.ATTACK_HIT_STAT.get()).setRaw(this.ahit.getValue().shortValue());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.MAGIC_HIT_STAT.get()).setRaw(this.mhit.getValue().shortValue());
+    }
+
+    if(bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.ATTACK_AVOID_STAT.get()).setRaw(this.aavd.getValue());
+    }
+
+    if(bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()) != null) {
+      bent.stats.getStat(LodMod.MAGIC_AVOID_STAT.get()).setRaw(this.mavd.getValue());
+    }
   }
 
   public void getStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e) + 1;
 
@@ -288,7 +302,7 @@ public class CombatDebuggerController {
 
   public void setStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     final int statusIndex = this.getStatusIndexFromFlags(state.innerStruct_00.status_0e);
     final int selectedStatusIndex = this.statusCondition.getSelectionModel().getSelectedIndex();
@@ -311,13 +325,13 @@ public class CombatDebuggerController {
 
   public void cureStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
 
     final int arrIndex = state.innerStruct_00.combatantIndex_26c;
     Scus94491BpeSegment_8006.battleState_8006e398.status_384[arrIndex].unpack(0);
   }
 
-  private int getStatusIndexFromFlags(int flags) {
+  private int getStatusIndexFromFlags(final int flags) {
     final int statusFlags = flags & 0xff;
     return statusFlags == 0 ? -1 : Integer.numberOfTrailingZeros(statusFlags);
   }

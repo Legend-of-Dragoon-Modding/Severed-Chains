@@ -1,6 +1,5 @@
 package legend.core.audio.sequencer;
 
-import legend.core.MathHelper;
 import legend.core.audio.sequencer.assets.AdsrPhase;
 
 final class AdsrEnvelope {
@@ -36,7 +35,7 @@ final class AdsrEnvelope {
       adsrStep = (adsrStep * this.currentLevel) >> 15;
     }
 
-    this.currentLevel = MathHelper.clamp(this.currentLevel + adsrStep, isDecreasing ? target : 0, isDecreasing ? 0x7fff : target);
+    this.currentLevel = Math.clamp(this.currentLevel + adsrStep, isDecreasing ? target : 0, isDecreasing ? 0x7fff : target);
     this.currentLevelF = this.currentLevel / 32768.0f;
 
     final boolean nextPhase = this.currentLevel == target;

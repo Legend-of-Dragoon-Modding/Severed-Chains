@@ -2,46 +2,57 @@ package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
 import legend.core.platform.input.InputAction;
+import legend.game.Scus94491BpeSegment_800b;
+import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
+import legend.game.types.MessageBoxType;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.playMenuSound;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.FullScreenEffects.startFadeEffect;
+import static legend.game.Menus.deallocateRenderables;
+import static legend.game.Menus.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
   private final Set<String> enabledMods = new HashSet<>();
 
   private final Textbox campaignName;
+  private final Dropdown<String> campaignType;
 
   private boolean unload;
 
   public NewCampaignScreen() {
+    loadingNewGameState_800bdc34 = false;
+
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     this.enabledMods.addAll(MODS.getAllModIds());
 
@@ -55,6 +66,25 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignName.setMaxLength(15);
     this.campaignName.setZ(35);
     this.addRow("Campaign name", this.campaignName);
+
+    this.campaignType = new Dropdown<>();
+    this.campaignType.setZ(35);
+    this.addRow("Campaign", this.campaignType);
+
+    final Map<String, RegistryId> campaignTypeIds = new HashMap<>();
+    final List<String> campaignTypeNames = new ArrayList<>();
+    for(final RegistryId campaignTypeId : REGISTRIES.campaignTypes) {
+      final String name = I18n.translate(REGISTRIES.campaignTypes.getEntry(campaignTypeId));
+      campaignTypeNames.add(name);
+      campaignTypeIds.put(name, campaignTypeId);
+    }
+    campaignTypeNames.sort(String::compareToIgnoreCase);
+
+    for(final String campaignTypeName : campaignTypeNames) {
+      this.campaignType.addOption(campaignTypeName);
+    }
+    this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.get(index))));
+    Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.getFirst()));
 
     final Button options = new Button("Options");
     this.addRow("", options);
@@ -85,7 +115,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow("", startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { })));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> { })));
       } else {
         this.unload = true;
       }
@@ -104,20 +134,16 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
       this.state.campaign = Campaign.create(SAVES, this.campaignName.getText().strip());
 
+      Scus94491BpeSegment_800b.campaignType.get().setUpNewCampaign(this.state);
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
-      final GameLoadedEvent gameLoadedEvent = EVENTS.postEvent(new GameLoadedEvent(newGameEvent.gameState));
 
-      gameState_800babc8 = gameLoadedEvent.gameState;
+      playMenuSound(2);
+      SAVES.loadGameState(newGameEvent.gameState);
 
       this.state.campaign.loadConfigInto(CONFIG);
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
-
-      loadingNewGameState_800bdc34 = true;
-      playMenuSound(2);
-      whichMenu_800bdc38 = WhichMenu.UNLOAD;
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, this.state.campaign.path.resolve("campaign_config.dcnf"));
     }
-
-
   }
 
   private void menuEscape() {

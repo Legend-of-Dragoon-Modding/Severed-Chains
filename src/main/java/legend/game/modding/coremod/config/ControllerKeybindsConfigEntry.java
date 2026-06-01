@@ -1,5 +1,8 @@
 package legend.game.modding.coremod.config;
 
+import legend.core.memory.types.IntRef;
+import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputActivation;
 import legend.game.SItem;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.KeybindsScreen;
@@ -8,12 +11,25 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.unpacker.ExpandableFileData;
+import legend.game.unpacker.FileData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
-import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class ControllerKeybindsConfigEntry extends ConfigEntry<Void> {
+import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.FullScreenEffects.startFadeEffect;
+
+public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDelegate<InputAction>, List<InputActivation>>> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ControllerKeybindsConfigEntry.class);
+
   public ControllerKeybindsConfigEntry() {
-    super(null, ConfigStorageLocation.GLOBAL, ConfigCategory.CONTROLS, o -> new byte[0], bytes -> null);
+    super(Map.of(), ConfigStorageLocation.CAMPAIGN, ConfigCategory.CONTROLS, ControllerKeybindsConfigEntry::serializer, ControllerKeybindsConfigEntry::deserializer);
 
     this.setEditControl((current, configCollection) -> {
       final Button button = new Button(I18n.translate(CoreMod.MOD_ID + ".config.controller_keybinds.configure"));
@@ -24,5 +40,62 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Void> {
 
       return button;
     });
+  }
+
+  @Override
+  public boolean availableInBattle() {
+    return false;
+  }
+
+  private static byte[] serializer(final Map<RegistryDelegate<InputAction>, List<InputActivation>> actionMap) {
+    final FileData out = new ExpandableFileData(100);
+    final IntRef offset = new IntRef();
+
+    out.writeShort(offset, actionMap.size());
+
+    for(final var e : actionMap.entrySet()) {
+      out.writeRegistryId(offset, e.getKey().getId());
+      out.writeByte(offset, e.getValue().size());
+
+      for(final InputActivation activation : e.getValue()) {
+        activation.serialize(out, offset);
+      }
+    }
+
+    return out.getBytes();
+  }
+
+  private static Map<RegistryDelegate<InputAction>, List<InputActivation>> deserializer(final byte[] data) {
+    if(data.length >= 1) {
+      final Map<RegistryDelegate<InputAction>, List<InputActivation>> out = new HashMap<>();
+
+      final FileData in = new FileData(data);
+      final IntRef offset = new IntRef();
+
+      final int actionsSize = in.readUShort(offset);
+
+      for(int actionIndex = 0; actionIndex < actionsSize; actionIndex++) {
+        final RegistryDelegate<InputAction> action = REGISTRIES.inputActions.getEntry(in.readRegistryId(offset));
+
+        final int activationsSize = in.readUByte(offset);
+
+        final List<InputActivation> activations = new ArrayList<>();
+
+        if(action.isValid()) {
+          out.put(action, activations);
+        } else {
+          LOGGER.warn("Skipping unknown keybind %s", action.getId());
+          // We still need to read the activations so the save loads right
+        }
+
+        for(int activationIndex = 0; activationIndex < activationsSize; activationIndex++) {
+          activations.add(InputActivation.deserialize(in, offset));
+        }
+      }
+
+      return out;
+    }
+
+    return Map.of();
   }
 }

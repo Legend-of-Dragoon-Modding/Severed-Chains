@@ -5,7 +5,6 @@ import legend.core.audio.opus.XaPlayer;
 import legend.core.audio.sequencer.Sequencer;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.sound.ReverbConfig;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +37,6 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 public final class AudioThread implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AudioThread.class);
   private static final Marker AUDIO_THREAD_MARKER = MarkerManager.getMarker("AUDIO_THREAD");
-  public static final int BASE_SAMPLE_RATE = 44_100;
 
   private final int nanosPerTick;
   private long audioContext;
@@ -47,7 +45,6 @@ public final class AudioThread implements Runnable {
   private final int voiceCount;
   private InterpolationPrecision interpolationPrecision;
   private PitchResolution pitchResolution;
-  private SampleRate sampleRate;
   private EffectsOverTimeGranularity effectsGranularity;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
@@ -69,13 +66,12 @@ public final class AudioThread implements Runnable {
     return ALUtil.getStringList(0, ALC_DEVICE_SPECIFIER);
   }
 
-  public AudioThread(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final SampleRate sampleRate, final EffectsOverTimeGranularity granularity) {
-    this.nanosPerTick = 1_000_000_000 / 60;
+  public AudioThread(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final EffectsOverTimeGranularity granularity) {
+    this.nanosPerTick = 1_000_000_000 / 120;
     this.stereo = stereo;
     this.voiceCount = voiceCount;
     this.interpolationPrecision = bitDepth;
     this.pitchResolution = pitchResolution;
-    this.sampleRate = sampleRate;
     this.effectsGranularity = granularity;
   }
 
@@ -88,9 +84,9 @@ public final class AudioThread implements Runnable {
     LOGGER.info("Reinitializing audio");
 
     synchronized(this) {
-      final boolean[] playing = new boolean[this.sources.size()];
+      final boolean[] active = new boolean[this.sources.size()];
       for(int i = 0; i < this.sources.size(); i++) {
-        playing[i] = this.sources.get(i).isPlaying();
+        active[i] = this.sources.get(i).isActive();
       }
 
       this.destroyInternal();
@@ -101,8 +97,8 @@ public final class AudioThread implements Runnable {
           final AudioSource source = this.sources.get(i);
           source.init();
 
-          if(playing[i]) {
-            source.setPlaying(true);
+          if(active[i]) {
+            source.setActive(true);
           }
         }
       }
@@ -198,7 +194,7 @@ public final class AudioThread implements Runnable {
   }
 
   private void addDefaultSources() {
-    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationPrecision, this.pitchResolution, this.sampleRate, this.effectsGranularity));
+    this.sequencer = this.addSource(new Sequencer(this.stereo, this.voiceCount, this.interpolationPrecision, this.pitchResolution, this.effectsGranularity));
     this.xaPlayer = this.addSource(new XaPlayer());
   }
 
@@ -407,13 +403,22 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  public boolean isMusicPlaying() {
+  public void stopXa() {
     synchronized(this) {
-      return this.sequencer.isPlaying();
+      if(this.xaPlayer.isInitialized()) {
+        this.xaPlayer.stop();
+        this.xaPlayer.unloadOpusFile();
+      }
     }
   }
 
-  public void setReverb(final ReverbConfig config) {
+  public boolean isMusicPlaying() {
+    synchronized(this) {
+      return this.sequencer.isActive() && this.sequencer.isPlaying();
+    }
+  }
+
+  public void setReverb(final int config) {
     synchronized(this) {
       this.sequencer.setReverbConfig(config);
     }
@@ -440,21 +445,6 @@ public final class AudioThread implements Runnable {
         this.pitchResolution = pitchResolution;
         this.sequencer.changePitchResolution(this.pitchResolution);
       }
-    }
-  }
-
-  public void changeSampleRate(final SampleRate sampleRate) {
-    synchronized(this) {
-      if(this.sampleRate != sampleRate) {
-        this.sampleRate = sampleRate;
-        this.sequencer.changeSampleRate(sampleRate, this.effectsGranularity);
-      }
-    }
-  }
-
-  public SampleRate getSampleRate() {
-    synchronized(this) {
-      return this.sampleRate;
     }
   }
 

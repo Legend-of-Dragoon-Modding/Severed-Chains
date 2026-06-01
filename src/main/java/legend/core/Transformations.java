@@ -12,9 +12,11 @@ import org.joml.Vector4f;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsMulCoord2;
-import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static legend.game.Graphics.GsGetLw;
+import static legend.game.Graphics.GsMulCoord2;
+import static legend.game.Graphics.PopMatrix;
+import static legend.game.Graphics.PushMatrix;
+import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 
 public final class Transformations {
   private Transformations() { }
@@ -24,12 +26,14 @@ public final class Transformations {
   private static final MV toScreenTempMv = new MV();
 
   public static void toScreenspace(final Vector3f worldspaceCoord, final MV transforms, final Vector2f out) {
-    if(RENDERER.getRenderMode() == EngineState.RenderMode.LEGACY || !CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get())) {
+    if(RENDERER.getRenderMode() == EngineState.RenderMode.LEGACY) {
       toScreenTempMv.set(transforms);
       GsMulCoord2(worldToScreenMatrix_800c3548, toScreenTempMv);
+      PushMatrix();
       GTE.setTransforms(toScreenTempMv);
       GTE.perspectiveTransform(worldspaceCoord.x, worldspaceCoord.y, worldspaceCoord.z);
       out.set(GTE.getScreenX(2), GTE.getScreenY(2));
+      PopMatrix();
       return;
     }
 
@@ -40,7 +44,14 @@ public final class Transformations {
     toScreenTempVec.mul(RENDERER.camera().getView());
     toScreenTempVec.mul(RENDERER.getPerspectiveProjection());
 
-    out.set(toScreenTempVec.x / toScreenTempVec.w / 2 * (RENDERER.getNativeWidth() * RENDERER.getRenderAspectRatio() / RENDERER.getNativeAspectRatio()), (-toScreenTempVec.y / toScreenTempVec.w / 2) * RENDERER.getNativeHeight());
+    final float renderAspect;
+    if(CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      renderAspect = RENDERER.getRenderAspectRatio();
+    } else {
+      renderAspect = 4.0f / 3.0f;
+    }
+
+    out.set(toScreenTempVec.x / toScreenTempVec.w / 2 * (RENDERER.getNativeWidth() * renderAspect / RENDERER.getNativeAspectRatio()), (-toScreenTempVec.y / toScreenTempVec.w / 2) * RENDERER.getNativeHeight());
   }
 
   private static final MV toScreenTempLw = new MV();

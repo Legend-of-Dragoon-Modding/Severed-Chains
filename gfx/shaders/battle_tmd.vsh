@@ -35,8 +35,6 @@ uniform float modelIndex;
 uniform int ctmdFlags;
 uniform vec3 battleColour;
 
-uniform int useVdf;
-
 uniform int time;
 
 struct ModelTransforms {
@@ -65,6 +63,10 @@ layout(std140) uniform lighting {
   Light[128] lights;
 };
 
+layout(std140) uniform clutAnimation {
+  vec4[1024] clutAnimations;
+};
+
 layout(std140) uniform projectionInfo {
   float znear;
   /** PS1 projection plane distance (H) when in PS1 perspective mode */
@@ -74,10 +76,6 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
-layout(std140) uniform vdf {
-  vec4[1024] vertices;
-};
-
 vec3 hsv2rgb(vec3 c) {
   vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
   vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
@@ -85,13 +83,7 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 void main() {
-  vec4 pos;
-
-  if(useVdf == 0) {
-    pos = vec4(inPos.xyz, 1.0f);
-  } else {
-    pos = vec4(vertices[int(inPos.w)].xyz, 1.0f);
-  }
+  vec4 pos = vec4(inPos.xyz, 1.0);
 
   vs_out.vertFlags = int(inFlags);
   bool ctmd = (ctmdFlags & 0x20) != 0;
@@ -106,6 +98,16 @@ void main() {
 
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
     vs_out.vertColour.rgb = inColour.rgb * battleColour.rgb;
+    // Individually checks for retail color overflows
+    if(vs_out.vertColour.r > 2.0) {
+      vs_out.vertColour.r = mod(vs_out.vertColour.r, 2.0);
+    }
+    if(vs_out.vertColour.g > 2.0) {
+      vs_out.vertColour.g = mod(vs_out.vertColour.g, 2.0);
+    }
+    if(vs_out.vertColour.b > 2.0) {
+      vs_out.vertColour.b = mod(vs_out.vertColour.b, 2.0);
+    }
   } else if(lit) {
     float range = 1.0;
 
@@ -146,6 +148,19 @@ void main() {
       vs_out.vertClut = vec2((intClut & 0x3f) * 16, intClut >> 6);
     } else {
       vs_out.vertClut = clutOverride;
+    }
+
+    for(int clutAnimationIndex = 0; clutAnimationIndex < 1024; clutAnimationIndex++) {
+      vec4 anim = clutAnimations[clutAnimationIndex];
+
+      if(anim.x == -1) {
+        break;
+      }
+
+      if(anim.xy == vs_out.vertClut.xy) {
+        vs_out.vertClut.xy = anim.zw;
+        break;
+      }
     }
 
     if(vs_out.vertBpp == 0 || vs_out.vertBpp == 1) {

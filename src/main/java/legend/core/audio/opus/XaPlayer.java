@@ -17,6 +17,7 @@ import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class XaPlayer extends AudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(XaPlayer.class);
@@ -74,13 +75,13 @@ public final class XaPlayer extends AudioSource {
       this.pcmBuffer = BufferUtils.createShortBuffer(this.pcm.length);
     }
 
-    this.sampleCount = OpusFile.op_pcm_total(this.opusFile, -1);
+    this.sampleCount = OpusFile.op_pcm_total(this.opusFile, -1) * newChannelCount;
 
     if(this.sampleCount < this.samplesPerTick * 4) {
       throw new RuntimeException("XA file is less than 4 buffers in length (40ms)");
     }
 
-    this.setPlaying(true);
+    this.setActive(true);
 
     if(this.canBuffer()) {
       for(int i = 0; i < 4; i++) {
@@ -89,7 +90,7 @@ public final class XaPlayer extends AudioSource {
       }
     }
 
-    if(this.isPlaying()) {
+    if(this.isActive()) {
       this.play();
     }
   }
@@ -114,16 +115,19 @@ public final class XaPlayer extends AudioSource {
 
     this.samplesRead += this.pcm.length;
 
-    this.setPlaying(this.samplesRead <= this.sampleCount);
+    this.setActive(this.samplesRead <= this.sampleCount);
 
-    if(!this.isPlaying()) {
+    if(!this.isActive()) {
       this.unloadOpusFile();
     }
   }
 
-  private void unloadOpusFile() {
-    OpusFile.op_free(this.opusFile);
-    this.opusFileData = null;
+  public void unloadOpusFile() {
+    if(this.opusFile != NULL) {
+      OpusFile.op_free(this.opusFile);
+      this.opusFile = NULL;
+      this.opusFileData = null;
+    }
   }
 
   @Override

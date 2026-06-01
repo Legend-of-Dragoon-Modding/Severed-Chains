@@ -18,12 +18,12 @@ group = 'legend'
 version = project.ext.hash
 
 java {
-  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = targetCompatibility = JavaVersion.VERSION_25
 }
 
 compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.4.0-SNAPSHOT"
+project.ext.lwjglVersion = "3.4.1"
 project.ext.jomlVersion = "1.10.8"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
@@ -54,16 +54,18 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 repositories {
   mavenCentral()
   mavenLocal()
-  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+//  maven { url = "https://central.sonatype.com/repository/maven-snapshots/" }
+  maven { url = "https://jitpack.io" }
 }
 
 dependencies {
-  api group: 'org.legendofdragoon', name: 'mod-loader', version: '4.2.0'
-  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.5.6'
+  api 'org.legendofdragoon:mod-loader:4.2.5'
+  api 'org.legendofdragoon:script-recompiler:0.7.6'
+  api 'org.legendofdragoon:mogul-dabas:0.0.1'
 
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.24.3'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.24.3'
-  implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.4.1'
+  api 'org.apache.logging.log4j:log4j-api:2.24.3'
+  api 'org.apache.logging.log4j:log4j-core:2.24.3'
+  api 'org.fusesource.jansi:jansi:2.4.1'
 
   api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
@@ -73,28 +75,37 @@ dependencies {
   api "org.lwjgl:lwjgl-openal"
   api "org.lwjgl:lwjgl-opus"
   api "org.lwjgl:lwjgl-stb"
+  api "org.lwjgl:lwjgl-assimp"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-sdl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
-  implementation group: 'org.asynchttpclient', name: 'async-http-client', version: '3.0.1' // update check
-  implementation group: 'org.json', name: 'json', version: '20250107'
+  implementation 'org.asynchttpclient:async-http-client:3.0.1' // update check
+  implementation 'org.json:json:20250107'
+  api "com.google.code.gson:gson:2.13.2"
 
-  implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
-  implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.15'
-  implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'
+  implementation 'com.opencsv:opencsv:5.9'
+  implementation 'io.github.java-diff-utils:java-diff-utils:4.15'
+  implementation 'commons-io:commons-io:2.18.0'
 
-  api group: 'com.github.slugify', name: 'slugify', version: '3.0.7'
+  api 'com.github.slugify:slugify:3.0.7'
 
-  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.15'
+  api 'it.unimi.dsi:fastutil:8.5.15'
 
-  implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.16.0'
+  implementation 'net.java.dev.jna:jna:5.16.0'
+
+  implementation 'com.github.JnCrMx:discord-game-sdk4j:v1.0.0'
+
+  testImplementation(platform("org.junit:junit-bom:6.0.0"))
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation("org.junit.platform:junit-platform-launcher")
 }
 
 javafx {
@@ -111,6 +122,23 @@ jar {
     attributes(
       'Main-Class': 'legend.game.Main'
     )
+  }
+}
+
+tasks.register('updaterJar', Jar) {
+  archiveBaseName = 'updater'
+  archiveVersion = ''
+  archiveClassifier = ''
+
+  manifest {
+    attributes(
+      'Main-Class': 'legend.core.UpdaterMain'
+    )
+  }
+
+  from(sourceSets.main.output) {
+    include 'legend/core/UpdaterMain.class'
+    include 'legend/core/UpdaterMain$*.class'
   }
 }
 
@@ -159,6 +187,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.MAC_OS:
@@ -174,6 +203,7 @@ tasks.register('copySupportFiles', Copy) {
         from('download-java') {
           filter(ReplaceTokens, tokens: [os: 'macosx', arch: isArm ? "aarch64" : "x64"])
         }
+        from 'launch.conf'
         break
 
       case OperatingSystem.WINDOWS:
@@ -185,6 +215,7 @@ tasks.register('copySupportFiles', Copy) {
           filter(ReplaceTokens, tokens: [false: "true"])
           filter(ReplaceTokens, tokens: [libs: libs])
         }
+        from 'gpu-optional-setup.bat'
         break
     }
 
@@ -192,10 +223,11 @@ tasks.register('copySupportFiles', Copy) {
     from 'gamecontrollerdb.txt'
     from 'README.md'
     from 'LICENSE'
+    from 'credits.txt'
   }
 }
 
-jar.dependsOn(clearOutput, copyLibs, copySupportFiles)
+jar.dependsOn(clearOutput, copyLibs, copySupportFiles, updaterJar)
 
 publishing {
   publications {
@@ -213,6 +245,8 @@ publishing {
 
 test {
   useJUnitPlatform()
+  // Don't automatically run tests in build process
+  exclude '**/*'
 }
 
 sourceSets {

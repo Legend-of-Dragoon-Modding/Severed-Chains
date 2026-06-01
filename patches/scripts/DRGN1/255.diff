@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -3845,7 +3845,7 @@
+ data 0x1e
+ data 0x2
+ PTR_6b1c_10:
+-data str[When this sight overlaps<line>the + in the center, <line>press the ` button.<multibox><line>Gray + means too fast<line>Blue + means too slow<line>White + means perfect.]
++data str[When this sight overlaps<line>the □ in the center, <line>press <action=lod:bttl_attack>.<multibox><line>Gray □ means too fast<line>Blue □ means too slow<line>White □ means perfect.]
+ data 0x18
+ data 0x6
+ PTR_6b1c_11:
+@@ -3865,7 +3865,7 @@
+ data 0x1a
+ data 0x6
+ PTR_6b1c_12:
+-data str[Press the @ button when the red<line>counterattack sight appears <line>overlaying the +.]
++data str[Press <action=lod:bttl_counter> when the red<line>counterattack sight appears <line>overlaying the □.]
+ data 0x1f
+ data 0x3
+ PTR_6b1c_13:

@@ -7,8 +7,8 @@ import java.util.HashMap;
 public record DirectoryEntry(String name, int entryLength, int sector, int length, boolean isDirectory, IsoReader reader, HashMap<String, DirectoryEntry> children) {
   public static DirectoryEntry fromArray(final IsoReader reader, final byte[] data, final int offset) {
     final int entryLength = data[offset];
-    final int sector = (int)MathHelper.get(data, offset +  2, 4);
-    final int length = (int)MathHelper.get(data, offset + 10, 4);
+    final int sector = MathHelper.getInt(data, offset +  2);
+    final int length = MathHelper.getInt(data, offset + 10);
     final int flags = data[offset + 25];
     final boolean isDirectory = (flags & 0x2) != 0;
 

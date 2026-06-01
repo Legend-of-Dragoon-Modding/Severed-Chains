@@ -6,7 +6,7 @@ import legend.game.scripting.ScriptState;
 
 public class ShieldItem extends BuffItem {
   public ShieldItem(final int useItemEntrypoint, final boolean physicalImmunity, final boolean magicalImmunity) {
-    super(useItemEntrypoint, ItemIcon.SHIELD, 200, TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, physicalImmunity, magicalImmunity, 0, 0, 0, 0, 0, 0);
+    super(useItemEntrypoint, ItemIcon.SHIELD_ITEM, 200, TargetType.ALLIES, 0, 0, 0, 0, 0, 0, 0, 0, physicalImmunity, magicalImmunity, 0, 0, 0, 0, 0, 0);
   }
 
   @Override

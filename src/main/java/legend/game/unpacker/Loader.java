@@ -2,6 +2,7 @@ package legend.game.unpacker;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import legend.core.Async;
 import legend.core.DebugHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,10 +15,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
@@ -28,15 +27,17 @@ public final class Loader {
 
   private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
 
-  private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
-  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(AVAILABLE_PROCESSORS);
   private static final AtomicInteger LOADING_COUNT = new AtomicInteger();
 
   public static Path resolve(final String name) {
     return Unpacker.ROOT.resolve(fixPath(name));
   }
 
-  public static FileData loadFile(final Path path) {
+  public static Path resolve(final Path name) {
+    return Unpacker.ROOT.resolve(name);
+  }
+
+  public static FileData loadFileSync(final Path path) {
     LOGGER.info("Loading file %s", path);
 
     try {
@@ -46,77 +47,120 @@ public final class Loader {
     }
   }
 
-  public static FileData loadFile(final String name) {
-    return loadFile(Unpacker.ROOT.resolve(fixPath(name)));
+  public static FileData loadFileSync(final String name) {
+    return loadFileSync(Unpacker.ROOT.resolve(fixPath(name)));
   }
 
-  public static void loadFile(final Path path, final Consumer<FileData> onCompletion) {
+  public static CompletableFuture<FileData> loadFile(final Path path) {
     final int total = LOADING_COUNT.incrementAndGet();
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Queueing file %s (total queued: %d) from %s.%s(%s:%d)", path, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadFile(path));
-      final int remaining = LOADING_COUNT.decrementAndGet();
-      LOGGER.info("File %s loaded (remaining queued: %d)", path, remaining);
-    });
+    return Async
+      .run(() -> loadFileSync(path))
+      .exceptionally(t -> onFileLoadingException(t, path.toString()))
+      .whenComplete((result, exception) -> {
+        final int remaining = LOADING_COUNT.decrementAndGet();
+        LOGGER.info("File %s loaded (remaining queued: %d)", path, remaining);
+      })
+    ;
   }
 
-  public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
+  public static CompletableFuture<FileData> loadFile(final String name) {
     final int total = LOADING_COUNT.incrementAndGet();
     LOGGER.info("Queueing file %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadFile(name));
-      final int remaining = LOADING_COUNT.decrementAndGet();
-      LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
-    });
+
+    return Async
+      .run(() -> loadFileSync(name))
+      .exceptionally(t -> onFileLoadingException(t, name))
+      .whenComplete((result, exception) -> {
+        final int remaining = LOADING_COUNT.decrementAndGet();
+        LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
+      })
+    ;
   }
 
-  public static void loadFiles(final Consumer<List<FileData>> onCompletion, final String... files) {
+  public static CompletableFuture<List<FileData>> loadFiles(final String... files) {
     final int total = LOADING_COUNT.updateAndGet(i -> i + files.length);
     LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
 
-    EXECUTOR.execute(() -> {
-      final List<FileData> fileData = new ArrayList<>();
-      for(final String file : files) {
-        final FileData data = loadFile(file);
-        fileData.add(data);
-      }
+    final FileData[] data = new FileData[files.length];
+    final CompletableFuture<FileData>[] futures = new CompletableFuture[files.length];
+    for(int i = 0; i < files.length; i++) {
+      final int finalI = i;
+      futures[i] = Async.run(() -> data[finalI] = loadFileSync(files[finalI]));
+    }
 
-      onCompletion.accept(fileData);
-      final int remaining = LOADING_COUNT.updateAndGet(i -> i - files.length);
-      LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
-    });
+    return CompletableFuture.allOf(futures)
+      .thenApply(v -> List.of(data))
+      .exceptionally(t -> onFileLoadingException(t, Arrays.toString(files)))
+      .whenComplete((result, exception) -> {
+        final int remaining = LOADING_COUNT.updateAndGet(i -> i - files.length);
+        LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
+      })
+    ;
   }
 
-  public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
+  public static CompletableFuture<List<FileData>> loadFiles(final Path... files) {
+    final int total = LOADING_COUNT.updateAndGet(i -> i + files.length);
+    LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
+
+    final FileData[] data = new FileData[files.length];
+    final CompletableFuture<FileData>[] futures = new CompletableFuture[files.length];
+    for(int i = 0; i < files.length; i++) {
+      final int finalI = i;
+      futures[i] = Async.run(() -> data[finalI] = loadFileSync(files[finalI]));
+    }
+
+    return CompletableFuture.allOf(futures)
+      .thenApply(v -> List.of(data))
+      .exceptionally(t -> onFileLoadingException(t, Arrays.toString(files)))
+      .whenComplete((result, exception) -> {
+        final int remaining = LOADING_COUNT.updateAndGet(i -> i - files.length);
+        LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
+      })
+    ;
+  }
+
+  public static CompletableFuture<List<FileData>> loadDirectory(final String name) {
     final int total = LOADING_COUNT.incrementAndGet();
     LOGGER.info("Queueing directory %s (total queued: %d)", name, total);
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadDirectory(name));
-      final int remaining = LOADING_COUNT.decrementAndGet();
-      LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
-    });
+
+    return Async
+      .run(() -> loadDirectorySync(name))
+      .exceptionally(t -> onFileLoadingException(t, name))
+      .whenComplete((result, exception) -> {
+        final int remaining = LOADING_COUNT.decrementAndGet();
+        LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
+      })
+    ;
   }
 
-  public static void loadDirectory(final Path dir, final Consumer<List<FileData>> onCompletion) {
+  public static CompletableFuture<List<FileData>> loadDirectory(final Path dir) {
     final int total = LOADING_COUNT.incrementAndGet();
 
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Queueing directory %s (total queued: %d) from %s.%s(%s:%d)", dir, total, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    EXECUTOR.execute(() -> {
-      onCompletion.accept(loadDirectory(dir));
-      final int remaining = LOADING_COUNT.decrementAndGet();
-      LOGGER.info("Directory %s loaded (remaining queued: %d)", dir, remaining);
-    });
+    return Async.run(() -> loadDirectorySync(dir))
+      .exceptionally(t -> onFileLoadingException(t, dir.toString()))
+      .whenComplete((result, exception) -> {
+        final int remaining = LOADING_COUNT.decrementAndGet();
+        LOGGER.info("Directory %s loaded (remaining queued: %d)", dir, remaining);
+      })
+    ;
   }
 
-  public static List<FileData> loadDirectory(final String name) {
-    return loadDirectory(Unpacker.ROOT.resolve(fixPath(name)));
+  private static <T> T onFileLoadingException(final Throwable t, final String path) {
+    LOGGER.error("Failed to load " + path, t);
+    return null;
   }
 
-  public static List<FileData> loadDirectory(final Path dir) {
+  public static List<FileData> loadDirectorySync(final String name) {
+    return loadDirectorySync(Unpacker.ROOT.resolve(fixPath(name)));
+  }
+
+  public static List<FileData> loadDirectorySync(final Path dir) {
     LOGGER.info("Loading directory %s", dir);
 
     final Path mrg = dir.resolve("mrg");
@@ -249,14 +293,10 @@ public final class Loader {
       name = name.substring(0, name.lastIndexOf(';'));
     }
 
-    if(name.startsWith("\\")) {
+    if(name.startsWith("\\") || name.startsWith("/")) {
       name = name.substring(1);
     }
 
     return name.replace('\\', '/');
-  }
-
-  public static void shutdownLoader() {
-    EXECUTOR.shutdown();
   }
 }

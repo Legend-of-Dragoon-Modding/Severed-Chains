@@ -4,28 +4,27 @@ import legend.core.QueuedModelBattleTmd;
 import legend.core.RenderEngine;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
 import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.TmdObjTable1c;
 import org.joml.Matrix4f;
 
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
-import static legend.game.Scus94491BpeSegment.zMin;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_800c.inverseWorldToScreenMatrix;
-import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Graphics.GsSetLightMatrix;
+import static legend.game.Graphics.inverseWorldToScreenMatrix;
+import static legend.game.Graphics.lightColourMatrix_800c3508;
+import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
+import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
+import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
+import static legend.game.Graphics.zMax_1f8003cc;
+import static legend.game.Graphics.zMin;
+import static legend.game.Graphics.zOffset_1f8003e8;
+import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.combat.SEffe.FUN_800e60e0;
 import static legend.game.combat.SEffe.FUN_800e6170;
 import static legend.game.combat.SEffe.FUN_800e61e4;
@@ -37,7 +36,6 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
   public int _00;
   public DeffPart.TmdType tmdType_04;
   public TmdObjTable1c tmd_08;
-  public Obj obj;
 
   /** ushort */
   public int tpage_10;
@@ -104,7 +102,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        final QueuedModelBattleTmd model = RENDERER.queueModel(this.obj, this.glTransforms, QueuedModelBattleTmd.class)
+        RENDERER.queueModel(this.tmd_08.getObj(), this.glTransforms, QueuedModelBattleTmd.class)
           .depthOffset(manager.params_10.z_22 * 4)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
@@ -112,13 +110,9 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
           .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
-
-        if(this.tmd_08.vdf != null) {
-          model.vdf(this.tmd_08.vdf);
-        }
       } else {
         //LAB_80118370
-        renderTmdSpriteEffect(this.tmd_08, this.obj, manager.params_10, this.transforms);
+        renderTmdSpriteEffect(this.tmd_08, this.tmd_08.getObj(), manager.params_10, this.transforms);
       }
 
       //LAB_80118380
@@ -135,9 +129,6 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
-    }
+    this.tmd_08.delete();
   }
 }

@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.TmdObjTable1c;
+import legend.game.tmd.TmdObjTable1c;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 

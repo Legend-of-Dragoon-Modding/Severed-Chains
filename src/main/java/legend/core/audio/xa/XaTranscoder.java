@@ -1,6 +1,5 @@
 package legend.core.audio.xa;
 
-import legend.core.MathHelper;
 import legend.core.audio.opus.OpusFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.PathNode;
@@ -159,7 +158,7 @@ public class XaTranscoder {
     for(int i = 0; i < 28; i++) {
       final int t = signed4bit((byte)(xaAdPcm.readUByte(position + 16 + blk + i * 4) >> nibble * 4 & 0x0f));
       final int s = (t << shift) + (this.old[lr] * f0 + this.older[lr] * f1 + 32) / 64;
-      final short sample = (short)MathHelper.clamp(s, -0x8000, 0x7fff);
+      final short sample = (short)Math.clamp(s, -0x8000, 0x7fff);
 
       this.sourceBuffer[lr][this.sourceBufferPosition + i] = sample;
       this.older[lr] = this.old[lr];
@@ -184,7 +183,7 @@ public class XaTranscoder {
           + interpolationWeights[2] * this.sourceBuffer[channel][samplePosition + 2]
           + interpolationWeights[3] * this.sourceBuffer[channel][samplePosition + 3];
 
-        this.opusInputBuffer.put(this.opusInputBufferPosition++, (short) MathHelper.clamp((int)sample >> 1, -0x8000, 0x7fff));
+        this.opusInputBuffer.put(this.opusInputBufferPosition++, (short)Math.clamp((int)sample >> 1, -0x8000, 0x7fff));
       }
 
       this.interpolationCounter += 63;

@@ -1,10 +1,12 @@
 package legend.core;
 
+import discord.DiscordRichPresence;
 import legend.core.audio.AudioThread;
 import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
-import legend.core.audio.SampleRate;
+import legend.core.font.Font;
+import legend.core.font.FontManager;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
@@ -12,35 +14,34 @@ import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
-import legend.core.opengl.TmdObjLoader;
 import legend.core.platform.PlatformManager;
 import legend.core.platform.SdlPlatformManager;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputBindings;
 import legend.core.spu.Spu;
-import legend.game.EngineStateEnum;
 import legend.game.Main;
-import legend.game.Scus94491BpeSegment_8002;
+import legend.game.Scus94491BpeSegment;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
-import legend.game.saves.serializers.RetailSerializer;
-import legend.game.saves.serializers.V1Serializer;
-import legend.game.saves.serializers.V2Serializer;
-import legend.game.saves.serializers.V3Serializer;
-import legend.game.saves.serializers.V4Serializer;
+import legend.game.saves.SaveVersion;
+import legend.game.saves.serializers.V9Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.textures.Image;
+import legend.game.textures.RegisterAtlasTexturesEvent;
+import legend.game.textures.TextureAtlas;
+import legend.game.textures.TexturePacker;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
-import legend.game.unpacker.FileData;
-import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
@@ -51,32 +52,26 @@ import org.joml.Vector3f;
 import org.legendofdragoon.modloader.ModManager;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.i18n.LangManager;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.game.SItem.UI_WHITE;
-import static legend.game.SItem.albertXpTable_801138c0;
-import static legend.game.SItem.dartXpTable_801135e4;
-import static legend.game.SItem.haschelXpTable_801136d8;
-import static legend.game.SItem.kongolXpTable_801134f0;
-import static legend.game.SItem.lavitzXpTable_801138c0;
 import static legend.game.SItem.loadMenuAssets;
-import static legend.game.SItem.meruXpTable_801137cc;
-import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.renderMenuCentredText;
-import static legend.game.SItem.roseXpTable_801139b4;
-import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
-import static legend.game.Scus94491BpeSegment.gameLoop;
-import static legend.game.Scus94491BpeSegment.startSound;
-import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment.bindRendererEvents;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
+import static legend.game.Text.initTextboxGeometry;
+import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
+import static legend.game.sound.Audio.startSound;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -98,19 +93,27 @@ public final class GameEngine {
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
   public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
 
-  public static final ScriptManager SCRIPTS = new ScriptManager(Path.of("./patches"));
+  public static final ScriptManager SCRIPTS = new ScriptManager(List.of(Path.of("./patches/libs"), Path.of("./patches/scripts")), Path.of("./patches"));
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
+  public static final SaveManager SAVES = new SaveManager(SaveVersion.V9, V9Serializer::toV9);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();
+
+  public static final FontManager FONTS = new FontManager();
+  public static Font DEFAULT_FONT = FONTS.get(Path.of("./gfx/fonts/default.json"));
+
+  private static TextureAtlas TEXTURE_ATLAS;
+  private static Texture UI_TEXTURE;
 
   public static final Gte GTE;
   public static final Gpu GPU;
   public static final Spu SPU;
   public static final AudioThread AUDIO_THREAD;
+
+  public static final DiscordRichPresence DISCORD = new DiscordRichPresence();
 
   public static final Thread hardwareThread;
   public static final Thread openalThread;
@@ -131,7 +134,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, SampleRate._48000, EffectsOverTimeGranularity.Finer);
+    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, EffectsOverTimeGranularity.Double);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -160,10 +163,11 @@ public final class GameEngine {
 
   private static String statusText = "";
 
-  private static boolean loading;
+  private static boolean engineLoading = true;
+  private static boolean unpackerLoading = true;
 
   public static boolean isLoading() {
-    return loading;
+    return engineLoading || unpackerLoading;
   }
 
   public static Updater.Release getUpdate() {
@@ -188,15 +192,9 @@ public final class GameEngine {
       try {
         LOGGER.info("Severed Chains %s commit %s built %s starting", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
-        loading = true;
         RENDERER.setRenderCallback(GameEngine::loadGfx);
 
         Files.createDirectories(Path.of("saves"));
-        SAVES.registerDeserializer(RetailSerializer::fromRetailMatcher, RetailSerializer::fromRetail);
-        SAVES.registerDeserializer(V1Serializer::fromV1Matcher, V1Serializer::fromV1);
-        SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
-        SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
-        SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
 
         synchronized(INIT_LOCK) {
           Unpacker.setStatusListener(status -> statusText = status);
@@ -214,9 +212,14 @@ public final class GameEngine {
           }
 
           statusText = I18n.translate("unpacker.patching_scripts");
-          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
+          try {
+            new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups")).apply();
+          } catch(final Exception e) {
+            statusText = I18n.translate("unpacker.patching_failed");
+            throw e;
+          }
 
-          loadXpTables();
+          statusText = "";
 
           synchronized(UPDATER_LOCK) {
             if(!UPDATE_CHECK_FINISHED) {
@@ -224,7 +227,7 @@ public final class GameEngine {
             }
           }
 
-          loading = false;
+          unpackerLoading = false;
         }
       } catch(final Exception e) {
         throw new RuntimeException(e);
@@ -241,27 +244,38 @@ public final class GameEngine {
 
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
+    DEFAULT_FONT = FONTS.get(Path.of("gfx", "fonts", CONFIG.getConfig(CoreMod.RETAIL_FONT_CONFIG.get())));
+
     AUDIO_THREAD.init();
     AUDIO_THREAD.setMusicPlayerVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
     AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get()));
     AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
-    AUDIO_THREAD.changeSampleRate(CONFIG.getConfig(CoreMod.MUSIC_SAMPLE_RATE_CONFIG.get()));
     AUDIO_THREAD.changeEffectsOverTimeGranularity(CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get()));
 
     SPU.init();
     RENDERER.init();
-    RENDERER.events().onClose(Loader::shutdownLoader);
+    RENDERER.events().onClose(Async::shutdown);
     GPU.init();
+    DISCORD.init();
 
     try {
       time = System.nanoTime();
       RENDERER.run();
     } finally {
+      DISCORD.destroy();
       AUDIO_THREAD.destroy();
       RENDERER.delete();
       UPDATER.delete();
       PLATFORM.destroy();
     }
+  }
+
+  public static TextureAtlas getTextureAtlas() {
+    return TEXTURE_ATLAS;
+  }
+
+  public static Texture getUiTexture() {
+    return UI_TEXTURE;
   }
 
   private static void loadUnpackerLang() {
@@ -292,70 +306,49 @@ public final class GameEngine {
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);
 
-    // Initialize config and input registries
+    // Load mod registries
+    EVENTS.postEvent(new AddRegistryEvent(REGISTRIES));
+
+    // Initialize registries needed on the menu and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+    REGISTRY_ACCESS.initialize(REGISTRIES.campaignTypes);
+    REGISTRY_ACCESS.initialize(REGISTRIES.engineStateTypes);
     REGISTRY_ACCESS.initialize(REGISTRIES.inputActions);
+    REGISTRY_ACCESS.initialize(REGISTRIES.characterTemplates);
+    REGISTRY_ACCESS.initialize(REGISTRIES.statTypes);
+    REGISTRY_ACCESS.initialize(REGISTRIES.statModTypes);
+
+    // We need to boot the goods registry for save cards on the title screen
+    REGISTRY_ACCESS.initialize(REGISTRIES.goods);
 
     MOD_ACCESS.loadingComplete();
 
     // Load default bindings for input actions
-    InputBindings.loadBindings();
+    InputBindings.initBindings();
 
     return missingMods;
   }
 
   public static void bootRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
-    InputBindings.loadBindings();
     ItemIcon.loadIconMap();
-  }
 
-  private static void loadXpTables() throws IOException {
-    final FileData dart = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
-    final FileData lavitz = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
-    final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
-    final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
-    final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
-    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
-    final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
-    final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
-    final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
+    LOGGER.info("Creating texture atlas...");
+    final long t = System.nanoTime();
 
-    for(int i = 0; i < dartXpTable_801135e4.length; i++) {
-      dartXpTable_801135e4[i] = dart.readInt(i * 4);
+    if(TEXTURE_ATLAS != null) {
+      TEXTURE_ATLAS.delete();
     }
 
-    for(int i = 0; i < lavitzXpTable_801138c0.length; i++) {
-      lavitzXpTable_801138c0[i] = lavitz.readInt(i * 4);
-    }
+    final Map<RegistryId, Image> images = new HashMap<>();
+    EVENTS.postEvent(new RegisterAtlasTexturesEvent(images));
 
-    for(int i = 0; i < albertXpTable_801138c0.length; i++) {
-      albertXpTable_801138c0[i] = albert.readInt(i * 4);
-    }
+    final TexturePacker packer = new TexturePacker();
+    images.forEach(packer::add);
 
-    for(int i = 0; i < shanaXpTable_80113aa8.length; i++) {
-      shanaXpTable_80113aa8[i] = shana.readInt(i * 4);
-    }
+    TEXTURE_ATLAS = packer.pack(512, 512);
 
-    for(int i = 0; i < mirandaXpTable_80113aa8.length; i++) {
-      mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
-    }
-
-    for(int i = 0; i < roseXpTable_801139b4.length; i++) {
-      roseXpTable_801139b4[i] = rose.readInt(i * 4);
-    }
-
-    for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
-      haschelXpTable_801136d8[i] = haschel.readInt(i * 4);
-    }
-
-    for(int i = 0; i < kongolXpTable_801134f0.length; i++) {
-      kongolXpTable_801134f0[i] = kongol.readInt(i * 4);
-    }
-
-    for(int i = 0; i < meruXpTable_801137cc.length; i++) {
-      meruXpTable_801137cc[i] = meru.readInt(i * 4);
-    }
+    LOGGER.info("Texture atlas created in %.02fs", (System.nanoTime() - t) / 1_000_000_000.0f);
   }
 
   private static void transitionToGame() {
@@ -409,19 +402,19 @@ public final class GameEngine {
     openalThread.start();
 
     synchronized(INIT_LOCK) {
-      Scus94491BpeSegment_8002.start();
+      Scus94491BpeSegment.main();
 
       TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
-        shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
+        shadowModel_800bda10.modelParts_00[i].tmd_08.getObj().persistent = true;
       }
 
       loadMenuAssets();
       initTextboxGeometry();
       battleUiParts.init();
       startSound();
-      gameLoop();
-      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
+      bindRendererEvents();
+      Fmv.playCurrentFmv(0, CoreEngineStateTypes.TITLE.get());
     }
   }
 
@@ -429,9 +422,11 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    title1Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title1.png"));
-    title2Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title2.png"));
-    eyeTexture = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
+    UI_TEXTURE = Texture.png(Path.of("gfx", "ui", "ui.png"));
+
+    title1Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title1.png"));
+    title2Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title2.png"));
+    eyeTexture = Texture.png(Path.of("gfx", "textures", "loading.png"));
 
     texturedObj = new QuadBuilder("Textured Obj")
       .bpp(Bpp.BITS_24)
@@ -452,6 +447,8 @@ public final class GameEngine {
 
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
     onShutdown = RENDERER.events().onClose(Unpacker::stop);
+
+    engineLoading = false;
   }
 
   private static void skip() {
@@ -505,7 +502,7 @@ public final class GameEngine {
       if(loadingFade > 1.0f) {
         loadingFade = 1.0f;
       }
-    } else if(!loading) {
+    } else if(!unpackerLoading) {
       synchronized(UPDATER_LOCK) {
         if(UPDATE_CHECK_FINISHED) {
           transitionToGame();
@@ -534,7 +531,7 @@ public final class GameEngine {
       .useTextureAlpha()
     ;
 
-    if(loading) {
+    if(unpackerLoading) {
       // Offset sine wave delta to quickly shift between colours and then wait for a moment before repeating
       eyeColour += Math.max(0.0f, MathHelper.sin(deltaMs / 300.0f % MathHelper.TWO_PI) * 0.75f + 0.25f) / 500.0f;
 
@@ -551,11 +548,11 @@ public final class GameEngine {
         .colour(colour)
       ;
 
-      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     if(!statusText.isBlank() && loadingFade != 0.0f) {
-      renderMenuCentredText(statusText, 160, 30, 300, fontOptions, model -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+      renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     textZ_800bdf00 = oldTextZ;

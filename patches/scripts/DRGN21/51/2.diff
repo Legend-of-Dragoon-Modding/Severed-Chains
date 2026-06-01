@@ -61,4 +61,4 @@ New: Shana waits for Lavitz to move before continuing
  yield
  jmp inl[:LABEL_18]
  data 0x49
-+#include ../../../../patches/libs/widescreen.txt
++#include widescreen.txt

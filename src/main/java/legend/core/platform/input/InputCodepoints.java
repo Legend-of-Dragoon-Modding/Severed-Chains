@@ -35,11 +35,26 @@ public final class InputCodepoints {
   public static final char XBOX_BUTTON_MENU = 0xe101;
   /** Two squares */
   public static final char XBOX_BUTTON_VIEW = 0xe102;
+  public static final char XBOX_BUTTON_GUIDE = 0xe103;
 
   public static final char PS_BUTTON_CROSS = 0xe200;
   public static final char PS_BUTTON_CIRCLE = 0xe201;
   public static final char PS_BUTTON_SQUARE = 0xe202;
   public static final char PS_BUTTON_TRIANGLE = 0xe203;
+  public static final char PS_BUTTON_TOUCHPAD = 0xe204;
+
+  public static final char GENERIC_LEFT_PADDLE1 = 0xe300;
+  public static final char GENERIC_RIGHT_PADDLE1 = 0xe301;
+  public static final char GENERIC_LEFT_PADDLE2 = 0xe302;
+  public static final char GENERIC_RIGHT_PADDLE2 = 0xe303;
+  public static final char GENERIC_MISC1 = 0xe304;
+  public static final char GENERIC_MISC2 = 0xe305;
+  public static final char GENERIC_MISC3 = 0xe306;
+  public static final char GENERIC_MISC4 = 0xe307;
+  public static final char GENERIC_MISC5 = 0xe308;
+  public static final char GENERIC_MISC6 = 0xe309;
+
+  public static final char TEXTBOX_INPUT_ACTION = 0xef00;
 
   /** Adjusts codepoints for the given controller (e.g. converts A->cross for PS controllers) */
   public static char getCodepoint(final InputGamepadType type, final InputButton button) {

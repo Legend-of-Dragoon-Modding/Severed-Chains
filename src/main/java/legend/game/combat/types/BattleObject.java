@@ -3,6 +3,7 @@ package legend.game.combat.types;
 import legend.core.MathHelper;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.game.combat.Battle;
 import legend.game.scripting.ScriptedObject;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -11,9 +12,11 @@ public abstract class BattleObject implements ScriptedObject {
   public static String EM__ = "EM  ";
   public static String BOBJ = "BOBJ";
 
+  public final Battle battle;
   public final String magic_00;
 
-  protected BattleObject(final String magic) {
+  protected BattleObject(final Battle battle, final String magic) {
+    this.battle = battle;
     this.magic_00 = magic;
   }
 

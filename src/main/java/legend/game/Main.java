@@ -3,23 +3,31 @@ package legend.game;
 import legend.core.GameEngine;
 import legend.core.Version;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.lastSavableEngineState;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public final class Main {
   public static final Locale ORIGINAL_LOCALE = Locale.getDefault();
@@ -36,6 +44,22 @@ public final class Main {
   private Main() { }
 
   public static void main(final String[] args) {
+    // swap in a staged updater jar if the previous update prepared one.
+    final Path gameDir = Path.of(".").toAbsolutePath().normalize();
+    final Path updaterNew = gameDir.resolve("updater.jar.new");
+    if(Files.exists(updaterNew)) {
+      try {
+        try {
+          Files.move(updaterNew, gameDir.resolve("updater.jar"), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch(final AtomicMoveNotSupportedException ignored) {
+          Files.move(updaterNew, gameDir.resolve("updater.jar"), StandardCopyOption.REPLACE_EXISTING);
+        }
+        LOGGER.info("Applied staged updater.jar");
+      } catch(final IOException e) {
+        LOGGER.warn("Could not apply staged updater.jar: %s", e.getMessage());
+      }
+    }
+
     try {
       LOGGER.info("Initialising LWJGL version %s", org.lwjgl.Version.getVersion());
       GameEngine.start();
@@ -43,18 +67,20 @@ public final class Main {
       boolean generatedCrashSave = false;
 
       if(gameState_800babc8 != null && CONFIG.getConfig(CoreMod.CREATE_CRASH_SAVE_CONFIG.get())) {
-        final List<SavedGame> saves = gameState_800babc8.campaign.loadAllSaves();
+        final List<CompletableFuture<SavedGame>> saves = gameState_800babc8.campaign.loadAllSaves();
         final String name = SAVES.generateSaveName(saves, "Crash Recovery");
 
         gameState_800babc8.submapScene_a4 = collidedPrimitiveIndex_80052c38;
-        gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
-        engineState_8004dd20 = lastSavableEngineState;
-        gameState_800babc8.isOnWorldMap_4e4 = engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08;
+        gameState_800babc8.submapCut_a8 = submapCut_80052c30;
+
+        if(lastSavableEngineState != null) {
+          currentEngineState_8004dd04 = lastSavableEngineState.constructor_00.get();
+        }
 
         try {
-          SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
+          SAVES.newSave(name, LodMod.RETAIL_CAMPAIGN_TYPE.get(), currentEngineState_8004dd04, gameState_800babc8);
           generatedCrashSave = true;
-        } catch(final SaveFailedException ex) {
+        } catch(final Throwable ex) {
           LOGGER.error("Failed to generate crash recovery save :(", ex);
         }
       }
@@ -66,10 +92,23 @@ public final class Main {
       LOGGER.error("Crash detected");
       LOGGER.error("Severed Chains %s commit %s built %s", Version.FULL_VERSION, Version.HASH, Version.TIMESTAMP);
 
+      LOGGER.error("Loaded mods: %s", MODS.getLoadedMods().stream().map(container -> container.modId).collect(Collectors.joining(", ")));
+      LOGGER.error("All mods: %s", String.join(", ", MODS.getAllModIds()));
+
+      if(!MODS.getFailedToLoad().isEmpty()) {
+        LOGGER.error("Failed to load mods:");
+
+        for(final var entry : MODS.getFailedToLoad().entrySet()) {
+          LOGGER.error("- %s: %s", entry.getKey(), entry.getValue());
+        }
+      }
+
       if(generatedCrashSave) {
+        LOGGER.error("");
         LOGGER.error("We have attempted to generate a recovery save. You can load it next time you run Severed Chains.");
       }
 
+      LOGGER.error("");
       LOGGER.error("Please copy this crash log and send it to us in the Player Help channel in the Legend of Dragoon Discord server.");
       LOGGER.error("https://discord.gg/legendofdragoon");
 
@@ -84,6 +123,13 @@ public final class Main {
       LOGGER.error("https://discord.gg/legendofdragoon");
 
       LogManager.shutdown();
+
+      // Copy to timestamped crash log
+      final String dt = LocalDateTime.now().toString().replace(':', '-');
+      try {
+        Files.copy(Path.of("debug.log"), Path.of("CRASHLOG-" + dt + ".log"), StandardCopyOption.REPLACE_EXISTING);
+      } catch(final IOException ex) {}
+
       System.exit(1);
     }
   }

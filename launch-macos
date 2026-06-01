@@ -14,6 +14,12 @@ fi
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"
 
+# Load launch configuration
+GPU_PREFERENCE=0
+if [[ -f ./launch.conf ]]; then
+  source ./launch.conf
+fi
+
 if [[ $(pwd) == *":"* ]]; then
   echo "Java cannot launch with a colon (:) in the path. Please rename the directory or move Severed Chains to a different directory."
   echo "Current directory: $(pwd)"
@@ -21,12 +27,12 @@ if [[ $(pwd) == *":"* ]]; then
   exit 1;
 fi
 
-JAVA=./jdk21/Contents/Home/bin/java
+JAVA=./jdk25/Contents/Home/bin/java
 
 if [[ ! -f $JAVA ]]
 then
   ./download-java
 fi
 
-"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "@libs@:lod-game-@version@.jar" legend.game.Main -Xmx2G
+"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED -cp "@libs@:lod-game-@version@.jar" legend.game.Main -Xmx2G
 read -p "Press enter to exit"

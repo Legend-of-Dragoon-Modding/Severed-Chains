@@ -65,16 +65,22 @@ public enum OpType {
   NOOP_97(97, "debug97"),
   NOOP_98(98, "debug98"),
   DEPTH(99, "depth"),
+
+  PUSH(101, "push"),
+  POP(102, "pop"),
+  CMP(103, "cmp")
   ;
 
+  private static final OpType[] VALUES = OpType.values();
+
   public static OpType byOpcode(final int opcode) {
-    for(final OpType op : OpType.values()) {
+    for(final OpType op : VALUES) {
       if(op.opcode == opcode) {
         return op;
       }
     }
 
-    return null;
+    throw new RuntimeException("Invalid opcode %#x".formatted(opcode));
   }
 
   public final int opcode;
@@ -83,15 +89,5 @@ public enum OpType {
   OpType(final int opcode, final String name) {
     this.opcode = opcode;
     this.name = name;
-  }
-
-  public boolean hasHeaderParam() {
-    return
-      this == WAIT_CMP ||
-      this == WAIT_CMP_0 ||
-      this == CALL ||
-      this == JMP_CMP ||
-      this == JMP_CMP_0 ||
-      this == NOOP_96;
   }
 }

@@ -26,6 +26,13 @@ layout(std140) uniform projectionInfo {
   float projectionMode;
 };
 
+layout(std140) uniform scissor {
+  float scissorX;
+  float scissorY;
+  float scissorW;
+  float scissorH;
+};
+
 uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float discardTranslucency;
@@ -37,6 +44,12 @@ uniform usampler2D tex15;
 layout(location = 0) out vec4 outColour;
 
 void main() {
+  // Older Intel iGPUs are buggy and don't implement scissoring properly, causing the Shirley fight to lock up when
+  // she transforms into another character. This is a workaround and reimplements scissoring at the shader level.
+  if(gl_FragCoord.x < scissorX || gl_FragCoord.x >= scissorX + scissorW || gl_FragCoord.y < scissorY || gl_FragCoord.y >= scissorY + scissorH) {
+    discard;
+  }
+
   // Linearize depth for perspective transforms so that we can render ortho models at specific depths
   if(projectionMode == 2) {
     gl_FragDepth = (depth - znear) * zdiffInv + depthOffset;
@@ -65,10 +78,18 @@ void main() {
       int p = (indexVec.r >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
 
       // Pull actual pixel colour from CLUT
-      texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
+      uint pixel = texelFetch(tex15, ivec2(vertClut.x + p, vertClut.y), 0).r;
+      texColour.a = float(pixel >> 15 & 0x1fu) / 31.0;
+      texColour.b = float(pixel >> 10 & 0x1fu) / 31.0;
+      texColour.g = float(pixel >>  5 & 0x1fu) / 31.0;
+      texColour.r = float(pixel       & 0x1fu) / 31.0;
     } else if(vertBpp == 2) {
       ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x), vertTpage.y + vertUv.y + uvOffset.y);
-      texColour = texelFetch(tex24, ivec2(uv.x, uv.y), 0);
+      uint pixel = texelFetch(tex15, uv, 0).r;
+      texColour.a = float(pixel >> 15 & 0x1fu) / 31.0;
+      texColour.b = float(pixel >> 10 & 0x1fu) / 31.0;
+      texColour.g = float(pixel >>  5 & 0x1fu) / 31.0;
+      texColour.r = float(pixel       & 0x1fu) / 31.0;
     } else {
       texColour = texture(tex24, vertUv + uvOffset);
     }

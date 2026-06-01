@@ -13,8 +13,8 @@ public class UnaryStatModConfig implements StatModConfig {
   }
 
   /** A flat modifier (e.g. 20 would add 20 to the stat) */
-  public UnaryStatModConfig flat(final int percent) {
-    this.amount = percent;
+  public UnaryStatModConfig flat(final int amount) {
+    this.amount = amount;
     this.percentile = false;
     return this;
   }

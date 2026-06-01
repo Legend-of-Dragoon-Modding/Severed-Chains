@@ -11,27 +11,27 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment_8004.calculateNoteVolume;
-import static legend.game.Scus94491BpeSegment_8004.setKeyOff;
-import static legend.game.Scus94491BpeSegment_8004.setKeyOn;
-import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
-import static legend.game.Scus94491BpeSegment_8004.setSequenceVolume;
-import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbType;
-import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbVolume;
-import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
-import static legend.game.Scus94491BpeSegment_800c.instrumentLayerIndex_800c6678;
-import static legend.game.Scus94491BpeSegment_800c.instrumentLayer_800c6678;
-import static legend.game.Scus94491BpeSegment_800c.instrumentLayers_800c6678;
-import static legend.game.Scus94491BpeSegment_800c.instrument_800c6674;
-import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
-import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
-import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
-import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
-import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
-import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
-import static legend.game.Scus94491BpeSegment_800c.sssqish_800c4aa8;
-import static legend.game.Scus94491BpeSegment_800c.volumeRamp_800c4ab0;
-import static legend.game.Scus94491BpeSegment_800c.waveforms_800c4ab8;
+import static legend.game.sound.Audio.calculateNoteVolume;
+import static legend.game.sound.Audio.instrumentLayerIndex_800c6678;
+import static legend.game.sound.Audio.instrumentLayer_800c6678;
+import static legend.game.sound.Audio.instrumentLayers_800c6678;
+import static legend.game.sound.Audio.instrument_800c6674;
+import static legend.game.sound.Audio.playingNotes_800c3a40;
+import static legend.game.sound.Audio.sequenceData_800c4ac8;
+import static legend.game.sound.Audio.setKeyOff;
+import static legend.game.sound.Audio.setKeyOn;
+import static legend.game.sound.Audio.setMainVolume;
+import static legend.game.sound.Audio.setSequenceVolume;
+import static legend.game.sound.Audio.soundEnv_800c6630;
+import static legend.game.sound.Audio.sshdPtr_800c4ac0;
+import static legend.game.sound.Audio.sssqChannelInfo_800C6680;
+import static legend.game.sound.Audio.sssqFadeCurrent_8005a1ce;
+import static legend.game.sound.Audio.sssqReader_800c667c;
+import static legend.game.sound.Audio.sssqSetReverbType;
+import static legend.game.sound.Audio.sssqSetReverbVolume;
+import static legend.game.sound.Audio.sssqish_800c4aa8;
+import static legend.game.sound.Audio.volumeRamp_800c4ab0;
+import static legend.game.sound.Audio.waveforms_800c4ab8;
 
 public class Sequencer {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
@@ -316,7 +316,8 @@ public class Sequencer {
     //LAB_800467f0
     voice.volumeLeft.set(l);
     voice.volumeRight.set(r);
-    voice.startAddress = sequenceData.playableSound_020.soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04;
+    voice.data = sequenceData.playableSound_020.data;
+    voice.startAddress = instrumentLayer_800c6678.soundOffset_04;
     voice.adsr.lo = instrumentLayer_800c6678.adsrLo_06;
     voice.adsr.hi = instrumentLayer_800c6678.adsrHi_08;
     setKeyOn(sequenceData, voiceIndex);

@@ -57,6 +57,8 @@ public abstract class PlatformManager {
     this.windows.removeAll(windows);
   }
 
+  public abstract Window getLastWindow();
+
   public Action addAction(final Action action) {
     this.actions.add(action);
     return action;
@@ -110,10 +112,12 @@ public abstract class PlatformManager {
 
   }
 
-  protected void tickInput() {
+  /** Called at the end of each game tick to clear one-frame input */
+  public void clearPressed() {
 
   }
 
+  protected abstract void tickInput();
   public abstract void rumble(final float intensity, final int ms);
   public abstract void rumble(final float bigIntensity, final float smallIntensity, final int ms);
   public abstract void adjustRumble(final float intensity, final int ms);

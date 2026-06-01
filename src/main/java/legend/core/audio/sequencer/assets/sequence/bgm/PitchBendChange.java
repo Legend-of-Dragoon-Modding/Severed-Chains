@@ -18,6 +18,10 @@ public final class PitchBendChange implements Command {
     return this.channel;
   }
 
+  public void apply() {
+    this.channel.setPitchBend(this.pitchAmount);
+  }
+
   public int getPitchAmount() {
     return this.pitchAmount;
   }

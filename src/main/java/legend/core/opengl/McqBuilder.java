@@ -1,20 +1,21 @@
 package legend.core.opengl;
 
 import legend.core.gpu.Bpp;
+import legend.game.tmd.TmdObjLoader;
 import legend.game.types.McqHeader;
 import legend.game.types.Translucency;
 import org.joml.Vector2i;
 
 import static legend.core.MathHelper.makeClut;
 import static legend.core.MathHelper.makeTpage;
-import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
-import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
-import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
-import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
-import static legend.core.opengl.TmdObjLoader.POS_SIZE;
-import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
-import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
-import static legend.core.opengl.TmdObjLoader.UV_SIZE;
+import static legend.game.tmd.TmdObjLoader.CLUT_SIZE;
+import static legend.game.tmd.TmdObjLoader.COLOUR_SIZE;
+import static legend.game.tmd.TmdObjLoader.FLAGS_SIZE;
+import static legend.game.tmd.TmdObjLoader.NORM_SIZE;
+import static legend.game.tmd.TmdObjLoader.POS_SIZE;
+import static legend.game.tmd.TmdObjLoader.TPAGE_SIZE;
+import static legend.game.tmd.TmdObjLoader.TRANSLUCENT_FLAG;
+import static legend.game.tmd.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class McqBuilder {

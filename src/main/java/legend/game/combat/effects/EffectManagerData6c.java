@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.memory.Method;
+import legend.game.combat.Battle;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
@@ -37,8 +38,8 @@ public class EffectManagerData6c<T extends EffectManagerParams<T>> extends Battl
     return (Class<EffectManagerData6c<T>>)(Class<?>)EffectManagerData6c.class;
   }
 
-  public EffectManagerData6c(final String name, final T params) {
-    super(BattleObject.EM__);
+  public EffectManagerData6c(final Battle battle, final String name, final T params) {
+    super(battle, BattleObject.EM__);
     this.name = name;
     this.params_10 = params;
   }

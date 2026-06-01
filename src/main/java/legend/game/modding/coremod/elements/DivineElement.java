@@ -1,7 +1,6 @@
 package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
-import legend.game.combat.types.AttackType;
 import org.joml.Vector3f;
 
 public class DivineElement extends Element {
@@ -10,16 +9,17 @@ public class DivineElement extends Element {
   }
 
   @Override
-  public int adjustAttackingElementalDamage(final AttackType attackType, final int damage, final Element targetElement) {
-    return damage;
+  public boolean isStrongAgainst(final Element other) {
+    return false;
   }
 
   @Override
-  public int adjustDragoonSpaceDamage(final AttackType attackType, final int damage, final Element attackingElement) {
-    if(attackingElement == this) {
-      return damage * 150 / 100;
-    }
+  public boolean isWeakAgainst(final Element other) {
+    return false;
+  }
 
-    return damage;
+  @Override
+  public boolean boostsElement(final Element other) {
+    return other == this;
   }
 }
