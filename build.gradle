@@ -223,7 +223,6 @@ tasks.register('copySupportFiles', Copy) {
     from 'gamecontrollerdb.txt'
     from 'README.md'
     from 'LICENSE'
-    from(tasks.named('updaterJar'))
     from 'credits.txt'
   }
 }
