@@ -461,6 +461,7 @@ public final class UpdaterMain {
 
         final byte realTypeFlag = typeFlag == 'L' ? header[156] : typeFlag;
         final long realSize = typeFlag == 'L' ? parseTarOctal(header, 124, 12) : size;
+        final long realMode = parseTarOctal(header, 100, 8);
 
         final Path resolved = destDir.resolve(fullName).normalize();
 
@@ -494,9 +495,9 @@ public final class UpdaterMain {
             gis.skipNBytes(512 - remainder);
           }
 
-          // restore execute permission for shell scripts
-          if(fullName.endsWith(".sh") || fullName.equals("launch") || fullName.equals("download-java")) {
-            resolved.toFile().setExecutable(true);
+          // use executable bit from tar header
+          if((realMode & 0111L) != 0) {
+            resolved.toFile().setExecutable(true, false);
           }
         } else {
           if(realSize > 0) {
