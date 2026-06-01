@@ -138,6 +138,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment::scriptGiveGold;
 
     scriptSubFunctions_8004e29c[890] = Scus94491BpeSegment::scriptReadRegistryEntryVar;
+    scriptSubFunctions_8004e29c[891] = SItem::scriptInputActionPressed;
+    scriptSubFunctions_8004e29c[892] = SItem::scriptInputActionHeld;
 
     scriptSubFunctions_8004e29c[900] = SItem::scriptGetMaxItemCount;
     scriptSubFunctions_8004e29c[901] = SItem::scriptGetMaxEquipmentCount;

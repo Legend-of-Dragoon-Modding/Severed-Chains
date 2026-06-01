@@ -238,6 +238,24 @@ public final class SItem {
     "Endiness",
   };
 
+  @ScriptDescription("Checks if an InputAction was pressed this frame")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "inputActionId")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "pressed")
+  public static FlowControl scriptInputActionPressed(final RunningScript<?> script) {
+    final RegistryId inputActionId = script.params_20[0].getRegistryId();
+    script.params_20[1].set(PLATFORM.isActionPressed(REGISTRIES.inputActions.getEntry(inputActionId).get()));
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Checks if an InputAction is held")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "inputActionId")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "held")
+  public static FlowControl scriptInputActionHeld(final RunningScript<?> script) {
+    final RegistryId inputActionId = script.params_20[0].getRegistryId();
+    script.params_20[1].set(PLATFORM.isActionHeld(REGISTRIES.inputActions.getEntry(inputActionId).get()));
+    return FlowControl.CONTINUE;
+  }
+
   @ScriptDescription("Gets the maximum number of items a player can carry")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
   public static FlowControl scriptGetMaxItemCount(final RunningScript<?> script) {
