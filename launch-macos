@@ -34,5 +34,5 @@ then
   ./download-java
 fi
 
-"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED -cp "@libs@:lod-game-@version@.jar" legend.game.Main -Xmx2G
+"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED --add-exports java.base/jdk.internal.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED -cp "@libs@:lod-game-@version@.jar" legend.game.Main -Xmx2G
 read -p "Press enter to exit"

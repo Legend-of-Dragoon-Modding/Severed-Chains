@@ -28,5 +28,5 @@ then
   LD_PRELOAD=${LD_PRELOAD/_32/_64} konsole --fullscreen -e /bin/bash -c './download-java'
 fi
 
-"$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED -cp "lod-game-@version@.jar:@libs@" legend.game.Main -Xmx2G -ea
+"$JAVA" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED --add-exports java.base/jdk.internal.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED -cp "lod-game-@version@.jar:@libs@" legend.game.Main -Xmx2G -ea
 read -p "Press enter to exit"

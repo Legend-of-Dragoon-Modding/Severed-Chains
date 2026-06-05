@@ -2,7 +2,7 @@
   <configuration default="false" name="game" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="legend.game.Main" />
     <module name="lod-game.main" />
-    <option name="VM_PARAMETERS" value="-Xms1g -Xmx2g -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED" />
+    <option name="VM_PARAMETERS" value="-Xms1g -Xmx2g -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED --add-exports java.base/jdk.internal.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

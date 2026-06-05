@@ -37,7 +37,7 @@ move ".\jdk25.0.0_36" ".\jdk25"
 del ".\jdk.zip"
 
 : LAUNCH
-".\jdk25\bin\java" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED -cp "lod-game-@version@.jar;@libs@" legend.game.MainWindows -Xmx2G -ea || pause
+".\jdk25\bin\java" -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma --add-opens java.base/java.util=ALL-UNNAMED --add-exports java.base/jdk.internal.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED -cp "lod-game-@version@.jar;@libs@" legend.game.MainWindows -Xmx2G -ea || pause
 exit 0
 
 : DOWNLOAD_FAILED
