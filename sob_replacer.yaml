@@ -200,7 +200,74 @@ replacer:
       0x77ce0062c650c900:
         modelHash: 0x4fc0041bf5678934
         assetHash: 0x77ce0062c650c900
-      
+
+# Tiberoa 2d sprites
+  0xe65b47b0553f28dc: # Tiberoa_NPC_Blue_shorts
+    replacement: 0xe1c5eee77857cf91
+    
+    textures:
+      0x11d6632690281b77:
+        modelHash: 0xe1c5eee77857cf91
+        assetHash: 0xd09fed47c452f7ab
+    
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0xe1c5eee77857cf91
+        assetHash: 0x8f705ecca0d34e98
+
+  0xdb157481f59325f1: # Tiberoa_NPC_Blue_dress
+    replacement: 0x7368841395eef392
+    
+    textures:
+      0x8bedc1f71486c490:
+        modelHash: 0x7368841395eef392
+        assetHash: 0x82e2cf59cecad171
+    
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0x7368841395eef392
+        assetHash: 0xffc5225ab65e1820
+
+  0xc79476fcde288d62: # Tiberoa_NPC_Orange_dress
+    replacement: 0xb595ecb662023356
+
+    textures:
+      0x2b0587d35c64da52:
+        modelHash: 0xb595ecb662023356
+        assetHash: 0xa9117fe8067ad984
+    
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0xb595ecb662023356
+        assetHash: 0xde4529dbb384ffb3
+
+  0xe02a94a4312f640b: # Tiberoa_Shopkeeper
+    replacement: 0xfec05a2adaeea41c
+    
+    textures:
+      0x34730a1f7ea60fad:
+        modelHash: 0xfec05a2adaeea41c
+        assetHash: 0x6526741a72c48321
+    
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0xfec05a2adaeea41c
+        assetHash: 0xedf1bd6c2c01682a
+
+
+  0xc46296ca9b55463e: # Tiberoa_NPC_Fletz_Guard
+    replacement: 0x97bc21af6290806a
+
+    textures:
+      0x7593183cc41d76f1:
+        modelHash: 0x97bc21af6290806a
+        assetHash: 0xfb91d2610cdcfb14
+
+    animations:
+      0x56d7286bc6809aeb:
+        modelHash: 0x97bc21af6290806a
+        assetHash: 0x6f2ce8ef2a2a8454
+
 # Kamui Warriors
   0x193a48e613cfe088: # Drake the Bandit
     replacement: 0x8db85e8578f91219

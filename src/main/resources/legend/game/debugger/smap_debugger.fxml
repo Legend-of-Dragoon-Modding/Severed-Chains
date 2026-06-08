@@ -155,6 +155,39 @@
                         </Button>
                      </children>
                   </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Ambient Color" />
+                        <CheckBox fx:id="useAmbientColor" mnemonicParsing="false" onAction="#useAmbientColorClick" text="Use ambient color" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+                     <children>
+                        <Label text="R">
+                           <HBox.margin>
+                              <Insets right="4.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Spinner fx:id="ambientColorR" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                        <Label text="G">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Spinner fx:id="ambientColorG" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                        <Label text="B">
+                           <HBox.margin>
+                              <Insets left="4.0" right="4.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Spinner fx:id="ambientColorB" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                        <Button fx:id="updateAmbientColor" mnemonicParsing="false" onAction="#updateAmbientColor" prefHeight="26.0" prefWidth="55.0" text="Update">
+                           <HBox.margin>
+                              <Insets left="8.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
                      <children>
                         <Label text="Depth offset">

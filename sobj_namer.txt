@@ -177,7 +177,6 @@ f24deae6b97ca8cb	=	Queen Fury Claw Bridge
 db80ca8eb4ea96fe	=	Marshlands Fish
 2c00a9d02b183e02	=	Marshlands water splash
 2d9e8547e7a2b8eb	=	Fletz Guard
-97bc21af6290806a	=	Fletz Guard 2
 3c6c7c51fc348ca3	=	Fletz ball dancing pair (2d)
 62feccb4326af60c	=	Fletz ball dancing pair (2d 2)
 5dfcb1de8ac60bff	=	Fletz Libria
@@ -195,15 +194,71 @@ e7cb0620a6eec720	=	Fletz King Zior
 778de18ff8ff7702	=	Fletz Women at the ball
 a74fe8334c3d5707	=	Fletz Fester
 a5745784c6cb8ca2	=	Fletz Shop NPC
-af439b1096a13215	=	Fletz NPC
-afc6ce67cbade974	=	Fletz NPC 2
+
+e65b47b0553f28dc	=	Tiberoa_NPC_Blue_shorts_2d
+e1c5eee77857cf91	=	Tiberoa_NPC_Blue_shorts
+8f705ecca0d34e98	=	Standing_still
+e50ce04cc0dd0c87	=	Walking
+c515338fd8ecccdb	=	Running
+7089b0a5a42191dd	=	Interaction
+
+af439b1096a13215	=	Tiberoa_NPC_White_shorts
+f5b925eae8da7020	=	Standing_still
+f8d7afe65e120d33	=	Walking
+c515338fd8ecccdb	=	Running
+7572fc71759fea3d	=	Interaction
+
+9aae80c3c65b4f43	=	Tiberoa_NPC_Green_shorts
+f5b925eae8da7020	=	Standing_still
+f8d7afe65e120d33	=	Walking
+7572fc71759fea3d	=	Interaction
+
+a009a57beb1fd945	=	Tiberoa_NPC_Young_blue_dress
+63191b4f5422377e	=	Standing_still
+eac3bade14ca605a	=	Walking
+60bd2abacbae7913	=	Interaction
+
+afc6ce67cbade974	=	Tiberoa_NPC_Young_beige_dress
+6a9fc77cfe8bff71	=	Standing_still
+14cbc061d3acdd0d	=	Walking
+158aebdc3e44b7f4	=	Running
+07254ced4629dd02	=	Interaction
+
+9be57a3c152511b8	=	Tiberoa_NPC_Young_green_dress
+6a9fc77cfe8bff71	=	Standing_still
+14cbc061d3acdd0d	=	Walking
+07254ced4629dd02	=	Interaction
+
+db157481f59325f1	=	Tiberoa_NPC_Blue_dress_2d
+7368841395eef392	=	Tiberoa_NPC_Blue_dress
+ffc5225ab65e1820	=	Standing_still
+
+c79476fcde288d62	=	Tiberoa_NPC_Orange_dress_2d
+b595ecb662023356	=	Tiberoa_NPC_Orange_dress
+de4529dbb384ffb3	=	Standing_still
+f020b11bd8b7bde0	=	Walking
+40e968652ac08de6	=	Running
+eb9ae41f4c219a46	=	Interaction
+
+e02a94a4312f640b	=	Tiberoa_NPC_Shopkeeper_2d
+fec05a2adaeea41c	=	Tiberoa_NPC_Shopkeeper
+edf1bd6c2c01682a	=	Standing_still
+e81977dd56bb9069	=	Walking
+a554a8ae5e4e5f6d	=	Interaction
+
+c46296ca9b55463e	=	Tiberoa_NPC_Fletz_Guard_2d
+97bc21af6290806a	=	Tiberoa_NPC_Fletz_Guard
+6f2ce8ef2a2a8454	=	Standing_still
+a21b27b1bf1e258b	=	Walking
+b8c8c749b3c4cb36	=	Running
+ef730a31a30d47f9	=	Interaction
+1ee9603551b51981	=	Yes
+8f2a82bc7730ee69	=	No
+
 7bed628c7b769335	=	Tiberoa Innkeeper
-e02a94a4312f640b	=	Tiberoa Inkeeper (2d)
-fec05a2adaeea41c	=	Tiberoa Shopkeeper
-e65b47b0553f28dc	=	Tiberoa NPC (2d)
-9aae80c3c65b4f43	=	Tiberoa NPC
+
 24e355705179851c	=	Tiberoa NPC 2
-e1c5eee77857cf91	=	Tiberoa NPC 3
+
 357862eaa7167207	=	Tiberoa NPC 4
 27aa8c4f282a9deb	=	Tiberoa NPC (old)
 28b72f5fe90b60e2	=	Tiberoa NPC (old 2)
@@ -305,10 +360,6 @@ ac219f0e46ff22c6	=	Kazas News Guy
 5010aad08f5cf420	=	Black Castle Ball of Trash
 87260f87828eb76e	=	Black Castle Commander
 a3f1c62688dbd527	=	Pete's Dog
-9be57a3c152511b8	=	Donau NPC
-db157481f59325f1	=	Donau NPC 2d
-7368841395eef392	=	Donau NPC 2
-a009a57beb1fd945	=	Donau NPC 3
 ac1ca0a0f0312115	=	Donau NPC 4
 d6a94ff1fce6d578	=	Donau flower girl
 4857d7eed1169e36	=	Donau Mayor

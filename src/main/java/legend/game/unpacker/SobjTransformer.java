@@ -245,7 +245,7 @@ public final class SobjTransformer {
 
   private static Map<Long, ReplacementModel> initReplacer() {
     try {
-      SimpleModule module = new SimpleModule();
+      final SimpleModule module = new SimpleModule();
 
       module.addKeyDeserializer(Long.class, new HexLongKeyDeserializer());
 
@@ -402,20 +402,20 @@ public final class SobjTransformer {
   }
 
   private static String resolveAnimationReference(final long modelHash, @Nullable final ReplacementModel replacementModel, final long animationHash, final Long2ObjectArrayMap<String> namer) {
-    final ReplacementAsset texture = replacementModel != null
+    final ReplacementAsset animation = replacementModel != null
       ? replacementModel.animations.get(animationHash)
       : null;
 
-    final long resolvedModelHash = texture != null
-      ? texture.modelHash
+    final long resolvedModelHash = animation != null
+      ? animation.modelHash
       : modelHash;
 
-    final long resolvedTextureHash = texture != null
-      ? texture.assetHash
+    final long resolvedAnimationHash = animation != null
+      ? animation.assetHash
       : animationHash;
 
     final String modelName = namer.getOrDefault(resolvedModelHash, String.format("%016x", resolvedModelHash));
-    final String animationName = namer.getOrDefault(resolvedTextureHash, String.format("%016x", resolvedTextureHash));
+    final String animationName = namer.getOrDefault(resolvedAnimationHash, String.format("%016x", resolvedAnimationHash));
 
     return "/sobj/" + modelName + "/animations/" + animationName;
   }
