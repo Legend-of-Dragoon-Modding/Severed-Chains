@@ -5,6 +5,7 @@ lod_core.name=Legend of Dragoon (core)
 lod_core.config.category.configure=Configure
 lod_core.config.category.gameplay.label=Gameplay
 lod_core.config.category.graphics.label=Graphics
+lod_core.config.category.postprocessing.label=Post-Processing
 lod_core.config.category.audio.label=Audio
 lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
@@ -183,6 +184,26 @@ lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignore virtual (reco
 lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignore when gamepad used
 lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
 lod_core.config.retail_font.label=Font
+
+# Shader config
+lod_core.config.shader_enable_crt.label=CRT Enabled
+lod_core.config.shader_scanlines_opacity.label=CRT: Scanline Opacity
+lod_core.config.shader_grille_opacity.label=CRT: Grille Opacity
+lod_core.config.shader_pixelate.label=CRT: Pixelate
+lod_core.config.shader_roll.label=CRT: Roll
+lod_core.config.shader_roll_speed.label=CRT: Roll Speed
+lod_core.config.shader_roll_size.label=CRT: Roll Size
+lod_core.config.shader_roll_variation.label=CRT: Roll Variation
+lod_core.config.shader_roll_intensity.label=CRT: Roll Intensity
+lod_core.config.shader_noise_opacity.label=CRT: Noise Opacity
+lod_core.config.shader_noise_speed.label=CRT: Noise Speed
+lod_core.config.shader_static_intensity.label=CRT: Static Intensity
+lod_core.config.shader_aberration.label=CRT: Abberation
+lod_core.config.shader_brightness.label=CRT: Brightness
+lod_core.config.shader_discolour.label=CRT: Discolour
+lod_core.config.shader_edge_warp.label=CRT: Edge Warp Intensity
+lod_core.config.shader_vignette_intensity.label=CRT: Vignette Intensity
+lod_core.config.shader_vignette_opacity.label=CRT: Vignette Opacity
 
 # FMV config
 lod_core.config.fmv.skip_keyboard = Press %s to skip

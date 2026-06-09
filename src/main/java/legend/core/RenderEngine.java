@@ -20,13 +20,13 @@ import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
 import legend.core.opengl.ShaderOptionsBattleTmd;
+import legend.core.opengl.ShaderOptionsScreen;
 import legend.core.opengl.ShaderOptionsStandard;
 import legend.core.opengl.ShaderOptionsTmd;
 import legend.core.opengl.ShaderType;
 import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.SubmapWidescreenMode;
 import legend.core.opengl.Texture;
-import legend.core.opengl.VoidShaderOptions;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
@@ -35,7 +35,6 @@ import legend.core.platform.input.InputMod;
 import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -72,6 +71,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.worldToScreenMatrix_800c3548;
+import static legend.game.modding.coremod.CoreMod.DISABLE_MOUSE_INPUT_CONFIG;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_FRAME_ADVANCE_HOLD;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_DEBUG_OPEN_DEBUGGER;
@@ -90,6 +90,26 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_SPEED_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_FULLSCREEN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TOGGLE_SPEED;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TURBO;
+import static legend.game.modding.coremod.CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.RESOLUTION_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ABERRATION_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_BRIGHTNESS_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_DISCOLOUR_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_EDGE_WARP_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ENABLE_CRT_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_GRILLE_OPACITY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_NOISE_OPACITY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_NOISE_SPEED_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_PIXELATE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ROLL_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ROLL_INTENSITY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ROLL_SIZE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ROLL_SPEED_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_ROLL_VARIATION_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_SCANLINES_OPACITY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_STATIC_INTENSITY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_VIGNETTE_INTENSITY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_VIGNETTE_OPACITY_CONFIG;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
@@ -244,7 +264,33 @@ public class RenderEngine {
     }
   );
 
-  public static final ShaderType<VoidShaderOptions> SCREEN_SHADER = new ShaderType<>(options -> loadShader("post", "screen", options), shader -> () -> VoidShaderOptions.INSTANCE);
+  public static final ShaderType<ShaderOptionsScreen> SCREEN_SHADER = new ShaderType<>(
+    options -> loadShader("post", "screen", options),
+    shader -> {
+      final Shader<ShaderOptionsScreen>.UniformInt enableCrt = shader.new UniformInt("enableCrt");
+      final Shader<ShaderOptionsScreen>.UniformFloat time = shader.new UniformFloat("time");
+      final Shader<ShaderOptionsScreen>.UniformFloat scanlinesOpacity = shader.new UniformFloat("scanlines_opacity");
+      final Shader<ShaderOptionsScreen>.UniformFloat scanlinesWidth = shader.new UniformFloat("scanlines_width");
+      final Shader<ShaderOptionsScreen>.UniformFloat grilleOpacity = shader.new UniformFloat("grille_opacity");
+      final Shader<ShaderOptionsScreen>.UniformVec2 resolution = shader.new UniformVec2("resolution");
+      final Shader<ShaderOptionsScreen>.UniformInt pixelate = shader.new UniformInt("pixelate");
+      final Shader<ShaderOptionsScreen>.UniformInt roll = shader.new UniformInt("roll");
+      final Shader<ShaderOptionsScreen>.UniformFloat rollSpeed = shader.new UniformFloat("roll_speed");
+      final Shader<ShaderOptionsScreen>.UniformFloat rollSize = shader.new UniformFloat("roll_size");
+      final Shader<ShaderOptionsScreen>.UniformFloat rollVariation = shader.new UniformFloat("roll_variation");
+      final Shader<ShaderOptionsScreen>.UniformFloat distortIntensity = shader.new UniformFloat("distort_intensity");
+      final Shader<ShaderOptionsScreen>.UniformFloat noiseOpacity = shader.new UniformFloat("noise_opacity");
+      final Shader<ShaderOptionsScreen>.UniformFloat noiseSpeed = shader.new UniformFloat("noise_speed");
+      final Shader<ShaderOptionsScreen>.UniformFloat staticNoiseIntensity = shader.new UniformFloat("static_noise_intensity");
+      final Shader<ShaderOptionsScreen>.UniformFloat aberration = shader.new UniformFloat("aberration");
+      final Shader<ShaderOptionsScreen>.UniformFloat brightness = shader.new UniformFloat("brightness");
+      final Shader<ShaderOptionsScreen>.UniformInt discolour = shader.new UniformInt("discolor");
+      final Shader<ShaderOptionsScreen>.UniformFloat warpAmount = shader.new UniformFloat("warp_amount");
+      final Shader<ShaderOptionsScreen>.UniformFloat vignetteIntensity = shader.new UniformFloat("vignette_intensity");
+      final Shader<ShaderOptionsScreen>.UniformFloat vignetteOpacity = shader.new UniformFloat("vignette_opacity");
+      return () -> new ShaderOptionsScreen(enableCrt, time, scanlinesOpacity, scanlinesWidth, grilleOpacity, resolution, pixelate, roll, rollSpeed, rollSize, rollVariation, distortIntensity, noiseOpacity, noiseSpeed, staticNoiseIntensity, aberration, brightness, discolour, warpAmount, vignetteIntensity, vignetteOpacity);
+    }
+  );
 
   private static final int RENDER_BUFFER_COUNT = 2;
   Shader<ShaderOptionsStandard> standardShader;
@@ -498,7 +544,8 @@ public class RenderEngine {
 
     ShaderManager.addShader(SIMPLE_SHADER);
     ShaderManager.addShader(COPY_SHADER);
-    final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
+    final Shader<ShaderOptionsScreen> screenShader = ShaderManager.addShader(SCREEN_SHADER);
+    final ShaderOptionsScreen screenShaderOptions = screenShader.makeOptions();
     this.standardShader = ShaderManager.addShader(STANDARD_SHADER);
     this.standardShaderOptions = this.standardShader.makeOptions();
     this.tmdShader = ShaderManager.addShader(TMD_SHADER);
@@ -703,6 +750,32 @@ public class RenderEngine {
 
         // use screen shader
         screenShader.use();
+
+        final boolean enableCrt = CONFIG.getConfig(SHADER_ENABLE_CRT_CONFIG.get());
+        screenShaderOptions.enableCrt(enableCrt);
+
+        if(enableCrt) {
+          screenShaderOptions.enableCrt(true);
+          screenShaderOptions.time((float)this.vsyncCount / 1000.0f);
+          screenShaderOptions.scanlinesOpacity(CONFIG.getConfig(SHADER_SCANLINES_OPACITY_CONFIG.get()));
+          screenShaderOptions.grilleOpacity(CONFIG.getConfig(SHADER_GRILLE_OPACITY_CONFIG.get()));
+          screenShaderOptions.resolution(this.window.getWidth() / 2.0f, this.window.getHeight() / 1.5f);
+          screenShaderOptions.pixelate(CONFIG.getConfig(SHADER_PIXELATE_CONFIG.get()));
+          screenShaderOptions.roll(CONFIG.getConfig(SHADER_ROLL_CONFIG.get()));
+          screenShaderOptions.rollSpeed(CONFIG.getConfig(SHADER_ROLL_SPEED_CONFIG.get()));
+          screenShaderOptions.rollSize(CONFIG.getConfig(SHADER_ROLL_SIZE_CONFIG.get()));
+          screenShaderOptions.rollVariation(CONFIG.getConfig(SHADER_ROLL_VARIATION_CONFIG.get()));
+          screenShaderOptions.distortionIntensity(CONFIG.getConfig(SHADER_ROLL_INTENSITY_CONFIG.get()) / 10.0f);
+          screenShaderOptions.noiseOpacity(CONFIG.getConfig(SHADER_NOISE_OPACITY_CONFIG.get()));
+          screenShaderOptions.noiseSpeed(CONFIG.getConfig(SHADER_NOISE_SPEED_CONFIG.get()));
+          screenShaderOptions.staticIntensity(CONFIG.getConfig(SHADER_STATIC_INTENSITY_CONFIG.get()) / 10.0f);
+          screenShaderOptions.aberration(CONFIG.getConfig(SHADER_ABERRATION_CONFIG.get()) / 10.0f);
+          screenShaderOptions.brightness(CONFIG.getConfig(SHADER_BRIGHTNESS_CONFIG.get()));
+          screenShaderOptions.discolour(CONFIG.getConfig(SHADER_DISCOLOUR_CONFIG.get()));
+          screenShaderOptions.warpAmount(CONFIG.getConfig(SHADER_EDGE_WARP_CONFIG.get()));
+          screenShaderOptions.vignetteIntensity(CONFIG.getConfig(SHADER_VIGNETTE_INTENSITY_CONFIG.get()));
+          screenShaderOptions.vignetteOpacity(CONFIG.getConfig(SHADER_VIGNETTE_OPACITY_CONFIG.get()));
+        }
 
         // draw final screen quad
         glViewport(0, 0, this.window.getWidth(), this.window.getHeight());
@@ -1142,7 +1215,7 @@ public class RenderEngine {
   }
 
   private void pre() {
-    if(this.mainBatch.renderMode == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+    if(this.mainBatch.renderMode == EngineState.RenderMode.LEGACY && CONFIG.getConfig(LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
       final float expectedAspect = (float)this.mainBatch.nativeWidth / this.mainBatch.nativeHeight;
       final int expectedHeight = this.renderHeight;
       final int expectedWidth = Math.round(expectedHeight * expectedAspect);
@@ -1192,7 +1265,7 @@ public class RenderEngine {
 
     LOGGER.info("Resizing window to %dx%d", width, height);
 
-    final Resolution res = CONFIG.getConfig(CoreMod.RESOLUTION_CONFIG.get());
+    final Resolution res = CONFIG.getConfig(RESOLUTION_CONFIG.get());
     if(res == Resolution.NATIVE) {
       this.renderWidth = (int)(width * (this.mainBatch.nativeWidth / 320.0f));
       this.renderHeight = height;
@@ -1315,7 +1388,7 @@ public class RenderEngine {
 
       if(this.allowMovement) {
         this.window.disableCursor();
-      } else if(CONFIG.getConfig(CoreMod.DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
+      } else if(CONFIG.getConfig(DISABLE_MOUSE_INPUT_CONFIG.get()) && PLATFORM.hasGamepad()) {
         this.window.hideCursor();
       } else {
         this.window.showCursor();
