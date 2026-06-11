@@ -349,18 +349,9 @@ public final class Unpacker {
   }
 
   private static void deleteUnpack() throws IOException {
-    final Path gitIgnore = ROOT.resolve(".gitignore");
-
     try(final Stream<Path> files = Files.walk(ROOT)) {
       files
         .sorted(Comparator.reverseOrder())
-        .filter(path -> {
-          try {
-            return !Files.isSameFile(path, gitIgnore);
-          } catch(final IOException ignored) {
-            return true;
-          }
-        })
         .forEach(path -> {
           try {
             if(!Files.isSameFile(path, ROOT)) {
