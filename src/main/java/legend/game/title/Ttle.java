@@ -560,10 +560,14 @@ public class Ttle extends EngineState<Ttle> {
         menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", MessageBoxType.CONFIRMATION, result1 -> {
           try {
             SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
+            whichMenu_800bdc38 = WhichMenu.UNLOAD;
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {
             LOGGER.error("Failed to convert memcard", e);
+
+            menuStack.pushScreen(new MessageBoxScreen("Failed to convert memcard", MessageBoxType.ALERT, result2 -> {
+              whichMenu_800bdc38 = WhichMenu.UNLOAD;
+            }));
           }
-          whichMenu_800bdc38 = WhichMenu.UNLOAD;
         }));
       } else {
         whichMenu_800bdc38 = WhichMenu.UNLOAD;

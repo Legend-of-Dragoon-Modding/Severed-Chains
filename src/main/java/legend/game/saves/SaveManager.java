@@ -233,13 +233,13 @@ public final class SaveManager {
       bootRegistries();
 
       final Campaign campaign = Campaign.create(this, campaignName);
-      Files.createDirectories(campaign.path);
-
       final List<MemcardSavedGame> saves = new ArrayList<>();
 
       for(final Path memcard : memcards) {
         this.splitMemcard(campaign, new FileData(Files.readAllBytes(memcard)), saves);
       }
+
+      Files.createDirectories(campaign.path);
 
       saves.sort(Comparator.comparingInt(save -> save.timestamp));
       final Object2IntMap<String> indices = new Object2IntOpenHashMap<>();
