@@ -837,10 +837,17 @@ public final class Unpacker {
 
     if(sect != null) {
       final PathNode drgn21 = sect.children.get("DRGN21.BIN");
+      final PathNode drgn22 = sect.children.get("DRGN22.BIN");
 
       if(drgn21 != null) {
         transformations.replaceWithFile(drgn21.children.get("260").children.get("textures").children.get("4"), REPLACEMENTS.resolve("chester.tim"));
       }
+
+      if(drgn22 != null) {
+        transformations.replaceWithFile(drgn22.children.get("260").children.get("textures").children.get("4"), REPLACEMENTS.resolve("chester.tim"));
+      }
+
+
     }
   }
 
