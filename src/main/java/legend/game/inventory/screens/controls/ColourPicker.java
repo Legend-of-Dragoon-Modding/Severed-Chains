@@ -110,7 +110,7 @@ public class ColourPicker extends Control {
   @Override
   protected void render(final int x, final int y) {
     this.transforms.scaling(this.getPreviewSize(), this.getPreviewSize(), 1.0f);
-    this.transforms.transfer.set(x + 2.0f, y + 2.0f, this.getZ());
+    this.transforms.transfer.set(x + 2.0f, y + 2.0f, this.getZ() * 4.0f);
     RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.transforms, QueuedModelStandard.class)
       .colour(this.getR() / 255.0f, this.getG() / 255.0f, this.getB() / 255.0f);
   }

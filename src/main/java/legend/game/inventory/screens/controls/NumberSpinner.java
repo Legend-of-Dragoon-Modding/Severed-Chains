@@ -13,14 +13,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
-import static legend.core.MathHelper.flEq;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class NumberSpinner<T extends Number> extends Control {
   private final Glyph upArrow;
@@ -103,11 +102,7 @@ public class NumberSpinner<T extends Number> extends Control {
   }
 
   public void setNumber(final T number) {
-    final T oldValue = this.number;
     this.number = this.clamp.apply(number);
-    if(oldValue != null && !flEq(this.number.floatValue(), oldValue.floatValue())) {
-      playMenuSound(1);
-    }
     this.label.setText(this.toString.apply(this.number));
     this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
@@ -182,6 +177,7 @@ public class NumberSpinner<T extends Number> extends Control {
 
     if(this.highlight.isVisible()) {
       this.setNumber(this.scroll.apply(this.number, deltaY));
+      playMenuSound(1);
       return InputPropagation.HANDLED;
     }
 
@@ -211,21 +207,25 @@ public class NumberSpinner<T extends Number> extends Control {
     if(this.highlight.isVisible()) {
       if(action == INPUT_ACTION_MENU_UP.get()) {
         this.setNumber(this.add.apply(this.number, this.step));
+        playMenuSound(1);
         return InputPropagation.HANDLED;
       }
 
       if(action == INPUT_ACTION_MENU_DOWN.get()) {
         this.setNumber(this.subtract.apply(this.number, this.step));
+        playMenuSound(1);
         return InputPropagation.HANDLED;
       }
 
       if(action == INPUT_ACTION_MENU_RIGHT.get()) {
         this.setNumber(this.add.apply(this.number, this.bigStep));
+        playMenuSound(1);
         return InputPropagation.HANDLED;
       }
 
       if(action == INPUT_ACTION_MENU_LEFT.get()) {
         this.setNumber(this.subtract.apply(this.number, this.bigStep));
+        playMenuSound(1);
         return InputPropagation.HANDLED;
       }
 
