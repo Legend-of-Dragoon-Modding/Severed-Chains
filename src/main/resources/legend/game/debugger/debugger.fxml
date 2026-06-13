@@ -134,6 +134,9 @@
                   </children>
                </VBox>
             </children>
+            <HBox.margin>
+               <Insets right="4.0" />
+            </HBox.margin>
          </VBox>
          <VBox prefHeight="386.0" prefWidth="232.0">
             <children>
@@ -145,6 +148,8 @@
                      <Button mnemonicParsing="false" onAction="#playSound" text="Play" />
                   </children>
                </HBox>
+               <Label text="Scripts" />
+               <Button mnemonicParsing="false" text="Disassemble Submap Scripts" onAction="#disassembleSubmapScripts" />
             </children>
          </VBox>
       </HBox>

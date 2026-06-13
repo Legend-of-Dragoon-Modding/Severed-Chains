@@ -1,5 +1,9 @@
 package legend.game.debugger;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,16 +22,31 @@ import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.sound.Audio;
 import legend.game.submap.SMap;
 import legend.game.types.GsRVIEW2;
+import legend.game.unpacker.Loader;
+import legend.game.unpacker.scripts.ScriptPatch;
+import legend.game.unpacker.scripts.ScriptPatchList;
+import legend.game.unpacker.scripts.ScriptPatcher;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.events.EventListener;
+import org.legendofdragoon.scripting.Translator;
+import org.legendofdragoon.scripting.tokens.Script;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.GsSetRefView2L;
 import static legend.game.Graphics.GsSetSmapRefView2L;
@@ -40,6 +59,8 @@ import static legend.game.sound.Audio.getSoundFileFromIndex;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(DebuggerController.class);
+
   @FXML
   private MenuItem menuDebuggersScript;
   @FXML
@@ -445,5 +466,63 @@ public class DebuggerController {
 
   public void playSound(final ActionEvent actionEvent) {
     Audio.playSound(getSoundFileFromIndex(this.soundFileIndex.getValue()), this.soundIndex.getValue(), 0, 0);
+  }
+
+  public void disassembleSubmapScripts(final ActionEvent actionEvent) throws IOException {
+    final ScriptPatcher patcher = new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups"));
+    final ScriptPatchList patchList = patcher.getPatchList();
+
+    for(int drgnIndex = 1; drgnIndex <= 4; drgnIndex++) {
+      try(final DirectoryStream<Path> stream = Files.newDirectoryStream(Loader.resolve("SECT/DRGN2%d.BIN".formatted(drgnIndex)))) {
+        for(final Path dir : stream) {
+          if(Files.isDirectory(dir)) {
+            final int dirIndex = Integer.parseInt(dir.getFileName().toString());
+
+            if(dirIndex % 3 == 0) {
+              this.disassembleScriptDir(patcher, patchList, dir);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private void disassembleScriptDir(final ScriptPatcher patcher, final ScriptPatchList patchList, final Path scriptDir) throws IOException {
+    try(final DirectoryStream<Path> stream = Files.newDirectoryStream(scriptDir)) {
+      for(final Path path : stream) {
+        if(!path.getFileName().endsWith("mrg")) {
+          this.disassembleScript(patcher, patchList, path);
+        }
+      }
+    }
+  }
+
+  private void disassembleScript(final ScriptPatcher patcher, final ScriptPatchList patchList, final Path scriptPath) {
+    try {
+      final String relativePath = Loader.resolve("").relativize(scriptPath).toString();
+      final ScriptPatch patch = patchList.getPatchForScript(relativePath);
+      final IntList branchList = new IntArrayList();
+      final Int2IntMap tableLengthList = new Int2IntOpenHashMap();
+      final Path actualScriptPath;
+
+      if(patch != null) {
+        final Path configPath = patcher.resolvePatchConfigPath(patcher.patchesDir.resolve(patch.patchFile));
+        patcher.getPatchConfigs(configPath, branchList, tableLengthList);
+        actualScriptPath = patcher.backupsDir.resolve(relativePath);
+      } else {
+        actualScriptPath = scriptPath;
+      }
+
+      final Script disassembled = SCRIPTS.disassemble(scriptPath.toString(), Files.readAllBytes(actualScriptPath), branchList, tableLengthList);
+      final Translator translator = new Translator();
+      final String translated = translator.translate(disassembled, SCRIPTS.meta(), false, false, false);
+
+      final Path basePath = Path.of("dis");
+      final Path newPath = basePath.resolve(Loader.resolve("SECT").relativize(scriptPath));
+      Files.createDirectories(newPath.getParent());
+      Files.writeString(Path.of(newPath + ".txt"), translated, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    } catch(final Throwable t) {
+      LOGGER.error("Failed to decompile %s", scriptPath);
+    }
   }
 }

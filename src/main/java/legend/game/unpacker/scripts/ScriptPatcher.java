@@ -42,10 +42,10 @@ public class ScriptPatcher {
   private final Translator translator = new Translator();
 
   private final ScriptPatchList patches;
-  private final Path patchesDir;
-  private final Path filesDir;
-  private final Path cacheDir;
-  private final Path backupsDir;
+  public final Path patchesDir;
+  public final Path filesDir;
+  public final Path cacheDir;
+  public final Path backupsDir;
 
   public ScriptPatcher(final Path patchDir, final Path filesDir, final Path cacheDir, final Path backupsDir) {
     this.backupsDir = backupsDir;
@@ -67,6 +67,10 @@ public class ScriptPatcher {
 
       return ScriptPatchList.empty();
     }
+  }
+
+  public ScriptPatchList getPatchList() {
+    return this.patches;
   }
 
   private boolean needsUpdate(@Nullable final ScriptPatch cachedPatch, final ScriptPatch newPatch) throws IOException {
@@ -272,15 +276,15 @@ public class ScriptPatcher {
     return SCRIPTS.assemble(name, patched);
   }
 
-  private String resolvePatchConfigName(final String diffName) {
+  public String resolvePatchConfigName(final String diffName) {
     return diffName.substring(0, diffName.lastIndexOf('.')) + ".config.csv";
   }
 
-  private Path resolvePatchConfigPath(final Path diffPath) {
+  public Path resolvePatchConfigPath(final Path diffPath) {
     return diffPath.resolveSibling(this.resolvePatchConfigName(diffPath.getFileName().toString()));
   }
 
-  private void getPatchConfigs(final Path configPath, final IntList branchList, final Int2IntMap tableLengthList) {
+  public void getPatchConfigs(final Path configPath, final IntList branchList, final Int2IntMap tableLengthList) {
     List<String[]> patchConfig = new ArrayList<>();
 
     if(Files.exists(configPath)) {
