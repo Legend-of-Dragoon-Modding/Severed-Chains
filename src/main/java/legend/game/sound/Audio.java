@@ -1273,8 +1273,8 @@ public final class Audio {
     if(fadeTime < 256 && !soundEnv_800c6630.fadingIn_2a) {
       soundEnv_800c6630.fadingOut_2b = true;
       soundEnv_800c6630.fadeTime_2c = fadeTime;
-      soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 8;
-      soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 8;
+      soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 7;
+      soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 7;
 
       // Retail bug: due to the way fade volume is lerped, fade out over 1
       // tick doesn't fade out at all. This was breaking music after Lenus 2.
