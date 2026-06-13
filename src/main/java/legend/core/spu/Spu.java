@@ -16,6 +16,7 @@ import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 public class Spu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Spu.class);
   private static final Marker SPU_MARKER = MarkerManager.getMarker("SPU");
+  private static final Marker SPU_KEY_MARKER = MarkerManager.getMarker("SPU_KEY");
 
   private static final int SOUND_TPS = 60;
   private static final int SAMPLES_PER_TICK = BASE_SAMPLE_RATE / SOUND_TPS;
@@ -97,11 +98,11 @@ public class Spu {
         this.keyOff = 0;
 
         if(edgeKeyOn != 0) {
-          LOGGER.debug(SPU_MARKER, "Keying on %x", edgeKeyOn);
+          LOGGER.debug(SPU_KEY_MARKER, "Keying on %x", edgeKeyOn);
         }
 
         if(edgeKeyOff != 0) {
-          LOGGER.debug(SPU_MARKER, "Keying off %x", edgeKeyOff);
+          LOGGER.debug(SPU_KEY_MARKER, "Keying off %x", edgeKeyOff);
         }
 
         this.tickNoiseGenerator();
@@ -111,12 +112,12 @@ public class Spu {
 
           //keyOn and KeyOff are edge triggered on 0 to 1
           if((edgeKeyOn & 0x1L << voiceIndex) != 0) {
-            LOGGER.debug(SPU_MARKER, "Keying on voice %d", voiceIndex);
+            LOGGER.debug(SPU_KEY_MARKER, "Keying on voice %d", voiceIndex);
             v.keyOn();
           }
 
           if((edgeKeyOff & 0x1L << voiceIndex) != 0) {
-            LOGGER.debug(SPU_MARKER, "Keying off voice %d", voiceIndex);
+            LOGGER.debug(SPU_KEY_MARKER, "Keying off voice %d", voiceIndex);
             v.keyOff();
           }
 
@@ -400,7 +401,7 @@ public class Spu {
   }
 
   public void keyOff(final long voices) {
-    LOGGER.debug(SPU_MARKER, "Setting SPU key off to %08x", voices);
+    LOGGER.debug(SPU_KEY_MARKER, "Setting SPU key off to %08x", voices);
 
     synchronized(Spu.class) {
       this.keyOff |= voices;
@@ -408,7 +409,7 @@ public class Spu {
   }
 
   public void keyOn(final long voices) {
-    LOGGER.debug(SPU_MARKER, "Setting SPU key on to %08x", voices);
+    LOGGER.debug(SPU_KEY_MARKER, "Setting SPU key on to %08x", voices);
 
     synchronized(Spu.class) {
       this.keyOn |= voices;

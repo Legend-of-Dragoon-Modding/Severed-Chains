@@ -7,6 +7,7 @@
   <MarkerFilter marker="ACTIONS" onMatch="DENY" onMismatch="NEUTRAL" />
   <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
   <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+  <MarkerFilter marker="SPU_KEY" onMatch="DENY" onMismatch="NEUTRAL"/>
   <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
   <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
   <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
