@@ -1,5 +1,8 @@
 package legend.core;
 
+import legend.game.DrgnFiles;
+import legend.game.unpacker.Loader;
+
 public final class DebugHelper {
   private DebugHelper() { }
 
@@ -16,15 +19,18 @@ public final class DebugHelper {
     }
   }
 
-  public static StackWalker.StackFrame getStackFrame(final int steps) {
-    return StackWalker.getInstance().walk(frames -> frames
-      .skip(steps + 1)
-      .findFirst())
-      .get();
-  }
-
   public static StackWalker.StackFrame getCallerFrame() {
-    return getStackFrame(2);
+    return StackWalker
+      .getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+      .walk(frames -> frames
+        .filter(frame ->
+          frame.getDeclaringClass() != DebugHelper.class &&
+          frame.getDeclaringClass() != DrgnFiles.class &&
+          frame.getDeclaringClass() != Loader.class
+        )
+        .findFirst()
+      )
+      .get();
   }
 
   public static Timer timer(final long interval) {

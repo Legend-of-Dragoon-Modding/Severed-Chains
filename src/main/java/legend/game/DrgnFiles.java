@@ -22,22 +22,14 @@ public final class DrgnFiles {
   public static int drgnBinIndex_800bc058;
 
   public static CompletableFuture<FileData> loadFile(final String file) {
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     return Loader.loadFile(file);
   }
 
   public static CompletableFuture<List<FileData>> loadDir(final String dir) {
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     return Loader.loadDirectory(dir);
