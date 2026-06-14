@@ -6516,7 +6516,6 @@ jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_EXIT] ; is dragoon
 
 mov stor[0], stor[28] ; source, dest
 call Battle::scriptGetBentStat, stor[0], HP_REGEN, stor[9] ; bentIndex, statIndex, value
-gosub inl[:SIGN_HP_REGEN_VALUE] ; addr
 jmp_cmp ==, 0x0, stor[9], inl[:HANDLE_REGEN_MP] ; no regen
 jmp_cmp >, 0x0, stor[9], inl[:HANDLE_REGEN_NEGATIVE_HP] ; negative regen
 
@@ -6569,22 +6568,6 @@ gosub inl[:ALLOCATE_REGEN_EFFECT] ; addr
 mov 0xa, stor[23] ; source, dest
 wait stor[23] ; frames
 HANDLE_REGEN_EXIT:
-return
-
-
-
-; SUBROUTINE
-; Terrible code to convert an unsigned byte to a signed int, with 0x80 considered negative. Why was this not a couple shifts?
-; @param int s9 unsigned byte regen
-; @return int s9 signed int regen
-SIGN_HP_REGEN_VALUE:
-and 0xff, stor[9] ; right, left
-jmp_cmp !&, 0x80, stor[9], inl[:LABEL_693] ; operand, left, right, addr
-mov 0xffffffff, stor[8] ; source, dest
-and 0xffffff00, stor[8] ; right, left
-or stor[9], stor[8] ; right, left
-mov stor[8], stor[9] ; source, dest
-LABEL_693:
 return
 
 
