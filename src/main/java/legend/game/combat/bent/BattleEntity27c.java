@@ -16,6 +16,7 @@ import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
+import legend.game.modding.events.battle.ActiveSpellEvent;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
@@ -614,7 +615,7 @@ public abstract class BattleEntity27c extends BattleObject {
   @Deprecated
   public void setStat(final BattleEntityStat statIndex, final RegistryId value) {
     switch(statIndex) {
-      case SPELL_ID -> this.spell_94 = REGISTRIES.spells.getEntry(value).get();
+      case SPELL_ID -> this.spell_94 = EVENTS.postEvent(new ActiveSpellEvent(this, value, REGISTRIES.spells.getEntry(value).get())).spell;
       case ITEM_ID -> this.item_d4 = new ItemStack(REGISTRIES.items.getEntry(value).get());
 
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
@@ -811,6 +812,6 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800f9e50L)
   public void setActiveSpell(final int spellId) {
-    this.spell_94 = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get();
+    this.spell_94 = EVENTS.postEvent(new ActiveSpellEvent(this, spellId, REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get())).spell;
   }
 }
