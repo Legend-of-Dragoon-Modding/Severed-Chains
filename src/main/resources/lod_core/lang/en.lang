@@ -268,6 +268,8 @@ lod_core.config.item_group_sort_mode.label=Item group sorting
 lod_core.config.item_group_sort_mode.help=Controls sorting within groups (e.g. potions, spells) of items
 lod_core.config.item_group_sort_mode.ALPHABETICAL=Alphabetical
 lod_core.config.item_group_sort_mode.RETAIL=Retail
+lod_core.config.element_icon_config.label=Elemental Icon Display
+lod_core.config.element_icon_config.help=Displays an icon beside damage numbers that will indicate the types of damage.
 
 lod_core.input_actions.menu_up.name=Menu: up
 lod_core.input_actions.menu_down.name=Menu: down

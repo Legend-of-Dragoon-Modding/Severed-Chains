@@ -19,6 +19,7 @@ import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.ElementIconString;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
@@ -44,6 +45,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +62,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
@@ -74,6 +78,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Text.renderText;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_CANT_TARGET;
+import static legend.game.modding.coremod.CoreMod.DISPLAY_ELEMENT_ICON_CONFIG;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -207,6 +212,11 @@ public class BattleHud {
 
   public Texture battleIconsTexture;
   public Obj battleIconQuad;
+
+  private Map<RegistryId, Texture> elementIcon;
+  private Obj elementIconQuad;
+  private final MV elementTransforms = new MV();
+  public List<ElementIconString> currentAttackElements = new ArrayList<>();
 
   private boolean closeMenu;
 
@@ -434,6 +444,20 @@ public class BattleHud {
           .uvSize((float)ICON_SIZE / this.battleIconsTexture.width, (float)ICON_SIZE / this.battleIconsTexture.height)
           .build()
         ;
+      }
+
+      if(this.elementIcon == null) {
+        this.elementIcon = new HashMap<>();
+
+        REGISTRIES.elementIcons.forEach(icon -> this.elementIcon.put(icon, Texture.png(REGISTRIES.elementIcons.getEntry(icon).get().path)));
+      }
+
+      if(this.elementIconQuad == null) {
+        this.elementIconQuad = new QuadBuilder("Element Icon")
+          .bpp(Bpp.BITS_24)
+          .posSize(16.0f, 16.0f)
+          .uvSize(1.0f, 1.0f)
+          .build();
       }
 
       //LAB_800f0ad4
@@ -1220,6 +1244,20 @@ public class BattleHud {
                     .alpha(num.shade_0c / 128.0f);
                 }
                 //LAB_800f4110
+
+              if(CONFIG.getConfig(DISPLAY_ELEMENT_ICON_CONFIG.get()) && i == 0) {
+                final List<ElementIconString> attackElements = this.currentAttackElements.stream().distinct().toList();
+                for(int x = 0; x < attackElements.size(); x++) {
+                  this.elementTransforms.transfer.set(digit.x_0e + num.x_1c - 18 - (16 * x), digit.y_10 + num.y_20, 0);
+                  RENDERER
+                    .queueOrthoModel(this.elementIconQuad, this.elementTransforms, QueuedModelStandard.class)
+                    .translucency(Translucency.HALF_B_PLUS_HALF_F)
+                    .alpha(num.shade_0c / 128.0f)
+                    .useTextureAlpha()
+                    .uvOffset(0, 0)
+                    .texture(this.elementIcon.get(this.currentAttackElements.get(x).getRegistryId()));
+                }
+              }
             }
           }
         }
@@ -2036,6 +2074,11 @@ public class BattleHud {
     if(this.spBars != null) {
       this.spBars.delete();
       this.spBars = null;
+    }
+
+    if(this.elementIconQuad != null) {
+      this.elementIconQuad.delete();
+      this.elementIconQuad = null;
     }
   }
 

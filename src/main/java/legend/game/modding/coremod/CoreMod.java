@@ -35,6 +35,7 @@ import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DeadzoneConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
+import legend.game.modding.coremod.config.ElementIconConfig;
 import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.FmvVolumeConfigEntry;
@@ -172,6 +173,7 @@ public class CoreMod {
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
   public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
+  public static final RegistryDelegate<ElementIconConfig> DISPLAY_ELEMENT_ICON_CONFIG = CONFIG_REGISTRAR.register("element_icon_config", ElementIconConfig::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 

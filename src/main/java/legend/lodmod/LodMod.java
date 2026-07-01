@@ -37,6 +37,9 @@ import legend.game.characters.VitalsStatType;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.bent.ElementIconRegistry;
+import legend.game.combat.bent.ElementIconRegistryEvent;
+import legend.game.combat.bent.ElementIconString;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.RegisterDeffsEvent;
@@ -90,6 +93,7 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -183,6 +187,18 @@ public class LodMod {
   public static final RegistryDelegate<Element> LIGHT_ELEMENT = ELEMENT_REGISTRAR.register("light", LightElement::new);
   public static final RegistryDelegate<Element> WIND_ELEMENT = ELEMENT_REGISTRAR.register("wind", WindElement::new);
   public static final RegistryDelegate<Element> FIRE_ELEMENT = ELEMENT_REGISTRAR.register("fire", FireElement::new);
+
+  private static final Registrar<ElementIconString, ElementIconRegistryEvent> ELEMENT_ICONS_REGISTRAR = new Registrar<>(REGISTRIES.elementIcons, MOD_ID);
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_NO_ELEMENT = ELEMENT_ICONS_REGISTRAR.register("none", () -> new ElementIconString((Path.of("gfx", "ui", "magic.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_PHYSICAL = ELEMENT_ICONS_REGISTRAR.register("physical", () -> new ElementIconString((Path.of("gfx", "ui", "physical.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_WATER = ELEMENT_ICONS_REGISTRAR.register("water", () -> new ElementIconString((Path.of("gfx", "ui", "water.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_EARTH = ELEMENT_ICONS_REGISTRAR.register("earth", () -> new ElementIconString((Path.of("gfx", "ui", "earth.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_DARK = ELEMENT_ICONS_REGISTRAR.register("dark", () -> new ElementIconString((Path.of("gfx", "ui", "dark.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_DIVINE = ELEMENT_ICONS_REGISTRAR.register("divine", () -> new ElementIconString((Path.of("gfx", "ui", "divine.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_THUNDER = ELEMENT_ICONS_REGISTRAR.register("thunder", () -> new ElementIconString((Path.of("gfx", "ui", "thunder.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_LIGHT = ELEMENT_ICONS_REGISTRAR.register("light", () -> new ElementIconString((Path.of("gfx", "ui", "light.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_WIND = ELEMENT_ICONS_REGISTRAR.register("wind", () -> new ElementIconString((Path.of("gfx", "ui", "wind.png"))));
+  public static final RegistryDelegate<ElementIconString> ELEMENT_ICON_FIRE = ELEMENT_ICONS_REGISTRAR.register("fire", () -> new ElementIconString((Path.of("gfx", "ui", "fire.png"))));
 
   private static final Registrar<BattleEntityType, BattleEntityTypeRegistryEvent> BENT_TYPE_REGISTRAR = new Registrar<>(REGISTRIES.battleEntityTypes, MOD_ID);
   public static final RegistryDelegate<BattleEntityType> PLAYER_TYPE = BENT_TYPE_REGISTRAR.register("player", BattleEntityType::new);
@@ -449,6 +465,11 @@ public class LodMod {
   @EventListener
   public static void registerElements(final ElementRegistryEvent event) {
     ELEMENT_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void registerElementIcons(final ElementIconRegistryEvent event) {
+    ELEMENT_ICONS_REGISTRAR.registryEvent(event);
   }
 
   @EventListener

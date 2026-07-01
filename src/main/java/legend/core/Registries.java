@@ -27,6 +27,9 @@ import legend.game.characters.StatTypeRegistryEvent;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistry;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.bent.ElementIconRegistry;
+import legend.game.combat.bent.ElementIconRegistryEvent;
+import legend.game.combat.bent.ElementIconString;
 import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.deff.DeffRegistry;
 import legend.game.combat.deff.RegisterDeffsEvent;
@@ -90,6 +93,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<Addition> additions = this.addRegistry(new AdditionRegistry(), AdditionRegistryEvent::new);
   public final Registry<BattleAction> battleActions = this.addRegistry(new BattleActionRegistry(), RegisterBattleActionsEvent::new);
   public final Registry<PostBattleAction<?, ?>> postBattleActions = this.addRegistry(new PostBattleActionRegistry(), RegisterPostBattleActionsEvent::new);
+  public final Registry<ElementIconString> elementIcons = this.addRegistry(new ElementIconRegistry(), ElementIconRegistryEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);

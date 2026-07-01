@@ -34,6 +34,7 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.AttackEvent;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityStat;
+import legend.game.combat.bent.ElementIconString;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.bent.SetBattleEntityStatEvent;
@@ -102,6 +103,7 @@ import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.CorePostBattleActions;
+import legend.game.modding.coremod.elements.NoElement;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
@@ -144,6 +146,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodEngineStateTypes;
+import legend.lodmod.LodMod;
 import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -305,6 +308,8 @@ import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
 import static legend.lodmod.LodMod.DEFENSE_STAT;
+import static legend.lodmod.LodMod.ELEMENT_ICON_NO_ELEMENT;
+import static legend.lodmod.LodMod.ELEMENT_ICON_PHYSICAL;
 import static legend.lodmod.LodMod.GUARD_HEAL_STAT;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
@@ -2315,6 +2320,7 @@ public class Battle extends EngineState<Battle> {
 
           LOGGER.info(BATTLE, "Bent %s (%s) forced turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
           EVENTS.postEvent(new BattleEntityTurnEvent<>(this, encounter, this.forcedTurnBent_800c66bc));
+          this.hud.currentAttackElements.clear();
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
@@ -2324,6 +2330,7 @@ public class Battle extends EngineState<Battle> {
 
             LOGGER.info(BATTLE, "Bent %s (%s) turn start", this.currentTurnBent_800c66c8.innerStruct_00.getName(), this.currentTurnBent_800c66c8.name);
             EVENTS.postEvent(new BattleEntityTurnEvent<>(this, encounter, this.currentTurnBent_800c66c8));
+            this.hud.currentAttackElements.clear();
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -8566,6 +8573,14 @@ public class Battle extends EngineState<Battle> {
     final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
+    this.hud.currentAttackElements.add(ELEMENT_ICON_PHYSICAL.get());
+    if(attacker instanceof final PlayerBattleEntity player) {
+      for(final Element element : player.getAttackElements()) {
+        this.addElementIcon(element);
+      }
+    }
+    this.hud.currentAttackElements.remove(ELEMENT_ICON_NO_ELEMENT.get());
+
     final int damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
     script.params_20[2].set(damage);
@@ -8594,12 +8609,13 @@ public class Battle extends EngineState<Battle> {
     //LAB_800f272c
     if((attacker.status_0e & 0x800) != 0) {
       attacker.status_0e &= 0xf7ff;
+      damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
     } else {
       damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.DRAGOON_MAGIC_STATUS_ITEMS);
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08.get());
+      damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
+      this.addElementIcon(attacker.spell_94.element_08.get());
     }
-
-    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
 
     //LAB_800f27ec
     script.params_20[3].set(damage);
@@ -8627,12 +8643,13 @@ public class Battle extends EngineState<Battle> {
     //LAB_800f28c8
     if((attacker.status_0e & 0x800) != 0) {
       attacker.status_0e &= 0xf7ff;
+      damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
     } else {
       damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.ITEM_MAGIC);
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.item_d4.getAttackElement());
+      damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
+      this.addElementIcon(attacker.item_d4.getAttackElement());
     }
-
-    damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
 
     //LAB_800f2970
     script.params_20[3].set(damage);
@@ -9303,5 +9320,12 @@ public class Battle extends EngineState<Battle> {
   @Override
   public GsRVIEW2 getCamera() {
     return this.camera_800c67f0.rview2_00;
+  }
+
+  public void addElementIcon(final Element element) {
+    final ElementIconString icon = REGISTRIES.elementIcons.getEntry(element.getRegistryId().modId(), element.getRegistryId().entryId()).get();
+    if(icon != null) {
+      this.hud.currentAttackElements.add(icon);
+    }
   }
 }
