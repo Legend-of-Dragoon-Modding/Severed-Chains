@@ -218,18 +218,24 @@ public class RenderBatch {
 
   private final Matrix4f temp = new Matrix4f();
 
+  private static boolean shouldSnap() {
+    return CONFIG.getConfig(CoreMod.SHADER_ENABLE_CRT_CONFIG.get()) && CONFIG.getConfig(CoreMod.SHADER_PIXELATE_CONFIG.get()) != legend.core.opengl.PixelateMode.NONE;
+  }
+
+  private static Matrix4f setSnappedTranslation(final Matrix4f dest, final float x, final float y, final float z) {
+    if(shouldSnap()) {
+      return dest.setTranslation(Math.round(x), Math.round(y), z);
+    }
+    return dest.setTranslation(x, y, z);
+  }
+
   public <T extends QueuedModel<?, ?>> T queueOrthoModel(final Obj obj, final Class<T> type) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
     this.needsSorting = true;
-    final boolean snap = CONFIG.getConfig(CoreMod.SHADER_ENABLE_CRT_CONFIG.get()) && CONFIG.getConfig(CoreMod.SHADER_PIXELATE_CONFIG.get()) != legend.core.opengl.PixelateMode.NONE;
-    if (snap) {
-      this.temp.identity().setTranslation(Math.round(this.widescreenOrthoOffsetX), 0.0f, 0.0f);
-    } else {
-      this.temp.identity().setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
-    }
+    setSnappedTranslation(this.temp.identity(), this.widescreenOrthoOffsetX, 0.0f, 0.0f);
 
     final T entry = this.orthoPool.acquire(type);
     entry.acquire(obj, this.sequence++, this.temp);
@@ -242,12 +248,7 @@ public class RenderBatch {
     }
 
     this.needsSorting = true;
-    final boolean snap = CONFIG.getConfig(CoreMod.SHADER_ENABLE_CRT_CONFIG.get()) && CONFIG.getConfig(CoreMod.SHADER_PIXELATE_CONFIG.get()) != legend.core.opengl.PixelateMode.NONE;
-    if (snap) {
-      this.temp.set(mv).setTranslation(Math.round(mv.transfer.x + this.widescreenOrthoOffsetX), Math.round(mv.transfer.y), mv.transfer.z);
-    } else {
-      this.temp.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
-    }
+    setSnappedTranslation(this.temp.set(mv), mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
 
     final T entry = this.orthoPool.acquire(type);
     entry.acquire(obj, this.sequence++, this.temp);
@@ -262,16 +263,9 @@ public class RenderBatch {
 
     this.needsSorting = true;
     final T entry = this.orthoPool.acquire(type);
-    final boolean snap = CONFIG.getConfig(CoreMod.SHADER_ENABLE_CRT_CONFIG.get()) && CONFIG.getConfig(CoreMod.SHADER_PIXELATE_CONFIG.get()) != legend.core.opengl.PixelateMode.NONE;
-    if (snap) {
-      this.temp.set(transforms);
-      final Vector3f translation = new Vector3f();
-      transforms.getTranslation(translation);
-      this.temp.setTranslation(Math.round(translation.x), Math.round(translation.y), translation.z);
-      entry.acquire(obj, this.sequence++, this.temp);
-    } else {
-      entry.acquire(obj, this.sequence++, transforms);
-    }
+    this.temp.set(transforms);
+    setSnappedTranslation(this.temp, transforms.m30(), transforms.m31(), transforms.m32());
+    entry.acquire(obj, this.sequence++, this.temp);
     return entry;
   }
 }

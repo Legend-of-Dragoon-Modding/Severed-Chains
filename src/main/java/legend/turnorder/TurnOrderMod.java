@@ -51,8 +51,6 @@ public class TurnOrderMod {
 
   private UiBox background;
   private boolean visible;
-  public static boolean isVisible = false;
-  public static float currentBoxWidth = 50.0f;
 
   private final Random random = new Random();
 
@@ -61,6 +59,18 @@ public class TurnOrderMod {
 
   public TurnOrderMod() {
     EVENTS.register(this);
+  }
+
+  public boolean isVisible() {
+    return this.visible;
+  }
+
+  public float getCurrentWidth() {
+    return this.background != null ? this.background.getWidth() : 0.0f;
+  }
+
+  public float getCurrentHeight() {
+    return this.background != null ? this.background.getHeight() : 0.0f;
   }
 
   @EventListener
@@ -76,13 +86,11 @@ public class TurnOrderMod {
   @EventListener
   public void battleEndedEvent(final BattleEndedEvent event) {
     this.visible = false;
-    isVisible = false;
   }
 
   @EventListener
   public void onTurnStarted(final BattleEntityTurnEvent<?> event) {
     this.visible = true;
-    isVisible = true;
 
     this.sortedBents.clear();
     this.turns.clear();
@@ -142,7 +150,6 @@ public class TurnOrderMod {
 
     final float boxWidth = Math.max(longestName + x + 15.0f, 50.0f);
     this.background.setSize(Math.round(boxWidth), 67);
-    currentBoxWidth = boxWidth;
   }
 
   @EventListener

@@ -64,9 +64,12 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import legend.turnorder.TurnOrderMod;
+
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
@@ -173,6 +176,8 @@ public class RenderEngine {
   private final FloatBuffer clutAnimationBuffer = BufferUtils.createFloatBuffer(2 * 2 * 1024); // 2 sets of 2 vectors
   private int clutAnimationBufferIndex;
   private boolean frameSkip = true;
+  private TurnOrderMod turnOrderMod;
+  private boolean turnOrderModSearched;
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -772,18 +777,18 @@ public class RenderEngine {
 
           final float resWidth;
           final float resHeight;
-          switch (pixelateMode) {
+          switch(pixelateMode) {
             case P240 -> {
               resHeight = 240.0f;
-              resWidth = resHeight * ((float) this.window.getWidth() / Math.max(1, this.window.getHeight()));
+              resWidth = resHeight * ((float)this.window.getWidth() / Math.max(1, this.window.getHeight()));
             }
             case P480 -> {
               resHeight = 480.0f;
-              resWidth = resHeight * ((float) this.window.getWidth() / Math.max(1, this.window.getHeight()));
+              resWidth = resHeight * ((float)this.window.getWidth() / Math.max(1, this.window.getHeight()));
             }
             case P720 -> {
               resHeight = 720.0f;
-              resWidth = resHeight * ((float) this.window.getWidth() / Math.max(1, this.window.getHeight()));
+              resWidth = resHeight * ((float)this.window.getWidth() / Math.max(1, this.window.getHeight()));
             }
             case NATIVE_1_4 -> {
               resWidth = this.window.getWidth() / 4.0f;
@@ -820,12 +825,22 @@ public class RenderEngine {
           screenShaderOptions.bloomIntensity(CONFIG.getConfig(SHADER_BLOOM_INTENSITY_CONFIG.get()));
           screenShaderOptions.bloomThreshold(CONFIG.getConfig(SHADER_BLOOM_THRESHOLD_CONFIG.get()));
           screenShaderOptions.bloomRadius(CONFIG.getConfig(SHADER_BLOOM_RADIUS_CONFIG.get()));
-          if (legend.turnorder.TurnOrderMod.isVisible && currentEngineState_8004dd04 instanceof final legend.game.combat.Battle battle && !battle.isBattleDisabled() && CONFIG.getConfig(legend.turnorder.TurnOrderConfigs.SHOW_TURN_ORDER.get())) {
+          if(this.turnOrderMod == null && !this.turnOrderModSearched && currentEngineState_8004dd04 instanceof legend.game.combat.Battle) {
+            this.turnOrderModSearched = true;
+            for(final var container : MODS.getLoadedMods()) {
+              if(container.mod instanceof TurnOrderMod) {
+                this.turnOrderMod = (TurnOrderMod)container.mod;
+                break;
+              }
+            }
+          }
+
+          if(this.turnOrderMod != null && this.turnOrderMod.isVisible() && currentEngineState_8004dd04 instanceof final legend.game.combat.Battle battle && !battle.isBattleDisabled() && CONFIG.getConfig(legend.turnorder.TurnOrderConfigs.SHOW_TURN_ORDER.get())) {
             final float xOffset = this.getWidescreenOrthoOffsetX();
-            final float minX = 3.5f / (640.0f + 2.0f * xOffset);
-            final float maxX = (3.5f + legend.turnorder.TurnOrderMod.currentBoxWidth) / (640.0f + 2.0f * xOffset);
-            final float minY = 409.0f / 480.0f;
-            final float maxY = 476.0f / 480.0f;
+            final float minX = 3.5f / (320.0f + xOffset);
+            final float maxX = (3.5f + this.turnOrderMod.getCurrentWidth()) / (320.0f + xOffset);
+            final float minY = (240.0f - 4.0f - this.turnOrderMod.getCurrentHeight()) / 240.0f;
+            final float maxY = (240.0f - 4.0f) / 240.0f;
             screenShaderOptions.turnOrderBounds(minX, minY, maxX, maxY);
           } else {
             screenShaderOptions.turnOrderBounds(0.0f, 0.0f, 0.0f, 0.0f);

@@ -55,6 +55,14 @@ public class UiBox {
     this.updateSize();
   }
 
+  public int getWidth() {
+    return this.width;
+  }
+
+  public int getHeight() {
+    return this.height;
+  }
+
   public void setZ(final float z) {
     this.textbox.z_0c = z / 4.0f;
     this.updateSize();
