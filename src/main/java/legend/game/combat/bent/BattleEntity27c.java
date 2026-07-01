@@ -27,6 +27,7 @@ import legend.game.types.Model124;
 import legend.lodmod.LodMod;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashSet;
@@ -812,6 +813,7 @@ public abstract class BattleEntity27c extends BattleObject {
 
   @Method(0x800f9e50L)
   public void setActiveSpell(final int spellId) {
-    this.spell_94 = EVENTS.postEvent(new ActiveSpellEvent(this, spellId, REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId])).get())).spell;
+    final RegistryDelegate<SpellStats0c> spell = REGISTRIES.spells.getEntry(LodMod.id(LodMod.SPELL_IDS[spellId]));
+    this.spell_94 = EVENTS.postEvent(new ActiveSpellEvent(this, spell.getId(), spell.get())).spell;
   }
 }
