@@ -34,7 +34,7 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.AttackEvent;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityStat;
-import legend.game.combat.bent.ElementIconString;
+import legend.game.combat.bent.ElementIcon;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.bent.SetBattleEntityStatEvent;
@@ -103,7 +103,6 @@ import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.CorePostBattleActions;
-import legend.game.modding.coremod.elements.NoElement;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleMusicEvent;
@@ -146,7 +145,6 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.LodEngineStateTypes;
-import legend.lodmod.LodMod;
 import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9323,7 +9321,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   public void addElementIcon(final Element element) {
-    final ElementIconString icon = REGISTRIES.elementIcons.getEntry(element.getRegistryId().modId(), element.getRegistryId().entryId()).get();
+    final ElementIcon icon = REGISTRIES.elementIcons.getEntry(element.getRegistryId()).get();
     if(icon != null) {
       this.hud.currentAttackElements.add(icon);
     }

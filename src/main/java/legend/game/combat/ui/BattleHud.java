@@ -19,7 +19,7 @@ import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.combat.bent.ElementIconString;
+import legend.game.combat.bent.ElementIcon;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
@@ -216,7 +216,7 @@ public class BattleHud {
   private Map<RegistryId, Texture> elementIcon;
   private Obj elementIconQuad;
   private final MV elementTransforms = new MV();
-  public List<ElementIconString> currentAttackElements = new ArrayList<>();
+  public List<ElementIcon> currentAttackElements = new ArrayList<>();
 
   private boolean closeMenu;
 
@@ -1246,7 +1246,7 @@ public class BattleHud {
                 //LAB_800f4110
 
               if(CONFIG.getConfig(DISPLAY_ELEMENT_ICON_CONFIG.get()) && i == 0) {
-                final List<ElementIconString> attackElements = this.currentAttackElements.stream().distinct().toList();
+                final List<ElementIcon> attackElements = this.currentAttackElements.stream().distinct().toList();
                 for(int x = 0; x < attackElements.size(); x++) {
                   this.elementTransforms.transfer.set(digit.x_0e + num.x_1c - 18 - (16 * x), digit.y_10 + num.y_20, 0);
                   RENDERER
@@ -2079,6 +2079,8 @@ public class BattleHud {
     if(this.elementIconQuad != null) {
       this.elementIconQuad.delete();
       this.elementIconQuad = null;
+
+      REGISTRIES.elementIcons.forEach(icon -> this.elementIcon.get(icon).delete());
     }
   }
 
