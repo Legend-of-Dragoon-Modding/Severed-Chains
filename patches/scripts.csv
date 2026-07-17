@@ -1,12 +1,12 @@
-replacement,player_combat_script,scripts/player_combat_script.txt,"Major rewrites to support modding"
-replacement,throw_item,scripts/throw_item.txt,"Handles throwing retail items"
-diff,SECT/DRGN1.BIN/20,scripts/DRGN1/20.diff,"Lizardman deallocate leaked script state"
-diff,SECT/DRGN1.BIN/40,scripts/DRGN1/40.diff,"Spring Hitter steal item registry"
-diff,SECT/DRGN1.BIN/43,scripts/DRGN1/43.diff,"OOPARTS combatant list refactor"
-diff,SECT/DRGN1.BIN/84,scripts/DRGN1/84.diff,"Crafty Thief steal item registry and return stolen gold instead of Bastard Sword"
-diff,SECT/DRGN1.BIN/254,scripts/DRGN1/254.diff,"Item tutorial item registry"
-diff,SECT/DRGN1.BIN/255,scripts/DRGN1/255.diff,"Battle tutorial input buttons"
-diff,SECT/DRGN1.BIN/258,scripts/DRGN1/258.diff,"Seles - knight in commander fight checks encounter ID when deciding to run away"
+replacement,player_combat_script,scripts/player_combat_script.txt,Major rewrites to support modding
+replacement,throw_item,scripts/throw_item.txt,Handles throwing retail items
+diff,SECT/DRGN1.BIN/20,scripts/DRGN1/20.diff,Lizardman deallocate leaked script state
+diff,SECT/DRGN1.BIN/40,scripts/DRGN1/40.diff,Spring Hitter steal item registry
+diff,SECT/DRGN1.BIN/43,scripts/DRGN1/43.diff,OOPARTS combatant list refactor
+diff,SECT/DRGN1.BIN/84,scripts/DRGN1/84.diff,Crafty Thief steal item registry and return stolen gold instead of Bastard Sword
+diff,SECT/DRGN1.BIN/254,scripts/DRGN1/254.diff,Item tutorial item registry
+diff,SECT/DRGN1.BIN/255,scripts/DRGN1/255.diff,Battle tutorial input buttons
+diff,SECT/DRGN1.BIN/258,scripts/DRGN1/258.diff,Seles - knight in commander fight checks encounter ID when deciding to run away
 diff,SECT/DRGN1.BIN/263,scripts/DRGN1/263.diff,"Fruegel II, Fix for finisher crash"
 diff,SECT/DRGN1.BIN/266,scripts/DRGN1/266.diff,"Kongol I, Fix for failed addition counter crash when below 3 characters"
 diff,SECT/DRGN1.BIN/284,scripts/DRGN1/284.diff,"Divine Dragon, Load Dart if not in party"
@@ -186,6 +186,7 @@ diff,SECT/DRGN22.BIN/453/1,scripts/DRGN22/453/1.diff,"Lohan Hero Competition sho
 diff,SECT/DRGN22.BIN/519/2,scripts/DRGN22/519/2.diff,"Kazas Entrance, fix civilian rotation, GH#1853"
 diff,SECT/DRGN22.BIN/543/1,scripts/DRGN22/543/1.diff,"Kazas Slums, fix Dart falling down ladder hole, GH#1452"
 diff,SECT/DRGN22.BIN/597/1,scripts/DRGN22/597/1.diff,"Kazas Garbage Room, GH#1078"
+diff,SECT/DRGN22.BIN/666/9,scripts/DRGN22/666/9.diff,"Fletz, Fake Princess Emily scene, 2d sprite"
 diff,SECT/DRGN22.BIN/669/6,scripts/DRGN22/669/6.diff,"Twin Castle, left balcony knight, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/669/7,scripts/DRGN22/669/7.diff,"Twin Castle, right balcony knight, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/669/8,scripts/DRGN22/669/8.diff,"Twin Castle, add daytime entrance knight, widescreen patch, GH#2027"
@@ -206,8 +207,23 @@ diff,SECT/DRGN22.BIN/717/3,scripts/DRGN22/717/3.diff,"Twin Castle, daytime main 
 diff,SECT/DRGN22.BIN/717/5,scripts/DRGN22/717/5.diff,"Twin Castle, daytime main hall, Rose, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/717/6,scripts/DRGN22/717/6.diff,"Twin Castle, daytime main hall, Albert and knight, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/717/9,scripts/DRGN22/717/9.diff,"Twin Castle, daytime main hall, knight, GH#2027"
+diff,SECT/DRGN22.BIN/723/11,scripts/DRGN22/723/11.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/723/12,scripts/DRGN22/723/12.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/723/13,scripts/DRGN22/723/13.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/723/14,scripts/DRGN22/723/14.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/738/9,scripts/DRGN22/738/9.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/738/10,scripts/DRGN22/738/10.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/738/11,scripts/DRGN22/738/11.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/738/12,scripts/DRGN22/738/12.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/738/13,scripts/DRGN22/738/13.diff,"Donau Wedding, 2d sprite"
 diff,SECT/DRGN22.BIN/774/1,scripts/DRGN22/774/1.diff,"After VoCG virage, adjustments for removing/restoring active party members"
 diff,SECT/DRGN24.BIN/171/1,scripts/DRGN22/774/1.diff,"After VoCG virage, adjustments for removing/restoring active party members, but disk 4"
+diff,SECT/DRGN22.BIN/783/8,scripts/DRGN22/783/8.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/783/9,scripts/DRGN22/783/9.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/783/10,scripts/DRGN22/783/10.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/783/11,scripts/DRGN22/783/11.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/783/12,scripts/DRGN22/783/12.diff,"Donau Wedding, 2d sprite"
+diff,SECT/DRGN22.BIN/783/13,scripts/DRGN22/783/13.diff,"Donau Wedding, 2d sprite"
 diff,SECT/DRGN22.BIN/795/1,scripts/DRGN22/795/1.diff,"Giganto Home Haschel solo cutscene, switch camera offset axis GH#1918"
 diff,SECT/DRGN22.BIN/798/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772"
 diff,SECT/DRGN24.BIN/195/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772, but disk 4"
@@ -255,26 +271,37 @@ diff,SECT/DRGN22.BIN/1137/1,scripts/DRGN22/1137/1.diff,"Twin Castle Balcony Lisa
 diff,SECT/DRGN22.BIN/1137/2,scripts/DRGN22/1137/2.diff,"Twin Castle Balcony Lisa Cutscenes, Lisa, widescreen patch"
 diff,SECT/DRGN22.BIN/1137/7,scripts/DRGN22/1137/7.diff,"Twin Castle Balcony Lisa Cutscenes, Rose, widescreen patch"
 diff,SECT/DRGN22.BIN/1137/8,scripts/DRGN22/1137/8.diff,"Twin Castle Balcony Lisa Cutscenes, Libria, widescreen patch"
+diff,SECT/DRGN22.BIN/1146/9,scripts/DRGN22/1146/9.diff,"Fletz, Scenes, 2d Sprite"
+diff,SECT/DRGN22.BIN/1146/10,scripts/DRGN22/1146/10.diff,"Fletz, Scenes, 2d Sprite"
+diff,SECT/DRGN22.BIN/1146/14,scripts/DRGN22/1146/14.diff,"Fletz, Scenes, 2d Sprite"
 diff,SECT/DRGN22.BIN/1173/2,scripts/DRGN22/1173/2.diff,"Fletz, Return from HoG, Albert, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/3,scripts/DRGN22/1173/3.diff,"Fletz, Return from HoG, Meru, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/5,scripts/DRGN22/1173/5.diff,"Fletz, Return from HoG, Rose, don't hide body parts, GH#2208"
 diff,SECT/DRGN22.BIN/1173/7,scripts/DRGN22/1173/7.diff,"Fletz, Return from HoG, Kongol, don't hide body parts, GH#2208"
+diff,SECT/DRGN22.BIN/1173/9,scripts/DRGN22/1173/9.diff,"Fletz, Return from HoG, 2d sprite"
+diff,SECT/DRGN22.BIN/1173/10,scripts/DRGN22/1173/10.diff,"Fletz, Return from HoG, 2d sprite"
+diff,SECT/DRGN22.BIN/1173/11,scripts/DRGN22/1173/11.diff,"Fletz, Return from HoG, 2d sprite"
 diff,SECT/DRGN23.BIN/12/1,scripts/DRGN23/12/1.diff,"Furni retail dialogue fix, GH#1484"
+diff,SECT/DRGN23.BIN/12/6,scripts/DRGN23/12/6.diff,Furni unflatten Kamuy Warrior Serfius
+diff,SECT/DRGN23.BIN/12/7,scripts/DRGN23/12/7.diff,Furni unflatten Kamuy Warrior Serfius 2
+diff,SECT/DRGN23.BIN/12/13,scripts/DRGN23/12/13.diff,Furni unflatten Kamuy Warrior Danton
+diff,SECT/DRGN23.BIN/12/14,scripts/DRGN23/12/14.diff,Furni unflatten Kamuy Warrior Greham
+diff,SECT/DRGN23.BIN/12/15,scripts/DRGN23/12/15.diff,Furni unflatten Kamuy Warrior Drake
 diff,SECT/DRGN23.BIN/45/4,scripts/DRGN23/45/4.diff,"Evergreen Forest, Meeting Kamuy, Bulgus, don't hide head, GH#2568"
 diff,SECT/DRGN23.BIN/141/1,scripts/DRGN23/141/1.diff,"Crystal Palace Queen Theresa Kidnap, widescreen patch"
 diff,SECT/DRGN23.BIN/144/1,scripts/DRGN23/144/1.diff,"Crystal Palace Queen Theresa Kidnap, widescreen patch"
 diff,SECT/DRGN23.BIN/204/1,scripts/DRGN23/204/1.diff,"Kadessa teleporter floating point error, GH#2322"
 diff,SECT/DRGN23.BIN/204/2,scripts/DRGN23/204/2.diff,"Kadessa teleporter floating point error, GH#2322"
 diff,SECT/DRGN23.BIN/213/9,scripts/DRGN23/213/9.diff,"Kadessa teleporter legacy depth, GH#1476"
-diff,SECT/DRGN23.BIN/348/1,scripts/DRGN23/348/1.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/348/2,scripts/DRGN23/348/2.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/348/3,scripts/DRGN23/348/3.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/360/1,scripts/DRGN23/360/1.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/360/2,scripts/DRGN23/360/2.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/360/3,scripts/DRGN23/360/3.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/366/1,scripts/DRGN23/366/1.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/366/2,scripts/DRGN23/366/2.diff,"Flanvel Teleporter Fixes"
-diff,SECT/DRGN23.BIN/366/3,scripts/DRGN23/366/3.diff,"Flanvel Teleporter Fixes"
+diff,SECT/DRGN23.BIN/348/1,scripts/DRGN23/348/1.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/348/2,scripts/DRGN23/348/2.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/348/3,scripts/DRGN23/348/3.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/360/1,scripts/DRGN23/360/1.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/360/2,scripts/DRGN23/360/2.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/360/3,scripts/DRGN23/360/3.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/366/1,scripts/DRGN23/366/1.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/366/2,scripts/DRGN23/366/2.diff,Flanvel Teleporter Fixes
+diff,SECT/DRGN23.BIN/366/3,scripts/DRGN23/366/3.diff,Flanvel Teleporter Fixes
 diff,SECT/DRGN23.BIN/477/1,scripts/DRGN23/477/1.diff,"Vellweb Ch. 3 ending cutscene, adjust final camera offset, GH#2013"
 diff,SECT/DRGN23.BIN/495/2,scripts/DRGN23/495/2.diff,"Vellweb Belzac dialogue fix, GH#1768"
 diff,SECT/DRGN24.BIN/66/6,scripts/DRGN24/66/6.diff,"Twin Castle, left balcony knight, widescreen patch, GH#2027"

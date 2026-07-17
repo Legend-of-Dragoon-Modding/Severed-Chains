@@ -52,6 +52,14 @@ public class SmapDebuggerController {
   @FXML
   public Spinner<Double> scaleZ;
   @FXML
+  public Spinner<Double> ambientColorR;
+  @FXML
+  public Spinner<Double> ambientColorG;
+  @FXML
+  public Spinner<Double> ambientColorB;
+  @FXML
+  public CheckBox useAmbientColor;
+  @FXML
   public Spinner<Integer> depthOffset;
   @FXML
   public CheckBox usePs1Depth;
@@ -124,6 +132,9 @@ public class SmapDebuggerController {
     this.scaleX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.scaleY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.scaleZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.ambientColorR.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.ambientColorG.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.ambientColorB.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
     this.depthOffset.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
 
     this.sobjList.getSelectionModel().select(0);
@@ -163,6 +174,10 @@ public class SmapDebuggerController {
     this.scaleX.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.x));
     this.scaleY.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.y));
     this.scaleZ.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.z));
+    this.ambientColorR.getValueFactory().setValue((double)this.sobj.ambientColour_1ca.x);
+    this.ambientColorG.getValueFactory().setValue((double)this.sobj.ambientColour_1ca.y);
+    this.ambientColorB.getValueFactory().setValue((double)this.sobj.ambientColour_1ca.z);
+    this.useAmbientColor.setSelected(this.sobj.ambientColourEnabled_1c8);
     this.depthOffset.getValueFactory().setValue(this.sobj.model_00.zOffset_a0);
     this.usePs1Depth.setSelected(this.sobj.model_00.usePs1Depth);
 
@@ -229,6 +244,21 @@ public class SmapDebuggerController {
       this.sobj.model_00.coord2_14.transforms.scale.x = this.scaleX.getValueFactory().getValue().floatValue();
       this.sobj.model_00.coord2_14.transforms.scale.y = this.scaleY.getValueFactory().getValue().floatValue();
       this.sobj.model_00.coord2_14.transforms.scale.z = this.scaleZ.getValueFactory().getValue().floatValue();
+    }
+  }
+
+  public void updateAmbientColor(final ActionEvent event) {
+    if(this.sobj != null) {
+      this.sobj.ambientColour_1ca.x = this.ambientColorR.getValueFactory().getValue().floatValue();
+      this.sobj.ambientColour_1ca.y = this.ambientColorG.getValueFactory().getValue().floatValue();
+      this.sobj.ambientColour_1ca.z = this.ambientColorB.getValueFactory().getValue().floatValue();
+    }
+  }
+
+  @FXML
+  public void useAmbientColorClick(final ActionEvent event) {
+    if(this.sobj != null) {
+      this.sobj.ambientColourEnabled_1c8 = this.useAmbientColor.isSelected();
     }
   }
 

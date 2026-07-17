@@ -1,0 +1,9 @@
+--- original
++++ modified
+@@ -20,6 +20,5 @@
+ JMP_60_0:
+ call 101, stor[0], 0xffffff51, 0x0, 0xffffff47
+ call 103, stor[0], 0x0, 0x800, 0x0
+-call 309, stor[0], 0x1000, 0x1000, 0x1000
+ call 106, 0x0
+ rewind
