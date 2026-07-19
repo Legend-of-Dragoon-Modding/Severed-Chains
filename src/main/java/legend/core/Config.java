@@ -6,6 +6,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -203,7 +204,10 @@ public final class Config {
   }
 
   public static void load() throws IOException {
-    properties.load(Files.newInputStream(path, StandardOpenOption.READ));
+    try(final InputStream stream = Files.newInputStream(path, StandardOpenOption.READ)) {
+      properties.load(stream);
+    }
+
     gameSpeedMultiplier = readInt("game_speed_multiplier", 1, 1, 16);
     loadedGameSpeedMultiplier = gameSpeedMultiplier;
   }

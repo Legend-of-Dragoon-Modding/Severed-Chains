@@ -21,7 +21,7 @@ public class ConfigCollection {
 
   public <T> T getConfig(final ConfigEntry<T> config) {
     //noinspection unchecked
-    return (T)this.configValues.getOrDefault(config.getRegistryId(), config.defaultValue);
+    return (T)this.configValues.getOrDefault(config.getRegistryId(), config.getDefaultValue());
   }
 
   public <T> void setConfig(final ConfigEntry<T> config, final T value) {

@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ConfigEntry<T> extends RegistryEntry {
-  public final T defaultValue;
+  private final T defaultValue;
   public final ConfigStorageLocation storageLocation;
   public final ConfigCategory category;
   public final Function<T, byte[]> serializer;
@@ -21,6 +21,10 @@ public class ConfigEntry<T> extends RegistryEntry {
     this.category = category;
     this.serializer = serializer;
     this.deserializer = deserializer;
+  }
+
+  public T getDefaultValue() {
+    return this.defaultValue;
   }
 
   protected void setEditControl(final BiFunction<T, ConfigCollection, Control> editControl) {
