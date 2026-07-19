@@ -289,6 +289,18 @@ public final class GameEngine {
     }
   }
 
+  public static void loadLangOverrides(final Path path) {
+    try {
+      LANG_ACCESS.loadLangOverrides(path, CONFIG.getConfig(CoreMod.LANGUAGE_CONFIG.get()));
+    } catch(final IOException e) {
+      LOGGER.warn("Failed to load lang overrides", e);
+    }
+  }
+
+  public static void addLangOverrides(final Map<String, String> lang) {
+    LANG_ACCESS.addLangOverrides(lang);
+  }
+
   /** Returns missing mod IDs, if any */
   public static Set<String> bootMods(final Set<String> modIds) {
     LOGGER.info("Booting mods...");
