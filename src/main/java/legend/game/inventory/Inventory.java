@@ -199,6 +199,7 @@ public class Inventory implements Iterable<ItemStack> {
       if(invStack.isSameItem(stack)) {
         final int numberToRemove = Math.min(invStack.getSize(), stack.getSize());
         invStack.shrink(numberToRemove);
+        stack.shrink(numberToRemove);
 
         if(invStack.isEmpty()) {
           // Stack is empty, remove it and backtrack one element since everything will get shifted up by one
