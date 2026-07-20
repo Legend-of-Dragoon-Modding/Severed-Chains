@@ -1,5 +1,7 @@
 package legend.core;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +41,7 @@ public final class SelfUpdater {
   /**
    * Progress info passed to the UI callback.
    */
-  public record UpdateProgress(UpdateState state, String message) { }
+  public record UpdateProgress(UpdateState state, TextComponent message) { }
 
   /**
    * Launches the external updater JAR and shuts down the game.
@@ -54,7 +56,7 @@ public final class SelfUpdater {
 
       if(!Files.exists(updaterJar)) {
         LOGGER.error("updater.jar not found at %s", updaterJar);
-        progressCallback.accept(new UpdateProgress(UpdateState.FAILED, "updater.jar not found. Please re-download Severed Chains."));
+        progressCallback.accept(new UpdateProgress(UpdateState.FAILED, new I18nText("lod_core.ui.updater.updater_not_found")));
         return false;
       }
 
@@ -62,14 +64,14 @@ public final class SelfUpdater {
       final Path javaExe = findJavaExecutable(gameDir);
       if(javaExe == null) {
         LOGGER.error("Could not find a Java executable to launch the updater");
-        progressCallback.accept(new UpdateProgress(UpdateState.FAILED, "Java not found. Cannot launch updater."));
+        progressCallback.accept(new UpdateProgress(UpdateState.FAILED, new I18nText("lod_core.ui.updater.java_not_found")));
         return false;
       }
 
       // pass the current PID so the updater can wait for the game to exit
       final long pid = ProcessHandle.current().pid();
 
-      progressCallback.accept(new UpdateProgress(UpdateState.LAUNCHING_UPDATER, "Launching updater..."));
+      progressCallback.accept(new UpdateProgress(UpdateState.LAUNCHING_UPDATER, new I18nText("lod_core.ui.updater.launching_updater")));
 
       LOGGER.info("Launching updater: %s -jar %s %s %s %d %s", javaExe, updaterJar, downloadUrl, gameDir, pid, Version.FULL_VERSION);
 
@@ -85,13 +87,13 @@ public final class SelfUpdater {
       pb.inheritIO();
       pb.start();
 
-      progressCallback.accept(new UpdateProgress(UpdateState.DONE, "Updater launched. Game will close now."));
+      progressCallback.accept(new UpdateProgress(UpdateState.DONE, new I18nText("lod_core.ui.updater.updater_launched")));
       LOGGER.info("Updater launched, closing game...");
       return true;
 
     } catch(final IOException e) {
       LOGGER.error("Failed to launch updater", e);
-      progressCallback.accept(new UpdateProgress(UpdateState.FAILED, "Failed to launch updater: " + e.getMessage()));
+      progressCallback.accept(new UpdateProgress(UpdateState.FAILED, new I18nText("lod_core.ui.updater.updater_launch_failed")));
       return false;
     }
   }

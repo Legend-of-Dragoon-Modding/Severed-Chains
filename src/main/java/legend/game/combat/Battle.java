@@ -2094,7 +2094,7 @@ public class Battle extends EngineState<Battle> {
 
       final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
-      final String name = character.getName();
+      final String name = character.getName().get();
 
       final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charId, scriptSlot, this.playerBattleScript_800c66fc);
       final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);

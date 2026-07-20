@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
@@ -56,22 +58,22 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         final Control control;
 
         if(action.canBeEdited) {
-          final Button button = new Button(this.actionToString(action));
+          final Button button = new Button(new RawText(this.actionToString(action)));
           button.onPressed(() -> menuStack.pushScreen(new KeybindScreen(action, this::actionToString, (result, activations) -> {
             if(result == MessageBoxResult.YES) {
               InputBindings.overwriteBindings(action, activations);
-              button.setText(this.actionToString(action));
+              button.setText(new RawText(this.actionToString(action)));
             }
           })));
 
           control = button;
         } else {
-          final Label label = new Label(this.actionToString(action));
+          final Label label = new Label(new RawText(this.actionToString(action)));
           label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
           control = label;
         }
 
-        this.addRow(I18n.translate(action.getTranslationKey()), control);
+        this.addRow(new I18nText(action.getTranslationKey()), control);
       }
     }
   }

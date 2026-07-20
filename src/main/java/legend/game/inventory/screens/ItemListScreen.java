@@ -1,8 +1,11 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.controls.Background;
@@ -10,7 +13,6 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.inventory.Inventory;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -21,7 +23,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
@@ -35,13 +36,14 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DELETE;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
 
   private final ItemList<ItemStack> itemList = new ItemList<>(stack -> stack.item_00.canStack() || stack.item_00.getSize() > 1 ? stack.item_00.getSize() : 0, null);
   private final ItemList<Equipment> equipmentList = new ItemList<>(null, i -> gameState_800babc8.equipment_1e8.size());
-  private final Label description = new Label("");
+  private final Label description = new Label(RawText.BLANK);
 
   public ItemListScreen(final Runnable unload) {
     deallocateRenderables(0xff);
@@ -50,11 +52,11 @@ public class ItemListScreen extends MenuScreen {
     this.unload = unload;
 
     this.itemList.setPos(8, 15);
-    this.itemList.setTitle("Items");
+    this.itemList.setTitle(new I18nText("lod_core.ui.item_list.items"));
     this.itemList.setMax(CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()));
 
     this.equipmentList.setPos(188, 15);
-    this.equipmentList.setTitle("Equipment");
+    this.equipmentList.setTitle(new I18nText("lod_core.ui.item_list.equipment"));
     this.equipmentList.setMax(255);
 
     this.itemList.onHoverIn(() -> this.setFocus(this.itemList));
@@ -97,9 +99,9 @@ public class ItemListScreen extends MenuScreen {
     this.addControl(Glyph.glyph(83)).setPos( 16, 164); // Button prompt pane
     this.addControl(Glyph.glyph(91)).setPos(194, 173); // Description pane
 
-    this.addHotkey(I18n.translate("lod_core.ui.item_list.sort"), INPUT_ACTION_MENU_SORT, this::menuSort);
-    this.addHotkey(I18n.translate("lod_core.ui.item_list.discard"), INPUT_ACTION_MENU_DELETE, this::menuDiscard);
-    this.addHotkey(I18n.translate("lod_core.ui.item_list.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+    this.addHotkey(new I18nText("lod_core.ui.item_list.sort"), INPUT_ACTION_MENU_SORT, this::menuSort);
+    this.addHotkey(new I18nText("lod_core.ui.item_list.discard"), INPUT_ACTION_MENU_DELETE, this::menuDiscard);
+    this.addHotkey(new I18nText("lod_core.ui.item_list.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
 
     this.description.setPos(14, 168);
 
@@ -126,11 +128,11 @@ public class ItemListScreen extends MenuScreen {
 
   private void updateDescription(@Nullable final MenuEntryStruct04<?> item) {
     if(item == null) {
-      this.description.setText("");
+      this.description.setText(RawText.BLANK);
       return;
     }
 
-    this.description.setText(I18n.translate(item.getDescriptionTranslationKey()));
+    this.description.setText(new I18nText(item.getDescriptionTranslationKey()));
   }
 
   @Override
@@ -143,7 +145,7 @@ public class ItemListScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen("Discard?", MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm"), MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 
@@ -152,7 +154,7 @@ public class ItemListScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen("Discard?", MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm"), MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 

@@ -1,5 +1,8 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Checkbox;
@@ -22,7 +25,7 @@ public class ModsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
 
   private final Map<Control, Label> helpLabels = new HashMap<>();
-  private final Map<Control, String> helpText = new HashMap<>();
+  private final Map<Control, TextComponent> helpText = new HashMap<>();
 
   public ModsScreen(final Set<String> enabledMods, final Runnable unload) {
     deallocateRenderables(0xff);
@@ -43,15 +46,15 @@ public class ModsScreen extends VerticalLayoutScreen {
 
         checkbox.onChecked(() -> enabledMods.add(modId));
         checkbox.onUnchecked(() -> enabledMods.remove(modId));
-        this.addRow(I18n.translate(modId + ".name"), checkbox);
+        this.addRow(new I18nText(modId + ".name"), checkbox);
       } else {
-        final Label label = this.addRow(I18n.translate(modId + ".name"), null);
+        final Label label = this.addRow(new I18nText(modId + ".name"), null);
 
-        final String required = I18n.translate("lod_core.ui.mods.required");
-        final Label help = label.addControl(new Label("?"));
+        final TextComponent required = new I18nText("lod_core.ui.mods.required");
+        final Label help = label.addControl(new Label(new I18nText("lod_core.ui.mods.tooltip")));
         help.setScale(0.4f);
-        help.setPos((int)(help.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
-        help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.mods.required"), (int)this.mouseX, (int)this.mouseY)));
+        help.setPos((int)(help.getFont().textWidth(label.getText().get()) * label.getScale()) + 2, 1);
+        help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(new I18nText("lod_core.ui.mods.required"), (int)this.mouseX, (int)this.mouseY)));
         this.helpLabels.put(label, help);
         this.helpText.put(label, required);
       }
@@ -59,26 +62,26 @@ public class ModsScreen extends VerticalLayoutScreen {
 
     if(!MODS.getFailedToLoad().isEmpty()) {
       for(final var entry : MODS.getFailedToLoad().entrySet()) {
-        final Label label = new Label(I18n.translate("lod_core.ui.mods.error", entry.getValue()));
+        final Label label = new Label(new I18nText("lod_core.ui.mods.error", entry.getValue()));
         label.getFontOptions().horizontalAlign(HorizontalAlign.RIGHT);
-        this.addRow(entry.getKey(), label).getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
+        this.addRow(new RawText(entry.getKey()), label).getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
       }
     }
 
     if(!MODS.getWrongVersions().isEmpty()) {
       for(final var entry : MODS.getWrongVersions().entrySet()) {
-        final Label label = new Label(I18n.translate("lod_core.ui.mods.wrong_version", entry.getValue()));
+        final Label label = new Label(new I18nText("lod_core.ui.mods.wrong_version", entry.getValue()));
         label.getFontOptions().horizontalAlign(HorizontalAlign.RIGHT);
-        this.addRow(entry.getKey(), label).getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
+        this.addRow(new RawText(entry.getKey()), label).getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
       }
     }
 
-    this.addHotkey(I18n.translate("lod_core.ui.mods.help"), INPUT_ACTION_MENU_HELP, this::help);
-    this.addHotkey(I18n.translate("lod_core.ui.mods.back"), INPUT_ACTION_MENU_BACK, this::back);
+    this.addHotkey(new I18nText("lod_core.ui.mods.help"), INPUT_ACTION_MENU_HELP, this::help);
+    this.addHotkey(new I18nText("lod_core.ui.mods.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
   private void help() {
-    final String text = this.helpText.get(this.getHighlightedRow());
+    final TextComponent text = this.helpText.get(this.getHighlightedRow());
     if(text != null) {
       playMenuSound(1);
       final Label helpLabel = this.helpLabels.get(this.getHighlightedRow());

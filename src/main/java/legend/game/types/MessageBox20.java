@@ -1,5 +1,6 @@
 package legend.game.types;
 
+import legend.core.lang.TextComponent;
 import legend.game.inventory.screens.controls.Highlight;
 
 public class MessageBox20 {
@@ -19,8 +20,8 @@ public class MessageBox20 {
 
   public MessageBoxResult result = MessageBoxResult.AWAITING_INPUT;
 
-  public String yes;
-  public String no;
+  public TextComponent yes;
+  public TextComponent no;
 
   public boolean ignoreInput;
 }

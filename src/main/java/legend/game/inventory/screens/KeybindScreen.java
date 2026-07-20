@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputAction;
@@ -7,7 +8,6 @@ import legend.core.platform.input.InputActivation;
 import legend.core.platform.input.InputBindings;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
-import legend.game.i18n.I18n;
 import legend.game.types.MessageBoxResult;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class KeybindScreen extends InputBoxScreen {
   private long timeout;
 
   public KeybindScreen(final InputAction inputAction, final Function<List<InputActivation>, String> actionToString, final BiConsumer<MessageBoxResult, List<InputActivation>> onResult) {
-    super(I18n.translate(inputAction), actionToString.apply(InputBindings.getActivationsForAction(inputAction)), (result, text) -> inst.onClose(result), 33);
+    super(new I18nText(inputAction), actionToString.apply(InputBindings.getActivationsForAction(inputAction)), (result, text) -> inst.onClose(result), 33);
 
     if(inst != null) {
       throw new IllegalStateException("Keybind screen already open");

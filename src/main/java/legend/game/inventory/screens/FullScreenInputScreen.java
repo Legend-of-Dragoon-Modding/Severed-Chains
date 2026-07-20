@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.TextComponent;
 import legend.game.SItem;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.types.MessageBoxResult;
@@ -13,9 +14,9 @@ import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.menuStack;
 
 public class FullScreenInputScreen extends MenuScreen {
-  private final String prompt;
+  private final TextComponent prompt;
 
-  public FullScreenInputScreen(final String prompt, final String subprompt, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
+  public FullScreenInputScreen(final TextComponent prompt, final TextComponent subprompt, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
 
@@ -29,6 +30,6 @@ public class FullScreenInputScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderMenuCentredText(DEFAULT_FONT, this.prompt, 188, 25, 240, UI_TEXT);
+    SItem.renderMenuCentredText(DEFAULT_FONT, this.prompt.get(), 188, 25, 240, UI_TEXT);
   }
 }

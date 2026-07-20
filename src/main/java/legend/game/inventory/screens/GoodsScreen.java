@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Good;
@@ -26,7 +28,7 @@ public class GoodsScreen extends MenuScreen {
 
   private final ItemList<Good> leftList;
   private final ItemList<Good> rightList;
-  private final Label description = new Label("");
+  private final Label description = new Label(RawText.BLANK);
 
   public GoodsScreen(final Runnable unload) {
     deallocateRenderables(0xff);
@@ -34,15 +36,15 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final ListBox.Highlight<MenuEntryStruct04<Good>> description = item -> this.description.setText(item == null ? "" : I18n.translate(item.getDescriptionTranslationKey()));
+    final ListBox.Highlight<MenuEntryStruct04<Good>> description = item -> this.description.setText(item == null ? RawText.BLANK : new I18nText(item.getDescriptionTranslationKey()));
 
     this.leftList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, this::renderIcon, null, null, null);
     this.leftList.setPos(8, 15);
-    this.leftList.setTitle("Goods");
+    this.leftList.setTitle(new I18nText("lod_core.ui.goods.goods"));
 
     this.rightList = new ItemList<>(entry -> I18n.translate(entry.getNameTranslationKey()), null, this::renderIcon, null, null, null);
     this.rightList.setPos(188, 15);
-    this.rightList.setTitle("Goods");
+    this.rightList.setTitle(new I18nText("lod_core.ui.goods.goods"));
 
     this.leftList.onHoverIn(() -> this.setFocus(this.leftList));
     this.leftList.onGotFocus(() -> {

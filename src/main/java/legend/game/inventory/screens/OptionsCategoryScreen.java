@@ -1,8 +1,8 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.core.lang.I18nText;
 import legend.game.SItem;
-import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Label;
@@ -16,10 +16,10 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.util.Locale;
 import java.util.Set;
 
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class OptionsCategoryScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -41,21 +41,21 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
       }
 
       if(count != 0) {
-        final Button button = new Button(I18n.translate(CoreMod.MOD_ID + ".config.category.configure"));
+        final Button button = new Button(new I18nText(CoreMod.MOD_ID + ".config.category.configure"));
         button.onPressed(() -> button.getScreen().getStack().pushScreen(this.createOptionsScreen(config, validLocations, category)));
 
-        this.addRow(I18n.translate(CoreMod.MOD_ID + ".config.category." + category.name().toLowerCase(Locale.US) + ".label"), button);
+        this.addRow(new I18nText(CoreMod.MOD_ID + ".config.category." + category.name().toLowerCase(Locale.US) + ".label"), button);
       }
     }
 
     if(!validLocations.contains(ConfigStorageLocation.CAMPAIGN)) {
-      final Label label = this.addControl(new Label(I18n.translate("lod_core.ui.options_category.some_options_not_available")));
+      final Label label = this.addControl(new Label(new I18nText("lod_core.ui.options_category.some_options_not_available")));
       label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
       label.setPos(0, 150);
       label.setWidth(this.getWidth());
     }
 
-    this.addHotkey(I18n.translate("lod_core.ui.options_category.back"), INPUT_ACTION_MENU_BACK, this::back);
+    this.addHotkey(new I18nText("lod_core.ui.options_category.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
   protected boolean configIsVisible(final ConfigEntry<?> entry, final ConfigCategory category, final Set<ConfigStorageLocation> validLocations) {

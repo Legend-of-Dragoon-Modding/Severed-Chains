@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
 import legend.core.platform.input.InputAction;
 import legend.game.DabasManager;
 import legend.game.dabas.Dabas;
@@ -94,7 +95,7 @@ public class DabasScreen extends MenuScreen {
   }
 
   private Button addButton(final int index, final String translationKey) {
-    final Button button = this.addControl(new Button(I18n.translate(translationKey)));
+    final Button button = this.addControl(new Button(new I18nText(translationKey)));
     button.setPos(52, this.getDabasMenuY(index));
     button.setSize(88, 14);
 

@@ -1,7 +1,9 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputMod;
-import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreEngineStateTypes;
@@ -28,9 +30,8 @@ public class AboutScreen extends VerticalLayoutScreen {
   private final Runnable unload;
   private int loadingStage;
 
-  private final List<String> linkText = new ArrayList<>();
-  private final Map<String, String> links = new HashMap<>();
-  private final Map<String, Label> linkLabels = new HashMap<>();
+  private final List<Label> linkLabels = new ArrayList<>();
+  private final Map<Label, String> links = new HashMap<>();
 
   private static final String LOD_CREDITS = "[LOD_CREDITS]";
   private static final String SC_CREDITS = "[SC_CREDITS]";
@@ -39,52 +40,50 @@ public class AboutScreen extends VerticalLayoutScreen {
     this.unload = unload;
 
     this.addControl(new Background());
-    this.addLink(I18n.translate("lod_core.ui.about.discord"), "https://discord.gg/legendofdragoon", true);
-    this.addLink(I18n.translate("lod_core.ui.about.youtube"), "https://www.youtube.com/@legend-of-dragoon", true);
-    this.addLink(I18n.translate("lod_core.ui.about.fandom"), "https://legendofdragoon.org", true);
-    this.addLink(I18n.translate("lod_core.ui.about.wiki"), "https://legendofdragoon.org/wiki/Main_Page", true);
-    this.addLink(I18n.translate("lod_core.ui.about.project"), "https://legendofdragoon.org/projects/severed-chains", true);
-    this.addLink(I18n.translate("lod_core.ui.about.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains", true);
-    this.addLink(I18n.translate("lod_core.ui.about.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues", true);
-    this.addLink(I18n.translate("lod_core.ui.about.lod_credits"), LOD_CREDITS, false);
-    this.addLink(I18n.translate("lod_core.ui.about.sc_credits"), SC_CREDITS, false);
+    this.addLink(new I18nText("lod_core.ui.about.discord"), "https://discord.gg/legendofdragoon", true);
+    this.addLink(new I18nText("lod_core.ui.about.youtube"), "https://www.youtube.com/@legend-of-dragoon", true);
+    this.addLink(new I18nText("lod_core.ui.about.fandom"), "https://legendofdragoon.org", true);
+    this.addLink(new I18nText("lod_core.ui.about.wiki"), "https://legendofdragoon.org/wiki/Main_Page", true);
+    this.addLink(new I18nText("lod_core.ui.about.project"), "https://legendofdragoon.org/projects/severed-chains", true);
+    this.addLink(new I18nText("lod_core.ui.about.github"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains", true);
+    this.addLink(new I18nText("lod_core.ui.about.issue"), "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains/issues", true);
+    this.addLink(new I18nText("lod_core.ui.about.lod_credits"), LOD_CREDITS, false);
+    this.addLink(new I18nText("lod_core.ui.about.sc_credits"), SC_CREDITS, false);
 
-    final Label help = this.addControl(new Label(I18n.translate("lod_core.ui.about.click_on_any_link_to_open")));
+    final Label help = this.addControl(new Label(new I18nText("lod_core.ui.about.click_on_any_link_to_open")));
     help.setWidth(this.getWidth());
     help.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
     help.setY(200);
 
-    this.addHotkey(I18n.translate("lod_core.ui.about.view_link"), INPUT_ACTION_MENU_HELP, this::viewLink);
-    this.addHotkey(I18n.translate("lod_core.ui.about.open_link"), INPUT_ACTION_MENU_CONFIRM, this::openLink);
-    this.addHotkey(I18n.translate("lod_core.ui.about.back"), INPUT_ACTION_MENU_BACK, this::back);
+    this.addHotkey(new I18nText("lod_core.ui.about.view_link"), INPUT_ACTION_MENU_HELP, this::viewLink);
+    this.addHotkey(new I18nText("lod_core.ui.about.open_link"), INPUT_ACTION_MENU_CONFIRM, this::openLink);
+    this.addHotkey(new I18nText("lod_core.ui.about.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
-  private void addLink(final String text, final String url, final boolean help) {
-    this.linkText.add(text);
-    this.links.put(text, url);
-
+  private void addLink(final TextComponent text, final String url, final boolean help) {
     final Label label = this.addRow(text, null);
 
-    if(help) {
-      final Label tooltip = label.addControl(new Label("?"));
-      tooltip.setScale(0.4f);
-      tooltip.setPos((int)(tooltip.getFont().textWidth(label.getText()) * label.getScale()) + 2, 1);
-      tooltip.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(url, (int)this.mouseX, (int)this.mouseY)));
-    }
+    this.linkLabels.add(label);
+    this.links.put(label, url);
 
-    this.linkLabels.put(text, label);
+    if(help) {
+      final Label tooltip = label.addControl(new Label(new I18nText("lod_core.ui.about.tooltip")));
+      tooltip.setScale(0.4f);
+      tooltip.setPos((int)(tooltip.getFont().textWidth(label.getText().get()) * label.getScale()) + 2, 1);
+      tooltip.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(new RawText(url), (int)this.mouseX, (int)this.mouseY)));
+    }
   }
 
   private void openLink() {
     playMenuSound(2);
-    this.execute(this.links.get(this.getHighlightedRow().getText()));
+    this.execute(this.links.get(this.getHighlightedRow()));
   }
 
   private void viewLink() {
     playMenuSound(1);
-    final String text = this.links.get(this.getHighlightedRow().getText());
-    final Label helpLabel = this.linkLabels.get(this.getHighlightedRow().getText());
-    this.getStack().pushScreen(new TooltipScreen(text, helpLabel.calculateTotalX() + helpLabel.getWidth() / 2, helpLabel.calculateTotalY() + helpLabel.getHeight() / 2));
+    final String text = this.links.get(this.getHighlightedRow());
+    final Label label = this.getHighlightedRow();
+    this.getStack().pushScreen(new TooltipScreen(new RawText(text), label.calculateTotalX() + label.getWidth() / 2, label.calculateTotalY() + label.getHeight() / 2));
   }
 
   private void back() {
@@ -101,9 +100,8 @@ public class AboutScreen extends VerticalLayoutScreen {
 
         this.loadingStage++;
       }
-      case 1 -> {
-        super.render();
-      }
+
+      case 1 -> super.render();
     }
   }
 
@@ -111,9 +109,9 @@ public class AboutScreen extends VerticalLayoutScreen {
   protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     final int linkIndex = Math.floorDiv((int)(y - 32), 13);
 
-    if(linkIndex >= 0 && linkIndex < this.linkText.size()) {
+    if(linkIndex >= 0 && linkIndex < this.linkLabels.size()) {
       playMenuSound(2);
-      this.execute(this.links.get(this.linkText.get(linkIndex)));
+      this.execute(this.links.get(this.linkLabels.get(linkIndex)));
       return InputPropagation.HANDLED;
     }
 

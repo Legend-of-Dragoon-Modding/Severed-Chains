@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
@@ -47,22 +49,22 @@ public class OptionsScreen extends VerticalLayoutScreen {
     this.unload = unload;
     this.init();
 
-    final Map<ConfigEntry<?>, String> translations = new HashMap<>();
+    final Map<ConfigEntry<?>, TextComponent> translations = new HashMap<>();
 
     for(final RegistryId configId : GameEngine.REGISTRIES.config) {
       final ConfigEntry<?> entry = GameEngine.REGISTRIES.config.getEntry(configId).get();
 
       if(entry.category == category) {
-        translations.put(entry, I18n.translate(entry.getLabelTranslationKey()));
+        translations.put(entry, new I18nText(entry.getLabelTranslationKey()));
       }
     }
 
     translations.entrySet().stream()
-      .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue()))
+      .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue().get(), o2.getValue().get()))
       .forEach(entry -> {
         //noinspection rawtypes
         final ConfigEntry configEntry = entry.getKey();
-        final String text = entry.getValue();
+        final TextComponent text = entry.getValue();
 
         if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl() && (!this.hideNonBattleEntries() || configEntry.availableInBattle())) {
           this.configs.add(configEntry);
@@ -89,13 +91,13 @@ public class OptionsScreen extends VerticalLayoutScreen {
             label.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
           }
 
-          int extrasX = (int)(label.getFont().textWidth(text) * label.getScale());
+          int extrasX = (int)(label.getFont().textWidth(text.get()) * label.getScale());
 
           if(configEntry.hasHelp()) {
-            final Label help = label.addControl(new Label("?"));
+            final Label help = label.addControl(new Label(new I18nText("lod_core.ui.options.tooltip")));
             help.setScale(0.4f);
             help.setPos(extrasX + 2, 1);
-            help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), (int)this.mouseX, (int)this.mouseY)));
+            help.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(new I18nText(configEntry.getHelpTranslationKey()), (int)this.mouseX, (int)this.mouseY)));
             this.helpLabels.put(label, help);
             this.helpEntries.put(label, configEntry);
             extrasX += help.getWidth();
@@ -103,17 +105,17 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
           if(!locked.isEmpty()) {
             editControl.disable();
-            final Label lock = label.addControl(new Label(I18n.translate("lod_core.ui.options.locked")));
+            final Label lock = label.addControl(new Label(new I18nText("lod_core.ui.options.locked")));
             lock.setScale(0.4f);
             lock.setPos(extrasX + 2, 1);
-            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(I18n.translate("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), (int)this.mouseX, (int)this.mouseY)));
+            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(new I18nText("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), (int)this.mouseX, (int)this.mouseY)));
           }
         }
       });
 
-    this.addToggleHotkey(I18n.translate("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, CONFIG.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
-    this.addHotkey(I18n.translate("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
-    this.addHotkey(I18n.translate("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
+    this.addToggleHotkey(new I18nText("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, CONFIG.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
+    this.addHotkey(new I18nText("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
+    this.addHotkey(new I18nText("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
 
   protected void init() {
@@ -126,7 +128,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
   }
 
   private Label createErrorLabel() {
-    final Label l = new Label(I18n.translate("lod_core.ui.options.error"));
+    final Label l = new Label(new I18nText("lod_core.ui.options.error"));
     l.getFontOptions().colour(0.30f, 0.0f, 0.0f).shadowColour(TextColour.LIGHT_BROWN);
     l.setSize(140, 11);
     l.setPos(this.getWidth() - 64 - l.getWidth(), 0);
@@ -166,7 +168,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
     if(configEntry != null) {
       playMenuSound(2);
       final Label helpLabel = this.helpLabels.get(this.getHighlightedRow());
-      this.getStack().pushScreen(new TooltipScreen(I18n.translate(configEntry.getHelpTranslationKey()), helpLabel.calculateTotalX() + helpLabel.getWidth() / 2, helpLabel.calculateTotalY() + helpLabel.getHeight() / 2));
+      this.getStack().pushScreen(new TooltipScreen(new I18nText(configEntry.getHelpTranslationKey()), helpLabel.calculateTotalX() + helpLabel.getWidth() / 2, helpLabel.calculateTotalY() + helpLabel.getHeight() / 2));
     }
   }
 

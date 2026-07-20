@@ -6,6 +6,8 @@ import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -1739,7 +1741,7 @@ public final class SItem {
           if(messageBox.highlightRenderable_04 == null) {
             messageBox.highlightRenderable_04 = new Highlight();
             final int horizontalSpacing = 12;
-            messageBox.highlightRenderable_04.setSize(Math.max(DEFAULT_FONT.textWidth(messageBox.yes), DEFAULT_FONT.textWidth(messageBox.no)) + horizontalSpacing, DEFAULT_FONT.textHeight(messageBox.yes));
+            messageBox.highlightRenderable_04.setSize(Math.max(DEFAULT_FONT.textWidth(messageBox.yes.get()), DEFAULT_FONT.textWidth(messageBox.no.get())) + horizontalSpacing, DEFAULT_FONT.textHeight(messageBox.yes.get()));
             messageBox.highlightRenderable_04.setPos(messageBox.x_1c + 60 - messageBox.highlightRenderable_04.getWidth() / 2, messageBox.menuIndex_18 * messageBox.highlightRenderable_04.getHeight() + y + 5);
             messageBox.highlightRenderable_04.setZ(31);
           }
@@ -1749,8 +1751,8 @@ public final class SItem {
           //LAB_8010ef64
           textZ_800bdf00 = 30;
 
-          renderText(messageBox.yes, messageBox.x_1c + leftPadding, y + 7, messageBox.menuIndex_18 == 0 ? UI_TEXT_SELECTED_CENTERED : UI_TEXT_CENTERED);
-          renderText(messageBox.no, messageBox.x_1c + leftPadding, y + 21, messageBox.menuIndex_18 == 0 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
+          renderText(messageBox.yes.get(), messageBox.x_1c + leftPadding, y + 7, messageBox.menuIndex_18 == 0 ? UI_TEXT_SELECTED_CENTERED : UI_TEXT_CENTERED);
+          renderText(messageBox.no.get(), messageBox.x_1c + leftPadding, y + 21, messageBox.menuIndex_18 == 0 ? UI_TEXT_CENTERED : UI_TEXT_SELECTED_CENTERED);
 
           textZ_800bdf00 = 33;
         }
@@ -1790,14 +1792,14 @@ public final class SItem {
     return MessageBoxResult.AWAITING_INPUT;
   }
 
-  public static void setMessageBoxOptions(final MessageBox20 messageBox, final String yes, final String no) {
+  public static void setMessageBoxOptions(final MessageBox20 messageBox, final TextComponent yes, final TextComponent no) {
     messageBox.yes = yes;
     messageBox.no = no;
   }
 
   @Method(0x8010f130L)
   public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type) {
-    setMessageBoxOptions(messageBox, "Yes", "No");
+    setMessageBoxOptions(messageBox, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"));
 
     if(text != null) {
       messageBox.text_00 = text.split("\n");

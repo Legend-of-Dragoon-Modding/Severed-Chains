@@ -2,6 +2,7 @@ package legend.game.inventory.screens.controls;
 
 import legend.core.GameEngine;
 import legend.core.font.Font;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputClass;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
@@ -12,7 +13,7 @@ import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 
 public class Label extends Control {
-  private String text;
+  private TextComponent text;
   private float textWidth;
   private float textHeight;
   private VerticalAlign verticalAlign = VerticalAlign.TOP;
@@ -20,7 +21,7 @@ public class Label extends Control {
   private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
-  public Label(final String text) {
+  public Label(final TextComponent text) {
     this.setText(text);
   }
 
@@ -53,13 +54,13 @@ public class Label extends Control {
     return this.fontOptions;
   }
 
-  public void setText(final String text) {
+  public void setText(final TextComponent text) {
     this.text = text;
     this.updateTextSize();
     this.updateAutoSize();
   }
 
-  public String getText() {
+  public TextComponent getText() {
     return this.text;
   }
 
@@ -78,8 +79,8 @@ public class Label extends Control {
   }
 
   private void updateTextSize() {
-    this.textWidth = this.font.textWidth(this.text) * this.getScale();
-    this.textHeight = this.font.textHeight(this.text) * this.getScale();
+    this.textWidth = this.font.textWidth(this.text.get()) * this.getScale();
+    this.textHeight = this.font.textHeight(this.text.get()) * this.getScale();
   }
 
   private void updateAutoSize() {
@@ -111,7 +112,7 @@ public class Label extends Control {
 
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderText(this.font, this.text, x + offsetX, y + offsetY, this.fontOptions);
+    renderText(this.font, this.text.get(), x + offsetX, y + offsetY, this.fontOptions);
     textZ_800bdf00 = oldZ;
   }
 

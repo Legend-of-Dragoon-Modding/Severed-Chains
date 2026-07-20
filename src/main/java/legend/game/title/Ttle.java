@@ -16,6 +16,7 @@ import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
+import legend.core.lang.I18nText;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -526,11 +527,11 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForCategorizeSave() {
-    this.fadeOutToMenu(() -> new FullScreenInputScreen("Uncategorized saves found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
+    this.fadeOutToMenu(() -> new FullScreenInputScreen(new I18nText("lod_core.ui.title.uncategorized_saves"), new I18nText("lod_core.ui.title.campaign_name"), SAVES.generateCampaignName(), (result, name) -> {
       this.saveCategorizationShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.title.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> {
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           }));
           return;
@@ -547,24 +548,24 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForMemcard() {
-    this.fadeOutToMenu(() -> new FullScreenInputScreen("PS1 memory card found. Please enter a name for your campaign.", "Campaign name:", SAVES.generateCampaignName(), (result, name) -> {
+    this.fadeOutToMenu(() -> new FullScreenInputScreen(new I18nText("lod_core.ui.title.ps1_memcard"), new I18nText("lod_core.ui.title.campaign_name"), SAVES.generateCampaignName(), (result, name) -> {
       this.memcardConversionShown = true;
       if(result == MessageBoxResult.YES) {
         if(SAVES.campaignExists(name)) {
-          menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> {
+          menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.title.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> {
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           }));
           return;
         }
 
-        menuStack.pushScreen(new MessageBoxScreen("Delete the memory card file?", MessageBoxType.CONFIRMATION, result1 -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.title.ps1_memcard_delete_confirm"), MessageBoxType.CONFIRMATION, result1 -> {
           try {
             SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {
             LOGGER.error("Failed to convert memcard", e);
 
-            menuStack.pushScreen(new MessageBoxScreen("Failed to convert memcard", MessageBoxType.ALERT, result2 -> {
+            menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.title.ps1_memcard_convert_failed"), MessageBoxType.ALERT, result2 -> {
               whichMenu_800bdc38 = WhichMenu.UNLOAD;
             }));
           }
@@ -894,13 +895,13 @@ public class Ttle extends EngineState<Ttle> {
 
     final String downloadUrl = this.update.getPlatformDownloadUrl();
     if(downloadUrl == null) {
-      LOGGER.info("No platform specific download found opening browser instead");
+      LOGGER.info("No platform specific download found; opening browser instead");
       PLATFORM.openUrl(this.update.uri);
       return;
     }
 
     this.updateInProgress = true;
-    this.updateProgress = new SelfUpdater.UpdateProgress(SelfUpdater.UpdateState.LAUNCHING_UPDATER, "Launching updater...");
+    this.updateProgress = new SelfUpdater.UpdateProgress(SelfUpdater.UpdateState.LAUNCHING_UPDATER, new I18nText("lod_core.ui.title.launching_updater"));
     LOGGER.info("Starting auto update from %s", downloadUrl);
 
     final boolean launched = SelfUpdater.launchUpdater(downloadUrl, progress -> {
@@ -1214,7 +1215,7 @@ public class Ttle extends EngineState<Ttle> {
     // render auto update status whenever there is progress information
     final SelfUpdater.UpdateProgress progress = this.updateProgress;
     if(progress != null) {
-      renderText(progress.message(), 10.0f, 230.0f, UI_WHITE_SMALL);
+      renderText(progress.message().get(), 10.0f, 230.0f, UI_WHITE_SMALL);
     }
 
     //LAB_800c9390

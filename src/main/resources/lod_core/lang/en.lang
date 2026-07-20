@@ -12,9 +12,36 @@ lod_core.config.category.controls.label=Controls
 lod_core.config.category.other.label=Other
 
 # UI text
+lod_core.ui.hotkey=%s (%s)
+
+lod_core.ui.title.uncategorized_saves=Uncategorized saves found. Please enter a name for your campaign.
+lod_core.ui.title.campaign_name=Campaign name:
+lod_core.ui.title.campaign_name_in_use=Campaign name already\nin use
+lod_core.ui.title.ps1_memcard=PS1 memory card found. Please enter a name for your campaign.
+lod_core.ui.title.ps1_memcard_delete_confirm=Delete the memory card file?
+lod_core.ui.title.ps1_memcard_convert_failed=Failed to convert memcard
+lod_core.ui.title.launching_updater=Launching updater...
 lod_core.ui.title.hotkey=(%s)
 
-lod_core.ui.hotkey=%s (%s)
+lod_core.ui.updater.updater_not_found=updater.jar not found. Please re-download Severed Chains.
+lod_core.ui.updater.java_not_found=java not found. Cannot launch updater.
+lod_core.ui.updater.launching_updater=Launching updater...
+lod_core.ui.updater.updater_launched=Updater launched. Game will now close.
+lod_core.ui.updater.updater_launch_failed=Failed to launch updater.
+
+lod_core.ui.message_box.yes=Yes
+lod_core.ui.message_box.no=No
+
+lod_core.ui.input_box.accept=Accept
+lod_core.ui.input_box.cancel=Cancel
+
+lod_core.ui.new_campaign.campaign_name=Campaign name
+lod_core.ui.new_campaign.campaign_name_in_use=Campaign name already\nin use
+lod_core.ui.new_campaign.campaign=Campaign
+lod_core.ui.new_campaign.options=Options
+lod_core.ui.new_campaign.mods=Mods
+lod_core.ui.new_campaign.start_game=Start Game
+lod_core.ui.new_campaign.unlimited_saves=Severed Chains has unlimited save slots and we recommend\nyou save in a new slot each time.
 
 lod_core.ui.campaign_selection.title=Campaigns
 lod_core.ui.campaign_selection.mods=Mods
@@ -26,13 +53,31 @@ lod_core.ui.campaign_selection.missing_mods_confirm=Missing mods, continue?
 lod_core.ui.campaign_selection.installed_mods_changed=Installed mods have changed,\nwould you like to enable them?
 lod_core.ui.campaign_selection.failed_to_delete_campaign=Failed to delete campaign
 
+lod_core.ui.load_game.loading=Loading...
+lod_core.ui.load_game.load_confirm=Load this save?
+lod_core.ui.load_game.load_fail=This save cannot be loaded
+lod_core.ui.load_game.cannot_delete_last_save=Cannot delete last save
+lod_core.ui.load_game.delete_confirm=Are you sure you want to\ndelete this save?
+lod_core.ui.load_game.delete_fail=Failed to delete save
 lod_core.ui.load_game.delete=Delete
 lod_core.ui.load_game.back=Back
+lod_core.ui.load_game.invalid_save=Invalid save
 
+lod_core.ui.save_game.save_game=Save Game
+lod_core.ui.save_game.loading=Loading...
+lod_core.ui.save_game.new_save=<new save>
+lod_core.ui.save_game.save_name=Save name:
+lod_core.ui.save_game.save_name_in_use=Save name already\nin use
+lod_core.ui.save_game.save_failed=Failed to save game
+lod_core.ui.save_game.overwrite_confirm=Overwrite save?
+lod_core.ui.save_game.cannot_delete_last_save=Cannot delete last save
+lod_core.ui.save_game.delete_confirm=Are you sure you want to\ndelete this save?
+lod_core.ui.save_game.delete_fail=Failed to delete save
 lod_core.ui.save_game.delete=Delete
 lod_core.ui.save_game.back=Back
 
 lod_core.ui.mods.required=Required mod
+lod_core.ui.mods.tooltip=?
 lod_core.ui.mods.error=Crashed: %s
 lod_core.ui.mods.wrong_version=Wrong version: %s
 lod_core.ui.mods.help=Help
@@ -44,6 +89,7 @@ lod_core.ui.options.back=Back
 lod_core.ui.options.error=Error
 lod_core.ui.options.locked=Locked
 lod_core.ui.options.locked_by=Locked by %s
+lod_core.ui.options.tooltip=?
 
 lod_core.ui.options_category.back=Back
 lod_core.ui.options_category.some_options_not_available=Note: many options will only appear while in-game
@@ -52,6 +98,7 @@ lod_core.ui.about.click_on_any_link_to_open=Click on any link to open it
 lod_core.ui.about.view_link=View Link
 lod_core.ui.about.open_link=Open Link
 lod_core.ui.about.back=Back
+lod_core.ui.about.tooltip=?
 lod_core.ui.about.discord=Legend of Dragoon & Severed Chains Discord Community
 lod_core.ui.about.youtube=Legend of Dragoon & Severed Chains YouTube
 lod_core.ui.about.fandom=Legend of Dragoon Global Fandom Website
@@ -102,6 +149,20 @@ lod_core.ui.shop.shop_empty=This shop has nothing\nto buy
 lod_core.ui.shop.what_do_you_want_to_sell=What do you want\nto sell?
 lod_core.ui.shop.you_have_nothing_to_sell=You have nothing\nto sell
 
+lod_core.ui.ingame_menu.use_item=Use Item
+lod_core.ui.ingame_menu.equipment=Goods
+lod_core.ui.ingame_menu.inventory=Inventory
+lod_core.ui.ingame_menu.goods=Goods
+lod_core.ui.ingame_menu.mogul_dabas=Diiig
+lod_core.ui.ingame_menu.quit=Quit
+lod_core.ui.ingame_menu.quit_confirm=Quit to main menu?
+lod_core.ui.ingame_menu.status=Status
+lod_core.ui.ingame_menu.additions=Additions
+lod_core.ui.ingame_menu.replace=Replace
+lod_core.ui.ingame_menu.options=Options
+lod_core.ui.ingame_menu.load=Load
+lod_core.ui.ingame_menu.save=Save
+
 lod_core.ui.additions.no_additions=No additions available
 
 lod_core.ui.equipment.unequip=Unequip
@@ -109,14 +170,19 @@ lod_core.ui.equipment.unequip=Unequip
 lod_core.ui.post_battle.addition_unlocked=Addition Unlocked
 lod_core.ui.post_battle.spell_unlocked=Spell Unlocked
 
+lod_core.ui.item_list.items=Items
+lod_core.ui.item_list.equipment=Equipment
+lod_core.ui.item_list.sort=Sort
+lod_core.ui.item_list.discard=Discard
+lod_core.ui.item_list.back=Back
+lod_core.ui.item_list.discard_confirm=Discard?
+
+lod_core.ui.goods.goods=Goods
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
 lod_core.items.nothing.battle_description=Nothing
-
-lod_core.ui.item_list.sort=Sort
-lod_core.ui.item_list.discard=Discard
-lod_core.ui.item_list.back=Back
 
 # Global config
 lod_core.config.controller_keybinds.label=Controls
