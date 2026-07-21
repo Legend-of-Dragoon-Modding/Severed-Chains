@@ -210,6 +210,7 @@ diff,SECT/DRGN22.BIN/774/1,scripts/DRGN22/774/1.diff,"After VoCG virage, adjustm
 diff,SECT/DRGN24.BIN/171/1,scripts/DRGN22/774/1.diff,"After VoCG virage, adjustments for removing/restoring active party members, but disk 4"
 diff,SECT/DRGN22.BIN/795/1,scripts/DRGN22/795/1.diff,"Giganto Home Haschel solo cutscene, switch camera offset axis GH#1918"
 diff,SECT/DRGN22.BIN/798/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772"
+diff,SECT/DRGN22.BIN/981/1,scripts/DRGN22/981/1.diff,"Lenus II, fix dialogue textbox race condition"
 diff,SECT/DRGN24.BIN/195/1,scripts/DRGN22/798/1.diff,"Giganto Home outside throne, Haschel leaves, fix unlock party GH#1772, but disk 4"
 diff,SECT/DRGN22.BIN/801/1,scripts/DRGN22/801/1.diff,"Giganto Home throne room, Haschel leaves, fix unlock party GH#1772"
 diff,SECT/DRGN24.BIN/198/1,scripts/DRGN22/801/1.diff,"Giganto Home throne room, Haschel leaves, fix unlock party GH#1772, but disk 4"
