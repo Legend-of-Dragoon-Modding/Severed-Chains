@@ -7,7 +7,7 @@ import legend.game.saves.EnumConfigEntry;
 
 public class IconSetConfigEntry extends EnumConfigEntry<IconSet> {
   public IconSetConfigEntry() {
-    super(IconSet.class, IconSet.ENHANCED, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(IconSet.class, IconSet.ENHANCED, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 
   @Override
