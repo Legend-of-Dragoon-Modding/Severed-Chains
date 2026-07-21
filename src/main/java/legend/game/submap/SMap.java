@@ -2226,6 +2226,8 @@ public class SMap extends EngineState<SMap> {
 
     final int index = script.params_20[1].get();
 
+    LOGGER.info("Sobj %s switching model to sobj %d", sobj, index);
+
     sobj.sobjIndex_12e = index;
     model.uvAdjustments_9d = this.submap.uvAdjustments.get(index);
 
