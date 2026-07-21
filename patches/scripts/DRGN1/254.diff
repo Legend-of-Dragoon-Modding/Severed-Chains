@@ -27,7 +27,7 @@
 -call 600, stor[9]
 -mov stor[9], var[45][209]
 -mov 0x0, stor[10]
-+mov 0, stor[10]
++mov 1, stor[10]
  LABEL_161:
 -mov 0xffffffff, stor[stor[8], 8 + stor[10]]
 +call 497, null, reg[stor[10]]
@@ -59,7 +59,8 @@
  LABEL_166:
 -mov var[45][208], stor[8]
 -mov var[45][209], stor[9]
- mov 0x0, stor[10]
+-mov 0x0, stor[10]
++mov 1, stor[10]
  LABEL_167:
 -mov stor[stor[8], 8 + stor[10]], stor[11]
 -jmp_cmp ==, 0xffffffff, stor[11], inl[:LABEL_169]
