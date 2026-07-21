@@ -9056,8 +9056,11 @@ public class Battle extends EngineState<Battle> {
 
     // Take a random item
     if(itemId == null) {
-      final ItemStack random = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.getSize()) >> 16);
+      final ItemStack random = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.getSize()) >> 16).copy();
       final RegistryId randomId = random.getRegistryId();
+
+      // We only want to take one item
+      random.setSize(1);
 
       if(!random.isProtected() && gameState_800babc8.items_2e9.take(random).isEmpty()) {
         script.params_20[1].set(randomId);

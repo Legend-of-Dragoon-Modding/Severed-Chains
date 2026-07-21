@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
 import legend.core.platform.input.InputAction;
+import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
@@ -15,8 +16,12 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.saves.SaveFailedException;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxType;
+import legend.lodmod.LodEngineStateTypes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
@@ -42,6 +47,8 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class NewCampaignScreen extends VerticalLayoutScreen {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(NewCampaignScreen.class);
+
   private final GameState52c state = new GameState52c();
   private final Set<String> enabledMods = new HashSet<>();
 
@@ -143,6 +150,12 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       this.state.campaign.loadConfigInto(CONFIG);
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, this.state.campaign.path.resolve("campaign_config.dcnf"));
+
+      try {
+        SAVES.newSave(SItem.chapterNames_80114248[0], Scus94491BpeSegment_800b.campaignType.get(), LodEngineStateTypes.SUBMAP.get().constructor_00.get(), this.state);
+      } catch(final SaveFailedException e) {
+        LOGGER.warn("Failed to create initial save", e);
+      }
     }
   }
 

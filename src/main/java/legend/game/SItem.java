@@ -1611,7 +1611,7 @@ public final class SItem {
       renderText(I18n.translate(menuItem.getNameTranslationKey()), x + 21, y + FUN_800fc814(i) + 1, (menuItem.flags_02 & 0x6000) == 0 ? UI_TEXT : UI_TEXT_DISABLED);
       menuItem.item_00.renderIcon(x + 4, y + FUN_800fc814(i), 0x8);
 
-      if(menuItem.getMaxSize() > 1) {
+      if(menuItem.getMaxSize() > 1 || menuItem.getSize() > 1) {
         renderNumber(x + 96, y + FUN_800fc814(i) + 3, menuItem.getSize(), 0x2, 10);
       }
 
