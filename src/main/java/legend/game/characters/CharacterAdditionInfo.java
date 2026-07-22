@@ -56,12 +56,15 @@ public class CharacterAdditionInfo {
       return false;
     }
 
-    for(int i = 0; i < this.unlockCriteria.size(); i++) {
-      if(!this.unlockCriteria.get(i).isUnlocked(character, this)) {
-        return false;
-      }
-    }
+    return this.checkUnlockCriteria(character);
+  }
 
-    return true;
+  /**
+   * @param character - Character to validate unlock criteria against
+   *
+   * @return True if all criteria is met, false if not.
+   */
+  public boolean checkUnlockCriteria(final CharacterData2c character) {
+    return this.unlockCriteria.stream().allMatch(uc -> uc.isUnlocked(character, this));
   }
 }
