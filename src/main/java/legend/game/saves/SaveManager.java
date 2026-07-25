@@ -258,6 +258,8 @@ public final class SaveManager {
           engineState = LodEngineStateTypes.WORLD_MAP.get();
         } else if(save.locationType == 3) {
           whichMenu_800bdc38 = WhichMenu.RENDER_SAVE_GAME_MENU_19;
+          collidedPrimitiveIndex_80052c38 = save.submapScene;
+          submapCut_80052c30 = save.submapCut;
           engineState = LodEngineStateTypes.SUBMAP.get();
         } else {
           submapId_800bd808 = save.locationIndex;
@@ -294,6 +296,7 @@ public final class SaveManager {
         for(final String expectedRegionCode : REGIONS) {
           if(expectedRegionCode.equals(regionCode)) {
             saves.add((MemcardSavedGame)this.loadData(campaign, "", memcard.slice(i * 0x2000, 0x720)));
+            break;
           }
         }
       }
