@@ -19,7 +19,7 @@ import javafx.util.StringConverter;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.modding.events.scripting.ScriptLifecycleEvent;
 import legend.game.scripting.ScriptManager;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
@@ -243,12 +243,14 @@ public class ScriptDebuggerController {
   }
 
   @EventListener
-  public void onScriptTick(final ScriptTickEvent event) {
-    Platform.runLater(() -> {
-      if(event.scriptIndex == this.scriptSelector.getValue().index) {
-        this.updateScriptVars();
-      }
-    });
+  public void onScriptTick(final ScriptLifecycleEvent event) {
+    if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.POST_SCRIPT_VM_TICK) {
+      Platform.runLater(() -> {
+        if(event.scriptIndex == this.scriptSelector.getValue().index) {
+          this.updateScriptVars();
+        }
+      });
+    }
   }
 
   @EventListener

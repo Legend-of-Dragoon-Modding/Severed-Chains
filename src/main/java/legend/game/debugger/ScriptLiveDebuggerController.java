@@ -11,7 +11,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.modding.events.scripting.ScriptLifecycleEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
@@ -141,8 +141,8 @@ public class ScriptLiveDebuggerController {
   }
 
   @EventListener
-  public void onScriptTick(final ScriptTickEvent event) {
-    if(event.scriptIndex == this.index) {
+  public void onScriptTick(final ScriptLifecycleEvent event) {
+    if(event.scriptIndex == this.index && event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.PRE_SCRIPT_VM_TICK) {
       final ScriptState<?> state = SCRIPTS.getState(this.index);
 
       if(this.stepping) {
