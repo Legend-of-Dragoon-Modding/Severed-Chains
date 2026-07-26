@@ -294,6 +294,7 @@ diff,SECT/DRGN24.BIN/492/9,scripts/DRGN24/492/9.diff,"Zenebatos, Kongol, don't h
 diff,SECT/DRGN24.BIN/492/12,scripts/DRGN24/492/12.diff,"Zenebatos, Coolon, don't hide, GH#2081"
 diff,SECT/DRGN24.BIN/492/13,scripts/DRGN24/492/13.diff,"Zenebatos, Meru, don't hide body parts, GH#2081"
 diff,SECT/DRGN24.BIN/612/3,scripts/DRGN24/612/3.diff,"Aglis, Meru running into walls fix, GH#1720"
+diff,SECT/DRGN24.BIN/615/1,scripts/DRGN24/615/1.diff,"Aglis, main.ultraquick Fix meru getting stuck flying"
 diff,SECT/DRGN24.BIN/621/5,scripts/DRGN24/621/5.diff,"Aglis, Teleporter to Zenebatos, Meru, don't hide body parts, GH#2174"
 diff,SECT/DRGN24.BIN/621/8,scripts/DRGN24/621/8.diff,"Aglis, Teleporter to Zenebatos, Miranda, don't hide body parts, GH#2174"
 diff,SECT/DRGN24.BIN/621/9,scripts/DRGN24/621/9.diff,"Aglis, Teleporter to Zenebatos, Kongol, don't hide body parts, GH#2174"
