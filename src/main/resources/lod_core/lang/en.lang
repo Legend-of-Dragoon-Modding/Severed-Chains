@@ -150,7 +150,7 @@ lod_core.ui.shop.what_do_you_want_to_sell=What do you want\nto sell?
 lod_core.ui.shop.you_have_nothing_to_sell=You have nothing\nto sell
 
 lod_core.ui.ingame_menu.use_item=Use Item
-lod_core.ui.ingame_menu.equipment=Goods
+lod_core.ui.ingame_menu.equipment=Equipment
 lod_core.ui.ingame_menu.inventory=Inventory
 lod_core.ui.ingame_menu.goods=Goods
 lod_core.ui.ingame_menu.mogul_dabas=Diiig
