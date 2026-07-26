@@ -7,7 +7,6 @@ import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.modding.events.scripting.ScriptLifecycleEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -157,7 +156,7 @@ public class ScriptState<T extends ScriptedObject> {
     this.index = index;
     this.name = name;
     this.innerStruct_00 = innerStruct;
-    this.tickEvent = new ScriptLifecycleEventMutable(index);
+    this.tickEvent = new ScriptLifecycleEvent(index);
   }
 
   public void setTicker(@Nullable final BiConsumer<ScriptState<T>, T> callback) {
@@ -266,7 +265,7 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   private void postLifecycleEvent(final ScriptLifecycleEvent.Lifecycle lifecycle) {
-    ((ScriptLifecycleEventMutable)this.tickEvent).setLifecycle(lifecycle);
+    this.tickEvent.lifecycle = lifecycle;
     EVENTS.postEvent(this.tickEvent);
   }
 

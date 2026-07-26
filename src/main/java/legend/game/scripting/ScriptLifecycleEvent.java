@@ -1,7 +1,9 @@
-package legend.game.modding.events.scripting;
+package legend.game.scripting;
+
+import legend.game.modding.events.scripting.ScriptEvent;
 
 public class ScriptLifecycleEvent extends ScriptEvent {
-  protected Lifecycle lifecycle;
+  Lifecycle lifecycle;
 
   public ScriptLifecycleEvent(final int scriptIndex) {
     super(scriptIndex);

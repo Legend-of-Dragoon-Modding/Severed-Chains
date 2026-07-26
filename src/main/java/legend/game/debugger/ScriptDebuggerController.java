@@ -19,7 +19,7 @@ import javafx.util.StringConverter;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.modding.events.scripting.ScriptLifecycleEvent;
+import legend.game.scripting.ScriptLifecycleEvent;
 import legend.game.scripting.ScriptManager;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
