@@ -592,15 +592,15 @@ public final class Fmv {
       final float windowHeight = RENDERER.getNativeHeight();
       final float windowWidth = windowHeight * RENDERER.getRenderAspectRatio();
 
-      final float scaleW = windowWidth / frameHeader.getWidth();
+      final float scaleW = windowWidth / 320.0f;
       final float scaleH = windowHeight / frameHeader.getHeight();
       final float scale = Math.min(scaleW, scaleH);
 
-      final float w = frameHeader.getWidth() * scale;
+      final float w = 320.0f * scale;
       final float h = frameHeader.getHeight() * scale;
 
-      final float l = (windowWidth - w) / 2;
-      final float t = (windowHeight - h) / 2;
+      final float l = (windowWidth - w) / 2.0f;
+      final float t = (windowHeight - h) / 2.0f;
 
       transforms
         .translation(l, t, 100.0f)
