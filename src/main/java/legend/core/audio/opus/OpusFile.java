@@ -28,11 +28,11 @@ public final class OpusFile {
   }
 
   public void addOpusSegment(final byte[] data) {
-    if(this.pages.get(this.pages.size() - 1).isFull()) {
-      this.pages.add(new OggPage((byte)0x0, this.pages.get(this.pages.size() - 1).getGranulePosition(), this.serialNumber, this.pages.size(), 50));
+    if(this.pages.getLast().isFull()) {
+      this.pages.add(new OggPage((byte)0x0, this.pages.getLast().getGranulePosition(), this.serialNumber, this.pages.size(), 50));
     }
 
-   this.pages.get(this.pages.size() - 1).addAudioSegment(data);
+   this.pages.getLast().addAudioSegment(data);
   }
 
   public void addComment(final String comment) {
@@ -41,7 +41,7 @@ public final class OpusFile {
 
   public byte[] toBytes() {
     this.pages.get(1).addDataSegment(this.opusTags.toBytes());
-    this.pages.get(this.pages.size() - 1).setEndOfStream();
+    this.pages.getLast().setEndOfStream();
 
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
