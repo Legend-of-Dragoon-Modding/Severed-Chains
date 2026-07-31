@@ -2,6 +2,8 @@ package legend.core.spu;
 
 import legend.game.unpacker.FileData;
 
+import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
+
 public class Voice {
   private static final int[] positiveXaAdpcmTable = {0, 60, 115, 98, 122};
   private static final int[] negativeXaAdpcmTable = {0, 0, -52, -55, -60};
@@ -11,7 +13,7 @@ public class Voice {
   public final Volume volumeLeft = new Volume();           //0
   public final Volume volumeRight = new Volume();          //2
 
-  public int pitch = 0x1000;                //4
+  public long pitch = 1L << PITCH_BIT_SHIFT;                //4
   public FileData data;
   public int startAddress;         //6
   public int currentAddress;       //6 Internal
@@ -25,14 +27,14 @@ public class Voice {
 
   public Phase adsrPhase;
 
-  public short old;
-  public short older;
+  public float old;
+  public float older;
 
-  public short lastBlockSample26;
-  public short lastBlockSample27;
-  public short lastBlockSample28;
+  public float lastBlockSample26;
+  public float lastBlockSample27;
+  public float lastBlockSample28;
 
-  public short latest;
+  public float latest;
 
   public boolean hasSamples;
 
@@ -49,7 +51,7 @@ public class Voice {
     this.adsrCounter = 0;
     this.adsrVolume = 0;
     this.adsrPhase = Phase.Attack;
-    this.counter.register = 0x2000;
+    this.counter.reset();
   }
 
   public void keyOff() {
@@ -58,7 +60,7 @@ public class Voice {
   }
 
   public byte[] spuAdpcm = new byte[16];
-  public short[] decodedSamples = new short[28];
+  public float[] decodedSamples = new float[28];
 
   private static final byte[] SILENT = {0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7, 0x7};
 
@@ -76,10 +78,9 @@ public class Voice {
     }
 
     final int shift = 12 - (this.spuAdpcm[0] & 0x0f);
-    int filter = (this.spuAdpcm[0] & 0x70) >> 4; //filter on SPU adpcm is 0-4 vs XA which is 0-3
-    if(filter > 4) {
-      filter = 4; //Crash Bandicoot sets this to 7 at the end of the first level and overflows the filter
-    }
+    //filter on SPU adpcm is 0-4 vs XA which is 0-3
+    //Crash Bandicoot sets this to 7 at the end of the first level and overflows the filter
+    final int filter = Math.min((this.spuAdpcm[0] & 0x70) >> 4, 4);
 
     final int f0 = positiveXaAdpcmTable[filter];
     final int f1 = negativeXaAdpcmTable[filter];
@@ -91,10 +92,9 @@ public class Voice {
       nibble = nibble + 1 & 0x1;
 
       final int t = signed4bit((byte)(this.spuAdpcm[position] >> nibble * 4 & 0x0f));
-      final int s = (t << shift) + (this.old * f0 + this.older * f1 + 32) / 64;
-      final short sample = (short)Math.clamp(s, -0x8000, 0x7fff);
+      final float sample = (t << shift) + (this.old * f0 + this.older * f1 + 32) / 64;
 
-      this.decodedSamples[i] = sample;
+      this.decodedSamples[i] = sample / (float)0x8000;
 
       this.older = this.old;
       this.old = sample;
@@ -115,7 +115,7 @@ public class Voice {
     return volume.fixedVolume();
   }
 
-  public short getSample(final int i) {
+  public float getSample(final int i) {
     if(i == -3) {
       return this.lastBlockSample26;
     }

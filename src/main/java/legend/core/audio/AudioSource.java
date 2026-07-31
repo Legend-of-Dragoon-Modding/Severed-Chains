@@ -1,12 +1,12 @@
 package legend.core.audio;
 
-import org.lwjgl.system.MemoryUtil;
-
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.Arrays;
 
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
+import static org.lwjgl.openal.AL10.AL_GAIN;
 import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
 import static org.lwjgl.openal.AL10.alBufferData;
@@ -20,22 +20,36 @@ import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
+import static org.lwjgl.openal.AL10.alSourcef;
 import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public abstract class AudioSource {
-  private final int[] buffers;
+  private final AudioTag tag;
+  private final int[] buffers = new int[6];
   private int bufferIndex;
   private int sourceId;
+  private final int format;
+  private final int sampleRate;
+  protected boolean eof;
 
   private boolean active;
 
-  private IntBuffer tmp;
-
   private float playTime;
 
-  public AudioSource(final int bufferCount) {
-    this.buffers = new int[bufferCount];
+  public AudioSource(final int format, final int sampleRate, final float volume, final AudioTag tag) {
+    this.tag = tag;
+    this.format = format;
+    this.sampleRate = sampleRate;
+
+    this.sourceId = alGenSources();
+    alGenBuffers(this.buffers);
+    this.bufferIndex = this.buffers.length - 1;
+
+    this.setVolume(volume);
+  }
+
+  public AudioTag getTag() {
+    return this.tag;
   }
 
   protected boolean isInitialized() {
@@ -44,7 +58,6 @@ public abstract class AudioSource {
 
   protected void init() {
     this.sourceId = alGenSources();
-    this.tmp = MemoryUtil.memAllocInt(1);
 
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
@@ -52,12 +65,15 @@ public abstract class AudioSource {
     this.playTime = 0.0f;
   }
 
+  protected boolean isFinished() {
+    return (this.eof && this.bufferIndex == this.buffers.length - 1);
+  }
+
   protected void destroy() {
     this.active = false;
     alSourceStop(this.sourceId);
 
-    alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
-    final int processedBufferCount = this.tmp.get(0);
+    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 
     for(int buffer = 0; buffer < processedBufferCount; buffer++) {
       final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
@@ -67,34 +83,46 @@ public abstract class AudioSource {
     alDeleteBuffers(this.buffers);
     alDeleteSources(this.sourceId);
 
-    memFree(this.tmp);
-
     Arrays.fill(this.buffers, 0);
     this.sourceId = 0;
-    this.tmp = null;
 
     this.playTime = 0.0f;
   }
 
   public void tick() {
+    this.handleProcessedBuffers();
+
+    // Wait until we have only two buffers left
+    if(!this.eof && this.bufferIndex >= this.buffers.length - 3) {
+      // Fill up buffers entirely
+      while(this.bufferIndex >= 0) {
+        if(this.eof) {
+          break;
+        }
+
+        this.fillBuffer();
+      }
+    }
+
     // Restart playback if stopped
     if(this.isActive()) {
       this.play();
     }
   }
 
+  protected abstract void fillBuffer();
+
   public boolean canBuffer() {
     if(!this.active || !this.isInitialized()) {
       return false;
     }
 
-    return this.bufferIndex >= 0;
+    return this.bufferIndex >= 2;
   }
 
   protected void handleProcessedBuffers() {
     if(this.bufferIndex < this.buffers.length - 1) {
-      alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
-      final int processedBufferCount = this.tmp.get(0);
+      final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 
       for(int buffer = 0; buffer < processedBufferCount; buffer++) {
         final int unqueuedBufferId = alSourceUnqueueBuffers(this.sourceId);
@@ -115,39 +143,39 @@ public abstract class AudioSource {
     }
   }
 
-  protected void bufferOutput(final int format, final ByteBuffer buffer, final int sampleRate) {
+  protected void bufferOutput(final short[] buffer) {
     synchronized(this) {
       if(this.bufferIndex >= 0) {
         final int bufferId = this.buffers[this.bufferIndex--];
-        alBufferData(bufferId, format, buffer, sampleRate);
+        alBufferData(bufferId, this.format, buffer, this.sampleRate);
         alSourceQueueBuffers(this.sourceId, bufferId);
       }
     }
   }
 
-  protected void bufferOutput(final int format, final short[] buffer, final int sampleRate) {
+  protected void bufferOutput(final ShortBuffer buffer) {
     synchronized(this) {
       if(this.bufferIndex >= 0) {
         final int bufferId = this.buffers[this.bufferIndex--];
-        alBufferData(bufferId, format, buffer, sampleRate);
+        alBufferData(bufferId, this.format, buffer, this.sampleRate);
         alSourceQueueBuffers(this.sourceId, bufferId);
       }
     }
   }
 
-  protected void bufferOutput(final int format, final float[] buffer, final int sampleRate) {
+  protected void bufferOutput(final float[] buffer) {
     synchronized(this) {
       if(this.bufferIndex >= 0) {
         final int bufferId = this.buffers[this.bufferIndex--];
-        alBufferData(bufferId, format, buffer, sampleRate);
+        alBufferData(bufferId, this.format, buffer, this.sampleRate);
         alSourceQueueBuffers(this.sourceId, bufferId);
       }
     }
   }
 
   protected void play() {
-    alGetSourcei(this.sourceId, AL_SOURCE_STATE, this.tmp);
-    if(this.tmp.get(0) != AL_PLAYING) {
+   ;
+    if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) != AL_PLAYING) {
       alSourcePlay(this.sourceId);
     }
   }
@@ -167,6 +195,10 @@ public abstract class AudioSource {
 
   public boolean isActive() {
     return this.active;
+  }
+
+  public void setVolume(final float volume) {
+    alSourcef(this.sourceId, AL_GAIN, volume);
   }
 
   /** NOTE: this method will return the play time of the current buffer, so if you're using more than one buffer it's likely not going to return what you expect */

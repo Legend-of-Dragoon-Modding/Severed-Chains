@@ -804,19 +804,19 @@ public class Sequencer {
    * @param note 0-127, numeric representation of musical note, e.g. 60 = middle C
    */
   @Method(0x80048998L)
-  public int calculateSampleRate(final int rootKey, final int note, final int sixtyFourths, final int pitchBend, final int pitchBendMultiplier) {
+  public long calculateSampleRate(final int rootKey, final int note, final int sixtyFourths, final int pitchBend, final int pitchBendMultiplier) {
     final int offsetIn64ths = (note - rootKey) * 64 + sixtyFourths + (pitchBend - 64) * pitchBendMultiplier;
 
 
     if(offsetIn64ths >= 0) {
       final int octaveOffset = offsetIn64ths / 768;
       final int i = offsetIn64ths - octaveOffset * 768;
-      return Spu.sampleRates[i] << octaveOffset;
+      return (Spu.sampleRates[i] & 0xFFFF_FFFFL) << octaveOffset;
     }
 
     final int octaveOffset = (offsetIn64ths + 1) / -768 + 1;
     final int i = offsetIn64ths + octaveOffset * 768;
-    return Spu.sampleRates[i] >> octaveOffset;
+    return (Spu.sampleRates[i] & 0xFFFF_FFFFL) >> octaveOffset;
   }
 
   @Method(0x80048ab8L)

@@ -2,7 +2,7 @@ package legend.core.audio.sequencer;
 
 import static legend.core.audio.Constants.SAMPLE_RATE_RATIO;
 
-final class Reverberizer {
+public final class Reverberizer {
   private static final Config[] configs = {
     new Config(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     new Config(125, 91, 28032, 21688, -16688, 0, 0, -17792, 22528, 21248, 1238, 819, 1008, 551, 884, 495, 820, 437, 0, 0, 0, 0, 0, 0, 0, 0, 436, 310, 184, 92, -32768, -32768),
@@ -29,7 +29,7 @@ final class Reverberizer {
   private float volumeLeft = 0x3000 / 32_768f;
   private float volumeRight = 0x3000 / 32_768f;
 
-  void processReverb(final float lInput, final float rInput) {
+  public void processReverb(final float lInput, final float rInput) {
     // Input from mixer
     final float Lin = this.config.vLIN * lInput;
     final float Rin = this.config.vRIN * rInput;
@@ -89,19 +89,19 @@ final class Reverberizer {
     return this.reverbWorkArea[address];
   }
 
-  void setConfig(final int config) {
+  public void setConfig(final int config) {
     this.config = configs[config];
   }
 
-  float getOutputLeft() {
+  public float getOutputLeft() {
     return this.outputLeft;
   }
 
-  float getOutputRight() {
+  public float getOutputRight() {
     return this.outputRight;
   }
 
-  void setVolume(final float left, final float right) {
+  public void setVolume(final float left, final float right) {
     this.volumeLeft = left;
     this.volumeRight = right;
   }

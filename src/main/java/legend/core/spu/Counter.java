@@ -1,18 +1,37 @@
 package legend.core.spu;
 
+import legend.core.audio.InterpolationPrecision;
+
+import static legend.core.audio.Constants.PITCH_BIT_SHIFT;
+import static legend.core.audio.Constants.PITCH_MAX_VALUE;
+
 public class Counter {            //internal
-  public int register = 0x2000;
+  private static final InterpolationPrecision interpolationPrecision = InterpolationPrecision.Double;
+  private static final long START_OFFSET = 2L << PITCH_BIT_SHIFT;
 
-  public int currentSampleIndex() {
-    return this.register >> 12 & 0x1F;
+  private long sampleCounter = START_OFFSET;
+
+  public int getCurrentSampleIndex() {
+    return (int)((this.sampleCounter >>> PITCH_BIT_SHIFT) & 0x1f);
   }
 
-  public void currentSampleIndex(final int value) {
-    this.register = (short)(this.register & 0xFFF);
-    this.register |= value << 12;
+  public int getSampleInterpolationIndex() {
+    return (int)((this.sampleCounter >>> interpolationPrecision.sampleShift) & interpolationPrecision.interpolationAnd);
   }
 
-  public int interpolationIndex() {
-    return this.register >> 3 & 0x1FF;
+  /** Adds value to the counter, returns true if the end of block was reached */
+  boolean add(final long value) {
+    this.sampleCounter += value;
+
+    if(this.sampleCounter >= PITCH_MAX_VALUE) {
+      this.sampleCounter -= PITCH_MAX_VALUE;
+      return true;
+    }
+
+    return false;
+  }
+
+  void reset() {
+    this.sampleCounter = START_OFFSET;
   }
 }
