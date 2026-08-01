@@ -263,12 +263,10 @@ public class BigList<T> extends Control {
 
   private void menuNavigatePageUp() {
     if(this.scroll - MAX_VISIBLE_ENTRIES >= 0) {
-      playMenuSound(1);
       this.highlight(this.slot - MAX_VISIBLE_ENTRIES);
       this.scroll -= MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     } else if(this.scroll != 0) {
-      playMenuSound(1);
       this.highlight(this.slot - this.scroll);
       this.scroll = 0;
       this.updateEntries();
@@ -278,12 +276,10 @@ public class BigList<T> extends Control {
   private void menuNavigatePageDown() {
     final int count = this.entries.size();
     if(this.scroll + MAX_VISIBLE_ENTRIES < count - 1 - MAX_VISIBLE_ENTRIES) {
-      playMenuSound(1);
       this.highlight(this.slot + MAX_VISIBLE_ENTRIES);
       this.scroll += MAX_VISIBLE_ENTRIES;
       this.updateEntries();
     } else if(count > MAX_VISIBLE_ENTRIES && this.scroll != count - MAX_VISIBLE_ENTRIES) {
-      playMenuSound(1);
       this.highlight(this.slot + (count - MAX_VISIBLE_ENTRIES - this.scroll));
       this.scroll = count - MAX_VISIBLE_ENTRIES;
       this.updateEntries();
