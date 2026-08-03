@@ -4,7 +4,7 @@
  data 0xffffff78
  LABEL_271:
  data 0x170
-+#include char_utils.fate
++#include char_utils.txt
  LABEL_272:
 -mov 0xffffffff, var[17][1]
 -mov 0xffffffff, var[17][2]
@@ -16,8 +16,7 @@
 -andor 0x40, 0x0, var[115 + 6]
 -andor 0x40, 0x0, var[115 + 7]
 -andor 0x40, 0x0, var[115 + 8]
-+push 0
-+gosub inl[:temporarilyRemoveAllCharsBut]
++gosub inl[:TEMPORARILY_REMOVE_ALL_CHARS_BUT_DART]
  return
  LABEL_273:
  data 0x2
