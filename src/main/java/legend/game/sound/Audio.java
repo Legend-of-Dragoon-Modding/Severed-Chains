@@ -731,8 +731,16 @@ public final class Audio {
   public static void loadMusicPackage(final int index) {
     unloadSoundFile(8);
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
+
     final int fileIndex = 5815 + index * 5;
-    loadDrgnDir(0, fileIndex).thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, true));
+
+    loadDrgnDir(0, fileIndex)
+      .thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, true))
+      .exceptionally(t -> {
+        LOGGER.error("Failed to load music package %#x".formatted(index), t);
+        return null;
+      })
+    ;
   }
 
   @ScriptDescription("Load a music package")
@@ -742,9 +750,18 @@ public final class Audio {
   public static FlowControl scriptLoadMusicPackage(final RunningScript<?> script) {
     unloadSoundFile(8);
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
+
     final int fileIndex = 5815 + script.params_20[0].get() * 5;
     final boolean playSequence = script.params_20[1].get() == 0;
-    loadDrgnDir(0, fileIndex).thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, playSequence));
+
+    loadDrgnDir(0, fileIndex)
+      .thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, playSequence))
+      .exceptionally(t -> {
+        LOGGER.error("Failed to load music package %#x".formatted(fileIndex), t);
+        return null;
+      })
+    ;
+
     return FlowControl.CONTINUE;
   }
 
@@ -758,7 +775,14 @@ public final class Audio {
 
     unloadSoundFile(8);
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    loadDrgnDir(0, fileIndex).thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, true));
+
+    loadDrgnDir(0, fileIndex)
+      .thenAccept(files -> musicPackageLoadedCallback(files, fileIndex, true))
+      .exceptionally(t -> {
+        LOGGER.error("Failed to load music package %#x".formatted(fileIndex), t);
+        return null;
+      })
+    ;
   }
 
   @ScriptDescription("Load some kind of audio package")
