@@ -15,8 +15,8 @@ public enum EffectsOverTimeGranularity {
   public final int samples;
 
   EffectsOverTimeGranularity(final int shift) {
-    this.scale = 1 << shift;
+    this.scale = 1 << (5 - shift);
     this.shift = shift;
-    this.samples = ENGINE_SAMPLE_RATE / (60 * this.scale);
+    this.samples = ENGINE_SAMPLE_RATE / (60 * (1 << shift));
   }
 }

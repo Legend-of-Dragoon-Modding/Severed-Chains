@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.lwjgl.openal.SOFTCallbackBufferTypeI;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -39,12 +40,24 @@ import static legend.game.DrgnFiles.loadDrgnFiles;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static org.lwjgl.openal.AL10.AL_BUFFER;
+import static org.lwjgl.openal.AL10.alDeleteBuffers;
+import static org.lwjgl.openal.AL10.alDeleteSources;
+import static org.lwjgl.openal.AL10.alGenBuffers;
+import static org.lwjgl.openal.AL10.alGenSources;
+import static org.lwjgl.openal.AL10.alSourcePlay;
+import static org.lwjgl.openal.AL10.alSourceStop;
+import static org.lwjgl.openal.AL10.alSourcei;
+import static org.lwjgl.openal.SOFTCallbackBuffer.alBufferCallbackSOFT;
 
 public final class Audio {
   private Audio() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Audio.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
+
+  private static int source;
+  private static int buffer;
 
   public static final int[] combatSoundEffectsTypes_8005019c = {
     12, 13, 86, 12, 12, 12, 12, 12,
@@ -1123,7 +1136,7 @@ public final class Audio {
     if(type != 0) {
       SPU.setReverbMode(0);
       SPU.enableReverb();
-      SPU.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
+      SPU.setReverb(type);
       AUDIO_THREAD.setReverb(type);
       return;
     }
@@ -1507,45 +1520,53 @@ public final class Audio {
     //LAB_8004da38
   }
   private static final int SOUND_TPS = 60;
-  private static final int NANOS_PER_TICK = 1_000_000_000 / SOUND_TPS;
-  private static boolean soundRunning;
+
+  private static final int AL_FORMAT_STEREO32 = 0x10011;
 
   public static void startSound() {
-    soundRunning = true;
-    final Thread sfx = new Thread(Audio::soundLoop);
-    sfx.setName("SFX");
-    sfx.start();
+    source = alGenSources();
+    buffer = alGenBuffers();
+
+    final SOFTCallbackBufferTypeI callback = (userPtr, sampleData, numBytes) -> {
+      tick(sampleData, numBytes >>> 3);
+
+      return numBytes;
+    };
+
+    alBufferCallbackSOFT(
+      buffer,
+      AL_FORMAT_STEREO32,
+      48_000,
+      callback,
+      2L
+    );
+
+    alSourcei(source, AL_BUFFER, buffer);
+
+    alSourcePlay(source);
   }
 
   public static void stopSound() {
-    soundRunning = false;
+    alSourceStop(source);
+
+    alDeleteBuffers(buffer);
+    alDeleteSources(source);
   }
 
-  private static void soundLoop() {
-    long time = System.nanoTime();
+  private static final int SAMPLES_PER_BLOCK = 48_000 / SOUND_TPS;
+  private static int pos = SAMPLES_PER_BLOCK;
 
-    while(soundRunning) {
-      try {
+  private static void tick(final long sampleData, final long sampleCount) {
+    for(int sample = 0; sample < sampleCount; sample++) {
+      pos++;
+
+      if(pos > SAMPLES_PER_BLOCK) {
+        pos -= SAMPLES_PER_BLOCK;
+
         SEQUENCER.tick();
-        SPU.tick();
-      } catch(final Throwable t) {
-        LOGGER.error("Sound thread crashed!", t);
       }
 
-
-      long interval = System.nanoTime() - time;
-
-      // Failsafe if we run too far behind (also applies to pausing in IDE)
-      if(interval >= NANOS_PER_TICK * 3) {
-        LOGGER.debug("Sequencer running behind, skipping ticks to catch up");
-        interval = NANOS_PER_TICK;
-        time = System.nanoTime() - interval;
-      }
-
-      final int toSleep = (int)Math.max(0, NANOS_PER_TICK - interval) / 1_000_000;
-      DebugHelper.sleep(toSleep);
-      time += NANOS_PER_TICK;
+      SPU.tick(sampleData, sample);
     }
   }
-
 }

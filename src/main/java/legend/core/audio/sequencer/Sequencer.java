@@ -1,6 +1,7 @@
 package legend.core.audio.sequencer;
 
 import legend.core.audio.AudioSource;
+import legend.core.audio.CallbackAudioSource;
 import legend.core.audio.EffectsOverTimeGranularity;
 import legend.core.audio.InterpolationPrecision;
 import legend.core.audio.PitchResolution;
@@ -24,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.lwjgl.system.MemoryUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +33,10 @@ import java.util.function.Consumer;
 
 import static legend.core.audio.Constants.ENGINE_SAMPLE_RATE;
 
-public final class Sequencer extends AudioSource {
+public final class Sequencer extends CallbackAudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
-  private static final int AL_FORMAT_STEREO32 = 0x10011;
   // TODO switch between mono and stereo
   private final boolean stereo;
   private EffectsOverTimeGranularity effectsOverTimeGranularity;
@@ -44,12 +45,9 @@ public final class Sequencer extends AudioSource {
   private int playingVoices;
   private final float[] voiceOutputBuffer = new float[2];
   private final float[] voiceReverbBuffer = new float[2];
-  // TODO consider making this variable length for mono, but it might be better to simply always playback as stereo, just with down mixing
-  private final float[] outputBuffer;
 
   private final Reverberizer reverb = new Reverberizer();
 
-  private float playerVolume = 1.0f;
   private float engineVolumeLeft = 0.5f;
   private float engineVolumeRight = 0.5f;
   private Fading fading = Fading.NONE;
@@ -71,10 +69,10 @@ public final class Sequencer extends AudioSource {
   private int samplesToProcess;
   private boolean paused;
 
-  public Sequencer(final boolean stereo, final int voiceCount, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final EffectsOverTimeGranularity effectsGranularity) {
-    super(3);
+  private int effectsPosition;
 
-    this.outputBuffer = new float[(ENGINE_SAMPLE_RATE / 60) * 2];
+  public Sequencer(final boolean stereo, final int voiceCount, final float playerVolume, final InterpolationPrecision bitDepth, final PitchResolution pitchResolution, final EffectsOverTimeGranularity effectsGranularity) {
+    super(1L, playerVolume);
 
     this.stereo = stereo;
 
@@ -91,51 +89,47 @@ public final class Sequencer extends AudioSource {
     VoiceCounter.changeEffectsOverTimeGranularity(effectsGranularity);
 
     this.reverb.setConfig(3);
-  }
 
-  public void setPlayerVolume(final float volume) {
-    this.playerVolume = volume;
+    this.play();
   }
 
   @Override
-  public void tick() {
-    int samplePostition = 0;
-    for(int effect = 0; effect < this.effectsOverTimeGranularity.scale; effect++) {
-      for(int sample = 0; sample < this.effectsOverTimeGranularity.samples; sample++, samplePostition += 2) {
-        this.clearFinishedVoices();
+  public void tick(final long sampleData, final long sampleCount) {
+    for(int sample = 0; sample < sampleCount; sample++) {
+      this.clearFinishedVoices();
 
-        if(!this.paused) {
-          this.tickSequence();
-        }
-
-        this.voiceOutputBuffer[0] = 0;
-        this.voiceOutputBuffer[1] = 0;
-
-        this.voiceReverbBuffer[0] = 0;
-        this.voiceReverbBuffer[1] = 0;
-
-        for(final Voice voice : this.voices) {
-          voice.tick(this.voiceOutputBuffer, this.voiceReverbBuffer);
-        }
-
-        this.reverb.processReverb(this.voiceReverbBuffer[0], this.voiceReverbBuffer[1]);
-
-        this.outputBuffer[samplePostition    ] = ((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft()) * this.engineVolumeLeft  * this.playerVolume);
-        this.outputBuffer[samplePostition + 1] = ((this.voiceOutputBuffer[1] + this.reverb.getOutputRight()) * this.engineVolumeRight * this.playerVolume);
+      if(!this.paused) {
+        this.tickSequence();
       }
 
-      this.handleVolumeChanging();
+      this.voiceOutputBuffer[0] = 0;
+      this.voiceOutputBuffer[1] = 0;
 
-      this.handleFadeInOut();
+      this.voiceReverbBuffer[0] = 0;
+      this.voiceReverbBuffer[1] = 0;
 
       for(final Voice voice : this.voices) {
-        voice.handleModulation();
+        voice.tick(this.voiceOutputBuffer, this.voiceReverbBuffer);
+      }
+
+      this.reverb.processReverb(this.voiceReverbBuffer[0], this.voiceReverbBuffer[1]);
+
+      MemoryUtil.memPutFloat(sampleData + sample * 8, ((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft()) * this.engineVolumeLeft));
+      MemoryUtil.memPutFloat(sampleData + 4 + sample * 8, ((this.voiceOutputBuffer[1] + this.reverb.getOutputRight()) * this.engineVolumeRight));
+
+      this.effectsPosition++;
+      if(this.effectsPosition >= this.effectsOverTimeGranularity.samples) {
+        this.effectsPosition -= this.effectsOverTimeGranularity.samples;
+
+        this.handleVolumeChanging();
+
+        this.handleFadeInOut();
+
+        for(final Voice voice : this.voices) {
+          voice.handleModulation();
+        }
       }
     }
-
-    this.bufferOutput(AL_FORMAT_STEREO32, this.outputBuffer, ENGINE_SAMPLE_RATE);
-
-    super.tick();
   }
 
   private void clearFinishedVoices() {
@@ -414,14 +408,14 @@ public final class Sequencer extends AudioSource {
     switch(this.fading) {
       case FADE_IN -> {
         final float volume = (this.fadeInVolume * this.fadeCounter) / this.fadeTime;
-        this.fadeCounter++;
+        this.fadeCounter += this.effectsOverTimeGranularity.scale;
         this.engineVolumeLeft = volume;
         this.engineVolumeRight = volume;
       }
       case FADE_OUT -> {
         final float volumeLeft = (this.fadeOutVolumeLeft * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
         final float volumeRight = (this.fadeOutVolumeRight * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
-        this.fadeCounter++;
+        this.fadeCounter += this.effectsOverTimeGranularity.scale;
         this.engineVolumeLeft = volumeLeft;
         this.engineVolumeRight = volumeRight;
       }
@@ -447,7 +441,7 @@ public final class Sequencer extends AudioSource {
     }
 
     this.backgroundMusic.setVolume(this.newVolume + (this.oldVolume - this.newVolume) * this.volumeChangingTimeRemaining / this.volumeChangingTimeTotal);
-    this.volumeChangingTimeRemaining--;
+    this.volumeChangingTimeRemaining -= this.effectsOverTimeGranularity.scale;
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed()) {
@@ -457,20 +451,14 @@ public final class Sequencer extends AudioSource {
   }
 
   public void fadeIn(final int time, final int volume) {
-    this.fadeTime = time * this.effectsOverTimeGranularity.scale;
+    this.fadeTime = time << 5;
     this.fadeInVolume = volume / 256.0f;
     this.fadeCounter = 0;
     this.fading = Fading.FADE_IN;
   }
 
   public void fadeOut(final int time) {
-    if(!this.isActive()) {
-      this.engineVolumeLeft = 0;
-      this.engineVolumeRight = 0;
-      return;
-    }
-
-    this.fadeTime = time * this.effectsOverTimeGranularity.scale;
+    this.fadeTime = time << 5;
     this.fadeOutVolumeLeft = this.engineVolumeLeft;
     this.fadeOutVolumeRight = this.engineVolumeRight;
     this.fadeCounter = 0;
@@ -500,11 +488,6 @@ public final class Sequencer extends AudioSource {
 
   public void startSequence() {
     this.paused = false;
-
-    if(!this.isActive()) {
-      this.setActive(true);
-      this.samplesToProcess = 0;
-    }
   }
 
   public void stopSequence() {
@@ -554,8 +537,8 @@ public final class Sequencer extends AudioSource {
     this.volumeChanging = true;
     this.newVolume = volume / 128.0f;
     this.oldVolume = this.backgroundMusic.getVolume();
-    this.volumeChangingTimeTotal = time * this.effectsOverTimeGranularity.scale;
-    this.volumeChangingTimeRemaining = time * this.effectsOverTimeGranularity.scale;
+    this.volumeChangingTimeTotal = time << 5;
+    this.volumeChangingTimeRemaining = time << 5;
 
     return Math.round(this.oldVolume * 0x80);
   }
@@ -581,19 +564,8 @@ public final class Sequencer extends AudioSource {
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
   public void changeEffectsOverTimeGranularity(final EffectsOverTimeGranularity effectsGranularity) {
-    final int oldScale = this.effectsOverTimeGranularity.scale;
-
     this.effectsOverTimeGranularity = effectsGranularity;
     VoiceCounter.changeEffectsOverTimeGranularity(effectsGranularity);
-
-    this.scaleTimeValues(oldScale, effectsGranularity.scale);
-  }
-
-  private void scaleTimeValues(final double oldScale, final double newScale) {
-    this.fadeCounter = (int)Math.round(this.fadeCounter * (newScale / oldScale));
-    this.fadeTime = (int)Math.round(this.fadeTime * (newScale / oldScale));
-    this.volumeChangingTimeRemaining = (int)Math.round(this.volumeChangingTimeRemaining * (newScale / oldScale));
-    this.volumeChangingTimeTotal = (int)Math.round(this.volumeChangingTimeTotal * (newScale / oldScale));
   }
 
   /** This isn't thread safe and should never be called from outside the Audio Thread synchronized block */
