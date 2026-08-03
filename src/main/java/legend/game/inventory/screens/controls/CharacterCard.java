@@ -116,11 +116,14 @@ public class CharacterCard extends Control {
       }
 
       renderRightAlignedNumber(x + this.getWidth(), y + 6, this.character.level_12);
-      renderRightAlignedNumber(x + 123, y + 17, this.character.dlevel_13);
-      renderRightAlignedNumber(x + this.getWidth(), y + 17, sp.getCurrent());
       renderFraction(x + this.getWidth(), y + 28, hp.getCurrent(), newHp, getClutForHp(hp.getCurrent(), newHp), getStatComparisonClut(oldHp, newHp));
-      renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), newMp, 0, getStatComparisonClut(oldMp, newMp));
       renderFraction(x + this.getWidth(), y + 50, this.character.xp_00, this.character.getXpToNextLevel());
+
+      if(this.character.hasDragoon()) {
+        renderRightAlignedNumber(x + 123, y + 17, this.character.dlevel_13);
+        renderRightAlignedNumber(x + this.getWidth(), y + 17, sp.getCurrent());
+        renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), newMp, 0, getStatComparisonClut(oldMp, newMp));
+      }
 
       if(this.dontSelect) {
         final Renderable58 dontSelect = allocateManualUiElement(113, 113, x + 65, y + 24);
