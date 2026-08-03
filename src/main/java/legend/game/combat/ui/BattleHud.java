@@ -1122,8 +1122,8 @@ public class BattleHud {
             //LAB_800f3a44
             final Vector2f screenCoords = new Vector2f();
             Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
-            num.x_1c = this.clampX(screenCoords.x + centreScreenX_1f8003dc);
-            num.y_20 = this.clampY(screenCoords.y + centreScreenY_1f8003de);
+            num.x_1c = this.clampX(screenCoords.x + centreScreenX_1f8003dc) + num.xOffset;
+            num.y_20 = this.clampY(screenCoords.y + centreScreenY_1f8003de) + num.yOffset;
           }
 
           //LAB_800f3ac8
@@ -1969,6 +1969,23 @@ public class BattleHud {
     }
 
     //LAB_800f8a84
+    return false;
+  }
+
+  public boolean initFloatingNumbers(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final float xOffset, final float yOffset, final int a6, final float r, final float g, final float b) {
+    for(int i = 0; i < this.floatingNumbers_800c6b5c.length; i++) {
+      final FloatingNumberC4 num = this.floatingNumbers_800c6b5c[i];
+
+      if(num.state_00 == 0) {
+        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, 0);
+        num.bentIndex_04 = bentIndex;
+        num.xOffset = xOffset;
+        num.yOffset = yOffset;
+        num.colour.set(r, g, b);
+        return true;
+      }
+    }
+
     return false;
   }
 
