@@ -30,6 +30,7 @@ import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.BattleOptionsCategoryScreen;
 import legend.game.inventory.screens.FontOptions;
+import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -763,6 +764,7 @@ public class BattleHud {
             //LAB_800f0d10
             str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
             targetBent = monsterBent;
+            EVENTS.postEvent(new SingleMonsterTargetEvent(this.battle, monsterBent));
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.playerBents_e40.get(targetCombatant).innerStruct_00;
             str = targetBent.getName();
