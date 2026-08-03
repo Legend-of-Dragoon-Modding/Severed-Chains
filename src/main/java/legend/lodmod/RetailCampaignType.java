@@ -6,6 +6,9 @@ import legend.game.characters.CharacterData2c;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 
+import static legend.game.characters.CharacterData2c.CANT_REMOVE;
+import static legend.game.characters.CharacterData2c.CAN_BE_IN_PARTY;
+import static legend.game.characters.CharacterData2c.IN_PARTY;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.MP_STAT;
 
@@ -33,7 +36,7 @@ public class RetailCampaignType extends CampaignType {
     this.levelUp(kongol, 19);
     this.levelUp(miranda, 23);
 
-    gameState.charData_32c.get(0).partyFlags_04 = 0x3;
+    dart.partyFlags_04 = IN_PARTY | CAN_BE_IN_PARTY | CANT_REMOVE;
 
     gameState.items_2e9.give(LodItems.BURN_OUT.get());
     gameState.items_2e9.give(LodItems.HEALING_POTION.get());
