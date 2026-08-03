@@ -176,6 +176,12 @@ public final class IoHelper {
     return val;
   }
 
+  public static String readAscii(final ByteBuffer stream, final int length) {
+    final byte[] chars = new byte[length];
+    stream.get(chars);
+    return new String(chars);
+  }
+
   public static void write(final ByteBuffer stream, final long value) {
     write(stream, (int)value);
   }

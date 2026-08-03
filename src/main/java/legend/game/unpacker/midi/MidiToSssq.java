@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class MidiToSssq {
   static void main(final String[] args) throws IOException {
@@ -20,15 +23,11 @@ public class MidiToSssq {
   public void write() throws IOException {
     final FileData originalData = Loader.loadFileSync(Loader.resolve("SECT/DRGN0.BIN/5820/1-orig"));
     final Sssq original = new Sssq(originalData);
-    final byte[] midiRaw = Files.readAllBytes(Path.of("out-new.mid"));
+    final byte[] midiRaw = Files.readAllBytes(Path.of("out-new-all-type0.mid"));
     final ByteBuffer midi = ByteBuffer.wrap(midiRaw);
 
     final int numberOfTracks = midi.getShort(0x0a);
     final int tempo = midi.getShort(0x0c);
-
-    if(numberOfTracks != 1) {
-      throw new RuntimeException("Only single-track midis supported");
-    }
 
     final ExpandableFileData out = new ExpandableFileData(originalData.size());
     final IntRef offset = new IntRef();
@@ -39,114 +38,135 @@ public class MidiToSssq {
     // Copy tempo
     out.writeShort(0x2, tempo);
 
-    midi.position(0x17);
-    offset.set(0x110);
+    midi.position(0x0e);
 
-    byte previousCommand = (byte)0xff;
-    boolean lastCommandWasNoOp = false;
+    final List<MidiCommand> commands = new ArrayList<>();
 
-    outer:
-    while(midi.hasRemaining()) {
-      byte command = midi.get();
-      System.out.printf("%#x - %#x%n", midi.position() - 1, command);
+    for(int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
+      System.out.printf("Processing track %d/%d%n...", trackIndex + 1, numberOfTracks);
 
-      if((command & 0xff) < 0x80) {
-        command = previousCommand;
-        midi.position(midi.position() - 1);
-        System.out.printf("Continuation command - using command %x%n", command);
-
-        if(lastCommandWasNoOp) {
-          out.writeByte(offset, command);
-        }
+      final String trackMagic = IoHelper.readString(midi, 4);
+      if(!"MTrk".equals(trackMagic)) {
+        throw new RuntimeException("Invalid track magic " + trackMagic);
       }
 
-      lastCommandWasNoOp = false;
+      final int trackChunkSize = midi.getInt();
+      final int startPosition = midi.position();
 
-      switch(command & 0xf0) {
-        // Key off, key on
-        case 0x80, 0x90 -> {
-          out.writeByte(offset, command);
-          out.writeByte(offset, midi.get()); // Note
-          out.writeByte(offset, midi.get()); // Velocity
+      midi.get(); // initial delta time
+
+      byte previousCommand = (byte)0xff;
+      int time = 0;
+
+      while(midi.position() - startPosition < trackChunkSize) {
+        byte command = midi.get();
+        System.out.printf("%#x - %#x%n", midi.position() - 1, command);
+
+        if((command & 0xff) < 0x80) {
+          command = previousCommand;
+          midi.position(midi.position() - 1);
+          System.out.printf("Continuation command - using command %x%n", command);
         }
 
-        case 0xb0 -> {
-          final byte controlNumber = midi.get();
-
-          switch(controlNumber) {
-            // Modulation wheel, breath control, data entry (???), channel volume, pan, non-registered parameter number (NRPN) - MSB (???)
-            case 1, 2, 6, 7, 0xa -> {
-              out.writeByte(offset, command);
-              out.writeByte(offset, controlNumber);
-              out.writeByte(offset, midi.get());
-            }
-
-            case 0x63 -> {
-              out.writeByte(offset, command);
-              out.writeByte(offset, controlNumber);
-              out.writeByte(offset, midi.get());
-            }
-
-            default -> throw new RuntimeException("Unknown control number %x".formatted(controlNumber));
+        switch(command & 0xf0) {
+          // Key off, key on
+          case 0x80, 0x90 -> {
+            final byte note = midi.get();
+            final byte velocity = midi.get();
+            commands.add(new MidiCommand(command, new byte[] {note, velocity}));
           }
-        }
 
-        case 0xc0 -> { // Program change (instrument)
-          out.writeByte(offset, command);
-          out.writeByte(offset, midi.get());
-        }
+          case 0xb0 -> {
+            final byte controlNumber = midi.get();
 
-        case 0xf0 -> { // Meta
-          final byte metaEvent = midi.get();
-
-          switch(metaEvent) {
-            case 0x3 -> { // Track name
-              final byte length = midi.get();
-              final byte[] chars = new byte[length];
-              midi.get(chars);
-              System.out.println("Track name: " + new String(chars));
-              lastCommandWasNoOp = true;
-            }
-
-            case 0x2f -> {
-              out.writeByte(offset, 0xff); // Meta
-              out.writeByte(offset, 0x2f); // End of track
-              break outer;
-            }
-
-            case 0x51 -> {
-              out.writeByte(offset, 0xff);
-              out.writeByte(offset, 0x51);
-
-              final int size = midi.get();
-              if(size != 3) {
-                throw new RuntimeException("Unknown tempo change size " + size);
+            switch(controlNumber) {
+              // Modulation wheel, breath control, data entry (???), channel volume, pan, non-registered parameter number (NRPN) - MSB (???)
+              case 1, 2, 6, 7, 0xa, 0x63 -> {
+                final byte value = midi.get();
+                commands.add(new MidiCommand(command, new byte[] {controlNumber, value}));
               }
 
-              out.writeShort(offset, 60_000_000 / IoHelper.read3(midi));
+              default -> throw new RuntimeException("Unknown control number %x".formatted(controlNumber));
             }
+          }
 
-            default -> throw new RuntimeException("Unknown meta event %x".formatted(metaEvent));
+          case 0xc0 -> { // Program change (instrument)
+            final byte instrument = midi.get();
+            commands.add(new MidiCommand(command, new byte[] {instrument}));
+          }
+
+          case 0xf0 -> { // Meta
+            final byte metaEvent = midi.get();
+
+            switch(metaEvent) {
+              case 0x3 -> { // Track name
+                final byte length = midi.get();
+                System.out.println("Track name: " + IoHelper.readString(midi, length));
+              }
+
+              case 0x2f -> {
+                commands.add(new MidiCommand(command, new byte[] {metaEvent}));
+              }
+
+              case 0x51 -> {
+                final int size = midi.get();
+                if(size != 3) {
+                  throw new RuntimeException("Unknown tempo change size " + size);
+                }
+
+                final int tempoChange = 60_000_000 / IoHelper.read3(midi);
+                commands.add(new MidiCommand(command, new byte[] {metaEvent, (byte)tempoChange, (byte)(tempoChange >>> 16)}));
+              }
+
+              default -> throw new RuntimeException("Unknown meta event %x".formatted(metaEvent));
+            }
+          }
+
+          default -> throw new RuntimeException("Unknown command %x".formatted(command));
+        }
+
+        // Copy elapsed time since last event (varint)
+        int deltaTime = 0;
+        while(true) {
+          final int varint = midi.get() & 0xff;
+
+          deltaTime <<= 7;
+          deltaTime |= varint;
+
+          if((varint & 0x80) == 0) {
+            break;
           }
         }
 
-        default -> throw new RuntimeException("Unknown command %x".formatted(command));
+        time += deltaTime;
+        commands.getLast().time = time;
+        previousCommand = command;
+      }
+    }
+
+    // Sort all commands
+    commands.sort(Comparator.comparingInt(command -> command.time));
+
+    // Relativize timestamps
+    for(int i = 0; i < commands.size() - 1; i++) {
+      final MidiCommand current = commands.get(i);
+      final MidiCommand next = commands.get(i + 1);
+      current.time = next.time - current.time;
+    }
+
+    offset.set(0x110);
+    int previousCommand = 0;
+
+    for(final MidiCommand command : commands) {
+      // Continuation
+      if(previousCommand != command.command) {
+        out.writeByte(offset, command.command);
       }
 
-      // Copy elapsed time since last event (varint)
-      while(true) {
-        final byte varint = midi.get();
+      out.write(0, command.data, offset, command.data.length);
+      out.writeVarInt(offset, command.time);
 
-        if(!lastCommandWasNoOp) {
-          out.writeByte(offset, varint);
-        }
-
-        if((varint & 0x80) == 0) {
-          break;
-        }
-      }
-
-      previousCommand = command;
+      previousCommand = command.command;
     }
 
     final byte[] trimmed = new byte[offset.get() + 1];
