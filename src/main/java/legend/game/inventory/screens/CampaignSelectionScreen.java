@@ -127,8 +127,8 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   private void bootModsAndLoadSaves(final Campaign campaign) {
     final Set<String> missingMods;
-    if(CONFIG.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
-      missingMods = bootMods(Set.of(CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get())));
+    if(campaign.config.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
+      missingMods = bootMods(Set.of(campaign.config.getConfig(CoreMod.ENABLED_MODS_CONFIG.get())));
     } else {
       // Fallback for old saves from before the config key existed
       missingMods = bootMods(MODS.getAllModIds());

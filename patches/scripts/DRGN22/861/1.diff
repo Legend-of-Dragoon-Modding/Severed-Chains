@@ -1,14 +1,8 @@
+Rotation subroutine doesn't check if the rotating sobj is at the target, causing the sobj to 180.
+Bug doesn't occur in retail because Meru is off target by 1 on both axes due to math precision errors.
 --- original
 +++ modified
-@@ -14,6 +14,7 @@
- entrypoint :ENTRYPOINT_13
- entrypoint :ENTRYPOINT_14
- entrypoint :ENTRYPOINT_15
-+#include queen_fury.fate
- LABEL_0:
- jmp_cmp !=, 0xffffffff, var[73][31], inl[:LABEL_1]
- mov 0x0, var[73][31]
-@@ -392,6 +393,7 @@
+@@ -392,9 +392,10 @@
  sub stor[8], stor[28]
  sub stor[10], stor[30]
  atan2_12 stor[28], stor[30], stor[26]
@@ -16,46 +10,3 @@
  LABEL_38:
  call 104, stor[24], stor[28], stor[29], stor[30]
  and 0xfff, stor[26]
-@@ -1081,6 +1083,11 @@
- rel :JMP_1d7c_0
- rel :JMP_1d7c_0
- JMP_1d58_0:
-+call 109, stor[24]
-+jmp_cmp !=, 32, stor[24], inl[:BEEN_HERE_BEFORE]
-+gosub inl[:backupActiveParty]
-+gosub inl[:temporarilyRemoveAllChars]
-+BEEN_HERE_BEFORE:
- call 698, stor[0], 0x0
- call 678, stor[0], 0x0
- call 688, stor[0], 0x0
-@@ -1094,7 +1101,8 @@
- call 317, 0x0
- gosub inl[:LABEL_23]
- mov stor[0], stor[24]
--gosub inl[:LABEL_64]
-+push stor[stor[stor[0], 23], 31]
-+gosub inl[:updateParty]
- yield
- gosub inl[:LABEL_91]
- gosub_table stor[stor[stor[0], 23], 31], inl[:LABEL_90]
-@@ -1605,7 +1613,8 @@
- call 103, stor[0], stor[8], stor[9], stor[10]
- mov 0xa, stor[stor[stor[0], 24], 22]
- mov stor[0], stor[24]
--gosub inl[:LABEL_64]
-+push stor[stor[stor[0], 23], 31]
-+gosub inl[:updateParty]
- call 698, stor[0], 0x0
- call 678, stor[0], 0x0
- call 311, stor[0]
-@@ -2386,8 +2395,8 @@
- data 0x35
- LABEL_255:
- mov stor[0], stor[24]
--mov 0x6, stor[25]
--gosub inl[:LABEL_65]
-+push 6
-+gosub inl[:updateParty]
- mov 0x3, stor[24]
- gosub inl[:LABEL_53]
- call 101, stor[24], inl[:LABEL_256], inl[:LABEL_257], inl[:LABEL_258]

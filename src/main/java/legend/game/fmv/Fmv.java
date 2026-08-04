@@ -385,6 +385,7 @@ public final class Fmv {
     oldRenderer = RENDERER.setRenderCallback(() -> {
       if(shouldStop) {
         stop();
+        return;
       }
 
       RENDERER.window().setFpsLimit(15 * Config.getGameSpeedMultiplier());
