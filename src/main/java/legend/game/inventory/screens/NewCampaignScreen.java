@@ -148,6 +148,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       SAVES.loadGameState(newGameEvent.gameState);
 
       this.state.campaign.loadConfigInto(CONFIG);
+      CONFIG.setConfig(CoreMod.KNOWN_MODS_CONFIG.get(), MODS.getAllModIds().toArray(String[]::new));
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, this.state.campaign.path.resolve("campaign_config.dcnf"));
 
