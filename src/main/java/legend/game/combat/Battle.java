@@ -4343,15 +4343,8 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800cd208
-      final Addition addition = REGISTRIES.additions.getEntry(charData.selectedAddition_19).get();
       final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(charData.selectedAddition_19);
       additionInfo.xp++;
-
-      //LAB_800cd240
-      //LAB_800cd288
-      while(additionInfo.level < addition.getMaxLevel(charData, additionInfo) && additionInfo.xp >= addition.getXpToNextLevel(charData, additionInfo)) {
-        additionInfo.level++;
-      }
     }
 
     //LAB_800cd3ac
