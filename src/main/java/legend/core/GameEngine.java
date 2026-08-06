@@ -22,6 +22,7 @@ import legend.core.spu.Spu;
 import legend.game.Main;
 import legend.game.Scus94491BpeSegment;
 import legend.game.fmv.Fmv;
+import legend.game.fmv.VideoPlayer;
 import legend.game.i18n.I18n;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
@@ -157,8 +158,7 @@ public final class GameEngine {
   private static WindowEvents.Click onMouseRelease;
   private static Runnable onShutdown;
 
-  private static Texture title1Texture;
-  private static Texture title2Texture;
+  private static boolean cinematicFinished;
   private static Texture eyeTexture;
   private static Obj texturedObj;
 
@@ -260,9 +260,11 @@ public final class GameEngine {
     RENDERER.events().onClose(Async::shutdown);
     GPU.init();
     DISCORD.init();
+    openalThread.start();
+
+    time = System.nanoTime();
 
     try {
-      time = System.nanoTime();
       RENDERER.run();
     } finally {
       DISCORD.destroy();
@@ -373,16 +375,6 @@ public final class GameEngine {
   private static void transitionToGame() {
     glDisable(GL_BLEND);
 
-    if(title1Texture != null) {
-      title1Texture.delete();
-      title1Texture = null;
-    }
-
-    if(title2Texture != null) {
-      title2Texture.delete();
-      title2Texture = null;
-    }
-
     if(eyeTexture != null) {
       eyeTexture.delete();
       eyeTexture = null;
@@ -418,8 +410,6 @@ public final class GameEngine {
       onShutdown = null;
     }
 
-    openalThread.start();
-
     synchronized(INIT_LOCK) {
       Scus94491BpeSegment.main();
 
@@ -443,8 +433,6 @@ public final class GameEngine {
 
     UI_TEXTURE = Texture.png(Path.of("gfx", "ui", "ui.png"));
 
-    title1Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title1.png"));
-    title2Texture = Texture.filteredPng(Path.of("gfx", "textures", "intro", "title2.png"));
     eyeTexture = Texture.png(Path.of("gfx", "textures", "loading.png"));
 
     texturedObj = new QuadBuilder("Textured Obj")
@@ -453,8 +441,17 @@ public final class GameEngine {
       .uvSize(1.0f, 1.0f)
       .build();
 
-    RENDERER.setRenderCallback(GameEngine::renderIntro);
     RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
+
+    try {
+      VideoPlayer.play(Path.of("gfx/intro.mp4"), GameEngine::renderIntro, () -> {
+        cinematicFinished = true;
+        RENDERER.setRenderCallback(GameEngine::renderIntro);
+      });
+    } catch(final IOException e) {
+      LOGGER.warn("Failed to play intro", e);
+      RENDERER.setRenderCallback(GameEngine::renderIntro);
+    }
 
     onKeyPressed = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
       if(mods.isEmpty()) {
@@ -478,15 +475,11 @@ public final class GameEngine {
     }
 
     time = 0;
-    fade1 = 0.0f;
-    fade2 = 0.0f;
     loadingFade = 1.0f;
     eyeFade = 1.0f;
   }
 
   private static long time;
-  private static float fade1;
-  private static float fade2;
   private static float loadingFade;
   private static float eyeFade;
   private static float eyeColour;
@@ -495,60 +488,30 @@ public final class GameEngine {
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 
     if(deltaMs < 5000) {
-      fade1 += 0.005f;
-      if(fade1 > 1.0f) {
-        fade1 = 1.0f;
+      eyeFade += 0.005f;
+      if(eyeFade > 1.0f) {
+        eyeFade = 1.0f;
       }
-      fade2 = fade1;
-      eyeFade = fade1;
-    } else if(deltaMs < 13000) {
-      fade1 -= 0.0015f;
-      if(fade1 < 0) {
-        fade1 = 0;
-      }
-    } else if(deltaMs < 17000) {
-      fade1 -= 0.01f;
-      if(fade1 < 0) {
-        fade1 = 0;
-      }
+    }
 
-      fade2 -= 0.02f;
-      if(fade2 < 0) {
-        fade2 = 0;
-      }
-
-      loadingFade += 0.02f;
-      if(loadingFade > 1.0f) {
-        loadingFade = 1.0f;
-      }
-    } else if(!unpackerLoading) {
-      synchronized(UPDATER_LOCK) {
-        if(UPDATE_CHECK_FINISHED) {
-          transitionToGame();
-          return;
+    if(cinematicFinished) {
+      if(unpackerLoading) {
+        loadingFade += 0.02f;
+        if(loadingFade > 1.0f) {
+          loadingFade = 1.0f;
+        }
+      } else {
+        synchronized(UPDATER_LOCK) {
+          if(UPDATE_CHECK_FINISHED) {
+            transitionToGame();
+            return;
+          }
         }
       }
     }
 
     final int oldTextZ = textZ_800bdf00;
     textZ_800bdf00 = 5;
-
-    final MV transforms = new MV();
-    transforms.scaling(320.0f, 240.0f, 1.0f);
-    transforms.transfer.z = 30.0f;
-    RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
-      .monochrome(fade1 * fade1 * fade1)
-      .texture(title1Texture)
-    ;
-
-    transforms.scaling(320.0f, 240.0f, 1.0f);
-    transforms.transfer.z = 29.0f;
-    RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
-      .translucency(Translucency.HALF_B_PLUS_HALF_F)
-      .monochrome(fade2 * fade2 * fade2)
-      .texture(title2Texture)
-      .useTextureAlpha()
-    ;
 
     if(unpackerLoading) {
       // Offset sine wave delta to quickly shift between colours and then wait for a moment before repeating
@@ -557,6 +520,7 @@ public final class GameEngine {
       final Vector3f colour = new Vector3f();
       MathHelper.hsvToRgb(eyeColour, 1.0f, 1.0f, colour);
 
+      final MV transforms = new MV();
       transforms.scaling(16.0f, 16.0f, 1.0f);
       transforms.transfer.set(4.0f, 220.0f, 29.0f);
       RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)

@@ -7,7 +7,6 @@ import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -142,7 +141,7 @@ public class ScriptState<T extends ScriptedObject> {
   public final RegistryId[] registryIds = new RegistryId[REGISTRY_ID_COUNT];
   private final Deque<Integer> stack = new LinkedList<>();
 
-  private final ScriptTickEvent tickEvent;
+  private final ScriptLifecycleEvent tickEvent;
 
   private boolean paused;
   private int ticks;
@@ -157,7 +156,7 @@ public class ScriptState<T extends ScriptedObject> {
     this.index = index;
     this.name = name;
     this.innerStruct_00 = innerStruct;
-    this.tickEvent = new ScriptTickEvent(index);
+    this.tickEvent = new ScriptLifecycleEvent(index);
   }
 
   public void setTicker(@Nullable final BiConsumer<ScriptState<T>, T> callback) {
@@ -265,10 +264,19 @@ public class ScriptState<T extends ScriptedObject> {
     return (this.storage_44[7] & flag) != 0;
   }
 
+  private void postLifecycleEvent(final ScriptLifecycleEvent.Lifecycle lifecycle) {
+    this.tickEvent.lifecycle = lifecycle;
+    EVENTS.postEvent(this.tickEvent);
+  }
+
   void tick() {
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.PRE_TICK_CALLBACK);
+
     if(!this.hasAnyFlag(FLAG_TICKER_NOT_SET | FLAG_CHILD_SCRIPT)) {
       this.ticker_04.accept(this, this.innerStruct_00);
     }
+
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.POST_TICK_CALLBACK);
   }
 
   void tempTick() {
@@ -280,9 +288,13 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   void render() {
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.PRE_RENDER_CALLBACK);
+
     if(!this.hasAnyFlag(FLAG_RENDERER_NOT_SET | FLAG_CHILD_SCRIPT)) {
       this.renderer_08.accept(this, this.innerStruct_00);
     }
+
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.POST_RENDER_CALLBACK);
   }
 
   public void loadScriptFile(@Nullable final ScriptFile script) {
@@ -444,6 +456,8 @@ public class ScriptState<T extends ScriptedObject> {
   void executeFrame() {
     this.ticks++;
 
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.PRE_SCRIPT_VM_TICK);
+
     if(!this.hasAnyFlag(FLAG_FILE_NOT_SET | FLAG_CHILD_SCRIPT) && !this.paused) {
       this.context.commandOffset_0c = this.frame().offset;
       this.context.opOffset_08 = this.context.commandOffset_0c;
@@ -479,8 +493,6 @@ public class ScriptState<T extends ScriptedObject> {
           }
         }
 
-        EVENTS.postEvent(this.tickEvent);
-
         if(scriptLog[this.index]) {
           if(scriptFunctionDescriptions.containsKey(this.context.opIndex_10)) {
             LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(this.context.opIndex_10).apply(this.context));
@@ -514,6 +526,8 @@ public class ScriptState<T extends ScriptedObject> {
       //LAB_800165f4
       this.frame().offset = this.context.opOffset_08;
     }
+
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.POST_SCRIPT_VM_TICK);
   }
 
   private Param parseParam() {

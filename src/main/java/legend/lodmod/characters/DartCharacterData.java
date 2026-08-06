@@ -8,19 +8,24 @@ import legend.game.characters.StatCollection;
 import legend.game.types.GameState52c;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.lodmod.LodGoods.DIVINE_DRAGOON_SPIRIT;
 import static legend.lodmod.LodSpells.DIVINE_DG_BALL;
 import static legend.lodmod.LodSpells.DIVINE_DG_CANNON;
 
 public class DartCharacterData extends CharacterData2c {
-  private final List<RegistryId> divineSpells = List.of(DIVINE_DG_BALL.getId(), DIVINE_DG_CANNON.getId());
-  private final CharacterSpellInfo spellInfo = new CharacterSpellInfo(List.of(), UnlockState.UNLOCKED, 0);
+  private final Map<RegistryId, CharacterSpellInfo> divineSpells = new HashMap<>();
 
   public DartCharacterData(final GameState52c gameState, final CharacterTemplate template, final StatCollection stats) {
     super(gameState, template, stats);
+
+    this.addDivineSpell(DIVINE_DG_BALL.getId(), new CharacterSpellInfo(List.of(), UnlockState.UNLOCKED, 0));
+    this.addDivineSpell(DIVINE_DG_CANNON.getId(), new CharacterSpellInfo(List.of(), UnlockState.UNLOCKED, 0));
   }
 
   private boolean hasDivineSpirit() {
@@ -46,7 +51,7 @@ public class DartCharacterData extends CharacterData2c {
   @Override
   public List<RegistryId> getUnlockedSpells() {
     if(this.hasDivineSpirit()) {
-      return this.divineSpells;
+      return new ArrayList<>(this.divineSpells.keySet());
     }
 
     return super.getUnlockedSpells();
@@ -55,7 +60,7 @@ public class DartCharacterData extends CharacterData2c {
   @Override
   public Collection<RegistryId> getAllSpells() {
     if(this.hasDivineSpirit()) {
-      return this.divineSpells;
+      return new ArrayList<>(this.divineSpells.keySet());
     }
 
     return super.getAllSpells();
@@ -64,9 +69,26 @@ public class DartCharacterData extends CharacterData2c {
   @Override
   public CharacterSpellInfo getSpellInfo(final RegistryId id) {
     if(this.hasDivineSpirit()) {
-      return this.spellInfo;
+      final CharacterSpellInfo spellInfo = this.getDivineSpellInfo(id);
+
+      if(spellInfo != null) {
+        return spellInfo;
+      }
     }
 
     return super.getSpellInfo(id);
+  }
+
+  public CharacterSpellInfo addDivineSpell(final RegistryId id, final CharacterSpellInfo info) {
+    this.divineSpells.put(id, info);
+    return info;
+  }
+
+  public void removeDivineSpell(final RegistryId id) {
+    this.divineSpells.remove(id);
+  }
+
+  public CharacterSpellInfo getDivineSpellInfo(final RegistryId id) {
+    return this.divineSpells.get(id);
   }
 }

@@ -366,12 +366,16 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   private void menuStage3NavigateUp() {
-    if(this.secondaryCharSlot >= SECONDARY_CHAR_PITCH) {
+    if(this.getTotalSlotCount() != 0) {
+      if(this.secondaryCharSlot >= SECONDARY_CHAR_PITCH) {
+        playMenuSound(1);
+        this.secondaryCharSlot -= SECONDARY_CHAR_PITCH;
+      } else if(this.allowWrapY) {
+        playMenuSound(1);
+        this.secondaryCharSlot = Math.floorMod(this.secondaryCharSlot - SECONDARY_CHAR_PITCH, this.getTotalSlotCount());
+      }
+    } else {
       playMenuSound(1);
-      this.secondaryCharSlot -= SECONDARY_CHAR_PITCH;
-    } else if(this.allowWrapY) {
-      playMenuSound(1);
-      this.secondaryCharSlot = Math.floorMod(this.secondaryCharSlot - SECONDARY_CHAR_PITCH, this.getTotalSlotCount());
     }
 
     this.adjustScroll();
@@ -395,7 +399,10 @@ public class CharSwapScreen extends MenuScreen {
       this.secondaryCharSlot--;
     } else if(this.allowWrapX) {
       playMenuSound(1);
-      this.secondaryCharSlot = this.getTotalSlotCount() - 1;
+
+      if(this.getTotalSlotCount() != 0) {
+        this.secondaryCharSlot = this.getTotalSlotCount() - 1;
+      }
     }
 
     this.adjustScroll();

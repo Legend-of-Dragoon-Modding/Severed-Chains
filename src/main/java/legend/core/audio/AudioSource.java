@@ -14,11 +14,13 @@ import static org.lwjgl.openal.AL10.alDeleteBuffers;
 import static org.lwjgl.openal.AL10.alDeleteSources;
 import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGenSources;
+import static org.lwjgl.openal.AL10.alGetSourcef;
 import static org.lwjgl.openal.AL10.alGetSourcei;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
+import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
 public abstract class AudioSource {
@@ -29,6 +31,8 @@ public abstract class AudioSource {
   private boolean active;
 
   private IntBuffer tmp;
+
+  private float playTime;
 
   public AudioSource(final int bufferCount) {
     this.buffers = new int[bufferCount];
@@ -44,6 +48,8 @@ public abstract class AudioSource {
 
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
+
+    this.playTime = 0.0f;
   }
 
   protected void destroy() {
@@ -66,6 +72,8 @@ public abstract class AudioSource {
     Arrays.fill(this.buffers, 0);
     this.sourceId = 0;
     this.tmp = null;
+
+    this.playTime = 0.0f;
   }
 
   public void tick() {
@@ -89,7 +97,20 @@ public abstract class AudioSource {
       final int processedBufferCount = this.tmp.get(0);
 
       for(int buffer = 0; buffer < processedBufferCount; buffer++) {
-        this.buffers[++this.bufferIndex] = alSourceUnqueueBuffers(this.sourceId);
+        final int unqueuedBufferId = alSourceUnqueueBuffers(this.sourceId);
+
+/*
+        // Calculate how much time was in that specific buffer and add it to the total
+        final int sizeBytes = alGetBufferi(unqueuedBufferId, AL_SIZE);
+        final int channels = alGetBufferi(unqueuedBufferId, AL_CHANNELS);
+        final int freq = alGetBufferi(unqueuedBufferId, AL_FREQUENCY);
+
+        // Bytes / bytes per sample * channels * samples per second
+        final float bufferDuration = (float)sizeBytes / (2.0f * channels * freq);
+        this.playTime += bufferDuration;
+*/
+
+        this.buffers[++this.bufferIndex] = unqueuedBufferId;
       }
     }
   }
@@ -133,6 +154,7 @@ public abstract class AudioSource {
 
   protected void stop() {
     this.active = false;
+    this.playTime = 0.0f;
 
     if(this.isInitialized()) {
       alSourceStop(this.sourceId);
@@ -145,5 +167,10 @@ public abstract class AudioSource {
 
   public boolean isActive() {
     return this.active;
+  }
+
+  /** NOTE: this method will return the play time of the current buffer, so if you're using more than one buffer it's likely not going to return what you expect */
+  public float getPosition() {
+    return alGetSourcef(this.sourceId, AL_SEC_OFFSET);
   }
 }

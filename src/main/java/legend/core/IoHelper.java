@@ -171,6 +171,19 @@ public final class IoHelper {
     stream.position(stream.position() - 1);
   }
 
+  /** Read a 24-bit int */
+  public static int read3(final ByteBuffer stream) {
+    final int val = stream.getInt() >>> 8;
+    stream.position(stream.position() - 1);
+    return val;
+  }
+
+  public static String readAscii(final ByteBuffer stream, final int length) {
+    final byte[] chars = new byte[length];
+    stream.get(chars);
+    return new String(chars);
+  }
+
   public static void write(final ByteBuffer stream, final long value) {
     write(stream, (int)value);
   }

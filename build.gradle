@@ -34,19 +34,25 @@ final def isSteamDeck = hasProperty("steamdeck") && "true" == steamdeck
 switch(operatingSystem) {
   case OperatingSystem.LINUX:
     project.ext.lwjglNatives = "natives-linux"
+    project.ext.ffmpegOs = "linux"
     break
 
   case OperatingSystem.MAC_OS:
     project.ext.lwjglNatives = "natives-macos"
+    project.ext.ffmpegOs = "macosx"
     break
 
   case OperatingSystem.WINDOWS:
     project.ext.lwjglNatives = "natives-windows"
+    project.ext.ffmpegOs = "windows"
     break
 }
 
 if(isArm) {
   project.ext.lwjglNatives += "-arm64"
+  project.ext.ffmpegArch = "arm64"
+} else {
+  project.ext.ffmpegArch = "x86_64"
 }
 
 println "Building for " + operatingSystem.familyName + " " + architecture
@@ -101,6 +107,10 @@ dependencies {
   implementation 'net.java.dev.jna:jna:5.16.0'
 
   implementation 'com.github.JnCrMx:discord-game-sdk4j:v1.0.0'
+
+  // Video decoding for the intro
+  implementation 'org.bytedeco:javacv:1.5.13'
+  implementation "org.bytedeco:ffmpeg:8.0-1.5.13:${ffmpegOs}-${ffmpegArch}"
 
   testImplementation(platform("org.junit:junit-bom:6.0.0"))
   testImplementation("org.junit.jupiter:junit-jupiter")

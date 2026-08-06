@@ -130,7 +130,7 @@ public class SeveredSavedCharacterV2 implements SavedCharacter {
     public AdditionInfo(final UnlockState unlockState, final int unlockTimestamp, final int level, final int xp) {
       this.unlockState = unlockState;
       this.unlockTimestamp = unlockTimestamp;
-      this.level = level;
+      this.level = Math.max(1, level);
       this.xp = xp;
     }
   }

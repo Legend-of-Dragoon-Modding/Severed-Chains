@@ -163,7 +163,7 @@ jobs:
         artifacts: 'build/*.zip,build/*.tar.gz'
         commit: ${{ github.sha }}
         draft: 'false'
-        generateReleaseNotes: 'true'
+        generateReleaseNotes: 'false'
         name: 'Latest Development Build'
         prerelease: 'false'
         tag: 'devbuild'

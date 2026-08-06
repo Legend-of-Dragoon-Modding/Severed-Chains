@@ -398,9 +398,13 @@ public class BattleHud {
           //LAB_800efb54
           this.renderNumber(charSlot, 0, playerHp.getCurrent(), colour);
           this.renderNumber(charSlot, 1, playerHp.getMax(), 1);
-          this.renderNumber(charSlot, 2, playerMp.getCurrent(), 1);
-          this.renderNumber(charSlot, 3, playerMp.getMax(), 1);
-          this.renderNumber(charSlot, 4, playerSp.getCurrent() / 100, 1);
+
+          if(player.character.hasDragoon()) {
+            this.renderNumber(charSlot, 2, playerMp.getCurrent(), 1);
+            this.renderNumber(charSlot, 3, playerMp.getMax(), 1);
+            this.renderNumber(charSlot, 4, playerSp.getCurrent() / 100, 1);
+          }
+
           EVENTS.postEvent(new StatDisplayEvent(this.battle, charSlot, player));
         }
       }
@@ -643,6 +647,11 @@ public class BattleHud {
 
           //LAB_800f05f4
           for(int i = 0; i < 3; i++) {
+            // Don't render MP slash if no DS
+            if(i == 1 && !player.character.hasDragoon()) {
+              continue;
+            }
+
             //LAB_800f060c
             final BattleHudStatLabelMetrics0c labelMetrics = battleHudStatLabelMetrics_800c6ecc[i];
 
@@ -653,8 +662,12 @@ public class BattleHud {
             final QueuedModelStandard statsModel = RENDERER.queueOrthoModel(this.nameAndPortraitObj, this.uiTransforms, QueuedModelStandard.class)
               .vertices(this.statObjIndices.get(charSlot).getInt(i), 4);
 
-            if(i == 2 && !canTransform) {
-              statsModel.scissor((int)this.uiTransforms.transfer.x, (int)this.uiTransforms.transfer.y, 320, 24);
+            if(i == 2) {
+              if(!player.character.hasDragoon()) {
+                statsModel.scissor((int)this.uiTransforms.transfer.x, (int)this.uiTransforms.transfer.y, 320, 12);
+              } else if(!canTransform) {
+                statsModel.scissor((int)this.uiTransforms.transfer.x, (int)this.uiTransforms.transfer.y, 320, 24);
+              }
             }
 
             if(this.hudFade < 6) {

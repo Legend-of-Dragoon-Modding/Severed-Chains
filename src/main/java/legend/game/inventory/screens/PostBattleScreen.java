@@ -12,6 +12,7 @@ import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.additions.Addition;
+import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.LevelUpActions;
 import legend.game.combat.types.EnemyDrop;
@@ -26,6 +27,7 @@ import legend.lodmod.characters.UnlockAdditionLevelUpAction;
 import legend.lodmod.characters.UnlockAdditionLevelUpActionOptions;
 import legend.lodmod.characters.UnlockSpellLevelUpAction;
 import legend.lodmod.characters.UnlockSpellLevelUpActionOptions;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,6 +156,20 @@ public class PostBattleScreen extends MenuScreen {
           for(int secondaryCharSlot = 0; secondaryCharSlot < secondaryCharIds_800bdbf8.size(); secondaryCharSlot++) {
             final int secondaryCharIndex = secondaryCharIds_800bdbf8.getInt(secondaryCharSlot);
             this.pendingXp_8011e180.put(gameState_800babc8.charData_32c.get(secondaryCharIndex), (int)(MathHelper.safeDiv(totalXpFromCombat_800bc95c, xpDivisor) * secondaryCharXpMultiplier));
+          }
+
+          // Level up additions
+          for(int charIndex = 0; charIndex < gameState_800babc8.charData_32c.size(); charIndex++) {
+            final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
+
+            for(final RegistryId additionId : character.getAllAdditions()) {
+              final CharacterAdditionInfo additionInfo = character.getAdditionInfo(additionId);
+              final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
+
+              while(additionInfo.level < addition.getMaxLevel(character, additionInfo) && additionInfo.xp >= addition.getXpToNextLevel(character, additionInfo)) {
+                additionInfo.level++;
+              }
+            }
           }
 
           this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FIRST_BUTTON_PRESS_3;
