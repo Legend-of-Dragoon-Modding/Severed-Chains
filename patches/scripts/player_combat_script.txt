@@ -6513,7 +6513,7 @@ consume
 ; SUBROUTINE
 HANDLE_REGEN:
 call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:config], id[lod_core:equip_effects_in_dragoon], 0, stor[31]
-jmp_cmp ==, 0x1, stor[31], inl[:HANDLE_REGEN_1] ; 
+jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_1] ; 
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_EXIT] ; is dragoon
 
@@ -6580,7 +6580,7 @@ return
 GIVE_ON_HIT_VITALS:
 jmp_cmp &, 0x40, stor[7], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dead
 call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:config], id[lod_core:equip_effects_in_dragoon], 0, stor[31]
-jmp_cmp ==, 0x1, stor[31], inl[:GIVE_ON_HIT_VITALS_1] ; 
+jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_1] ; 
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dragoon
 
