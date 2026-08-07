@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -763,6 +763,8 @@
+ call 2, 0x20, 0x1
+ mov 0x1a, stor[24]
+ gosub inl[:LABEL_48]
++mov 0x8, stor[24]
++wait stor[24]
+ call 2, 0x21, 0x1
+ mov 0x32, stor[24]
+ wait stor[24]

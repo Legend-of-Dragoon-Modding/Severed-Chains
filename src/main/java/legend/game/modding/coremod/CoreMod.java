@@ -53,6 +53,7 @@ import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry
 import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.PixelateModeConfigEntry;
+import legend.game.modding.coremod.config.QuickTextModeConfigEntry;
 import legend.game.modding.coremod.config.ReduceMotionFlashingConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
 import legend.game.modding.coremod.config.RumbleIntensityConfigEntry;
@@ -164,7 +165,7 @@ public class CoreMod {
   public static final RegistryDelegate<AdditionOverlaySizeConfigEntry> ADDITION_OVERLAY_SIZE_CONFIG = CONFIG_REGISTRAR.register("addition_overlay_size", AdditionOverlaySizeConfigEntry::new);
   public static final RegistryDelegate<AdditionTimingWindowConfigEntry> ADDITION_TIMING_WINDOW_CONFIG = CONFIG_REGISTRAR.register("addition_timing_window", AdditionTimingWindowConfigEntry::new);
   public static final RegistryDelegate<TransformationModeConfigEntry> TRANSFORMATION_MODE_CONFIG = CONFIG_REGISTRAR.register("transformation_mode", TransformationModeConfigEntry::new);
-  public static final RegistryDelegate<BoolConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<QuickTextModeConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", QuickTextModeConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<AutoTextDelayConfigEntry> AUTO_TEXT_DELAY_CONFIG = CONFIG_REGISTRAR.register("auto_text_delay", AutoTextDelayConfigEntry::new);
   public static final RegistryDelegate<SaveAnywhereConfig> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", SaveAnywhereConfig::new);
