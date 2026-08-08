@@ -1972,12 +1972,34 @@ public class BattleHud {
     return false;
   }
 
-  public boolean initFloatingNumbers(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final float xOffset, final float yOffset, final int a6, final float r, final float g, final float b) {
+  public void addFloatingNumberForBent(final int bentIndex, final int damage, final int xOffset, final int yOffset, final float r, final float g, final float b) {
+    final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
+
+    final float x;
+    final float y;
+    final float z;
+    if(bent instanceof final MonsterBattleEntity monster) {
+      x = -monster.targetArrowPos_78.z * 100.0f;
+      y = -monster.targetArrowPos_78.y * 100.0f;
+      z = -monster.targetArrowPos_78.x * 100.0f;
+    } else {
+      x = 0;
+      y = -640;
+      z = 0;
+    }
+
+    final Vector2f screenCoords = new Vector2f();
+    Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
+
+    this.addFloatingNumberForBent(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), xOffset, yOffset, 60 / vsyncMode_8007a3b8 / 4, 0, r, g, b);
+  }
+
+  public boolean addFloatingNumberForBent(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int xOffset, final int yOffset, final int a6, final int a7, final float r, final float g, final float b) {
     for(int i = 0; i < this.floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = this.floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, 0);
+        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
         num.bentIndex_04 = bentIndex;
         num.xOffset = xOffset;
         num.yOffset = yOffset;
