@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.lang.I18nText;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
@@ -81,7 +82,7 @@ public class EquipmentScreen extends MenuScreen {
     this.characterCard = this.addControl(new CharacterCard());
     this.characterCard.setPos(8, 20);
 
-    this.addHotkey(I18n.translate("lod_core.ui.equipment.unequip"), INPUT_ACTION_MENU_UNEQUIP, this::menuUnequip);
+    this.addHotkey(new I18nText("lod_core.ui.equipment.unequip"), INPUT_ACTION_MENU_UNEQUIP, this::menuUnequip);
   }
 
   @Override

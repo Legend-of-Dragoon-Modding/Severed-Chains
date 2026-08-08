@@ -7,7 +7,7 @@ import legend.game.submap.IndicatorMode;
 
 public class IndicatorModeConfigEntry extends EnumConfigEntry<IndicatorMode> {
   public IndicatorModeConfigEntry() {
-    super(IndicatorMode.class, IndicatorMode.ON, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(IndicatorMode.class, IndicatorMode.ON, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 
   @Override

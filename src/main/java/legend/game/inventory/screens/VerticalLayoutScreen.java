@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanList;
 import legend.core.MathHelper;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Button;
@@ -67,7 +68,7 @@ public class VerticalLayoutScreen extends MenuScreen {
     return Math.round(320.0f * this.getSizeScale());
   }
 
-  public <T extends Control> Label addRow(final String name, @Nullable final T control) {
+  public <T extends Control> Label addRow(final TextComponent name, @Nullable final T control) {
     final Label label = this.addControl(new Label(name));
     label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     label.setSize(this.getWidth() - this.getPadding() * 2, 11);

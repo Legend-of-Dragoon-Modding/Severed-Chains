@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Panel;
@@ -12,7 +13,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 public class TooltipScreen extends MenuScreen {
   private static final int PADDING = 3;
 
-  public TooltipScreen(final String text, final int x, final int y) {
+  public TooltipScreen(final TextComponent text, final int x, final int y) {
     final Panel panel = this.addControl(Panel.dark());
     panel.onHoverOut(() -> this.deferAction(() -> this.getStack().popScreen()));
 

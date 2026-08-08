@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.core.MathHelper;
+import legend.core.lang.I18nText;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
@@ -498,7 +499,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       case 1 -> // Sell
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.what_do_you_want_to_sell"), I18n.translate("lod_core.ui.shop.equipment"), I18n.translate("lod_core.ui.shop.items"), MessageBoxType.CONFIRMATION, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.what_do_you_want_to_sell"), new I18nText("lod_core.ui.shop.equipment"), new I18nText("lod_core.ui.shop.items"), MessageBoxType.CONFIRMATION, result -> {
           switch(result) {
             case YES -> {
               this.invIndex_8011e0e0 = 0;

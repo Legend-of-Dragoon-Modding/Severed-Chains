@@ -45,6 +45,7 @@ import legend.game.modding.coremod.config.FullscreenConfigEntry;
 import legend.game.modding.coremod.config.IgnoreSteamInputModeConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
+import legend.game.modding.coremod.config.LanguageConfigEntry;
 import legend.game.modding.coremod.config.LegacyWidescreenModeConfig;
 import legend.game.modding.coremod.config.MashModeConfigEntry;
 import legend.game.modding.coremod.config.MasterVolumeConfigEntry;
@@ -129,6 +130,8 @@ public class CoreMod {
   public static final RegistryDelegate<CreateCrashSaveConfigEntry> CREATE_CRASH_SAVE_CONFIG = CONFIG_REGISTRAR.register("create_crash_save", CreateCrashSaveConfigEntry::new);
   public static final RegistryDelegate<ShowAdvancedOptionsConfigEntry> SHOW_ADVANCED_OPTIONS_CONFIG = CONFIG_REGISTRAR.register("show_advanced_options", ShowAdvancedOptionsConfigEntry::new);
 
+  public static final RegistryDelegate<LanguageConfigEntry> LANGUAGE_CONFIG = CONFIG_REGISTRAR.register("language", LanguageConfigEntry::new);
+
   // Shader config
   public static final RegistryDelegate<BoolConfigEntry> SHADER_ENABLE_CRT_CONFIG = CONFIG_REGISTRAR.register("shader_enable_crt", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL, ConfigCategory.POSTPROCESSING));
   public static final RegistryDelegate<FloatConfigEntry> SHADER_SCANLINES_OPACITY_CONFIG = CONFIG_REGISTRAR.register("shader_scanlines_opacity", () -> new FloatConfigEntry(0.4f, 0.05f, 0.1f, 0.0f, 1.0f, ConfigStorageLocation.GLOBAL, ConfigCategory.POSTPROCESSING));
@@ -167,11 +170,11 @@ public class CoreMod {
   public static final RegistryDelegate<AdditionTimingWindowConfigEntry> ADDITION_TIMING_WINDOW_CONFIG = CONFIG_REGISTRAR.register("addition_timing_window", AdditionTimingWindowConfigEntry::new);
   public static final RegistryDelegate<TransformationModeConfigEntry> TRANSFORMATION_MODE_CONFIG = CONFIG_REGISTRAR.register("transformation_mode", TransformationModeConfigEntry::new);
   public static final RegistryDelegate<QuickTextModeConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", QuickTextModeConfigEntry::new);
-  public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE));
   public static final RegistryDelegate<AutoTextDelayConfigEntry> AUTO_TEXT_DELAY_CONFIG = CONFIG_REGISTRAR.register("auto_text_delay", AutoTextDelayConfigEntry::new);
   public static final RegistryDelegate<SaveAnywhereConfig> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", SaveAnywhereConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_STATUS_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("disable_status_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
-  public static final RegistryDelegate<BoolConfigEntry> ENEMY_HP_BARS_CONFIG = CONFIG_REGISTRAR.register("enemy_hp_bars", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
+  public static final RegistryDelegate<BoolConfigEntry> ENEMY_HP_BARS_CONFIG = CONFIG_REGISTRAR.register("enemy_hp_bars", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE));
   public static final RegistryDelegate<MashModeConfigEntry> MASH_MODE_CONFIG = CONFIG_REGISTRAR.register("mash_mode", MashModeConfigEntry::new);
   public static final RegistryDelegate<SecondaryCharacterXpMultiplierConfigEntry> SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG = CONFIG_REGISTRAR.register("secondary_character_xp_multiplier", SecondaryCharacterXpMultiplierConfigEntry::new);
   public static final RegistryDelegate<BattleTransitionModeConfigEntry> BATTLE_TRANSITION_MODE_CONFIG = CONFIG_REGISTRAR.register("battle_transition_mode", BattleTransitionModeConfigEntry::new);

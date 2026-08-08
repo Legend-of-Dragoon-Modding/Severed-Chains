@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_800b;
@@ -72,11 +74,11 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignName.setText(SAVES.generateCampaignName());
     this.campaignName.setMaxLength(15);
     this.campaignName.setZ(35);
-    this.addRow("Campaign name", this.campaignName);
+    this.addRow(new I18nText("lod_core.ui.new_campaign.campaign_name"), this.campaignName);
 
     this.campaignType = new Dropdown<>();
     this.campaignType.setZ(35);
-    this.addRow("Campaign", this.campaignType);
+    this.addRow(new I18nText("lod_core.ui.new_campaign.campaign"), this.campaignType);
 
     final Map<String, RegistryId> campaignTypeIds = new HashMap<>();
     final List<String> campaignTypeNames = new ArrayList<>();
@@ -93,8 +95,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.get(index))));
     Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.getFirst()));
 
-    final Button options = new Button("Options");
-    this.addRow("", options);
+    final Button options = new Button(new I18nText("lod_core.ui.new_campaign.options"));
+    this.addRow(RawText.BLANK, options);
     options.onPressed(() ->
       this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
         startFadeEffect(2, 10);
@@ -105,8 +107,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       }))
     );
 
-    final Button mods = new Button("Mods");
-    this.addRow("", mods);
+    final Button mods = new Button(new I18nText("lod_core.ui.new_campaign.mods"));
+    this.addRow(RawText.BLANK, mods);
     mods.onPressed(() ->
       this.deferAction(() ->
         this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
@@ -118,17 +120,17 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       )
     );
 
-    final Button startGame = new Button("Start Game");
-    this.addRow("", startGame);
+    final Button startGame = new Button(new I18nText("lod_core.ui.new_campaign.start_game"));
+    this.addRow(RawText.BLANK, startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen("Campaign name already\nin use", MessageBoxType.ALERT, result1 -> { })));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> { })));
       } else {
         this.unload = true;
       }
     });
 
-    final Label saveSlots = this.addControl(new Label("Severed Chains has unlimited save slots and we recommend\nyou save in a new slot each time."));
+    final Label saveSlots = this.addControl(new Label(new I18nText("lod_core.ui.new_campaign.unlimited_saves")));
     saveSlots.setWidth(this.getWidth());
     saveSlots.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
     saveSlots.setY(200);

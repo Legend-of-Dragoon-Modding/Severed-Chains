@@ -1,8 +1,9 @@
 package legend.game.characters;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.game.additions.AdditionHits80;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.i18n.I18n;
 import legend.game.inventory.CanEquip;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentTypes;
@@ -34,6 +35,7 @@ public class CharacterData2c {
 
   public final GameState52c gameState;
   public final CharacterTemplate template;
+  private final TextComponent name;
 
   public int xp_00;
   /**
@@ -81,10 +83,11 @@ public class CharacterData2c {
     this.gameState = gameState;
     this.template = template;
     this.stats = stats;
+    this.name = new I18nText(template);
   }
 
-  public String getName() {
-    return I18n.translate(this.template);
+  public TextComponent getName() {
+    return this.name;
   }
 
   public void set(final CharacterData2c other) {

@@ -17,7 +17,7 @@ import static legend.core.GameEngine.FONTS;
 
 public class RetailFontConfigEntry extends StringConfigEntry {
   public RetailFontConfigEntry() {
-    super("smooth.json", 2, ConfigStorageLocation.GLOBAL, ConfigCategory.GRAPHICS);
+    super("smooth.json", 2, ConfigStorageLocation.GLOBAL, ConfigCategory.USER_INTERFACE);
 
     this.setEditControl((current, gameState) -> {
       final Path fontsDir = Path.of("gfx", "fonts");

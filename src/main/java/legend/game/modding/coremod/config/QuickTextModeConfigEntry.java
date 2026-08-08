@@ -6,7 +6,7 @@ import legend.game.saves.EnumConfigEntry;
 
 public class QuickTextModeConfigEntry extends EnumConfigEntry<QuickTextMode> {
   public QuickTextModeConfigEntry() {
-    super(QuickTextMode.class, QuickTextMode.HOLD, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(QuickTextMode.class, QuickTextMode.HOLD, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 
   @Override

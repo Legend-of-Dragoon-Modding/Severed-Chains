@@ -2,6 +2,7 @@ package legend.game.inventory.screens.controls;
 
 import legend.core.GameEngine;
 import legend.core.font.Font;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -21,14 +22,14 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 
 public class Button extends Control {
   private final Highlight hover;
-  private String text;
+  private TextComponent text;
   private float textHeight;
   private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE);
 
   private boolean enableSounds = true;
 
-  public Button(final String text) {
+  public Button(final TextComponent text) {
     this.hover = this.addControl(new Highlight());
     this.hover.setZ(this.getZ());
     this.hover.hide();
@@ -56,11 +57,11 @@ public class Button extends Control {
     this.hover.setZ(z);
   }
 
-  public String getText() {
+  public TextComponent getText() {
     return this.text;
   }
 
-  public void setText(final String text) {
+  public void setText(final TextComponent text) {
     this.text = text;
     this.updateTextSize();
   }
@@ -77,7 +78,7 @@ public class Button extends Control {
   }
 
   private void updateTextSize() {
-    this.textHeight = this.font.textHeight(this.text) * this.getScale();
+    this.textHeight = this.font.textHeight(this.text.get()) * this.getScale();
   }
 
   public void enableSounds() {
@@ -147,7 +148,7 @@ public class Button extends Control {
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00;
     textZ_800bdf00 = this.getZ() - 1;
-    renderText(this.text, x + this.getWidth() / 2, y + (this.getHeight() - this.textHeight) / 2, this.isDisabled() ? UI_TEXT_DISABLED_CENTERED : this.fontOptions);
+    renderText(this.text.get(), x + this.getWidth() / 2, y + (this.getHeight() - this.textHeight) / 2, this.isDisabled() ? UI_TEXT_DISABLED_CENTERED : this.fontOptions);
     textZ_800bdf00 = oldZ;
   }
 

@@ -145,7 +145,7 @@ public class CharacterEditorController {
       this.additionList.getItems().add(id);
     }
 
-    this.name.setText(this.charData.getName() + " (" + this.charData.template.getRegistryId() + ')');
+    this.name.setText(this.charData.getName().get() + " (" + this.charData.template.getRegistryId() + ')');
 
     this.inParty.setSelected((this.charData.partyFlags_04 & IN_PARTY) != 0);
     this.canBeInParty.setSelected((this.charData.partyFlags_04 & CAN_BE_IN_PARTY) != 0);

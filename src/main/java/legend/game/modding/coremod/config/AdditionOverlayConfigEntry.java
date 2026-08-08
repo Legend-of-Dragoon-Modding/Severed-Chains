@@ -7,7 +7,7 @@ import legend.game.saves.EnumConfigEntry;
 
 public class AdditionOverlayConfigEntry extends EnumConfigEntry<AdditionOverlayMode> {
   public AdditionOverlayConfigEntry() {
-    super(AdditionOverlayMode.class, AdditionOverlayMode.FULL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(AdditionOverlayMode.class, AdditionOverlayMode.FULL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 
   @Override

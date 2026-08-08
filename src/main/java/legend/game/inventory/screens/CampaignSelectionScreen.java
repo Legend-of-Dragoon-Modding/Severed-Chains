@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -54,12 +56,12 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     this.addControl(new Background());
 
-    final Label title = this.addControl(new Label(I18n.translate("lod_core.ui.campaign_selection.title")));
+    final Label title = this.addControl(new Label(new I18nText("lod_core.ui.campaign_selection.title")));
     title.getFontOptions().set(UI_TEXT_CENTERED);
     title.setPos(0, 10);
     title.setWidth(this.getWidth());
 
-    this.campaignList = this.addControl(new BigList<>(c -> c.name));
+    this.campaignList = this.addControl(new BigList<>(c -> new RawText(c.name)));
     this.campaignList.setPos(16, 16);
     this.campaignList.setSize(360, 144);
     this.campaignList.onHighlight(campaign -> {
@@ -80,9 +82,9 @@ public class CampaignSelectionScreen extends MenuScreen {
       this.campaignList.addEntry(campaign);
     }
 
-    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.mods"), INPUT_ACTION_MENU_MODS, this::menuMods);
-    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
-    this.addHotkey(I18n.translate("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+    this.addHotkey(new I18nText("lod_core.ui.campaign_selection.mods"), INPUT_ACTION_MENU_MODS, this::menuMods);
+    this.addHotkey(new I18nText("lod_core.ui.campaign_selection.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(new I18nText("lod_core.ui.campaign_selection.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
   public SavedGame getSelectedSave() {

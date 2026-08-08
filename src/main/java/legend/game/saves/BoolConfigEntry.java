@@ -19,11 +19,11 @@ public class BoolConfigEntry extends ConfigEntry<Boolean> {
     );
 
     if(editable) {
-      this.setEditControl((current, gameState) -> {
+      this.setEditControl((current, config) -> {
         final Checkbox checkbox = new Checkbox();
         checkbox.setHorizontalAlign(HorizontalAlign.RIGHT);
         checkbox.setChecked(current);
-        checkbox.onToggled(val -> gameState.setConfig(this, val));
+        checkbox.onToggled(val -> config.setConfig(this, val));
         return checkbox;
       });
     }

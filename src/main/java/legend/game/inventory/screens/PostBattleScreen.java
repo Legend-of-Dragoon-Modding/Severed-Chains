@@ -838,7 +838,7 @@ public class PostBattleScreen extends MenuScreen {
   private void drawChar(final int x, final int y, final CharacterData2c character) {
     this.drawResultsBackground(x + 1, y + 5, 24, 32, 2);
     this.drawCharPortrait(x - 1, y + 4, character);
-    renderText(character.getName(), x + 22, y + 4, this.nameFont);
+    renderText(character.getName().get(), x + 22, y + 4, this.nameFont);
     this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
     this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 

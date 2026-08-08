@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputAxis;
 import legend.core.platform.input.InputAxisDirection;
@@ -10,7 +12,6 @@ import legend.core.platform.input.InputCodepoints;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.SItem;
-import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Checkbox;
 import legend.game.inventory.screens.controls.Label;
@@ -39,10 +40,10 @@ public abstract class MenuScreen extends ControlHost {
   private final List<Hotkey> hotkeys = new ArrayList<>();
   private int hotkeyX = 8;
 
-  public void addHotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler) {
-    final Button button = this.addControl(new Button(I18n.translate("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
+  public void addHotkey(final TextComponent label, final RegistryDelegate<InputAction> action, final Runnable handler) {
+    final Button button = this.addControl(new Button(new I18nText("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
     button.setScale(0.66f);
-    button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
+    button.setSize((int)(button.getFont().textWidth(button.getText().get()) * button.getFontOptions().getSize() + 10), 10);
     button.setPos(this.hotkeyX, 227);
     button.onPressed(handler::run);
     button.onHoverIn(() -> playMenuSound(1));
@@ -51,7 +52,7 @@ public abstract class MenuScreen extends ControlHost {
     this.hotkeys.add(new Hotkey(label, action, handler, button));
   }
 
-  public void addToggleHotkey(final String label, final RegistryDelegate<InputAction> action, final boolean checked, final BooleanConsumer handler) {
+  public void addToggleHotkey(final TextComponent label, final RegistryDelegate<InputAction> action, final boolean checked, final BooleanConsumer handler) {
     final Checkbox checkbox = this.addControl(new Checkbox());
     checkbox.setSize(10, 10);
     checkbox.setPos(this.hotkeyX, 226);
@@ -59,9 +60,9 @@ public abstract class MenuScreen extends ControlHost {
     checkbox.setChecked(checked);
     this.hotkeyX += checkbox.getWidth() + 3;
 
-    final Label checkboxLabel = this.addControl(new Label(I18n.translate("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
+    final Label checkboxLabel = this.addControl(new Label(new I18nText("lod_core.ui.hotkey", label, InputCodepoints.getActionName(action.get()))));
     checkboxLabel.setScale(0.66f);
-    checkboxLabel.setSize((int)(checkboxLabel.getFont().textWidth(checkboxLabel.getText()) * checkboxLabel.getFontOptions().getSize() + 10), 10);
+    checkboxLabel.setSize((int)(checkboxLabel.getFont().textWidth(checkboxLabel.getText().get()) * checkboxLabel.getFontOptions().getSize() + 10), 10);
     checkboxLabel.setPos(this.hotkeyX, 228);
     this.hotkeyX += checkboxLabel.getWidth() - 5;
 
@@ -81,12 +82,12 @@ public abstract class MenuScreen extends ControlHost {
         this.hotkeyX += control.getWidth();
 
         if(control instanceof final Button button) {
-          button.setText(I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
-          button.setSize((int)(button.getFont().textWidth(button.getText()) * button.getFontOptions().getSize() + 10), 10);
+          button.setText(new I18nText("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
+          button.setSize((int)(button.getFont().textWidth(button.getText().get()) * button.getFontOptions().getSize() + 10), 10);
         } else if(control instanceof Checkbox) {
           this.hotkeyX += 3;
         } else if(control instanceof final Label label) {
-          label.setText(I18n.translate("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
+          label.setText(new I18nText("lod_core.ui.hotkey", hotkey.label, InputCodepoints.getActionName(hotkey.action.get())));
           this.hotkeyX -= 5;
         }
       }
@@ -498,12 +499,12 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   private static class Hotkey {
-    private final String label;
+    private final TextComponent label;
     private final RegistryDelegate<InputAction> action;
     private final Runnable handler;
     private final Control[] controls;
 
-    private Hotkey(final String label, final RegistryDelegate<InputAction> action, final Runnable handler, final Control... controls) {
+    private Hotkey(final TextComponent label, final RegistryDelegate<InputAction> action, final Runnable handler, final Control... controls) {
       this.label = label;
       this.action = action;
       this.handler = handler;

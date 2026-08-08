@@ -60,6 +60,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -188,7 +189,7 @@ public final class GameEngine {
       }
     });
 
-    loadUnpackerLang();
+    loadLangOverrides(Main.ORIGINAL_LOCALE);
 
     final Thread thread = new Thread(() -> {
       try {
@@ -282,12 +283,24 @@ public final class GameEngine {
     return UI_TEXTURE;
   }
 
-  private static void loadUnpackerLang() {
+  private static void loadLangOverrides(final Locale locale) {
     try {
-      LANG_ACCESS.loadLang(LANG_ACCESS.getLangPath(Path.of("lang", "unpacker"), Main.ORIGINAL_LOCALE));
+      LANG_ACCESS.loadLangOverrides(Path.of("lang"), locale);
     } catch(final IOException e) {
-      LOGGER.warn("Failed to load unpacker lang", e);
+      LOGGER.warn("Failed to load lang overrides", e);
     }
+  }
+
+  public static void loadLangOverrides(final Path path) {
+    try {
+      LANG_ACCESS.loadLangOverrides(path, CONFIG.getConfig(CoreMod.LANGUAGE_CONFIG.get()));
+    } catch(final IOException e) {
+      LOGGER.warn("Failed to load lang overrides", e);
+    }
+  }
+
+  public static void addLangOverrides(final Map<String, String> lang) {
+    LANG_ACCESS.addLangOverrides(lang);
   }
 
   /** Returns missing mod IDs, if any */
@@ -295,17 +308,12 @@ public final class GameEngine {
     LOGGER.info("Booting mods...");
 
     MOD_ACCESS.reset();
-    LANG_ACCESS.reset();
     EVENT_ACCESS.reset();
     REGISTRY_ACCESS.reset();
-    loadUnpackerLang();
 
     LOGGER.info("Loading mods %s...", modIds);
 
     final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
-
-    // Initialize language
-    LANG_ACCESS.initialize(MODS, Main.ORIGINAL_LOCALE);
 
     // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize(MODS);
@@ -330,7 +338,16 @@ public final class GameEngine {
     // Load default bindings for input actions
     InputBindings.initBindings();
 
+    loadLang();
+
     return missingMods;
+  }
+
+  public static void loadLang() {
+    final Locale locale = CONFIG.getConfig(CoreMod.LANGUAGE_CONFIG.get());
+    LANG_ACCESS.reset();
+    LANG_ACCESS.initialize(MODS, locale);
+    loadLangOverrides(locale);
   }
 
   public static void bootRegistries() {

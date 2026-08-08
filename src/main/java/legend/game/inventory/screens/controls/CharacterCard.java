@@ -1,6 +1,7 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.GameEngine;
+import legend.core.lang.RawText;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.Equipment;
@@ -41,7 +42,7 @@ public class CharacterCard extends Control {
     this.background = this.addControl(Glyph.uiElement(153, 153));
     this.background.getRenderable().x_40 += 8;
 
-    this.name = this.addControl(new Label(""));
+    this.name = this.addControl(new Label(RawText.BLANK));
     this.name.setPos(57, 3);
 
     this.portrait = this.addControl(new AtlasIcon());

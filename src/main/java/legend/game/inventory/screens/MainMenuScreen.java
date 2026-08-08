@@ -1,6 +1,10 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
+import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
@@ -91,25 +95,25 @@ public class MainMenuScreen extends MenuScreen {
 
     this.addControl(new DragoonSpirits(gameState_800babc8.goods_19c)).setPos(40, 197); // Dragoon spirits
 
-    this.addButton("Use Item", this::showUseItemScreen);
-    this.addButton("Equipment", this::showEquipmentScreen);
-    this.addButton("Inventory", this::showItemListScreen);
-    this.addButton("Goods", this::showGoodsScreen);
-    this.addButton("Diiig", this::showDabasScreen);
-    this.addButton("", () -> { }).hide();
-    this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen("Quit to main menu?", MessageBoxType.CONFIRMATION, result -> {
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.use_item"), this::showUseItemScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.equipment"), this::showEquipmentScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.inventory"), this::showItemListScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.goods"), this::showGoodsScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.mogul_dabas"), this::showDabasScreen);
+    this.addButton(RawText.BLANK, () -> { }).hide();
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.quit"), () -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.ingame_menu.quit_confirm"), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
         this.menuEscape();
         whichMenu_800bdc38 = WhichMenu.QUIT;
       }
     })));
-    this.addButton("Status", this::showStatusScreen);
-    this.addButton("Addition", this::showAdditionsScreen);
-    this.addButton("Replace", this::showCharSwapScreen);
-    this.addButton("Options", this::showOptionsScreen);
-    this.addButton("", () -> { }).hide();
-    this.loadButton = this.addButton("Load", this::showLoadScreen);
-    this.saveButton = this.addButton("Save", this::showSaveScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.status"), this::showStatusScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.additions"), this::showAdditionsScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.replace"), this::showCharSwapScreen);
+    this.addButton(new I18nText("lod_core.ui.ingame_menu.options"), this::showOptionsScreen);
+    this.addButton(RawText.BLANK, () -> { }).hide();
+    this.loadButton = this.addButton(new I18nText("lod_core.ui.ingame_menu.load"), this::showLoadScreen);
+    this.saveButton = this.addButton(new I18nText("lod_core.ui.ingame_menu.save"), this::showSaveScreen);
 
     this.loadButton.setDisabled(gameState_800babc8.campaign.loadAllSaves().isEmpty());
     this.saveButton.setDisabled(!currentEngineState_8004dd04.canSave());
@@ -132,7 +136,7 @@ public class MainMenuScreen extends MenuScreen {
     this.setFocus(this.menuButtons.getFirst());
   }
 
-  private Button addButton(final String text, final Runnable onClick) {
+  private Button addButton(final TextComponent text, final Runnable onClick) {
     final int index = this.menuButtons.size();
 
     final Button button = this.addControl(new Button(text));

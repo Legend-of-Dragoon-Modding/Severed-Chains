@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.RawText;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
@@ -55,10 +57,10 @@ public class LoadGameScreen extends MenuScreen {
 
     this.saveList = this.addControl(new BigList<>(savedGame -> {
       if(!savedGame.isDone()) {
-        return "Loading...";
+        return new I18nText("lod_core.ui.load_game.loading");
       }
 
-      return savedGame.resultNow().saveName;
+      return new RawText(savedGame.resultNow().saveName);
     }));
 
     this.saveList.setPos(16, 16);
@@ -77,8 +79,8 @@ public class LoadGameScreen extends MenuScreen {
       this.saveList.addEntry(save);
     }
 
-    this.addHotkey(I18n.translate("lod_core.ui.load_game.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
-    this.addHotkey(I18n.translate("lod_core.ui.load_game.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
+    this.addHotkey(new I18nText("lod_core.ui.load_game.delete"), INPUT_ACTION_MENU_DELETE, this::menuDelete);
+    this.addHotkey(new I18nText("lod_core.ui.load_game.back"), INPUT_ACTION_MENU_BACK, this::menuEscape);
   }
 
   private void onHighlight(final CompletableFuture<SavedGame> save) {
@@ -113,10 +115,10 @@ public class LoadGameScreen extends MenuScreen {
 
     if(save.isValid()) {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen("Load this save?", MessageBoxType.CONFIRMATION, result -> this.onMessageboxResult(result, save)));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.load_confirm"), MessageBoxType.CONFIRMATION, result -> this.onMessageboxResult(result, save)));
     } else {
       playMenuSound(4);
-      menuStack.pushScreen(new MessageBoxScreen("This save cannot be loaded", MessageBoxType.ALERT, result -> { }));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.load_fail"), MessageBoxType.ALERT, result -> { }));
     }
   }
 
@@ -155,19 +157,19 @@ public class LoadGameScreen extends MenuScreen {
     playMenuSound(40);
 
     if(this.saveList.size() == 1) {
-      menuStack.pushScreen(new MessageBoxScreen("Can't delete last save", MessageBoxType.ALERT, result -> {}));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.cannot_delete_last_save"), MessageBoxType.ALERT, result -> {}));
       return;
     }
 
     if(this.saveList.getSelected() != null && this.saveList.getSelected().isDone()) {
-      menuStack.pushScreen(new MessageBoxScreen("Are you sure you want to\ndelete this save?", MessageBoxType.CONFIRMATION, result -> {
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.delete_confirm"), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           try {
             this.campaign.deleteSave(this.saveList.getSelected().resultNow().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());
           } catch(final IOException e) {
             LOGGER.error("Failed to delete save", e);
-            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen("Failed to delete save", MessageBoxType.ALERT, result1 -> {})));
+            this.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.delete_fail"), MessageBoxType.ALERT, result1 -> {})));
           }
         }
       }));

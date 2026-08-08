@@ -116,7 +116,9 @@ public final class IoHelper {
   }
 
   public static List<String[]> loadCsvFile(final Path file) throws IOException, CsvException {
-    return loadCsv(Files.newInputStream(file));
+    try(final InputStream stream = Files.newInputStream(file)) {
+      return loadCsv(stream);
+    }
   }
 
   public static List<String[]> loadCsv(final InputStream input) throws IOException, CsvException {

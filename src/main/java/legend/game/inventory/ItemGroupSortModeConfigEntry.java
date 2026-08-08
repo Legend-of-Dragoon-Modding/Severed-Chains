@@ -6,7 +6,7 @@ import legend.game.saves.EnumConfigEntry;
 
 public class ItemGroupSortModeConfigEntry extends EnumConfigEntry<ItemGroupSortMode> {
   public ItemGroupSortModeConfigEntry() {
-    super(ItemGroupSortMode.class, ItemGroupSortMode.ALPHABETICAL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(ItemGroupSortMode.class, ItemGroupSortMode.ALPHABETICAL, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 
   @Override

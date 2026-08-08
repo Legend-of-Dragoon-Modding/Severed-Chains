@@ -1,5 +1,6 @@
 package legend.game.inventory.screens.controls;
 
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
@@ -25,7 +26,7 @@ public class BigList<T> extends Control {
   private static final int ENTRY_HEIGHT = 24;
   private static final int MAX_VISIBLE_ENTRIES = 5;
 
-  private final Function<T, String> entryToString;
+  private final Function<T, TextComponent> entryToString;
   private final List<T> entries = new ArrayList<>();
 
   private int scroll;
@@ -40,7 +41,7 @@ public class BigList<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public BigList(final Function<T, String> entryToString) {
+  public BigList(final Function<T, TextComponent> entryToString) {
     this.entryToString = entryToString;
 
     this.highlight = this.addControl(new Brackets());

@@ -582,7 +582,7 @@ public class GameStateEditorController {
         return "";
       }
 
-      return t.getName();
+      return t.getName().get();
     }
 
     @Override

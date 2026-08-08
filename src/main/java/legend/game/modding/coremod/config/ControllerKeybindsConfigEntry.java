@@ -1,10 +1,10 @@
 package legend.game.modding.coremod.config;
 
+import legend.core.lang.I18nText;
 import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActivation;
 import legend.game.SItem;
-import legend.game.i18n.I18n;
 import legend.game.inventory.screens.KeybindsScreen;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.modding.coremod.CoreMod;
@@ -32,7 +32,7 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDeleg
     super(Map.of(), ConfigStorageLocation.CAMPAIGN, ConfigCategory.CONTROLS, ControllerKeybindsConfigEntry::serializer, ControllerKeybindsConfigEntry::deserializer);
 
     this.setEditControl((current, configCollection) -> {
-      final Button button = new Button(I18n.translate(CoreMod.MOD_ID + ".config.controller_keybinds.configure"));
+      final Button button = new Button(new I18nText(CoreMod.MOD_ID + ".config.controller_keybinds.configure"));
       button.onPressed(() -> button.getScreen().getStack().pushScreen(new KeybindsScreen(configCollection, () -> {
         startFadeEffect(2, 10);
         SItem.menuStack.popScreen();

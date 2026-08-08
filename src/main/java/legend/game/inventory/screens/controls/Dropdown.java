@@ -106,6 +106,10 @@ public class Dropdown<T> extends Control {
     this.selectedIndex = -1;
   }
 
+  public T getOption(final int index) {
+    return this.options.get(index);
+  }
+
   public void addOption(final T option) {
     this.options.add(option);
     this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
@@ -143,6 +147,10 @@ public class Dropdown<T> extends Control {
     }
 
     this.selectedIndex = index;
+  }
+
+  public void setSelected(final T option) {
+    this.selectedIndex = this.options.indexOf(option);
   }
 
   public int getSelectedIndex() {

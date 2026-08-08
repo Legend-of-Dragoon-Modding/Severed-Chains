@@ -1,6 +1,8 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.font.Font;
+import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -34,30 +36,30 @@ public class NumberSpinner<T extends Number> extends Control {
   private final BiFunction<T, T, T> subtract;
   private final BiFunction<T, Integer, T> scroll;
   private final Function<T, T> clamp;
-  private final Function<T, String> toString;
+  private final Function<T, TextComponent> toString;
 
   public static NumberSpinner<Integer> intSpinner(final int number, final int min, final int max) {
     return new NumberSpinner<>(number, 1, 5, Integer::sum, (a, b) -> a - b, Integer::sum, num -> Math.clamp(num, min, max));
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float min, final float max) {
-    return new NumberSpinner<>(number, step, step * 5, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
+    return new NumberSpinner<>(number, step, step * 5, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> new RawText(String.format(Locale.US, "%.2f", num)));
   }
 
   public static NumberSpinner<Float> floatSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
-    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> String.format(Locale.US, "%.2f", num));
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> new RawText(String.format(Locale.US, "%.2f", num)));
   }
 
   public static NumberSpinner<Float> percentSpinner(final float number, final float step, final float bigStep, final float min, final float max) {
-    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> Math.round(num * 100) + "%");
+    return new NumberSpinner<>(number, step, bigStep, Float::sum, (a, b) -> a - b, (num, s) -> num + s * step, num -> Math.clamp(num, min, max), num -> new RawText(Math.round(num * 100) + "%"));
   }
 
   public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp) {
-    this(number, step, bigStep, add, subtract, scroll, clamp, T::toString);
+    this(number, step, bigStep, add, subtract, scroll, clamp, t -> new RawText(t.toString()));
   }
 
-  public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp, final Function<T, String> toString) {
-    this.label = this.addControl(new Label(""));
+  public NumberSpinner(final T number, final T step, final T bigStep, final BiFunction<T, T, T> add, final BiFunction<T, T, T> subtract, final BiFunction<T, Integer, T> scroll, final Function<T, T> clamp, final Function<T, TextComponent> toString) {
+    this.label = this.addControl(new Label(RawText.BLANK));
     this.label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     this.label.getFontOptions().horizontalAlign(HorizontalAlign.CENTRE);
     this.label.ignoreInput();
@@ -104,7 +106,7 @@ public class NumberSpinner<T extends Number> extends Control {
   public void setNumber(final T number) {
     this.number = this.clamp.apply(number);
     this.label.setText(this.toString.apply(this.number));
-    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText().get()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
 
     if(this.changeHandler != null) {
@@ -149,7 +151,7 @@ public class NumberSpinner<T extends Number> extends Control {
     this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
     this.downArrow.setScale(scale);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
-    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText()) + 14) * this.getScale()));
+    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText().get()) + 14) * this.getScale()));
     this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
   }
 

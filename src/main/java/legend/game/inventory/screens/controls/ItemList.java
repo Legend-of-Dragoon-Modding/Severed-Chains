@@ -1,6 +1,8 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
+import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
@@ -49,7 +51,7 @@ public class ItemList<T extends InventoryEntry<?>> extends Control {
     this.items.setSize(173, 119);
     this.addControl(this.items);
 
-    this.titleLabel = this.addControl(new Label(""));
+    this.titleLabel = this.addControl(new Label(RawText.BLANK));
     this.titleLabel.setPos(24, 8);
 
     this.background = allocateUiElement(allocateManualRenderable(), 0x55, 0x55, 0, 0);
@@ -58,11 +60,11 @@ public class ItemList<T extends InventoryEntry<?>> extends Control {
     this.itemCount = Objects.requireNonNullElseGet(itemSlotsCount, () -> i -> i);
   }
 
-  public void setTitle(final String title) {
+  public void setTitle(final TextComponent title) {
     this.titleLabel.setText(title);
   }
 
-  public String getTitle() {
+  public TextComponent getTitle() {
     return this.titleLabel.getText();
   }
 

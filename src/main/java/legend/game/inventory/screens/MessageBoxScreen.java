@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.types.MessageBox20;
@@ -28,10 +30,10 @@ public class MessageBoxScreen extends MenuScreen {
   private boolean allowWrapY = true;
 
   public MessageBoxScreen(final String text, final MessageBoxType type, final Consumer<MessageBoxResult> onResult) {
-    this(text, "Yes", "No", type, onResult);
+    this(text, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"), type, onResult);
   }
 
-  public MessageBoxScreen(final String text, final String yes, final String no, final MessageBoxType type, final Consumer<MessageBoxResult> onResult) {
+  public MessageBoxScreen(final String text, final TextComponent yes, final TextComponent no, final MessageBoxType type, final Consumer<MessageBoxResult> onResult) {
     setMessageBoxText(this.messageBox, text, type);
     setMessageBoxOptions(this.messageBox, yes, no);
     this.onResult = onResult;

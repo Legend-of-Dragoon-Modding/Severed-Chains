@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.lang.I18nText;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.i18n.I18n;
@@ -89,7 +90,7 @@ public class TooManyItemsScreen extends MenuScreen {
   private final MenuEntries<InventoryEntry<?>> droppedItems = new MenuEntries<>();
 
   public TooManyItemsScreen() {
-    this.addHotkey(I18n.translate(SORT), INPUT_ACTION_MENU_SORT, this::sortMenuState9);
+    this.addHotkey(new I18nText(SORT), INPUT_ACTION_MENU_SORT, this::sortMenuState9);
   }
 
   @Override

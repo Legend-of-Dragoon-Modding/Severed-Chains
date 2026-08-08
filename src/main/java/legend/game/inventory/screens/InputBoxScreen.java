@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Button;
@@ -26,11 +28,11 @@ public class InputBoxScreen extends MenuScreen {
   protected final Button cancel;
   private int selectedIndex;
 
-  public InputBoxScreen(final String message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
+  public InputBoxScreen(final TextComponent message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
     this(message, defaultText, onResult, 32);
   }
 
-  public InputBoxScreen(final String message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult, final int z) {
+  public InputBoxScreen(final TextComponent message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult, final int z) {
     final Panel panel = this.addControl(Panel.panel());
     panel.setPos(75, 75);
     panel.setSize(215, 90);
@@ -51,7 +53,7 @@ public class InputBoxScreen extends MenuScreen {
     this.text.setText(defaultText);
     this.text.setMaxLength(15);
 
-    this.accept = panel.addControl(new Button("Accept"));
+    this.accept = panel.addControl(new Button(new I18nText("lod_core.ui.input_box.accept")));
     this.accept.setSize(112, 14);
     this.accept.setPos((panel.getWidth() - this.accept.getWidth()) / 2, this.text.getY() + this.text.getHeight() + 4);
     this.accept.setZ(z - 1);
@@ -60,7 +62,7 @@ public class InputBoxScreen extends MenuScreen {
       this.onResult.accept(MessageBoxResult.YES, this.text.getText().strip());
     });
 
-    this.cancel = panel.addControl(new Button("Cancel"));
+    this.cancel = panel.addControl(new Button(new I18nText("lod_core.ui.input_box.cancel")));
     this.cancel.setSize(112, 14);
     this.cancel.setPos((panel.getWidth() - this.cancel.getWidth()) / 2, this.accept.getY() + this.accept.getHeight() + 2);
     this.cancel.setZ(z - 1);

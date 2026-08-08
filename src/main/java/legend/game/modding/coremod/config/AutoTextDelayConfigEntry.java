@@ -9,7 +9,7 @@ import legend.game.scripting.ScriptReadable;
 
 public class AutoTextDelayConfigEntry extends ConfigEntry<Float> implements ScriptReadable {
   public AutoTextDelayConfigEntry() {
-    super(1.0f, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY, AutoTextDelayConfigEntry::serializer, AutoTextDelayConfigEntry::deserializer);
+    super(1.0f, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE, AutoTextDelayConfigEntry::serializer, AutoTextDelayConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
       final NumberSpinner<Float> spinner = NumberSpinner.floatSpinner(number, 0.25f, 0, 15);
