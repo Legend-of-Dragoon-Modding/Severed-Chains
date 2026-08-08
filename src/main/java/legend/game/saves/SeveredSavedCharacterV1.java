@@ -198,7 +198,7 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
     public final int xp;
 
     public AdditionInfo(final int level, final int xp) {
-      this.level = level;
+      this.level = Math.max(1, level);
       this.xp = xp;
     }
   }

@@ -1289,7 +1289,7 @@ public class BattleHud {
   }
 
   @Method(0x800f4268L)
-  public void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4) {
+  public void addFloatingNumberForBent(final int bentIndex, final int damage, final int colour) {
     final BattleEntity27c bent = SCRIPTS.getObject(bentIndex, BattleEntity27c.class);
 
     final float x;
@@ -1312,7 +1312,7 @@ public class BattleHud {
     Transformations.toScreenspace(new Vector3f(x, y, z), bent.model_148.coord2_14, screenCoords);
 
     //LAB_800f4394
-    this.FUN_800f89f4(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);
+    this.addFloatingNumberForBent(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, colour);
   }
 
   private void onListClose() {
@@ -1954,13 +1954,13 @@ public class BattleHud {
   }
 
   @Method(0x800f89f4L)
-  public boolean FUN_800f89f4(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int a6, final int a7) {
+  public boolean addFloatingNumberForBent(final int bentIndex, final int onHitTextType, final int onHitClutCol, final int rawDamage, final float x, final float y, final int ticks, final int colour) {
     //LAB_800f8a30
     for(int i = 0; i < this.floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = this.floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
+        this.addFloatingNumber(i, onHitTextType, onHitClutCol, rawDamage, x, y, ticks, colour);
         num.bentIndex_04 = bentIndex;
         return true;
       }

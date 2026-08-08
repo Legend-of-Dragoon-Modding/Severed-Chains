@@ -13,6 +13,7 @@ import legend.core.platform.input.InputCodepoints;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.config.QuickTextMode;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -42,6 +43,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.modding.coremod.CoreMod.QUICK_TEXT_CONFIG;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
@@ -329,7 +331,7 @@ public final class Text {
             textbox.state_00 = TextboxState._2;
             textbox.flags_08 |= Textbox4c.ANIMATING;
             textbox.currentTicks_10 = 0;
-            textbox.animationTicks_24 = 60 / vsyncMode_8007a3b8 / 4;
+            textbox.animationTicks_24 = CONFIG.getConfig(QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT ? 1 : 60 / vsyncMode_8007a3b8 / 4;
 
             if((textbox.flags_08 & 0x2) != 0) {
               textbox.stepX_30 = (textbox.currentX_28 - textbox._38) / textbox.animationTicks_24;
@@ -414,7 +416,7 @@ public final class Text {
             textbox.state_00 = TextboxState.ANIMATE_OUT_3;
             textbox.flags_08 |= Textbox4c.ANIMATING;
 
-            final int ticks = 60 / vsyncMode_8007a3b8 / 4;
+            final int ticks = CONFIG.getConfig(QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT ? 1 : 60 / vsyncMode_8007a3b8 / 4;
             textbox.currentTicks_10 = ticks;
             textbox.animationTicks_24 = ticks;
           } else {
@@ -522,7 +524,7 @@ public final class Text {
       case INIT_TEXTBOX_TYPE_1 -> {
         //LAB_8002663c
         if((textbox.flags_08 & TextboxText84.INITIALIZED) == 0) {
-          var type = TextboxType.from(textboxText.type_04);
+          final var type = TextboxType.from(textboxText.type_04);
           switch(type) {
             case NORMAL_INTERACTIVE -> textboxText.state_00 = TextboxTextState.CHECK_UNINITIALIZED_PENDING_INPUT_12;
 
@@ -547,6 +549,7 @@ public final class Text {
 
             case SMAP_NAMED -> {
               //LAB_80026780
+              // Show name immediately
               do {
                 processTextboxCharacter(textboxIndex);
               } while((textboxText.flags_08 & TextboxText84.PROCESSED_NEW_LINE) == 0);
@@ -564,9 +567,15 @@ public final class Text {
       case SET_STATE_PROCESS_TEXT_2 -> textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
 
       //LAB_80026538
-      case PROCESS_TEXT_4 ->
+      case PROCESS_TEXT_4 -> {
+        if(textboxText.waitTicks != 0) {
+          textboxText.waitTicks--;
+          break;
+        }
+
         //LAB_800267c4
         processTextboxCharacter(textboxIndex);
+      }
 
       case SCROLL_TEXT_5 -> {
         //LAB_800267d4
@@ -631,11 +640,12 @@ public final class Text {
 
         //LAB_80026928
         if((textboxText.flags_08 & TextboxText84.NO_INPUT) == 0) {
-          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
+          if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_CONFIRM.get()) || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()) != QuickTextMode.HOLD) {
             boolean endOfTextBlock = false;
 
             //LAB_80026954
-            for(int lineIndex = 0; lineIndex < 4; lineIndex++) {
+            final int charCount = CONFIG.getConfig(QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT ? 400 : 4;
+            for(int lineIndex = 0; lineIndex < charCount; lineIndex++) {
               processTextboxCharacter(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5 || textboxText.state_00 == TextboxTextState.WAIT_FOR_INPUT_ADVANCED_DIRTY_BOX_6 || textboxText.state_00 == TextboxTextState.CLOSE_TEXTBOX_15 || textboxText.state_00 == TextboxTextState.WAIT_FOR_INPUT_ADVANCED_CLEAN_BOX_11 || textboxText.state_00 == TextboxTextState.PROCESS_NO_INPUT_ADVANCED_13) {
@@ -1203,12 +1213,6 @@ public final class Text {
   public static void processTextboxCharacter(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    // This code would be really tricky to make work at 60 FPS, but there isn't any harm in just slowing it down
-    if(textboxText.waitTicks != 0) {
-      textboxText.waitTicks--;
-      return;
-    }
-
     textboxText.waitTicks = currentEngineState_8004dd04.tickMultiplier() - 1;
 
     final LodString str = textboxText.str_24;
@@ -1705,7 +1709,7 @@ public final class Text {
 
     textboxText.scrollAmount_2c += textboxText.scrollSpeed_2a;
 
-    if(textboxText.scrollAmount_2c >= 12.0f) {
+    if(textboxText.scrollAmount_2c >= 12.0f || CONFIG.getConfig(QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT) {
       advanceTextbox(textboxIndex);
       textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
       textboxText.scrollAmount_2c = 0.0f;

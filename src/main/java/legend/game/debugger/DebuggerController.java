@@ -17,6 +17,7 @@ import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.combat.encounters.Encounter;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.config.QuickTextMode;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.sound.Audio;
@@ -165,7 +166,7 @@ public class DebuggerController {
     this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
     this.combatStage.setSelected(Config.combatStage());
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
-    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT);
     this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
 
     this.viewpointX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE, 0.0f));
@@ -184,7 +185,7 @@ public class DebuggerController {
   @EventListener
   public void configLoaded(final ConfigLoadedEvent event) {
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT);
     this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
     this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC);
     this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
@@ -198,7 +199,7 @@ public class DebuggerController {
     }
 
     if(event.config == CoreMod.QUICK_TEXT_CONFIG.get()) {
-      this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+      this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()) == QuickTextMode.INSTANT);
     }
 
     if(event.config == CoreMod.AUTO_TEXT_CONFIG.get()) {
@@ -400,7 +401,7 @@ public class DebuggerController {
 
   @FXML
   private void toggleFastText(final ActionEvent event) {
-    CONFIG.setConfig(CoreMod.QUICK_TEXT_CONFIG.get(), !CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    CONFIG.setConfig(CoreMod.QUICK_TEXT_CONFIG.get(), this.fastTextSpeed.isSelected() ? QuickTextMode.INSTANT : QuickTextMode.HOLD);
   }
 
   @FXML
