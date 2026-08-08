@@ -1994,12 +1994,12 @@ public class BattleHud {
     this.addFloatingNumberForBent(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), xOffset, yOffset, 60 / vsyncMode_8007a3b8 / 4, 0, r, g, b);
   }
 
-  public boolean addFloatingNumberForBent(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int xOffset, final int yOffset, final int a6, final int a7, final float r, final float g, final float b) {
+  public boolean addFloatingNumberForBent(final int bentIndex, final int onHitTextType, final int onHitClutCol, final int rawDamage, final float x, final float y, final int xOffset, final int yOffset, final int ticks, final int colour, final float r, final float g, final float b) {
     for(int i = 0; i < this.floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = this.floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        this.addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
+        this.addFloatingNumber(i, onHitTextType, onHitClutCol, rawDamage, x, y, ticks, colour);
         num.bentIndex_04 = bentIndex;
         num.xOffset = xOffset;
         num.yOffset = yOffset;
