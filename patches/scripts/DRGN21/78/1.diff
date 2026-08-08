@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -2127,7 +2127,7 @@
+ data 0x19
+ data 0x4
+ PTR_4570_9:
+-data str[<speed=0>Hellena Warden<chr=0x900>iate<line>Oh, feisty feisty.<line>It's the worst kind of POW,<line>but the best kind of feed.]
++data str[<speed=0>Hellena Warden<line>Oh, feisty feisty.<line>It's the worst kind of POW,<line>but the best kind of feed.]
+ PTR_4628_9:
+ data 0x1b
+ data 0x4
+@@ -2172,7 +2172,7 @@
+ data 0x1a
+ data 0x1
+ PTR_4570_18:
+-data str[<speed=0>Dart<line> Is this civil war!? ]
++data str[<speed=0>Dart<line>Is this civil war!?]
+ PTR_4628_18:
+ data 0x15
+ data 0x2
