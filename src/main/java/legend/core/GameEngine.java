@@ -11,6 +11,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.gte.MV;
+import legend.core.lang.I18nText;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
@@ -43,6 +44,7 @@ import legend.game.textures.TextureAtlas;
 import legend.game.textures.TexturePacker;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.types.Translucency;
+import legend.game.ui.GameOverlay;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
@@ -94,7 +96,7 @@ public final class GameEngine {
   private static Registries.Access REGISTRY_ACCESS;
   public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access, "lod", "lod_core");
   public static final LangManager LANG = new LangManager(access -> LANG_ACCESS = access);
-  public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
+  public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access, GameEngine::onModError);
   public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
 
   public static final ScriptManager SCRIPTS = new ScriptManager(List.of(Path.of("./patches/libs"), Path.of("./patches/scripts")), Path.of("./patches"));
@@ -340,7 +342,19 @@ public final class GameEngine {
 
     loadLang();
 
+    for(final String modId : MODS.getFailedToLoad().keySet()) {
+      GameOverlay.addNotification(7, new I18nText("lod_core.ui.mods.error", modId));
+    }
+
+    for(final String modId : MODS.getWrongVersions().keySet()) {
+      GameOverlay.addNotification(7, new I18nText("lod_core.ui.mods.wrong_version", modId));
+    }
+
     return missingMods;
+  }
+
+  private static void onModError(final String modId, final Throwable t) {
+    GameOverlay.addNotification(7, new I18nText("lod_core.ui.mods.error", modId));
   }
 
   public static void loadLang() {

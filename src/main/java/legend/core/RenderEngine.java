@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
+import legend.core.lang.RawText;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
 import legend.core.opengl.CopyShaderOptions;
@@ -41,6 +42,8 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.types.Translucency;
+import legend.game.ui.GameOverlay;
+import legend.turnorder.TurnOrderMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -63,8 +66,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import legend.turnorder.TurnOrderMod;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -97,10 +98,10 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_GENERAL_TURBO;
 import static legend.game.modding.coremod.CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RESOLUTION_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SHADER_ABERRATION_CONFIG;
-import static legend.game.modding.coremod.CoreMod.SHADER_BRIGHTNESS_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SHADER_BLOOM_INTENSITY_CONFIG;
-import static legend.game.modding.coremod.CoreMod.SHADER_BLOOM_THRESHOLD_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SHADER_BLOOM_RADIUS_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_BLOOM_THRESHOLD_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHADER_BRIGHTNESS_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SHADER_DISCOLOUR_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SHADER_EDGE_WARP_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SHADER_ENABLE_CRT_CONFIG;
@@ -342,6 +343,7 @@ public class RenderEngine {
   private double vsyncCount;
   private final long[] frameTimes = new long[60];
   private int fpsIndex;
+  private float currentFps;
 
   private Runnable renderCallback = () -> { };
 
@@ -467,6 +469,10 @@ public class RenderEngine {
 
   public int getVsyncCount() {
     return (int)this.vsyncCount;
+  }
+
+  public float getCurrentFps() {
+    return this.currentFps;
   }
 
   public void setClearColour(final float red, final float green, final float blue) {
@@ -727,6 +733,8 @@ public class RenderEngine {
         }
 
         this.renderFrame();
+        GameOverlay.drawNotifications();
+        GameOverlay.drawFps();
       }
 
       if(legacyMode == 0) {
@@ -893,7 +901,8 @@ public class RenderEngine {
             avg += this.frameTimes[i];
           }
 
-          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, 1_000_000_000.0f / (avg / (float)fpsLimit), fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
+          this.currentFps = 1_000_000_000.0f * fpsLimit / avg;
+          RENDERER.window().setTitle("Severed Chains %s - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(Version.FULL_VERSION, this.currentFps, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.getNativeWidth(), this.getNativeHeight()));
         }
       }
 
@@ -1437,9 +1446,9 @@ public class RenderEngine {
         this.updateProjections();
 
         switch(legacyMode) {
-          case 0 -> System.out.println("Switched to OpenGL rendering");
-          case 1 -> System.out.println("Switched to legacy rendering");
-          case 2 -> System.out.println("Switched to VRAM rendering");
+          case 0 -> GameOverlay.addNotification(3, new RawText("Switched to OpenGL rendering"));
+          case 1 -> GameOverlay.addNotification(3, new RawText("Switched to legacy rendering"));
+          case 2 -> GameOverlay.addNotification(3, new RawText("Switched to VRAM rendering"));
         }
       } else if(key == InputKey.F4 && mods.contains(InputMod.CTRL) && mods.contains(InputMod.SHIFT)) {
         throw new RuntimeException("Can't say I didn't warn you");

@@ -22,6 +22,7 @@ lod_core.ui.title.ps1_memcard_delete_confirm=Delete the memory card file?
 lod_core.ui.title.ps1_memcard_convert_failed=Failed to convert memcard
 lod_core.ui.title.launching_updater=Launching updater...
 lod_core.ui.title.hotkey=(%s)
+lod_core.ui.fps=%.2f/%d FPS
 
 lod_core.ui.updater.updater_not_found=updater.jar not found. Please re-download Severed Chains.
 lod_core.ui.updater.java_not_found=java not found. Cannot launch updater.
@@ -253,6 +254,7 @@ lod_core.config.ignore_steam_input_mode.NONE=Off (allow Steam Input)
 lod_core.config.retail_font.label=Font
 lod_core.config.language.label=Language (WIP, Menu Only)
 lod_core.config.language.help=Language support is a work in progress and most of the game will still display in English
+lod_core.config.show_fps.label=Show FPS
 
 # Shader config
 lod_core.config.shader_enable_crt.label=CRT Enabled
