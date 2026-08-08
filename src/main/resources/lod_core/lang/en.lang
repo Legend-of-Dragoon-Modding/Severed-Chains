@@ -284,6 +284,8 @@ lod_core.config.item_group_sort_mode.ALPHABETICAL=Alphabetical
 lod_core.config.item_group_sort_mode.RETAIL=Retail
 lod_core.config.element_icon_config.label=Elemental Icon Display
 lod_core.config.element_icon_config.help=Displays an icon beside damage numbers that will indicate the types of damage.
+lod_core.config.equip_effects_in_dragoon.label=Enable Equip Effects in Dragoon
+lod_core.config.equip_effects_in_dragoon.help=Enables regen and on hit effects from equips in Dragoon form
 
 lod_core.input_actions.menu_up.name=Menu: up
 lod_core.input_actions.menu_down.name=Menu: down
