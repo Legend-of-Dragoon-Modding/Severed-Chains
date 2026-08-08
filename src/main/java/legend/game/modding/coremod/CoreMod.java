@@ -38,6 +38,7 @@ import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
 import legend.game.modding.coremod.config.ElementIconConfig;
 import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
+import legend.game.modding.coremod.config.EquipEffectsInDragoonConfig;
 import legend.game.modding.coremod.config.FmvVolumeConfigEntry;
 import legend.game.modding.coremod.config.FrameSkipConfigEntry;
 import legend.game.modding.coremod.config.FullscreenConfigEntry;
@@ -54,6 +55,7 @@ import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry
 import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.PixelateModeConfigEntry;
+import legend.game.modding.coremod.config.QuickTextModeConfigEntry;
 import legend.game.modding.coremod.config.ReduceMotionFlashingConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
 import legend.game.modding.coremod.config.RumbleIntensityConfigEntry;
@@ -167,7 +169,7 @@ public class CoreMod {
   public static final RegistryDelegate<AdditionOverlaySizeConfigEntry> ADDITION_OVERLAY_SIZE_CONFIG = CONFIG_REGISTRAR.register("addition_overlay_size", AdditionOverlaySizeConfigEntry::new);
   public static final RegistryDelegate<AdditionTimingWindowConfigEntry> ADDITION_TIMING_WINDOW_CONFIG = CONFIG_REGISTRAR.register("addition_timing_window", AdditionTimingWindowConfigEntry::new);
   public static final RegistryDelegate<TransformationModeConfigEntry> TRANSFORMATION_MODE_CONFIG = CONFIG_REGISTRAR.register("transformation_mode", TransformationModeConfigEntry::new);
-  public static final RegistryDelegate<BoolConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE));
+  public static final RegistryDelegate<QuickTextModeConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", QuickTextModeConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE));
   public static final RegistryDelegate<AutoTextDelayConfigEntry> AUTO_TEXT_DELAY_CONFIG = CONFIG_REGISTRAR.register("auto_text_delay", AutoTextDelayConfigEntry::new);
   public static final RegistryDelegate<SaveAnywhereConfig> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", SaveAnywhereConfig::new);
@@ -181,6 +183,7 @@ public class CoreMod {
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
   public static final RegistryDelegate<ItemGroupSortModeConfigEntry> ITEM_GROUP_SORT_MODE = CONFIG_REGISTRAR.register("item_group_sort_mode", ItemGroupSortModeConfigEntry::new);
   public static final RegistryDelegate<ElementIconConfig> DISPLAY_ELEMENT_ICON_CONFIG = CONFIG_REGISTRAR.register("element_icon_config", ElementIconConfig::new);
+  public static final RegistryDelegate<BoolConfigEntry> EQUIP_EFFECTS_IN_DRAGOON = CONFIG_REGISTRAR.register("equip_effects_in_dragoon", EquipEffectsInDragoonConfig::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 

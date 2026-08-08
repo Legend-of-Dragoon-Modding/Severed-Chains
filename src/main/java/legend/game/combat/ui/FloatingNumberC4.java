@@ -20,6 +20,8 @@ public class FloatingNumberC4 {
   public float x_1c;
   public float y_20;
   public final FloatingNumberDigit20[] digits_24 = new FloatingNumberDigit20[10];
+  public float xOffset = 0.0f;
+  public float yOffset = 0.0f;
 
   public final MV transforms = new MV();
 

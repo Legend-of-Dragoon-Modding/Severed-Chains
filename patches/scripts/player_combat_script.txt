@@ -6512,9 +6512,12 @@ consume
 
 ; SUBROUTINE
 HANDLE_REGEN:
+call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:config], id[lod_core:equip_effects_in_dragoon], 0, stor[31]
+jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_1] ; 
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_EXIT] ; is dragoon
 
+HANDLE_REGEN_1:
 mov stor[0], stor[28] ; source, dest
 call Battle::scriptGetBentStat, stor[0], HP_REGEN, stor[9] ; bentIndex, statIndex, value
 jmp_cmp ==, 0x0, stor[9], inl[:HANDLE_REGEN_MP] ; no regen
@@ -6576,9 +6579,12 @@ return
 ; SUBROUTINE
 GIVE_ON_HIT_VITALS:
 jmp_cmp &, 0x40, stor[7], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dead
+call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:config], id[lod_core:equip_effects_in_dragoon], 0, stor[31]
+jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_1] ; 
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dragoon
 
+GIVE_ON_HIT_VITALS_1:
 mov stor[0], stor[28] ; source, dest
 gosub inl[:LABEL_605] ; addr
 jmp_cmp !=, 0x0, stor[8], inl[:GIVE_ON_HIT_VITALS_MAGICAL_HIT] ; was magical damage
