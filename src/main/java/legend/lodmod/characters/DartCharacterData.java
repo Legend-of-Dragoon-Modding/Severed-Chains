@@ -51,19 +51,19 @@ public class DartCharacterData extends CharacterData2c {
   @Override
   public List<RegistryId> getUnlockedSpells() {
     if(this.hasDivineSpirit()) {
-      return new ArrayList<>(this.divineSpells.keySet());
+      return this.getUnlockedDivineSpells();
     }
 
-    return super.getUnlockedSpells();
+    return this.getUnlockedRedEyeSpells();
   }
 
   @Override
   public Collection<RegistryId> getAllSpells() {
     if(this.hasDivineSpirit()) {
-      return new ArrayList<>(this.divineSpells.keySet());
+      return this.getDivineSpells();
     }
 
-    return super.getAllSpells();
+    return this.getRedEyeSpells();
   }
 
   @Override
@@ -76,6 +76,27 @@ public class DartCharacterData extends CharacterData2c {
       }
     }
 
+    return this.getRedEyeSpellInfo(id);
+  }
+
+  public CharacterSpellInfo addRedEyeSpell(final RegistryId id, final CharacterSpellInfo info) {
+    super.addSpell(id, info);
+    return info;
+  }
+
+  public void removeRedEyeSpell(final RegistryId id) {
+    super.removeSpell(id);
+  }
+
+  public List<RegistryId> getUnlockedRedEyeSpells() {
+    return super.getUnlockedSpells();
+  }
+
+  public Collection<RegistryId> getRedEyeSpells() {
+    return super.getAllSpells();
+  }
+
+  public CharacterSpellInfo getRedEyeSpellInfo(final RegistryId id) {
     return super.getSpellInfo(id);
   }
 
@@ -86,6 +107,14 @@ public class DartCharacterData extends CharacterData2c {
 
   public void removeDivineSpell(final RegistryId id) {
     this.divineSpells.remove(id);
+  }
+
+  public List<RegistryId> getUnlockedDivineSpells() {
+    return new ArrayList<>(this.divineSpells.keySet());
+  }
+
+  public Collection<RegistryId> getDivineSpells() {
+    return new ArrayList<>(this.divineSpells.keySet());
   }
 
   public CharacterSpellInfo getDivineSpellInfo(final RegistryId id) {
