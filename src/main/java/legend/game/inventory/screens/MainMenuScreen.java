@@ -46,6 +46,8 @@ import static legend.game.SItem.getTimestampPart;
 import static legend.game.SItem.initHighlight;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacter;
+import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
+import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -547,6 +549,8 @@ public class MainMenuScreen extends MenuScreen {
 
     return menuStack.pushScreen(new LoadGameScreen(gameState_800babc8.campaign.loadAllSaves(), save -> {
       _800bd7ac = true;
+      submapCutBeforeBattle_80052c3c = -1;
+      shouldRestoreCameraPosition_80052c40 = false;
       SAVES.loadGameState(save, false);
       currentEngineState_8004dd04.loadSaveFromMenu(save);
     }, () -> {
