@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -444,7 +444,7 @@
+ JMP_a98_1:
+ call 106, 0x0
+ call 101, stor[0], 0x49, 0x18, 0x164
+-call 103, stor[0], 0xe80, 0x880, 0x0
++call 103, stor[0], 0, 0x880, 0x0
+ call 97, 0x5
+ mov 0x16, stor[24]
+ gosub inl[:LABEL_3]
