@@ -4,7 +4,6 @@ import com.opencsv.exceptions.CsvException;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import legend.core.QueuePool;
-import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.IoHelper.intsToBytes;
 import static legend.game.scripting.ScriptState.FLAG_1_0000;
@@ -328,8 +326,6 @@ public class ScriptManager {
 
     scriptState.setStor(0, index);
     scriptState.setStor(7, FLAG_1_0000 | FLAG_FILE_NOT_SET | FLAG_TICKER_NOT_SET | FLAG_RENDERER_NOT_SET | FLAG_DESTRUCTOR_NOT_SET);
-
-    EVENTS.postEvent(new ScriptAllocatedEvent(index));
 
     //LAB_80015a34
     return scriptState;

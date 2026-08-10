@@ -14,6 +14,8 @@ public class ScriptLifecycleEvent extends ScriptEvent {
   }
 
   public enum Lifecycle {
+    /** Called when this script state is allocated */
+    ALLOCATED,
     /** Called before this script state's script ticks */
     PRE_SCRIPT_VM_TICK,
     /** Called after this script state's script ticks */
@@ -26,5 +28,9 @@ public class ScriptLifecycleEvent extends ScriptEvent {
     PRE_RENDER_CALLBACK,
     /** Called after this script state's render callback runs */
     POST_RENDER_CALLBACK,
+    /** Called before this script state is deallocated */
+    PRE_DEALLOCATE,
+    /** Called after this script state is deallocated */
+    POST_DEALLOCATE,
   }
 }

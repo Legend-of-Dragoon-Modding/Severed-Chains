@@ -6,7 +6,6 @@ import legend.core.QueuePool;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -157,6 +156,7 @@ public class ScriptState<T extends ScriptedObject> {
     this.name = name;
     this.innerStruct_00 = innerStruct;
     this.tickEvent = new ScriptLifecycleEvent(index);
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.ALLOCATED);
   }
 
   public void setTicker(@Nullable final BiConsumer<ScriptState<T>, T> callback) {
@@ -319,7 +319,7 @@ public class ScriptState<T extends ScriptedObject> {
   public void deallocate() {
     LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", this.index);
 
-    EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.PRE_DEALLOCATE);
 
     if(!this.hasAnyFlag(FLAG_DESTRUCTOR_NOT_SET | FLAG_CHILD_SCRIPT)) {
       try {
@@ -332,6 +332,8 @@ public class ScriptState<T extends ScriptedObject> {
 
     //LAB_80015c70
     this.manager.deallocate(this.index);
+
+    this.postLifecycleEvent(ScriptLifecycleEvent.Lifecycle.POST_DEALLOCATE);
   }
 
   public void deallocateChildren() {
