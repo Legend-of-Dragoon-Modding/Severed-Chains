@@ -60,6 +60,11 @@ public final class TmdObjLoader {
   public static void fromModel(final String name, final Model124 model, final int textureWidth, final int textureHeight) {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final ModelPart10 part = model.modelParts_00[i];
+
+      if(part.tmd_08.obj != null) {
+        part.tmd_08.obj.delete();
+      }
+
       part.tmd_08.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, 0, textureWidth, textureHeight);
     }
   }

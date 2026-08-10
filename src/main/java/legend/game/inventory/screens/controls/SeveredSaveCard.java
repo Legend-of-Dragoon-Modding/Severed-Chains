@@ -47,7 +47,7 @@ public class SeveredSaveCard extends BlankSaveCard {
 
     final ByteBuffer buffer = BufferUtils.createByteBuffer(savedGame.atlas.size());
     savedGame.atlas.read(0, buffer, 0, savedGame.atlas.size());
-    this.texture = Texture.png(buffer);
+    this.texture = Texture.png("Save card " + savedGame.saveName + " (" + savedGame.fileName + ')', buffer);
 
     this.charIndices.addAll(savedGame.activeParty);
 
@@ -78,6 +78,14 @@ public class SeveredSaveCard extends BlankSaveCard {
     dragoonSpirits.setPos(205, 27);
 
     this.setSelectedCharacter(0);
+  }
+
+  @Override
+  protected void delete() {
+    super.delete();
+
+    this.texture.delete();
+    this.obj.delete();
   }
 
   public void setSelectedCharacter(final int index) {

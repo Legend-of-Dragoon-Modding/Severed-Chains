@@ -577,7 +577,7 @@ public final class Fmv {
           displayTexture.delete();
         }
 
-        displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
+        displayTexture = Texture.filteredEmpty("FMV", frameHeader.getWidth(), frameHeader.getHeight());
       }
 
       if(texturedObj == null) {

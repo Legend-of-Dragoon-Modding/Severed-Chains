@@ -33,6 +33,11 @@ public class TextureAtlas {
       .useTextureAlpha();
   }
 
+  public void setPersistent(final boolean persistent) {
+    this.texture.persistent = persistent;
+    this.obj.persistent = persistent;
+  }
+
   public void delete() {
     this.obj.delete();
     this.texture.delete();

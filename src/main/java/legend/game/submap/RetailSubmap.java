@@ -638,7 +638,7 @@ public class RetailSubmap extends Submap {
   @Override
   public void prepareSobjModel(final SubmapObject210 sobj) {
     if(this.sobjTextureOverrides.containsKey(sobj.sobjIndex_12e)) {
-      sobj.texture = Texture.create(this.sobjTextureOverrides.get(sobj.sobjIndex_12e));
+      sobj.texture = Texture.create("Sobj " + sobj.sobjIndex_12e + " texture override", this.sobjTextureOverrides.get(sobj.sobjIndex_12e));
       final Tim oldTexture = this.pxls.get(sobj.sobjIndex_12e);
       TmdObjLoader.fromModel("SobjModel (index " + sobj.sobjIndex_12e + ')', sobj.model_00, oldTexture.getImageRect().w * oldTexture.getBpp().widthDivisor, oldTexture.getImageRect().h);
     } else {
@@ -828,7 +828,7 @@ public class RetailSubmap extends Submap {
     if(event.background != null) {
       this.backgroundTexture = event.background;
     } else {
-      this.backgroundTexture = Texture.create(builder -> {
+      this.backgroundTexture = Texture.create("Submap background", builder -> {
         builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
         builder.internalFormat(GL_RGBA);
         builder.dataFormat(GL_RGBA);
@@ -887,7 +887,7 @@ public class RetailSubmap extends Submap {
           }
         }
 
-        this.foregroundTextures[i] = Texture.create(builder -> {
+        this.foregroundTextures[i] = Texture.create("Submap foreground " + i, builder -> {
           builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
           builder.internalFormat(GL_RGBA);
           builder.dataFormat(GL_RGBA);

@@ -3347,13 +3347,15 @@ public class SMap extends EngineState<SMap> {
         final Model124 model = sobj.model_00;
         pos.pos_00.set(model.coord2_14.coord.transfer);
         pos.rot_0c.set(model.coord2_14.transforms.rotate);
-        this.sobjs_800c6880[i].deallocateWithChildren();
+        sobjState.deallocateWithChildren();
       } else {
         //LAB_800e231c
         pos.pos_00.zero();
         pos.rot_0c.zero();
       }
     }
+
+    this.deallocateSavePoint();
 
     //LAB_800e2350
     _800bd7b0 = 1;
@@ -5568,6 +5570,8 @@ public class SMap extends EngineState<SMap> {
       this.savepointObj.delete();
       this.savepointObj = null;
     }
+
+    this.savePointModel_800d5eb0.deleteModelParts();
   }
 
   @Method(0x800f3c98L)

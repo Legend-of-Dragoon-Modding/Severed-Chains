@@ -9,10 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import legend.game.modding.events.scripting.ScriptAllocatedEvent;
-import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.scripting.ScriptLifecycleEvent;
 import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptLifecycleEvent;
 import legend.game.scripting.ScriptStackFrame;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.events.EventListener;
@@ -127,36 +125,28 @@ public class ScriptLiveDebuggerController {
   }
 
   @EventListener
-  public void onScriptAllocated(final ScriptAllocatedEvent event) {
+  public void onScriptLifecycle(final ScriptLifecycleEvent event) {
     if(event.scriptIndex == this.index) {
-      Platform.runLater(this::decompile);
-    }
-  }
+      if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.ALLOCATED) {
+        Platform.runLater(this::decompile);
+      } else if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.PRE_DEALLOCATE) {
+        Platform.runLater(this::clear);
+      } else if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.PRE_SCRIPT_VM_TICK) {
+        final ScriptState<?> state = SCRIPTS.getState(this.index);
 
-  @EventListener
-  public void onScriptDeallocated(final ScriptDeallocatedEvent event) {
-    if(event.scriptIndex == this.index) {
-      Platform.runLater(this::clear);
-    }
-  }
+        if(this.stepping) {
+          state.pause();
+          this.stepping = false;
+        }
 
-  @EventListener
-  public void onScriptTick(final ScriptLifecycleEvent event) {
-    if(event.scriptIndex == this.index && event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.PRE_SCRIPT_VM_TICK) {
-      final ScriptState<?> state = SCRIPTS.getState(this.index);
+        if(this.runningDebugCode) {
+          this.runningDebugCode = false;
+          return;
+        }
 
-      if(this.stepping) {
-        state.pause();
-        this.stepping = false;
+        final int offset = state.context.opOffset_08;
+        Platform.runLater(() -> this.displayCode(offset));
       }
-
-      if(this.runningDebugCode) {
-        this.runningDebugCode = false;
-        return;
-      }
-
-      final int offset = state.context.opOffset_08;
-      Platform.runLater(() -> this.displayCode(offset));
     }
   }
 

@@ -24,4 +24,11 @@ public class MessageBox20 {
   public TextComponent no;
 
   public boolean ignoreInput;
+
+  public void delete() {
+    if(this.highlightRenderable_04 != null) {
+      this.highlightRenderable_04.delete();
+      this.highlightRenderable_04 = null;
+    }
+  }
 }

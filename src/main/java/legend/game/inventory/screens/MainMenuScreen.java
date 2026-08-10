@@ -138,6 +138,15 @@ public class MainMenuScreen extends MenuScreen {
     this.setFocus(this.menuButtons.getFirst());
   }
 
+  @Override
+  protected void delete() {
+    super.delete();
+
+    for(final Button button : this.menuButtons) {
+      button.delete();
+    }
+  }
+
   private Button addButton(final TextComponent text, final Runnable onClick) {
     final int index = this.menuButtons.size();
 

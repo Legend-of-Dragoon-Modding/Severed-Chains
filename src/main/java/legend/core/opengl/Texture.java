@@ -1,6 +1,8 @@
 package legend.core.opengl;
 
+import legend.core.lang.RawText;
 import legend.core.memory.types.TriConsumer;
+import legend.game.ui.GameOverlay;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.system.MemoryStack;
@@ -50,16 +52,16 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 public final class Texture {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Texture.class);
 
-  public static Texture create(final Consumer<Builder> callback) {
-    final Builder builder = new Builder();
+  public static Texture create(final String name, final Consumer<Builder> callback) {
+    final Builder builder = new Builder(name);
     callback.accept(builder);
     final Texture texture = builder.build();
     builder.free();
     return texture;
   }
 
-  public static Texture empty(final int w, final int h) {
-    return Texture.create(builder -> {
+  public static Texture empty(final String name, final int w, final int h) {
+    return Texture.create(name, builder -> {
       builder.size(w, h);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
@@ -68,8 +70,8 @@ public final class Texture {
     });
   }
 
-  public static Texture filteredEmpty(final int w, final int h) {
-    return Texture.create(builder -> {
+  public static Texture filteredEmpty(final String name, final int w, final int h) {
+    return Texture.create(name, builder -> {
       builder.size(w, h);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
@@ -78,8 +80,8 @@ public final class Texture {
     });
   }
 
-  public static Texture png(final ByteBuffer data) {
-    return Texture.create(builder -> {
+  public static Texture png(final String name, final ByteBuffer data) {
+    return Texture.create(name, builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
@@ -89,8 +91,8 @@ public final class Texture {
     });
   }
 
-  public static Texture png(final Path path) {
-    return Texture.create(builder -> {
+  public static Texture png(final String name, final Path path) {
+    return Texture.create(name, builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
@@ -100,8 +102,8 @@ public final class Texture {
     });
   }
 
-  public static Texture filteredPng(final Path path) {
-    return Texture.create(builder -> {
+  public static Texture filteredPng(final String name, final Path path) {
+    return Texture.create(name, builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
@@ -111,8 +113,8 @@ public final class Texture {
     });
   }
 
-  public static Texture copyAttributesFrom(final Texture other) {
-    return Texture.create(builder -> {
+  public static Texture copyAttributesFrom(final String name, final Texture other) {
+    return Texture.create(name, builder -> {
       builder.size(other.width, other.height);
       builder.internalFormat(other.internalFormat);
       builder.dataFormat(other.dataFormat);
@@ -135,7 +137,10 @@ public final class Texture {
   }
 
   private static final List<Texture> texList = new ArrayList<>();
+  private static boolean shouldLog = true;
   private static final int[] currentTextures = new int[32];
+
+  public final String name;
 
   final int id;
 
@@ -152,8 +157,11 @@ public final class Texture {
   public final int wrapT;
 
   private boolean deleted;
+  /** This Obj won't be deleted on state transition */
+  public boolean persistent;
 
-  private Texture(@Nullable final TriConsumer<Integer, Integer, Integer> texImage2d, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
+  private Texture(@Nullable final TriConsumer<Integer, Integer, Integer> texImage2d, final String name, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
+    this.name = name;
     this.id = glGenTextures();
     this.width = w;
     this.height = h;
@@ -248,7 +256,29 @@ public final class Texture {
     }
   }
 
+  public static void setShouldLog(final boolean shouldLog) {
+    Texture.shouldLog = shouldLog;
+  }
+
+  public static void clearTextureList(final boolean clearPersistent) {
+    for(int i = texList.size() - 1; i >= 0; i--) {
+      final Texture tex = texList.get(i);
+
+      if(!tex.deleted && (!tex.persistent || clearPersistent)) {
+        if(shouldLog) {
+          LOGGER.warn("Leaked: %s", tex.name);
+          GameOverlay.addNotification(5, new RawText("Leaked texture: " + tex.name));
+        }
+
+        tex.delete();
+        texList.remove(i);
+      }
+    }
+  }
+
   public static class Builder {
+    private final String name;
+
     private TriConsumer<Integer, Integer, Integer> texImage2d = (internalFormat, dataFormat, dataType) -> glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, this.w, this.h, 0, dataFormat, dataType, (ByteBuffer)null);
     private int w;
     private int h;
@@ -268,7 +298,9 @@ public final class Texture {
 
     private final List<Runnable> cleanup = new ArrayList<>();
 
-    Builder() {}
+    Builder(final String name) {
+      this.name = name;
+    }
 
     public void free() {
       for(final Runnable runnable : this.cleanup) {
@@ -364,7 +396,7 @@ public final class Texture {
     }
 
     Texture build() {
-      return new Texture(this.texImage2d, this.w, this.h, this.internalFormat, this.dataFormat, this.dataType, this.minFilter, this.magFilter, this.wrapS, this.wrapT, this.generateMipmaps, this.mipmaps);
+      return new Texture(this.texImage2d, this.name, this.w, this.h, this.internalFormat, this.dataFormat, this.dataType, this.minFilter, this.magFilter, this.wrapS, this.wrapT, this.generateMipmaps, this.mipmaps);
     }
   }
 

@@ -283,8 +283,8 @@ public class CreditsScreen extends MenuScreen {
   }
 
   private void initBackground() {
-    this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
-    this.fadeTex = Texture.png(Path.of("gfx/ui/credits_fade.png"));
+    this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture("Credits background", (VramTextureSingle)this.backgroundPalettes[0]);
+    this.fadeTex = Texture.png("Credits fade", Path.of("gfx/ui/credits_fade.png"));
 
     this.backgroundObj = new QuadBuilder("Title Screen Background")
       .pos(0.0f, 0.0f, 0.0f)

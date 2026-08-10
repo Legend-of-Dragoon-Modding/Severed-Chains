@@ -49,7 +49,7 @@ public class ScreenCaptureEffect1c implements Effect<EffectManagerParams.VoidTyp
     this.captureH_08 = captureH;
     this.rendererIndex_0c = rendererIndex;
 
-    this.texture = RENDERER.copyTexture(RENDERER.getLastFrame());
+    this.texture = RENDERER.copyTexture("Screen capture", RENDERER.getLastFrame());
 
     final float widthFactor = ((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / (4.0f / 3.0f);
     final float normalizedCaptureW = (float)captureW / RENDERER.getNativeWidth() / widthFactor;

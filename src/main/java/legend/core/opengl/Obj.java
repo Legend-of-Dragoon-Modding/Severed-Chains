@@ -1,6 +1,8 @@
 package legend.core.opengl;
 
+import legend.core.lang.RawText;
 import legend.game.types.Translucency;
+import legend.game.ui.GameOverlay;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,9 +50,10 @@ public abstract class Obj {
     for(int i = objList.size() - 1; i >= 0; i--) {
       final Obj obj = objList.get(i);
 
-      if(!obj.persistent || clearPersistent) {
+      if(!obj.deleted && (!obj.persistent || clearPersistent)) {
         if(shouldLog) {
           LOGGER.warn("Leaked: %s", obj.name);
+          GameOverlay.addNotification(5, new RawText("Leaked obj: " + obj.name));
         }
 
         obj.delete();

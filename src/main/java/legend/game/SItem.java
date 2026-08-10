@@ -759,9 +759,13 @@ public final class SItem {
       //LAB_800fc9e4
       uiFile_800bdc3c = UiFile.fromFile(data);
       uiFile_800bdc3c.uiElements_0000().obj = buildUiRenderable(uiFile_800bdc3c.uiElements_0000(), "Elements");
+      uiFile_800bdc3c.uiElements_0000().obj.persistent = true;
       uiFile_800bdc3c.itemIcons_c6a4().obj = buildUiRenderable(uiFile_800bdc3c.itemIcons_c6a4(), "Item Icons");
+      uiFile_800bdc3c.itemIcons_c6a4().obj.persistent = true;
       uiFile_800bdc3c.portraits_cfac().obj = buildUiRenderable(uiFile_800bdc3c.portraits_cfac(), "Portraits");
+      uiFile_800bdc3c.portraits_cfac().obj.persistent = true;
       uiFile_800bdc3c._d2d8().obj = buildUiRenderable(uiFile_800bdc3c._d2d8(), "d2d8");
+      uiFile_800bdc3c._d2d8().obj.persistent = true;
     }
 
     //LAB_800fc9fc
@@ -1762,11 +1766,7 @@ public final class SItem {
 
       case 4:
         messageBox.state_0c = 5;
-
-        if(messageBox.highlightRenderable_04 != null) {
-          messageBox.highlightRenderable_04.delete();
-          messageBox.highlightRenderable_04 = null;
-        }
+        messageBox.delete();
 
         //LAB_8010f084
         unloadRenderable(messageBox.backgroundRenderable_08);

@@ -2,6 +2,7 @@ package legend.game;
 
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
+import legend.core.opengl.Texture;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.events.engine.EngineStateChangeEvent;
 import legend.game.unpacker.FileData;
@@ -74,6 +75,7 @@ public final class EngineStates {
     }
 
     Obj.clearObjList(false);
+    Texture.clearTextureList(false);
 
     //LAB_80012ad8
     if(currentEngineState_8004dd04 != null) {

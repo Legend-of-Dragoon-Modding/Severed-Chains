@@ -95,23 +95,25 @@ public class Gpu {
 
     this.initVram();
 
-    this.vramTexture24 = Texture.create(builder -> {
+    this.vramTexture24 = Texture.create("VRAM 24", builder -> {
       builder.size(1024, 512);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
     });
+    this.vramTexture24.persistent = true;
 
     this.displaySize(320, 240);
   }
 
   public void initVram() {
-    this.vramTexture15 = Texture.create(builder -> {
+    this.vramTexture15 = Texture.create("VRAM 15", builder -> {
       builder.size(1024, 512);
       builder.internalFormat(GL_R32UI);
       builder.dataFormat(GL_RED_INTEGER);
       builder.dataType(GL_UNSIGNED_INT);
     });
+    this.vramTexture15.persistent = true;
   }
 
   public void updateVramTexture() {
@@ -410,7 +412,8 @@ public class Gpu {
       this.renderBuffers[i] = new VramTextureSingle(Bpp.BITS_24, new Rect4i(0, 0, horizontalRes, verticalRes), new int[horizontalRes * verticalRes]);
     }
 
-    this.displayTexture = Texture.empty(horizontalRes, verticalRes);
+    this.displayTexture = Texture.empty("Display buffer", horizontalRes, verticalRes);
+    this.displayTexture.persistent = true;
 
     this.updateDisplayTexture(this.windowWidth, this.windowHeight);
   }

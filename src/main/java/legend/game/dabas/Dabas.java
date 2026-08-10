@@ -133,7 +133,7 @@ public class Dabas implements DabasInterface {
 
   private void tick() {
     if(this.displayTexture == null) {
-      this.displayTexture = Texture.empty(32, 32);
+      this.displayTexture = Texture.empty("Dabas display buffer", 32, 32);
     }
 
     if(this.texturedObj == null) {

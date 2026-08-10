@@ -17,8 +17,6 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.modding.events.RenderEvent;
-import legend.game.modding.events.scripting.ScriptAllocatedEvent;
-import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.scripting.ScriptLifecycleEvent;
 import legend.game.scripting.ScriptManager;
 import legend.game.scripting.ScriptStackFrame;
@@ -233,23 +231,13 @@ public class ScriptDebuggerController {
   }
 
   @EventListener
-  public void onScriptAllocated(final ScriptAllocatedEvent event) {
-    Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
-  }
-
-  @EventListener
-  public void onScriptDeallocated(final ScriptDeallocatedEvent event) {
-    Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
-  }
-
-  @EventListener
-  public void onScriptTick(final ScriptLifecycleEvent event) {
-    if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.POST_SCRIPT_VM_TICK) {
-      Platform.runLater(() -> {
-        if(event.scriptIndex == this.scriptSelector.getValue().index) {
-          this.updateScriptVars();
-        }
-      });
+  public void onScriptLifecycle(final ScriptLifecycleEvent event) {
+    if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.ALLOCATED || event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.PRE_DEALLOCATE) {
+      Platform.runLater(() -> this.updateScriptName(event.scriptIndex));
+    } else if(event.getLifecycle() == ScriptLifecycleEvent.Lifecycle.POST_SCRIPT_VM_TICK) {
+      if(event.scriptIndex == this.scriptSelector.getValue().index) {
+        Platform.runLater(this::updateScriptVars);
+      }
     }
   }
 

@@ -505,6 +505,10 @@ public class RenderEngine {
     ShaderManager.delete();
     Obj.setShouldLog(false);
     Obj.clearObjList(true);
+    Obj.setShouldLog(true);
+    Texture.setShouldLog(false);
+    Texture.clearTextureList(true);
+    Texture.setShouldLog(true);
   }
 
   public static <Options extends ShaderOptions<Options>> Shader<Options> loadShader(final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
@@ -1086,8 +1090,8 @@ public class RenderEngine {
   }
 
   /** Duplicates the passed in texture into a new texture. New texture must be deleted by the caller. Can only be called on the render thread. */
-  public Texture copyTexture(final Texture texture) {
-    final Texture copy = Texture.copyAttributesFrom(texture);
+  public Texture copyTexture(final String copyName, final Texture texture) {
+    final Texture copy = Texture.copyAttributesFrom(copyName, texture);
     final FrameBuffer buffer = FrameBuffer.create(builder -> builder.attachment(copy, GL_COLOR_ATTACHMENT0));
     final Shader<CopyShaderOptions> shader = ShaderManager.getShader(COPY_SHADER);
     final CopyShaderOptions options = shader.makeOptions();
@@ -1381,7 +1385,7 @@ public class RenderEngine {
         this.renderTextures[i].delete();
       }
 
-      this.renderTextures[i] = Texture.create(builder -> {
+      this.renderTextures[i] = Texture.create("Render buffer " + i, builder -> {
         builder.size(this.renderWidth, this.renderHeight);
         builder.internalFormat(GL_RGBA16);
         builder.dataFormat(GL_RGBA);
@@ -1389,18 +1393,20 @@ public class RenderEngine {
         builder.magFilter(GL_NEAREST);
         builder.minFilter(GL_LINEAR);
       });
+      this.renderTextures[i].persistent = true;
     }
 
     if(this.depthTexture != null) {
       this.depthTexture.delete();
     }
 
-    this.depthTexture = Texture.create(builder -> {
+    this.depthTexture = Texture.create("Depth buffer", builder -> {
       builder.size(this.renderWidth, this.renderHeight);
       builder.internalFormat(GL_DEPTH_COMPONENT);
       builder.dataFormat(GL_DEPTH_COMPONENT);
       builder.dataType(GL_FLOAT);
     });
+    this.depthTexture.persistent = true;
 
     // Render buffers
     for(int i = 0; i < this.renderBuffers.length; i++) {

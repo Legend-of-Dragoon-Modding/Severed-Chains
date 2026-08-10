@@ -121,8 +121,8 @@ public class VramTextureSingle extends VramTexture {
     }
   }
 
-  public Texture createOpenglTexture(final VramTextureSingle palette, final Rect4i region) {
-    return Texture.create(builder -> {
+  public Texture createOpenglTexture(final String name, final VramTextureSingle palette, final Rect4i region) {
+    return Texture.create(name, builder -> {
       builder.data(this.applyPalette(palette, region), this.rect.w(), this.rect.h());
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
@@ -130,8 +130,8 @@ public class VramTextureSingle extends VramTexture {
     });
   }
 
-  public Texture createOpenglTexture(final VramTextureSingle palette) {
-    return this.createOpenglTexture(palette, new Rect4i(0, 0, this.rect.w, this.rect.h));
+  public Texture createOpenglTexture(final String name, final VramTextureSingle palette) {
+    return this.createOpenglTexture(name, palette, new Rect4i(0, 0, this.rect.w, this.rect.h));
   }
 
   public void dumpToFile() {

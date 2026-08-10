@@ -30,7 +30,8 @@ public class Font {
   public void init() {
     if(this.texture == null) {
       final String fontName = this.path.getFileName().toString();
-      this.texture = Texture.png(this.path.resolveSibling(fontName.substring(0, fontName.lastIndexOf('.')) + ".png"));
+      this.texture = Texture.png("Font " + fontName, this.path.resolveSibling(fontName.substring(0, fontName.lastIndexOf('.')) + ".png"));
+      this.texture.persistent = true;
     }
 
     if(this.obj == null) {

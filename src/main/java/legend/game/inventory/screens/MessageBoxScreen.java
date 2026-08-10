@@ -40,6 +40,12 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
+  protected void delete() {
+    super.delete();
+    this.messageBox.delete();
+  }
+
+  @Override
   protected void render() {
     messageBox(this.messageBox);
 

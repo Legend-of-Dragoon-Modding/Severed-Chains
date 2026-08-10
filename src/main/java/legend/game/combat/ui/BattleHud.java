@@ -438,7 +438,7 @@ public class BattleHud {
     //LAB_800effa0
     if(this.battle.countCombatUiFilesLoaded_800c6cf4 >= 6) {
       if(this.battleIconsTexture == null) {
-        this.battleIconsTexture = Texture.png(Path.of("gfx/ui/battle_icons.png"));
+        this.battleIconsTexture = Texture.png("Battle icons", Path.of("gfx/ui/battle_icons.png"));
       }
 
       if(this.battleIconQuad == null) {
@@ -453,7 +453,7 @@ public class BattleHud {
       if(this.elementIcon == null) {
         this.elementIcon = new HashMap<>();
 
-        REGISTRIES.elementIcons.forEach(icon -> this.elementIcon.put(icon, Texture.png(REGISTRIES.elementIcons.getEntry(icon).get().path)));
+        REGISTRIES.elementIcons.forEach(icon -> this.elementIcon.put(icon, Texture.png("Element icons", REGISTRIES.elementIcons.getEntry(icon).get().path)));
       }
 
       if(this.elementIconQuad == null) {
@@ -2126,6 +2126,16 @@ public class BattleHud {
     if(this.spBars != null) {
       this.spBars.delete();
       this.spBars = null;
+    }
+
+    if(this.battleIconsTexture != null) {
+      this.battleIconsTexture.delete();
+      this.battleIconsTexture = null;
+    }
+
+    if(this.battleIconQuad != null) {
+      this.battleIconQuad.delete();
+      this.battleIconQuad = null;
     }
 
     if(this.elementIconQuad != null) {

@@ -90,7 +90,7 @@ public final class VideoPlayer {
 
     LOGGER.info("Video size %dx%d", videoWidth, videoHeight);
 
-    displayTexture = Texture.create(builder -> {
+    displayTexture = Texture.create("Video", builder -> {
       builder.size(videoWidth, videoHeight);
       builder.internalFormat(GL_RGB);
       builder.dataFormat(GL_RGB);

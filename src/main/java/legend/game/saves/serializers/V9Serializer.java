@@ -168,7 +168,7 @@ public final class V9Serializer {
   }
 
   public static void toV9(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) {
-    final TexturePacker packer = new TexturePacker();
+    final TexturePacker packer = new TexturePacker("Save " + name);
 
     for(final CharacterData2c character : gameState.charData_32c) {
       packer.add(character.template.getRegistryId(), character.template.loadPortrait());

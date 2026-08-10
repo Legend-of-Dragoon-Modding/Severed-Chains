@@ -378,10 +378,11 @@ public final class GameEngine {
     final Map<RegistryId, Image> images = new HashMap<>();
     EVENTS.postEvent(new RegisterAtlasTexturesEvent(images));
 
-    final TexturePacker packer = new TexturePacker();
+    final TexturePacker packer = new TexturePacker("Mod atlas");
     images.forEach(packer::add);
 
     TEXTURE_ATLAS = packer.pack(512, 512);
+    TEXTURE_ATLAS.setPersistent(true);
 
     LOGGER.info("Texture atlas created in %.02fs", (System.nanoTime() - t) / 1_000_000_000.0f);
   }
@@ -445,9 +446,10 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    UI_TEXTURE = Texture.png(Path.of("gfx", "ui", "ui.png"));
+    UI_TEXTURE = Texture.png("UI", Path.of("gfx", "ui", "ui.png"));
+    UI_TEXTURE.persistent = true;
 
-    eyeTexture = Texture.png(Path.of("gfx", "textures", "loading.png"));
+    eyeTexture = Texture.png("Loading eye", Path.of("gfx", "textures", "loading.png"));
 
     texturedObj = new QuadBuilder("Textured Obj")
       .bpp(Bpp.BITS_24)

@@ -22,8 +22,14 @@ import static org.lwjgl.stb.STBRectPack.stbrp_init_target;
 import static org.lwjgl.stb.STBRectPack.stbrp_pack_rects;
 
 public class TexturePacker {
+  public final String name;
+
   private final Map<RegistryId, Rect4i> entryToRect = new HashMap<>();
   private final Map<RegistryId, Image> entryToImage = new HashMap<>();
+
+  public TexturePacker(final String name) {
+    this.name = name;
+  }
 
   public void add(final RegistryId id, final Image image) {
     final Rect4i rect = new Rect4i();
@@ -78,7 +84,7 @@ public class TexturePacker {
     final ByteBuffer buffer = BufferUtils.createByteBuffer(packedData.length);
     buffer.put(0, packedData);
 
-    final Texture texture = Texture.create(builder -> {
+    final Texture texture = Texture.create("Atlas " + this.name, builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
@@ -88,7 +94,7 @@ public class TexturePacker {
     });
 
     final Map<RegistryId, TextureAtlasIcon> icons = new HashMap<>();
-    final QuadBuilder builder = new QuadBuilder("Atlas");
+    final QuadBuilder builder = new QuadBuilder("Atlas " + this.name);
 
     for(final var entry : this.entryToRect.entrySet()) {
       final Rect4i rect = entry.getValue();

@@ -317,7 +317,7 @@ public class Ttle extends EngineState<Ttle> {
       return;
     }
 
-    this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
+    this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture("Background", (VramTextureSingle)this.backgroundPalettes[0]);
     this.backgroundObj = new QuadBuilder("Title Screen Background")
       .pos(0.0f, 0.0f, 60000.0f)
       .posSize(368.0f, 424.0f)
@@ -325,14 +325,14 @@ public class Ttle extends EngineState<Ttle> {
       .bpp(Bpp.BITS_24)
       .build();
 
-    this.logoTex = Texture.filteredPng(Path.of("gfx/ui/logo.png"));
+    this.logoTex = Texture.filteredPng("Logo", Path.of("gfx/ui/logo.png"));
     this.logoObj = new QuadBuilder("Title Screen Logo")
       .posSize(352.0f, 198.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .build();
 
-    this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture((VramTextureSingle)this.tmPalettes[0]);
+    this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture("Trademark", (VramTextureSingle)this.tmPalettes[0]);
     this.trademarkObj = new QuadBuilder("Title Screen Trademark")
       .pos(326.0f, 86.0f, 0.0f)
       .posSize(16.0f, 8.0f)
@@ -341,7 +341,7 @@ public class Ttle extends EngineState<Ttle> {
       .translucency(Translucency.B_PLUS_F)
       .build();
 
-    this.menuTextTex = Texture.filteredPng(Path.of("gfx/ui/title_menu.png"));
+    this.menuTextTex = Texture.filteredPng("Menu", Path.of("gfx/ui/title_menu.png"));
     final QuadBuilder menuTextBuilder = new QuadBuilder("Title Screen Menu Text");
     for(int i = 0; i < MENU_OPTIONS; i++) {
       menuTextBuilder
@@ -420,7 +420,7 @@ public class Ttle extends EngineState<Ttle> {
 
     this.menuTextObj = menuTextBuilder.build();
 
-    this.copyrightTex = ((VramTextureSingle)this.copyrightTexture).createOpenglTexture((VramTextureSingle)this.copyrightPalettes[0]);
+    this.copyrightTex = ((VramTextureSingle)this.copyrightTexture).createOpenglTexture("Copyright", (VramTextureSingle)this.copyrightPalettes[0]);
     this.copyrightObj = new QuadBuilder("Title Screen Copyright")
       .pos(92.0f, 220.0f, 0.0f)
       .size(184.0f, 16.0f)
