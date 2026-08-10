@@ -140,7 +140,7 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
-    AUDIO_THREAD = new AudioThread(true, 24, InterpolationPrecision.Double, PitchResolution.Quadruple, EffectsOverTimeGranularity.Double);
+    AUDIO_THREAD = new AudioThread();
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -251,13 +251,12 @@ public final class GameEngine {
 
     DEFAULT_FONT = FONTS.get(Path.of("gfx", "fonts", CONFIG.getConfig(CoreMod.RETAIL_FONT_CONFIG.get())));
 
-    AUDIO_THREAD.init();
-    AUDIO_THREAD.setMusicPlayerVolume(CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get()));
-    AUDIO_THREAD.changeInterpolationBitDepth(CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get()));
-    AUDIO_THREAD.changePitchResolution(CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get()));
-    AUDIO_THREAD.changeEffectsOverTimeGranularity(CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get()));
+    final float playerVolume = CONFIG.getConfig(CoreMod.MUSIC_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
+    final InterpolationPrecision interpolationPrecision = CONFIG.getConfig(CoreMod.MUSIC_INTERPOLATION_PRECISION_CONFIG.get());
+    final PitchResolution pitchResolution = CONFIG.getConfig(CoreMod.MUSIC_PITCH_RESOLUTION_CONFIG.get());
+    final EffectsOverTimeGranularity effectsOverTimeGranularity = CONFIG.getConfig(CoreMod.MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG.get());
+    AUDIO_THREAD.init(playerVolume, interpolationPrecision, pitchResolution, effectsOverTimeGranularity);
 
-    SPU.init();
     RENDERER.init();
     RENDERER.events().onClose(Async::shutdown);
     GPU.init();
@@ -459,6 +458,7 @@ public final class GameEngine {
 
     RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
+    /*
     try {
       VideoPlayer.play(Path.of("gfx/intro.mp4"), GameEngine::renderIntro, () -> {
         cinematicFinished = true;
@@ -468,6 +468,10 @@ public final class GameEngine {
       LOGGER.warn("Failed to play intro", e);
       RENDERER.setRenderCallback(GameEngine::renderIntro);
     }
+     */
+
+    cinematicFinished = true;
+    RENDERER.setRenderCallback(GameEngine::renderIntro);
 
     onKeyPressed = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> {
       if(mods.isEmpty()) {
