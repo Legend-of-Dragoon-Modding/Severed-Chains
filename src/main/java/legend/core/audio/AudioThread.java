@@ -92,6 +92,8 @@ public final class AudioThread implements Runnable {
 
     // Poll for default device change
     this.scheduler.scheduleAtFixedRate(() -> {
+      alcGetString(0, ALC_ALL_DEVICES_SPECIFIER); // refresh the list
+
       final String currentDefault = alcGetString(0, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
 
       if(currentDefault != null && !currentDefault.equals(this.defaultDevice)) {
