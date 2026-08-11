@@ -95,6 +95,7 @@ public final class AudioThread implements Runnable {
       final String currentDefault = alcGetString(0, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
 
       if(currentDefault != null && !currentDefault.equals(this.defaultDevice)) {
+        LOGGER.info("Found new default device %s", currentDefault);
         this.defaultDevice = currentDefault;
         this.deviceChanged = true;
       }
