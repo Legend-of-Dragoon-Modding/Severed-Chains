@@ -20,6 +20,9 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
@@ -28,9 +31,11 @@ import static org.lwjgl.openal.ALC10.alcCreateContext;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
 import static org.lwjgl.openal.ALC10.alcGetError;
 import static org.lwjgl.openal.ALC10.alcGetIntegerv;
+import static org.lwjgl.openal.ALC10.alcGetString;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 import static org.lwjgl.openal.ALC11.ALC_ALL_DEVICES_SPECIFIER;
+import static org.lwjgl.openal.ALC11.ALC_DEFAULT_ALL_DEVICES_SPECIFIER;
 import static org.lwjgl.openal.EXTDisconnect.ALC_CONNECTED;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
@@ -58,6 +63,10 @@ public final class AudioThread implements Runnable {
 
   private IntBuffer tmp;
 
+  private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+  private String defaultDevice;
+  private volatile boolean deviceChanged;
+
   public static List<String> getDevices() {
     if(ALC.getCapabilities().ALC_ENUMERATE_ALL_EXT) {
       return ALUtil.getStringList(0, ALC_ALL_DEVICES_SPECIFIER);
@@ -78,6 +87,21 @@ public final class AudioThread implements Runnable {
   public void init() {
     this.initInternal();
     this.addDefaultSources();
+
+    this.defaultDevice = alcGetString(0, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
+
+    // Poll for default device change
+    this.scheduler.scheduleAtFixedRate(() -> {
+      alcGetString(0, ALC_ALL_DEVICES_SPECIFIER); // refresh the list
+
+      final String currentDefault = alcGetString(0, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
+
+      if(currentDefault != null && !currentDefault.equals(this.defaultDevice)) {
+        LOGGER.info("Found new default device %s", currentDefault);
+        this.defaultDevice = currentDefault;
+        this.deviceChanged = true;
+      }
+    }, 2, 2, TimeUnit.SECONDS);
   }
 
   public void reinit() {
@@ -143,6 +167,8 @@ public final class AudioThread implements Runnable {
   }
 
   public void destroy() {
+    this.scheduler.shutdown();
+
     synchronized(this) {
       if(!this.running && this.audioDevice != 0) {
         this.destroyInternal();
@@ -184,6 +210,9 @@ public final class AudioThread implements Runnable {
     if(devices.contains(currentDevice)) {
       LOGGER.info(AUDIO_THREAD_MARKER, "Using selected audio device %s", currentDevice);
       this.audioDevice = alcOpenDevice(currentDevice);
+    } else if(this.defaultDevice != null) {
+      LOGGER.info(AUDIO_THREAD_MARKER, "Using default audio device %s", this.defaultDevice);
+      this.audioDevice = alcOpenDevice(this.defaultDevice);
     } else if(!devices.isEmpty()) {
       LOGGER.info(AUDIO_THREAD_MARKER, "Using first audio device %s", devices.getFirst());
       this.audioDevice = alcOpenDevice(devices.getFirst());
@@ -238,6 +267,15 @@ public final class AudioThread implements Runnable {
 
         if(!this.running) {
           break;
+        }
+
+        if(this.deviceChanged) {
+          if("<default>".equals(CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get()))) {
+            LOGGER.info("Default audio device changed");
+            this.reinit();
+          }
+
+          this.deviceChanged = false;
         }
 
         if(this.alcCapabilities.ALC_EXT_disconnect) {
