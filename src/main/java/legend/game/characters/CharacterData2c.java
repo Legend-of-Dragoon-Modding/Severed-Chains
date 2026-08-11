@@ -7,6 +7,7 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.CanEquip;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentTypes;
+import legend.game.modding.events.characters.ResolveCharacterElementEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -21,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static legend.core.GameEngine.EVENTS;
 
 public class CharacterData2c {
   public static final int IN_PARTY = 0x1;
@@ -201,11 +204,13 @@ public class CharacterData2c {
   }
 
   public Element getElement() {
-    return this.template.getElement(this);
+    final ResolveCharacterElementEvent event = EVENTS.postEvent(new ResolveCharacterElementEvent(this, null, this.template.getElement(this)));
+    return event.element;
   }
 
   public Element getElement(final PlayerBattleEntity bent) {
-    return this.template.getElement(this, bent);
+    final ResolveCharacterElementEvent event = EVENTS.postEvent(new ResolveCharacterElementEvent(this, bent, this.template.getElement(this, bent)));
+    return event.element;
   }
 
   public boolean hasDragoon() {
