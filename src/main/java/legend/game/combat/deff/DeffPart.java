@@ -1,13 +1,14 @@
 package legend.game.combat.deff;
 
 import legend.core.gpu.Rect4i;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
 import java.util.List;
 
-public class DeffPart {
+public abstract class DeffPart {
   /**
    * MSB is type, LSB is index, middle bytes are some kind of ID?
    * <ul>
@@ -25,6 +26,8 @@ public class DeffPart {
   public DeffPart(final FileData data) {
     this.flags_00 = data.readInt(0);
   }
+
+  public abstract void delete();
 
   public static DeffPart getDeffPart(final List<FileData> files, final int i) {
     final FileData data = files.get(i);
@@ -57,6 +60,11 @@ public class DeffPart {
         default -> throw new RuntimeException("Unsupported LMB type");
       };
     }
+
+    @Override
+    public void delete() {
+
+    }
   }
 
   public static class TmdType extends DeffPart {
@@ -88,6 +96,15 @@ public class DeffPart {
         this.tmd_0c = new CContainer(name, data.slice(tmdOffset));
       } else {
         this.tmd_0c = null;
+      }
+    }
+
+    @Override
+    public void delete() {
+      if(this.tmd_0c != null) {
+        for(final TmdObjTable1c objTable : this.tmd_0c.tmdPtr_00.tmd.objTable) {
+          objTable.delete();
+        }
       }
     }
   }
@@ -125,6 +142,11 @@ public class DeffPart {
     public SpriteType(final FileData data) {
       super(data);
       this.metrics_08 = new SpriteMetrics(data.slice(data.readInt(0xc), 0xc));
+    }
+
+    @Override
+    public void delete() {
+
     }
   }
 

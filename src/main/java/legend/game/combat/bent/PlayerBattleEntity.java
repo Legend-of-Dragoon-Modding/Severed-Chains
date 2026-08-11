@@ -106,6 +106,17 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   @Override
+  public String toString() {
+    final String str = super.toString();
+
+    if(this.isDragoon()) {
+      return str + " (dragoon)";
+    }
+
+    return str;
+  }
+
+  @Override
   public String getName() {
     return I18n.translate(this.character.template);
   }

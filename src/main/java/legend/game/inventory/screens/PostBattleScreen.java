@@ -497,6 +497,7 @@ public class PostBattleScreen extends MenuScreen {
         resizeDisplay(384, 240);
         renderMode = EngineState.RenderMode.LEGACY;
         deallocateRenderables(0xff);
+        this.deleteResultsScreenObjects();
         menuStack.popScreen();
         menuStack.pushScreen(new TooManyItemsScreen());
       }

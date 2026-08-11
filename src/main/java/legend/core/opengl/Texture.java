@@ -159,6 +159,7 @@ public final class Texture {
   private boolean deleted;
   /** This Obj won't be deleted on state transition */
   public boolean persistent;
+  private boolean actuallyDeleted;
 
   private Texture(@Nullable final TriConsumer<Integer, Integer, Integer> texImage2d, final String name, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
     this.name = name;
@@ -226,6 +227,11 @@ public final class Texture {
   }
 
   public void use(final int activeTexture) {
+    if(this.actuallyDeleted) {
+      LOGGER.warn("%s used after being deleted", this.name);
+      GameOverlay.addNotification(3, new RawText("Texture " + this.name + " used after being deleted"));
+    }
+
     if(currentTextures[activeTexture] != this.id) {
       currentTextures[activeTexture] = this.id;
       glActiveTexture(GL_TEXTURE0 + activeTexture);
@@ -242,6 +248,7 @@ public final class Texture {
   }
 
   private void performDelete() {
+    this.actuallyDeleted = true;
     glDeleteTextures(this.id);
   }
 

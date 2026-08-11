@@ -60,6 +60,14 @@ public class DeffManager7cc {
     this.scripts_2c = null;
   }
 
+  public void delete() {
+    if(this.deffPackage_5a8 != null) {
+      for(final DeffPart part : this.deffPackage_5a8) {
+        part.delete();
+      }
+    }
+  }
+
   /** See {@link DeffPart#flags_00} */
   @Method(0x800eac58L)
   public DeffPart getDeffPart(final int flags) {

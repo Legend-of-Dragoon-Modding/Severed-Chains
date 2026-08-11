@@ -2905,6 +2905,8 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c952cL)
   public static void loadCombatantModelAndAnimation(final Battle battle, final BattleEntity27c bent, final CombatantStruct1a8 combatant) {
+    bent.model_148.deleteModelParts();
+
     final CContainer tmd;
     if(combatant._1a4 >= 0) {
       tmd = new CContainer(bent.model_148.name, battleState_8006e398.getGlobalAsset(combatant._1a4).data_00);
@@ -2931,7 +2933,7 @@ public class Battle extends EngineState<Battle> {
       initModel(bent.model_148, tmd, anim);
     }
 
-    TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', bent.model_148);
+    TmdObjLoader.fromModel("CombatantModel (%s)".formatted(bent), bent.model_148);
 
     EVENTS.postEvent(new CombatantModelLoadedEvent(battle, combatant, bent.model_148));
 
@@ -5753,7 +5755,7 @@ public class Battle extends EngineState<Battle> {
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
     model.shadowOffset_118.zero();
 
-    TmdObjLoader.fromModel("BattleModel", model);
+    TmdObjLoader.fromModel("BattleModel " + model.name, model);
   }
 
   @Method(0x800e45c0L)
@@ -6474,6 +6476,7 @@ public class Battle extends EngineState<Battle> {
 
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
+    struct7cc.delete();
     struct7cc.deffPackage_5a8 = null;
 
     this.deffLoadingStage_800fafe8 = 4;
