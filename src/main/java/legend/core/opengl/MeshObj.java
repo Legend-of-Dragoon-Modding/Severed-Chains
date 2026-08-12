@@ -1,26 +1,18 @@
 package legend.core.opengl;
 
-import legend.core.lang.RawText;
 import legend.game.types.Translucency;
-import legend.game.ui.GameOverlay;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Set;
 
 public class MeshObj extends Obj {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(MeshObj.class);
-
   public final Mesh[] meshes;
   private final boolean backfaceCulling;
   private final boolean textured;
   private final boolean opaque;
   private final boolean translucent;
   protected final Set<Translucency> translucencies = EnumSet.noneOf(Translucency.class);
-
-  private boolean actuallyDeleted;
 
   public MeshObj(final String name, final Mesh[] meshes) {
     this(name, meshes, true);
@@ -101,21 +93,11 @@ public class MeshObj extends Obj {
 
   @Override
   public void render(final int layer, final int startVertex, final int vertexCount) {
-    if(this.actuallyDeleted) {
-      LOGGER.warn("%s rendered after being deleted", this.name);
-      GameOverlay.addNotification(3, new RawText("Obj " + this.name + " rendered after being deleted"));
-    }
-
     this.meshes[layer].draw(startVertex, vertexCount);
   }
 
   @Override
   public void render(@Nullable final Translucency translucency, final int layer, final int startVertex, final int vertexCount) {
-    if(this.actuallyDeleted) {
-      LOGGER.warn("%s rendered after being deleted", this.name);
-      GameOverlay.addNotification(3, new RawText("Obj " + this.name + " rendered after being deleted"));
-    }
-
     final Mesh mesh = this.meshes[layer];
 
     if(!mesh.translucent && translucency == null || mesh.translucent && mesh.translucencyMode == translucency) {
@@ -125,8 +107,6 @@ public class MeshObj extends Obj {
 
   @Override
   protected void performDelete() {
-    this.actuallyDeleted = true;
-
     for(final Mesh mesh : this.meshes) {
       mesh.delete();
     }
