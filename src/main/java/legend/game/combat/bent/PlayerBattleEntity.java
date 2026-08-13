@@ -582,6 +582,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       spell = LodSpells.SPELL127.get();
     }
 
-    this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(gameState_800babc8.charData_32c.get(this.charId_272), spell)).spell;
+    final SpellStatsEvent spellStatsEvent = EVENTS.postEvent(new SpellStatsEvent(this.character, spell));
+    this.spell_94 = spellStatsEvent.spell;
   }
 }

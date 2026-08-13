@@ -110,6 +110,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -8344,7 +8345,9 @@ public class Battle extends EngineState<Battle> {
       this.dragoonSpells_800c6960.add(spells);
 
       for(final RegistryId spellId : player.character.getUnlockedSpells()) {
-        spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
+        final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
+        final SpellStatsEvent spellStatsEvent = EVENTS.postEvent(new SpellStatsEvent(player.character, spell));
+        spells.spells_01.add(spellStatsEvent.spell);
       }
 
       //LAB_800ef400
