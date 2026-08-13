@@ -9,7 +9,7 @@ import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
-import legend.game.modding.events.battle.SpellStatsEvent;
+import legend.game.modding.events.battle.ResolveSpellDescriptionEvent;
 import legend.game.scripting.RunningScript;
 import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
@@ -118,7 +118,9 @@ public class SpellListMenu extends ListMenu {
     if(this.menuState_00 != 0 && (this.flags_02 & 0x1) != 0) {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
-        final SpellStats0c spell = EVENTS.postEvent(new SpellStatsEvent(this.spells.character_00, this.spells.spells_01.get(this.listScroll_1e + this.listIndex_24))).spell;
+      final SpellStats0c spell = this.spells.spells_01.get(this.listScroll_1e + this.listIndex_24);
+      final String baseDescription = I18n.translate(spell.getTranslationKey("description"));
+      final String description = EVENTS.postEvent(new ResolveSpellDescriptionEvent(this.spells.character_00, spell.getRegistryId(), spell, baseDescription)).description;
 
         //Selected item description
         if(this.description == null) {
@@ -129,7 +131,7 @@ public class SpellListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText(I18n.translate(spell.getTranslationKey("description")), 160, 157, this.fontOptions);
+      renderText(description, 160, 157, this.fontOptions);
       }
     }
   }
