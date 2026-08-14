@@ -2419,14 +2419,7 @@ public class Battle extends EngineState<Battle> {
     if(fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.updateGameStateAndDeallocateMenu();
       this.setStageHasNoModel();
-
-      if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 != null) {
-        for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
-          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].tmd_08.delete();
-        }
-
-        battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 = null;
-      }
+      this.deleteBattleStageModel();
 
       if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
         battlePreloadedEntities_1f8003f4.skyboxObj.delete();
@@ -2499,6 +2492,16 @@ public class Battle extends EngineState<Battle> {
     //LAB_800c8604
   }
 
+  private void deleteBattleStageModel() {
+    if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 != null) {
+      for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
+        battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].tmd_08.delete();
+      }
+
+      battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 = null;
+    }
+  }
+
   @Method(0x80018508L)
   private void renderPostCombatScreen() {
     // There used to be code to preload SMAP while the post-combat screen is still up. I removed it because it only takes a few milliseconds to load in SC.
@@ -2546,6 +2549,7 @@ public class Battle extends EngineState<Battle> {
     LOGGER.info("Battle stage %s loaded", modelName);
 
     this.setStageHasNoModel();
+    this.deleteBattleStageModel();
 
     if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
