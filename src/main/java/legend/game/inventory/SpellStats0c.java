@@ -73,20 +73,8 @@ public abstract class SpellStats0c extends RegistryEntry implements ScriptReadab
     return -1;
   }
 
-  public SpellEffectPlan getEffectPlan() {
-    return this.effectPlans.get(0);
-  }
-
   public List<SpellEffectPlan> getEffectPlans() {
     return this.effectPlans;
-  }
-
-  public final void setEffectPlan(final SpellEffectPlan effectPlan) {
-    if(effectPlan == null) {
-      throw new IllegalArgumentException("Spell effect plan cannot be null");
-    }
-
-    this.setEffectPlans(List.of(effectPlan));
   }
 
   public final void setEffectPlans(final List<SpellEffectPlan> effectPlans) {

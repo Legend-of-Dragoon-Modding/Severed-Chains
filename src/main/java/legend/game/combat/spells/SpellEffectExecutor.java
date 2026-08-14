@@ -9,15 +9,37 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.function.IntUnaryOperator;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public final class SpellEffectExecutor {
-  public PreparedSpellEffects prepare(final PlayerBattleEntity caster, final BattleEntity27c target, final SpellEffectPlan plan, final IntUnaryOperator damageCalculator) {
-    this.validateTarget(caster, target, plan.target());
+  public List<TargetedSpellEffects> prepare(final PlayerBattleEntity caster, final BattleEntity27c selectedTarget, final List<? extends BattleEntity27c> battleEntities, final List<SpellEffectPlan> plans, final DamageCalculator damageCalculator) {
+    final List<TargetedSpellEffects> prepared = new ArrayList<>();
+    for(final SpellEffectPlan plan : plans) {
+      if(plan.executionMode() != ExecutionMode.DECLARATIVE) {
+        continue;
+      }
 
+      if(plan.target().scope() == TargetScope.SINGLE) {
+        final BattleEntity27c target = this.singleTarget(caster, selectedTarget, battleEntities, plan.target());
+        if(target != null) {
+          prepared.add(new TargetedSpellEffects(target, this.prepare(target, plan, damageCalculator)));
+        }
+        continue;
+      }
+
+      for(final BattleEntity27c target : battleEntities) {
+        if(this.matchesTarget(caster, target, plan.target())) {
+          prepared.add(new TargetedSpellEffects(target, this.prepare(target, plan, damageCalculator)));
+        }
+      }
+    }
+
+    return List.copyOf(prepared);
+  }
+
+  private PreparedSpellEffects prepare(final BattleEntity27c target, final SpellEffectPlan plan, final DamageCalculator damageCalculator) {
     int damagePower = 0;
     for(final SpellEffect effect : plan.effects()) {
       if(effect instanceof DamageSpellEffect damageEffect) {
@@ -25,8 +47,22 @@ public final class SpellEffectExecutor {
       }
     }
 
-    final int damage = damagePower == 0 ? 0 : damageCalculator.applyAsInt(damagePower);
+    final int damage = damagePower == 0 ? 0 : damageCalculator.calculate(target, damagePower);
     return new PreparedSpellEffects(plan, max(0, damage));
+  }
+
+  private BattleEntity27c singleTarget(final PlayerBattleEntity caster, final BattleEntity27c selectedTarget, final List<? extends BattleEntity27c> battleEntities, final SpellTargetProfile profile) {
+    if(this.matchesTarget(caster, selectedTarget, profile)) {
+      return selectedTarget;
+    }
+
+    for(final BattleEntity27c target : battleEntities) {
+      if(this.matchesTarget(caster, target, profile)) {
+        return target;
+      }
+    }
+
+    return null;
   }
 
   public int complete(final PlayerBattleEntity caster, final BattleEntity27c target, final PreparedSpellEffects prepared, final Random random, final int appliedVitalLoss) {
@@ -124,7 +160,7 @@ public final class SpellEffectExecutor {
     }
   }
 
-  private void validateTarget(final PlayerBattleEntity caster, final BattleEntity27c target, final SpellTargetProfile profile) {
+  private boolean matchesTarget(final PlayerBattleEntity caster, final BattleEntity27c target, final SpellTargetProfile profile) {
     final boolean targetIsPlayer = target instanceof PlayerBattleEntity;
     final boolean validSide = switch(profile.side()) {
       case SELF -> target == caster;
@@ -133,7 +169,7 @@ public final class SpellEffectExecutor {
       case ANY -> true;
     };
     if(!validSide) {
-      throw new IllegalArgumentException("Spell target " + target + " is incompatible with target side " + profile.side());
+      return false;
     }
 
     final boolean targetIsLiving = target.stats.getStat(LodMod.HP_STAT.get()).getCurrent() > 0;
@@ -142,8 +178,17 @@ public final class SpellEffectExecutor {
       case DEAD -> !targetIsLiving;
       case ANY -> true;
     };
-    if(!validLifeState) {
-      throw new IllegalArgumentException("Spell target " + target + " is incompatible with target life state " + profile.lifeState());
+    return validLifeState;
+  }
+
+  public record TargetedSpellEffects(BattleEntity27c target, PreparedSpellEffects effects) {
+    public TargetedSpellEffects {
+      if(target == null) {
+        throw new IllegalArgumentException("Prepared spell target cannot be null");
+      }
+      if(effects == null) {
+        throw new IllegalArgumentException("Prepared spell effects cannot be null");
+      }
     }
   }
 
@@ -156,6 +201,11 @@ public final class SpellEffectExecutor {
     STATUS,
     STAT_MODIFIER,
     REGEN,
+  }
+
+  @FunctionalInterface
+  public interface DamageCalculator {
+    int calculate(BattleEntity27c target, int power);
   }
 
   public record PreparedSpellEffects(SpellEffectPlan plan, int damage) {

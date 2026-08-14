@@ -169,7 +169,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -329,6 +331,9 @@ import static legend.lodmod.LodMod.SP_STAT;
 import static legend.lodmod.LodMod.disableRetailBattleActions;
 
 public class Battle extends EngineState<Battle> {
+  private static final int DECLARATIVE_SPELL_EFFECTS_APPLIED = Integer.MIN_VALUE;
+  private static final int BENT_TAKE_DAMAGE_ENTRYPOINT = 2;
+  private static final int SCRIPT_DAMAGE_STORAGE = 32;
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
@@ -424,6 +429,7 @@ public class Battle extends EngineState<Battle> {
 
   private final Object usedMonsterTextureSlotsLock = new Object();
   private final SpellEffectExecutor spellEffectExecutor = new SpellEffectExecutor();
+  private DeclarativeSpellCast declarativeSpellCast;
   private int usedMonsterTextureSlots_800c66c4;
   public ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
   private int mcqBaseOffsetX_800c66cc;
@@ -610,6 +616,9 @@ public class Battle extends EngineState<Battle> {
   public final SoundFile deffSounds = addSoundFile("DEFF SFX");
   public final SoundFile cutsceneSounds = addSoundFile("Cutscene SFX");
   public final SoundFile attackSounds = addSoundFile("Attack SFX");
+
+  private record DeclarativeSpellCast(int turnCount, int attackerIndex, RegistryId spellId) { }
+  private record DeclarativeSpellResult(int damage, int specialEffects) { }
 
   public Battle() {
     super(LodEngineStateTypes.BATTLE.get());
@@ -8606,28 +8615,11 @@ public class Battle extends EngineState<Battle> {
     attacker.clearTempWeaponAndSpellStats();
     attacker.setActiveSpell(script.params_20[2].get());
 
-    if(attacker instanceof final PlayerBattleEntity player) {
-      final SpellEffectPlan plan = this.declarativeSpellPlan(player, defender);
-      if(plan != null) {
-        final SpellEffectPlan primaryPlan = attacker.spell_94.getEffectPlans().get(0);
-        if(primaryPlan.executionMode() == ExecutionMode.DECLARATIVE) {
-          this.validateDeclarativeSpellTargeting(attacker.spell_94, primaryPlan);
-        }
-
-        var prepared = this.spellEffectExecutor.prepare(player, defender, plan, power -> this.calculateDeclarativeSpellDamage(player, defender, power));
-        final boolean dealsDamage = plan.effects().stream().anyMatch(DamageSpellEffect.class::isInstance);
-        final int eventDamage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, prepared.damage())).damage;
-        if(dealsDamage) {
-          prepared = new SpellEffectExecutor.PreparedSpellEffects(plan, java.lang.Math.max(0, eventDamage));
-          this.addElementIcon(attacker.spell_94.element_08.get());
-        }
-
-        final int appliedVitalLoss = java.lang.Math.min(prepared.damage(), defender.stats.getStat(HP_STAT.get()).getCurrent());
-        final int specialEffects = this.spellEffectExecutor.complete(player, defender, prepared, seed_800fa754, appliedVitalLoss);
-        script.params_20[3].set(prepared.damage());
-        script.params_20[4].set(specialEffects);
-        return FlowControl.CONTINUE;
-      }
+    if(attacker instanceof final PlayerBattleEntity player && attacker.spell_94.getEffectPlans().stream().anyMatch(plan -> plan.executionMode() == ExecutionMode.DECLARATIVE)) {
+      final DeclarativeSpellResult result = this.executeDeclarativeSpell(player, defender);
+      script.params_20[3].set(result.damage());
+      script.params_20[4].set(result.specialEffects());
+      return FlowControl.CONTINUE;
     }
 
     int damage = this.calculateMagicDamage(attacker, defender, 1);
@@ -8651,6 +8643,55 @@ public class Battle extends EngineState<Battle> {
     return FlowControl.CONTINUE;
   }
 
+  private DeclarativeSpellResult executeDeclarativeSpell(final PlayerBattleEntity attacker, final BattleEntity27c selectedTarget) {
+    final DeclarativeSpellCast cast = new DeclarativeSpellCast(gameState_800babc8.turnCount_b8, attacker.allBentSlot_274, attacker.spell_94.getRegistryId());
+    if(cast.equals(this.declarativeSpellCast)) {
+      return new DeclarativeSpellResult(0, DECLARATIVE_SPELL_EFFECTS_APPLIED);
+    }
+
+    this.declarativeSpellCast = cast;
+    this.validateDeclarativeSpellTargeting(attacker.spell_94, attacker.spell_94.getEffectPlans());
+    final List<? extends BattleEntity27c> battleEntities = battleState_8006e398.allBents_e0c.stream().map(state -> state.innerStruct_00).toList();
+    final List<SpellEffectExecutor.TargetedSpellEffects> preparedEffects = this.spellEffectExecutor.prepare(
+      attacker,
+      selectedTarget,
+      battleEntities,
+      attacker.spell_94.getEffectPlans(),
+      (target, power) -> this.calculateDeclarativeSpellDamage(attacker, target, power)
+    );
+    final Map<BattleEntity27c, Integer> damageByTarget = new LinkedHashMap<>();
+    final Map<BattleEntity27c, Integer> remainingHpByTarget = new LinkedHashMap<>();
+    boolean dealsDamage = false;
+
+    for(final SpellEffectExecutor.TargetedSpellEffects targeted : preparedEffects) {
+      final BattleEntity27c target = targeted.target();
+      var prepared = targeted.effects();
+      if(prepared.plan().effects().stream().anyMatch(DamageSpellEffect.class::isInstance)) {
+        dealsDamage = true;
+        final int eventDamage = EVENTS.postEvent(new AttackEvent(this, attacker, target, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, prepared.damage())).damage;
+        prepared = new SpellEffectExecutor.PreparedSpellEffects(prepared.plan(), java.lang.Math.max(0, eventDamage));
+      }
+
+      final int remainingHp = remainingHpByTarget.computeIfAbsent(target, bent -> bent.stats.getStat(HP_STAT.get()).getCurrent());
+      final int appliedVitalLoss = java.lang.Math.min(prepared.damage(), remainingHp);
+      remainingHpByTarget.put(target, remainingHp - appliedVitalLoss);
+      this.spellEffectExecutor.complete(attacker, target, prepared, seed_800fa754, appliedVitalLoss);
+      damageByTarget.merge(target, prepared.damage(), Integer::sum);
+    }
+
+    if(dealsDamage) {
+      this.addElementIcon(attacker.spell_94.element_08.get());
+    }
+
+    for(final Map.Entry<BattleEntity27c, Integer> entry : damageByTarget.entrySet()) {
+      if(entry.getValue() > 0) {
+        this.applyDeclarativeSpellDamage(entry.getKey(), entry.getValue());
+      }
+    }
+
+    return new DeclarativeSpellResult(0, DECLARATIVE_SPELL_EFFECTS_APPLIED);
+  }
+
   private int calculateDeclarativeSpellDamage(final PlayerBattleEntity attacker, final BattleEntity27c defender, final int power) {
     final Element attackElement = attacker.spell_94.element_08.get();
     final AttackType attackType = AttackType.DRAGOON_MAGIC_STATUS_ITEMS;
@@ -8670,59 +8711,24 @@ public class Battle extends EngineState<Battle> {
     return damage;
   }
 
-  private SpellEffectPlan declarativeSpellPlan(final PlayerBattleEntity attacker, final BattleEntity27c defender) {
-    boolean hasDeclarativePlan = false;
-    for(final SpellEffectPlan plan : attacker.spell_94.getEffectPlans()) {
-      if(plan.executionMode() != ExecutionMode.DECLARATIVE) {
-        continue;
-      }
-
-      hasDeclarativePlan = true;
-      if(this.matchesDeclarativeSpellTarget(attacker, defender, plan)) {
-        return plan;
-      }
-    }
-
-    if(hasDeclarativePlan) {
-      throw new IllegalStateException("Declarative spell " + attacker.spell_94.getRegistryId() + " has no plan for target " + defender.getClass().getSimpleName());
-    }
-
-    return null;
+  private void applyDeclarativeSpellDamage(final BattleEntity27c target, final int damage) {
+    final ScriptState<? extends BattleEntity27c> targetState = battleState_8006e398.allBents_e0c.get(target.allBentSlot_274);
+    targetState.fork();
+    targetState.frame().offset = targetState.frame().file.getEntry(BENT_TAKE_DAMAGE_ENTRYPOINT);
+    targetState.setStor(SCRIPT_DAMAGE_STORAGE, damage);
   }
 
-  private boolean matchesDeclarativeSpellTarget(final PlayerBattleEntity attacker, final BattleEntity27c defender, final SpellEffectPlan plan) {
-    final boolean sideMatches = switch(plan.target().side()) {
-      case SELF -> attacker == defender;
-      case ALLIES -> defender instanceof PlayerBattleEntity;
-      case ENEMIES -> !(defender instanceof PlayerBattleEntity);
-      case ANY -> true;
-    };
-
-    if(!sideMatches) {
-      return false;
-    }
-
-    final boolean living = defender.stats.getStat(HP_STAT.get()).getCurrent() > 0;
-    return switch(plan.target().lifeState()) {
-      case LIVING -> living;
-      case DEAD -> !living;
-      case ANY -> true;
-    };
-  }
-
-  private void validateDeclarativeSpellTargeting(final SpellStats0c spell, final SpellEffectPlan plan) {
+  private void validateDeclarativeSpellTargeting(final SpellStats0c spell, final List<SpellEffectPlan> plans) {
     final boolean targetsAll = (spell.targetType_00 & 0x8) != 0;
-    if(targetsAll != (plan.target().scope() == TargetScope.ALL)) {
-      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " target scope does not match its resolved target metadata");
-    }
-
     final boolean targetsEnemies = (spell.targetType_00 & 0x40) != 0;
-    if(plan.target().side() == TargetSide.ENEMIES && !targetsEnemies) {
-      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " enemy target side does not match its resolved target metadata");
-    }
-
-    if((plan.target().side() == TargetSide.SELF || plan.target().side() == TargetSide.ALLIES) && targetsEnemies) {
-      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " friendly target side does not match its resolved target metadata");
+    final boolean hasMenuTargetPlan = plans.stream()
+      .filter(plan -> plan.executionMode() == ExecutionMode.DECLARATIVE)
+      .anyMatch(plan ->
+        targetsAll == (plan.target().scope() == TargetScope.ALL) &&
+          (plan.target().side() == TargetSide.ANY || targetsEnemies == (plan.target().side() == TargetSide.ENEMIES))
+      );
+    if(!hasMenuTargetPlan) {
+      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " has no plan matching its resolved target metadata");
     }
   }
 
