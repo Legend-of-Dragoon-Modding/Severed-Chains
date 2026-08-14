@@ -38,6 +38,12 @@ import legend.game.combat.bent.ElementIcon;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.bent.SetBattleEntityStatEvent;
+import legend.game.combat.spells.DamageSpellEffect;
+import legend.game.combat.spells.ExecutionMode;
+import legend.game.combat.spells.SpellEffectExecutor;
+import legend.game.combat.spells.SpellEffectPlan;
+import legend.game.combat.spells.TargetScope;
+import legend.game.combat.spells.TargetSide;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
@@ -417,6 +423,7 @@ public class Battle extends EngineState<Battle> {
   public ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
 
   private final Object usedMonsterTextureSlotsLock = new Object();
+  private final SpellEffectExecutor spellEffectExecutor = new SpellEffectExecutor();
   private int usedMonsterTextureSlots_800c66c4;
   public ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
   private int mcqBaseOffsetX_800c66cc;
@@ -8599,6 +8606,30 @@ public class Battle extends EngineState<Battle> {
     attacker.clearTempWeaponAndSpellStats();
     attacker.setActiveSpell(script.params_20[2].get());
 
+    if(attacker instanceof final PlayerBattleEntity player) {
+      final SpellEffectPlan plan = this.declarativeSpellPlan(player, defender);
+      if(plan != null) {
+        final SpellEffectPlan primaryPlan = attacker.spell_94.getEffectPlans().get(0);
+        if(primaryPlan.executionMode() == ExecutionMode.DECLARATIVE) {
+          this.validateDeclarativeSpellTargeting(attacker.spell_94, primaryPlan);
+        }
+
+        var prepared = this.spellEffectExecutor.prepare(player, defender, plan, power -> this.calculateDeclarativeSpellDamage(player, defender, power));
+        final boolean dealsDamage = plan.effects().stream().anyMatch(DamageSpellEffect.class::isInstance);
+        final int eventDamage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, prepared.damage())).damage;
+        if(dealsDamage) {
+          prepared = new SpellEffectExecutor.PreparedSpellEffects(plan, java.lang.Math.max(0, eventDamage));
+          this.addElementIcon(attacker.spell_94.element_08.get());
+        }
+
+        final int appliedVitalLoss = java.lang.Math.min(prepared.damage(), defender.stats.getStat(HP_STAT.get()).getCurrent());
+        final int specialEffects = this.spellEffectExecutor.complete(player, defender, prepared, seed_800fa754, appliedVitalLoss);
+        script.params_20[3].set(prepared.damage());
+        script.params_20[4].set(specialEffects);
+        return FlowControl.CONTINUE;
+      }
+    }
+
     int damage = this.calculateMagicDamage(attacker, defender, 1);
     damage = applyMagicDamageMultiplier(attacker, defender, damage, 0);
     damage = java.lang.Math.max(1, damage);
@@ -8618,6 +8649,81 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
     return FlowControl.CONTINUE;
+  }
+
+  private int calculateDeclarativeSpellDamage(final PlayerBattleEntity attacker, final BattleEntity27c defender, final int power) {
+    final Element attackElement = attacker.spell_94.element_08.get();
+    final AttackType attackType = AttackType.DRAGOON_MAGIC_STATUS_ITEMS;
+    int damage = attacker.calculateMagicDamage(defender, 0);
+    damage = attackElement.adjustAttackingElementalDamage(attackType, damage, defender.getElement());
+    damage = defender.getElement().adjustDefendingElementalDamage(attackType, damage, attackElement);
+    damage = adjustDamageForPower(damage, attacker.powerMagicAttack_b6, defender.powerMagicDefence_ba);
+    if(this.dragoonSpaceElement_800c6b64 != null) {
+      damage = attackElement.adjustDragoonSpaceDamage(attackType, damage, this.dragoonSpaceElement_800c6b64);
+    }
+
+    // Declarative power uses the retail 25 = 1x scale and replaces the legacy damage multiplier.
+    damage = damage * power / 25;
+    damage = java.lang.Math.max(1, damage);
+    damage = defender.applyDamageResistanceAndImmunity(damage, attackType);
+    damage = defender.applyElementalResistanceAndImmunity(damage, attackElement);
+    return damage;
+  }
+
+  private SpellEffectPlan declarativeSpellPlan(final PlayerBattleEntity attacker, final BattleEntity27c defender) {
+    boolean hasDeclarativePlan = false;
+    for(final SpellEffectPlan plan : attacker.spell_94.getEffectPlans()) {
+      if(plan.executionMode() != ExecutionMode.DECLARATIVE) {
+        continue;
+      }
+
+      hasDeclarativePlan = true;
+      if(this.matchesDeclarativeSpellTarget(attacker, defender, plan)) {
+        return plan;
+      }
+    }
+
+    if(hasDeclarativePlan) {
+      throw new IllegalStateException("Declarative spell " + attacker.spell_94.getRegistryId() + " has no plan for target " + defender.getClass().getSimpleName());
+    }
+
+    return null;
+  }
+
+  private boolean matchesDeclarativeSpellTarget(final PlayerBattleEntity attacker, final BattleEntity27c defender, final SpellEffectPlan plan) {
+    final boolean sideMatches = switch(plan.target().side()) {
+      case SELF -> attacker == defender;
+      case ALLIES -> defender instanceof PlayerBattleEntity;
+      case ENEMIES -> !(defender instanceof PlayerBattleEntity);
+      case ANY -> true;
+    };
+
+    if(!sideMatches) {
+      return false;
+    }
+
+    final boolean living = defender.stats.getStat(HP_STAT.get()).getCurrent() > 0;
+    return switch(plan.target().lifeState()) {
+      case LIVING -> living;
+      case DEAD -> !living;
+      case ANY -> true;
+    };
+  }
+
+  private void validateDeclarativeSpellTargeting(final SpellStats0c spell, final SpellEffectPlan plan) {
+    final boolean targetsAll = (spell.targetType_00 & 0x8) != 0;
+    if(targetsAll != (plan.target().scope() == TargetScope.ALL)) {
+      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " target scope does not match its resolved target metadata");
+    }
+
+    final boolean targetsEnemies = (spell.targetType_00 & 0x40) != 0;
+    if(plan.target().side() == TargetSide.ENEMIES && !targetsEnemies) {
+      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " enemy target side does not match its resolved target metadata");
+    }
+
+    if((plan.target().side() == TargetSide.SELF || plan.target().side() == TargetSide.ALLIES) && targetsEnemies) {
+      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " friendly target side does not match its resolved target metadata");
+    }
   }
 
   @ScriptDescription("Perform a battle entity's item attack against another battle entity")

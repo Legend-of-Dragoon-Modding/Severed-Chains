@@ -213,6 +213,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Method(0x800f2e98L)
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
     int matk = this.stats.getStat(MAGIC_ATTACK_STAT.get()).get();
+
     if(magicType == 1) {
       matk += this.spell_94.multi_04;
     }
