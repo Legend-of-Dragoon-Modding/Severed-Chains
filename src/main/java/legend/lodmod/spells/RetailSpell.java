@@ -3,6 +3,7 @@ package legend.lodmod.spells;
 import legend.game.characters.Element;
 import legend.game.combat.Battle;
 import legend.game.combat.effects.ScriptDeffEffect;
+import legend.game.combat.spells.SpellEffectPlan;
 import legend.game.combat.types.BattleObject;
 import legend.game.inventory.SpellStats0c;
 import legend.game.scripting.ScriptState;
@@ -12,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+
+import java.util.List;
 
 import static legend.game.DrgnFiles.loadDrgnDir;
 import static legend.game.combat.Battle.deffManager_800c693c;
@@ -27,6 +30,15 @@ public class RetailSpell extends SpellStats0c {
   public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index) {
     super(targetType, flags, specialEffect, damage, multi, accuracy, mp, statusChance, element, statusType, buffType, _0b);
     this.index = index;
+  }
+
+  public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index, final SpellEffectPlan effectPlan) {
+    this(targetType, flags, specialEffect, damage, multi, accuracy, mp, statusChance, element, statusType, buffType, _0b, index, List.of(effectPlan));
+  }
+
+  public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index, final List<SpellEffectPlan> effectPlans) {
+    this(targetType, flags, specialEffect, damage, multi, accuracy, mp, statusChance, element, statusType, buffType, _0b, index);
+    this.setEffectPlans(effectPlans);
   }
 
   @Override
