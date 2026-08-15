@@ -33,7 +33,7 @@ public final class InputBindings {
 
   public static void loadBindings(final ConfigCollection config) {
     final Map<RegistryDelegate<InputAction>, List<InputActivation>> savedBindings = config.getConfig(CoreMod.CONTROLLER_KEYBINDS_CONFIG.get());
-    savedBindings.forEach(InputBindings::overwriteBindings);
+    savedBindings.forEach((action, activations) -> overwriteBindings(REGISTRIES.inputActions.getEntry(action.getId()), activations));
   }
 
   public static void saveBindings(final ConfigCollection config) {
