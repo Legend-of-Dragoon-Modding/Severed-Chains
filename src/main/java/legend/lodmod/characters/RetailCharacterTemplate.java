@@ -17,6 +17,7 @@ import legend.game.modding.events.characters.PostCharacterDragoonLevelUpEvent;
 import legend.game.modding.events.characters.PostCharacterLevelUpEvent;
 import legend.game.modding.events.characters.PreCharacterDragoonLevelUpEvent;
 import legend.game.modding.events.characters.PreCharacterLevelUpEvent;
+import legend.game.modding.events.characters.ResolveCharacterAdditionSaveEvent;
 import legend.game.saves.SavedCharacter;
 import legend.game.saves.SeveredSavedCharacterV2;
 import legend.game.textures.Image;
@@ -32,7 +33,6 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.EVENTS;
@@ -100,13 +100,15 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
       data.writeRegistryId(offset, character.getEquipment(slot));
     }
 
-    data.writeRegistryId(offset, character.selectedAddition_19);
+    final ResolveCharacterAdditionSaveEvent additionSave = EVENTS.postEvent(new ResolveCharacterAdditionSaveEvent(character));
+    data.writeRegistryId(offset, additionSave.getSelectedAddition());
 
-    final Set<RegistryId> additionIds = character.getAllAdditions();
-    data.writeShort(offset, additionIds.size());
+    final var additions = additionSave.getAdditions();
+    data.writeShort(offset, additions.size());
 
-    for(final RegistryId additionId : additionIds) {
-      final CharacterAdditionInfo info = character.getAdditionInfo(additionId);
+    for(final var entry : additions.entrySet()) {
+      final RegistryId additionId = entry.getKey();
+      final CharacterAdditionInfo info = entry.getValue();
       data.writeRegistryId(offset, additionId);
       data.writeEnum(offset, info.getUnlockState());
       data.writeInt(offset, info.getUnlockTimestamp());
