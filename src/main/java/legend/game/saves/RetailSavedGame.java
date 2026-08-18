@@ -8,6 +8,7 @@ import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
+import legend.game.characters.LevelUpSource;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
@@ -138,7 +139,7 @@ public class RetailSavedGame extends SavedGame {
       gameState.charData_32c.add(character);
 
       while(character.level_12 < savedCharacter.level) {
-        character.applyLevelUp(null);
+        character.applyLevelUp(null, LevelUpSource.INITIALIZATION);
       }
 
       while(character.dlevel_13 < savedCharacter.dlevel) {

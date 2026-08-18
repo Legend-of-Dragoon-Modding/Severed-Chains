@@ -7,6 +7,7 @@ import legend.game.characters.AdditionMasteryUnlockCriterion;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
+import legend.game.characters.LevelUpSource;
 import legend.game.characters.SpellDragoonLevelUnlockCriterion;
 import legend.game.characters.SpellDragoonSpiritUnlockCriterion;
 import legend.game.characters.StatCollection;
@@ -52,7 +53,7 @@ public class AlbertTemplate extends LavitzTemplate {
     stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
     stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10);
 
-    this.applyLevelUp(character, null);
+    this.applyLevelUp(character, null, LevelUpSource.INITIALIZATION);
     this.applyDragoonLevelUp(character, null);
 
     final VitalsStat hp = character.stats.getStat(HP_STAT.get());

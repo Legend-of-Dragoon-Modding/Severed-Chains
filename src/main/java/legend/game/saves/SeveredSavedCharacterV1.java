@@ -6,6 +6,7 @@ import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
+import legend.game.characters.LevelUpSource;
 import legend.game.characters.VitalsStat;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.SpellStats0c;
@@ -78,7 +79,7 @@ public class SeveredSavedCharacterV1 implements SavedCharacter {
     character.hasTransformed = this.hasTransformed;
 
     for(int i = 1; i < this.level; i++) {
-      template.applyLevelUp(character, null);
+      template.applyLevelUp(character, null, LevelUpSource.INITIALIZATION);
     }
 
     for(int i = 1; i < this.dlevel; i++) {

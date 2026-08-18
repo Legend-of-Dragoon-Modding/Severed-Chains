@@ -32,6 +32,11 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract void renderTransformIcon(final CharacterData2c character, final PlayerBattleEntity bent, final MV transforms, final int frame);
 
   public abstract void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions);
+
+  public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions, final LevelUpSource source) {
+    this.applyLevelUp(character, actions);
+  }
+
   public abstract void applyDragoonLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions);
   public abstract void checkUnlocks(final CharacterData2c character, final LevelUpActions actions);
   public abstract int getXpToNextLevel(final CharacterData2c character);
