@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.UI_TEXT_CENTERED;
@@ -40,9 +41,16 @@ public class SaveGameScreen extends MenuScreen {
   private final List<CompletableFuture<SavedGame>> saves;
 
   private final Runnable unload;
+  private final boolean fadeOutOnClose;
+  private boolean closing;
 
   public SaveGameScreen(final Runnable unload) {
+    this(unload, false);
+  }
+
+  public SaveGameScreen(final Runnable unload, final boolean fadeOutOnClose) {
     this.unload = unload;
+    this.fadeOutOnClose = fadeOutOnClose;
 
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
@@ -125,9 +133,16 @@ public class SaveGameScreen extends MenuScreen {
   @Override
   protected void render() {
     renderText(I18n.translate("lod_core.ui.save_game.save_game"), 188, 10, UI_TEXT_CENTERED);
+
+    if(this.closing && fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
+      this.closing = false;
+      this.unload.run();
+    }
   }
 
   private void onSelection(@Nullable final SavedGame save) {
+    if(this.closing) return;
+
     playMenuSound(2);
 
     if(save == null) {
@@ -146,7 +161,7 @@ public class SaveGameScreen extends MenuScreen {
 
       try {
         SAVES.newSave(name, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8);
-        this.unload.run();
+        this.close();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.save_game.save_failed"), MessageBoxType.ALERT, r -> { }));
         LOGGER.error("Failed to save game", e);
@@ -158,7 +173,7 @@ public class SaveGameScreen extends MenuScreen {
     if(result == MessageBoxResult.YES) {
       try {
         SAVES.overwriteSave(save.fileName, save.saveName, campaignType.get(), currentEngineState_8004dd04, gameState_800babc8);
-        this.unload.run();
+        this.close();
       } catch(final SaveFailedException e) {
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.save_game.save_failed"), MessageBoxType.ALERT, r -> { }));
         LOGGER.error("Failed to save game", e);
@@ -167,6 +182,8 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void menuDelete() {
+    if(this.closing) return;
+
     playMenuSound(40);
 
     if(this.saveList.size() == 1) {
@@ -192,7 +209,18 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void menuEscape() {
+    if(this.closing) return;
+
     playMenuSound(3);
-    this.unload.run();
+    this.close();
+  }
+
+  private void close() {
+    if(this.fadeOutOnClose) {
+      startFadeEffect(1, 10);
+      this.closing = true;
+    } else {
+      this.unload.run();
+    }
   }
 }
