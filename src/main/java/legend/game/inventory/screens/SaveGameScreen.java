@@ -213,7 +213,9 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void menuEscape() {
-    if(this.closing) return;
+    if(this.closing) {
+      return;
+    }
 
     playMenuSound(3);
     this.close();
