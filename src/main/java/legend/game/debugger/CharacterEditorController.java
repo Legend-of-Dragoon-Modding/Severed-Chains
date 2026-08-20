@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import legend.game.additions.UnlockState;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
+import legend.game.characters.LevelUpSource;
 import legend.game.characters.VitalsStat;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
@@ -331,7 +332,7 @@ public class CharacterEditorController {
   }
 
   public void onLevelUpClick() {
-    this.charData.applyLevelUp(null);
+    this.charData.applyLevelUp(null, LevelUpSource.DEBUGGER);
     this.refresh();
   }
 

@@ -9,6 +9,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
 import legend.game.characters.LevelUpActions;
+import legend.game.characters.LevelUpSource;
 import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -71,7 +72,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     stats.getStat(MAGIC_HIT_STAT.get()).setRaw(100);
     stats.getStat(GUARD_HEAL_STAT.get()).setRaw(10);
 
-    this.applyLevelUp(character, null);
+    this.applyLevelUp(character, null, LevelUpSource.INITIALIZATION);
     this.applyDragoonLevelUp(character, null);
 
     final VitalsStat hp = character.stats.getStat(HP_STAT.get());
@@ -188,7 +189,12 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
   @Override
   public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions) {
-    final PreCharacterLevelUpEvent event = new PreCharacterLevelUpEvent(character);
+    this.applyLevelUp(character, actions, LevelUpSource.GAMEPLAY);
+  }
+
+  @Override
+  public void applyLevelUp(final CharacterData2c character, @Nullable final LevelUpActions actions, final LevelUpSource source) {
+    final PreCharacterLevelUpEvent event = new PreCharacterLevelUpEvent(character, source);
 
     event.statsToAdd.put(HP_STAT.get(), this.getHpToAdd(character.level_12));
     event.statsToAdd.put(ATTACK_STAT.get(), this.getAttackToAdd(character.level_12));
@@ -206,7 +212,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
     character.level_12 += event.levelsToAdd;
 
     this.checkUnlocks(character, actions);
-    EVENTS.postEvent(new PostCharacterLevelUpEvent(character));
+    EVENTS.postEvent(new PostCharacterLevelUpEvent(character, source));
   }
 
   @Override
