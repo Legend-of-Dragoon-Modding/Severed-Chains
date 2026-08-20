@@ -1114,7 +1114,7 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800d9bf4L)
   private FlowControl scriptClearStatusEffects(final RunningScript<?> script) {
     //LAB_800d9c04
-    for(int i = 0; i < 9; i++) {
+    for(int i = 0; i < gameState_800babc8.charData_32c.size(); i++) {
       gameState_800babc8.charData_32c.get(i).status_10 = 0;
     }
 
