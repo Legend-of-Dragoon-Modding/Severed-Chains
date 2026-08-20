@@ -134,11 +134,11 @@ public class BuffItem extends BattleItem {
     }
 
     if(this.speedDown != 0) {
-      target.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_down"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().percent(this.speedDown).turns(turnCount)));
+      target.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_down"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().flat((int)Math.floor(target.stats.getStat(LodMod.SPEED_STAT.get()).getRawWithEquipment() * (this.speedDown / 100.0))).turns(turnCount)));
     }
 
     if(this.speedUp != 0) {
-      target.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_up"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().percent(this.speedUp).turns(turnCount)));
+      target.stats.getStat(LodMod.SPEED_STAT.get()).addMod(LodMod.id("speed_up"), LodMod.UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().flat((int)Math.floor(target.stats.getStat(LodMod.SPEED_STAT.get()).getRawWithEquipment() * (this.speedUp / 100.0))).turns(turnCount)));
     }
 
     if(target instanceof final PlayerBattleEntity playerTarget) {
