@@ -141,7 +141,9 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void onSelection(@Nullable final SavedGame save) {
-    if(this.closing) return;
+    if(this.closing) {
+      return;
+    }
 
     playMenuSound(2);
 
