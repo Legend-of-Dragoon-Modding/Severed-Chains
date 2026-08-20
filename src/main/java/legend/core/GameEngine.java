@@ -339,6 +339,7 @@ public final class GameEngine {
 
     // Load default bindings for input actions
     InputBindings.initBindings();
+    InputBindings.loadBindings(CONFIG);
 
     loadLang();
 
