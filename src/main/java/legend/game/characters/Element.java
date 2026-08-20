@@ -100,7 +100,7 @@ public abstract class Element extends RegistryEntry implements ScriptReadable {
       return damage * 150 / 100;
     }
 
-    if(attackingElement.isWeakAgainst(this)) {
+    if(attackingElement.isStrongAgainst(this)) {
       return damage * 50 / 100;
     }
 
