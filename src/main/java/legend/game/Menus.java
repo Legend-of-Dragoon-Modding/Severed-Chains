@@ -102,7 +102,9 @@ public final class Menus {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
-        if(!unloadSaveGameMenu) startFadeEffect(2, 10);
+        if(!unloadSaveGameMenu) {
+          startFadeEffect(2, 10);
+        }
         currentEngineState_8004dd04.menuClosed();
 
         textZ_800bdf00 = 13;
