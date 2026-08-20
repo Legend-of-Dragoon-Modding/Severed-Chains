@@ -184,7 +184,9 @@ public class SaveGameScreen extends MenuScreen {
   }
 
   private void menuDelete() {
-    if(this.closing) return;
+    if(this.closing) {
+      return;
+    }
 
     playMenuSound(40);
 
