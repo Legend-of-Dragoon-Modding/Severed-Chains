@@ -4,6 +4,7 @@ public class FractionalStatModConfig implements StatModConfig {
   protected int amount;
   protected boolean percentile;
   protected int turns = -1;
+  protected boolean contributesToOtherMods = false;
 
   /** A percentage modifier (e.g. 200% buff would be 200, -20% debuff would be -20) */
   public FractionalStatModConfig percent(final int percent) {
@@ -26,5 +27,10 @@ public class FractionalStatModConfig implements StatModConfig {
 
   public FractionalStatModConfig permanent() {
     return this.turns(-1);
+  }
+
+  public FractionalStatModConfig contributesToOtherMods(final boolean contributesToOtherMods) {
+    this.contributesToOtherMods = contributesToOtherMods;
+    return this;
   }
 }
