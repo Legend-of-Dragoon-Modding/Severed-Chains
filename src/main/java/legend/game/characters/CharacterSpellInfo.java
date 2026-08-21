@@ -28,6 +28,10 @@ public class CharacterSpellInfo {
   }
 
   public void setUnlockState(final UnlockState unlockState, final int timestamp) {
+    if (this.unlockState == unlockState) {
+      return;
+    }
+    
     this.unlockState = unlockState;
 
     if(unlockState.isUsable()) {
