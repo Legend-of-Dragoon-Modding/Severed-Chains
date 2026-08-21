@@ -1,12 +1,6 @@
 package legend.game.characters;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
-import org.legendofdragoon.modloader.registries.RegistryId;
-
-import java.util.Map;
-import java.util.Set;
-
-import static legend.core.GameEngine.REGISTRIES;
 
 public class UnaryStat extends Stat {
   private final Int2IntFunction validator;
@@ -37,6 +31,18 @@ public class UnaryStat extends Stat {
     return this.value;
   }
 
+  public int getRawWithContributingMods() {
+    int value = 0;
+
+    for(final StatMod mod : this.mods.values()) {
+      if(mod.contributesToOtherMods(this.stats, this.type)) {
+        value += mod.apply(this.stats, this.type);
+      }
+    }
+
+    return this.value + value;
+  }
+
   public void setRaw(final int value) {
     this.value = this.validator.applyAsInt(value);
   }
@@ -53,17 +59,5 @@ public class UnaryStat extends Stat {
     }
 
     return value;
-  }
-
-  public int getRawWithEquipment() {
-    int value = 0;
-
-    for(final Map.Entry<RegistryId, StatMod> entry : this.mods.entrySet()) {
-      if(REGISTRIES.equipment.hasEntry(entry.getKey())) {
-        value += entry.getValue().apply(this.stats, this.type);
-      }
-    }
-
-    return this.getRaw() + value;
   }
 }

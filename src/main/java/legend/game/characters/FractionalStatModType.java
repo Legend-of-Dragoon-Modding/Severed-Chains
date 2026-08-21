@@ -7,7 +7,7 @@ import legend.game.unpacker.FileData;
 public class FractionalStatModType extends StatModType<FractionalStat, FractionalStatMod, FractionalStatModConfig> {
   @Override
   public FractionalStatMod make(final FractionalStatModConfig config) {
-    return new FractionalStatMod(config.amount, config.percentile, config.turns);
+    return new FractionalStatMod(config.amount, config.percentile, config.turns, config.contributesToOtherMods);
   }
 
   @Override
@@ -20,6 +20,7 @@ public class FractionalStatModType extends StatModType<FractionalStat, Fractiona
     data.writeInt(offset, mod.amount);
     data.writeBool(offset, mod.percentile);
     data.writeInt(offset, mod.turns);
+    data.writeBool(offset, mod.contributesToOtherMods);
   }
 
   @Override
@@ -27,7 +28,8 @@ public class FractionalStatModType extends StatModType<FractionalStat, Fractiona
     final int amount = data.readInt(offset);
     final boolean percentile = data.readBool(offset);
     final int turns = data.readInt(offset);
-    return new FractionalStatMod(amount, percentile, turns);
+    final boolean contributesToOtherMods = data.readBool(offset);
+    return new FractionalStatMod(amount, percentile, turns, contributesToOtherMods);
   }
 
   @Override

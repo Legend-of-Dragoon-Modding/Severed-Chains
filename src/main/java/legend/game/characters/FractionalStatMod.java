@@ -7,11 +7,13 @@ public class FractionalStatMod implements StatMod<FractionalStat> {
   protected int amount;
   protected boolean percentile;
   protected int turns;
+  protected boolean contributesToOtherMods = false;
 
-  protected FractionalStatMod(final int amount, final boolean percentile, final int turns) {
+  protected FractionalStatMod(final int amount, final boolean percentile, final int turns, final boolean contributesToOtherMods) {
     this.amount = amount;
     this.percentile = percentile;
     this.turns = turns;
+    this.contributesToOtherMods = contributesToOtherMods;
   }
 
   @Override
@@ -21,7 +23,7 @@ public class FractionalStatMod implements StatMod<FractionalStat> {
 
   @Override
   public StatMod<FractionalStat> copy() {
-    return new FractionalStatMod(this.amount, this.percentile, this.turns);
+    return new FractionalStatMod(this.amount, this.percentile, this.turns, this.contributesToOtherMods);
   }
 
   @Override
@@ -43,5 +45,10 @@ public class FractionalStatMod implements StatMod<FractionalStat> {
   @Override
   public boolean isFinished(final StatCollection stats, final StatType<FractionalStat> type, final BattleEntity27c bent) {
     return this.turns == 0;
+  }
+
+  @Override
+  public boolean contributesToOtherMods(final StatCollection stats, final StatType<FractionalStat> type) {
+    return this.contributesToOtherMods;
   }
 }
