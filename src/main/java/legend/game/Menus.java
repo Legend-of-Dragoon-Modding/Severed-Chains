@@ -91,6 +91,7 @@ public final class Menus {
       case RENDER_NEW_MENU, RENDER_SAVE_GAME_MENU_19 -> menuStack.render();
 
       case UNLOAD, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_POST_COMBAT_REPORT_30 -> {
+        final boolean unloadSaveGameMenu = whichMenu_800bdc38 == WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
         menuStack.reset();
 
         if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20 && whichMenu_800bdc38 != WhichMenu.UNLOAD_POST_COMBAT_REPORT_30) {
@@ -101,7 +102,9 @@ public final class Menus {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
-        startFadeEffect(2, 10);
+        if(!unloadSaveGameMenu) {
+          startFadeEffect(2, 10);
+        }
         currentEngineState_8004dd04.menuClosed();
 
         textZ_800bdf00 = 13;
