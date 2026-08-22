@@ -118,9 +118,9 @@ public class SpellListMenu extends ListMenu {
     if(this.menuState_00 != 0 && (this.flags_02 & 0x1) != 0) {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
-      final SpellStats0c spell = this.spells.spells_01.get(this.listScroll_1e + this.listIndex_24);
-      final String baseDescription = I18n.translate(spell.getTranslationKey("description"));
-      final String description = EVENTS.postEvent(new ResolveSpellDescriptionEvent(this.spells.character_00, spell.getRegistryId(), spell, baseDescription)).description;
+        final SpellStats0c spell = this.spells.spells_01.get(this.listScroll_1e + this.listIndex_24);
+        final String baseDescription = I18n.translate(spell.getTranslationKey("description"));
+        final String description = EVENTS.postEvent(new ResolveSpellDescriptionEvent(this.spells.character_00, spell.getRegistryId(), spell, baseDescription)).description;
 
         //Selected item description
         if(this.description == null) {
