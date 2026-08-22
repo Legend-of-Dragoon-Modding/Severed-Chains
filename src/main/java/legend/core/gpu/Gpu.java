@@ -178,7 +178,7 @@ public class Gpu {
     }
 
     if(RenderEngine.legacyMode == 1) {
-      this.displayTexture.data(0, 0, this.displayTexture.width(), this.displayTexture.height(), TextureDataType.UBYTE, this.getDisplayBuffer().getData());
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, TextureDataType.UBYTE, this.getDisplayBuffer().getData());
       this.drawDisplay();
     } else if(RenderEngine.legacyMode == 2) {
       this.drawVram();
@@ -475,11 +475,11 @@ public class Gpu {
   }
 
   public int getDisplayTextureWidth() {
-    return this.displayTexture.width();
+    return this.displayTexture.width;
   }
 
   public int getDisplayTextureHeight() {
-    return this.displayTexture.height();
+    return this.displayTexture.height;
   }
 
   void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {

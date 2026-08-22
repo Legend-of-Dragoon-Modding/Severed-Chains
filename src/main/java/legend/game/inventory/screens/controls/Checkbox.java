@@ -79,7 +79,7 @@ public class Checkbox extends Control {
       obj = new QuadBuilder("Checkbox")
         .bpp(Bpp.BITS_24)
         .posSize(1.0f, 1.0f)
-        .uvSize(14.0f / tex.width(), 14.0f / tex.height())
+        .uvSize(14.0f / tex.width, 14.0f / tex.height)
         .build();
 
       obj.persistent = true;
@@ -107,7 +107,7 @@ public class Checkbox extends Control {
     ;
 
     if(this.checked) {
-      model.uvOffset(16.0f / tex.width(), 0.0f);
+      model.uvOffset(16.0f / tex.width, 0.0f);
     }
   }
 

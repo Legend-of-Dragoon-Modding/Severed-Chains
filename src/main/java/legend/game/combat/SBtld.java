@@ -265,7 +265,7 @@ public final class SBtld {
         offset = 0.0f;
       } else {
         squish = dissolveDisplayWidth / 320.0f;
-        width = RENDERER.getLastFrame().width() / ((float)RENDERER.getLastFrame().height() / RENDERER.getNativeHeight());
+        width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getNativeHeight());
         offset = width - 320.0f;
       }
 
@@ -341,7 +341,7 @@ public final class SBtld {
       offset = 0.0f;
     } else {
       squish = dissolveDisplayWidth / 320.0f;
-      width = RENDERER.getLastFrame().width() / ((float)RENDERER.getLastFrame().height() / RENDERER.getNativeHeight());
+      width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getNativeHeight());
       offset = width - 320.0f;
     }
 

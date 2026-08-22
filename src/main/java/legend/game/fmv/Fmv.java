@@ -573,7 +573,7 @@ public final class Fmv {
       final int[] framePixels = new int[frameHeader.getWidth() * frameHeader.getHeight()];
       readDecodedRgb(chromaW, lumaW, cr, cb, luma, frameHeader.getWidth(), frameHeader.getHeight(), framePixels, 0, frameHeader.getWidth());
 
-      if(displayTexture == null || displayTexture.width() != frameHeader.getWidth() || displayTexture.height() != frameHeader.getHeight()) {
+      if(displayTexture == null || displayTexture.width != frameHeader.getWidth() || displayTexture.height != frameHeader.getHeight()) {
         if(displayTexture != null) {
           displayTexture.delete();
         }

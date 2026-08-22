@@ -44,8 +44,8 @@ public abstract class SeveredBattleAction extends BattleAction {
     menu.transforms.scaling(16.0f, 16.0f, 1.0f);
     menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.8f);
 
-    final float iconU = this.frameIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.width();
-    final float iconV = this.iconIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.height();
+    final float iconU = this.frameIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.width;
+    final float iconV = this.iconIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
 
     if(tickCount_800bb0fc % 4 == 0) {
       this.frameIndex++;

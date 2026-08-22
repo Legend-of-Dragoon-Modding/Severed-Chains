@@ -43,8 +43,8 @@ public class Font {
         builder
           .add()
           .bpp(Bpp.BITS_24)
-          .uv(glyph.texU / (float)this.texture.width(), glyph.texV / (float)this.texture.height())
-          .uvSize(glyph.texW / (float)this.texture.width(), glyph.texH / (float)this.texture.height())
+          .uv(glyph.texU / (float)this.texture.width, glyph.texV / (float)this.texture.height)
+          .uvSize(glyph.texW / (float)this.texture.width, glyph.texH / (float)this.texture.height)
           .pos(glyph.x, glyph.y, 0.0f)
           .posSize(glyph.w, glyph.h)
         ;

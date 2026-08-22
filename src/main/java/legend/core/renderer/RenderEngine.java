@@ -1004,8 +1004,8 @@ public class RenderEngine {
     final Shader<CopyShaderOptions> shader = ShaderManager.getShader(COPY_SHADER);
     final CopyShaderOptions options = shader.makeOptions();
 
-    final int w = texture.width();
-    final int h = texture.height();
+    final int w = texture.width;
+    final int h = texture.height;
 
     this.api.translucency(null);
     this.api.backfaceCulling(false);

@@ -71,7 +71,7 @@ public abstract class Texture {
 
   public static Texture copyAttributesFrom(final String name, final Texture other) {
     return Texture.create(name, builder -> {
-      builder.size(other.width(), other.height());
+      builder.size(other.width, other.height);
       builder.internalFormat(other.internalFormat());
       builder.dataFormat(other.dataFormat());
       builder.dataType(other.dataType());
@@ -83,9 +83,13 @@ public abstract class Texture {
   }
 
   public final String name;
+  public final int width;
+  public final int height;
 
-  protected Texture(final String name) {
+  protected Texture(final String name, final int width, final int height) {
     this.name = name;
+    this.width = width;
+    this.height = height;
     texList.add(this);
   }
 
@@ -94,8 +98,6 @@ public abstract class Texture {
   public abstract void use(int activeTexture);
   public abstract void use();
 
-  public abstract int width();
-  public abstract int height();
   public abstract TextureInternalFormat internalFormat();
   public abstract TextureDataFormat dataFormat();
   public abstract TextureDataType dataType();

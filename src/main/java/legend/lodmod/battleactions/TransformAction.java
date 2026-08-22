@@ -65,7 +65,7 @@ public class TransformAction extends RetailBattleAction {
 
         final int iconIndex = 1;
         final float iconU = 0;
-        final float iconV = iconIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.height();
+        final float iconV = iconIndex * ICON_SIZE / (float)battle.hud.battleIconsTexture.height;
 
         menu.transforms.scaling(16.0f, 16.0f, 1.0f);
         menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 10.0f);

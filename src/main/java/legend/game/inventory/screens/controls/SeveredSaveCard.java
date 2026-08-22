@@ -65,8 +65,8 @@ public class SeveredSaveCard extends BlankSaveCard {
       builder.add();
       builder.bpp(Bpp.BITS_24);
       builder.posSize(48.0f, 48.0f);
-      builder.uv((float)charPortrait.x / this.texture.width(), (float)charPortrait.y / this.texture.height());
-      builder.uvSize((float)charPortrait.w / this.texture.width(), (float)charPortrait.h / this.texture.height());
+      builder.uv((float)charPortrait.x / this.texture.width, (float)charPortrait.y / this.texture.height);
+      builder.uvSize((float)charPortrait.w / this.texture.width, (float)charPortrait.h / this.texture.height);
     }
 
     this.obj = builder.build();

@@ -76,7 +76,7 @@ public final class GlTexture extends Texture {
   private boolean actuallyDeleted;
 
   GlTexture(@Nullable final Buffer buffer, final String name, final int w, final int h, final TextureInternalFormat internalFormat, final TextureDataFormat dataFormat, final TextureDataType dataType, final boolean minFilter, final boolean magFilter, final boolean wrapS, final boolean wrapT) {
-    super(name);
+    super(name, w, h);
     this.id = glGenTextures();
     this.width = w;
     this.height = h;
@@ -159,16 +159,6 @@ public final class GlTexture extends Texture {
   @Override
   public void use() {
     this.use(0);
-  }
-
-  @Override
-  public int width() {
-    return this.width;
-  }
-
-  @Override
-  public int height() {
-    return this.height;
   }
 
   @Override

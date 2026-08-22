@@ -348,8 +348,8 @@ public class Ttle extends EngineState<Ttle> {
         .add()
         .bpp(Bpp.BITS_24)
         .posSize(512.0f, 64.0f)
-        .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-        .uv(0, i * 64.0f / this.menuTextTex.height())
+        .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+        .uv(0, i * 64.0f / this.menuTextTex.height)
       ;
     }
 
@@ -359,8 +359,8 @@ public class Ttle extends EngineState<Ttle> {
         .add()
         .bpp(Bpp.BITS_24)
         .posSize(512.0f, 64.0f)
-        .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-        .uv(512.0f / this.menuTextTex.width(), i * 64.0f / this.menuTextTex.height())
+        .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+        .uv(512.0f / this.menuTextTex.width, i * 64.0f / this.menuTextTex.height)
       ;
     }
 
@@ -369,8 +369,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-      .uv(0, 6 * 64.0f / this.menuTextTex.height())
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 6 * 64.0f / this.menuTextTex.height)
     ;
 
     this.updateAvailableShadowIndex = menuTextBuilder.currentQuadIndex();
@@ -378,8 +378,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-      .uv(512.0f / this.menuTextTex.width(), 6 * 64.0f / this.menuTextTex.height())
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(512.0f / this.menuTextTex.width, 6 * 64.0f / this.menuTextTex.height)
     ;
 
     this.updateAvailableIconIndex = menuTextBuilder.currentQuadIndex();
@@ -387,8 +387,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(64.0f, 64.0f)
-      .uvSize(64.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-      .uv(0, 7 * 64.0f / this.menuTextTex.height())
+      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 7 * 64.0f / this.menuTextTex.height)
     ;
 
     this.memcardFoundIndex = menuTextBuilder.currentQuadIndex();
@@ -396,8 +396,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-      .uv(0, 5 * 64.0f / this.menuTextTex.height())
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(0, 5 * 64.0f / this.menuTextTex.height)
     ;
 
     this.memcardFoundShadowIndex = menuTextBuilder.currentQuadIndex();
@@ -405,8 +405,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-      .uv(512.0f / this.menuTextTex.width(), 5 * 64.0f / this.menuTextTex.height())
+      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(512.0f / this.menuTextTex.width, 5 * 64.0f / this.menuTextTex.height)
     ;
 
     this.memcardFoundIconIndex = menuTextBuilder.currentQuadIndex();
@@ -414,8 +414,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(64.0f, 64.0f)
-      .uvSize(64.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
-      .uv(64.0f / this.menuTextTex.width(), 7 * 64.0f / this.menuTextTex.height())
+      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
+      .uv(64.0f / this.menuTextTex.width, 7 * 64.0f / this.menuTextTex.height)
     ;
 
     this.menuTextObj = menuTextBuilder.build();
