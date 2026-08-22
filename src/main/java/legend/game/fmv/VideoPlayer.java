@@ -2,13 +2,16 @@ package legend.game.fmv;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
 import legend.core.audio.GenericSource;
 import legend.core.gpu.Bpp;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.WindowEvents;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureDataFormat;
+import legend.core.renderer.TextureDataType;
+import legend.core.renderer.TextureInternalFormat;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +39,6 @@ import static legend.game.Graphics.clearBlue_800babc0;
 import static legend.game.Graphics.clearGreen_800bb104;
 import static legend.game.Graphics.clearRed_8007a3a8;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
-import static org.lwjgl.opengl.GL11C.GL_LINEAR;
-import static org.lwjgl.opengl.GL11C.GL_RGB;
 
 public final class VideoPlayer {
   private VideoPlayer() { }
@@ -92,10 +93,10 @@ public final class VideoPlayer {
 
     displayTexture = Texture.create("Video", builder -> {
       builder.size(videoWidth, videoHeight);
-      builder.internalFormat(GL_RGB);
-      builder.dataFormat(GL_RGB);
-      builder.minFilter(GL_LINEAR);
-      builder.magFilter(GL_LINEAR);
+      builder.internalFormat(TextureInternalFormat.RGB_8);
+      builder.dataFormat(TextureDataFormat.RGB);
+      builder.minFilter(true);
+      builder.magFilter(true);
     });
 
     oldFps = RENDERER.window().getFpsLimit();
@@ -104,7 +105,7 @@ public final class VideoPlayer {
     oldClearColour.set(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
-    RENDERER.setClearColour(0.0f, 0.0f, 0.0f);
+    RENDERER.api().clearColour(0.0f, 0.0f, 0.0f);
 
     keyPress = RENDERER.events().onKeyPress((window, key, scancode, mods, repeat) -> shouldStop = true);
     buttonPressed = RENDERER.events().onButtonPress((window, action, repeat) -> shouldStop = true);
@@ -180,7 +181,7 @@ public final class VideoPlayer {
 
           // IN SYNC: decode and process the frame
           final ByteBuffer buffer = (ByteBuffer)currentFrame.image[0];
-          displayTexture.data(0, 0, videoWidth, videoHeight, buffer);
+          displayTexture.data(0, 0, videoWidth, videoHeight, TextureDataType.UBYTE, buffer);
           break;
         }
       } catch(final Exception e) {

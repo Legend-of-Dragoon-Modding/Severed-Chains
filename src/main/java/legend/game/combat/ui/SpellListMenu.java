@@ -1,6 +1,6 @@
 package legend.game.combat.ui;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.DragoonSpells09;

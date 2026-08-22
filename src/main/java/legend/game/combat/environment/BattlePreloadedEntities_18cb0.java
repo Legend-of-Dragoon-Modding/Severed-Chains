@@ -2,7 +2,7 @@ package legend.game.combat.environment;
 
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionHits80;
 import legend.game.characters.CharacterAdditionInfo;

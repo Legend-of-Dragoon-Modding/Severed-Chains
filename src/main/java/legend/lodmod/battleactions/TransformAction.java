@@ -1,7 +1,7 @@
 package legend.lodmod.battleactions;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.DetransformationMode;
 import legend.game.combat.ui.BattleMenuStruct58;

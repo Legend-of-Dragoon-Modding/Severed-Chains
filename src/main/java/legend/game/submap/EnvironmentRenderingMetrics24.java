@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 
 public class EnvironmentRenderingMetrics24 {
   public int tpage_04;

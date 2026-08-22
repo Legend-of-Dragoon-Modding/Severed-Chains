@@ -1,11 +1,11 @@
 package legend.game.ui;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.types.BackgroundType;
 import legend.game.types.Textbox4c;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.CONFIG;

@@ -1,12 +1,13 @@
 package legend.game.combat.effects;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -18,7 +19,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.RotTransPers4;
 import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 
 public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType> {
   public final GradientRaysEffectInstance04[] rays_00;
@@ -181,7 +181,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
 
       //LAB_8010ad68
       //LAB_8010ad6c
-      final PolyBuilder builder = new PolyBuilder("GradientRay", GL_TRIANGLE_STRIP)
+      final PolyBuilder builder = new PolyBuilder("GradientRay", VertexOrder.TRIANGLE_STRIP)
         .translucency(Translucency.B_PLUS_F)
         .addVertex(this.sxy0.x, this.sxy0.y, 0)
         .monochrome(0);

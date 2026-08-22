@@ -1,13 +1,13 @@
 package legend.game;
 
 import legend.core.GameEngine;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
 import legend.game.inventory.screens.FontOptions;
@@ -28,7 +28,7 @@ import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TextboxType;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import legend.lodmod.LodConfig;
 import legend.lodmod.LodEngineStateTypes;
 import org.joml.Math;

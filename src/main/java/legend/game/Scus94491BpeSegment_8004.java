@@ -1,6 +1,6 @@
 package legend.game;
 
-import legend.core.RenderEngine;
+import legend.core.renderer.RenderEngine;
 import legend.game.additions.Addition;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;

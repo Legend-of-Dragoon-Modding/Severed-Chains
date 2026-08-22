@@ -2,8 +2,8 @@ package legend.game.wmap;
 
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.game.types.Translucency;
+import legend.core.renderer.Obj;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package legend.game.scripting;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.Transformations;
 import legend.core.gte.MV;
 import legend.game.inventory.screens.FontOptions;

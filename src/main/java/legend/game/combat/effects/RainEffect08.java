@@ -2,10 +2,11 @@ package legend.game.combat.effects;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Matrix4f;
 
@@ -13,7 +14,6 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
   public int count_00;
@@ -56,7 +56,7 @@ public class RainEffect08 implements Effect<EffectManagerParams.VoidType> {
     final RaindropEffect0c[] rainArray = this.raindropArray_04;
 
     if(this.obj == null) {
-      this.obj = new PolyBuilder("Rain effect", GL_TRIANGLE_STRIP)
+      this.obj = new PolyBuilder("Rain effect", VertexOrder.TRIANGLE_STRIP)
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(0.0f)
         .addVertex(1.0f, 0.0f, 0.0f)

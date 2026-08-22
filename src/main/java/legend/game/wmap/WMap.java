@@ -2,8 +2,8 @@ package legend.game.wmap;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
-import legend.core.QueuedModelTmd;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -12,11 +12,12 @@ import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.memory.types.IntRef;
-import legend.core.opengl.McqBuilder;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.McqBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.EngineStates;
@@ -44,7 +45,7 @@ import legend.game.types.Model124;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
@@ -192,7 +193,6 @@ import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ROTATE_RIGHT;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_SERVICES;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_IN;
 import static legend.lodmod.LodMod.INPUT_ACTION_WMAP_ZOOM_OUT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
 public class WMap extends EngineState<WMap> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(WMap.class);
@@ -3455,7 +3455,7 @@ public class WMap extends EngineState<WMap> {
     GsGetLs(modelAndAnimData.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
 
-    final PolyBuilder builder = new PolyBuilder("Queen Fury wake", GL_TRIANGLES)
+    final PolyBuilder builder = new PolyBuilder("Queen Fury wake", VertexOrder.TRIANGLES)
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_PLUS_F);
 

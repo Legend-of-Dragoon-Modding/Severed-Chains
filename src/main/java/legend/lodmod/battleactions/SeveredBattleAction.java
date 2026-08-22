@@ -1,6 +1,6 @@
 package legend.lodmod.battleactions;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.game.combat.Battle;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleMenuStruct58;

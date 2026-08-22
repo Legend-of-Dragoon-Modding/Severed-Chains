@@ -1,6 +1,6 @@
 package legend.game.textures;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 

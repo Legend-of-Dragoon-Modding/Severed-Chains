@@ -2,8 +2,8 @@ package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.Obj;
 import org.joml.Vector3f;
 
 public class WmapSmokeInstance60 {

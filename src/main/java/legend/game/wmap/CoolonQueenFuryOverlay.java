@@ -1,10 +1,10 @@
 package legend.game.wmap;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
 import legend.core.platform.input.InputCodepoints;
 import legend.lodmod.LodMod;
 

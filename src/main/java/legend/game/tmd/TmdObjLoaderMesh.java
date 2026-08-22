@@ -1,6 +1,6 @@
 package legend.game.tmd;
 
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 
 import javax.annotation.Nullable;
 

@@ -2,14 +2,14 @@ package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.modding.coremod.CoreMod;

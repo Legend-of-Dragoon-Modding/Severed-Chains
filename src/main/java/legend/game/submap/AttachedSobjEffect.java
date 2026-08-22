@@ -1,13 +1,15 @@
 package legend.game.submap;
 
-import legend.core.QueuedModelStandard;
-import legend.core.QueuedModelTmd;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 import legend.game.PoolList;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
@@ -15,7 +17,6 @@ import legend.game.tmd.TmdObjLoader;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -37,8 +38,6 @@ import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zOffset_1f8003e8;
 import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.Models.initModel;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class AttachedSobjEffect {
   public CContainer dustTmd;
@@ -66,7 +65,7 @@ public class AttachedSobjEffect {
 
     this.footprintTrail.clear();
     if(this.footprints == null) {
-      this.footprints = new PolyBuilder("Footprints", GL_TRIANGLE_STRIP)
+      this.footprints = new PolyBuilder("Footprints", VertexOrder.TRIANGLE_STRIP)
         .bpp(Bpp.BITS_4)
         .translucency(Translucency.B_MINUS_F)
         .addVertex(-12.0f, 0.0f, - 8.0f)
@@ -455,7 +454,7 @@ public class AttachedSobjEffect {
 
     averageZ /= countZ;
 
-    final PolyBuilder builder = new PolyBuilder("Law pod trail", GL_TRIANGLES);
+    final PolyBuilder builder = new PolyBuilder("Law pod trail", VertexOrder.TRIANGLES);
 
     //LAB_800f09c0
     for(int i = 0; i < this.lawPodTrail_800d4f90.size(); i++) {

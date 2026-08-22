@@ -4,7 +4,7 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptedObject;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;

@@ -1,16 +1,17 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 
 import java.util.function.Consumer;
@@ -20,7 +21,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.displayHeight_1f8003e4;
 import static legend.game.Graphics.displayWidth_1f8003e0;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.VoidType> {
   private final int type;
@@ -72,7 +72,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     final float extraWidth = fullWidth - displayWidth_1f8003e0;
     final float inverseScreenHeight = 1.0f / 240.0f;
 
-    final PolyBuilder builder = new PolyBuilder("Wave effect", GL_TRIANGLES)
+    final PolyBuilder builder = new PolyBuilder("Wave effect", VertexOrder.TRIANGLES)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3));
 

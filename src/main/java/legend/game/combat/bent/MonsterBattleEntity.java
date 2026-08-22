@@ -1,6 +1,6 @@
 package legend.game.combat.bent;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.characters.Element;

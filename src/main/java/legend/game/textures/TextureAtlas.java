@@ -1,9 +1,9 @@
 package legend.game.textures;
 
-import legend.core.QueuedModelStandard;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.Texture;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Map;

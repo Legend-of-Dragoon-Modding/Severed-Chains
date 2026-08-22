@@ -1,6 +1,10 @@
 package legend.core.gpu;
 
-import legend.core.opengl.Texture;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureDataFormat;
+import legend.core.renderer.TextureDataType;
+import legend.core.renderer.TextureInternalFormat;
+import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -8,9 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Arrays;
-
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class VramTextureSingle extends VramTexture {
   private final int[] data;
@@ -123,10 +124,13 @@ public class VramTextureSingle extends VramTexture {
 
   public Texture createOpenglTexture(final String name, final VramTextureSingle palette, final Rect4i region) {
     return Texture.create(name, builder -> {
-      builder.data(this.applyPalette(palette, region), this.rect.w(), this.rect.h());
-      builder.internalFormat(GL_RGBA);
-      builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      final int[] data = this.applyPalette(palette, region);
+      final IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+      buffer.put(0, data);
+      builder.data(buffer, this.rect.w(), this.rect.h());
+      builder.internalFormat(TextureInternalFormat.RGBA_8);
+      builder.dataFormat(TextureDataFormat.RGBA);
+      builder.dataType(TextureDataType.UBYTE);
     });
   }
 

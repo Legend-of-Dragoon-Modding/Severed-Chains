@@ -19,7 +19,7 @@ import legend.game.inventory.Good;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodAdditions;

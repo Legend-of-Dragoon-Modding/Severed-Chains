@@ -1,13 +1,13 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.game.types.Translucency;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;

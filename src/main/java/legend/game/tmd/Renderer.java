@@ -1,13 +1,13 @@
 package legend.game.tmd;
 
 import legend.core.IoHelper;
-import legend.core.RenderEngine;
+import legend.core.renderer.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.ModelPart10;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattleLightStruct64;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;

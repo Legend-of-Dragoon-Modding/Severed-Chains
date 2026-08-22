@@ -1,7 +1,6 @@
 package legend.core.platform;
 
 import legend.core.DebugHelper;
-import legend.core.opengl.Action;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputAxis;
 import legend.core.platform.input.InputButton;

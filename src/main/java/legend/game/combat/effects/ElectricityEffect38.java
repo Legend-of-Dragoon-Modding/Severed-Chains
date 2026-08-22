@@ -1,14 +1,15 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.TriConsumer;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -24,7 +25,6 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.FUN_800cfb94;
 import static legend.game.combat.SEffe.renderSegmentGradient;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class ElectricityEffect38 implements Effect<EffectManagerParams.ElectricityType> {
   private final int renderIndex;
@@ -298,7 +298,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
 
     final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
 
-    final PolyBuilder builder = new PolyBuilder("Electricity effect type 0", GL_TRIANGLES)
+    final PolyBuilder builder = new PolyBuilder("Electricity effect type 0", VertexOrder.TRIANGLES)
       .translucency(translucency);
 
     //LAB_80103200
@@ -471,7 +471,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
 
       final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
 
-      final PolyBuilder builder = new PolyBuilder("Lightning effect type 1", GL_TRIANGLES)
+      final PolyBuilder builder = new PolyBuilder("Lightning effect type 1", VertexOrder.TRIANGLES)
         .translucency(translucency);
 
       //LAB_80103f18

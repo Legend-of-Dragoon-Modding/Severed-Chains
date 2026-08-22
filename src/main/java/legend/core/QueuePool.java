@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class QueuePool<T> {
   private final List<T> queue = new ArrayList<>();
   private final Map<Class<? extends T>, QueueType<? extends T>> pools = new HashMap<>();
-  boolean ignoreQueues;
+  public boolean ignoreQueues;
 
   private T[] sortArray = (T[])new Object[100];
   private T[] workArray = (T[])new Object[this.sortArray.length];
