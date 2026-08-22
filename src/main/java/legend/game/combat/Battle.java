@@ -38,6 +38,12 @@ import legend.game.combat.bent.ElementIcon;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.bent.SetBattleEntityStatEvent;
+import legend.game.combat.spells.DamageSpellEffect;
+import legend.game.combat.spells.ExecutionMode;
+import legend.game.combat.spells.SpellEffectExecutor;
+import legend.game.combat.spells.SpellEffectPlan;
+import legend.game.combat.spells.TargetScope;
+import legend.game.combat.spells.TargetSide;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
@@ -110,6 +116,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -162,7 +169,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -322,6 +331,9 @@ import static legend.lodmod.LodMod.SP_STAT;
 import static legend.lodmod.LodMod.disableRetailBattleActions;
 
 public class Battle extends EngineState<Battle> {
+  private static final int DECLARATIVE_SPELL_EFFECTS_APPLIED = Integer.MIN_VALUE;
+  private static final int BENT_TAKE_DAMAGE_ENTRYPOINT = 2;
+  private static final int SCRIPT_DAMAGE_STORAGE = 32;
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
@@ -416,6 +428,8 @@ public class Battle extends EngineState<Battle> {
   public ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
 
   private final Object usedMonsterTextureSlotsLock = new Object();
+  private final SpellEffectExecutor spellEffectExecutor = new SpellEffectExecutor();
+  private DeclarativeSpellCast declarativeSpellCast;
   private int usedMonsterTextureSlots_800c66c4;
   public ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
   private int mcqBaseOffsetX_800c66cc;
@@ -602,6 +616,9 @@ public class Battle extends EngineState<Battle> {
   public final SoundFile deffSounds = addSoundFile("DEFF SFX");
   public final SoundFile cutsceneSounds = addSoundFile("Cutscene SFX");
   public final SoundFile attackSounds = addSoundFile("Attack SFX");
+
+  private record DeclarativeSpellCast(int turnCount, int attackerIndex, RegistryId spellId) { }
+  private record DeclarativeSpellResult(int damage, int specialEffects) { }
 
   public Battle() {
     super(LodEngineStateTypes.BATTLE.get());
@@ -8348,7 +8365,9 @@ public class Battle extends EngineState<Battle> {
       this.dragoonSpells_800c6960.add(spells);
 
       for(final RegistryId spellId : player.character.getUnlockedSpells()) {
-        spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
+        final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
+        final SpellStatsEvent spellStatsEvent = EVENTS.postEvent(new SpellStatsEvent(player.character, spell));
+        spells.spells_01.add(spellStatsEvent.spell);
       }
 
       //LAB_800ef400
@@ -8600,6 +8619,13 @@ public class Battle extends EngineState<Battle> {
     attacker.clearTempWeaponAndSpellStats();
     attacker.setActiveSpell(script.params_20[2].get());
 
+    if(attacker instanceof final PlayerBattleEntity player && attacker.spell_94.getEffectPlans().stream().anyMatch(plan -> plan.executionMode() == ExecutionMode.DECLARATIVE)) {
+      final DeclarativeSpellResult result = this.executeDeclarativeSpell(player, defender);
+      script.params_20[3].set(result.damage());
+      script.params_20[4].set(result.specialEffects());
+      return FlowControl.CONTINUE;
+    }
+
     int damage = this.calculateMagicDamage(attacker, defender, 1);
     damage = applyMagicDamageMultiplier(attacker, defender, damage, 0);
     damage = java.lang.Math.max(1, damage);
@@ -8619,6 +8645,95 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
     return FlowControl.CONTINUE;
+  }
+
+  private DeclarativeSpellResult executeDeclarativeSpell(final PlayerBattleEntity attacker, final BattleEntity27c selectedTarget) {
+    final DeclarativeSpellCast cast = new DeclarativeSpellCast(gameState_800babc8.turnCount_b8, attacker.allBentSlot_274, attacker.spell_94.getRegistryId());
+    if(cast.equals(this.declarativeSpellCast)) {
+      return new DeclarativeSpellResult(0, DECLARATIVE_SPELL_EFFECTS_APPLIED);
+    }
+
+    this.declarativeSpellCast = cast;
+    this.validateDeclarativeSpellTargeting(attacker.spell_94, attacker.spell_94.getEffectPlans());
+    final List<? extends BattleEntity27c> battleEntities = battleState_8006e398.allBents_e0c.stream().map(state -> state.innerStruct_00).toList();
+    final List<SpellEffectExecutor.TargetedSpellEffects> preparedEffects = this.spellEffectExecutor.prepare(
+      attacker,
+      selectedTarget,
+      battleEntities,
+      attacker.spell_94.getEffectPlans(),
+      (target, power) -> this.calculateDeclarativeSpellDamage(attacker, target, power)
+    );
+    final Map<BattleEntity27c, Integer> damageByTarget = new LinkedHashMap<>();
+    final Map<BattleEntity27c, Integer> remainingHpByTarget = new LinkedHashMap<>();
+    boolean dealsDamage = false;
+
+    for(final SpellEffectExecutor.TargetedSpellEffects targeted : preparedEffects) {
+      final BattleEntity27c target = targeted.target();
+      var prepared = targeted.effects();
+      if(prepared.plan().effects().stream().anyMatch(DamageSpellEffect.class::isInstance)) {
+        dealsDamage = true;
+        final int eventDamage = EVENTS.postEvent(new AttackEvent(this, attacker, target, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, prepared.damage())).damage;
+        prepared = new SpellEffectExecutor.PreparedSpellEffects(prepared.plan(), java.lang.Math.max(0, eventDamage));
+      }
+
+      final int remainingHp = remainingHpByTarget.computeIfAbsent(target, bent -> bent.stats.getStat(HP_STAT.get()).getCurrent());
+      final int appliedVitalLoss = java.lang.Math.min(prepared.damage(), remainingHp);
+      remainingHpByTarget.put(target, remainingHp - appliedVitalLoss);
+      this.spellEffectExecutor.complete(attacker, target, prepared, seed_800fa754, appliedVitalLoss);
+      damageByTarget.merge(target, prepared.damage(), Integer::sum);
+    }
+
+    if(dealsDamage) {
+      this.addElementIcon(attacker.spell_94.element_08.get());
+    }
+
+    for(final Map.Entry<BattleEntity27c, Integer> entry : damageByTarget.entrySet()) {
+      if(entry.getValue() > 0) {
+        this.applyDeclarativeSpellDamage(entry.getKey(), entry.getValue());
+      }
+    }
+
+    return new DeclarativeSpellResult(0, DECLARATIVE_SPELL_EFFECTS_APPLIED);
+  }
+
+  private int calculateDeclarativeSpellDamage(final PlayerBattleEntity attacker, final BattleEntity27c defender, final int power) {
+    final Element attackElement = attacker.spell_94.element_08.get();
+    final AttackType attackType = AttackType.DRAGOON_MAGIC_STATUS_ITEMS;
+    int damage = attacker.calculateMagicDamage(defender, 0);
+    damage = attackElement.adjustAttackingElementalDamage(attackType, damage, defender.getElement());
+    damage = defender.getElement().adjustDefendingElementalDamage(attackType, damage, attackElement);
+    damage = adjustDamageForPower(damage, attacker.powerMagicAttack_b6, defender.powerMagicDefence_ba);
+    if(this.dragoonSpaceElement_800c6b64 != null) {
+      damage = attackElement.adjustDragoonSpaceDamage(attackType, damage, this.dragoonSpaceElement_800c6b64);
+    }
+
+    // Declarative power uses the retail 25 = 1x scale and replaces the legacy damage multiplier.
+    damage = damage * power / 25;
+    damage = java.lang.Math.max(1, damage);
+    damage = defender.applyDamageResistanceAndImmunity(damage, attackType);
+    damage = defender.applyElementalResistanceAndImmunity(damage, attackElement);
+    return damage;
+  }
+
+  private void applyDeclarativeSpellDamage(final BattleEntity27c target, final int damage) {
+    final ScriptState<? extends BattleEntity27c> targetState = battleState_8006e398.allBents_e0c.get(target.allBentSlot_274);
+    targetState.fork();
+    targetState.frame().offset = targetState.frame().file.getEntry(BENT_TAKE_DAMAGE_ENTRYPOINT);
+    targetState.setStor(SCRIPT_DAMAGE_STORAGE, damage);
+  }
+
+  private void validateDeclarativeSpellTargeting(final SpellStats0c spell, final List<SpellEffectPlan> plans) {
+    final boolean targetsAll = (spell.targetType_00 & 0x8) != 0;
+    final boolean targetsEnemies = (spell.targetType_00 & 0x40) != 0;
+    final boolean hasMenuTargetPlan = plans.stream()
+      .filter(plan -> plan.executionMode() == ExecutionMode.DECLARATIVE)
+      .anyMatch(plan ->
+        targetsAll == (plan.target().scope() == TargetScope.ALL) &&
+          (plan.target().side() == TargetSide.ANY || targetsEnemies == (plan.target().side() == TargetSide.ENEMIES))
+      );
+    if(!hasMenuTargetPlan) {
+      throw new IllegalStateException("Declarative spell " + spell.getRegistryId() + " has no plan matching its resolved target metadata");
+    }
   }
 
   @ScriptDescription("Perform a battle entity's item attack against another battle entity")
