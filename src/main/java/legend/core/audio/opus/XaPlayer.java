@@ -51,7 +51,7 @@ public final class XaPlayer extends AudioSource {
     this.playerVolume = volume;
   }
 
-  public void loadXa(final FileData fileData) {
+  public synchronized void loadXa(final FileData fileData) {
     this.opusFileData = BufferUtils.createByteBuffer(fileData.size());
     this.opusFileData.put(fileData.getBytes());
     this.opusFileData.rewind();
@@ -96,7 +96,12 @@ public final class XaPlayer extends AudioSource {
   }
 
   @Override
-  public void tick() {
+  public synchronized void tick() {
+    if(this.opusFile == NULL) {
+      this.setActive(false);
+      return;
+    }
+
     this.readFile();
     this.bufferOutput(this.format, this.pcm, 48_000);
     super.tick();
@@ -122,7 +127,7 @@ public final class XaPlayer extends AudioSource {
     }
   }
 
-  public void unloadOpusFile() {
+  public synchronized void unloadOpusFile() {
     if(this.opusFile != NULL) {
       OpusFile.op_free(this.opusFile);
       this.opusFile = NULL;
@@ -131,7 +136,7 @@ public final class XaPlayer extends AudioSource {
   }
 
   @Override
-  protected void destroy() {
+  protected synchronized void destroy() {
     if(this.opusFileData != null) {
       this.unloadOpusFile();
     }
