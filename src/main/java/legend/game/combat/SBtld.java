@@ -1,11 +1,11 @@
 package legend.game.combat;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.combat.encounters.Encounter;
@@ -14,7 +14,7 @@ import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.types.BattleReportOverlay0e;
 import legend.game.types.BattleReportOverlayList10;
 import legend.game.characters.CharacterData2c;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodMod;
 
@@ -265,7 +265,7 @@ public final class SBtld {
         offset = 0.0f;
       } else {
         squish = dissolveDisplayWidth / 320.0f;
-        width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getNativeHeight());
+        width = RENDERER.getLastFrame().width() / ((float)RENDERER.getLastFrame().height() / RENDERER.getNativeHeight());
         offset = width - 320.0f;
       }
 
@@ -341,7 +341,7 @@ public final class SBtld {
       offset = 0.0f;
     } else {
       squish = dissolveDisplayWidth / 320.0f;
-      width = RENDERER.getLastFrame().width / ((float)RENDERER.getLastFrame().height / RENDERER.getNativeHeight());
+      width = RENDERER.getLastFrame().width() / ((float)RENDERER.getLastFrame().height() / RENDERER.getNativeHeight());
       offset = width - 320.0f;
     }
 

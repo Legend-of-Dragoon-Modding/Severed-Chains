@@ -7,7 +7,7 @@ import legend.core.gte.ModelPart10;
 import legend.game.tmd.TmdObjTable1c;
 import legend.game.tmd.TmdWithId;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

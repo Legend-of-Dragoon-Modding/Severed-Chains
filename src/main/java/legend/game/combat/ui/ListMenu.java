@@ -1,14 +1,14 @@
 package legend.game.combat.ui;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.scripting.RunningScript;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import legend.game.ui.UiBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

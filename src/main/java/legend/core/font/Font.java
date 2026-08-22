@@ -1,13 +1,13 @@
 package legend.core.font;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
 
 import java.nio.file.Path;
 
@@ -43,8 +43,8 @@ public class Font {
         builder
           .add()
           .bpp(Bpp.BITS_24)
-          .uv(glyph.texU / (float)this.texture.width, glyph.texV / (float)this.texture.height)
-          .uvSize(glyph.texW / (float)this.texture.width, glyph.texH / (float)this.texture.height)
+          .uv(glyph.texU / (float)this.texture.width(), glyph.texV / (float)this.texture.height())
+          .uvSize(glyph.texW / (float)this.texture.width(), glyph.texH / (float)this.texture.height())
           .pos(glyph.x, glyph.y, 0.0f)
           .posSize(glyph.w, glyph.h)
         ;

@@ -1,10 +1,10 @@
 package legend.game.combat.effects;
 
-import legend.core.QueuedModelTmd;
+import legend.core.renderer.QueuedModelTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 

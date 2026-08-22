@@ -1,6 +1,6 @@
 package legend.game.types;
 
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.unpacker.FileData;
 
 import java.util.Arrays;

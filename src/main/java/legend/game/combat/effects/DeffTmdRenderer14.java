@@ -1,7 +1,7 @@
 package legend.game.combat.effects;
 
-import legend.core.QueuedModelBattleTmd;
-import legend.core.RenderEngine;
+import legend.core.renderer.QueuedModelBattleTmd;
+import legend.core.renderer.RenderEngine;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;

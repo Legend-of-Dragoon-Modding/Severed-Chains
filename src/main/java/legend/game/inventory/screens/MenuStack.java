@@ -2,7 +2,7 @@ package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import legend.core.opengl.SubmapWidescreenMode;
+import legend.core.renderer.SubmapWidescreenMode;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;

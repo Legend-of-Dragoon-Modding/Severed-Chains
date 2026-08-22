@@ -1,7 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
@@ -9,8 +9,8 @@ import legend.core.gte.MV;
 import legend.core.lang.I18nText;
 import legend.core.lang.TextComponent;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
@@ -48,7 +48,7 @@ import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;

@@ -2,12 +2,8 @@ package legend.game.fmv;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
 import legend.core.audio.GenericSource;
 import legend.core.gpu.Bpp;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.InputActivation;
@@ -17,6 +13,11 @@ import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.KeyInputActivation;
 import legend.core.platform.input.ScancodeInputActivation;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureDataType;
 import legend.core.spu.XaAdpcm;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
@@ -331,7 +332,7 @@ public final class Fmv {
     oldClearColour.set(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
-    RENDERER.setClearColour(0.0f, 0.0f, 0.0f);
+    RENDERER.api().clearColour(0.0f, 0.0f, 0.0f);
 
     source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 37800));
     volume = CONFIG.getConfig(CoreMod.FMV_VOLUME_CONFIG.get()) * CONFIG.getConfig(CoreMod.MASTER_VOLUME_CONFIG.get());
@@ -572,7 +573,7 @@ public final class Fmv {
       final int[] framePixels = new int[frameHeader.getWidth() * frameHeader.getHeight()];
       readDecodedRgb(chromaW, lumaW, cr, cb, luma, frameHeader.getWidth(), frameHeader.getHeight(), framePixels, 0, frameHeader.getWidth());
 
-      if(displayTexture == null || displayTexture.width != frameHeader.getWidth() || displayTexture.height != frameHeader.getHeight()) {
+      if(displayTexture == null || displayTexture.width() != frameHeader.getWidth() || displayTexture.height() != frameHeader.getHeight()) {
         if(displayTexture != null) {
           displayTexture.delete();
         }
@@ -588,7 +589,7 @@ public final class Fmv {
       }
 
       displayTexture.use();
-      displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
+      displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), TextureDataType.UBYTE, framePixels);
 
       final float windowHeight = RENDERER.getNativeHeight();
       final float windowWidth = windowHeight * RENDERER.getRenderAspectRatio();

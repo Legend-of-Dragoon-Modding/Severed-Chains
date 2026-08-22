@@ -1,10 +1,11 @@
 package legend.game.combat.effects;
 
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -13,7 +14,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.FUN_800cfb14;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class ProjectileHitEffect14 implements Effect<EffectManagerParams.VoidType> {
   private final int count_00;
@@ -67,7 +67,7 @@ public class ProjectileHitEffect14 implements Effect<EffectManagerParams.VoidTyp
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     if(this.obj == null) {
-      this.obj = new PolyBuilder("Projectile hit effect", GL_TRIANGLE_STRIP)
+      this.obj = new PolyBuilder("Projectile hit effect", VertexOrder.TRIANGLE_STRIP)
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(0.0f)
         .addVertex(1.0f, 0.0f, 0.0f)

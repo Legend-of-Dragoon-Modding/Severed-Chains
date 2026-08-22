@@ -2,9 +2,12 @@ package legend.game.textures;
 
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureDataFormat;
+import legend.core.renderer.TextureDataType;
+import legend.core.renderer.TextureInternalFormat;
 import org.legendofdragoon.modloader.registries.RegistryId;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBRPContext;
@@ -15,9 +18,6 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 import static org.lwjgl.stb.STBRectPack.stbrp_init_target;
 import static org.lwjgl.stb.STBRectPack.stbrp_pack_rects;
 
@@ -85,11 +85,9 @@ public class TexturePacker {
     buffer.put(0, packedData);
 
     final Texture texture = Texture.create("Atlas " + this.name, builder -> {
-      builder.internalFormat(GL_RGBA);
-      builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
-      builder.minFilter(GL_NEAREST);
-      builder.magFilter(GL_NEAREST);
+      builder.internalFormat(TextureInternalFormat.RGBA_8);
+      builder.dataFormat(TextureDataFormat.RGBA);
+      builder.dataType(TextureDataType.UBYTE);
       builder.data(buffer, width, height);
     });
 

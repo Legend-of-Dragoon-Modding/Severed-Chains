@@ -15,7 +15,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 

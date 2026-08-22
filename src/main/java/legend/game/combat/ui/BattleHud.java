@@ -7,14 +7,15 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import legend.core.GameEngine;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
 import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
+import legend.core.renderer.Translucency;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.Battle;
@@ -35,7 +36,6 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.ScriptState;
 import legend.game.textures.TextureAtlasIcon;
-import legend.game.types.Translucency;
 import legend.game.ui.UiBox;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -445,7 +445,7 @@ public class BattleHud {
         this.battleIconQuad = new QuadBuilder("battle icon")
           .bpp(Bpp.BITS_24)
           .size(1.0f, 1.0f)
-          .uvSize((float)ICON_SIZE / this.battleIconsTexture.width, (float)ICON_SIZE / this.battleIconsTexture.height)
+          .uvSize((float)ICON_SIZE / this.battleIconsTexture.width(), (float)ICON_SIZE / this.battleIconsTexture.height())
           .build()
         ;
       }

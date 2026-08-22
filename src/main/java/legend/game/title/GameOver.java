@@ -1,12 +1,12 @@
 package legend.game.title;
 
 import de.jcm.discordgamesdk.activity.Activity;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.McqBuilder;
-import legend.core.opengl.Obj;
+import legend.core.renderer.McqBuilder;
+import legend.core.renderer.Obj;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.GameState52c;

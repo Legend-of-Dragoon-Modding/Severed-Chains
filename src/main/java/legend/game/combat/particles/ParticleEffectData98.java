@@ -1,7 +1,7 @@
 package legend.game.combat.particles;
 
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;

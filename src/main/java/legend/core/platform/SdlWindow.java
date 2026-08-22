@@ -1,7 +1,6 @@
 package legend.core.platform;
 
 import legend.core.Config;
-import legend.core.opengl.Action;
 import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputMod;
 import legend.game.modding.coremod.CoreMod;

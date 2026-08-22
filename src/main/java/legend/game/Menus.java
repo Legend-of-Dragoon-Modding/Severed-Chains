@@ -1,17 +1,18 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.renderer.DepthComparator;
+import legend.core.renderer.Translucency;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.tim.Tim;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -39,7 +40,6 @@ import static legend.game.SItem.startMenuMusic;
 import static legend.game.SItem.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Text.textZ_800bdf00;
-import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
 
 public final class Menus {
   private Menus() { }
@@ -387,8 +387,8 @@ public final class Menus {
               .tpageOverride(tpageX, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride(clutX, clut >>> 6)
               .colour(renderable.colour)
-              .translucentDepthComparator(GL_LEQUAL)
-              .opaqueDepthComparator(GL_LEQUAL)
+              .translucentDepthComparator(DepthComparator.LESS_THAN_OR_EQUAL)
+              .opaqueDepthComparator(DepthComparator.LESS_THAN_OR_EQUAL)
             ;
 
             if((metrics.clut_04 & 0x8000) != 0) {

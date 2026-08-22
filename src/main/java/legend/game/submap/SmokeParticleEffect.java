@@ -1,14 +1,14 @@
 package legend.game.submap;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.QuadBuilder;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 
 import java.util.ArrayList;

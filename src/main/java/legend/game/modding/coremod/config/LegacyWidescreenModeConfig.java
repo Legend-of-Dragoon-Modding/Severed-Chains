@@ -1,6 +1,6 @@
 package legend.game.modding.coremod.config;
 
-import legend.core.opengl.SubmapWidescreenMode;
+import legend.core.renderer.SubmapWidescreenMode;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorageLocation;

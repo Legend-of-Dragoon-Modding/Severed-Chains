@@ -2,13 +2,14 @@ package legend.game.combat.particles;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -18,7 +19,6 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.SEffe.FUN_800cfc20;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class LineParticle extends ParticleEffectData98 {
   private final Matrix4f identity = new Matrix4f();
@@ -135,7 +135,7 @@ public class LineParticle extends ParticleEffectData98 {
   @Method(0x800fce10L)
   protected void renderLineParticles(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
-      final Obj obj = new PolyBuilder("Line particle", GL_TRIANGLE_STRIP)
+      final Obj obj = new PolyBuilder("Line particle", VertexOrder.TRIANGLE_STRIP)
         .translucency(Translucency.B_PLUS_F)
         .addVertex(0.0f, 0.0f, 0.0f)
         .rgb(particleMetrics.colour0_40)

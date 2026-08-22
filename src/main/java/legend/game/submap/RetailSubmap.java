@@ -4,9 +4,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
-import legend.core.QueuedModel;
-import legend.core.QueuedModelStandard;
-import legend.core.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
@@ -15,9 +12,16 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModel;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureBuilder;
+import legend.core.renderer.TextureDataFormat;
+import legend.core.renderer.TextureDataType;
+import legend.core.renderer.TextureInternalFormat;
 import legend.game.combat.encounters.Encounter;
 import legend.game.modding.events.submap.SubmapEncounterEvent;
 import legend.game.modding.events.submap.SubmapEncounterRateEvent;
@@ -47,7 +51,9 @@ import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -100,8 +106,6 @@ import static legend.game.sound.Audio.startCurrentMusicSequence;
 import static legend.game.sound.Audio.stopAndResetSoundsAndSequences;
 import static legend.game.sound.Audio.stopCurrentMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class RetailSubmap extends Submap {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSubmap.class);
@@ -175,7 +179,7 @@ public class RetailSubmap extends Submap {
   private Obj backgroundObj;
   private final MV backgroundTransforms = new MV();
   private Texture[] foregroundTextures;
-  private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
+  private final Int2ObjectMap<Consumer<TextureBuilder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
   public RetailSubmap(final SMap smap, final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
     super(smap);
@@ -823,16 +827,16 @@ public class RetailSubmap extends Submap {
     final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.smap, gameState_800babc8, this, drgnBinIndex_800bc058, this.cut, this.envForegroundTextureCount_800cb580));
 
     this.backgroundRect = Rect4i.bound(rects);
-    final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
+    final IntBuffer empty = BufferUtils.createIntBuffer(this.backgroundRect.w * this.backgroundRect.h);
 
     if(event.background != null) {
       this.backgroundTexture = event.background;
     } else {
       this.backgroundTexture = Texture.create("Submap background", builder -> {
         builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
-        builder.internalFormat(GL_RGBA);
-        builder.dataFormat(GL_RGBA);
-        builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+        builder.internalFormat(TextureInternalFormat.RGBA_8);
+        builder.dataFormat(TextureDataFormat.RGBA);
+        builder.dataType(TextureDataType.UBYTE);
       });
 
       // Arrange the segments of the background textures into one texture
@@ -852,7 +856,7 @@ public class RetailSubmap extends Submap {
             }
           }
 
-          this.backgroundTexture.data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
+          this.backgroundTexture.data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, TextureDataType.UBYTE, data);
         }
       }
     }
@@ -889,12 +893,12 @@ public class RetailSubmap extends Submap {
 
         this.foregroundTextures[i] = Texture.create("Submap foreground " + i, builder -> {
           builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
-          builder.internalFormat(GL_RGBA);
-          builder.dataFormat(GL_RGBA);
-          builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+          builder.internalFormat(TextureInternalFormat.RGBA_8);
+          builder.dataFormat(TextureDataFormat.RGBA);
+          builder.dataType(TextureDataType.UBYTE);
         });
 
-        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, appliedRect.w, appliedRect.h, data);
+        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, appliedRect.w, appliedRect.h, TextureDataType.UBYTE, data);
       }
     }
 

@@ -4,8 +4,6 @@ import de.jcm.discordgamesdk.activity.Activity;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import legend.core.Async;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
-import legend.core.QueuedModelTmd;
 import legend.core.SelfUpdater;
 import legend.core.Updater;
 import legend.core.Version;
@@ -18,14 +16,17 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.lang.I18nText;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.SubmapWidescreenMode;
-import legend.core.opengl.Texture;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
+import legend.core.renderer.SubmapWidescreenMode;
+import legend.core.renderer.Texture;
+import legend.core.renderer.Translucency;
 import legend.game.EngineState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
@@ -51,7 +52,6 @@ import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
-import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -348,8 +348,8 @@ public class Ttle extends EngineState<Ttle> {
         .add()
         .bpp(Bpp.BITS_24)
         .posSize(512.0f, 64.0f)
-        .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-        .uv(0, i * 64.0f / this.menuTextTex.height)
+        .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+        .uv(0, i * 64.0f / this.menuTextTex.height())
       ;
     }
 
@@ -359,8 +359,8 @@ public class Ttle extends EngineState<Ttle> {
         .add()
         .bpp(Bpp.BITS_24)
         .posSize(512.0f, 64.0f)
-        .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-        .uv(512.0f / this.menuTextTex.width, i * 64.0f / this.menuTextTex.height)
+        .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+        .uv(512.0f / this.menuTextTex.width(), i * 64.0f / this.menuTextTex.height())
       ;
     }
 
@@ -369,8 +369,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-      .uv(0, 6 * 64.0f / this.menuTextTex.height)
+      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+      .uv(0, 6 * 64.0f / this.menuTextTex.height())
     ;
 
     this.updateAvailableShadowIndex = menuTextBuilder.currentQuadIndex();
@@ -378,8 +378,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-      .uv(512.0f / this.menuTextTex.width, 6 * 64.0f / this.menuTextTex.height)
+      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+      .uv(512.0f / this.menuTextTex.width(), 6 * 64.0f / this.menuTextTex.height())
     ;
 
     this.updateAvailableIconIndex = menuTextBuilder.currentQuadIndex();
@@ -387,8 +387,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(64.0f, 64.0f)
-      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-      .uv(0, 7 * 64.0f / this.menuTextTex.height)
+      .uvSize(64.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+      .uv(0, 7 * 64.0f / this.menuTextTex.height())
     ;
 
     this.memcardFoundIndex = menuTextBuilder.currentQuadIndex();
@@ -396,8 +396,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-      .uv(0, 5 * 64.0f / this.menuTextTex.height)
+      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+      .uv(0, 5 * 64.0f / this.menuTextTex.height())
     ;
 
     this.memcardFoundShadowIndex = menuTextBuilder.currentQuadIndex();
@@ -405,8 +405,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(512.0f, 64.0f)
-      .uvSize(512.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-      .uv(512.0f / this.menuTextTex.width, 5 * 64.0f / this.menuTextTex.height)
+      .uvSize(512.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+      .uv(512.0f / this.menuTextTex.width(), 5 * 64.0f / this.menuTextTex.height())
     ;
 
     this.memcardFoundIconIndex = menuTextBuilder.currentQuadIndex();
@@ -414,8 +414,8 @@ public class Ttle extends EngineState<Ttle> {
       .add()
       .bpp(Bpp.BITS_24)
       .posSize(64.0f, 64.0f)
-      .uvSize(64.0f / this.menuTextTex.width, 64.0f / this.menuTextTex.height)
-      .uv(64.0f / this.menuTextTex.width, 7 * 64.0f / this.menuTextTex.height)
+      .uvSize(64.0f / this.menuTextTex.width(), 64.0f / this.menuTextTex.height())
+      .uv(64.0f / this.menuTextTex.width(), 7 * 64.0f / this.menuTextTex.height())
     ;
 
     this.menuTextObj = menuTextBuilder.build();

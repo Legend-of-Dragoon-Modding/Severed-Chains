@@ -1,13 +1,14 @@
 package legend.game.dabas;
 
-import legend.core.QueuedModelStandard;
 import legend.core.audio.GenericSource;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.WindowEvents;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureDataType;
 import legend.game.EngineState;
 import legend.game.unpacker.Loader;
 import org.joml.Vector2i;
@@ -80,7 +81,7 @@ public class Dabas implements DabasInterface {
 
       RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
       RENDERER.setProjectionSize(320, 320);
-      RENDERER.setClearColour(0.0f, 0.0f, 0.0f);
+      RENDERER.api().clearColour(0.0f, 0.0f, 0.0f);
 
       this.onPressed = RENDERER.window().events().onInputActionPressed((window, action, repeat) -> {
         final InputType input;
@@ -156,7 +157,7 @@ public class Dabas implements DabasInterface {
       this.pixelBuffer.put(pixelIndex++, (byte)0xff);
     }
 
-    this.displayTexture.data(0, 0, 32, 32, this.pixelBuffer);
+    this.displayTexture.data(0, 0, 32, 32, TextureDataType.UBYTE, this.pixelBuffer);
 
     this.transforms.scaling(320.0f, 320.0f, 1.0f);
     this.transforms.transfer.set(0.0f, 0.0f, 100.0f);

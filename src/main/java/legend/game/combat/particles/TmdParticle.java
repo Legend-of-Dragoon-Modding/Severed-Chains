@@ -1,11 +1,11 @@
 package legend.game.combat.particles;
 
-import legend.core.QueuedModelBattleTmd;
-import legend.core.RenderEngine;
+import legend.core.renderer.QueuedModelBattleTmd;
+import legend.core.renderer.RenderEngine;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;

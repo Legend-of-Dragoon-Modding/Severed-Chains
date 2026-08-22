@@ -2,9 +2,9 @@ package legend.game.wmap;
 
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.QuadBuilder;
-import legend.game.types.Translucency;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
 
 public class PathDots {
 

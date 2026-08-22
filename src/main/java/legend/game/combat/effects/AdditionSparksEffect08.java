@@ -1,10 +1,11 @@
 package legend.game.combat.effects;
 
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -14,7 +15,6 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.getRelativeOffset;
 import static legend.game.combat.SEffe.rotateAndTranslateEffect;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidType> {
   /** ubyte */
@@ -71,7 +71,7 @@ public class AdditionSparksEffect08 implements Effect<EffectManagerParams.VoidTy
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     if(this.spark == null) {
-      this.spark = new PolyBuilder("Addition spark", GL_TRIANGLE_STRIP)
+      this.spark = new PolyBuilder("Addition spark", VertexOrder.TRIANGLE_STRIP)
         .addVertex(0.0f, 0.0f, 0.0f)
         .monochrome(1.0f)
         .addVertex(1.0f, 0.0f, 0.0f)

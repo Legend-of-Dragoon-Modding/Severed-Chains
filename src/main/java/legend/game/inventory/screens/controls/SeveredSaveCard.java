@@ -2,14 +2,14 @@ package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.modding.coremod.CoreMod;
@@ -65,8 +65,8 @@ public class SeveredSaveCard extends BlankSaveCard {
       builder.add();
       builder.bpp(Bpp.BITS_24);
       builder.posSize(48.0f, 48.0f);
-      builder.uv((float)charPortrait.x / this.texture.width, (float)charPortrait.y / this.texture.height);
-      builder.uvSize((float)charPortrait.w / this.texture.width, (float)charPortrait.h / this.texture.height);
+      builder.uv((float)charPortrait.x / this.texture.width(), (float)charPortrait.y / this.texture.height());
+      builder.uvSize((float)charPortrait.w / this.texture.width(), (float)charPortrait.h / this.texture.height());
     }
 
     this.obj = builder.build();
