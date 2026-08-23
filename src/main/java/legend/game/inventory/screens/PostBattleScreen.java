@@ -164,7 +164,7 @@ public class PostBattleScreen extends MenuScreen {
 
             for(final RegistryId additionId : character.getAllAdditions()) {
               final CharacterAdditionInfo additionInfo = character.getAdditionInfo(additionId);
-              final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
+              final Addition addition = character.resolveAddition(additionId);
 
               while(additionInfo.level < addition.getMaxLevel(character, additionInfo) && additionInfo.xp >= addition.getXpToNextLevel(character, additionInfo)) {
                 additionInfo.level++;
