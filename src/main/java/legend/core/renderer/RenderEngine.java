@@ -15,8 +15,7 @@ import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
-import legend.core.renderer.opengl.GlApi;
-import legend.core.renderer.opengl.GlShader;
+import legend.core.renderer.opengles.GlesApi;
 import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
@@ -106,7 +105,8 @@ public class RenderEngine {
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
   public final ScissorStack scissorStack;
-  private RenderApi api = new GlApi(this);
+  private RenderApi api = new GlesApi(this);
+//  private RenderApi api = new GlesApi(this);
 
   private Camera camera2d;
   private Camera camera3d;
@@ -444,7 +444,7 @@ public class RenderEngine {
 
   public static <Options extends ShaderOptions> Shader<Options> loadShader(final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
-      return new GlShader<>(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+      return RENDERER.api.makeShader(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
@@ -452,7 +452,7 @@ public class RenderEngine {
 
   public static <Options extends ShaderOptions> Shader<Options> loadShader(final String vsh, final String gsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
-      return new GlShader<>(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+      return RENDERER.api.makeShader(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }

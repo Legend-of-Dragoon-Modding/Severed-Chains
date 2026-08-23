@@ -1,9 +1,10 @@
-package legend.core.renderer.opengl;
+package legend.core.renderer.opengles;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import legend.core.memory.types.IntRef;
 import legend.core.renderer.Shader;
+import legend.core.renderer.ShaderManager;
 import legend.core.renderer.ShaderOptions;
+import legend.core.renderer.ShaderStage;
 import legend.core.renderer.ShaderUniformFloat;
 import legend.core.renderer.ShaderUniformInt;
 import legend.core.renderer.ShaderUniformMat4;
@@ -22,66 +23,68 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
-import static org.lwjgl.opengl.GL11C.glGetError;
-import static org.lwjgl.opengl.GL20C.GL_COMPILE_STATUS;
-import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20C.GL_LINK_STATUS;
-import static org.lwjgl.opengl.GL20C.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20C.glAttachShader;
-import static org.lwjgl.opengl.GL20C.glCompileShader;
-import static org.lwjgl.opengl.GL20C.glCreateProgram;
-import static org.lwjgl.opengl.GL20C.glCreateShader;
-import static org.lwjgl.opengl.GL20C.glDeleteProgram;
-import static org.lwjgl.opengl.GL20C.glDeleteShader;
-import static org.lwjgl.opengl.GL20C.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL20C.glGetProgrami;
-import static org.lwjgl.opengl.GL20C.glGetShaderInfoLog;
-import static org.lwjgl.opengl.GL20C.glGetShaderi;
-import static org.lwjgl.opengl.GL20C.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20C.glLinkProgram;
-import static org.lwjgl.opengl.GL20C.glShaderSource;
-import static org.lwjgl.opengl.GL20C.glUniform1f;
-import static org.lwjgl.opengl.GL20C.glUniform1i;
-import static org.lwjgl.opengl.GL20C.glUniform2f;
-import static org.lwjgl.opengl.GL20C.glUniform2fv;
-import static org.lwjgl.opengl.GL20C.glUniform3f;
-import static org.lwjgl.opengl.GL20C.glUniform3fv;
-import static org.lwjgl.opengl.GL20C.glUniform4f;
-import static org.lwjgl.opengl.GL20C.glUniform4fv;
-import static org.lwjgl.opengl.GL20C.glUniformMatrix4fv;
-import static org.lwjgl.opengl.GL20C.glUseProgram;
-import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
-import static org.lwjgl.opengl.GL31C.glGetUniformBlockIndex;
-import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
-import static org.lwjgl.opengl.GL32C.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengles.GLES20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengles.GLES20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengles.GLES20.GL_LINK_STATUS;
+import static org.lwjgl.opengles.GLES20.GL_NO_ERROR;
+import static org.lwjgl.opengles.GLES20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengles.GLES20.glAttachShader;
+import static org.lwjgl.opengles.GLES20.glCompileShader;
+import static org.lwjgl.opengles.GLES20.glCreateProgram;
+import static org.lwjgl.opengles.GLES20.glCreateShader;
+import static org.lwjgl.opengles.GLES20.glDeleteProgram;
+import static org.lwjgl.opengles.GLES20.glDeleteShader;
+import static org.lwjgl.opengles.GLES20.glGetError;
+import static org.lwjgl.opengles.GLES20.glGetProgramInfoLog;
+import static org.lwjgl.opengles.GLES20.glGetProgrami;
+import static org.lwjgl.opengles.GLES20.glGetShaderInfoLog;
+import static org.lwjgl.opengles.GLES20.glGetShaderi;
+import static org.lwjgl.opengles.GLES20.glGetUniformLocation;
+import static org.lwjgl.opengles.GLES20.glLinkProgram;
+import static org.lwjgl.opengles.GLES20.glShaderSource;
+import static org.lwjgl.opengles.GLES20.glUniform1f;
+import static org.lwjgl.opengles.GLES20.glUniform1i;
+import static org.lwjgl.opengles.GLES20.glUniform2f;
+import static org.lwjgl.opengles.GLES20.glUniform2fv;
+import static org.lwjgl.opengles.GLES20.glUniform3f;
+import static org.lwjgl.opengles.GLES20.glUniform3fv;
+import static org.lwjgl.opengles.GLES20.glUniform4f;
+import static org.lwjgl.opengles.GLES20.glUniform4fv;
+import static org.lwjgl.opengles.GLES20.glUniformMatrix4fv;
+import static org.lwjgl.opengles.GLES20.glUseProgram;
+import static org.lwjgl.opengles.GLES30.GL_INVALID_INDEX;
+import static org.lwjgl.opengles.GLES30.glGetUniformBlockIndex;
+import static org.lwjgl.opengles.GLES30.glUniformBlockBinding;
+import static org.lwjgl.opengles.GLES32.GL_GEOMETRY_SHADER;
 
-public class GlShader<Options extends ShaderOptions> implements Shader<Options> {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(GlShader.class);
+public class GlesShader<Options extends ShaderOptions> implements Shader<Options> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GlesShader.class);
 
-  private final Object2IntMap<Path> stages = new Object2IntOpenHashMap<>();
+  private final Map<Path, ShaderStage> stages = new HashMap<>();
   private final Function<Shader<Options>, Supplier<Options>> optionsSupplier;
   private Supplier<Options> options;
   private int shader = -1;
 
-  GlShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+  GlesShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
     LOGGER.info("Compiling shader vs[%s] fs[%s]", vert, frag);
 
-    this.stages.put(vert, GL_VERTEX_SHADER);
-    this.stages.put(frag, GL_FRAGMENT_SHADER);
+    this.stages.put(vert, ShaderStage.VERTEX);
+    this.stages.put(frag, ShaderStage.FRAGMENT);
     this.optionsSupplier = options;
     this.reload();
   }
 
-  GlShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+  GlesShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
     LOGGER.info("Compiling shader vs[%s] gs[%s] fs[%s]", vert, geom, frag);
 
-    this.stages.put(vert, GL_VERTEX_SHADER);
-    this.stages.put(geom, GL_GEOMETRY_SHADER);
-    this.stages.put(frag, GL_FRAGMENT_SHADER);
+    this.stages.put(vert, ShaderStage.VERTEX);
+    this.stages.put(geom, ShaderStage.GEOMETRY);
+    this.stages.put(frag, ShaderStage.FRAGMENT);
     this.optionsSupplier = options;
     this.reload();
   }
@@ -91,9 +94,10 @@ public class GlShader<Options extends ShaderOptions> implements Shader<Options> 
     final int[] stages = new int[this.stages.size()];
     boolean error = false;
     int i = 0;
+    final IntRef uniformIndex = new IntRef();
 
-    for(final var entry : this.stages.object2IntEntrySet()) {
-      stages[i] = this.compileShader(entry.getKey(), entry.getIntValue());
+    for(final var entry : this.stages.entrySet()) {
+      stages[i] = this.compileShader(entry.getKey(), entry.getValue(), uniformIndex);
 
       if(stages[i] == 0) {
         error = true;
@@ -133,9 +137,17 @@ public class GlShader<Options extends ShaderOptions> implements Shader<Options> 
     }
   }
 
-  private int compileShader(final Path file, final int type) throws IOException {
+  private int compileShader(final Path file, final ShaderStage stage, final IntRef uniformIndex) throws IOException {
+    final String transpiled = ShaderManager.transpileShader(Files.readString(file), stage, uniformIndex);
+
+    final int type = switch(stage) {
+      case VERTEX -> GL_VERTEX_SHADER;
+      case GEOMETRY -> GL_GEOMETRY_SHADER;
+      case FRAGMENT -> GL_FRAGMENT_SHADER;
+    };
+
     final int shader = glCreateShader(type);
-    glShaderSource(shader, Files.readString(file));
+    glShaderSource(shader, transpiled);
     glCompileShader(shader);
 
     if(glGetShaderi(shader, GL_COMPILE_STATUS) == 0) {
@@ -222,10 +234,10 @@ public class GlShader<Options extends ShaderOptions> implements Shader<Options> 
     final int loc;
 
     private Uniform(final String name) {
-      this.loc = glGetUniformLocation(GlShader.this.shader, name);
+      this.loc = glGetUniformLocation(GlesShader.this.shader, name);
 
       if(this.loc == GL_INVALID_INDEX) {
-        LOGGER.error("Uniform %s not found in shader %d", name, GlShader.this.shader);
+        LOGGER.error("Uniform %s not found in shader %d", name, GlesShader.this.shader);
       }
     }
   }
@@ -307,8 +319,8 @@ public class GlShader<Options extends ShaderOptions> implements Shader<Options> 
 
     @Override
     public void set(final Matrix4fc mat, final boolean transpose) {
-      mat.get(GlShader.this.uniformMatrixBuffer);
-      this.set(GlShader.this.uniformMatrixBuffer, transpose);
+      mat.get(GlesShader.this.uniformMatrixBuffer);
+      this.set(GlesShader.this.uniformMatrixBuffer, transpose);
     }
 
     @Override

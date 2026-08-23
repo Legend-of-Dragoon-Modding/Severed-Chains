@@ -1,7 +1,7 @@
-package legend.core.renderer.opengl;
+package legend.core.renderer.opengles;
 
-import legend.core.Version;
 import legend.core.gpu.Rect4i;
+import legend.core.lang.RawText;
 import legend.core.renderer.BufferUsage;
 import legend.core.renderer.DepthComparator;
 import legend.core.renderer.FrameBuffer;
@@ -21,12 +21,14 @@ import legend.core.renderer.TextureDataType;
 import legend.core.renderer.TextureInternalFormat;
 import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
+import legend.core.renderer.opengl.GlShader;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.ui.GameOverlay;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.opengles.GLES;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -37,49 +39,44 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
-import static org.lwjgl.opengl.GL11C.GL_ALWAYS;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11C.GL_EQUAL;
-import static org.lwjgl.opengl.GL11C.GL_FILL;
-import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11C.GL_GEQUAL;
-import static org.lwjgl.opengl.GL11C.GL_GREATER;
-import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11C.GL_LESS;
-import static org.lwjgl.opengl.GL11C.GL_LINE;
-import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
-import static org.lwjgl.opengl.GL11C.GL_NEVER;
-import static org.lwjgl.opengl.GL11C.GL_NOTEQUAL;
-import static org.lwjgl.opengl.GL11C.GL_ONE;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11C.GL_VENDOR;
-import static org.lwjgl.opengl.GL11C.GL_VERSION;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.glClear;
-import static org.lwjgl.opengl.GL11C.glClearColor;
-import static org.lwjgl.opengl.GL11C.glDepthFunc;
-import static org.lwjgl.opengl.GL11C.glDepthMask;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glGetString;
-import static org.lwjgl.opengl.GL11C.glLineWidth;
-import static org.lwjgl.opengl.GL11C.glPolygonMode;
-import static org.lwjgl.opengl.GL11C.glViewport;
-import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
-import static org.lwjgl.opengl.GL14C.glBlendEquation;
-import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
-import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30C.glBindFramebuffer;
+import static org.lwjgl.opengles.GLES20.GL_ALWAYS;
+import static org.lwjgl.opengles.GLES20.GL_BLEND;
+import static org.lwjgl.opengles.GLES20.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_CULL_FACE;
+import static org.lwjgl.opengles.GLES20.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_DEPTH_TEST;
+import static org.lwjgl.opengles.GLES20.GL_EQUAL;
+import static org.lwjgl.opengles.GLES20.GL_FRAMEBUFFER;
+import static org.lwjgl.opengles.GLES20.GL_FUNC_ADD;
+import static org.lwjgl.opengles.GLES20.GL_FUNC_REVERSE_SUBTRACT;
+import static org.lwjgl.opengles.GLES20.GL_GEQUAL;
+import static org.lwjgl.opengles.GLES20.GL_GREATER;
+import static org.lwjgl.opengles.GLES20.GL_LEQUAL;
+import static org.lwjgl.opengles.GLES20.GL_LESS;
+import static org.lwjgl.opengles.GLES20.GL_NEVER;
+import static org.lwjgl.opengles.GLES20.GL_NOTEQUAL;
+import static org.lwjgl.opengles.GLES20.GL_ONE;
+import static org.lwjgl.opengles.GLES20.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengles.GLES20.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.opengles.GLES20.GL_SRC_ALPHA;
+import static org.lwjgl.opengles.GLES20.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_VENDOR;
+import static org.lwjgl.opengles.GLES20.GL_VERSION;
+import static org.lwjgl.opengles.GLES20.glBindFramebuffer;
+import static org.lwjgl.opengles.GLES20.glBlendEquation;
+import static org.lwjgl.opengles.GLES20.glBlendFunc;
+import static org.lwjgl.opengles.GLES20.glClear;
+import static org.lwjgl.opengles.GLES20.glClearColor;
+import static org.lwjgl.opengles.GLES20.glDepthFunc;
+import static org.lwjgl.opengles.GLES20.glDepthMask;
+import static org.lwjgl.opengles.GLES20.glDisable;
+import static org.lwjgl.opengles.GLES20.glEnable;
+import static org.lwjgl.opengles.GLES20.glGetString;
+import static org.lwjgl.opengles.GLES20.glLineWidth;
+import static org.lwjgl.opengles.GLES20.glViewport;
 
-public class GlApi implements RenderApi {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(GlApi.class);
+public class GlesApi implements RenderApi {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GlesApi.class);
 
   private boolean backfaceCulling;
 
@@ -97,78 +94,71 @@ public class GlApi implements RenderApi {
 
   private Translucency translucency;
 
-  private boolean wireframeEnabled;
-
-  public GlApi(final RenderEngine engine) {
+  public GlesApi(final RenderEngine engine) {
     this.engine = engine;
   }
 
   @Override
   public void init() {
-    GL.createCapabilities();
+    GLES.createCapabilities();
 
-    LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
+    LOGGER.info("OpenGLES version: %s", glGetString(GL_VERSION));
     LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
 
     if("true".equals(System.getenv("opengl_debug"))) {
       GLUtil.setupDebugMessageCallback(System.err);
     }
-
-    glEnable(GL_LINE_SMOOTH);
   }
 
   @Override
   public void resize(final int renderWidth, final int renderHeight) {
-    // glLineWidth has been removed on M3 macs
-    if(!Version.isMac()) {
-      glLineWidth(Math.max(1, renderHeight / 480.0f));
-    }
+    glLineWidth(Math.max(1, renderHeight / 480.0f));
   }
 
   @Override
   public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
-    return new GlMesh(vertexOrder, vertexData, indices, false, false, null, BufferUsage.STATIC);
+    return new GlesMesh(vertexOrder, vertexData, indices, false, false, null, BufferUsage.STATIC);
   }
 
   @Override
   public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
-    return new GlMesh(vertexOrder, vertexData, indices, textured, translucent, translucencyMode, bufferUsage);
+    return new GlesMesh(vertexOrder, vertexData, indices, textured, translucent, translucencyMode, bufferUsage);
   }
 
   @Override
   public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
-    return new GlMesh(vertexOrder, vertexData, vertexCount, false, false, null, BufferUsage.STATIC);
+    return new GlesMesh(vertexOrder, vertexData, vertexCount, false, false, null, BufferUsage.STATIC);
   }
 
   @Override
   public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
-    return new GlMesh(vertexOrder, vertexData, vertexCount, textured, translucent, translucencyMode, bufferUsage);
+    return new GlesMesh(vertexOrder, vertexData, vertexCount, textured, translucent, translucencyMode, bufferUsage);
   }
 
   @Override
   public Texture makeTexture(@Nullable final Buffer buffer, final String name, final int w, final int h, final TextureInternalFormat internalFormat, final TextureDataFormat dataFormat, final TextureDataType dataType, final boolean minFilter, final boolean magFilter, final boolean wrapS, final boolean wrapT) {
-    return new GlTexture(buffer, name, w, h, internalFormat, dataFormat, dataType, minFilter, magFilter, wrapS, wrapT);
+    return new GlesTexture(buffer, name, w, h, internalFormat, dataFormat, dataType, minFilter, magFilter, wrapS, wrapT);
   }
 
   @Override
   public FrameBuffer makeFrameBuffer(final FrameBufferAttachment[] attachments) {
-    return new GlFrameBuffer(attachments);
+    return new GlesFrameBuffer(attachments);
   }
 
   @Override
   public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlShader<>(vert, frag, options);
+    return new GlesShader<>(vert, frag, options);
   }
 
   @Override
   public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlShader<>(vert, geom, frag, options);
+    return new GlesShader<>(vert, geom, frag, options);
   }
 
   @Override
   public ShaderUniformBuffer makeUniformBuffer(final long size, final int binding) {
-    return new GlShaderUniformBuffer(size, binding);
+    return new GlesShaderUniformBuffer(size, binding);
   }
 
   @Override
@@ -207,7 +197,7 @@ public class GlApi implements RenderApi {
 
   @Override
   public void unbindTexture() {
-    GlTexture.unbind();
+    GlesTexture.unbind();
   }
 
   @Override
@@ -336,9 +326,8 @@ public class GlApi implements RenderApi {
 
   @Override
   public void wireframe(final boolean enable) {
-    if(this.wireframeEnabled != enable) {
-      glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
-      this.wireframeEnabled = enable;
+    if(enable) {
+      GameOverlay.addNotification(3, new RawText("Wireframe not supported in OpenGLES"));
     }
   }
 
