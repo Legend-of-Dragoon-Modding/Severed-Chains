@@ -609,7 +609,7 @@ public class PostBattleScreen extends MenuScreen {
     for(final LevelUpActions.Entry<?> entry : results) {
       if(entry.action instanceof final UnlockAdditionLevelUpAction unlockAddition) {
         final UnlockAdditionLevelUpActionOptions options = unlockAddition.cast(entry.options);
-        this.additionsUnlocked_8011e1b8.computeIfAbsent(character, k -> new ArrayList<>()).add(REGISTRIES.additions.getEntry(options.additionId).get());
+        this.additionsUnlocked_8011e1b8.computeIfAbsent(character, k -> new ArrayList<>()).add(character.resolveAddition(options.additionId));
       }
 
       if(entry.action instanceof final UnlockSpellLevelUpAction unlockSpell) {

@@ -5124,7 +5124,8 @@ public class Battle extends EngineState<Battle> {
     } else {
       //LAB_800d3dc0
       final AdditionNameTextEffect1c additionStruct = new AdditionNameTextEffect1c();
-      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19).get();
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(script.params_20[0].get());
+      final Addition addition = character.resolveAddition(character.selectedAddition_19);
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));

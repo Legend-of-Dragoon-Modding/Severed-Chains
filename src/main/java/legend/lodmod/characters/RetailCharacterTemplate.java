@@ -273,7 +273,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   public CompletableFuture<List<FileData>> loadHumanAttackAnimations(final CharacterData2c character, final  PlayerBattleEntity bent) {
-    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().loadAnimations(character, character.getAdditionInfo(character.selectedAddition_19));
+    return character.resolveAddition(character.selectedAddition_19).loadAnimations(character, character.getAdditionInfo(character.selectedAddition_19));
   }
 
   public abstract CompletableFuture<List<FileData>> loadDragoonAttackAnimations(final CharacterData2c character, final PlayerBattleEntity bent);
