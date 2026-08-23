@@ -61,9 +61,6 @@ public final class GlTexture extends Texture {
 
   final int id;
 
-  public final int width;
-  public final int height;
-
   public final TextureInternalFormat internalFormat;
   public final TextureDataFormat dataFormat;
   public final TextureDataType dataType;
@@ -78,8 +75,6 @@ public final class GlTexture extends Texture {
   GlTexture(@Nullable final Buffer buffer, final String name, final int w, final int h, final TextureInternalFormat internalFormat, final TextureDataFormat dataFormat, final TextureDataType dataType, final boolean minFilter, final boolean magFilter, final boolean wrapS, final boolean wrapT) {
     super(name, w, h);
     this.id = glGenTextures();
-    this.width = w;
-    this.height = h;
     this.internalFormat = internalFormat;
     this.dataFormat = dataFormat;
     this.dataType = dataType;
