@@ -21,7 +21,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.characters.AdditionLevelUpEvent;
+import legend.game.modding.events.characters.PostAdditionLevelUpEvent;
 import legend.game.textures.TextureAtlasIcon;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
@@ -171,7 +171,7 @@ public class PostBattleScreen extends MenuScreen {
 
               while(additionInfo.level < addition.getMaxLevel(character, additionInfo) && additionInfo.xp >= addition.getXpToNextLevel(character, additionInfo)) {
                 additionInfo.level++;
-                EVENTS.postEvent(new AdditionLevelUpEvent(character, addition, additionInfo.level));
+                EVENTS.postEvent(new PostAdditionLevelUpEvent(character, additionId, additionInfo));
               }
             }
           }
