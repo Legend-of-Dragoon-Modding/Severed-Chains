@@ -5560,7 +5560,7 @@ APPLY_DAMAGE_NO_SHIELD:
 call Battle::scriptGetBentStat, stor[0], GUARD, stor[8] ; bentIndex, statIndex, value
 jmp_cmp ==, 0x0, stor[8], inl[:APPLY_DAMAGE_NOT_GUARDING] ; not guarding
 
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x6, 0x1, 0x0, 0x0, 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
+call Battle::scriptPlayBentSoundForUsage, 0x1, stor[0], 0x6, REACTION, 0x0, 0x0 ; type, bentIndex, soundIndex, usage, initialDelay, repeatDelay
 
 mov stor[0], stor[28] ; source, dest
 gosub inl[:ALLOCATE_GUARD_EFFECT] ; addr
@@ -6535,7 +6535,7 @@ wait stor[23] ; frames
 jmp inl[:HANDLE_REGEN_MP] ; addr
 
 HANDLE_REGEN_NEGATIVE_HP:
-call Battle::scriptPlayBentSound, 0x1, stor[0], 0x6, 0x1, 0x0, 0x0, 0x0 ; type, bentIndex, soundIndex, a3, a4, initialDelay, repeatDelay
+call Battle::scriptPlayBentSoundForUsage, 0x1, stor[0], 0x6, REACTION, 0x0, 0x0 ; type, bentIndex, soundIndex, usage, initialDelay, repeatDelay
 neg stor[9] ; s9 = percent to subtract
 call Battle::scriptGetBentStat, stor[0], MAX_HP, stor[8] ; s8 = my max hp
 
