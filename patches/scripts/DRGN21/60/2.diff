@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -59,6 +59,7 @@
+ mov var[64][0], stor[28]
+ LABEL_4:
+ call 102, stor[28], stor[24], stor[25], stor[26]
++add 0xb, stor[25]
+ call 101, stor[0], stor[24], stor[25], stor[26]
+ call 104, stor[28], stor[24], stor[25], stor[26]
+ call 103, stor[0], stor[24], stor[25], stor[26]
