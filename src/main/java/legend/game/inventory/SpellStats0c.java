@@ -73,11 +73,26 @@ public abstract class SpellStats0c extends RegistryEntry implements ScriptReadab
     return -1;
   }
 
-  public List<SpellEffectPlan> getEffectPlans() {
-    return this.effectPlans;
-  }
+    /**
+     * Returns the immutable effect plans currently attached to this spell.
+     *
+     * @return immutable, non-empty effect-plan list
+     */
+    public List<SpellEffectPlan> getEffectPlans() {
+        return this.effectPlans;
+    }
 
-  public final void setEffectPlans(final List<SpellEffectPlan> effectPlans) {
+    /**
+     * Replaces all effect plans attached to this spell.
+     *
+     * <p>The list is defensively copied. Plans are evaluated in list order when the spell is cast,
+     * and only {@link legend.game.combat.spells.ExecutionMode#DECLARATIVE} plans are interpreted by
+     * the declarative runtime.</p>
+     *
+     * @param effectPlans non-null, non-empty plans with no null entries
+     * @throws IllegalArgumentException if the list is null, empty, or contains a null plan
+     */
+    public final void setEffectPlans(final List<SpellEffectPlan> effectPlans) {
     if(effectPlans == null || effectPlans.isEmpty()) {
       throw new IllegalArgumentException("Spell effect plans cannot be null or empty");
     }

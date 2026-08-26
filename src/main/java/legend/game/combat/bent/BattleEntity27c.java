@@ -213,7 +213,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempPhysicalImmunityTurns_c5;
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
-  public final SpellEffectExecutor.RegenState spellRegen = new SpellEffectExecutor.RegenState();
+    /** Active declarative spell regeneration, updated after this entity completes a turn. */
+    public final SpellEffectExecutor.RegenState spellRegen = new SpellEffectExecutor.RegenState();
 
   public ItemStack item_d4;
 //  public int _ec;
