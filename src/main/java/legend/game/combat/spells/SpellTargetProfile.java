@@ -1,5 +1,12 @@
 package legend.game.combat.spells;
 
+/**
+ * Immutable targeting rules for one {@link SpellEffectPlan}.
+ *
+ * @param side relationship to the caster that a target must have
+ * @param scope whether one or every eligible target is selected
+ * @param lifeState life state that a target must have
+ */
 public record SpellTargetProfile(TargetSide side, TargetScope scope, TargetLifeState lifeState) {
   public SpellTargetProfile {
     if(side == null) {

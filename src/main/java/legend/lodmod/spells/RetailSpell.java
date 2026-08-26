@@ -32,11 +32,47 @@ public class RetailSpell extends SpellStats0c {
     this.index = index;
   }
 
-  public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index, final SpellEffectPlan effectPlan) {
+    /**
+     * Creates a retail spell with one effect plan.
+     *
+     * @param targetType retail target flags stored in {@link #targetType_00}
+     * @param flags retail spell flags stored in {@link #flags_01}
+     * @param specialEffect retail special-effect value stored in {@link #specialEffect_02}
+     * @param damage retail damage multiplier stored in {@link #damageMultiplier_03}
+     * @param multi retail multi-purpose value stored in {@link #multi_04}
+     * @param accuracy spell accuracy stored in {@link #accuracy_05}
+     * @param mp MP cost stored in {@link #mp_06}
+     * @param statusChance retail status chance stored in {@link #statusChance_07}
+     * @param element spell element
+     * @param statusType retail status mask stored in {@link #statusType_09}
+     * @param buffType retail buff mask stored in {@link #buffType_0a}
+     * @param _0b retail spell metadata stored in {@link #_0b}
+     * @param index Dragoon spell effect index used to load the spell's visual effect
+     * @param effectPlan effect plan attached to the spell
+     */
+    public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index, final SpellEffectPlan effectPlan) {
     this(targetType, flags, specialEffect, damage, multi, accuracy, mp, statusChance, element, statusType, buffType, _0b, index, List.of(effectPlan));
   }
 
-  public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index, final List<SpellEffectPlan> effectPlans) {
+    /**
+     * Creates a retail spell with one or more effect plans.
+     *
+     * @param targetType retail target flags stored in {@link #targetType_00}
+     * @param flags retail spell flags stored in {@link #flags_01}
+     * @param specialEffect retail special-effect value stored in {@link #specialEffect_02}
+     * @param damage retail damage multiplier stored in {@link #damageMultiplier_03}
+     * @param multi retail multi-purpose value stored in {@link #multi_04}
+     * @param accuracy spell accuracy stored in {@link #accuracy_05}
+     * @param mp MP cost stored in {@link #mp_06}
+     * @param statusChance retail status chance stored in {@link #statusChance_07}
+     * @param element spell element
+     * @param statusType retail status mask stored in {@link #statusType_09}
+     * @param buffType retail buff mask stored in {@link #buffType_0a}
+     * @param _0b retail spell metadata stored in {@link #_0b}
+     * @param index Dragoon spell effect index used to load the spell's visual effect
+     * @param effectPlans non-null, non-empty effect plans defensively copied onto the spell
+     */
+    public RetailSpell(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b, final int index, final List<SpellEffectPlan> effectPlans) {
     this(targetType, flags, specialEffect, damage, multi, accuracy, mp, statusChance, element, statusType, buffType, _0b, index);
     this.setEffectPlans(effectPlans);
   }

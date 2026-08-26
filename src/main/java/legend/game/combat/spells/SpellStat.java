@@ -1,2 +1,15 @@
 package legend.game.combat.spells;
-public enum SpellStat { ATTACK, MAGIC_ATTACK, DEFENCE, MAGIC_DEFENCE }
+/** Identifies a battle stat modified by {@link StatModifierSpellEffect}. */
+public enum SpellStat {
+    /** Physical attack. */
+    ATTACK,
+
+    /** Magical attack. */
+    MAGIC_ATTACK,
+
+    /** Physical defence. */
+    DEFENCE,
+
+    /** Magical defence. */
+    MAGIC_DEFENCE,
+}
