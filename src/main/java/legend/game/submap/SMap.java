@@ -38,6 +38,7 @@ import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
 import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
+import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -102,6 +103,7 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
@@ -155,6 +157,7 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
@@ -192,6 +195,7 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_INTERACT;
+import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SAVE;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
 import static legend.lodmod.LodMod.MP_STAT;
@@ -541,9 +545,30 @@ public class SMap extends EngineState<SMap> {
     return saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get());
   }
 
+  private boolean canCreateNewSave() {
+    return this.smapLoadingStage_800cb430 == SubmapState.RENDER_SUBMAP_12
+      && whichMenu_800bdc38 == WhichMenu.NONE_0
+      && !gameState_800babc8.indicatorsDisabled_4e3
+      && !this.transitioning_800f7e4c
+      && fullScreenEffect_800bb140.currentColour_28 == 0
+      && this.canSave();
+  }
+
+  private void createNewSave() {
+    try {
+      SAVES.newSave(campaignType.get(), this, gameState_800babc8);
+    } catch(final SaveFailedException e) {
+      LOGGER.error("Failed to create save", e);
+    }
+  }
+
   @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     super.inputActionPressed(action, repeat);
+
+    if(action == INPUT_ACTION_SMAP_SAVE.get() && !repeat && this.canCreateNewSave()) {
+      this.createNewSave();
+    }
 
     if(action == INPUT_ACTION_GENERAL_MOVE_UP.get()) {
       if(!repeat) {

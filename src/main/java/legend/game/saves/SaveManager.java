@@ -371,6 +371,12 @@ public final class SaveManager {
     return this.overwriteSave(IoHelper.slugName(saveName), saveName, campaignType, engineState, gameState);
   }
 
+  public Path newSave(final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
+    final List<CompletableFuture<SavedGame>> existingSaves = gameState.campaign.loadAllSaves();
+    final String saveName = this.generateSaveName(existingSaves, gameState);
+    return this.newSave(saveName, campaignType, engineState, gameState);
+  }
+
   public SavedGame loadData(final Campaign campaign, final String filename, final FileData data) throws InvalidSaveException {
     //LAB_80109e38
     for(final SaveVersion version : SaveVersion.values()) {
