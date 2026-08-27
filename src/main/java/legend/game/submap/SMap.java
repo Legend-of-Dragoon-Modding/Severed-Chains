@@ -188,6 +188,7 @@ import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.game.sound.Audio.addSoundFile;
 import static legend.game.sound.Audio.getLoadedAudioFiles;
 import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
@@ -570,7 +571,9 @@ public class SMap extends EngineState<SMap> {
   private void createNewSave() {
     try {
       SAVES.newSave(campaignType.get(), this, gameState_800babc8);
+      playMenuSound(50);
     } catch(final SaveFailedException e) {
+      playMenuSound(40);
       LOGGER.error("Failed to create save", e);
     }
   }
