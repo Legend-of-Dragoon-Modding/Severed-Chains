@@ -60,6 +60,15 @@ public class AdditionHitProperties10 {
     this.sounds = sounds;
   }
 
+  /**
+   * Creates an independent copy of one addition hit.
+   *
+   * <p>All scalar properties and {@link #animationScale} are copied. The sound array and each
+   * {@link AdditionSound} entry are also copied, so callers may modify the new hit without changing
+   * the source hit.</p>
+   *
+   * @param other addition hit to copy
+   */
   public AdditionHitProperties10(final AdditionHitProperties10 other) {
     this(other.flags_00, other.totalFrames_01, other.overlayHitFrameOffset_02, other.totalSuccessFrames_03, other.damageMultiplier_04, other.sp_05, other.audioFile_06, other.isFinalHit_07, other.cameraMovementX_08, other.cameraMovementZ_09, other.cameraMovementTicks_0a, other.hitDistanceFromTarget_0b, other.framesToHitPosition_0c, other._0d, other.additionFailAnimationIndex_0e, other.overlayStartingFrameOffset_0f, copySounds(other.sounds));
     this.animationScale = other.animationScale;
