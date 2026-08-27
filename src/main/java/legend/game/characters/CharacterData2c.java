@@ -257,6 +257,16 @@ public class CharacterData2c {
     return this.additions.get(id);
   }
 
+  /**
+   * Resolves the effective addition definition for this character.
+   *
+   * <p>The registered definition and this character's progression are supplied to a
+   * {@link ResolveAdditionEvent}. The event is posted on every call; callers must not assume the
+   * returned definition is cached or identical across resolutions.</p>
+   *
+   * @param id registry ID of the addition to resolve
+   * @return addition definition selected by the event listeners
+   */
   public Addition resolveAddition(final RegistryId id) {
     final Addition baseAddition = REGISTRIES.additions.getEntry(id).get();
     final CharacterAdditionInfo additionInfo = this.getAdditionInfo(id);

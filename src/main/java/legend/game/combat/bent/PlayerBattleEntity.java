@@ -162,6 +162,15 @@ public class PlayerBattleEntity extends BattleEntity27c {
     return EVENTS.postEvent(new ResolvePhysicalAttackElementsEvent(this, this.equipmentAttackElements_1c)).elements;
   }
 
+  /**
+   * Reports whether the physical hit currently being resolved reached the selected addition's
+   * final hit.
+   *
+   * <p>Dragoon attacks, attacks without a selected addition, and invalid hit positions return
+   * {@code false}.</p>
+   *
+   * @return {@code true} when the current non-Dragoon addition hit is marked as its final hit
+   */
   public boolean isAdditionCompletedSuccessfully() {
     if(this.isDragoon() || this.selectedAddition_58 == null || this.additionHits_56 <= 0) return false;
 
