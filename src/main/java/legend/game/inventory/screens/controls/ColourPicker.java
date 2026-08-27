@@ -28,7 +28,9 @@ public class ColourPicker extends Control {
   private static final int PREVIEW_CONTROL = 0;
   private static final int FIRST_COLOUR_CONTROL = 1;
   private static final int RANDOM_CONTROL = 4;
-  private static final int RANDOM_BUTTON_WIDTH = 38;
+  private static final int RANDOM_BUTTON_WIDTH = 32;
+  private static final int COLOUR_SPINNER_ARROW_PADDING = 12;
+  private static final float UI_ACTION_CONTROL_SCALE = 0.9f;
 
   private Font font = DEFAULT_FONT;
   private final NumberSpinner<Integer>[] colours = new NumberSpinner[3];
@@ -64,6 +66,9 @@ public class ColourPicker extends Control {
     for(int i = 0; i < this.colours.length; i++) {
       this.colours[i] = this.addControl(NumberSpinner.intSpinner(0, 0, 255));
       this.colours[i].setFont(this.getFont());
+      if(enableUiActions) {
+        this.colours[i].setLabelRightPadding(COLOUR_SPINNER_ARROW_PADDING);
+      }
       this.colours[i].onChange(val -> this.triggerChangeEvent());
     }
   }
@@ -123,12 +128,14 @@ public class ColourPicker extends Control {
   public void setScale(final float scale) {
     super.setScale(scale);
 
+    final float controlScale = this.enableUiActions ? scale * UI_ACTION_CONTROL_SCALE : scale;
+
     if(this.randomButton != null) {
-      this.randomButton.setScale(scale);
+      this.randomButton.setScale(controlScale);
     }
 
     for(int i = 0; i < this.colours.length; i++) {
-      this.colours[i].setScale(scale);
+      this.colours[i].setScale(controlScale);
     }
   }
 

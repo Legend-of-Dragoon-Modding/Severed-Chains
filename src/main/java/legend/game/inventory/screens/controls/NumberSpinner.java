@@ -28,6 +28,7 @@ public class NumberSpinner<T extends Number> extends Control {
   private final Glyph downArrow;
   private final Brackets highlight;
   private final Label label;
+  private int labelRightPadding;
 
   private T number;
   private T step;
@@ -97,6 +98,7 @@ public class NumberSpinner<T extends Number> extends Control {
 
   public void setFont(final Font font) {
     this.label.setFont(font);
+    this.updateLabelLayout();
   }
 
   public Font getFont() {
@@ -106,8 +108,7 @@ public class NumberSpinner<T extends Number> extends Control {
   public void setNumber(final T number) {
     this.number = this.clamp.apply(number);
     this.label.setText(this.toString.apply(this.number));
-    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText().get()) + 14) * this.getScale()));
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
+    this.updateLabelLayout();
 
     if(this.changeHandler != null) {
       this.changeHandler.change(this.number);
@@ -116,6 +117,11 @@ public class NumberSpinner<T extends Number> extends Control {
 
   public T getNumber() {
     return this.number;
+  }
+
+  public void setLabelRightPadding(final int padding) {
+    this.labelRightPadding = Math.max(0, padding);
+    this.updateLabelLayout();
   }
 
   public void setStep(final T step, final T bigStep) {
@@ -151,18 +157,26 @@ public class NumberSpinner<T extends Number> extends Control {
     this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
     this.downArrow.setScale(scale);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
-    this.highlight.setWidth((int)((this.getFont().textWidth(this.label.getText().get()) + 14) * this.getScale()));
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
+    this.updateLabelLayout();
   }
 
   @Override
   protected void onResize() {
     super.onResize();
-    this.label.setSize(this.getWidth(), this.getHeight());
     this.upArrow.setPos((int)(this.getWidth() - 10 * this.getScale()), (this.getHeight() - 17) / 2);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
     this.highlight.setHeight(this.getHeight());
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 + 1);
+    this.updateLabelLayout();
+  }
+
+  private void updateLabelLayout() {
+    final int labelWidth = Math.max(0, this.getWidth() - this.labelRightPadding);
+    final int highlightWidth = (int)((this.getFont().textWidth(this.label.getText().get()) + 14) * this.getScale());
+    final int displayedHighlightWidth = this.labelRightPadding == 0 ? highlightWidth : Math.min(highlightWidth, labelWidth);
+
+    this.label.setSize(labelWidth, this.getHeight());
+    this.highlight.setWidth(displayedHighlightWidth);
+    this.highlight.setX((labelWidth - this.highlight.getWidth()) / 2 + 1);
   }
 
   @Override
