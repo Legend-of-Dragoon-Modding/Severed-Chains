@@ -7,6 +7,10 @@ import org.joml.Vector3i;
 /** Convenience class for simple int-backed configs */
 public class ColourConfigEntry extends ConfigEntry<Vector3f> {
   public ColourConfigEntry(final Vector3f defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category) {
+    this(defaultValue, storageLocation, category, false);
+  }
+
+  protected ColourConfigEntry(final Vector3f defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category, final boolean enableUiActions) {
     super(
       defaultValue,
       storageLocation,
@@ -16,7 +20,7 @@ public class ColourConfigEntry extends ConfigEntry<Vector3f> {
     );
 
     this.setEditControl((current, gameState) -> {
-      final ColourPicker picker = new ColourPicker();
+      final ColourPicker picker = new ColourPicker(enableUiActions);
       picker.setColour(new Vector3i((int)(current.x * 255.0f), (int)(current.y * 255.0f), (int)(current.z * 255.0f)));
       picker.onChange((r, g, b) -> gameState.setConfig(this, new Vector3f(r / 255.0f, g / 255.0f, b / 255.0f)));
       return picker;
