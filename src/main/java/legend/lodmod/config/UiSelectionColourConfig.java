@@ -7,6 +7,6 @@ import org.joml.Vector3f;
 
 public class UiSelectionColourConfig extends ColourConfigEntry {
   public UiSelectionColourConfig() {
-    super(new Vector3f(0.5f, 0.19607843f, 0.39215687f), ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
+    super(new Vector3f(0.5f, 0.19607843f, 0.39215687f), ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE, true);
   }
 }
