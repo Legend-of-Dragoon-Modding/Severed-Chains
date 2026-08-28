@@ -365,7 +365,7 @@ public final class GameEngine {
   }
 
   public static void bootRegistries() {
-    REGISTRY_ACCESS.initializeRemaining();
+    initializeRemainingRegistries();
     ItemIcon.loadIconMap();
 
     LOGGER.info("Creating texture atlas...");
@@ -385,6 +385,10 @@ public final class GameEngine {
     TEXTURE_ATLAS.setPersistent(true);
 
     LOGGER.info("Texture atlas created in %.02fs", (System.nanoTime() - t) / 1_000_000_000.0f);
+  }
+
+  public static void initializeRemainingRegistries() {
+    REGISTRY_ACCESS.initializeRemaining();
   }
 
   private static void transitionToGame() {
