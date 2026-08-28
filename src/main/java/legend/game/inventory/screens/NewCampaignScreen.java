@@ -124,10 +124,11 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, mods);
     mods.onPressed(() ->
       this.deferAction(() ->
-        this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
-          bootMods(this.enabledMods);
+          this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
+            bootMods(this.enabledMods);
+            EVENTS.postEvent(new NewCampaignConfigEvent(CONFIG, rememberDefaults));
 
-          startFadeEffect(2, 10);
+            startFadeEffect(2, 10);
           this.getStack().popScreen();
         }))
       )
