@@ -7,7 +7,7 @@ import legend.game.unpacker.FileData;
 public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, UnaryStatModConfig> {
   @Override
   public UnaryStatMod make(final UnaryStatModConfig config) {
-    return new UnaryStatMod(config.amount, config.percentile, config.turns);
+    return new UnaryStatMod(config.amount, config.percentile, config.turns, config.contributesToOtherMods);
   }
 
   @Override
@@ -20,6 +20,7 @@ public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, Unary
     data.writeInt(offset, mod.amount);
     data.writeBool(offset, mod.percentile);
     data.writeInt(offset, mod.turns);
+    data.writeBool(offset, mod.contributesToOtherMods);
   }
 
   @Override
@@ -27,7 +28,8 @@ public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, Unary
     final int amount = data.readInt(offset);
     final boolean percentile = data.readBool(offset);
     final int turns = data.readInt(offset);
-    return new UnaryStatMod(amount, percentile, turns);
+    final boolean contributesToOtherMods = data.readBool(offset);
+    return new UnaryStatMod(amount, percentile, turns, contributesToOtherMods);
   }
 
   @Override

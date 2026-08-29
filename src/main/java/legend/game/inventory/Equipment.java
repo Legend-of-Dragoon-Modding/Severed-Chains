@@ -193,7 +193,7 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
     }
 
     if(this.speed_0f != 0) {
-      character.stats.getStat(SPEED_STAT.get()).addMod(this.getRegistryId(), UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().flat(this.speed_0f).permanent()));
+      character.stats.getStat(SPEED_STAT.get()).addMod(this.getRegistryId(), UNARY_STAT_MOD_TYPE.get().make(new UnaryStatModConfig().flat(this.speed_0f).permanent().contributesToOtherMods(true)));
     }
   }
 
