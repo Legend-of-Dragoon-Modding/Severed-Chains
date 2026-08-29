@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Text.renderText;
 import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
@@ -56,7 +55,7 @@ public class AdditionListMenu extends ListMenu {
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
     final RegistryId additionId = this.additionIds.get(index);
     final CharacterAdditionInfo additionInfo = this.player_08.character.getAdditionInfo(additionId);
-    final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
+    final Addition addition = this.player_08.character.resolveAddition(additionId);
 
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
@@ -85,7 +84,7 @@ public class AdditionListMenu extends ListMenu {
   protected void onUse(final int index) {
     this.player_08.combatant_144.mrg_04 = null;
     this.player_08.character.selectedAddition_19 = this.additionIds.get(index);
-    this.player_08.addition = REGISTRIES.additions.getEntry(this.player_08.character.selectedAddition_19).get();
+    this.player_08.addition = this.player_08.character.resolveAddition(this.player_08.character.selectedAddition_19);
     this.hud.battle.loadAttackAnimations(this.player_08.combatant_144);
     this.flags_02 &= ~0x8;
     this.menuState_00 = 8;
@@ -115,7 +114,7 @@ public class AdditionListMenu extends ListMenu {
       if((this.flags_02 & 0x40) != 0) {
         final int listIndex = this.listScroll_1e + this.listIndex_24;
         final RegistryId additionId = this.additionIds.get(listIndex);
-        final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
+      final Addition addition = this.player_08.character.resolveAddition(additionId);
         final CharacterAdditionInfo additionInfo = this.player_08.character.getAdditionInfo(additionId);
         final int damage = addition.getDamage(this.player_08.character, additionInfo);
         final int sp = addition.getSp(this.player_08.character, additionInfo);

@@ -13,6 +13,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.SpellStats0c;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.ArcherSpEvent;
+import legend.game.modding.events.battle.ResolvePhysicalAttackElementsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
@@ -158,7 +159,26 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   @Override
   public ElementSet getAttackElements() {
-    return this.equipmentAttackElements_1c;
+    return EVENTS.postEvent(new ResolvePhysicalAttackElementsEvent(this, this.equipmentAttackElements_1c)).elements;
+  }
+
+  /**
+   * Reports whether the physical hit currently being resolved reached the selected addition's
+   * final hit.
+   *
+   * <p>Dragoon attacks, attacks without a selected addition, and invalid hit positions return
+   * {@code false}.</p>
+   *
+   * @return {@code true} when the current non-Dragoon addition hit is marked as its final hit
+   */
+  public boolean isAdditionCompletedSuccessfully() {
+    if(this.isDragoon() || this.selectedAddition_58 == null || this.additionHits_56 <= 0) return false;
+
+    // The addition hit count includes the physical hit currently being resolved.
+    final int hitIndex = this.additionHits_56 - 1;
+    if(hitIndex >= this.getAdditionHitCount()) return false;
+
+    return battlePreloadedEntities_1f8003f4.getHit(this.typeBentSlot_276, hitIndex).isFinalHit_07 != 0;
   }
 
   @Override
@@ -503,7 +523,6 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case DRAGOON_ATTACK_SOUNDS -> out.set(this.getDragoonAttackSounds());
       case ARCHER_SP -> out.set(this.getArcherSp());
       case ADDITION_HIT_COUNT -> out.set(this.getAdditionHitCount());
-
       case GUARD_HEAL -> out.set(this.stats.getStat(GUARD_HEAL_STAT.get()).get());
       case GUARD_HEAL_RAW -> out.set(this.stats.getStat(GUARD_HEAL_STAT.get()).getRaw());
 
@@ -526,7 +545,6 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case CURRENT_MP -> this.stats.getStat(MP_STAT.get()).setCurrent(value);
 
       case ADDITION_HITS -> this.additionHits_56 = value;
-
       case DRAGOON_ATTACK -> this.stats.getStat(DRAGOON_ATTACK_STAT.get()).setRaw(value);
       case DRAGOON_MAGIC -> this.stats.getStat(DRAGOON_MAGIC_ATTACK_STAT.get()).setRaw(value);
       case DRAGOON_DEFENCE -> this.stats.getStat(DRAGOON_DEFENSE_STAT.get()).setRaw(value);
