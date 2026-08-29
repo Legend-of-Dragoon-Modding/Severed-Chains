@@ -8,6 +8,7 @@ import legend.game.dabas.DabasRewardsEvent;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
+import legend.game.inventory.GoodsSource;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.controls.Button;
@@ -425,7 +426,7 @@ public class DabasScreen extends MenuScreen {
     } else if(entry instanceof final Equipment equipment) {
       giveEquipment(equipment);
     } else if(entry instanceof final Good good) {
-      gameState_800babc8.goods_19c.give(good);
+      gameState_800babc8.goods_19c.give(good, GoodsSource.GAMEPLAY);
     }
   }
 

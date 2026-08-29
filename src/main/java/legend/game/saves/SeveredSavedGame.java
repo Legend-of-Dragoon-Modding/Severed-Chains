@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.GameEngine;
 import legend.core.gpu.Rect4i;
+import legend.game.inventory.GoodsSource;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.screens.Control;
@@ -94,7 +95,7 @@ public class SeveredSavedGame extends SavedGame {
     gameState.scriptFlags1_13c.set(this.scriptFlags1);
     gameState.wmapFlags_15c.set(this.wmapFlags);
     gameState.visitedLocations_17c.set(this.visitedLocations);
-    this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(gameState.goods_19c::give);
+    this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
     System.arraycopy(this._1a4, 0, gameState._1a4, 0, this._1a4.length);
     System.arraycopy(this.chestFlags, 0, gameState.chestFlags_1c4, 0, this.chestFlags.length);
     this.equipmentIds.stream().map(REGISTRIES.equipment::getEntry).map(RegistryDelegate::get).forEach(gameState.equipment_1e8::add);
