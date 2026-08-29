@@ -92,6 +92,10 @@ lod_core.ui.options.error=Error
 lod_core.ui.options.locked=Locked
 lod_core.ui.options.locked_by=Locked by %s
 lod_core.ui.options.tooltip=?
+lod_core.ui.options.colour_random=Random
+lod_core.ui.options.colour_preview=UI colour preview
+lod_core.ui.options.colour_preview_first=First choice
+lod_core.ui.options.colour_preview_second=Second choice
 
 lod_core.ui.options_category.back=Back
 lod_core.ui.options_category.some_options_not_available=Note: many options will only appear while in-game
