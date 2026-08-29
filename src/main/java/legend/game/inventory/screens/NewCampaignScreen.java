@@ -16,6 +16,7 @@ import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.NewCampaignConfigEvent;
+import legend.game.modding.events.config.ValidateNewCampaignConfigEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.CampaignConfigDefaultsStorage;
@@ -123,10 +124,11 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, mods);
     mods.onPressed(() ->
       this.deferAction(() ->
-        this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
-          bootMods(this.enabledMods);
+          this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
+            bootMods(this.enabledMods);
+            EVENTS.postEvent(new NewCampaignConfigEvent(CONFIG, rememberDefaults));
 
-          startFadeEffect(2, 10);
+            startFadeEffect(2, 10);
           this.getStack().popScreen();
         }))
       )
@@ -136,9 +138,16 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> { })));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> { }))); 
       } else {
-        this.unload = true;
+        GameEngine.initializeRemainingRegistries();
+        final ValidateNewCampaignConfigEvent validationEvent = EVENTS.postEvent(new ValidateNewCampaignConfigEvent(CONFIG));
+
+        if(validationEvent.hasErrors()) {
+          this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.config_validation_failed") + '\n' + String.join("\n", validationEvent.errors()), MessageBoxType.ALERT, result1 -> { })));
+        } else {
+          this.unload = true;
+        }
       }
     });
 
