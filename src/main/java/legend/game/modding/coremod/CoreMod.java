@@ -30,6 +30,7 @@ import legend.game.modding.coremod.config.AdditionTimingWindowConfigEntry;
 import legend.game.modding.coremod.config.AllowWidescreenConfigEntry;
 import legend.game.modding.coremod.config.AudioDeviceConfig;
 import legend.game.modding.coremod.config.AutoTextDelayConfigEntry;
+import legend.game.modding.coremod.config.AutoSaveAfterBattleConfig;
 import legend.game.modding.coremod.config.BattleTransitionModeConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
@@ -173,6 +174,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE));
   public static final RegistryDelegate<AutoTextDelayConfigEntry> AUTO_TEXT_DELAY_CONFIG = CONFIG_REGISTRAR.register("auto_text_delay", AutoTextDelayConfigEntry::new);
   public static final RegistryDelegate<SaveAnywhereConfig> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", SaveAnywhereConfig::new);
+  public static final RegistryDelegate<AutoSaveAfterBattleConfig> AUTO_SAVE_AFTER_BATTLE_CONFIG = CONFIG_REGISTRAR.register("auto_save_after_battle", AutoSaveAfterBattleConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_STATUS_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("disable_status_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY));
   public static final RegistryDelegate<BoolConfigEntry> ENEMY_HP_BARS_CONFIG = CONFIG_REGISTRAR.register("enemy_hp_bars", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE));
   public static final RegistryDelegate<MashModeConfigEntry> MASH_MODE_CONFIG = CONFIG_REGISTRAR.register("mash_mode", MashModeConfigEntry::new);

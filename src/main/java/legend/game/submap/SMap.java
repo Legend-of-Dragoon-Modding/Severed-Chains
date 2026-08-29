@@ -8,6 +8,7 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.Transformations;
+import legend.core.lang.I18nText;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
@@ -38,6 +39,7 @@ import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
 import legend.game.modding.events.submap.SubmapLoadEvent;
 import legend.game.modding.events.submap.SubmapWarpEvent;
+import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -69,6 +71,7 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.ui.GameOverlay;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
@@ -102,6 +105,7 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
@@ -113,6 +117,7 @@ import static legend.game.DrgnFiles.loadFile;
 import static legend.game.EngineStates.FUN_800218f0;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.lastSavableEngineState;
+import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GetTPage;
@@ -155,6 +160,7 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
@@ -181,6 +187,7 @@ import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.game.sound.Audio.addSoundFile;
 import static legend.game.sound.Audio.getLoadedAudioFiles;
 import static legend.game.sound.Audio.musicLoaded_800bd782;
+import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
@@ -192,6 +199,7 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_RUN;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_INTERACT;
+import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SAVE;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
 import static legend.lodmod.LodMod.MP_STAT;
@@ -410,6 +418,7 @@ public class SMap extends EngineState<SMap> {
   private int inputPressed;
   private int inputRepeat;
   private int inputHeld;
+  private boolean autoSaveAfterBattlePending;
 
   public final SoundFile submapSounds = addSoundFile("Submap SFX");
 
@@ -435,6 +444,9 @@ public class SMap extends EngineState<SMap> {
   public void init() {
     lastSavableEngineState = this.type;
     sssqResetStuff();
+    this.autoSaveAfterBattlePending = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get())
+      && CONFIG.getConfig(CoreMod.AUTO_SAVE_AFTER_BATTLE_CONFIG.get())
+      && previousEngineState_8004dd28 == LodEngineStateTypes.BATTLE.get();
   }
 
   @Override
@@ -541,9 +553,40 @@ public class SMap extends EngineState<SMap> {
     return saveMode == SubmapSavable.SAVE_ANYWHERE && CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get());
   }
 
+  private boolean canCreateNewSave() {
+    return this.smapLoadingStage_800cb430 == SubmapState.RENDER_SUBMAP_12
+      && whichMenu_800bdc38 == WhichMenu.NONE_0
+      && !gameState_800babc8.indicatorsDisabled_4e3
+      && !this.transitioning_800f7e4c
+      && fullScreenEffect_800bb140.currentColour_28 == 0
+      && this.canSave();
+  }
+
+  private void createNewSave() {
+    try {
+      SAVES.newSave(campaignType.get(), this, gameState_800babc8);
+      GameOverlay.addNotification(3, new I18nText("lod_core.ui.save_game.saved"));
+    } catch(final SaveFailedException e) {
+      playMenuSound(40);
+      GameOverlay.addNotification(3, new I18nText("lod_core.ui.save_game.save_failed"));
+      LOGGER.error("Failed to create save", e);
+    }
+  }
+
+  private void autoSaveIfEnabled() {
+    if(!this.autoSaveAfterBattlePending || !this.canSave()) return;
+
+    this.autoSaveAfterBattlePending = false;
+    this.createNewSave();
+  }
+
   @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
     super.inputActionPressed(action, repeat);
+
+    if(action == INPUT_ACTION_SMAP_SAVE.get() && !repeat && this.canCreateNewSave()) {
+      this.createNewSave();
+    }
 
     if(action == INPUT_ACTION_GENERAL_MOVE_UP.get()) {
       if(!repeat) {
@@ -4069,6 +4112,7 @@ public class SMap extends EngineState<SMap> {
         loadingNewGameState_800bdc34 = false;
         this.submap.loadMapTransitionData(this.mapTransitionData_800cab24);
         this.submap.finishLoading();
+        this.autoSaveIfEnabled();
         startFadeEffect(2, 10);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
