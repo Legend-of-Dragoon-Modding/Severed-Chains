@@ -8,6 +8,7 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.Transformations;
+import legend.core.lang.I18nText;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
@@ -34,7 +35,6 @@ import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.coremod.CorePostBattleActions;
 import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.modding.events.submap.SubmapEncounterAccumulatorEvent;
 import legend.game.modding.events.submap.SubmapLoadEvent;
@@ -71,6 +71,7 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.ui.GameOverlay;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
@@ -79,7 +80,6 @@ import legend.lodmod.LodConfig;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
-import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -164,7 +164,6 @@ import static legend.game.Scus94491BpeSegment_800b.campaignType;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
-import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
@@ -211,7 +210,6 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState<SMap> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
-  private static final int AUTO_SAVE_AFTER_BATTLE_STABLE_TICKS = 30;
 
   private int fmvIndex_800bf0dc;
 
@@ -421,7 +419,6 @@ public class SMap extends EngineState<SMap> {
   private int inputRepeat;
   private int inputHeld;
   private boolean autoSaveAfterBattlePending;
-  private int autoSaveAfterBattleStableTicks;
 
   public final SoundFile submapSounds = addSoundFile("Submap SFX");
 
@@ -449,10 +446,7 @@ public class SMap extends EngineState<SMap> {
     sssqResetStuff();
     this.autoSaveAfterBattlePending = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get())
       && CONFIG.getConfig(CoreMod.AUTO_SAVE_AFTER_BATTLE_CONFIG.get())
-      && previousEngineState_8004dd28 == LodEngineStateTypes.BATTLE.get()
-      && postBattleAction_800bc974 != null
-      && (postBattleAction_800bc974.action == CorePostBattleActions.VICTORY.get()
-        || postBattleAction_800bc974.action == LodPostBattleActions.BOSS_KILL.get());
+      && previousEngineState_8004dd28 == LodEngineStateTypes.BATTLE.get();
   }
 
   @Override
@@ -571,27 +565,16 @@ public class SMap extends EngineState<SMap> {
   private void createNewSave() {
     try {
       SAVES.newSave(campaignType.get(), this, gameState_800babc8);
-      playMenuSound(50);
+      GameOverlay.addNotification(3, new I18nText("lod_core.ui.save_game.saved"));
     } catch(final SaveFailedException e) {
       playMenuSound(40);
+      GameOverlay.addNotification(3, new I18nText("lod_core.ui.save_game.save_failed"));
       LOGGER.error("Failed to create save", e);
     }
   }
 
-  private void tickAutoSaveAfterBattle() {
-    if(!this.autoSaveAfterBattlePending) {
-      return;
-    }
-
-    if(!this.canCreateNewSave()) {
-      this.autoSaveAfterBattleStableTicks = 0;
-      return;
-    }
-
-    this.autoSaveAfterBattleStableTicks++;
-    if(this.autoSaveAfterBattleStableTicks < AUTO_SAVE_AFTER_BATTLE_STABLE_TICKS) {
-      return;
-    }
+  private void autoSaveIfEnabled() {
+    if(!this.autoSaveAfterBattlePending || !this.canSave()) return;
 
     this.autoSaveAfterBattlePending = false;
     this.createNewSave();
@@ -4129,6 +4112,7 @@ public class SMap extends EngineState<SMap> {
         loadingNewGameState_800bdc34 = false;
         this.submap.loadMapTransitionData(this.mapTransitionData_800cab24);
         this.submap.finishLoading();
+        this.autoSaveIfEnabled();
         startFadeEffect(2, 10);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
@@ -4152,8 +4136,6 @@ public class SMap extends EngineState<SMap> {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
         this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
-
-        this.tickAutoSaveAfterBattle();
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
           this.mapTransition(-1, 0x3ff); // Open inv
