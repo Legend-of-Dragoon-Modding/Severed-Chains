@@ -5,12 +5,14 @@ import legend.game.characters.CharacterData2c;
 import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.screens.controls.CharacterCard;
+import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -147,7 +149,9 @@ public class StatusScreen extends MenuScreen {
         if(i < unlockedSpells.size()) {
           this.renderNumber(198, 127 + (i - this.spellScrollIndex) * 14, i + 1, 2, 0, 0x7ca9);
           final RegistryId spellId = unlockedSpells.get(i);
-          final SpellStats0c spell = REGISTRIES.spells.getEntry(spellId).get();
+          final SpellStats0c baseSpell = REGISTRIES.spells.getEntry(spellId).get();
+          final SpellStatsEvent spellStatsEvent = EVENTS.postEvent(new SpellStatsEvent(character, baseSpell));
+          final SpellStats0c spell = spellStatsEvent.spell;
           renderText(I18n.translate(spell), 210, 125 + (i - this.spellScrollIndex) * 14, UI_TEXT);
           this.renderNumber(342, 128 + (i - this.spellScrollIndex) * 14, spell.mp_06, 3);
         }

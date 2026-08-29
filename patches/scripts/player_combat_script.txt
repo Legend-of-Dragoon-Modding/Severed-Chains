@@ -2642,6 +2642,9 @@ mov stor[0], stor[28] ; source, dest
 gosub inl[:LABEL_8] ; addr
 mov stor[18], stor[28] ; source, dest
 mov stor[20], stor[30] ; source, dest
+; Declarative spells dispatch every plan and target through Java, including target damage handlers.
+; The special-effects sentinel skips this retail damage path so the selected target is not hit twice.
+jmp_cmp ==, 0x80000000, stor[10], inl[:LABEL_286] ; declarative spell effects applied
 mov stor[8], stor[32] ; source, dest
 gosub inl[:APPLY_DAMAGE_SIMPLE] ; addr
 jmp_cmp &, 0x40, stor[7], inl[:LABEL_286] ; operand, left, right, addr

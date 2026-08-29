@@ -213,6 +213,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Method(0x800f2e98L)
   public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
     int matk = this.stats.getStat(MAGIC_ATTACK_STAT.get()).get();
+
     if(magicType == 1) {
       matk += this.spell_94.multi_04;
     }
@@ -582,6 +583,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       spell = LodSpells.SPELL127.get();
     }
 
-    this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(gameState_800babc8.charData_32c.get(this.charId_272), spell)).spell;
+    final SpellStatsEvent spellStatsEvent = EVENTS.postEvent(new SpellStatsEvent(this.character, spell));
+    this.spell_94 = spellStatsEvent.spell;
   }
 }

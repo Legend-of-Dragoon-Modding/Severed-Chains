@@ -16,6 +16,7 @@ import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
+import legend.game.combat.spells.SpellEffectExecutor;
 import legend.game.modding.events.battle.ActiveItemEvent;
 import legend.game.modding.events.battle.ActiveSpellEvent;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
@@ -212,6 +213,8 @@ public abstract class BattleEntity27c extends BattleObject {
   public int tempPhysicalImmunityTurns_c5;
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
+    /** Active declarative spell regeneration, updated after this entity completes a turn. */
+    public final SpellEffectExecutor.RegenState spellRegen = new SpellEffectExecutor.RegenState();
 
   public ItemStack item_d4;
 //  public int _ec;
@@ -299,9 +302,6 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract int calculatePhysicalDamage(final BattleEntity27c target);
-  /**
-   * @param magicType item (0), spell (1)
-   */
   public abstract int calculateMagicDamage(final BattleEntity27c target, final int magicType);
 
   public int applyPhysicalDamageMultipliers(final BattleEntity27c target, final int damage) {
@@ -346,6 +346,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public void turnFinished() {
+    this.spellRegen.turnFinished(this);
     if(this.powerAttackTurns_b5 > 0) {
       this.powerAttackTurns_b5--;
 
