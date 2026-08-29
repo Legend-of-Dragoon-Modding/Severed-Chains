@@ -4,8 +4,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.longs.Long2FloatMap;
+import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import legend.core.platform.input.AxisInputActivation;
 import legend.core.platform.input.ButtonInputActivation;
 import legend.core.platform.input.FailedToLoadDeviceException;
@@ -45,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,6 +126,7 @@ public class SdlPlatformManager extends PlatformManager {
 
   private final Set<InputAction> pressed = new HashSet<>();
   private final Map<InputAction, InputActionState> actionStates = new HashMap<>();
+  private final Map<InputAction, AxisInputState> axisActionStates = new HashMap<>();
   private boolean clearActionStates;
 
   private final Int2ObjectMap<SdlGamepadDevice> gamepads = new Int2ObjectOpenHashMap<>();
@@ -252,7 +259,7 @@ public class SdlPlatformManager extends PlatformManager {
   // These are used to disable keyboard input while controller buttons are held. This is a dumb
   // workaround for dumb Steam's Steam Input repeating all controller input as keyboard input.
   private final IntSet ignoredKeys = new IntOpenHashSet();
-  private final IntSet axesHeld = new IntOpenHashSet();
+  private final LongSet axesHeld = new LongOpenHashSet();
   private int buttonsHeld;
   //
 
@@ -491,6 +498,7 @@ public class SdlPlatformManager extends PlatformManager {
               }
             }
 
+            this.removeGamepadAxisInputs(device.which());
             this.gamepads.remove(device.which());
           }
 
@@ -514,16 +522,17 @@ public class SdlPlatformManager extends PlatformManager {
               final float movementOuterDeadzone = CONFIG.getConfig(MOVEMENT_OUTER_DEADZONE_CONFIG.get());
               final float minInner = Math.min(menuInnerDeadzone, movementInnerDeadzone);
               final float maxOuter = Math.min(menuOuterDeadzone, movementOuterDeadzone);
+              final long gamepadAxis = gamepadAxisId(axis.which(), axis.axis());
 
               if(Math.abs(axis.value()) >= minInner * 0x7fff) {
                 this.setWindowInputClass(this.lastActiveWindow, InputClass.GAMEPAD);
                 this.lastGamepad = this.gamepads.get(axis.which());
-                this.axesHeld.add(axis.axis());
+                this.axesHeld.add(gamepadAxis);
                 final float menuValue = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - menuInnerDeadzone) / (Math.abs(menuOuterDeadzone - menuInnerDeadzone)));
                 final float movementValue = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - movementInnerDeadzone) / (Math.abs(movementOuterDeadzone - movementInnerDeadzone)));
                 this.lastActiveWindow.events().onAxis(getInputFromAxisCode(axis.axis()), InputAxisDirection.getDirection(axis.value()), menuValue, movementValue);
               } else {
-                this.axesHeld.remove(axis.axis());
+                this.axesHeld.remove(gamepadAxis);
               }
 
               final List<InputBinding<AxisInputActivation>> axisBindings = InputBindings.getBindings(AxisInputActivation.class);
@@ -533,7 +542,7 @@ public class SdlPlatformManager extends PlatformManager {
 
                 if(getAxisCode(binding.activation.axis) == axis.axis()) {
                   final InputAxisDirection direction = InputAxisDirection.getDirection(axis.value());
-                  final InputActionState state = this.getInputActionState(binding.action);
+                  float value = 0.0f;
 
                   if(binding.activation.direction == direction) {
                     final float inner;
@@ -546,30 +555,14 @@ public class SdlPlatformManager extends PlatformManager {
                       outer = menuOuterDeadzone;
                     }
 
-                    final float value = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - inner) / (Math.abs(outer - inner)));
-
-                    if(value >= 0.0f) {
-                      if(!state.isHeld()) {
-                        LOGGER.info(ACTIONS_MARKER, "Triggering press input action axis gamepad %d axis %d value %d -> %s", axis.which(), axis.axis(), axis.value(), binding.action);
-                        this.pressed.add(binding.action);
-                        this.lastActiveWindow.events().onInputActionPressed(binding.action, false);
-                        state.press();
-                        EVENTS.postEvent(new InputPressedEvent(binding.action, false));
-                      }
-
-                      state.axis(value * Math.signum(axis.value()));
-                    } else if(state.isHeld() && state.getAxis() != 0.0f) {
-                      LOGGER.info(ACTIONS_MARKER, "Triggering release A input action axis gamepad %d axis %d value %d -> %s", axis.which(), axis.axis(), axis.value(), binding.action);
-                      this.lastActiveWindow.events().onInputActionReleased(binding.action);
-                      state.release();
-                      EVENTS.postEvent(new InputReleasedEvent(binding.action));
+                    final float deadzoneValue = Math.min(1.0f, (Math.abs(axis.value()) / (float)0x7fff - inner) / (Math.abs(outer - inner)));
+                    if(deadzoneValue > 0.0f) {
+                      value = deadzoneValue * Math.signum(axis.value());
                     }
-                  } else if(state.isHeld() && state.getAxis() != 0.0f) {
-                    LOGGER.info(ACTIONS_MARKER, "Triggering release B input action axis gamepad %d axis %d value %d -> %s", axis.which(), axis.axis(), axis.value(), binding.action);
-                    this.lastActiveWindow.events().onInputActionReleased(binding.action);
-                    state.release();
-                    EVENTS.postEvent(new InputReleasedEvent(binding.action));
                   }
+
+                  final long axisInput = axisInputId(axis.which(), axis.axis(), binding.activation.direction);
+                  this.updateAxisAction(binding.action, axisInput, value, axis.which(), axis.axis(), axis.value());
                 }
               }
             }
@@ -661,6 +654,8 @@ public class SdlPlatformManager extends PlatformManager {
             EVENTS.postEvent(new InputReleasedEvent(action));
           }
         }
+
+        this.axisActionStates.clear();
       }
     }
 
@@ -679,6 +674,7 @@ public class SdlPlatformManager extends PlatformManager {
     if(this.clearActionStates) {
       this.clearActionStates = false;
       this.actionStates.clear();
+      this.axisActionStates.clear();
     }
   }
 
@@ -747,6 +743,76 @@ public class SdlPlatformManager extends PlatformManager {
     }
   }
 
+  private void updateAxisAction(final InputAction action, final long axisInput, final float value, final int gamepadId, final int axisId, final int rawValue) {
+    final AxisInputState axisState = this.axisActionStates.computeIfAbsent(action, key -> new AxisInputState());
+    axisState.update(axisInput, value);
+    this.applyAxisActionValue(action, axisState.getValue(), gamepadId, axisId, rawValue);
+
+    if(axisState.isEmpty()) {
+      this.axisActionStates.remove(action);
+    }
+  }
+
+  private void removeGamepadAxisInputs(final int gamepadId) {
+    final LongIterator axesHeldIterator = this.axesHeld.iterator();
+    while(axesHeldIterator.hasNext()) {
+      if(axisInputGamepadId(axesHeldIterator.nextLong()) == gamepadId) {
+        axesHeldIterator.remove();
+      }
+    }
+
+    final Iterator<Map.Entry<InputAction, AxisInputState>> actionIterator = this.axisActionStates.entrySet().iterator();
+    while(actionIterator.hasNext()) {
+      final Map.Entry<InputAction, AxisInputState> entry = actionIterator.next();
+      final AxisInputState axisState = entry.getValue();
+
+      if(axisState.removeGamepad(gamepadId)) {
+        this.applyAxisActionValue(entry.getKey(), axisState.getValue(), gamepadId, -1, 0);
+      }
+
+      if(axisState.isEmpty()) {
+        actionIterator.remove();
+      }
+    }
+  }
+
+  private void applyAxisActionValue(final InputAction action, final float value, final int gamepadId, final int axisId, final int rawValue) {
+    final InputActionState state = this.getInputActionState(action);
+
+    if(value != 0.0f) {
+      if(!state.isHeld()) {
+        LOGGER.info(ACTIONS_MARKER, "Triggering press input action axis gamepad %d axis %d value %d -> %s", gamepadId, axisId, rawValue, action);
+        this.pressed.add(action);
+        if(this.lastActiveWindow != null) {
+          this.lastActiveWindow.events().onInputActionPressed(action, false);
+        }
+        state.press();
+        EVENTS.postEvent(new InputPressedEvent(action, false));
+      }
+
+      state.axis(value);
+    } else if(state.isHeld() && state.getAxis() != 0.0f) {
+      LOGGER.info(ACTIONS_MARKER, "Triggering release input action axis gamepad %d axis %d value %d -> %s", gamepadId, axisId, rawValue, action);
+      if(this.lastActiveWindow != null) {
+        this.lastActiveWindow.events().onInputActionReleased(action);
+      }
+      state.release();
+      EVENTS.postEvent(new InputReleasedEvent(action));
+    }
+  }
+
+  private static long gamepadAxisId(final int gamepadId, final int axisId) {
+    return (long)gamepadId << 32 | Integer.toUnsignedLong(axisId);
+  }
+
+  private static long axisInputId(final int gamepadId, final int axisId, final InputAxisDirection direction) {
+    return (long)gamepadId << 32 | Integer.toUnsignedLong(axisId) << 1 | direction.ordinal();
+  }
+
+  private static int axisInputGamepadId(final long axisInput) {
+    return (int)(axisInput >> 32);
+  }
+
   private InputActionState getInputActionState(final InputAction action) {
     return this.actionStates.computeIfAbsent(action, key -> new InputActionState());
   }
@@ -811,5 +877,38 @@ public class SdlPlatformManager extends PlatformManager {
 
   private void logLastError() {
     LOGGER.error(SDL_GetError());
+  }
+
+  private static final class AxisInputState {
+    private final Long2FloatMap values = new Long2FloatOpenHashMap();
+
+    void update(final long axisInput, final float value) {
+      if(value == 0.0f) {
+        this.values.remove(axisInput);
+      } else {
+        this.values.put(axisInput, value);
+      }
+    }
+
+    boolean removeGamepad(final int gamepadId) {
+      return this.values.long2FloatEntrySet().removeIf(entry -> axisInputGamepadId(entry.getLongKey()) == gamepadId);
+    }
+
+    float getValue() {
+      float value = 0.0f;
+
+      for(final Long2FloatMap.Entry entry : this.values.long2FloatEntrySet()) {
+        final float candidate = entry.getFloatValue();
+        if(Math.abs(candidate) > Math.abs(value)) {
+          value = candidate;
+        }
+      }
+
+      return value;
+    }
+
+    boolean isEmpty() {
+      return this.values.isEmpty();
+    }
   }
 }
