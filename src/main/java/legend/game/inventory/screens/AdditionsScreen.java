@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
@@ -164,7 +163,7 @@ public class AdditionsScreen extends MenuScreen {
 
       for(int i = 0; i < Math.min(this.additionIds.size() - this.additionScroll, ADDITION_SLOTS); i++) {
         final RegistryId additionId = this.additionIds.get(i + this.additionScroll);
-        final Addition addition = REGISTRIES.additions.getEntry(additionId).get();
+      final Addition addition = charData.resolveAddition(additionId);
         final int y = this.getAdditionSlotY(i);
 
         renderText(addition.getName(), 33, y - 2, !additionId.equals(selectedAddition) ? UI_TEXT : UI_TEXT_SELECTED);

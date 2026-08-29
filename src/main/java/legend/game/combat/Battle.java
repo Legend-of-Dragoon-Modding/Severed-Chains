@@ -116,6 +116,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.ResolvePhysicalAttackStatusEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -4357,16 +4358,13 @@ public class Battle extends EngineState<Battle> {
     if(script.params_20[1].get() != 0) {
       final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
-      final int charIndex = bent.charId_272;
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-
-      if(charData.selectedAddition_19 == null) {
+      if(!(bent instanceof final PlayerBattleEntity player) || player.selectedAddition_58 == null) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
 
       //LAB_800cd208
-      final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(charData.selectedAddition_19);
+      final CharacterAdditionInfo additionInfo = player.character.getAdditionInfo(player.selectedAddition_58);
       additionInfo.xp++;
     }
 
@@ -5147,7 +5145,8 @@ public class Battle extends EngineState<Battle> {
     } else {
       //LAB_800d3dc0
       final AdditionNameTextEffect1c additionStruct = new AdditionNameTextEffect1c();
-      final Addition addition = REGISTRIES.additions.getEntry(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19).get();
+      final CharacterData2c character = gameState_800babc8.charData_32c.get(script.params_20[0].get());
+      final Addition addition = character.resolveAddition(character.selectedAddition_19);
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", additionStruct);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> additionStruct.tickAdditionNameEffect(s, this._800faa9d));
@@ -8387,7 +8386,7 @@ public class Battle extends EngineState<Battle> {
       player.dlevel_06 = player.character.dlevel_13;
       player.status_0e = player.character.getStatusAndFlags();
       player.selectedAddition_58 = player.character.selectedAddition_19;
-      player.addition = player.character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(player.character.selectedAddition_19).get() : null;
+      player.addition = player.character.selectedAddition_19 != null ? player.character.resolveAddition(player.character.selectedAddition_19) : null;
 
       player.equipment_11e.clear();
 
@@ -8869,13 +8868,18 @@ public class Battle extends EngineState<Battle> {
 
     final boolean isAttackerMonster = attacker instanceof MonsterBattleEntity;
 
-    final int effectChance = attacker.getStatusEffectChance(attackType);
+    int effectChance = attacker.getStatusEffectChance(attackType);
+    int statusType = attacker.getStatusEffectStatus(attackType);
+
+    if(attackType == AttackType.PHYSICAL && attacker instanceof final PlayerBattleEntity player) {
+      final ResolvePhysicalAttackStatusEvent event = EVENTS.postEvent(new ResolvePhysicalAttackStatusEvent(player, defender, player.selectedAddition_58, player.isAdditionCompletedSuccessfully(), effectChance, statusType));
+      effectChance = event.chance;
+      statusType = event.statusMask;
+    }
 
     //LAB_800f7e98
     int effect = -1;
     if(seed_800fa754.nextInt(100) < effectChance) {
-      final int statusType = attacker.getStatusEffectStatus(attackType);
-
       if((statusType & 0xff) != 0) {
         //LAB_800f7eec
         int statusIndex;
