@@ -32,17 +32,21 @@ public final class GameOverlay {
   }
 
   public static void addNotification(final int seconds, final TextComponent text) {
-    notifications.addLast(new Notification(System.nanoTime() + seconds * 1_000_000_000L, text));
+    synchronized(notifications) {
+      notifications.addLast(new Notification(System.nanoTime() + seconds * 1_000_000_000L, text));
+    }
   }
 
   public static void drawNotifications() {
-    final float x = 4.0f - RENDERER.getWidescreenOrthoOffsetX();
-    float y = 4.0f;
+    synchronized(notifications) {
+      final float x = 4.0f - RENDERER.getWidescreenOrthoOffsetX();
+      float y = 4.0f;
 
-    for(int i = 0; i < notifications.size(); i++) {
-      y += notifications.get(i).draw(x, y);
+      for(int i = 0; i < notifications.size(); i++) {
+        y += notifications.get(i).draw(x, y);
+      }
+
+      notifications.removeIf(Notification::isFinished);
     }
-
-    notifications.removeIf(Notification::isFinished);
   }
 }

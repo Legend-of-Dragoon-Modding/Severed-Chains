@@ -1392,6 +1392,12 @@ public class BattleHud {
     this.battleMenu_800c6c34.xShiftOffset_0a = (short)((this.battleMenu_800c6c34.actions.size() * 19 - 3) / 2);
   }
 
+  private BattleAction actionOverride;
+
+  public void setActionOverride(final BattleAction action) {
+    this.actionOverride = action;
+  }
+
   /** Handles the various combat menu actions and then renders the menu:
    * <ol>
    *   <li>0 -> Set up camera positions</li>
@@ -1405,6 +1411,12 @@ public class BattleHud {
   public BattleAction tickAndRender() {
     if(this.battleMenu_800c6c34.state_00 == 0) {
       return null;
+    }
+
+    if(this.actionOverride != null) {
+      final BattleAction action = this.actionOverride;
+      this.actionOverride = null;
+      return action;
     }
 
     BattleAction selectedAction = null;
@@ -1817,11 +1829,27 @@ public class BattleHud {
     this.setGpuPacketClutAndTpageAndQueue(builder, baseClutOffset, null);
   }
 
+  private int targetOverride = -1;
+
+  public void setTargetOverride(final int target) {
+    this.targetOverride = target;
+  }
+
   /**
    * @param targetType 0: chars, 1: monsters, 2: all
    */
   @Method(0x800f7768L)
   public int handleTargeting(final int targetType, final boolean targetAll) {
+    boolean autoAttack = false;
+
+    if(this.targetOverride != -1) {
+      this.battleMenu_800c6c34.targetedSlot_800c697c = this.targetOverride;
+      this.battleMenu_800c6c34.targetedPlayerSlot_800c6980 = this.targetOverride;
+      this.battleMenu_800c6c34.targetedMonsterSlot_800c697e = this.targetOverride;
+      this.targetOverride = -1;
+      autoAttack = true;
+    }
+
     final int count;
 
     this.battleMenu_800c6c34.displayTargetArrowAndName_4c = true;
@@ -1918,8 +1946,8 @@ public class BattleHud {
 
     //LAB_800f7a0c
     //LAB_800f7a10
-    if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-      LOGGER.info(BATTLE, "Player selected selected target %d type %d", this.battleMenu_800c6c34.target_48, this.battleMenu_800c6c34.targetType_50);
+    if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get()) || autoAttack) {
+      LOGGER.info(BATTLE, "Player selected target %d type %d", this.battleMenu_800c6c34.target_48, this.battleMenu_800c6c34.targetType_50);
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
       this.battleMenu_800c6c34.targetArrowHiding = true;

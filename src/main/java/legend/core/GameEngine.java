@@ -33,11 +33,13 @@ import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.saves.Campaign;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
 import legend.game.saves.SaveVersion;
+import legend.game.saves.SavedGame;
 import legend.game.saves.serializers.V9Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
@@ -68,11 +70,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.SItem.UI_WHITE;
 import static legend.game.SItem.loadMenuAssets;
 import static legend.game.SItem.renderMenuCentredText;
 import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.bindRendererEvents;
+import static legend.game.Scus94491BpeSegment_800b.campaignType;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Text.initTextboxGeometry;
 import static legend.game.Text.renderText;
@@ -101,7 +107,7 @@ public final class GameEngine {
   public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(SaveVersion.V9, V9Serializer::toV9);
 
-  public static final PlatformManager PLATFORM = new SdlPlatformManager();
+  public static final PlatformManager PLATFORM = loadPlatform();
   public static final RenderEngine RENDERER = new RenderEngine();
 
   public static final FontManager FONTS = new FontManager();
@@ -167,6 +173,8 @@ public final class GameEngine {
   private static boolean engineLoading = true;
   private static boolean unpackerLoading = true;
 
+  private static String[] autoLoadSave;
+
   public static boolean isLoading() {
     return engineLoading || unpackerLoading;
   }
@@ -178,14 +186,19 @@ public final class GameEngine {
   }
 
   public static void start() throws IOException {
+    getAutoLoadSave();
+
     UPDATE_CHECK_FINISHED = false;
     UPDATE = null;
-    UPDATER.check(release -> {
-      synchronized(UPDATER_LOCK) {
-        UPDATE_CHECK_FINISHED = true;
-        UPDATE = release;
-      }
-    });
+
+    if(autoLoadSave == null) { // Skip update check if we're directly loading a save
+      UPDATER.check(release -> {
+        synchronized(UPDATER_LOCK) {
+          UPDATE_CHECK_FINISHED = true;
+          UPDATE = release;
+        }
+      });
+    }
 
     loadLangOverrides(Main.ORIGINAL_LOCALE);
 
@@ -229,6 +242,11 @@ public final class GameEngine {
           }
 
           unpackerLoading = false;
+
+          // Skip intro if we're directly loading a save
+          if(autoLoadSave != null) {
+            skip();
+          }
         }
       } catch(final Exception e) {
         throw new RuntimeException(e);
@@ -265,6 +283,10 @@ public final class GameEngine {
     try {
       RENDERER.run();
     } finally {
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.destroy();
+      }
+
       DISCORD.destroy();
       AUDIO_THREAD.destroy();
       RENDERER.delete();
@@ -434,6 +456,26 @@ public final class GameEngine {
       battleUiParts.init();
       startSound();
       bindRendererEvents();
+
+      if(autoLoadSave != null) {
+        final Campaign campaign = Campaign.load(SAVES, SAVES.resolve(autoLoadSave[0]));
+        CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+        campaign.loadConfigInto(CONFIG);
+
+        if(campaign.config.hasConfig(CoreMod.ENABLED_MODS_CONFIG.get())) {
+          bootMods(Set.of(campaign.config.getConfig(CoreMod.ENABLED_MODS_CONFIG.get())));
+        } else {
+          // Fallback for old saves from before the config key existed
+          bootMods(MODS.getAllModIds());
+        }
+
+        final SavedGame save = campaign.loadGame(autoLoadSave[1]);
+        SAVES.loadGameState(save);
+        engineStateOnceLoaded_8004dd24 = REGISTRIES.engineStateTypes.getEntry(save.engineState).get();
+        campaignType.get().transitionToLoadedGame(gameState_800babc8);
+        return;
+      }
+
       Fmv.playCurrentFmv(0, CoreEngineStateTypes.TITLE.get());
     }
   }
@@ -455,10 +497,15 @@ public final class GameEngine {
     RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
     try {
-      VideoPlayer.play(Path.of("gfx/intro.mp4"), GameEngine::renderIntro, () -> {
+      if(autoLoadSave == null) {
+        VideoPlayer.play(Path.of("gfx/intro.mp4"), GameEngine::renderIntro, () -> {
+          cinematicFinished = true;
+          RENDERER.setRenderCallback(GameEngine::renderIntro);
+        });
+      } else {
         cinematicFinished = true;
         RENDERER.setRenderCallback(GameEngine::renderIntro);
-      });
+      }
     } catch(final IOException e) {
       LOGGER.warn("Failed to play intro", e);
       RENDERER.setRenderCallback(GameEngine::renderIntro);
@@ -550,5 +597,40 @@ public final class GameEngine {
     }
 
     textZ_800bdf00 = oldTextZ;
+  }
+
+  private static PlatformManager loadPlatform() {
+    final String platformOverride = System.getProperty("platform");
+
+    if(platformOverride != null) {
+      LOGGER.info("NOTICE: using platform override %s", platformOverride);
+    }
+
+    return ClassHelper.loadClassWithDefault(platformOverride, PlatformManager.class, SdlPlatformManager::new);
+  }
+
+  private static void getAutoLoadSave() {
+    final String loadSave = System.getProperty("loadsave");
+
+    if(loadSave == null) {
+      return;
+    }
+
+    final String[] parts = loadSave.split("/");
+
+    if(parts.length != 2) {
+      LOGGER.error("loadsave %s is invalid", loadSave);
+      return;
+    }
+
+    final Path path = Path.of("saves", parts[0], parts[1] + ".dsav");
+
+    if(!Files.exists(path)) {
+      LOGGER.error("loadsave %s does not exist", loadSave);
+      return;
+    }
+
+    LOGGER.info("Autoloading save %s", loadSave);
+    autoLoadSave = parts;
   }
 }

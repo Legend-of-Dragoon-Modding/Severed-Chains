@@ -105,7 +105,10 @@ public final class Menus {
         if(!unloadSaveGameMenu) {
           startFadeEffect(2, 10);
         }
-        currentEngineState_8004dd04.menuClosed();
+
+        if(currentEngineState_8004dd04 != null) {
+          currentEngineState_8004dd04.menuClosed();
+        }
 
         textZ_800bdf00 = 13;
       }

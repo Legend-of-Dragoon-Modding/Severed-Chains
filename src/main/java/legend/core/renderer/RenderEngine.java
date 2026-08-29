@@ -2,6 +2,7 @@ package legend.core.renderer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import legend.core.ClassHelper;
 import legend.core.Config;
 import legend.core.LitModel;
 import legend.core.MathHelper;
@@ -105,8 +106,7 @@ public class RenderEngine {
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
   public final ScissorStack scissorStack;
-  private RenderApi api = new GlesApi(this);
-//  private RenderApi api = new GlesApi(this);
+  private final RenderApi api = loadApi();
 
   private Camera camera2d;
   private Camera camera3d;
@@ -1477,5 +1477,15 @@ public class RenderEngine {
 
   public void setFrameSkipOption(final boolean frameSkip) {
     this.frameSkip = frameSkip;
+  }
+
+  private static RenderApi loadApi() {
+    final String apiOverride = System.getProperty("renderapi");
+
+    if(apiOverride != null) {
+      LOGGER.info("NOTICE: using render API override %s", apiOverride);
+    }
+
+    return ClassHelper.loadClassWithDefault(apiOverride, RenderApi.class, GlesApi::new);
   }
 }
