@@ -1,0 +1,16 @@
+--- original
++++ modified
+@@ -104,8 +104,13 @@
+ ENTRYPOINT_1:
+ call 3, 0x69, stor[31]
+ mov var[64][0], stor[28]
++mov 0xa, stor[12]
++mov stor[31], stor[13]
++mul 0xa, stor[13]
++add stor[13], stor[12]
+ LABEL_11:
+ call 102, stor[28], stor[24], stor[25], stor[26]
++add stor[12], stor[25]
+ call 101, stor[0], stor[24], stor[25], stor[26]
+ call 104, stor[28], stor[24], stor[25], stor[26]
+ call 103, stor[0], stor[24], stor[25], stor[26]
