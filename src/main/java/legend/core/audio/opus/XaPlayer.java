@@ -22,6 +22,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public final class XaPlayer extends AudioSource {
   private static final Logger LOGGER = LogManager.getFormatterLogger(XaPlayer.class);
 
+  private final Object playbackLock = new Object();
+
   private ByteBuffer opusFileData;
   private long opusFile;
   private int channelCount;
@@ -52,54 +54,63 @@ public final class XaPlayer extends AudioSource {
   }
 
   public void loadXa(final FileData fileData) {
-    this.opusFileData = BufferUtils.createByteBuffer(fileData.size());
-    this.opusFileData.put(fileData.getBytes());
-    this.opusFileData.rewind();
-    this.samplesRead = 0;
+    synchronized(this.playbackLock) {
+      this.opusFileData = BufferUtils.createByteBuffer(fileData.size());
+      this.opusFileData.put(fileData.getBytes());
+      this.opusFileData.rewind();
+      this.samplesRead = 0;
 
-    try(final MemoryStack stack = stackPush()) {
-      final IntBuffer error = stack.mallocInt(1);
-      this.opusFile = OpusFile.op_open_memory(this.opusFileData, error);
+      try(final MemoryStack stack = stackPush()) {
+        final IntBuffer error = stack.mallocInt(1);
+        this.opusFile = OpusFile.op_open_memory(this.opusFileData, error);
 
-      if(error.get(0) != 0) {
-        LOGGER.error("Error opening Opus XA file: 0x%x", error.get(0));
+        if(error.get(0) != 0) {
+          LOGGER.error("Error opening Opus XA file: 0x%x", error.get(0));
+        }
       }
-    }
 
-    final int newChannelCount = OpusFile.op_channel_count(this.opusFile, -1);
+      final int newChannelCount = OpusFile.op_channel_count(this.opusFile, -1);
 
-    if(this.channelCount != newChannelCount) {
-      this.channelCount = newChannelCount;
-      this.format = this.channelCount == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
-      this.pcm = new short[this.samplesPerTick * this.channelCount];
-      this.pcmBuffer = BufferUtils.createShortBuffer(this.pcm.length);
-    }
-
-    this.sampleCount = OpusFile.op_pcm_total(this.opusFile, -1) * newChannelCount;
-
-    if(this.sampleCount < this.samplesPerTick * 4) {
-      throw new RuntimeException("XA file is less than 4 buffers in length (40ms)");
-    }
-
-    this.setActive(true);
-
-    if(this.canBuffer()) {
-      for(int i = 0; i < 4; i++) {
-        this.readFile();
-        this.bufferOutput(this.format, this.pcm, 48_000);
+      if(this.channelCount != newChannelCount) {
+        this.channelCount = newChannelCount;
+        this.format = this.channelCount == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
+        this.pcm = new short[this.samplesPerTick * this.channelCount];
+        this.pcmBuffer = BufferUtils.createShortBuffer(this.pcm.length);
       }
-    }
 
-    if(this.isActive()) {
-      this.play();
+      this.sampleCount = OpusFile.op_pcm_total(this.opusFile, -1) * newChannelCount;
+
+      if(this.sampleCount < this.samplesPerTick * 4) {
+        throw new RuntimeException("XA file is less than 4 buffers in length (40ms)");
+      }
+
+      this.setActive(true);
+
+      if(this.canBuffer()) {
+        for(int i = 0; i < 4; i++) {
+          this.readFile();
+          this.bufferOutput(this.format, this.pcm, 48_000);
+        }
+      }
+
+      if(this.isActive()) {
+        this.play();
+      }
     }
   }
 
   @Override
   public void tick() {
-    this.readFile();
-    this.bufferOutput(this.format, this.pcm, 48_000);
-    super.tick();
+    synchronized(this.playbackLock) {
+      if(this.opusFile == NULL) {
+        this.setActive(false);
+        return;
+      }
+
+      this.readFile();
+      this.bufferOutput(this.format, this.pcm, 48_000);
+      super.tick();
+    }
   }
 
   private void readFile() {
@@ -123,19 +134,23 @@ public final class XaPlayer extends AudioSource {
   }
 
   public void unloadOpusFile() {
-    if(this.opusFile != NULL) {
-      OpusFile.op_free(this.opusFile);
-      this.opusFile = NULL;
-      this.opusFileData = null;
+    synchronized(this.playbackLock) {
+      if(this.opusFile != NULL) {
+        OpusFile.op_free(this.opusFile);
+        this.opusFile = NULL;
+        this.opusFileData = null;
+      }
     }
   }
 
   @Override
   protected void destroy() {
-    if(this.opusFileData != null) {
-      this.unloadOpusFile();
-    }
+    synchronized(this.playbackLock) {
+      if(this.opusFileData != null) {
+        this.unloadOpusFile();
+      }
 
-    super.destroy();
+      super.destroy();
+    }
   }
 }
