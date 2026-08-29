@@ -8,6 +8,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
+import legend.game.combat.types.BattleSoundUsage;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.SpellStats0c;
@@ -18,6 +19,7 @@ import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.SoundFile;
 import legend.game.types.EquipmentSlot;
 import legend.lodmod.LodMod;
 import legend.lodmod.LodSpells;
@@ -96,6 +98,9 @@ public class PlayerBattleEntity extends BattleEntity27c {
 
   public DetransformationMode detransformationMode = DetransformationMode.NOW;
 
+  /** Regular combat sounds retained while Dragoon attack sounds are active. */
+  public SoundFile regularSoundFile;
+
   private final ScriptFile script;
 
   public PlayerBattleEntity(final Battle battle, final String name, final int charId, final int scriptIndex, final ScriptFile script) {
@@ -120,6 +125,14 @@ public class PlayerBattleEntity extends BattleEntity27c {
   @Override
   public String getName() {
     return I18n.translate(this.character.template);
+  }
+
+  @Override
+  public SoundFile resolveSoundFile(final BattleSoundUsage usage) {
+    return switch(usage) {
+      case ACTIVE_FORM -> this.soundFile;
+      case REACTION -> this.regularSoundFile != null ? this.regularSoundFile : this.soundFile;
+    };
   }
 
   public ScriptState<PlayerBattleEntity> getState() {

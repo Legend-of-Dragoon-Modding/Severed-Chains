@@ -603,8 +603,14 @@ public final class Audio {
 
             if(bent.soundFile != null) {
               sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
-              bent.soundFile = null;
             }
+
+            if(bent.regularSoundFile != null && bent.regularSoundFile != bent.soundFile) {
+              sssqUnloadPlayableSound(bent.regularSoundFile.playableSound_10);
+            }
+
+            bent.soundFile = null;
+            bent.regularSoundFile = null;
 
             //LAB_8001e374
           }
