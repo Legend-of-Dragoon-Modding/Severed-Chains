@@ -138,6 +138,7 @@ public class LodMod {
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_INTERACT = INPUT_ACTION_REGISTRAR.register("smap_interact", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_TOGGLE_INDICATORS = INPUT_ACTION_REGISTRAR.register("smap_toggle_indicators", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_SAVE = INPUT_ACTION_REGISTRAR.register("smap_save", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_SMAP_SNOWFIELD_WARP = INPUT_ACTION_REGISTRAR.register("smap_snowfield_warp", InputAction::hidden);
 
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::editable);
