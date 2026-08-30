@@ -95,11 +95,18 @@ public final class AudioThread implements Runnable {
       alcGetString(0, ALC_ALL_DEVICES_SPECIFIER); // refresh the list
 
       final String currentDefault = alcGetString(0, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
+      final boolean defaultDeviceChanged = currentDefault != null && !currentDefault.equals(this.defaultDevice);
 
-      if(currentDefault != null && !currentDefault.equals(this.defaultDevice)) {
-        LOGGER.info("Found new default device %s", currentDefault);
-        this.defaultDevice = currentDefault;
-        this.deviceChanged = true;
+      synchronized(this) {
+        if(defaultDeviceChanged) {
+          LOGGER.info("Found new default device %s", currentDefault);
+          this.defaultDevice = currentDefault;
+        }
+
+        if(defaultDeviceChanged || this.paused) {
+          this.deviceChanged = true;
+          this.notify();
+        }
       }
     }, 2, 2, TimeUnit.SECONDS);
   }
@@ -116,14 +123,15 @@ public final class AudioThread implements Runnable {
       this.destroyInternal();
       this.initInternal();
 
-      if(this.audioDevice != 0) {
-        for(int i = 0; i < this.sources.size(); i++) {
-          final AudioSource source = this.sources.get(i);
-          source.init();
+      for(int i = 0; i < this.sources.size(); i++) {
+        final AudioSource source = this.sources.get(i);
 
-          if(active[i]) {
-            source.setActive(true);
-          }
+        if(this.audioDevice != 0) {
+          source.init();
+        }
+
+        if(active[i]) {
+          source.setActive(true);
         }
       }
     }
@@ -141,6 +149,7 @@ public final class AudioThread implements Runnable {
       if(this.audioContext == 0) {
         LOGGER.error("Failed to create audio context: %#x", alcGetError(this.audioDevice));
         this.destroyInternal();
+        this.paused = true;
         return;
       }
 
@@ -162,7 +171,8 @@ public final class AudioThread implements Runnable {
       this.audioContext = 0;
     }
 
-    LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
+    LOGGER.warn("Device does not support OpenAL10. Retrying audio initialization.");
+    this.destroyInternal();
     this.paused = true;
   }
 
@@ -259,7 +269,7 @@ public final class AudioThread implements Runnable {
       boolean canBuffer = false;
 
       synchronized(this) {
-        while(this.paused) {
+        while(this.paused && !this.deviceChanged) {
           try {
             this.wait();
           } catch(final InterruptedException ignored) { }
@@ -270,14 +280,23 @@ public final class AudioThread implements Runnable {
         }
 
         if(this.deviceChanged) {
-          final String configuredDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
+          this.deviceChanged = false;
 
-          if(configuredDevice.isEmpty() || "<default>".equals(configuredDevice)) {
-            LOGGER.info("Default audio device changed");
+          if(this.paused) {
+            LOGGER.info("Retrying audio initialization");
             this.reinit();
+          } else {
+            final String configuredDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
+
+            if(configuredDevice.isEmpty() || "<default>".equals(configuredDevice)) {
+              LOGGER.info("Default audio device changed");
+              this.reinit();
+            }
           }
 
-          this.deviceChanged = false;
+          if(this.paused) {
+            continue;
+          }
         }
 
         if(this.alcCapabilities.ALC_EXT_disconnect) {
@@ -287,6 +306,10 @@ public final class AudioThread implements Runnable {
           if(connected == 0) {
             LOGGER.warn("Audio device lost");
             this.reinit();
+
+            if(this.paused) {
+              continue;
+            }
           }
         }
 
