@@ -92,7 +92,7 @@ public abstract class AudioSource {
   }
 
   protected void handleProcessedBuffers() {
-    if(this.bufferIndex < this.buffers.length - 1) {
+    if(this.isInitialized() && this.bufferIndex < this.buffers.length - 1) {
       alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
       final int processedBufferCount = this.tmp.get(0);
 
