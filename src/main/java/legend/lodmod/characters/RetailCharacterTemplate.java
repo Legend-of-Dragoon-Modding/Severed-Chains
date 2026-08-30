@@ -91,49 +91,6 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   }
 
   @Override
-  public void serialize(final CharacterData2c character, final FileData data, final IntRef offset) {
-    data.writeInt(offset, character.partyFlags_04);
-    data.writeInt(offset, character.xp_00);
-    data.writeInt(offset, character.dlevelXp_0e);
-    data.writeInt(offset, character.level_12);
-    data.writeInt(offset, character.dlevel_13);
-    data.writeBool(offset, character.hasTransformed);
-    data.writeInt(offset, character.status_10);
-    character.stats.serialize(data, offset);
-
-    data.writeInt(offset, EquipmentSlot.values().length);
-
-    for(final EquipmentSlot slot : EquipmentSlot.values()) {
-      data.writeAscii(offset, slot.name());
-      data.writeRegistryId(offset, character.getEquipment(slot));
-    }
-
-    data.writeRegistryId(offset, character.selectedAddition_19);
-
-    final Set<RegistryId> additionIds = character.getAllAdditions();
-    data.writeShort(offset, additionIds.size());
-
-    for(final RegistryId additionId : additionIds) {
-      final CharacterAdditionInfo info = character.getAdditionInfo(additionId);
-      data.writeRegistryId(offset, additionId);
-      data.writeEnum(offset, info.getUnlockState());
-      data.writeInt(offset, info.getUnlockTimestamp());
-      data.writeShort(offset, info.level);
-      data.writeInt(offset, info.xp);
-    }
-
-    final Collection<RegistryId> spellIds = character.getAllSpells();
-    data.writeShort(offset, spellIds.size());
-
-    for(final RegistryId spellId : spellIds) {
-      final CharacterSpellInfo info = character.getSpellInfo(spellId);
-      data.writeRegistryId(offset, spellId);
-      data.writeEnum(offset, info.getUnlockState());
-      data.writeInt(offset, info.getUnlockTimestamp());
-    }
-  }
-
-  @Override
   public SavedCharacter deserialize(final FileData data, final IntRef offset) {
     final SeveredSavedCharacterV2 character = new SeveredSavedCharacterV2(this.getRegistryId());
 

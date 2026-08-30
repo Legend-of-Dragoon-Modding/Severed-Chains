@@ -11,7 +11,6 @@ public abstract class StatModType<S extends Stat, M extends StatMod<S>, C extend
   public abstract M make(final C config);
   public abstract C makeConfig();
 
-  public abstract void serialize(final M mod, final FileData data, final IntRef offset);
   public abstract M deserialize(final FileData data, final IntRef offset);
   public abstract void serialize(final M mod, final MapTag tag);
   public abstract M deserialize(final MapTag tag);

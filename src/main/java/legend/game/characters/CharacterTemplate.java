@@ -26,7 +26,7 @@ public abstract class CharacterTemplate extends RegistryEntry {
 
   }
 
-  public abstract void serialize(final CharacterData2c character, final FileData data, final IntRef offset);
+  /** For legacy saves */
   public abstract SavedCharacter deserialize(final FileData data, final IntRef offset);
   public abstract void serialize(final CharacterData2c character, final MapTag tag);
   public abstract SavedCharacter deserialize(final MapTag tag);

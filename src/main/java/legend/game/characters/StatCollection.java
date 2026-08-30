@@ -47,18 +47,6 @@ public class StatCollection implements Iterable<RegistryId> {
     }
   }
 
-  public void serialize(final FileData data, final IntRef offset) {
-    data.writeInt(offset, this.stats.size());
-
-    for(final var entry : this.stats.entrySet()) {
-      final RegistryId statTypeId = entry.getKey();
-      final StatType statType = REGISTRIES.statTypes.getEntry(statTypeId).get();
-      final Stat stat = entry.getValue();
-      data.writeRegistryId(offset, statTypeId);
-      statType.serialize(stat, data, offset);
-    }
-  }
-
   public static StatCollection deserialize(final FileData data, final IntRef offset) {
     final StatCollection stats = new StatCollection();
 

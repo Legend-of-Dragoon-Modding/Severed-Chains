@@ -13,13 +13,6 @@ public class VitalsStatType extends StatType<VitalsStat> {
   }
 
   @Override
-  public void serialize(final VitalsStat stat, final FileData data, final IntRef offset) {
-    data.writeInt(offset, stat.getCurrent());
-    data.writeInt(offset, stat.getMaxRaw());
-    this.serializeMods(stat, data, offset);
-  }
-
-  @Override
   public void deserialize(final VitalsStat stat, final FileData data, final IntRef offset) {
     stat.setCurrent(data.readInt(offset));
     stat.setMaxRaw(data.readInt(offset));

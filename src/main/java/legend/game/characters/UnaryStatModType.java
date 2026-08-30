@@ -19,13 +19,6 @@ public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, Unary
   }
 
   @Override
-  public void serialize(final UnaryStatMod mod, final FileData data, final IntRef offset) {
-    data.writeInt(offset, mod.amount);
-    data.writeBool(offset, mod.percentile);
-    data.writeInt(offset, mod.turns);
-  }
-
-  @Override
   public UnaryStatMod deserialize(final FileData data, final IntRef offset) {
     final int amount = data.readInt(offset);
     final boolean percentile = data.readBool(offset);

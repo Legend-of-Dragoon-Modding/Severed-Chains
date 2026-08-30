@@ -19,13 +19,6 @@ public class FractionalStatModType extends StatModType<FractionalStat, Fractiona
   }
 
   @Override
-  public void serialize(final FractionalStatMod mod, final FileData data, final IntRef offset) {
-    data.writeInt(offset, mod.amount);
-    data.writeBool(offset, mod.percentile);
-    data.writeInt(offset, mod.turns);
-  }
-
-  @Override
   public FractionalStatMod deserialize(final FileData data, final IntRef offset) {
     final int amount = data.readInt(offset);
     final boolean percentile = data.readBool(offset);
