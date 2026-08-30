@@ -146,10 +146,6 @@ public final class XaPlayer extends AudioSource {
   @Override
   protected void destroy() {
     synchronized(this.playbackLock) {
-      if(this.opusFileData != null) {
-        this.unloadOpusFile();
-      }
-
       super.destroy();
     }
   }

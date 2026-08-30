@@ -182,10 +182,13 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       if(!this.running && this.audioDevice != 0) {
         this.destroyInternal();
+        this.xaPlayer.unloadOpusFile();
         return;
       }
 
       this.running = false;
+      this.xaPlayer.unloadOpusFile();
+      this.notify();
     }
 
     while(this.audioDevice != 0) {
@@ -338,6 +341,7 @@ public final class AudioThread implements Runnable {
 
     synchronized(this) {
       this.destroyInternal();
+      this.xaPlayer.unloadOpusFile();
     }
   }
 
