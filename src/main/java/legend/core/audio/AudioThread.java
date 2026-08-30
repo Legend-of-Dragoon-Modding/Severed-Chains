@@ -53,6 +53,7 @@ public final class AudioThread implements Runnable {
   private EffectsOverTimeGranularity effectsGranularity;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
+  private FileData pendingXa;
   private final List<AudioSource> sources = new ArrayList<>();
 
   private boolean running;
@@ -134,6 +135,11 @@ public final class AudioThread implements Runnable {
           source.setActive(true);
         }
       }
+
+      if(this.pendingXa != null && this.xaPlayer.isInitialized()) {
+        this.xaPlayer.loadXa(this.pendingXa);
+        this.pendingXa = null;
+      }
     }
   }
 
@@ -180,6 +186,8 @@ public final class AudioThread implements Runnable {
     this.scheduler.shutdown();
 
     synchronized(this) {
+      this.pendingXa = null;
+
       if(!this.running && this.audioDevice != 0) {
         this.destroyInternal();
         this.xaPlayer.unloadOpusFile();
@@ -341,6 +349,7 @@ public final class AudioThread implements Runnable {
 
     synchronized(this) {
       this.destroyInternal();
+      this.pendingXa = null;
       this.xaPlayer.unloadOpusFile();
     }
   }
@@ -350,6 +359,7 @@ public final class AudioThread implements Runnable {
     this.running = false;
 
     synchronized(this) {
+      this.pendingXa = null;
       this.notify();
     }
   }
@@ -466,16 +476,19 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       if(this.xaPlayer.isInitialized()) {
         this.xaPlayer.loadXa(fileData);
+      } else {
+        this.xaPlayer.stop();
+        this.xaPlayer.unloadOpusFile();
+        this.pendingXa = new FileData(fileData.getBytes());
       }
     }
   }
 
   public void stopXa() {
     synchronized(this) {
-      if(this.xaPlayer.isInitialized()) {
-        this.xaPlayer.stop();
-        this.xaPlayer.unloadOpusFile();
-      }
+      this.pendingXa = null;
+      this.xaPlayer.stop();
+      this.xaPlayer.unloadOpusFile();
     }
   }
 
