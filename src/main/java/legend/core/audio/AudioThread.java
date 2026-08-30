@@ -127,12 +127,14 @@ public final class AudioThread implements Runnable {
       for(int i = 0; i < this.sources.size(); i++) {
         final AudioSource source = this.sources.get(i);
 
-        if(this.audioDevice != 0) {
-          source.init();
-        }
+        synchronized(source) {
+          if(this.audioDevice != 0) {
+            source.init();
+          }
 
-        if(active[i]) {
-          source.setActive(true);
+          if(active[i]) {
+            source.setActive(true);
+          }
         }
       }
 
@@ -206,8 +208,10 @@ public final class AudioThread implements Runnable {
 
   private void destroyInternal() {
     for(final AudioSource source : this.sources) {
-      if(source.isInitialized()) {
-        source.destroy();
+      synchronized(source) {
+        if(source.isInitialized()) {
+          source.destroy();
+        }
       }
     }
 
@@ -252,8 +256,10 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       this.sources.add(source);
 
-      if(this.audioDevice != 0) {
-        source.init();
+      synchronized(source) {
+        if(this.audioDevice != 0) {
+          source.init();
+        }
       }
 
       return source;
@@ -262,8 +268,10 @@ public final class AudioThread implements Runnable {
 
   public void removeSource(final AudioSource source) {
     synchronized(this) {
-      if(source.isInitialized()) {
-        source.destroy();
+      synchronized(source) {
+        if(source.isInitialized()) {
+          source.destroy();
+        }
       }
 
       this.sources.remove(source);
