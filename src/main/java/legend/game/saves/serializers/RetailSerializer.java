@@ -191,7 +191,7 @@ public final class RetailSerializer {
     savedGame.indicatorsDisabled = data.readUByte(0x4e3) != 0;
     final boolean isOnWorldMap = data.readUByte(0x4e4) != 0;
 
-    savedGame.characterInitialized = data.readUShort(0x4e6);
+    /*savedGame.characterInitialized = */data.readUShort(0x4e6);
 
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
 

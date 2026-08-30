@@ -3,6 +3,13 @@ package legend.lodmod.characters;
 import legend.core.Latch;
 import legend.core.gte.MV;
 import legend.core.memory.types.IntRef;
+import legend.core.tags.BoolTag;
+import legend.core.tags.EnumTag;
+import legend.core.tags.IntTag;
+import legend.core.tags.ListTag;
+import legend.core.tags.MapTag;
+import legend.core.tags.RegistryIdTag;
+import legend.core.tags.Tag;
 import legend.game.additions.UnlockState;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
@@ -170,6 +177,112 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
       final RegistryId spellId = data.readRegistryId(offset);
       final UnlockState unlockState = data.readEnum(offset, UnlockState.class);
       final int unlockTimestamp = data.readInt(offset);
+      character.spellInfo.put(spellId, new SeveredSavedCharacterV2.SpellInfo(unlockState, unlockTimestamp));
+    }
+
+    return character;
+  }
+
+  @Override
+  public void serialize(final CharacterData2c character, final MapTag tag) {
+    tag.set("flags", new IntTag(character.partyFlags_04));
+    tag.set("xp", new IntTag(character.xp_00));
+    tag.set("dxp", new IntTag(character.dlevelXp_0e));
+    tag.set("level", new IntTag(character.level_12));
+    tag.set("dlevel", new IntTag(character.dlevel_13));
+    tag.set("hasTransformed", new BoolTag(character.hasTransformed));
+    tag.set("status", new IntTag(character.status_10));
+
+    final ListTag statsTag = new ListTag();
+    character.stats.serialize(statsTag);
+    tag.set("stats", statsTag);
+
+    final ListTag equipsTag = new ListTag();
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final MapTag equipTag = new MapTag();
+      equipTag.set("slot", new EnumTag(slot));
+      equipTag.set("equipmentId", new RegistryIdTag(character.getEquipment(slot)));
+      equipsTag.add(equipTag);
+    }
+    tag.set("equipment", equipsTag);
+
+    if(character.selectedAddition_19 != null) {
+      tag.set("selectedAdditionId", new RegistryIdTag(character.selectedAddition_19));
+    }
+
+    final Set<RegistryId> additionIds = character.getAllAdditions();
+    final ListTag additionsTag = new ListTag();
+
+    for(final RegistryId additionId : additionIds) {
+      final MapTag additionTag = new MapTag();
+      final CharacterAdditionInfo info = character.getAdditionInfo(additionId);
+      additionTag.set("additionId", new RegistryIdTag(additionId));
+      additionTag.set("unlockState", new EnumTag(info.getUnlockState()));
+      additionTag.set("unlockTimestamp", new IntTag(info.getUnlockTimestamp()));
+      additionTag.set("level", new IntTag(info.level));
+      additionTag.set("xp", new IntTag(info.xp));
+      additionsTag.add(additionTag);
+    }
+    tag.set("additions", additionsTag);
+
+    final Collection<RegistryId> spellIds = character.getAllSpells();
+    final ListTag spellsTag = new ListTag();
+
+    for(final RegistryId spellId : spellIds) {
+      final MapTag spellTag = new MapTag();
+      final CharacterSpellInfo info = character.getSpellInfo(spellId);
+      spellTag.set("spellId", new RegistryIdTag(spellId));
+      spellTag.set("unlockState", new EnumTag(info.getUnlockState()));
+      spellTag.set("unlockTimestamp", new IntTag(info.getUnlockTimestamp()));
+      spellsTag.add(spellTag);
+    }
+    tag.set("spells", spellsTag);
+  }
+
+  @Override
+  public SavedCharacter deserialize(final MapTag tag) {
+    final SeveredSavedCharacterV2 character = new SeveredSavedCharacterV2(this.getRegistryId());
+
+    character.flags = tag.get("flags").asInt().get();
+    character.xp = tag.get("xp").asInt().get();
+    character.dxp = tag.get("dxp").asInt().get();
+    character.level = tag.get("level").asInt().get();
+    character.dlevel = tag.get("dlevel").asInt().get();
+    character.hasTransformed = tag.get("hasTransformed").asBool().get();
+    character.status = tag.get("status").asInt().get();
+
+    final ListTag statsTag = tag.get("stats").asList();
+    character.stats = StatCollection.deserialize(statsTag);
+
+    final ListTag equipsTag = tag.get("equipment").asList();
+    for(final Tag tag1 : equipsTag) {
+      final MapTag equipTag = tag1.asMap();
+      final EquipmentSlot slot = equipTag.get("slot").asEnum().get(EquipmentSlot.class);
+      final RegistryId equipmentId = equipTag.get("equipmentId").asRegistryId().get();
+      character.equipmentIds.put(slot, equipmentId);
+    }
+
+    if(tag.has("selectedAddition")) {
+      character.selectedAddition = tag.get("selectedAddition").asRegistryId().get();
+    }
+
+    final ListTag additionsTag = tag.get("additions").asList();
+    for(final Tag tag1 : additionsTag) {
+      final MapTag additionTag = tag1.asMap();
+      final RegistryId additionId = additionTag.get("additionId").asRegistryId().get();
+      final UnlockState unlockState = additionTag.get("unlockState").asEnum().get(UnlockState.class);
+      final int unlockTimestamp = additionTag.get("unlockTimestamp").asInt().get();
+      final int level = additionTag.get("level").asInt().get();
+      final int xp = additionTag.get("xp").asInt().get();
+      character.additionInfo.put(additionId, new SeveredSavedCharacterV2.AdditionInfo(unlockState, unlockTimestamp, level, xp));
+    }
+
+    final ListTag spellsTag = tag.get("spells").asList();
+    for(final Tag tag1 : spellsTag) {
+      final MapTag spellTag = tag1.asMap();
+      final RegistryId spellId = spellTag.get("spellId").asRegistryId().get();
+      final UnlockState unlockState = spellTag.get("unlockState").asEnum().get(UnlockState.class);
+      final int unlockTimestamp = spellTag.get("unlockTimestamp").asInt().get();
       character.spellInfo.put(spellId, new SeveredSavedCharacterV2.SpellInfo(unlockState, unlockTimestamp));
     }
 

@@ -1,6 +1,10 @@
 package legend.game.characters;
 
 import legend.core.memory.types.IntRef;
+import legend.core.tags.ListTag;
+import legend.core.tags.MapTag;
+import legend.core.tags.RegistryIdTag;
+import legend.core.tags.Tag;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.unpacker.FileData;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +69,34 @@ public class StatCollection implements Iterable<RegistryId> {
       final StatType statType = REGISTRIES.statTypes.getEntry(statTypeId).get();
       final Stat stat = statType.make(stats);
       statType.deserialize(stat, data, offset);
+      stats.stats.put(statTypeId, stat);
+    }
+
+    return stats;
+  }
+
+  public void serialize(final ListTag tags) {
+    for(final var entry : this.stats.entrySet()) {
+      final RegistryId statTypeId = entry.getKey();
+      final StatType statType = REGISTRIES.statTypes.getEntry(statTypeId).get();
+      final Stat stat = entry.getValue();
+
+      final MapTag statTag = new MapTag();
+      statTag.set("statTypeId", new RegistryIdTag(statTypeId));
+      statType.serialize(stat, statTag);
+      tags.add(statTag);
+    }
+  }
+
+  public static StatCollection deserialize(final ListTag tags) {
+    final StatCollection stats = new StatCollection();
+
+    for(final Tag tag : tags) {
+      final MapTag statTag = tag.asMap();
+      final RegistryId statTypeId = statTag.get("statTypeId").asRegistryId().get();
+      final StatType statType = REGISTRIES.statTypes.getEntry(statTypeId).get();
+      final Stat stat = statType.make(stats);
+      statType.deserialize(stat, statTag);
       stats.stats.put(statTypeId, stat);
     }
 
