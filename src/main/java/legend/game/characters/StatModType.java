@@ -1,6 +1,7 @@
 package legend.game.characters;
 
 import legend.core.memory.types.IntRef;
+import legend.core.tags.MapTag;
 import legend.game.scripting.Param;
 import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
@@ -10,8 +11,9 @@ public abstract class StatModType<S extends Stat, M extends StatMod<S>, C extend
   public abstract M make(final C config);
   public abstract C makeConfig();
 
-  public abstract void serialize(final M mod, final FileData data, final IntRef offset);
   public abstract M deserialize(final FileData data, final IntRef offset);
+  public abstract void serialize(final M mod, final MapTag tag);
+  public abstract M deserialize(final MapTag tag);
 
   public abstract void update(final M mod, final C config);
 

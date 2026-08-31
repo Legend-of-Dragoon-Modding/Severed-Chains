@@ -13,6 +13,7 @@ import legend.game.characters.StatType;
 import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
+import legend.game.combat.types.BattleSoundUsage;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
@@ -269,6 +270,10 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   public abstract String getName();
+
+  public SoundFile resolveSoundFile(final BattleSoundUsage usage) {
+    return this.soundFile;
+  }
 
   @Override
   public String toString() {

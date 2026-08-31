@@ -38,7 +38,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
 import legend.game.saves.SaveVersion;
-import legend.game.saves.serializers.V9Serializer;
+import legend.game.saves.serializers.V10Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.textures.Image;
@@ -99,7 +99,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(SaveVersion.V9, V9Serializer::toV9);
+  public static final SaveManager SAVES = new SaveManager(SaveVersion.V10, V10Serializer::toV10);
 
   public static final PlatformManager PLATFORM = new SdlPlatformManager();
   public static final RenderEngine RENDERER = new RenderEngine();

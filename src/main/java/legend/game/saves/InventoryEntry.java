@@ -1,6 +1,6 @@
 package legend.game.saves;
 
-import com.google.gson.JsonObject;
+import legend.core.tags.Tag;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -10,9 +10,9 @@ public class InventoryEntry {
   public final int size;
   public final int durability;
   @Nullable
-  public final JsonObject extraData;
+  public final Tag extraData;
 
-  public InventoryEntry(final RegistryId id, final int size, final int durability, @Nullable final JsonObject extraData) {
+  public InventoryEntry(final RegistryId id, final int size, final int durability, @Nullable final Tag extraData) {
     this.id = id;
     this.size = size;
     this.durability = durability;

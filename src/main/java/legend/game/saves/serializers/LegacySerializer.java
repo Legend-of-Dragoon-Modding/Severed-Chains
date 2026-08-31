@@ -1,11 +1,7 @@
 package legend.game.saves.serializers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.ReflectionAccessFilter;
 import legend.core.memory.types.IntRef;
+import legend.core.tags.MapTag;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
@@ -24,8 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.nio.charset.StandardCharsets;
-
 import static legend.game.Scus94491BpeSegment_8004.CHARACTER_ADDITIONS;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.lodmod.LodMod.getLocationName;
@@ -34,8 +28,6 @@ public final class LegacySerializer {
   private LegacySerializer() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(LegacySerializer.class);
-
-  private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
   public static SavedGame fromV2To7(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
@@ -171,28 +163,18 @@ public final class LegacySerializer {
 
       final int size;
       final int durability;
-      JsonObject extraData = null;
       if(version.ordinal() >= SaveVersion.V5.ordinal()) {
         size = data.readInt(offset);
         durability = data.readInt(offset);
+
         final int extraDataSize = data.readInt(offset);
-
-        if(extraDataSize != 0) {
-          final byte[] serialized = new byte[extraDataSize];
-          data.read(offset, serialized, 0, serialized.length);
-
-          try {
-            extraData = jsonSerializer.fromJson(new String(serialized, StandardCharsets.UTF_8), JsonObject.class);
-          } catch(final JsonSyntaxException e) {
-            LOGGER.error("Failed to load extra data for instance of item " + itemId, e);
-          }
-        }
+        offset.add(extraDataSize); // no one was using extraData at this point, just gonna remove the reader instead of converting json to tags
       } else {
         size = 1;
         durability = 1;
       }
 
-      savedGame.itemIds.add(new InventoryEntry(itemId, size, durability, extraData));
+      savedGame.itemIds.add(new InventoryEntry(itemId, size, durability, null));
     }
 
     for(int i = 0; i < goodsCount; i++) {
@@ -288,7 +270,7 @@ public final class LegacySerializer {
     savedGame.dotOffset = data.readUByte(offset);
     savedGame.facing = data.readByte(offset);
     savedGame.directionalPathIndex = data.readUShort(offset);
-    savedGame.characterInitialized = data.readInt(offset);
+    /*savedGame.characterInitialized = */data.readInt(offset);
     final boolean isOnWorldMap = data.readUByte(offset) != 0;
 
     if(version.ordinal() <= SaveVersion.V4.ordinal()) {
@@ -303,6 +285,7 @@ public final class LegacySerializer {
 
     savedGame.locationName = getLocationName(locationType, locationIndex);
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    savedGame.engineStateData = new MapTag();
     savedGame.maxHp = maxHp;
     savedGame.maxMp = maxMp;
 

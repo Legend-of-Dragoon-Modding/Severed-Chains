@@ -53,6 +53,7 @@ public final class AudioThread implements Runnable {
   private EffectsOverTimeGranularity effectsGranularity;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
+  private FileData pendingXa;
   private final List<AudioSource> sources = new ArrayList<>();
 
   private boolean running;
@@ -95,11 +96,18 @@ public final class AudioThread implements Runnable {
       alcGetString(0, ALC_ALL_DEVICES_SPECIFIER); // refresh the list
 
       final String currentDefault = alcGetString(0, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
+      final boolean defaultDeviceChanged = currentDefault != null && !currentDefault.equals(this.defaultDevice);
 
-      if(currentDefault != null && !currentDefault.equals(this.defaultDevice)) {
-        LOGGER.info("Found new default device %s", currentDefault);
-        this.defaultDevice = currentDefault;
-        this.deviceChanged = true;
+      synchronized(this) {
+        if(defaultDeviceChanged) {
+          LOGGER.info("Found new default device %s", currentDefault);
+          this.defaultDevice = currentDefault;
+        }
+
+        if(defaultDeviceChanged || this.paused) {
+          this.deviceChanged = true;
+          this.notify();
+        }
       }
     }, 2, 2, TimeUnit.SECONDS);
   }
@@ -116,15 +124,23 @@ public final class AudioThread implements Runnable {
       this.destroyInternal();
       this.initInternal();
 
-      if(this.audioDevice != 0) {
-        for(int i = 0; i < this.sources.size(); i++) {
-          final AudioSource source = this.sources.get(i);
-          source.init();
+      for(int i = 0; i < this.sources.size(); i++) {
+        final AudioSource source = this.sources.get(i);
+
+        synchronized(source) {
+          if(this.audioDevice != 0) {
+            source.init();
+          }
 
           if(active[i]) {
             source.setActive(true);
           }
         }
+      }
+
+      if(this.pendingXa != null && this.xaPlayer.isInitialized()) {
+        this.xaPlayer.loadXa(this.pendingXa);
+        this.pendingXa = null;
       }
     }
   }
@@ -141,6 +157,7 @@ public final class AudioThread implements Runnable {
       if(this.audioContext == 0) {
         LOGGER.error("Failed to create audio context: %#x", alcGetError(this.audioDevice));
         this.destroyInternal();
+        this.paused = true;
         return;
       }
 
@@ -162,7 +179,8 @@ public final class AudioThread implements Runnable {
       this.audioContext = 0;
     }
 
-    LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
+    LOGGER.warn("Device does not support OpenAL10. Retrying audio initialization.");
+    this.destroyInternal();
     this.paused = true;
   }
 
@@ -170,12 +188,17 @@ public final class AudioThread implements Runnable {
     this.scheduler.shutdown();
 
     synchronized(this) {
+      this.pendingXa = null;
+
       if(!this.running && this.audioDevice != 0) {
         this.destroyInternal();
+        this.xaPlayer.unloadOpusFile();
         return;
       }
 
       this.running = false;
+      this.xaPlayer.unloadOpusFile();
+      this.notify();
     }
 
     while(this.audioDevice != 0) {
@@ -185,8 +208,10 @@ public final class AudioThread implements Runnable {
 
   private void destroyInternal() {
     for(final AudioSource source : this.sources) {
-      if(source.isInitialized()) {
-        source.destroy();
+      synchronized(source) {
+        if(source.isInitialized()) {
+          source.destroy();
+        }
       }
     }
 
@@ -231,8 +256,10 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       this.sources.add(source);
 
-      if(this.audioDevice != 0) {
-        source.init();
+      synchronized(source) {
+        if(this.audioDevice != 0) {
+          source.init();
+        }
       }
 
       return source;
@@ -241,8 +268,10 @@ public final class AudioThread implements Runnable {
 
   public void removeSource(final AudioSource source) {
     synchronized(this) {
-      if(source.isInitialized()) {
-        source.destroy();
+      synchronized(source) {
+        if(source.isInitialized()) {
+          source.destroy();
+        }
       }
 
       this.sources.remove(source);
@@ -259,7 +288,7 @@ public final class AudioThread implements Runnable {
       boolean canBuffer = false;
 
       synchronized(this) {
-        while(this.paused) {
+        while(this.paused && !this.deviceChanged) {
           try {
             this.wait();
           } catch(final InterruptedException ignored) { }
@@ -270,12 +299,23 @@ public final class AudioThread implements Runnable {
         }
 
         if(this.deviceChanged) {
-          if("<default>".equals(CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get()))) {
-            LOGGER.info("Default audio device changed");
+          this.deviceChanged = false;
+
+          if(this.paused) {
+            LOGGER.info("Retrying audio initialization");
             this.reinit();
+          } else {
+            final String configuredDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
+
+            if(configuredDevice.isEmpty() || "<default>".equals(configuredDevice)) {
+              LOGGER.info("Default audio device changed");
+              this.reinit();
+            }
           }
 
-          this.deviceChanged = false;
+          if(this.paused) {
+            continue;
+          }
         }
 
         if(this.alcCapabilities.ALC_EXT_disconnect) {
@@ -285,6 +325,10 @@ public final class AudioThread implements Runnable {
           if(connected == 0) {
             LOGGER.warn("Audio device lost");
             this.reinit();
+
+            if(this.paused) {
+              continue;
+            }
           }
         }
 
@@ -313,6 +357,8 @@ public final class AudioThread implements Runnable {
 
     synchronized(this) {
       this.destroyInternal();
+      this.pendingXa = null;
+      this.xaPlayer.unloadOpusFile();
     }
   }
 
@@ -321,6 +367,7 @@ public final class AudioThread implements Runnable {
     this.running = false;
 
     synchronized(this) {
+      this.pendingXa = null;
       this.notify();
     }
   }
@@ -437,16 +484,19 @@ public final class AudioThread implements Runnable {
     synchronized(this) {
       if(this.xaPlayer.isInitialized()) {
         this.xaPlayer.loadXa(fileData);
+      } else {
+        this.xaPlayer.stop();
+        this.xaPlayer.unloadOpusFile();
+        this.pendingXa = new FileData(fileData.getBytes());
       }
     }
   }
 
   public void stopXa() {
     synchronized(this) {
-      if(this.xaPlayer.isInitialized()) {
-        this.xaPlayer.stop();
-        this.xaPlayer.unloadOpusFile();
-      }
+      this.pendingXa = null;
+      this.xaPlayer.stop();
+      this.xaPlayer.unloadOpusFile();
     }
   }
 

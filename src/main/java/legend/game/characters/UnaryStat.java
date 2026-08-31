@@ -31,6 +31,18 @@ public class UnaryStat extends Stat {
     return this.value;
   }
 
+  public int getRawWithContributingMods() {
+    int value = 0;
+
+    for(final StatMod mod : this.mods.values()) {
+      if(mod.contributesToOtherMods(this.stats, this.type)) {
+        value += mod.apply(this.stats, this.type);
+      }
+    }
+
+    return this.value + value;
+  }
+
   public void setRaw(final int value) {
     this.value = this.validator.applyAsInt(value);
   }

@@ -74,8 +74,8 @@ public class GameState52c {
 //  public boolean vibrationEnabled_4e1;
   public boolean indicatorsDisabled_4e3;
 
-  /** A bitset used to set each char's MP to max the first time each one is loaded */
-  public int characterInitialized_4e6;
+//  /** A bitset used to set each char's MP to max the first time each one is loaded */
+//  public int characterInitialized_4e6;
 
   public CharacterData2c addCharacter(final CharacterData2c character) {
     this.charData_32c.add(character);

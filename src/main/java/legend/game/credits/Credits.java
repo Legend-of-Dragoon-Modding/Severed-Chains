@@ -2,7 +2,6 @@ package legend.game.credits;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -10,13 +9,15 @@ import legend.core.memory.Method;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
 import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.tim.Tim;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.core.renderer.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -206,12 +207,12 @@ public class Credits extends EngineState<Credits> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 

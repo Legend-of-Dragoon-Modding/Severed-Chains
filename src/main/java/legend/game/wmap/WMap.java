@@ -2,8 +2,6 @@ package legend.game.wmap;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelStandard;
-import legend.core.renderer.QueuedModelTmd;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -17,7 +15,14 @@ import legend.core.renderer.McqBuilder;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
 import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
+import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
+import legend.core.tags.FloatTag;
+import legend.core.tags.IntTag;
+import legend.core.tags.MapTag;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.EngineStates;
@@ -45,8 +50,6 @@ import legend.game.types.Model124;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
-import legend.core.renderer.Translucency;
-import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodEncounters;
@@ -308,7 +311,7 @@ public class WMap extends EngineState<WMap> {
   private final Vector3f shipWakeCrossVector_800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
 
   private EngineStateType<?> engineStateToTransitionTo;
-  private FileData engineStateData;
+  private Tag engineStateData;
   public WmapState wmapState_800bb10c = WmapState.INIT;
 
   /**
@@ -431,46 +434,30 @@ public class WMap extends EngineState<WMap> {
     lastSavableEngineState = this.type;
   }
 
-  private static final int WMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
-
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
-    final FileData data = new ExpandableFileData(10);
-    final IntRef offset = new IntRef();
-    data.writeShort(offset, WMAP_SAVE_VERSION_1);
-    data.writeShort(offset, gameState.pathIndex_4d8);
-    data.writeShort(offset, gameState.dotIndex_4da);
-    data.writeByte(offset, (int)gameState.dotOffset_4dc);
-    data.writeByte(offset, gameState.facing_4dd);
-    data.writeShort(offset, gameState.directionalPathIndex_4de);
-    return data;
+  public Tag writeSaveData(final GameState52c gameState) {
+    final MapTag tag = new MapTag();
+    tag.set("pathIndex", new IntTag(gameState.pathIndex_4d8));
+    tag.set("dotIndex", new IntTag(gameState.dotIndex_4da));
+    tag.set("dotOffset", new FloatTag(gameState.dotOffset_4dc));
+    tag.set("facing", new IntTag(gameState.facing_4dd));
+    tag.set("directionalPathIndex", new IntTag(gameState.directionalPathIndex_4de));
+    return tag;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
-    // no data - legacy saves
-    if(data.size() == 0) {
+  public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
+    final MapTag map = tag.asMap();
+
+    if(!map.has("pathIndex")) {
       return;
     }
 
-    if(data.size() < 2) {
-      LOGGER.warn("Failed to load WMAP data for save");
-      return;
-    }
-
-    final IntRef offset = new IntRef();
-    final int version = data.readUShort(offset);
-
-    if(version != WMAP_SAVE_VERSION_1) {
-      LOGGER.warn("Unknown WMAP save data version");
-      return;
-    }
-
-    gameState.pathIndex_4d8 = data.readUShort(offset);
-    gameState.dotIndex_4da = data.readUShort(offset);
-    gameState.dotOffset_4dc = data.readUByte(offset);
-    gameState.facing_4dd = data.readByte(offset);
-    gameState.directionalPathIndex_4de = data.readUShort(offset);
+    gameState.pathIndex_4d8 = map.get("pathIndex").asInt().get();
+    gameState.dotIndex_4da = map.get("dotIndex").asInt().get();
+    gameState.dotOffset_4dc = map.get("dotOffset").asFloat().get();
+    gameState.facing_4dd = map.get("facing").asInt().get();
+    gameState.directionalPathIndex_4de = map.get("directionalPathIndex").asInt().get();
   }
 
   @Override

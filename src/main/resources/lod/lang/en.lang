@@ -716,6 +716,7 @@ lod.input_actions.wmap_destinations.name=World map: view destinations
 
 lod.input_actions.smap_interact.name=Sub map: interact
 lod.input_actions.smap_toggle_indicators.name=Sub map: toggle indicators
+lod.input_actions.smap_save.name=Sub map: create new save
 
 lod.input_actions.bttl_attack.name=Battle: attack
 lod.input_actions.bttl_counter.name=Battle: counter

@@ -92,7 +92,7 @@ public abstract class AudioSource {
   }
 
   protected void handleProcessedBuffers() {
-    if(this.bufferIndex < this.buffers.length - 1) {
+    if(this.isInitialized() && this.bufferIndex < this.buffers.length - 1) {
       alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED, this.tmp);
       final int processedBufferCount = this.tmp.get(0);
 
@@ -117,7 +117,7 @@ public abstract class AudioSource {
 
   protected void bufferOutput(final int format, final ByteBuffer buffer, final int sampleRate) {
     synchronized(this) {
-      if(this.bufferIndex >= 0) {
+      if(this.isInitialized() && this.bufferIndex >= 0) {
         final int bufferId = this.buffers[this.bufferIndex--];
         alBufferData(bufferId, format, buffer, sampleRate);
         alSourceQueueBuffers(this.sourceId, bufferId);
@@ -127,7 +127,7 @@ public abstract class AudioSource {
 
   protected void bufferOutput(final int format, final short[] buffer, final int sampleRate) {
     synchronized(this) {
-      if(this.bufferIndex >= 0) {
+      if(this.isInitialized() && this.bufferIndex >= 0) {
         final int bufferId = this.buffers[this.bufferIndex--];
         alBufferData(bufferId, format, buffer, sampleRate);
         alSourceQueueBuffers(this.sourceId, bufferId);
@@ -137,7 +137,7 @@ public abstract class AudioSource {
 
   protected void bufferOutput(final int format, final float[] buffer, final int sampleRate) {
     synchronized(this) {
-      if(this.bufferIndex >= 0) {
+      if(this.isInitialized() && this.bufferIndex >= 0) {
         final int bufferId = this.buffers[this.bufferIndex--];
         alBufferData(bufferId, format, buffer, sampleRate);
         alSourceQueueBuffers(this.sourceId, bufferId);
@@ -171,6 +171,12 @@ public abstract class AudioSource {
 
   /** NOTE: this method will return the play time of the current buffer, so if you're using more than one buffer it's likely not going to return what you expect */
   public float getPosition() {
-    return alGetSourcef(this.sourceId, AL_SEC_OFFSET);
+    synchronized(this) {
+      if(!this.isInitialized()) {
+        return 0.0f;
+      }
+
+      return alGetSourcef(this.sourceId, AL_SEC_OFFSET);
+    }
   }
 }
