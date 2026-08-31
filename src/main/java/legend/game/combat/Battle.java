@@ -1414,6 +1414,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.ENUM, name = "usage", description = "The BattleSoundUsage ordinal")
+  @ScriptEnum(BattleSoundUsage.class)
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before sound starts")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before sound repeats")
   private FlowControl scriptPlayBentSoundForUsage(final RunningScript<?> script) {
