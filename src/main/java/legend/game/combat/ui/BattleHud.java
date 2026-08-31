@@ -1919,7 +1919,7 @@ public class BattleHud {
     //LAB_800f7a0c
     //LAB_800f7a10
     if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_CONFIRM.get())) {
-      LOGGER.info(BATTLE, "Player selected selected target %d type %d", this.battleMenu_800c6c34.target_48, this.battleMenu_800c6c34.targetType_50);
+      LOGGER.info(BATTLE, "Player selected target %d type %d", this.battleMenu_800c6c34.target_48, this.battleMenu_800c6c34.targetType_50);
       this.battleMenu_800c6c34.targetedSlot_800c697c = 0;
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
       this.battleMenu_800c6c34.targetArrowHiding = true;
