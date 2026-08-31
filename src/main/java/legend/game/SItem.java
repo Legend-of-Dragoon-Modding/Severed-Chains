@@ -18,6 +18,7 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.GoodsSource;
 import legend.game.inventory.Inventory;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.ItemGroupSortMode;
@@ -400,7 +401,7 @@ public final class SItem {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.REG, name = "id")
   public static FlowControl scriptGiveGood(final RunningScript<?> script) {
     final RegistryId id = script.params_20[0].getRegistryId();
-    gameState_800babc8.goods_19c.give(REGISTRIES.goods.getEntry(id));
+    gameState_800babc8.goods_19c.give(REGISTRIES.goods.getEntry(id), GoodsSource.GAMEPLAY);
     return FlowControl.CONTINUE;
   }
 

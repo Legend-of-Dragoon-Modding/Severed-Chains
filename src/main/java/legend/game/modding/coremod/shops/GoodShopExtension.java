@@ -2,6 +2,7 @@ package legend.game.modding.coremod.shops;
 
 import legend.game.i18n.I18n;
 import legend.game.inventory.Good;
+import legend.game.inventory.GoodsSource;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
@@ -45,7 +46,7 @@ public class GoodShopExtension extends ShopExtension<Good> {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
         if(result == MessageBoxResult.YES) {
           EVENTS.postEvent(new ShopBuyEvent(shop, entry.item));
-          gameState.goods_19c.give(entry.item);
+          gameState.goods_19c.give(entry.item, GoodsSource.GAMEPLAY);
           gameState_800babc8.gold_94 -= entry.price;
         }
       }));
