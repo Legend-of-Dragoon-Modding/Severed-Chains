@@ -1,6 +1,8 @@
 package legend.core.platform;
 
 import legend.core.platform.input.InputClass;
+import legend.core.renderer.RenderApi;
+import legend.core.renderer.noop.NoopApi;
 
 import java.nio.file.Path;
 
@@ -18,6 +20,11 @@ public class NoopWindow extends Window {
     this.width = width;
     this.height = height;
     this.render = this.manager.addAction(new Action(this::tick, 60));
+  }
+
+  @Override
+  public RenderApi getRenderApi() {
+    return new NoopApi();
   }
 
   @Override

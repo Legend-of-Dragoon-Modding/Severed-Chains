@@ -10,7 +10,6 @@ import legend.core.renderer.Mesh;
 import legend.core.renderer.QueuedModel;
 import legend.core.renderer.RenderApi;
 import legend.core.renderer.RenderBatch;
-import legend.core.renderer.RenderEngine;
 import legend.core.renderer.Shader;
 import legend.core.renderer.ShaderOptions;
 import legend.core.renderer.ShaderUniformBuffer;
@@ -25,7 +24,6 @@ import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 
 import javax.annotation.Nullable;
@@ -83,11 +81,12 @@ public class GlApi implements RenderApi {
 
   private boolean backfaceCulling;
 
-  private final RenderEngine engine;
   private RenderBatch batch;
   private boolean widescreen;
   private float w;
   private float h;
+  private int renderWidth;
+  private int renderHeight;
 
   private final Rect4i tempScissorRect = new Rect4i();
   private final Rect4i activeScissorRect = new Rect4i();
@@ -99,14 +98,8 @@ public class GlApi implements RenderApi {
 
   private boolean wireframeEnabled;
 
-  public GlApi(final RenderEngine engine) {
-    this.engine = engine;
-  }
-
   @Override
   public void init() {
-    GL.createCapabilities();
-
     LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
     LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
@@ -120,6 +113,9 @@ public class GlApi implements RenderApi {
 
   @Override
   public void resize(final int renderWidth, final int renderHeight) {
+    this.renderWidth = renderWidth;
+    this.renderHeight = renderHeight;
+
     // glLineWidth has been removed on M3 macs
     if(!Version.isMac()) {
       glLineWidth(Math.max(1, renderHeight / 480.0f));
@@ -214,8 +210,8 @@ public class GlApi implements RenderApi {
   public void initBatch(final RenderBatch batch) {
     this.batch = batch;
     this.widescreen = batch.getRenderMode() == EngineState.RenderMode.PERSPECTIVE && CoreMod.ALLOW_WIDESCREEN_CONFIG.isValid() && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get()) || batch.getRenderMode() == EngineState.RenderMode.LEGACY && CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.isValid() && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.EXPANDED;
-    this.w = (float)this.engine.getRenderWidth() / batch.nativeWidth;
-    this.h = (float)this.engine.getRenderHeight() / batch.nativeHeight;
+    this.w = (float)this.renderWidth / batch.nativeWidth;
+    this.h = (float)this.renderHeight / batch.nativeHeight;
 
     this.backfaceCulling(false);
   }
@@ -270,17 +266,17 @@ public class GlApi implements RenderApi {
     final Rect4i worldScissor = model.worldScissor();
     final Rect4i modelScissor = model.modelScissor();
 
-    this.tempScissorRect.set(worldScissor.x, this.engine.getRenderHeight() - (worldScissor.y + worldScissor.h), worldScissor.w, worldScissor.h);
+    this.tempScissorRect.set(worldScissor.x, this.renderHeight - (worldScissor.y + worldScissor.h), worldScissor.w, worldScissor.h);
 
     if(modelScissor.w != 0 || modelScissor.h != 0) {
       if(this.widescreen) {
-        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), Math.round(modelScissor.h * this.h));
+        this.tempScissorRect.subregion(Math.round((modelScissor.x + this.batch.widescreenOrthoOffsetX) * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), this.renderHeight - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * this.h * ((float)this.batch.expectedWidth / this.batch.nativeWidth)), Math.round(modelScissor.h * this.h));
       } else {
         final float offset;
         final float w;
 
         if(this.batch.getRenderMode() == EngineState.RenderMode.LEGACY && CONFIG.getConfig(CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
-          final float ratio = (float)this.engine.getRenderWidth() / this.engine.getRenderHeight();
+          final float ratio = (float)this.renderWidth / this.renderHeight;
           final float adjustedW = this.batch.nativeHeight * ratio;
           offset = (adjustedW - this.batch.nativeWidth) / 2.0f;
           w = this.h;
@@ -289,7 +285,7 @@ public class GlApi implements RenderApi {
           w = this.w;
         }
 
-        this.tempScissorRect.subregion(Math.round((modelScissor.x + offset) * w), this.engine.getRenderHeight() - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * w), Math.round(modelScissor.h * this.h));
+        this.tempScissorRect.subregion(Math.round((modelScissor.x + offset) * w), this.renderHeight - Math.round((modelScissor.y + modelScissor.h) * this.h), Math.round(modelScissor.w * w), Math.round(modelScissor.h * this.h));
       }
     }
 
