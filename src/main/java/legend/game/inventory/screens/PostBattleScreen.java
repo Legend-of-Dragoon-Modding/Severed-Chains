@@ -15,6 +15,7 @@ import legend.game.additions.Addition;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.LevelUpActions;
+import legend.game.characters.LevelUpSource;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
@@ -541,7 +542,7 @@ public class PostBattleScreen extends MenuScreen {
       //LAB_8010cd30
       final LevelUpActions levelUpActions = new LevelUpActions();
       while(character.xp_00 >= character.getXpToNextLevel() && character.level_12 < CONFIG.getConfig(MAX_LEVEL.get())) {
-        character.applyLevelUp(levelUpActions);
+        character.applyLevelUp(levelUpActions, LevelUpSource.GAMEPLAY);
         this.levelsGained_8011e1c8.mergeInt(character, 1, Integer::sum);
       }
 

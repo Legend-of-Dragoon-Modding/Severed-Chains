@@ -18,6 +18,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.platform.input.InputAction;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
@@ -608,12 +609,12 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 

@@ -270,7 +270,9 @@ public final class AudioThread implements Runnable {
         }
 
         if(this.deviceChanged) {
-          if("<default>".equals(CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get()))) {
+          final String configuredDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
+
+          if(configuredDevice.isEmpty() || "<default>".equals(configuredDevice)) {
             LOGGER.info("Default audio device changed");
             this.reinit();
           }

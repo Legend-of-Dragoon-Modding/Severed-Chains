@@ -8,6 +8,7 @@ import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
+import legend.game.characters.LevelUpSource;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
@@ -80,9 +81,6 @@ public class RetailSavedGame extends SavedGame {
   // Config stuff
   public boolean indicatorsDisabled;
 
-  /** A bitset used to set each char's MP to max the first time each one is loaded */
-  public int characterInitialized;
-
   public RetailSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
     super(campaign, version, fileName, saveName, campaignType, config);
     Arrays.setAll(this.characters, i -> new SavedCharacter());
@@ -138,7 +136,7 @@ public class RetailSavedGame extends SavedGame {
       gameState.charData_32c.add(character);
 
       while(character.level_12 < savedCharacter.level) {
-        character.applyLevelUp(null);
+        character.applyLevelUp(null, LevelUpSource.INITIALIZATION);
       }
 
       while(character.dlevel_13 < savedCharacter.dlevel) {
@@ -237,8 +235,6 @@ public class RetailSavedGame extends SavedGame {
     gameState.directionalPathIndex_4de = this.directionalPathIndex;
 
     gameState.indicatorsDisabled_4e3 = this.indicatorsDisabled;
-
-    gameState.characterInitialized_4e6 = this.characterInitialized;
 
     gameState.charData_32c.get(0).hasTransformed = gameState.scriptFlags2_bc.get(0x1b8);
     gameState.charData_32c.get(1).hasTransformed = gameState.scriptFlags2_bc.get(0x1ba);

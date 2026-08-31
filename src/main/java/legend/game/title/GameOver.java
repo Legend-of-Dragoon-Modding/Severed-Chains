@@ -7,6 +7,7 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.GameState52c;
@@ -45,12 +46,12 @@ public class GameOver extends EngineState<GameOver> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 

@@ -4,7 +4,7 @@ public class FractionalStatModConfig implements StatModConfig {
   protected int amount;
   protected boolean percentile;
   protected int turns = -1;
-  protected boolean contributesToOtherMods = false;
+  protected boolean contributesToOtherMods;
 
   /** A percentage modifier (e.g. 200% buff would be 200, -20% debuff would be -20) */
   public FractionalStatModConfig percent(final int percent) {

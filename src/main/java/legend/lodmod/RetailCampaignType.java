@@ -3,6 +3,7 @@ package legend.lodmod;
 import legend.game.fmv.Fmv;
 import legend.game.saves.CampaignType;
 import legend.game.characters.CharacterData2c;
+import legend.game.characters.LevelUpSource;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 
@@ -101,11 +102,11 @@ public class RetailCampaignType extends CampaignType {
 
   private void levelUp(final CharacterData2c character, final int level) {
     while(character.level_12 < level - 1) {
-      character.applyLevelUp(null);
+      character.applyLevelUp(null, LevelUpSource.INITIALIZATION);
     }
 
     character.xp_00 = character.getXpToNextLevel();
-    character.applyLevelUp(null);
+    character.applyLevelUp(null, LevelUpSource.INITIALIZATION);
 
     character.stats.getStat(HP_STAT.get()).restore();
     character.stats.getStat(MP_STAT.get()).restore();

@@ -61,9 +61,6 @@ public class SeveredSavedGame extends SavedGame {
   public int facing;
   public int directionalPathIndex;
 
-  /** A bitset used to set each char's MP to max the first time each one is loaded */
-  public int characterInitialized;
-
   public SeveredSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config, final FileData atlas, final int atlasWidth, final int atlasHeight) {
     super(campaign, version, fileName, saveName, campaignType, config);
     this.atlas = atlas;
@@ -123,8 +120,6 @@ public class SeveredSavedGame extends SavedGame {
     gameState.dotOffset_4dc = this.dotOffset;
     gameState.facing_4dd = this.facing;
     gameState.directionalPathIndex_4de = this.directionalPathIndex;
-
-    gameState.characterInitialized_4e6 = this.characterInitialized;
 
     return gameState;
   }

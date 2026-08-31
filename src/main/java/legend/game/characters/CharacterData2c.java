@@ -225,6 +225,10 @@ public class CharacterData2c {
     this.template.applyLevelUp(this, actions);
   }
 
+  public void applyLevelUp(@Nullable final LevelUpActions actions, final LevelUpSource source) {
+    this.template.applyLevelUp(this, actions, source);
+  }
+
   public void applyDragoonLevelUp(@Nullable final LevelUpActions actions) {
     this.template.applyDragoonLevelUp(this, actions);
   }
