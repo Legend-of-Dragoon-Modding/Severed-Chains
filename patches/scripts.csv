@@ -126,6 +126,7 @@ diff,SECT/DRGN21.BIN/57/2,scripts/DRGN21/57/2.diff,"Hellena Prison, fix dart fee
 diff,SECT/DRGN21.BIN/60/2,scripts/DRGN21/60/2.diff,"Hellena Prison, fix dart feet noclipping"
 diff,SECT/DRGN21.BIN/60/4,scripts/DRGN21/60/2.diff,"Hellena Prison, fix dart feet noclipping"
 diff,SECT/DRGN21.BIN/60/5,scripts/DRGN21/60/2.diff,"Hellena Prison, fix dart feet noclipping"
+diff,SECT/DRGN21.BIN/66/1,scripts/DRGN21/66/1.diff,"Check hasGood instead of flags for shana tower door, GH#2794"
 diff,SECT/DRGN21.BIN/66/2,scripts/DRGN21/66/2.diff,"Hellena Prison, fix dart feet noclipping"
 diff,SECT/DRGN21.BIN/66/4,scripts/DRGN21/66/4.diff,"Hellena Prison, fix dart feet noclipping"
 diff,SECT/DRGN22.BIN/57/2,scripts/DRGN21/57/2.diff,"Hellena Prison Disc 2, fix dart feet noclipping"
