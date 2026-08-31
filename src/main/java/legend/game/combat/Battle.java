@@ -84,6 +84,7 @@ import legend.game.combat.postbattleactions.PostBattleAction;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleAsset08;
 import legend.game.combat.types.BattleObject;
+import legend.game.combat.types.BattleSoundUsage;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -1122,6 +1123,7 @@ public class Battle extends EngineState<Battle> {
     functions[1013] = this::scriptAttack;
 
     functions[1020] = this::scriptSetCombatantVramSlot;
+    functions[1021] = this::scriptPlayBentSoundForUsage;
     return functions;
   }
 
@@ -1326,7 +1328,11 @@ public class Battle extends EngineState<Battle> {
    */
   @Method(0x80019e24L)
   public void playBentSound(final int type, final BattleEntity27c bent, final int soundIndex, final int a3, final int a4, final int initialDelay, final int repeatDelay) {
-    final SoundFile soundFile = bent.soundFile;
+    this.playBentSound(type, bent, soundIndex, BattleSoundUsage.ACTIVE_FORM, initialDelay, repeatDelay);
+  }
+
+  public void playBentSound(final int type, final BattleEntity27c bent, final int soundIndex, final BattleSoundUsage usage, final int initialDelay, final int repeatDelay) {
+    final SoundFile soundFile = bent.resolveSoundFile(usage);
 
     // Retail bug: one of the Divine Dragon Spirit's attack scripts tries to play soundIndex 10 but there are only 10 elements in the patch/sequence file (DRGN0.1225.1.1)
     if(soundIndex < soundFile.indices_08.length) {
@@ -1401,6 +1407,20 @@ public class Battle extends EngineState<Battle> {
   @Method(0x8001abd0L)
   private FlowControl scriptPlayBentSound(final RunningScript<?> script) {
     this.playBentSound(script.params_20[0].get(), SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    return FlowControl.CONTINUE;
+  }
+
+  @ScriptDescription("Play a battle entity sound for a semantic usage")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "1 = player, 2 = monster")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.ENUM, name = "usage", description = "The BattleSoundUsage ordinal")
+  @ScriptEnum(BattleSoundUsage.class)
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before sound starts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before sound repeats")
+  private FlowControl scriptPlayBentSoundForUsage(final RunningScript<?> script) {
+    final BattleSoundUsage usage = BattleSoundUsage.values()[script.params_20[3].get()];
+    this.playBentSound(script.params_20[0].get(), SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class), script.params_20[2].get(), usage, script.params_20[4].get(), script.params_20[5].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1503,10 +1523,10 @@ public class Battle extends EngineState<Battle> {
     final PlayerBattleEntity bent = SCRIPTS.getObject(bentIndex, PlayerBattleEntity.class);
 
     //LAB_8001cd78
-    sssqUnloadPlayableSound(bent.soundFile.playableSound_10);
-    removeSoundFile(bent.soundFile);
-    bent.soundFile.used_00 = false;
-    bent.soundFile = null;
+    if(bent.soundFile != bent.regularSoundFile) {
+      this.unloadBentSoundFile(bent.soundFile);
+      bent.soundFile = bent.regularSoundFile;
+    }
 
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8);
 
@@ -1523,22 +1543,37 @@ public class Battle extends EngineState<Battle> {
     //LAB_8001ce70
     Loader
       .loadDirectory(path)
-      .thenAccept(files -> this.charAttackSoundsLoaded(files, soundName, bent))
+      .thenAccept(files -> this.charAttackSoundsLoaded(files, soundName, bent, type != 0))
     ;
   }
 
   @Method(0x8001ce98L)
-  private void charAttackSoundsLoaded(final List<FileData> files, final String name, final BattleEntity27c bent) {
-    bent.soundFile = addSoundFile(name);
+  private void charAttackSoundsLoaded(final List<FileData> files, final String name, final PlayerBattleEntity bent, final boolean regularSounds) {
+    final SoundFile soundFile = addSoundFile(name);
 
     //LAB_8001cee8
     //LAB_8001cf2c
-    bent.soundFile.indices_08 = SoundFileIndices.load(files.get(1));
-    bent.soundFile.id_02 = files.get(0).readShort(0);
-    bent.soundFile.playableSound_10 = loadSshdAndSoundbank(bent.soundFile.name, files.get(3), new Sshd(bent.soundFile.name, files.get(2)));
-    setSoundSequenceVolume(bent.soundFile.playableSound_10, 0x7f);
-    bent.soundFile.used_00 = true;
+    soundFile.indices_08 = SoundFileIndices.load(files.get(1));
+    soundFile.id_02 = files.get(0).readShort(0);
+    soundFile.playableSound_10 = loadSshdAndSoundbank(soundFile.name, files.get(3), new Sshd(soundFile.name, files.get(2)));
+    setSoundSequenceVolume(soundFile.playableSound_10, 0x7f);
+    soundFile.used_00 = true;
+
+    if(regularSounds) {
+      this.unloadBentSoundFile(bent.regularSoundFile);
+      bent.regularSoundFile = soundFile;
+    }
+
+    bent.soundFile = soundFile;
     loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
+  }
+
+  private void unloadBentSoundFile(final SoundFile soundFile) {
+    if(soundFile == null) return;
+
+    sssqUnloadPlayableSound(soundFile.playableSound_10);
+    removeSoundFile(soundFile);
+    soundFile.used_00 = false;
   }
 
   @Method(0x8001d1c4L)
@@ -2139,6 +2174,7 @@ public class Battle extends EngineState<Battle> {
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(sound.name, files.get(2)));
     sound.used_00 = true;
     bent.soundFile = sound;
+    bent.regularSoundFile = sound;
   }
 
   @Method(0x800c791cL)

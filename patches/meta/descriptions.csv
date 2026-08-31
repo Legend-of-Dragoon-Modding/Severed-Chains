@@ -1019,6 +1019,6 @@
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Battle::scriptSetCombatantVramSlot","Changes vram slot of a combatant"
-"Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
+"Battle::scriptPlayBentSoundForUsage","Play a battle entity sound for a semantic usage"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
 "Scus94491BpeSegment::scriptRewindAndPause2","Does nothing"
