@@ -356,11 +356,13 @@ public final class SaveManager {
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerVersion.code);
       this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState);
+      final byte[] bytes = new byte[offset.get()];
+      data.read(0, bytes, 0, offset.get());
 
       final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
       Files.createDirectories(gameState.campaign.path);
-      Files.write(file, data.slice(0, offset.get()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      Files.write(file, bytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
       return file;
     } catch(final IOException e) {
       throw new SaveFailedException("Failed to save game", e);

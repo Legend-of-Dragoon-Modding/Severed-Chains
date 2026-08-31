@@ -2,12 +2,12 @@ package legend.game.credits;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.memory.Method;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.fmv.Fmv;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
 
 import static legend.game.EngineStates.postCreditsEngineState;
@@ -21,12 +21,12 @@ public class FinalFmv extends EngineState<FinalFmv> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 

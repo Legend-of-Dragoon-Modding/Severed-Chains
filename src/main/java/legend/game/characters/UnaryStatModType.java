@@ -1,6 +1,9 @@
 package legend.game.characters;
 
 import legend.core.memory.types.IntRef;
+import legend.core.tags.BoolTag;
+import legend.core.tags.IntTag;
+import legend.core.tags.MapTag;
 import legend.game.scripting.Param;
 import legend.game.unpacker.FileData;
 
@@ -16,17 +19,25 @@ public class UnaryStatModType extends StatModType<UnaryStat, UnaryStatMod, Unary
   }
 
   @Override
-  public void serialize(final UnaryStatMod mod, final FileData data, final IntRef offset) {
-    data.writeInt(offset, mod.amount);
-    data.writeBool(offset, mod.percentile);
-    data.writeInt(offset, mod.turns);
-  }
-
-  @Override
   public UnaryStatMod deserialize(final FileData data, final IntRef offset) {
     final int amount = data.readInt(offset);
     final boolean percentile = data.readBool(offset);
     final int turns = data.readInt(offset);
+    return new UnaryStatMod(amount, percentile, turns);
+  }
+
+  @Override
+  public void serialize(final UnaryStatMod mod, final MapTag tag) {
+    tag.set("amount", new IntTag(mod.amount));
+    tag.set("percentile", new BoolTag(mod.percentile));
+    tag.set("turns", new IntTag(mod.turns));
+  }
+
+  @Override
+  public UnaryStatMod deserialize(final MapTag tag) {
+    final int amount = tag.get("amount").asInt().get();
+    final boolean percentile = tag.get("percentile").asBool().get();
+    final int turns = tag.get("turns").asInt().get();
     return new UnaryStatMod(amount, percentile, turns);
   }
 

@@ -1,8 +1,8 @@
 package legend.game.saves;
 
+import legend.core.tags.Tag;
 import legend.game.inventory.screens.Control;
 import legend.game.types.GameState52c;
-import legend.game.unpacker.FileData;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 public abstract class SavedGame {
@@ -14,7 +14,7 @@ public abstract class SavedGame {
   public final ConfigCollection config;
 
   public RegistryId engineState;
-  public FileData engineStateData = new FileData(new byte[0]);
+  public Tag engineStateData;
 
   public SavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
     this.campaign = campaign;

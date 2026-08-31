@@ -1,6 +1,6 @@
 package legend.game.inventory;
 
-import com.google.gson.JsonObject;
+import legend.core.tags.Tag;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.coremod.CoreMod;
@@ -23,7 +23,7 @@ public class ItemStack implements InventoryEntry<ItemStack> {
   private int durability;
 
   @Nullable
-  private JsonObject extraData;
+  private Tag extraData;
 
   public ItemStack(final Item item, final int size, final int durability) {
     this.item = item;
@@ -42,7 +42,7 @@ public class ItemStack implements InventoryEntry<ItemStack> {
 
   public ItemStack(final ItemStack other) {
     this(other.item, other.size, other.durability);
-    this.extraData = other.extraData != null ? other.extraData.deepCopy() : null;
+    this.extraData = other.extraData != null ? other.extraData.clone() : null;
   }
 
   @Override
@@ -347,11 +347,11 @@ public class ItemStack implements InventoryEntry<ItemStack> {
   }
 
   @Nullable
-  public JsonObject getExtraData() {
+  public Tag getExtraData() {
     return this.extraData;
   }
 
-  public void setExtraData(@Nullable final JsonObject extraData) {
+  public void setExtraData(@Nullable final Tag extraData) {
     this.extraData = extraData;
   }
 

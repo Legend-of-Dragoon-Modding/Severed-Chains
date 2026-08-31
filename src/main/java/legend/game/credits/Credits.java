@@ -10,6 +10,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.tim.Tim;
@@ -206,12 +207,12 @@ public class Credits extends EngineState<Credits> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 

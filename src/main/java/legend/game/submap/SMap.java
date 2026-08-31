@@ -8,19 +8,23 @@ import legend.core.MathHelper;
 import legend.core.QueuedModelStandard;
 import legend.core.QueuedModelTmd;
 import legend.core.Transformations;
-import legend.core.lang.I18nText;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
+import legend.core.lang.I18nText;
 import legend.core.memory.Method;
-import legend.core.memory.types.IntRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
+import legend.core.tags.BoolTag;
+import legend.core.tags.IntTag;
+import legend.core.tags.ListTag;
+import legend.core.tags.MapTag;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
 import legend.game.Menus;
@@ -72,8 +76,6 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.ui.GameOverlay;
-import legend.game.unpacker.ExpandableFileData;
-import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodCharacterTemplates;
 import legend.lodmod.LodConfig;
@@ -454,63 +456,53 @@ public class SMap extends EngineState<SMap> {
     sssqResetStuff();
   }
 
-  private static final int SMAP_SAVE_VERSION_1 = 'V' | '1' << 8;
-  private static final int SMAP_SAVE_VERSION_2 = 'V' | '2' << 8;
-
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     gameState.submapScene_a4 = collidedPrimitiveIndex_80052c38;
     gameState.submapCut_a8 = submapCut_80052c30;
 
-    final FileData data = new ExpandableFileData(9);
-    final IntRef offset = new IntRef();
-    data.writeShort(offset, SMAP_SAVE_VERSION_2);
-    data.writeInt(offset, gameState.submapScene_a4);
-    data.writeInt(offset, gameState.submapCut_a8);
-    data.writeBool(offset, gameState.indicatorsDisabled_4e3);
+    final MapTag tag = new MapTag();
+    tag.set("scene", new IntTag(gameState.submapScene_a4));
+    tag.set("cut", new IntTag(gameState.submapCut_a8));
+    tag.set("indicatorsDisabled", new BoolTag(gameState.indicatorsDisabled_4e3));
 
-    data.writeInt(offset, this.primaryPartyBackup.size());
+    final ListTag primaryPartyBackupTag = new ListTag();
+    tag.set("primaryPartyBackup", primaryPartyBackupTag);
     for(int i = 0; i < this.primaryPartyBackup.size(); i++) {
-      data.writeInt(offset, this.primaryPartyBackup.getInt(i));
+      primaryPartyBackupTag.add(new IntTag(this.primaryPartyBackup.getInt(i)));
     }
 
-    return data;
+    return tag;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
     this.unstuckMovementBudget = UNSTUCK_SAVE_LOADED_BUDGET;
 
     // no data - legacy saves
-    if(data.size() == 0) {
+    if(tag == null) {
       submapScene_80052c34 = gameState.submapScene_a4;
       submapCut_80052c30 = gameState.submapCut_a8;
       collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
       return;
     }
 
-    if(data.size() < 2) {
-      LOGGER.warn("Failed to load SMAP data for save");
-      return;
-    }
+    final MapTag map = tag.asMap();
 
-    final IntRef offset = new IntRef();
-    final int version = data.readUShort(offset);
-
-    gameState.submapScene_a4 = data.readInt(offset);
-    gameState.submapCut_a8 = data.readInt(offset);
-    gameState.indicatorsDisabled_4e3 = data.readBool(offset);
+    gameState.submapScene_a4 = map.get("scene").asInt().get();
+    gameState.submapCut_a8 = map.get("cut").asInt().get();
+    gameState.indicatorsDisabled_4e3 = map.get("indicatorsDisabled").asBool().get();
 
     submapScene_80052c34 = gameState.submapScene_a4;
     submapCut_80052c30 = gameState.submapCut_a8;
     collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
 
-    if(version == SMAP_SAVE_VERSION_2) {
+    if(map.has("primaryPartyBackup")) {
       this.primaryPartyBackup.clear();
-      final int count = data.readInt(offset);
 
-      for(int i = 0; i < count; i++) {
-        this.primaryPartyBackup.add(data.readInt(offset));
+      final ListTag primaryPartyBackupTag = map.get("primaryPartyBackup").asList();
+      for(int i = 0; i < primaryPartyBackupTag.size(); i++) {
+        this.primaryPartyBackup.add(primaryPartyBackupTag.get(i).asInt().get());
       }
     }
   }

@@ -1,10 +1,5 @@
 package legend.game.saves.serializers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.ReflectionAccessFilter;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
 import legend.game.saves.Campaign;
@@ -13,27 +8,20 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.InventoryEntry;
+import legend.game.saves.SaveMigrator;
 import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
 import legend.game.saves.SeveredSavedCharacterV1;
 import legend.game.saves.SeveredSavedGame;
 import legend.game.types.EquipmentSlot;
 import legend.game.unpacker.FileData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
-
-import java.nio.charset.StandardCharsets;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.lodmod.Legacy.CHAR_IDS;
 
 public final class V8Serializer {
   private V8Serializer() { }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger(V8Serializer.class);
-
-  private static final Gson jsonSerializer = new GsonBuilder().addReflectionAccessFilter(rawClass -> ReflectionAccessFilter.FilterResult.BLOCK_ALL).create();
 
   private static final int[] transformFlags = {
     0x1b8,
@@ -114,20 +102,9 @@ public final class V8Serializer {
       final int durability = data.readInt(offset);
 
       final int extraDataSize = data.readInt(offset);
-      JsonObject extraData = null;
+      offset.add(extraDataSize); // no one was using extraData at this point, just gonna remove the reader instead of converting json to tags
 
-      if(extraDataSize != 0) {
-        final byte[] serialized = new byte[extraDataSize];
-        data.read(offset, serialized, 0, serialized.length);
-
-        try {
-          extraData = jsonSerializer.fromJson(new String(serialized, StandardCharsets.UTF_8), JsonObject.class);
-        } catch(final JsonSyntaxException e) {
-          LOGGER.error("Failed to load extra data for instance of item " + itemId, e);
-        }
-      }
-
-      savedGame.itemIds.add(new InventoryEntry(itemId, size, durability, extraData));
+      savedGame.itemIds.add(new InventoryEntry(itemId, size, durability, null));
     }
 
     for(int i = 0; i < goodsCount; i++) {
@@ -177,7 +154,7 @@ public final class V8Serializer {
       }
     }
 
-    savedGame.characterInitialized = data.readInt(offset);
+    /*savedGame.characterInitialized = */data.readInt(offset);
 
     final RegistryId engineStateId = data.readRegistryId(offset);
     final int engineStateDataLength = data.readInt(offset);
@@ -193,7 +170,7 @@ public final class V8Serializer {
 
     savedGame.locationName = locationName;
     savedGame.engineState = engineStateId;
-    savedGame.engineStateData = engineStateData;
+    savedGame.engineStateData = SaveMigrator.upgradeEngineStateData(engineStateId, engineStateData, 4, 675);
 
     return savedGame;
   }

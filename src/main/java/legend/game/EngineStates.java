@@ -3,9 +3,9 @@ package legend.game;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.Texture;
+import legend.core.tags.Tag;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.events.engine.EngineStateChangeEvent;
-import legend.game.unpacker.FileData;
 import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +35,7 @@ public final class EngineStates {
 
   /** When the overlay finishes loading, switch to this */
   public static EngineStateType<?> engineStateOnceLoaded_8004dd24;
-  public static FileData engineStateData;
+  public static Tag engineStateData;
   /** The previous state before the file finished loading */
   public static EngineStateType<?> previousEngineState_8004dd28;
   /** The last savable state we were in, used for generating crash recovery saves */
@@ -65,7 +65,7 @@ public final class EngineStates {
   }
 
   @Method(0x80012a84L)
-  public static void loadGameStateOverlay(final EngineStateType<?> engineState, @Nullable final FileData saveData) {
+  public static void loadGameStateOverlay(final EngineStateType<?> engineState, @Nullable final Tag saveData) {
     LOGGER.info("Transitioning to engine state %s", engineState);
 
     SCRIPTS.setFramesPerTick(1);
@@ -84,10 +84,7 @@ public final class EngineStates {
 
     currentEngineState_8004dd04 = engineState.constructor_00.get();
     currentEngineState_8004dd04.init();
-
-    if(saveData != null) {
-      currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
-    }
+    currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
 
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
     renderMode = currentEngineState_8004dd04.getRenderMode();

@@ -1,7 +1,8 @@
 package legend.game.saves;
 
-import legend.game.saves.serializers.RetailSerializer;
 import legend.game.saves.serializers.LegacySerializer;
+import legend.game.saves.serializers.RetailSerializer;
+import legend.game.saves.serializers.V10Serializer;
 import legend.game.saves.serializers.V8Serializer;
 import legend.game.saves.serializers.V9Serializer;
 import legend.game.unpacker.FileData;
@@ -17,6 +18,7 @@ public enum SaveVersion {
   V7(0x37615344, "V7", SaveVersion::defaultMatcher, LegacySerializer::fromV2To7), // DSa7
   V8(0x38615344, "V8", SaveVersion::defaultMatcher, V8Serializer::fromV8), // DSa8
   V9(0x39615344, "V9", SaveVersion::defaultMatcher, V9Serializer::fromV9), // DSa9
+  V10(0x61615344, "V10", SaveVersion::defaultMatcher, V10Serializer::fromV10), // DSaa
   ;
 
   public final int code;

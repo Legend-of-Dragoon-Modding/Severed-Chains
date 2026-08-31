@@ -26,6 +26,7 @@ import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
@@ -204,12 +205,12 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 
