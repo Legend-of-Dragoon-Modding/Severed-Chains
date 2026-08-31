@@ -84,7 +84,10 @@ public final class EngineStates {
 
     currentEngineState_8004dd04 = engineState.constructor_00.get();
     currentEngineState_8004dd04.init();
-    currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
+
+    if(saveData != null) {
+      currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
+    }
 
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
     renderMode = currentEngineState_8004dd04.getRenderMode();

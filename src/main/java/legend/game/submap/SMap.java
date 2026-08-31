@@ -479,15 +479,15 @@ public class SMap extends EngineState<SMap> {
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
     this.unstuckMovementBudget = UNSTUCK_SAVE_LOADED_BUDGET;
 
+    final MapTag map = tag.asMap();
+
     // no data - legacy saves
-    if(tag == null) {
+    if(!map.has("scene")) {
       submapScene_80052c34 = gameState.submapScene_a4;
       submapCut_80052c30 = gameState.submapCut_a8;
       collidedPrimitiveIndex_80052c38 = submapScene_80052c34;
       return;
     }
-
-    final MapTag map = tag.asMap();
 
     gameState.submapScene_a4 = map.get("scene").asInt().get();
     gameState.submapCut_a8 = map.get("cut").asInt().get();

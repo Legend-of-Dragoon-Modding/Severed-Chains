@@ -1,6 +1,7 @@
 package legend.game.saves.serializers;
 
 import legend.core.memory.types.IntRef;
+import legend.core.tags.MapTag;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
@@ -284,6 +285,7 @@ public final class LegacySerializer {
 
     savedGame.locationName = getLocationName(locationType, locationIndex);
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    savedGame.engineStateData = new MapTag();
     savedGame.maxHp = maxHp;
     savedGame.maxMp = maxMp;
 

@@ -447,11 +447,12 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
-    if(tag == null) {
+    final MapTag map = tag.asMap();
+
+    if(!map.has("pathIndex")) {
       return;
     }
 
-    final MapTag map = tag.asMap();
     gameState.pathIndex_4d8 = map.get("pathIndex").asInt().get();
     gameState.dotIndex_4da = map.get("dotIndex").asInt().get();
     gameState.dotOffset_4dc = map.get("dotOffset").asFloat().get();

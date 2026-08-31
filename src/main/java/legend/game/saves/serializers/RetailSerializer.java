@@ -1,5 +1,6 @@
 package legend.game.saves.serializers;
 
+import legend.core.tags.MapTag;
 import legend.game.additions.Addition;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigCollection;
@@ -194,6 +195,7 @@ public final class RetailSerializer {
     /*savedGame.characterInitialized = */data.readUShort(0x4e6);
 
     savedGame.engineState = isOnWorldMap ? LodEngineStateTypes.WORLD_MAP.getId() : LodEngineStateTypes.SUBMAP.getId();
+    savedGame.engineStateData = new MapTag();
 
     final RetailSavedGame.SavedCharacter charData = savedGame.characters[savedGame.charIndices.getInt(0)];
     savedGame.maxHp = Legacy.RETAIL_HP[savedGame.charIndices.getInt(0)][charData.level - 1];
