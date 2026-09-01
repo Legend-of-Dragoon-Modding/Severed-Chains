@@ -219,8 +219,8 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
       character.equipmentIds.put(slot, equipmentId);
     }
 
-    if(tag.has("selectedAddition")) {
-      character.selectedAddition = tag.get("selectedAddition").asRegistryId().get();
+    if(tag.has("selectedAdditionId")) {
+      character.selectedAddition = tag.get("selectedAdditionId").asRegistryId().get();
     }
 
     final ListTag additionsTag = tag.get("additions").asList();
