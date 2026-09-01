@@ -10,6 +10,7 @@ import legend.game.characters.CharacterSpellInfo;
 import legend.game.characters.CharacterTemplate;
 import legend.game.characters.LevelUpSource;
 import legend.game.inventory.Equipment;
+import legend.game.inventory.GoodsSource;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
@@ -81,9 +82,6 @@ public class RetailSavedGame extends SavedGame {
   // Config stuff
   public boolean indicatorsDisabled;
 
-  /** A bitset used to set each char's MP to max the first time each one is loaded */
-  public int characterInitialized;
-
   public RetailSavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
     super(campaign, version, fileName, saveName, campaignType, config);
     Arrays.setAll(this.characters, i -> new SavedCharacter());
@@ -114,7 +112,7 @@ public class RetailSavedGame extends SavedGame {
     gameState.scriptFlags1_13c.set(this.scriptFlags1);
     gameState.wmapFlags_15c.set(this.wmapFlags);
     gameState.visitedLocations_17c.set(this.visitedLocations);
-    this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(gameState.goods_19c::give);
+    this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
     System.arraycopy(this._1a4, 0, gameState._1a4, 0, this._1a4.length);
     System.arraycopy(this.chestFlags, 0, gameState.chestFlags_1c4, 0, this.chestFlags.length);
     this.equipmentIds.stream().map(REGISTRIES.equipment::getEntry).map(RegistryDelegate::get).forEach(gameState.equipment_1e8::add);
@@ -238,8 +236,6 @@ public class RetailSavedGame extends SavedGame {
     gameState.directionalPathIndex_4de = this.directionalPathIndex;
 
     gameState.indicatorsDisabled_4e3 = this.indicatorsDisabled;
-
-    gameState.characterInitialized_4e6 = this.characterInitialized;
 
     gameState.charData_32c.get(0).hasTransformed = gameState.scriptFlags2_bc.get(0x1b8);
     gameState.charData_32c.get(1).hasTransformed = gameState.scriptFlags2_bc.get(0x1ba);

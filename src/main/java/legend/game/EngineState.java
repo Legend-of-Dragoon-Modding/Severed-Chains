@@ -2,6 +2,7 @@ package legend.game;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.platform.input.InputAction;
+import legend.core.tags.Tag;
 import legend.game.saves.SavedGame;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -9,10 +10,10 @@ import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
-import legend.game.unpacker.FileData;
 import org.joml.Math;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.PLATFORM;
@@ -45,8 +46,8 @@ public abstract class EngineState<T extends EngineState<T>> {
     return this.type.getRegistryId().equals(type);
   }
 
-  public abstract FileData writeSaveData(final GameState52c gameState);
-  public abstract void readSaveData(final GameState52c gameState, final FileData data);
+  public abstract Tag writeSaveData(final GameState52c gameState);
+  public abstract void readSaveData(final GameState52c gameState, @Nullable final Tag tag);
 
   public void init() {
     sssqResetStuff();

@@ -26,7 +26,6 @@ import legend.game.ui.GameOverlay;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GLUtil;
-import org.lwjgl.opengles.GLES;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -95,8 +94,6 @@ public class GlesApi implements RenderApi {
 
   @Override
   public void init() {
-    GLES.createCapabilities();
-
     LOGGER.info("OpenGLES version: %s", glGetString(GL_VERSION));
     LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));

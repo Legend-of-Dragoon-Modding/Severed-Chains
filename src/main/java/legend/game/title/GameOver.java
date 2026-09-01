@@ -1,12 +1,13 @@
 package legend.game.title;
 
 import de.jcm.discordgamesdk.activity.Activity;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.renderer.McqBuilder;
 import legend.core.renderer.Obj;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.types.GameState52c;
@@ -19,7 +20,6 @@ import legend.lodmod.LodEngineStateTypes;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.DrgnFiles.loadDrgnFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
@@ -30,6 +30,7 @@ import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class GameOver extends EngineState<GameOver> {
   /** NOTE: same address as previous var */
@@ -45,12 +46,12 @@ public class GameOver extends EngineState<GameOver> {
   }
 
   @Override
-  public FileData writeSaveData(final GameState52c gameState) {
+  public Tag writeSaveData(final GameState52c gameState) {
     return null;
   }
 
   @Override
-  public void readSaveData(final GameState52c gameState, final FileData data) {
+  public void readSaveData(final GameState52c gameState, final Tag tag) {
 
   }
 

@@ -8,6 +8,7 @@ import javafx.util.StringConverter;
 import legend.game.characters.CharacterTemplate;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
+import legend.game.inventory.GoodsSource;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemStack;
 import legend.game.characters.CharacterData2c;
@@ -407,7 +408,7 @@ public class GameStateEditorController {
   }
 
   private void goodSelectorOnSelect(final Good good) {
-    gameState_800babc8.goods_19c.give(good);
+    gameState_800babc8.goods_19c.give(good, GoodsSource.DEBUGGER);
 
     if(!this.goodsList.getItems().contains(good)) {
       this.goodsList.getItems().add(good);

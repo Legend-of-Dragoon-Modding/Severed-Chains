@@ -24,7 +24,6 @@ import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 
 import javax.annotation.Nullable;
@@ -101,8 +100,6 @@ public class GlApi implements RenderApi {
 
   @Override
   public void init() {
-    GL.createCapabilities();
-
     LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
     LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));

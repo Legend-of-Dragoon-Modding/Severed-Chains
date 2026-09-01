@@ -259,6 +259,27 @@ public class FileData {
     offset.add(4);
   }
 
+  public float readFloat(final int offset) {
+    this.checkBounds(offset, 4);
+    return Float.intBitsToFloat(MathHelper.getInt(this.data, this.offset + offset));
+  }
+
+  public float readFloat(final IntRef offset) {
+    final float read = this.readFloat(offset.get());
+    offset.add(4);
+    return read;
+  }
+
+  public void writeFloat(final int offset, final float val) {
+    this.checkBounds(offset, 4);
+    MathHelper.setInt(this.data, this.offset + offset, Float.floatToRawIntBits(val));
+  }
+
+  public void writeFloat(final IntRef offset, final float val) {
+    this.writeFloat(offset.get(), val);
+    offset.add(4);
+  }
+
   public int readVarInt(int offset) {
     int tmp;
     if((tmp = this.readByte(offset++)) >= 0) {
@@ -315,6 +336,102 @@ public class FileData {
     return result;
   }
 
+  public long readVarLong(int offset) {
+    long tmp;
+    if((tmp = this.readByte(offset++)) >= 0) {
+      return tmp;
+    }
+    long result = tmp & 0x7f;
+    if((tmp = this.readByte(offset++)) >= 0) {
+      result |= tmp << 7;
+    } else {
+      result |= (tmp & 0x7f) << 7;
+      if((tmp = this.readByte(offset++)) >= 0) {
+        result |= tmp << 14;
+      } else {
+        result |= (tmp & 0x7f) << 14;
+        if((tmp = this.readByte(offset++)) >= 0) {
+          result |= tmp << 21;
+        } else {
+          result |= (tmp & 0x7f) << 21;
+          if((tmp = this.readByte(offset++)) >= 0) {
+            result |= tmp << 28;
+          } else {
+            result |= (tmp & 0x7f) << 28;
+            if((tmp = this.readByte(offset++)) >= 0) {
+              result |= tmp << 35;
+            } else {
+              result |= (tmp & 0x7f) << 35;
+              if((tmp = this.readByte(offset++)) >= 0) {
+                result |= tmp << 42;
+              } else {
+                result |= (tmp & 0x7f) << 42;
+                if((tmp = this.readByte(offset++)) >= 0) {
+                  result |= tmp << 49;
+                } else {
+                  result |= (tmp & 0x7f) << 49;
+                  result |= (tmp = this.readByte(offset++)) << 56;
+                  while(tmp < 0) {
+                    tmp = this.readByte(offset++);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  public long readVarLong(final IntRef offset) {
+    long tmp;
+    if((tmp = this.readByte(offset)) >= 0) {
+      return tmp;
+    }
+    long result = tmp & 0x7f;
+    if((tmp = this.readByte(offset)) >= 0) {
+      result |= tmp << 7;
+    } else {
+      result |= (tmp & 0x7f) << 7;
+      if((tmp = this.readByte(offset)) >= 0) {
+        result |= tmp << 14;
+      } else {
+        result |= (tmp & 0x7f) << 14;
+        if((tmp = this.readByte(offset)) >= 0) {
+          result |= tmp << 21;
+        } else {
+          result |= (tmp & 0x7f) << 21;
+          if((tmp = this.readByte(offset)) >= 0) {
+            result |= tmp << 28;
+          } else {
+            result |= (tmp & 0x7f) << 28;
+            if((tmp = this.readByte(offset)) >= 0) {
+              result |= tmp << 35;
+            } else {
+              result |= (tmp & 0x7f) << 35;
+              if((tmp = this.readByte(offset)) >= 0) {
+                result |= tmp << 42;
+              } else {
+                result |= (tmp & 0x7f) << 42;
+                if((tmp = this.readByte(offset)) >= 0) {
+                  result |= tmp << 49;
+                } else {
+                  result |= (tmp & 0x7f) << 49;
+                  result |= (tmp = this.readByte(offset)) << 56;
+                  while(tmp < 0) {
+                    tmp = this.readByte(offset);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public void writeVarInt(int offset, int val) {
     do {
       final int bits = val & 0x7f;
@@ -327,6 +444,24 @@ public class FileData {
   public void writeVarInt(final IntRef offset, int val) {
     do {
       final int bits = val & 0x7f;
+      val >>>= 7;
+      final byte b = (byte)(bits + (val != 0 ? 0x80 : 0));
+      this.writeByte(offset, b);
+    } while(val != 0);
+  }
+
+  public void writeVarLong(int offset, long val) {
+    do {
+      final long bits = val & 0x7f;
+      val >>>= 7;
+      final byte b = (byte)(bits + (val != 0 ? 0x80 : 0));
+      this.writeByte(offset++, b);
+    } while(val != 0);
+  }
+
+  public void writeVarLong(final IntRef offset, long val) {
+    do {
+      final long bits = val & 0x7f;
       val >>>= 7;
       final byte b = (byte)(bits + (val != 0 ? 0x80 : 0));
       this.writeByte(offset, b);
@@ -416,6 +551,27 @@ public class FileData {
     final String read = this.readFixedLengthAscii(offset.get(), length);
     offset.add(length);
     return read;
+  }
+
+  public void writeString(final IntRef offset, final String val) {
+    final byte[] bytes = val.getBytes(StandardCharsets.UTF_8);
+
+    this.writeVarInt(offset, bytes.length);
+    this.checkBounds(offset.get(), bytes.length);
+
+    System.arraycopy(bytes, 0, this.data, this.offset + offset.get(), bytes.length);
+    offset.add(bytes.length);
+  }
+
+  public String readString(final IntRef offset) {
+    final int length = this.readVarInt(offset);
+    this.checkBounds(offset.get(), length);
+
+    final byte[] bytes = new byte[length];
+    System.arraycopy(this.data, this.offset + offset.get(), bytes, 0, length);
+    offset.add(length);
+
+    return new String(bytes, StandardCharsets.UTF_8);
   }
 
   public void writeRegistryId(final int offset, @Nullable final RegistryId id) {

@@ -11,4 +11,5 @@ public interface StatMod<T extends Stat> {
   int apply(final StatCollection stats, final StatType<T> type);
   void turnFinished(final StatCollection stats, final StatType<T> type, final BattleEntity27c bent);
   boolean isFinished(final StatCollection stats, final StatType<T> type, final BattleEntity27c bent);
+  boolean contributesToOtherMods(final StatCollection stats, final StatType<T> type);
 }

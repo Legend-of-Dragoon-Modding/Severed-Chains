@@ -24,21 +24,21 @@ public class GoodsInventory implements Iterable<Good> {
 
   private final Set<Good> goods = new HashSet<>();
 
-  public void give(final Good good) {
-    final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good));
+  public void give(final Good good, final GoodsSource source) {
+    final GiveGoodsEvent event = EVENTS.postEvent(new GiveGoodsEvent(this, good, source));
 
     if(!event.isCanceled()) {
       this.goods.addAll(event.givenGoods);
     }
   }
 
-  public void give(final RegistryDelegate<Good> good) {
+  public void give(final RegistryDelegate<Good> good, final GoodsSource source) {
     if(!good.isValid()) {
       LOGGER.warn("Invalid good %s", good.getId());
       return;
     }
 
-    this.give(good.get());
+    this.give(good.get(), source);
   }
 
   public void take(final Good good) {
@@ -86,7 +86,7 @@ public class GoodsInventory implements Iterable<Good> {
       final boolean has = this.has(good);
 
       if(set && !has) {
-        this.give(good);
+        this.give(good, GoodsSource.GAMEPLAY);
       } else if(!set && has) {
         this.take(good);
       }

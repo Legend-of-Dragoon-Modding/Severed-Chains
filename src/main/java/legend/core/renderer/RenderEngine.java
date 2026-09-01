@@ -2,7 +2,6 @@ package legend.core.renderer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import legend.core.ClassHelper;
 import legend.core.Config;
 import legend.core.LitModel;
 import legend.core.MathHelper;
@@ -16,7 +15,6 @@ import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
-import legend.core.renderer.opengles.GlesApi;
 import legend.game.EngineState;
 import legend.game.combat.Battle;
 import legend.game.debugger.Debugger;
@@ -106,7 +104,7 @@ public class RenderEngine {
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
   public final ScissorStack scissorStack;
-  private final RenderApi api = loadApi();
+  private RenderApi api;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -477,6 +475,7 @@ public class RenderEngine {
     this.window.setFpsLimit(60);
     PLATFORM.setInputTickRate(60);
 
+    this.api = this.window.getRenderApi();
     this.api.init();
 
     this.window.events().onResize(this::onResize);
@@ -1477,15 +1476,5 @@ public class RenderEngine {
 
   public void setFrameSkipOption(final boolean frameSkip) {
     this.frameSkip = frameSkip;
-  }
-
-  private static RenderApi loadApi() {
-    final String apiOverride = System.getProperty("renderapi");
-
-    if(apiOverride != null) {
-      LOGGER.info("NOTICE: using render API override %s", apiOverride);
-    }
-
-    return ClassHelper.loadClassWithDefault(apiOverride, RenderApi.class, GlesApi::new);
   }
 }
