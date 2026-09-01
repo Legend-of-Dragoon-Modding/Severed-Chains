@@ -4,19 +4,21 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gte.ModelPart10;
-import legend.core.opengl.Mesh;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
+import legend.core.renderer.BufferUsage;
+import legend.core.renderer.Mesh;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.Obj;
+import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 import legend.game.types.Model124;
-import legend.game.types.Translucency;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.tmdGp0CommandId_1f8003ee;
-import static org.lwjgl.opengl.GL32C.GL_TRIANGLES_ADJACENCY;
 
 public final class TmdObjLoader {
   private TmdObjLoader() { }
@@ -325,7 +327,7 @@ public final class TmdObjLoader {
   }
 
   private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh) {
-    final Mesh mesh = new Mesh(GL_TRIANGLES_ADJACENCY, tmdMesh.vertices, tmdMesh.indices, tmdMesh.textured, tmdMesh.translucent, tmdMesh.translucency);
+    final Mesh mesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLES_ADJACENCY, tmdMesh.vertices, tmdMesh.indices, tmdMesh.textured, tmdMesh.translucent, tmdMesh.translucency, BufferUsage.STATIC);
 
     mesh.attribute(0, 0L, POS_SIZE, VERTEX_SIZE);
 

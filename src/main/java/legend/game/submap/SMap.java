@@ -5,8 +5,6 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
-import legend.core.QueuedModelTmd;
 import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -15,11 +13,16 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.lang.I18nText;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.DepthComparator;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
+import legend.core.renderer.Texture;
+import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 import legend.core.tags.BoolTag;
 import legend.core.tags.IntTag;
 import legend.core.tags.ListTag;
@@ -74,7 +77,6 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.Translucency;
 import legend.game.ui.GameOverlay;
 import legend.game.unpacker.Loader;
 import legend.lodmod.LodCharacterTemplates;
@@ -206,9 +208,6 @@ import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_SNOWFIELD_WARP;
 import static legend.lodmod.LodMod.INPUT_ACTION_SMAP_TOGGLE_INDICATORS;
 import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
-import static org.lwjgl.opengl.GL11C.GL_LESS;
-import static org.lwjgl.opengl.GL11C.GL_LINES;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState<SMap> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
@@ -1277,7 +1276,7 @@ public class SMap extends EngineState<SMap> {
           .backgroundColour(GTE.backgroundColour)
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           // Fix for chest shadow rendering on top of lid (GH#1408)
-          .translucentDepthComparator(GL_LESS)
+          .translucentDepthComparator(DepthComparator.LESS)
           ;
 
         if(texture != null) {
@@ -3055,7 +3054,7 @@ public class SMap extends EngineState<SMap> {
   }
 
   private void queueCollisionRectPacket(final Vector2f v0, final Vector2f v1, final float r, final float g, final float b) {
-    final Obj obj = new PolyBuilder("Sobj collision", GL_TRIANGLE_STRIP)
+    final Obj obj = new PolyBuilder("Sobj collision", VertexOrder.TRIANGLE_STRIP)
       .translucency(Translucency.B_PLUS_F)
       .addVertex(v0.x, v0.y, 0.0f)
       .rgb(r, g, b)
@@ -3746,10 +3745,10 @@ public class SMap extends EngineState<SMap> {
       if(this.collisionGeometry_800cbe08.debugObj == null) {
         final List<Vector3f> vertices = new ArrayList<>();
 
-        final PolyBuilder builder = new PolyBuilder("Collision Model", GL_TRIANGLE_STRIP);
+        final PolyBuilder builder = new PolyBuilder("Collision Model", VertexOrder.TRIANGLE_STRIP);
         builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
 
-        final PolyBuilder lines = new PolyBuilder("Collision Normals Probably", GL_LINES);
+        final PolyBuilder lines = new PolyBuilder("Collision Normals Probably", VertexOrder.LINES);
 
         for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
           final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];

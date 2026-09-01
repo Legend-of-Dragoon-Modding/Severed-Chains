@@ -1,12 +1,12 @@
 package legend.game.combat.types;
 
-import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.opengl.Mesh;
-import legend.core.opengl.MeshObj;
-import legend.game.tmd.TmdObjLoader;
+import legend.core.renderer.Mesh;
+import legend.core.renderer.MeshObj;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptedObject;
+import legend.game.tmd.TmdObjLoader;
+import legend.game.tmd.TmdObjTable1c;
 import org.joml.Vector3f;
 
 public class VertexDifferenceAnimation18 implements ScriptedObject {
@@ -47,12 +47,12 @@ public class VertexDifferenceAnimation18 implements ScriptedObject {
     final MeshObj obj = (MeshObj)animation.tmd.getObj();
 
     for(final Mesh mesh : obj.meshes) {
-      for(int offset = 0; offset < mesh.vertexData.length; offset += TmdObjLoader.VERTEX_SIZE) {
-        final int vertexIndex = (int)mesh.vertexData[offset + 0x3];
+      for(int offset = 0; offset < mesh.vertices().length; offset += TmdObjLoader.VERTEX_SIZE) {
+        final int vertexIndex = (int)mesh.vertices()[offset + 0x3];
         final Vector3f vertex = animation.tmd.vert_top_00[vertexIndex];
-        mesh.vertexData[offset] = vertex.x;
-        mesh.vertexData[offset + 0x1] = vertex.y;
-        mesh.vertexData[offset + 0x2] = vertex.z;
+        mesh.vertices()[offset] = vertex.x;
+        mesh.vertices()[offset + 0x1] = vertex.y;
+        mesh.vertices()[offset + 0x2] = vertex.z;
       }
 
       mesh.update();

@@ -1,6 +1,6 @@
 package legend.game.modding.events.submap;
 
-import legend.core.opengl.Texture;
+import legend.core.renderer.Texture;
 import legend.game.modding.events.engine.InGameEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.Submap;

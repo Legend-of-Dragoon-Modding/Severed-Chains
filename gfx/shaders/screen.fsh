@@ -13,37 +13,37 @@ uniform bool enableCrt;
 
 uniform float time;
 
-uniform float scanlines_opacity = 0.4;
-uniform float scanlines_width = 0.25;
-uniform float grille_opacity = 0.3;
-uniform vec2 resolution = vec2(640.0, 480.0); // Set the number of rows and columns the texture will be divided in. Scanlines and grille will make a square based on these values
+uniform float scanlines_opacity;
+uniform float scanlines_width;
+uniform float grille_opacity;
+uniform vec2 resolution; // Set the number of rows and columns the texture will be divided in. Scanlines and grille will make a square based on these values
 
-uniform bool pixelate = true; // Fill each square ("pixel") with a sampled color, creating a pixel look and a more accurate representation of how a CRT monitor would work.
+uniform bool pixelate; // Fill each square ("pixel") with a sampled color, creating a pixel look and a more accurate representation of how a CRT monitor would work.
 
-uniform bool roll = false;
-uniform float roll_speed = 8.0; // Positive values are down, negative are up
-uniform float roll_size = 15.0;
-uniform float roll_variation = 1.8; // This value is not an exact science. You have to play around with the value to find a look you like. How this works is explained in the code below.
-uniform float distort_intensity = 0.05; // The distortion created by the rolling effect.
+uniform bool roll;
+uniform float roll_speed; // Positive values are down, negative are up
+uniform float roll_size;
+uniform float roll_variation; // This value is not an exact science. You have to play around with the value to find a look you like. How this works is explained in the code below.
+uniform float distort_intensity; // The distortion created by the rolling effect.
 
-uniform float noise_opacity = 0.4;
-uniform float noise_speed = 5.0; // There is a movement in the noise pattern that can be hard to see first. This sets the speed of that movement.
+uniform float noise_opacity;
+uniform float noise_speed; // There is a movement in the noise pattern that can be hard to see first. This sets the speed of that movement.
 
-uniform float static_noise_intensity = 0.06;
+uniform float static_noise_intensity;
 
-uniform float aberration = 0.03; // Chromatic aberration, a distortion on each color channel.
-uniform float brightness = 1.4; // When adding scanline gaps and grille the image can get very dark. Brightness tries to compensate for that.
-uniform bool discolor = true; // Add a discolor effect simulating a VHS
+uniform float aberration; // Chromatic aberration, a distortion on each color channel.
+uniform float brightness; // When adding scanline gaps and grille the image can get very dark. Brightness tries to compensate for that.
+uniform bool discolor; // Add a discolor effect simulating a VHS
 
-uniform float warp_amount = 1.0; // Warp the texture edges simulating the curved glass of a CRT monitor or old TV.
-uniform bool clip_warp = false;
+uniform float warp_amount; // Warp the texture edges simulating the curved glass of a CRT monitor or old TV.
+bool clip_warp = false;
 
-uniform float vignette_intensity = 0.4; // Size of the vignette, how far towards the middle it should go.
-uniform float vignette_opacity = 0.5;
-uniform float bloom_intensity = 0.0;
-uniform float bloom_threshold = 0.3;
-uniform float bloom_radius = 1.5;
-uniform vec4 turn_order_bounds = vec4(0.0);
+uniform float vignette_intensity; // Size of the vignette, how far towards the middle it should go.
+uniform float vignette_opacity;
+uniform float bloom_intensity;
+uniform float bloom_threshold;
+uniform float bloom_radius;
+uniform vec4 turn_order_bounds;
 
 // Performs bilinear filtering manually on a texture
 vec4 textureBilinear(sampler2D tex, vec2 uv) {

@@ -1,7 +1,7 @@
 package legend.core;
 
 import legend.core.gpu.Bpp;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;

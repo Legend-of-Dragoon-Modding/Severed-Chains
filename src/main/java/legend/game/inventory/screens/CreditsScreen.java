@@ -1,20 +1,20 @@
 package legend.game.inventory.screens;
 
 import discord.DiscordRichPresence;
-import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.VramTexture;
 import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Texture;
+import legend.core.renderer.Translucency;
 import legend.game.credits.Credits.CreditsType;
 import legend.game.i18n.I18n;
 import legend.game.tim.Tim;
-import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import org.apache.logging.log4j.LogManager;

@@ -1,7 +1,7 @@
 package legend.lodmod.battleactions;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.game.combat.Battle;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleMenuStruct58;
@@ -9,7 +9,7 @@ import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.RENDERER;

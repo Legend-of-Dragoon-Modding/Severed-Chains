@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.QueuedModel;
+import legend.core.renderer.QueuedModel;
 import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
 import legend.game.scripting.ScriptFile;

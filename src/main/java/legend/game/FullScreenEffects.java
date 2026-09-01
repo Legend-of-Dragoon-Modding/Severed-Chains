@@ -1,6 +1,6 @@
 package legend.game;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
 import legend.game.scripting.FlowControl;
@@ -8,7 +8,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.types.FullScreenEffect;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;

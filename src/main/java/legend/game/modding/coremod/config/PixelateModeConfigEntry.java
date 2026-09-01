@@ -1,6 +1,6 @@
 package legend.game.modding.coremod.config;
 
-import legend.core.opengl.PixelateMode;
+import legend.core.renderer.PixelateMode;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.EnumConfigEntry;

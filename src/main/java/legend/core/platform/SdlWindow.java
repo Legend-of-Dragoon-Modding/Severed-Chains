@@ -1,12 +1,18 @@
 package legend.core.platform;
 
 import legend.core.Config;
-import legend.core.opengl.Action;
 import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputMod;
+import legend.core.renderer.RenderApi;
+import legend.core.renderer.opengl.GlApi;
+import legend.core.renderer.opengles.GlesApi;
 import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengles.GLES;
+import org.lwjgl.opengles.GLESCapabilities;
 import org.lwjgl.sdl.SDL_DisplayMode;
 import org.lwjgl.sdl.SDL_Rect;
 import org.lwjgl.sdl.SDL_Surface;
@@ -41,6 +47,7 @@ import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_FLAGS;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_MAJOR_VERSION;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_MINOR_VERSION;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_PROFILE_CORE;
+import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_PROFILE_ES;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CONTEXT_PROFILE_MASK;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_CreateContext;
 import static org.lwjgl.sdl.SDLVideo.SDL_GL_DestroyContext;
@@ -78,6 +85,8 @@ public class SdlWindow extends Window {
   private final long window;
   private final long context;
 
+  private final RenderApi renderApi;
+
   private int width;
   private int height;
   boolean hasFocus;
@@ -104,6 +113,41 @@ public class SdlWindow extends Window {
       throw new RuntimeException("Failed to get video mode");
     }
 
+    final long[] windowRef = {0};
+    final long[] contextRef = {0};
+
+    this.createOpenGlWindow(title, width, height, windowRef, contextRef);
+
+    if(windowRef[0] != NULL) {
+      this.window = windowRef[0];
+      this.context = contextRef[0];
+      this.renderApi = new GlApi();
+    } else {
+      this.createOpenGlesWindow(title, width, height, windowRef, contextRef);
+
+      if(windowRef[0] != NULL) {
+        this.window = windowRef[0];
+        this.context = contextRef[0];
+        this.renderApi = new GlesApi();
+      } else {
+        throw new RuntimeException("This device does not support OpenGL 3.3 or OpenGLES 3.2. Severed Chains requires at least one of those in order to run.");
+      }
+    }
+
+    SDL_SetWindowMinimumSize(this.window, 320, 240);
+    SDL_GL_SetSwapInterval(0);
+
+    this.pointerCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
+
+    this.render = this.manager.addAction(new Action(this::tick, 60));
+  }
+
+  private void createOpenGlWindow(final String title, final int width, final int height, final long[] windowRef, final long[] contextRef) {
+    windowRef[0] = NULL;
+    contextRef[0] = NULL;
+
+    LOGGER.info("Initializing OpenGL 3.3...");
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -112,29 +156,94 @@ public class SdlWindow extends Window {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
     }
 
-    this.window = SDL_CreateWindow(title, width,  height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
+    final long window = SDL_CreateWindow(title, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
 
-    if(this.window == NULL) {
-      throw new RuntimeException("Failed to create the SDL window: " + SDL_GetError());
+    if(window == NULL) {
+      LOGGER.warn("Failed to create SDL window: %s", SDL_GetError());
+      return;
     }
 
-    SDL_SetWindowMinimumSize(this.window, 320, 240);
+    final long context = this.createContext(window);
 
-    this.pointerCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
-
-    this.context = SDL_GL_CreateContext(this.window);
-
-    if(this.context == NULL) {
-      throw new RuntimeException("Failed to create SDL OpenGL context: " + SDL_GetError());
+    if(context == NULL) {
+      SDL_DestroyWindow(window);
+      return;
     }
 
-    if(!SDL_GL_MakeCurrent(this.window, this.context)) {
-      throw new RuntimeException("Failed to make OpenGL context current: " + SDL_GetError());
+    final GLCapabilities caps = GL.createCapabilities();
+
+    if(!caps.OpenGL33) {
+      LOGGER.warn("OpenGL 3.3 is not supported");
+      SDL_DestroyWindow(window);
+      SDL_GL_DestroyContext(context);
+      return;
     }
 
-    SDL_GL_SetSwapInterval(0);
+    windowRef[0] = window;
+    contextRef[0] = context;
+  }
 
-    this.render = this.manager.addAction(new Action(this::tick, 60));
+  private void createOpenGlesWindow(final String title, final int width, final int height, final long[] windowRef, final long[] contextRef) {
+    windowRef[0] = NULL;
+    contextRef[0] = NULL;
+
+    LOGGER.info("Initializing OpenGLES 3.2...");
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+
+    if("true".equals(System.getenv("opengl_debug"))) {
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+    }
+
+    final long window = SDL_CreateWindow(title, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
+
+    if(window == NULL) {
+      LOGGER.warn("Failed to create SDL window: %s", SDL_GetError());
+      return;
+    }
+
+    final long context = this.createContext(window);
+
+    if(context == NULL) {
+      SDL_DestroyWindow(window);
+      return;
+    }
+
+    final GLESCapabilities caps = GLES.createCapabilities();
+
+    if(!caps.GLES32) {
+      LOGGER.warn("OpenGLES 3.2 is not supported");
+      SDL_DestroyWindow(window);
+      SDL_GL_DestroyContext(context);
+      return;
+    }
+
+    windowRef[0] = window;
+    contextRef[0] = context;
+  }
+
+  private long createContext(final long window) {
+    final long context = SDL_GL_CreateContext(window);
+
+    if(context == NULL) {
+      LOGGER.warn("Failed to create SDL OpenGL context: %s", SDL_GetError());
+      return NULL;
+    }
+
+    if(!SDL_GL_MakeCurrent(window, context)) {
+      LOGGER.warn("Failed to make OpenGL context current: %s", SDL_GetError());
+      SDL_GL_DestroyContext(context);
+      return NULL;
+    }
+
+    return context;
+  }
+
+  @Override
+  public RenderApi getRenderApi() {
+    return this.renderApi;
   }
 
   @Override

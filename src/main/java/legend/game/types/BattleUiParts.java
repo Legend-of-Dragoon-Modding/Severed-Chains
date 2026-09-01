@@ -1,10 +1,11 @@
 package legend.game.types;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 
 import javax.annotation.Nullable;

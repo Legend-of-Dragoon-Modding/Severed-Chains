@@ -1,13 +1,13 @@
 package legend.game.submap;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.Random;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.QuadBuilder;
-import legend.game.types.Translucency;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;

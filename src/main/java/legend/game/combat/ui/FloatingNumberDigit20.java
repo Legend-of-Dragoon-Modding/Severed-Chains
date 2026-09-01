@@ -1,6 +1,6 @@
 package legend.game.combat.ui;
 
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 
 public class FloatingNumberDigit20 {
   public int flags_00;

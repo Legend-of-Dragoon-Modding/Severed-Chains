@@ -2,21 +2,22 @@ package legend.game.credits;
 
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.tim.Tim;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -40,7 +41,6 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.sound.Audio.playXaAudio;
 import static legend.game.sound.Audio.stopXaAudio;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Credits extends EngineState<Credits> {
   public enum CreditsType {
@@ -266,7 +266,7 @@ public class Credits extends EngineState<Credits> {
     this.creditTimsLoaded_800d1ae8 = false;
     loadDrgnDir(0, 5720).thenAccept(this::creditsLoaded);
 
-    this.gradient = new PolyBuilder("CreditsGradient", GL_TRIANGLE_STRIP)
+    this.gradient = new PolyBuilder("CreditsGradient", VertexOrder.TRIANGLE_STRIP)
       .translucency(Translucency.B_MINUS_F)
       .addVertex(-192.0f, -120.0f, 0.0f)
       .monochrome(1.0f)

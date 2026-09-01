@@ -1,11 +1,14 @@
 package legend.core.platform;
 
 import legend.core.platform.input.InputClass;
+import legend.core.renderer.RenderApi;
 
 import java.nio.file.Path;
 
 public abstract class Window {
   private final WindowEvents events = new WindowEvents(this);
+
+  public abstract RenderApi getRenderApi();
 
   protected abstract void destroy();
   protected abstract boolean shouldClose();

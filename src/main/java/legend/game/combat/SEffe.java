@@ -2,20 +2,21 @@ package legend.game.combat;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.QueuedModelBattleTmd;
-import legend.core.QueuedModelStandard;
-import legend.core.QueuedModelTmd;
-import legend.core.RenderEngine;
+import legend.core.renderer.QueuedModelBattleTmd;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
+import legend.core.renderer.RenderEngine;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.QuadBuilder;
 import legend.core.platform.input.InputCodepoints;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -87,7 +88,7 @@ import legend.game.tmd.TmdObjTable1c;
 import legend.game.tmd.TmdWithId;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.Model124;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -108,9 +109,6 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.sound.Audio._800bf0cf;
-import static legend.game.sound.Audio.playMenuSound;
-import static legend.game.sound.Audio.playXaAudio;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.Graphics.GetClut;
 import static legend.game.Graphics.GsGetLw;
@@ -144,8 +142,10 @@ import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
+import static legend.game.sound.Audio._800bf0cf;
+import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.sound.Audio.playXaAudio;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public final class SEffe {
   private SEffe() { }
@@ -1048,7 +1048,7 @@ public final class SEffe {
     //LAB_8010575c
     final Translucency translucency = Translucency.of(data._10 >>> 28 & 0x3);
 
-    final PolyBuilder builder = new PolyBuilder("Thunder arrow effect", GL_TRIANGLES)
+    final PolyBuilder builder = new PolyBuilder("Thunder arrow effect", VertexOrder.TRIANGLES)
       .translucency(translucency);
 
     for(int s7 = 0; s7 < data.count_00; s7++) {

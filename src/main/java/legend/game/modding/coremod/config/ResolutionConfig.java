@@ -1,6 +1,6 @@
 package legend.game.modding.coremod.config;
 
-import legend.core.opengl.Resolution;
+import legend.core.renderer.Resolution;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorageLocation;

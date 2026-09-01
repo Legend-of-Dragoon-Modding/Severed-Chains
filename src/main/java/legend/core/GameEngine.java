@@ -12,13 +12,16 @@ import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.gte.MV;
 import legend.core.lang.I18nText;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.Texture;
 import legend.core.platform.PlatformManager;
 import legend.core.platform.SdlPlatformManager;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputBindings;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.RenderEngine;
+import legend.core.renderer.Texture;
+import legend.core.renderer.Translucency;
 import legend.core.spu.Spu;
 import legend.game.Main;
 import legend.game.Scus94491BpeSegment;
@@ -43,7 +46,6 @@ import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.textures.TextureAtlas;
 import legend.game.textures.TexturePacker;
 import legend.game.tmd.TmdObjLoader;
-import legend.game.types.Translucency;
 import legend.game.ui.GameOverlay;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -76,12 +78,6 @@ import static legend.game.Text.initTextboxGeometry;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.sound.Audio.startSound;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
 
 public final class GameEngine {
   private GameEngine() { }
@@ -388,7 +384,7 @@ public final class GameEngine {
   }
 
   private static void transitionToGame() {
-    glDisable(GL_BLEND);
+    RENDERER.api().translucency(null);
 
     if(eyeTexture != null) {
       eyeTexture.delete();
@@ -443,8 +439,7 @@ public final class GameEngine {
   }
 
   private static void loadGfx() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    RENDERER.api().translucency(Translucency.HALF_B_PLUS_HALF_F);
 
     UI_TEXTURE = Texture.png("UI", Path.of("gfx", "ui", "ui.png"));
     UI_TEXTURE.persistent = true;

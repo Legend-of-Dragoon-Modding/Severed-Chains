@@ -1,6 +1,6 @@
 package legend.core.gpu;
 
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;

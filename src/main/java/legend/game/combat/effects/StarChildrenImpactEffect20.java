@@ -1,11 +1,11 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelBattleTmd;
+import legend.core.renderer.QueuedModelBattleTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.tmd.TmdObjLoader;

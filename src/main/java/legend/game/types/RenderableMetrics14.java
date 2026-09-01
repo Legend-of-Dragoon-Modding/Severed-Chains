@@ -1,6 +1,6 @@
 package legend.game.types;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.game.unpacker.FileData;
 
 public class RenderableMetrics14 {

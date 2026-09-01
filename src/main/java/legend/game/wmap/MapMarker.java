@@ -1,11 +1,11 @@
 package legend.game.wmap;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.QuadBuilder;
-import legend.game.types.Translucency;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.RENDERER;

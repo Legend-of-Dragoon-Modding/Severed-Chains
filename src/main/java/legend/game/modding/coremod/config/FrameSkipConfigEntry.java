@@ -1,6 +1,5 @@
 package legend.game.modding.coremod.config;
 
-import legend.core.RenderEngine;
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;

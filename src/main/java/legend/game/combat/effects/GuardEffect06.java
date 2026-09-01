@@ -1,12 +1,13 @@
 package legend.game.combat.effects;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -17,7 +18,6 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
   private static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {
@@ -81,7 +81,7 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
         managerZ = 0xffe - effectZ;
       }
 
-      final PolyBuilder builder = new PolyBuilder("Guard effect", GL_TRIANGLES)
+      final PolyBuilder builder = new PolyBuilder("Guard effect", VertexOrder.TRIANGLES)
         .translucency(Translucency.B_PLUS_F);
 
       for(int i = 0; i < 5; i++) {

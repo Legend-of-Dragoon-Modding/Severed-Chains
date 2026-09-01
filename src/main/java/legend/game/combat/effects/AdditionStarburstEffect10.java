@@ -1,13 +1,14 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -22,7 +23,6 @@ import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.VoidType> {
   private static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {
@@ -111,7 +111,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     final float[] baseAngle = {MathHelper.psxDegToRad(-16), MathHelper.psxDegToRad(16)};
 
-    final PolyBuilder builder = new PolyBuilder("Addition starburst", GL_TRIANGLES)
+    final PolyBuilder builder = new PolyBuilder("Addition starburst", VertexOrder.TRIANGLES)
       .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d128c
@@ -184,7 +184,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     final float[] xArray = new float[3];
     final float[] yArray = new float[3];
 
-    final PolyBuilder builder = new PolyBuilder("Addition completed starburst", GL_TRIANGLES)
+    final PolyBuilder builder = new PolyBuilder("Addition completed starburst", VertexOrder.TRIANGLES)
       .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d16fc

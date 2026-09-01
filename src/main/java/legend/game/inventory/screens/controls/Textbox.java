@@ -1,7 +1,7 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.GameEngine;
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.font.Font;
 import legend.core.gte.MV;
 import legend.core.platform.input.InputAction;

@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import legend.core.renderer.Translucency;
+
 public class BattleReportOverlay0e {
   public int x_00;
   public int y_02;

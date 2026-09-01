@@ -1,14 +1,19 @@
 package legend.core.gpu;
 
 import legend.core.MathHelper;
-import legend.core.ProjectionMode;
-import legend.core.RenderEngine;
-import legend.core.opengl.Mesh;
-import legend.core.opengl.Shader;
-import legend.core.opengl.ShaderManager;
-import legend.core.opengl.SimpleShaderOptions;
-import legend.core.opengl.Texture;
-import legend.game.types.Translucency;
+import legend.core.renderer.Mesh;
+import legend.core.renderer.ProjectionMode;
+import legend.core.renderer.RenderEngine;
+import legend.core.renderer.Shader;
+import legend.core.renderer.ShaderManager;
+import legend.core.renderer.ShaderUniformBuffer;
+import legend.core.renderer.SimpleShaderOptions;
+import legend.core.renderer.Texture;
+import legend.core.renderer.TextureDataFormat;
+import legend.core.renderer.TextureDataType;
+import legend.core.renderer.TextureInternalFormat;
+import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,14 +29,6 @@ import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
 import static legend.game.Graphics.orderingTableSize_1f8003c8;
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
-import static org.lwjgl.opengl.GL30C.GL_R32UI;
-import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
@@ -55,7 +52,7 @@ public class Gpu {
 
   private Shader<SimpleShaderOptions> vramShader;
   private SimpleShaderOptions vramShaderOptions;
-  private Shader.UniformBuffer transforms2Uniform;
+  private ShaderUniformBuffer transforms2Uniform;
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
   private final Matrix4f identity = new Matrix4f();
 
@@ -97,9 +94,9 @@ public class Gpu {
 
     this.vramTexture24 = Texture.create("VRAM 24", builder -> {
       builder.size(1024, 512);
-      builder.internalFormat(GL_RGBA);
-      builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      builder.internalFormat(TextureInternalFormat.RGBA_8);
+      builder.dataFormat(TextureDataFormat.RGBA);
+      builder.dataType(TextureDataType.UBYTE);
     });
     this.vramTexture24.persistent = true;
 
@@ -109,9 +106,9 @@ public class Gpu {
   public void initVram() {
     this.vramTexture15 = Texture.create("VRAM 15", builder -> {
       builder.size(1024, 512);
-      builder.internalFormat(GL_R32UI);
-      builder.dataFormat(GL_RED_INTEGER);
-      builder.dataType(GL_UNSIGNED_INT);
+      builder.internalFormat(TextureInternalFormat.R_32_UINT);
+      builder.dataFormat(TextureDataFormat.RED_INT);
+      builder.dataType(TextureDataType.UINT);
     });
     this.vramTexture15.persistent = true;
   }
@@ -119,7 +116,7 @@ public class Gpu {
   public void updateVramTexture() {
     synchronized(this.vramLock) {
       if(this.vramDirty) {
-        this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
+        this.vramTexture15.data(0, 0, 1024, 512, TextureDataType.UINT, this.vram15);
         this.vramDirty = false;
       }
     }
@@ -164,7 +161,7 @@ public class Gpu {
     final float r = l + w;
     final float b = t + h;
 
-    this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+    this.displayMesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLE_STRIP, new float[] {
       l, t, 1.0f, 0, 0,
       l, b, 1.0f, 0, 1,
       r, t, 1.0f, 1, 0,
@@ -181,7 +178,7 @@ public class Gpu {
     }
 
     if(RenderEngine.legacyMode == 1) {
-      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, TextureDataType.UBYTE, this.getDisplayBuffer().getData());
       this.drawDisplay();
     } else if(RenderEngine.legacyMode == 2) {
       this.drawVram();
@@ -442,8 +439,7 @@ public class Gpu {
 
   public void drawDisplay() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
-
-    glDisable(GL_BLEND);
+    RENDERER.api().translucency(null);
 
     this.identity.get(this.transforms2Buffer);
     this.transforms2Uniform.set(this.transforms2Buffer);
@@ -457,8 +453,7 @@ public class Gpu {
 
   public void drawVram() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
-
-    glDisable(GL_BLEND);
+    RENDERER.api().translucency(null);
 
     this.identity.get(this.transforms2Buffer);
     this.transforms2Uniform.set(this.transforms2Buffer);
@@ -467,7 +462,7 @@ public class Gpu {
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
     this.vramShaderOptions.apply();
     this.vramTexture24.use();
-    this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
+    this.vramTexture24.data(0, 0, 1024, 512, TextureDataType.UBYTE, this.vram24);
     this.displayMesh.draw();
   }
 

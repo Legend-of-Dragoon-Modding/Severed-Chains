@@ -2,7 +2,7 @@ package legend.game;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
+import legend.core.renderer.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandFillVram;
@@ -13,7 +13,7 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -146,7 +146,7 @@ public final class Graphics {
       GsSortClear(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
     }
 
-    RENDERER.setClearColour(clearRed_8007a3a8 / 255.0f, clearGreen_800bb104 / 255.0f, clearBlue_800babc0 / 255.0f);
+    RENDERER.api().clearColour(clearRed_8007a3a8 / 255.0f, clearGreen_800bb104 / 255.0f, clearBlue_800babc0 / 255.0f);
   }
 
   @Method(0x80013200L)

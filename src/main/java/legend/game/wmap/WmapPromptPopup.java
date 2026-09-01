@@ -1,12 +1,12 @@
 package legend.game.wmap;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.MeshObj;
-import legend.core.opengl.QuadBuilder;
+import legend.core.renderer.MeshObj;
+import legend.core.renderer.QuadBuilder;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;

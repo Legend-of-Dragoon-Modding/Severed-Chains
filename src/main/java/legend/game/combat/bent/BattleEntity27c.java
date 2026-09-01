@@ -1,6 +1,6 @@
 package legend.game.combat.bent;
 
-import legend.core.QueuedModelBattleTmd;
+import legend.core.renderer.QueuedModelBattleTmd;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;

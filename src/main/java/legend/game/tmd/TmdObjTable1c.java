@@ -1,7 +1,7 @@
 package legend.game.tmd;
 
 import legend.core.MathHelper;
-import legend.core.opengl.Obj;
+import legend.core.renderer.Obj;
 import legend.game.unpacker.CtmdTransformer;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;

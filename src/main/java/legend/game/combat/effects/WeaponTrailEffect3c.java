@@ -1,16 +1,17 @@
 package legend.game.combat.effects;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
-import legend.game.tmd.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
-import legend.core.opengl.PolyBuilder;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.VertexOrder;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.TmdObjTable1c;
 import legend.game.types.Model124;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -22,7 +23,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.GsGetLw;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
-import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTrailType> {
   private int currentSegmentIndex_00 = -1;
@@ -134,7 +134,7 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
       renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v2.x) > renderCoordThreshold || Math.abs(v2.y) > renderCoordThreshold;
 
       //LAB_800cdf94
-      final PolyBuilder builder = new PolyBuilder("Weapon trail", GL_TRIANGLES);
+      final PolyBuilder builder = new PolyBuilder("Weapon trail", VertexOrder.TRIANGLES);
 
       segment = segment.previousSegmentRef_24;
       for(int i = 0; i < this.segmentCount_0e && segment != null; i++) {

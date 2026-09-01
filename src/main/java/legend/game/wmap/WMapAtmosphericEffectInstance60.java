@@ -3,9 +3,9 @@ package legend.game.wmap;
 import legend.core.gpu.Bpp;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
-import legend.core.opengl.QuadBuilder;
-import legend.game.types.Translucency;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 public class WMapAtmosphericEffectInstance60 {

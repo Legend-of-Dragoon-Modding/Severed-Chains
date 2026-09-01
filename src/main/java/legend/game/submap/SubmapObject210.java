@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.opengl.Texture;
+import legend.core.renderer.Texture;
 import legend.game.scripting.ScriptedObject;
 import legend.game.types.Model124;
 import org.joml.Vector3f;

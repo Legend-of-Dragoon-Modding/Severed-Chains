@@ -1,9 +1,9 @@
 package legend.game.combat.effects;
 
-import legend.core.QueuedModelStandard;
+import legend.core.renderer.QueuedModelStandard;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Translucency;
+import legend.core.renderer.Translucency;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
