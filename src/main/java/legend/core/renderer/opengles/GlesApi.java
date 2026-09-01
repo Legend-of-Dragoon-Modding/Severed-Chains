@@ -79,10 +79,10 @@ public class GlesApi implements RenderApi {
 
   private RenderBatch batch;
   private boolean widescreen;
-  private int renderWidth;
-  private int renderHeight;
   private float w;
   private float h;
+  private int renderWidth;
+  private int renderHeight;
 
   private final Rect4i tempScissorRect = new Rect4i();
   private final Rect4i activeScissorRect = new Rect4i();
