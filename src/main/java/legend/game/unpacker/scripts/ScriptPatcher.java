@@ -1,5 +1,7 @@
 package legend.game.unpacker.scripts;
 
+import legend.game.unpacker.GameRegion;
+import legend.game.unpacker.Unpacker;
 import com.github.difflib.patch.PatchFailedException;
 import com.opencsv.exceptions.CsvException;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -161,6 +163,8 @@ public class ScriptPatcher {
 
     // Apply new or changed patches
     boolean changed = false;
+    int applied = 0;
+    int failed = 0;
     for(final ScriptPatch patch : this.patches) {
       final ScriptPatch cachedPatch = cacheList.getPatchForScript(patch.sourceFile);
 
@@ -169,9 +173,15 @@ public class ScriptPatcher {
 
         try {
           this.patchFile(patch);
-        } catch(final PatchFailedException error) {
-          LOGGER.error("Patch failed for script: %s", patch.patchFile);
-          throw error;
+          applied++;
+        } catch(final PatchFailedException | RuntimeException error) {
+          // US patches always apply, a miss there means the extraction is busted
+          if(Unpacker.REGION == GameRegion.US) {
+            throw error;
+          }
+
+          LOGGER.warn("Patch failed for script: %s", patch.patchFile);
+          failed++;
         }
 
         changed = true;
@@ -186,6 +196,8 @@ public class ScriptPatcher {
         changed = true;
       }
     }
+
+    LOGGER.info("SCRIPT PATCH TALLY: %d applied, %d failed, %d total", applied, failed, applied + failed);
 
     // Cache changes
     if(changed) {
