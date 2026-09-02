@@ -112,6 +112,7 @@ import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.scripting.DrgnFileEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -6708,19 +6709,22 @@ public class Battle extends EngineState<Battle> {
     this.loadedDeff_800c6938.script_14 = null;
     this.deffLoadingStage_800fafe8 = 1;
 
+    final DrgnFileEvent eventTims = EVENTS.postEvent(new DrgnFileEvent(tims));
+    final DrgnFileEvent eventDeff = EVENTS.postEvent(new DrgnFileEvent(deff));
+
     Loader
-      .loadDirectory(tims)
+      .loadDirectory(eventTims.path)
       .thenAccept(this::uploadTims)
     ;
 
     Loader
-      .loadDirectory(deff.resolve("0"))
+      .loadDirectory(eventDeff.path.resolve("0"))
       .thenAccept(files -> {
         this.loadDeffPackage(files, this.loadedDeff_800c6938.managerState_18);
 
         // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
         Loader
-          .loadFile(deff.resolve("1"))
+          .loadFile(eventDeff.path.resolve("1"))
           .thenAccept(file -> {
             LOGGER.info(DEFF, "Loading DEFF script");
             this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
@@ -9312,7 +9316,9 @@ public class Battle extends EngineState<Battle> {
     combatant.gold_196 = event.gold;
     combatant._19a = rewards._06;
 
-    loadDrgnFile(1, Integer.toString(enemyId + 1)).thenAccept(file -> this.loadCombatantScript(file.getBytes(), combatantIndex));
+    final DrgnFileEvent eventMonster = EVENTS.postEvent(new DrgnFileEvent(Path.of(".", "files", "SECT", "DRGN1.BIN", Integer.toString(enemyId + 1))));
+
+    Loader.loadFile(eventMonster.path).thenAccept(file -> this.loadCombatantScript(file.getBytes(), combatantIndex));
   }
 
   @Method(0x8010989cL)
