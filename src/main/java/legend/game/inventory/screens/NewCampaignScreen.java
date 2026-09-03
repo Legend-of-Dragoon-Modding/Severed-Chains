@@ -4,6 +4,7 @@ import legend.core.GameEngine;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputBindings;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.i18n.I18n;
@@ -14,8 +15,11 @@ import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.config.NewCampaignConfigEvent;
+import legend.game.modding.events.config.ValidateNewCampaignConfigEvent;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
+import legend.game.saves.CampaignConfigDefaultsStorage;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveFailedException;
@@ -63,6 +67,15 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     loadingNewGameState_800bdc34 = false;
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+    final boolean rememberDefaults = CONFIG.getConfig(CoreMod.REMEMBER_CAMPAIGN_SETTINGS_CONFIG.get());
+
+    if(rememberDefaults) {
+      CampaignConfigDefaultsStorage.load(CONFIG);
+    }
+
+    EVENTS.postEvent(new NewCampaignConfigEvent(CONFIG, rememberDefaults));
+    InputBindings.initBindings();
+    InputBindings.loadBindings(CONFIG);
     this.enabledMods.addAll(MODS.getAllModIds());
 
     deallocateRenderables(0xff);
@@ -111,10 +124,11 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, mods);
     mods.onPressed(() ->
       this.deferAction(() ->
-        this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
-          bootMods(this.enabledMods);
+          this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
+            bootMods(this.enabledMods);
+            EVENTS.postEvent(new NewCampaignConfigEvent(CONFIG, rememberDefaults));
 
-          startFadeEffect(2, 10);
+            startFadeEffect(2, 10);
           this.getStack().popScreen();
         }))
       )
@@ -124,9 +138,16 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, startGame);
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> { })));
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.campaign_name_in_use"), MessageBoxType.ALERT, result1 -> { }))); 
       } else {
-        this.unload = true;
+        GameEngine.initializeRemainingRegistries();
+        final ValidateNewCampaignConfigEvent validationEvent = EVENTS.postEvent(new ValidateNewCampaignConfigEvent(CONFIG));
+
+        if(validationEvent.hasErrors()) {
+          this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.config_validation_failed") + '\n' + String.join("\n", validationEvent.errors()), MessageBoxType.ALERT, result1 -> { })));
+        } else {
+          this.unload = true;
+        }
       }
     });
 

@@ -1,5 +1,6 @@
 package legend.game.saves;
 
+import legend.game.modding.events.config.CampaignConfigUpdatedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.lodmod.LodMod;
 import org.legendofdragoon.modloader.ModContainer;
@@ -29,6 +30,10 @@ public class ConfigCollection {
     this.setConfigQuietly(config, value);
     config.onChange(this, oldValue, value);
     EVENTS.postEvent(new ConfigUpdatedEvent(config));
+
+    if(config.storageLocation == ConfigStorageLocation.CAMPAIGN) {
+      EVENTS.postEvent(new CampaignConfigUpdatedEvent(this, config));
+    }
   }
 
   /** Doesn't trigger onChange */

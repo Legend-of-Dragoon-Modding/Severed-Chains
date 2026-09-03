@@ -3,6 +3,7 @@ package legend.game.saves;
 import legend.core.memory.types.IntRef;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
+import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,10 +11,15 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -45,89 +51,105 @@ public final class ConfigStorage {
   }
 
   public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation location, final Path file) {
-    LOGGER.info("Saving config %s to %s", location, file);
+    saveConfig(configs, location, file, config -> true, ConfigStorage::serialize);
+  }
+
+  public static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data) {
+    loadConfig(configs, storageLocation, data, config -> true, ConfigStorage::deserialize, true);
+    EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
+    RENDERER.setFrameSkipOption(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get()));
+  }
+
+  public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data, final IntRef offset) {
+    saveConfig(configs, storageLocation, data, offset, config -> true, ConfigStorage::serialize);
+  }
+
+  static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final Path file, final Predicate<ConfigEntry<?>> filter, final BiFunction<ConfigEntry<?>, byte[], Object> deserializer) {
+    LOGGER.info("Loading filtered config %s from %s", storageLocation, file);
+
+    if(!Files.exists(file)) return;
 
     try {
-      Files.createDirectories(file.toAbsolutePath().getParent());
-    } catch(final IOException e) {
-      LOGGER.warn("Failed to create parent directories for config file %s", file);
+      loadConfig(configs, storageLocation, new FileData(Files.readAllBytes(file)), filter, deserializer, false);
+    } catch(final Throwable e) {
+      LOGGER.warn("Failed to load filtered config file %s", file);
       LOGGER.warn("Exception", e);
-      return;
     }
+  }
 
-    final FileData data = new FileData(new byte[100 * 1024]);
-    final IntRef size = new IntRef();
-    saveConfig(configs, location, data, size);
+  static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final Path file, final Predicate<ConfigEntry<?>> filter, final BiFunction<ConfigEntry<?>, Object, byte[]> serializer) {
+    LOGGER.info("Saving config %s to %s", storageLocation, file);
+
+    final FileData data = new ExpandableFileData(1);
+    final IntRef offset = new IntRef();
+    saveConfig(configs, storageLocation, data, offset, filter, serializer);
 
     try {
-      Files.write(file, data.slice(0, size.get()).getBytes());
+      writeAtomically(file, Arrays.copyOf(data.getBytes(), offset.get()));
     } catch(final IOException e) {
       LOGGER.warn("Failed to save config file %s", file);
       LOGGER.warn("Exception", e);
     }
   }
 
-  public static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data) {
-    int offset = 0;
+  private static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data, final Predicate<ConfigEntry<?>> filter, final BiFunction<ConfigEntry<?>, byte[], Object> deserializer, final boolean clearConfig) {
+    final IntRef offset = new IntRef();
 
-    configs.clearConfig(storageLocation);
+    if(clearConfig) configs.clearConfig(storageLocation);
 
     final int configCount = data.readInt(offset);
-    offset += 4;
 
     for(int configIndex = 0; configIndex < configCount; configIndex++) {
       final RegistryId configId = data.readRegistryId(offset);
-      offset += configId.toString().length() + 3;
+      final int configValueLength = data.readInt(offset);
+      final byte[] configValue = data.slice(offset.get(), configValueLength).getBytes();
+      offset.add(configValueLength);
+
+      if(configId == null) {
+        LOGGER.warn("Unknown config ID %s", configId);
+        continue;
+      }
 
       final RegistryDelegate<ConfigEntry<?>> delegate = REGISTRIES.config.getEntry(configId);
 
-      if(delegate.isValid()) {
-        //noinspection rawtypes
-        final ConfigEntry configEntry = delegate.get();
+      if(!delegate.isValid()) {
+        LOGGER.warn("Unknown config ID %s", configId);
+        continue;
+      }
 
-        final int configValueLength = data.readInt(offset);
-        offset += 4;
+      final ConfigEntry<?> configEntry = delegate.get();
 
-        final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
-        offset += configValueLength;
+      if(configEntry.storageLocation != storageLocation || !filter.test(configEntry)) continue;
 
-        if(configEntry != null) {
-          if(configEntry.storageLocation == storageLocation) {
-            //noinspection unchecked
-            configs.setConfigQuietly(configEntry, configEntry.deserializer.apply(configValueRaw));
-          }
-        } else {
-          LOGGER.warn("Unknown config ID %s", configId);
-        }
-      } else {
-        LOGGER.warn("Unknown mod ID %s", configId);
-        final int configValueLength = data.readInt(offset);
-        offset += 4;
-        offset += configValueLength;
+      try {
+        setConfigQuietly(configs, configEntry, deserializer.apply(configEntry, configValue));
+      } catch(final Throwable e) {
+        LOGGER.warn("Ignoring invalid config ID %s", configId);
+        LOGGER.warn("Exception", e);
       }
     }
-
-    EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
-    RENDERER.setFrameSkipOption(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get()));
   }
 
-  public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data, final IntRef offset) {
+  private static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data, final IntRef offset, final Predicate<ConfigEntry<?>> filter, final BiFunction<ConfigEntry<?>, Object, byte[]> serializer) {
     final Map<RegistryId, byte[]> config = new HashMap<>();
 
     for(final RegistryId configId : REGISTRIES.config) {
-      //noinspection rawtypes
-      final ConfigEntry configEntry = REGISTRIES.config.getEntry(configId).get();
+      final ConfigEntry<?> configEntry = REGISTRIES.config.getEntry(configId).get();
 
-      if(configEntry.storageLocation == storageLocation) {
-        //noinspection unchecked
-        final Object value = configs.getConfig(configEntry);
+      if(configEntry.storageLocation != storageLocation || !filter.test(configEntry)) continue;
 
-        if(value != null) {
-          //noinspection unchecked
-          config.put(configId, (byte[])configEntry.serializer.apply(value));
-        } else {
-          LOGGER.warn("Unknown config ID %s", configId);
-        }
+      final Object value = configs.getConfig(configEntry);
+
+      if(value == null) {
+        LOGGER.warn("Unknown config ID %s", configId);
+        continue;
+      }
+
+      try {
+        config.put(configId, serializer.apply(configEntry, value));
+      } catch(final Throwable e) {
+        LOGGER.warn("Ignoring invalid config ID %s while saving", configId);
+        LOGGER.warn("Exception", e);
       }
     }
 
@@ -136,7 +158,45 @@ public final class ConfigStorage {
     for(final var entry : config.entrySet()) {
       data.writeRegistryId(offset, entry.getKey());
       data.writeInt(offset, entry.getValue().length);
-      data.write(0, entry.getValue(), offset, entry.getValue().length);
+      data.write(0, entry.getValue(), offset.get(), entry.getValue().length);
+      offset.add(entry.getValue().length);
+    }
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private static byte[] serialize(final ConfigEntry config, final Object value) {
+    return (byte[])config.serializer.apply(value);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private static Object deserialize(final ConfigEntry config, final byte[] value) {
+    return config.deserializer.apply(value);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private static void setConfigQuietly(final ConfigCollection configs, final ConfigEntry config, final Object value) {
+    configs.setConfigQuietly(config, value);
+  }
+
+  private static void writeAtomically(final Path file, final byte[] data) throws IOException {
+    final Path absoluteFile = file.toAbsolutePath();
+    final Path parent = absoluteFile.getParent();
+    Path temporaryFile = null;
+
+    try {
+      Files.createDirectories(parent);
+      temporaryFile = Files.createTempFile(parent, absoluteFile.getFileName().toString(), ".tmp");
+      Files.write(temporaryFile, data);
+
+      try {
+        Files.move(temporaryFile, absoluteFile, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+      } catch(final AtomicMoveNotSupportedException e) {
+        Files.move(temporaryFile, absoluteFile, StandardCopyOption.REPLACE_EXISTING);
+      }
+
+      temporaryFile = null;
+    } finally {
+      if(temporaryFile != null) Files.deleteIfExists(temporaryFile);
     }
   }
 }

@@ -70,9 +70,11 @@ import legend.game.modding.coremod.config.UnlockPartyConfig;
 import legend.game.modding.coremod.shops.EquipmentShopExtension;
 import legend.game.modding.coremod.shops.GoodShopExtension;
 import legend.game.modding.coremod.shops.ItemShopExtension;
+import legend.game.modding.events.config.CampaignConfigUpdatedEvent;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.saves.BoolConfigEntry;
+import legend.game.saves.CampaignConfigDefaultsStorage;
 import legend.game.saves.CampaignNameConfigEntry;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigEntry;
@@ -130,6 +132,7 @@ public class CoreMod {
   public static final RegistryDelegate<MusicEffectsOverTimeGranularityConfigEntry> MUSIC_EFFECTS_OVER_TIME_GRANULARITY_CONFIG = CONFIG_REGISTRAR.register("music_effects_over_time_granularity", MusicEffectsOverTimeGranularityConfigEntry::new);
   public static final RegistryDelegate<CreateCrashSaveConfigEntry> CREATE_CRASH_SAVE_CONFIG = CONFIG_REGISTRAR.register("create_crash_save", CreateCrashSaveConfigEntry::new);
   public static final RegistryDelegate<ShowAdvancedOptionsConfigEntry> SHOW_ADVANCED_OPTIONS_CONFIG = CONFIG_REGISTRAR.register("show_advanced_options", ShowAdvancedOptionsConfigEntry::new);
+  public static final RegistryDelegate<BoolConfigEntry> REMEMBER_CAMPAIGN_SETTINGS_CONFIG = CONFIG_REGISTRAR.register("remember_campaign_settings", () -> new BoolConfigEntry(true, ConfigStorageLocation.GLOBAL, ConfigCategory.OTHER));
 
   public static final RegistryDelegate<LanguageConfigEntry> LANGUAGE_CONFIG = CONFIG_REGISTRAR.register("language", LanguageConfigEntry::new);
 
@@ -360,6 +363,15 @@ public class CoreMod {
     event.addExtension(new ItemShopExtension(), 1000);
     event.addExtension(new EquipmentShopExtension(), 1000);
     event.addExtension(new GoodShopExtension(), 1000);
+  }
+
+  @EventListener
+  public static void saveCampaignConfigDefaults(final CampaignConfigUpdatedEvent event) {
+    if(event.configCollection != GameEngine.CONFIG) return;
+    if(!GameEngine.CONFIG.getConfig(REMEMBER_CAMPAIGN_SETTINGS_CONFIG.get())) return;
+    if(!CampaignConfigDefaultsStorage.manages(event.config)) return;
+
+    CampaignConfigDefaultsStorage.save(event.configCollection);
   }
 
   @EventListener
