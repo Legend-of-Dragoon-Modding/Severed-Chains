@@ -163,6 +163,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       if(result == MessageBoxResult.YES) {
         CONFIG.clearConfig();
         CONFIG.copyConfigFrom(this.optionPresets.getSelectedOption().getPreset().config);
+        ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       }
     })));
   }
