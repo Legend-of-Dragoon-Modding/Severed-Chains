@@ -17,6 +17,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -114,7 +115,7 @@ public final class ConfigPresetManager {
     final Path path = configPath.resolve(IoHelper.slugName(name) + ".dpre");
 
     try {
-      Files.write(path, out);
+      Files.write(path, out, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     } catch(final IOException e) {
       GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_save_preset"));
       LOGGER.warn("Failed to save options preset", e);
