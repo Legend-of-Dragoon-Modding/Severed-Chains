@@ -52,23 +52,7 @@ public class ConfigCollection {
   }
 
   public void copyConfigFrom(final ConfigCollection other) {
-    final Map<RegistryId, Object> oldValues = new HashMap<>();
-
-    for(final RegistryId id : REGISTRIES.config) {
-      final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
-
-      if(config.storageLocation == ConfigStorageLocation.GLOBAL) {
-        oldValues.put(id, this.getConfig(config));
-      }
-    }
-
     this.configValues.putAll(other.configValues);
-
-    for(final var entry : oldValues.entrySet()) {
-      final RegistryId id = entry.getKey();
-      final ConfigEntry config = REGISTRIES.config.getEntry(id).get();
-      config.onChange(this, oldValues.get(id), this.getConfig(config));
-    }
   }
 
   public void lockConfig(final ConfigEntry<?> config) {

@@ -17,6 +17,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.CampaignType;
+import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
 import legend.game.saves.ConfigStorage;
@@ -35,8 +36,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
@@ -162,7 +165,24 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", this.optionPresets.getSelectedOption().getName()), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
         CONFIG.clearConfig();
+
+        final Map<RegistryId, Object> oldValues = new HashMap<>();
+
+        for(final RegistryId id : REGISTRIES.config) {
+          final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
+
+          if(config.storageLocation == ConfigStorageLocation.GLOBAL) {
+            oldValues.put(id, CONFIG.getConfig(config));
+          }
+        }
+
         CONFIG.copyConfigFrom(this.optionPresets.getSelectedOption().getPreset().config);
+
+        for(final var entry : oldValues.entrySet()) {
+          final RegistryId id = entry.getKey();
+          final ConfigEntry config = REGISTRIES.config.getEntry(id).get();
+          config.onChange(CONFIG, oldValues.get(id), CONFIG.getConfig(config));
+        }
         ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       }
     })));
