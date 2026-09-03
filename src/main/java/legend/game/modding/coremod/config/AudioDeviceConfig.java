@@ -36,7 +36,10 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
   @Override
   public void onChange(final ConfigCollection configCollection, final String oldValue, final String newValue) {
     super.onChange(configCollection, oldValue, newValue);
-    AUDIO_THREAD.reinit();
+
+    if(!oldValue.equals(newValue)) {
+      AUDIO_THREAD.reinit();
+    }
   }
 
   private static byte[] serialize(final String val) {
