@@ -1,5 +1,7 @@
 package legend.game.modding.coremod.config;
 
+import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
@@ -21,13 +23,13 @@ public class MonitorConfigEntry extends ConfigEntry<Integer> {
     );
 
     this.setEditControl((current, gameState) -> {
-      final Dropdown<String> dropdown = new Dropdown<>();
+      final Dropdown<TextComponent> dropdown = new Dropdown<>((index, e) -> e);
       dropdown.onSelection(index -> gameState.setConfig(this, index));
 
       final String[] displays = PLATFORM.listDisplays();
 
       for(int i = 0; i < displays.length; i++) {
-        dropdown.addOption(displays[i]);
+        dropdown.addOption(new RawText(displays[i]));
       }
 
       final int selected = CONFIG.getConfig(this);

@@ -16,6 +16,7 @@ import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
+import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveFailedException;
@@ -24,15 +25,15 @@ import legend.game.types.MessageBoxType;
 import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
@@ -55,7 +56,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private final Set<String> enabledMods = new HashSet<>();
 
   private final Textbox campaignName;
-  private final Dropdown<String> campaignType;
+  private final Dropdown<RegistryDelegate<CampaignType>> campaignType;
 
   private boolean unload;
 
@@ -76,24 +77,19 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignName.setZ(35);
     this.addRow(new I18nText("lod_core.ui.new_campaign.campaign_name"), this.campaignName);
 
-    this.campaignType = new Dropdown<>();
+    this.campaignType = new Dropdown<>((index, entry) -> new I18nText(entry.getTranslationKey()));
     this.campaignType.setZ(35);
     this.addRow(new I18nText("lod_core.ui.new_campaign.campaign"), this.campaignType);
 
-    final Map<String, RegistryId> campaignTypeIds = new HashMap<>();
-    final List<String> campaignTypeNames = new ArrayList<>();
+    final List<RegistryDelegate<CampaignType>> campaignTypes = new ArrayList<>();
     for(final RegistryId campaignTypeId : REGISTRIES.campaignTypes) {
-      final String name = I18n.translate(REGISTRIES.campaignTypes.getEntry(campaignTypeId));
-      campaignTypeNames.add(name);
-      campaignTypeIds.put(name, campaignTypeId);
+      campaignTypes.add(REGISTRIES.campaignTypes.getEntry(campaignTypeId));
     }
-    campaignTypeNames.sort(String::compareToIgnoreCase);
+    campaignTypes.sort(Comparator.comparing(e -> new I18nText(e.getTranslationKey()).get()));
+    campaignTypes.forEach(this.campaignType::addOption);
 
-    for(final String campaignTypeName : campaignTypeNames) {
-      this.campaignType.addOption(campaignTypeName);
-    }
-    this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.get(index))));
-    Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.getFirst()));
+    this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = this.campaignType.getSelectedOption());
+    Scus94491BpeSegment_800b.campaignType = campaignTypes.getFirst();
 
     final Button options = new Button(new I18nText("lod_core.ui.new_campaign.options"));
     this.addRow(RawText.BLANK, options);

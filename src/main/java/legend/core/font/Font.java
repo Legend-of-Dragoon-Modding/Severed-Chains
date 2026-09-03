@@ -3,6 +3,7 @@ package legend.core.font;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
+import legend.core.lang.TextComponent;
 import legend.core.memory.Method;
 import legend.core.renderer.Obj;
 import legend.core.renderer.QuadBuilder;
@@ -15,13 +16,13 @@ import static legend.core.GameEngine.RENDERER;
 
 public class Font {
   public final Path path;
-  public final String name;
+  public final TextComponent name;
   private final Char2ObjectMap<Glyph> glyphs;
 
   private Texture texture;
   private Obj obj;
 
-  public Font(final Path path, final String name, final Char2ObjectMap<Glyph> glyphs) {
+  public Font(final Path path, final TextComponent name, final Char2ObjectMap<Glyph> glyphs) {
     this.path = path;
     this.name = name;
     this.glyphs = glyphs;

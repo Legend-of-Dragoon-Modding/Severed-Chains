@@ -3,7 +3,6 @@ package legend.core.font;
 import legend.core.GameEngine;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.saves.ConfigCategory;
-import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.StringConfigEntry;
 
@@ -47,10 +46,5 @@ public class RetailFontConfigEntry extends StringConfigEntry {
 
       return dropdown;
     });
-  }
-
-  @Override
-  public void onChange(ConfigCollection configCollection, String oldValue, String newValue) {
-    super.onChange(configCollection, oldValue, newValue);
   }
 }

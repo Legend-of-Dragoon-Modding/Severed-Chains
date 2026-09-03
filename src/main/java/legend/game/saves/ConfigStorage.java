@@ -1,6 +1,10 @@
 package legend.game.saves;
 
 import legend.core.memory.types.IntRef;
+import legend.core.tags.ListTag;
+import legend.core.tags.MapTag;
+import legend.core.tags.RawTag;
+import legend.core.tags.RegistryIdTag;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.unpacker.FileData;
@@ -137,6 +141,65 @@ public final class ConfigStorage {
       data.writeRegistryId(offset, entry.getKey());
       data.writeInt(offset, entry.getValue().length);
       data.write(0, entry.getValue(), offset, entry.getValue().length);
+    }
+  }
+
+  public static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final MapTag tag) {
+    configs.clearConfig(storageLocation);
+
+    final ListTag locationTag = tag.get(storageLocation.name()).asList();
+
+    for(int configIndex = 0; configIndex < locationTag.size(); configIndex++) {
+      final MapTag configTag = locationTag.get(configIndex).asMap();
+      final RegistryId configId = configTag.get("configId").asRegistryId().get();
+
+      final RegistryDelegate<ConfigEntry<?>> delegate = REGISTRIES.config.getEntry(configId);
+
+      if(delegate.isValid()) {
+        //noinspection rawtypes
+        final ConfigEntry configEntry = delegate.get();
+        final byte[] configValueRaw = configTag.get("data").asRaw().get();
+
+        if(configEntry != null) {
+          if(configEntry.storageLocation == storageLocation) {
+            //noinspection unchecked
+            configs.setConfigQuietly(configEntry, configEntry.deserializer.apply(configValueRaw));
+          }
+        } else {
+          LOGGER.warn("Unknown config ID %s", configId);
+        }
+      } else {
+        LOGGER.warn("Unknown mod ID %s", configId);
+      }
+    }
+
+    EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
+    RENDERER.setFrameSkipOption(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get()));
+  }
+
+  public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final MapTag tag) {
+    final ListTag locationTag = new ListTag();
+    tag.set(storageLocation.name(), locationTag);
+
+    for(final RegistryId configId : REGISTRIES.config) {
+      //noinspection rawtypes
+      final ConfigEntry configEntry = REGISTRIES.config.getEntry(configId).get();
+
+      if(configEntry.storageLocation == storageLocation) {
+        //noinspection unchecked
+        final Object value = configs.getConfig(configEntry);
+
+        if(value != null) {
+          final MapTag configTag = new MapTag();
+          locationTag.add(configTag);
+
+          configTag.set("configId", new RegistryIdTag(configId));
+          //noinspection unchecked
+          configTag.set("data", new RawTag((byte[])configEntry.serializer.apply(value)));
+        } else {
+          LOGGER.warn("Unknown config ID %s", configId);
+        }
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 package legend.game.modding.coremod.config;
 
 import legend.core.GameEngine;
+import legend.core.lang.RawText;
 import legend.core.memory.types.IntRef;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.saves.ConfigCategory;
@@ -31,7 +32,7 @@ public class LanguageConfigEntry extends ConfigEntry<Locale> {
 
     this.setEditControl((locale, config) -> {
       final Set<Locale> locales = getAllLocales();
-      final Dropdown<Locale> dropdown = new Dropdown<>((index, entry) -> entry.getDisplayName());
+      final Dropdown<Locale> dropdown = new Dropdown<>((index, entry) -> new RawText(entry.getDisplayName()));
       dropdown.onSelection(index -> config.setConfig(this, dropdown.getOption(index)));
 
       locales.stream()
