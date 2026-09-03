@@ -514,16 +514,7 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForOptions() {
-    this.fadeOutToMenu(() -> new OptionsPresetsScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> {
-      return false;
-    });
-
-/*
-    this.fadeOutToMenu(() -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> {
-      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-      return false;
-    });
-*/
+    this.fadeOutToMenu(() -> new OptionsPresetsScreen((selectedIndex, presets) -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
   }
 
   private void fadeOutForLinks() {

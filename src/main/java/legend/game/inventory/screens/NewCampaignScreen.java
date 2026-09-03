@@ -60,6 +60,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
   private final Textbox campaignName;
   private final Dropdown<RegistryDelegate<CampaignType>> campaignType;
+  private final Dropdown<ConfigPresetEntry> optionPresets;
 
   private boolean unload;
 
@@ -94,27 +95,25 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = this.campaignType.getSelectedOption());
     Scus94491BpeSegment_800b.campaignType = campaignTypes.getFirst();
 
-    final Dropdown<ConfigPresetEntry> optionPresets = new Dropdown<>((i, e) -> e.getName());
-    this.addRow(new I18nText("lod_core.ui.new_campaign.options_presets"), optionPresets);
-    ConfigPresetManager.loadDefaultPresets().forEach(optionPresets::addOption);
-    ConfigPresetManager.loadPresetList().forEach(optionPresets::addOption);
-    optionPresets.onSelection(index -> {
-      this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm"), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
-          CONFIG.clearConfig();
-          CONFIG.copyConfigFrom(optionPresets.getSelectedOption().getPreset().config);
-        }
-      })));
-    });
+    this.optionPresets = new Dropdown<>((i, e) -> e.getName());
+    this.addRow(new I18nText("lod_core.ui.new_campaign.options_presets"), this.optionPresets);
+    ConfigPresetManager.loadDefaultPresets().forEach(this.optionPresets::addOption);
+    ConfigPresetManager.loadPresetList().forEach(this.optionPresets::addOption);
+    this.optionPresets.onSelection(this::onPresetSelected);
 
     final Button editPresets = new Button(new I18nText("lod_core.ui.new_campaign.edit_presets"));
     this.addRow(RawText.BLANK, editPresets);
     editPresets.onPressed(() -> {
       bootMods(MODS.getAllModIds());
-      this.deferAction(() -> this.getStack().pushScreen(new OptionsPresetsScreen(() -> {
+      this.deferAction(() -> this.getStack().pushScreen(new OptionsPresetsScreen((selectedIndex, presets) -> {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
         bootMods(this.enabledMods);
+
+        this.optionPresets.clearOptions();
+        presets.forEach(this.optionPresets::addOption);
+        this.optionPresets.setSelectedIndex(selectedIndex);
+        this.onPresetSelected(selectedIndex);
       })));
     });
 
@@ -157,6 +156,15 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     saveSlots.setWidth(this.getWidth());
     saveSlots.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
     saveSlots.setY(200);
+  }
+
+  private void onPresetSelected(final int index) {
+    this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", this.optionPresets.getSelectedOption().getName()), MessageBoxType.CONFIRMATION, result -> {
+      if(result == MessageBoxResult.YES) {
+        CONFIG.clearConfig();
+        CONFIG.copyConfigFrom(this.optionPresets.getSelectedOption().getPreset().config);
+      }
+    })));
   }
 
   @Override

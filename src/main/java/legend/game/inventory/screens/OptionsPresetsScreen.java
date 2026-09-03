@@ -17,8 +17,11 @@ import legend.game.types.MessageBoxType;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -26,13 +29,13 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class OptionsPresetsScreen extends VerticalLayoutScreen {
-  private final Runnable unload;
+  private final BiConsumer<Integer, List<ConfigPresetEntry>> unload;
 
   private final Dropdown<ConfigPresetEntry> presetList;
   private final Button edit;
   private final Button delete;
 
-  public OptionsPresetsScreen(final Runnable unload) {
+  public OptionsPresetsScreen(final BiConsumer<Integer, List<ConfigPresetEntry>> unload) {
     this.unload = unload;
 
     deallocateRenderables(0xff);
@@ -146,6 +149,13 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
 
   private void back() {
     playMenuSound(3);
-    this.unload.run();
+
+    final List<ConfigPresetEntry> presets = new ArrayList<>();
+
+    for(int i = 0; i < this.presetList.size(); i++) {
+      presets.add(this.presetList.getOption(i));
+    }
+
+    this.unload.accept(this.presetList.getSelectedIndex(), presets);
   }
 }
