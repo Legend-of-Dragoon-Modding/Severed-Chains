@@ -6,6 +6,12 @@ import legend.core.lang.RawText;
 import legend.core.memory.types.IntRef;
 import legend.core.tags.MapTag;
 import legend.core.tags.StringTag;
+import legend.game.combat.BattleTransitionMode;
+import legend.game.combat.effects.TransformationMode;
+import legend.game.inventory.IconSet;
+import legend.game.inventory.ItemGroupSortMode;
+import legend.game.modding.coremod.config.QuickTextMode;
+import legend.game.submap.EncounterRateMode;
 import legend.game.ui.GameOverlay;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
@@ -21,6 +27,24 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+
+import static legend.game.modding.coremod.CoreMod.AUTO_TEXT_CONFIG;
+import static legend.game.modding.coremod.CoreMod.AUTO_TEXT_DELAY_CONFIG;
+import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.DISPLAY_ELEMENT_ICON_CONFIG;
+import static legend.game.modding.coremod.CoreMod.ENCOUNTER_RATE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.EQUIP_EFFECTS_IN_DRAGOON;
+import static legend.game.modding.coremod.CoreMod.ICON_SET;
+import static legend.game.modding.coremod.CoreMod.ITEM_GROUP_SORT_MODE;
+import static legend.game.modding.coremod.CoreMod.QUICK_TEXT_CONFIG;
+import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
+import static legend.game.modding.coremod.CoreMod.SAVE_ANYWHERE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG;
+import static legend.game.modding.coremod.CoreMod.SHOW_FPS;
+import static legend.game.modding.coremod.CoreMod.TRANSFORMATION_MODE_CONFIG;
+import static legend.game.modding.coremod.CoreMod.UNLOCK_PARTY_CONFIG;
+import static legend.lodmod.LodConfig.EXTENDED_DRAGOON_ACTIONS;
+import static legend.turnorder.TurnOrderConfigs.SHOW_TURN_ORDER;
 
 public final class ConfigPresetManager {
   private ConfigPresetManager() { }
@@ -141,10 +165,32 @@ public final class ConfigPresetManager {
   }
 
   private static ConfigPreset getVanillaDefaults() {
-    return new ConfigPreset(new I18nText("lod_core.config_presets.vanilla"), new ConfigCollection());
+    final ConfigCollection config = new ConfigCollection();
+    config.setConfig(EXTENDED_DRAGOON_ACTIONS.get(), false);
+    config.setConfig(EQUIP_EFFECTS_IN_DRAGOON.get(), false);
+    config.setConfig(SAVE_ANYWHERE_CONFIG.get(), false);
+    config.setConfig(UNLOCK_PARTY_CONFIG.get(), false);
+    config.setConfig(SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG.get(), 0.5f);
+    config.setConfig(DISPLAY_ELEMENT_ICON_CONFIG.get(), false);
+    config.setConfig(ICON_SET.get(), IconSet.RETAIL);
+    config.setConfig(ITEM_GROUP_SORT_MODE.get(), ItemGroupSortMode.RETAIL);
+    config.setConfig(SHOW_TURN_ORDER.get(), false);
+    config.setConfig(QUICK_TEXT_CONFIG.get(), QuickTextMode.HOLD);
+    config.setConfig(RUN_BY_DEFAULT.get(), false);
+    config.setConfig(ENCOUNTER_RATE_CONFIG.get(), EncounterRateMode.RETAIL);
+
+    return new ConfigPreset(new I18nText("lod_core.config_presets.vanilla"), config);
   }
 
   private static ConfigPreset getSpeedrunnerDefaults() {
-    return new ConfigPreset(new I18nText("lod_core.config_presets.speedrunner"), new ConfigCollection());
+    final ConfigCollection config = new ConfigCollection();
+    config.setConfig(BATTLE_TRANSITION_MODE_CONFIG.get(), BattleTransitionMode.INSTANT);
+    config.setConfig(TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.SHORT);
+    config.setConfig(AUTO_TEXT_CONFIG.get(), true);
+    config.setConfig(AUTO_TEXT_DELAY_CONFIG.get(), 0.0f);
+    config.setConfig(QUICK_TEXT_CONFIG.get(), QuickTextMode.INSTANT);
+    config.setConfig(SHOW_FPS.get(), true);
+
+    return new ConfigPreset(new I18nText("lod_core.config_presets.speedrunner"), config);
   }
 }
