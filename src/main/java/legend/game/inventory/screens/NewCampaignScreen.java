@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
+import legend.core.Config;
 import legend.core.GameEngine;
+import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
@@ -17,6 +19,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.CampaignType;
+import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
@@ -104,6 +107,14 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     ConfigPresetManager.loadPresetList().forEach(this.optionPresets::addOption);
     this.optionPresets.onSelection(this::onPresetSelected);
 
+    for(int i = 0; i < this.optionPresets.size(); i++) {
+      if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(Config.getLastConfigPreset())) {
+        this.optionPresets.setSelectedIndex(i);
+        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+        break;
+      }
+    }
+
     final Button editPresets = new Button(new I18nText("lod_core.ui.new_campaign.edit_presets"));
     this.addRow(RawText.BLANK, editPresets);
     editPresets.onPressed(() -> {
@@ -164,28 +175,34 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private void onPresetSelected(final int index) {
     this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", this.optionPresets.getSelectedOption().getName()), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
-        CONFIG.clearConfig();
-
-        final Map<RegistryId, Object> oldValues = new HashMap<>();
-
-        for(final RegistryId id : REGISTRIES.config) {
-          final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
-
-          if(config.storageLocation == ConfigStorageLocation.GLOBAL) {
-            oldValues.put(id, CONFIG.getConfig(config));
-          }
-        }
-
-        CONFIG.copyConfigFrom(this.optionPresets.getSelectedOption().getPreset().config);
-
-        for(final var entry : oldValues.entrySet()) {
-          final RegistryId id = entry.getKey();
-          final ConfigEntry config = REGISTRIES.config.getEntry(id).get();
-          config.onChange(CONFIG, oldValues.get(id), CONFIG.getConfig(config));
-        }
-        ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
       }
     })));
+
+    Config.setLastConfigPreset(IoHelper.slugName(this.optionPresets.getSelectedOption().getName().get()));
+  }
+
+  private void updateConfig(final ConfigCollection newConfig) {
+    CONFIG.clearConfig();
+
+    final Map<RegistryId, Object> oldValues = new HashMap<>();
+
+    for(final RegistryId id : REGISTRIES.config) {
+      final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
+
+      if(config.storageLocation == ConfigStorageLocation.GLOBAL) {
+        oldValues.put(id, CONFIG.getConfig(config));
+      }
+    }
+
+    CONFIG.copyConfigFrom(newConfig);
+
+    for(final var entry : oldValues.entrySet()) {
+      final RegistryId id = entry.getKey();
+      final ConfigEntry config = REGISTRIES.config.getEntry(id).get();
+      config.onChange(CONFIG, oldValues.get(id), CONFIG.getConfig(config));
+    }
+    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
   }
 
   @Override

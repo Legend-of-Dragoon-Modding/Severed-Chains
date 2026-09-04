@@ -55,9 +55,19 @@ public final class ConfigPresetManager {
   public static final PathMatcher CONFIG_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.dpre");
 
   public static boolean presetExists(final String name) {
+    final String slugged = IoHelper.slugName(name);
+
+    // Check if name matches built-in preset
+    for(final ConfigPresetEntry presetEntry : loadDefaultPresets()) {
+      if(slugged.equals(IoHelper.slugName(presetEntry.getName().get()))) {
+        return false;
+      }
+    }
+
+    // Check if name matches user-provided preset
     try {
       Files.createDirectories(configPath);
-      return Files.exists(configPath.resolve(IoHelper.slugName(name) + ".dpre"));
+      return Files.exists(configPath.resolve(slugged + ".dpre"));
     } catch(final IOException e) {
       GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_load_presets"));
       LOGGER.warn("Failed to check if options preset exists", e);

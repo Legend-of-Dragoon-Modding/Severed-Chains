@@ -31,6 +31,7 @@ public final class Config {
 
   static {
     properties.setProperty("low_memory_unpacker", "false");
+    properties.setProperty("last_config_preset", "");
     properties.setProperty("window_width", "960");
     properties.setProperty("window_height", "720");
     properties.setProperty("battle_ui_colour_change", "false");
@@ -58,6 +59,14 @@ public final class Config {
 
   public static void enableLowMemoryUnpacker() {
     properties.setProperty("low_memory_unpacker", "true");
+  }
+
+  public static String getLastConfigPreset() {
+    return properties.getProperty("last_config_preset");
+  }
+
+  public static void setLastConfigPreset(final String preset) {
+    properties.setProperty("last_config_preset", preset);
   }
 
   public static int windowWidth() {
