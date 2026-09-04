@@ -38,7 +38,6 @@ public class Spu {
   private long channelNoiseMode;
   private long channelReverbMode;
   private int reverbCurrentAddress;
-  private final Control control = new Control();
   private boolean reverbEnabled;
   private boolean muted = true;
   private int noiseFrequencyShift;
@@ -284,8 +283,8 @@ public class Spu {
   int noiseLevel;
 
   private void tickNoiseGenerator() {
-    final int noiseStep = this.control.noiseFrequencyStep() + 4;
-    final int noiseShift = this.control.noiseFrequencyShift();
+    final int noiseStep = this.noiseFrequencyStep + 4;
+    final int noiseShift = this.noiseFrequencyShift;
 
     this.noiseTimer -= noiseStep;
     final int parityBit = this.noiseLevel >> 15 & 0x1 ^ this.noiseLevel >> 12 & 0x1 ^ this.noiseLevel >> 11 & 0x1 ^ this.noiseLevel >> 10 & 0x1 ^ 1;
