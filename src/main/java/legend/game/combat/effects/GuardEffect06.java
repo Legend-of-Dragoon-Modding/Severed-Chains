@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -82,6 +83,7 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
       }
 
       final PolyBuilder builder = new PolyBuilder("Guard effect", VertexOrder.TRIANGLES)
+        .bufferUsage(BufferUsage.STREAMING)
         .translucency(Translucency.B_PLUS_F);
 
       for(int i = 0; i < 5; i++) {
@@ -96,9 +98,10 @@ public class GuardEffect06 implements Effect<EffectManagerParams.VoidType> {
       }
 
       final Obj obj = builder.build();
+      obj.delete(); // Mark for deletion after this frame
+
       this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), (effectZ + managerZ) * 4.0f);
       RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class);
-      obj.delete(); // Mark for deletion after this frame
 
       //LAB_800d2c78
       int s6 = 0x1000;

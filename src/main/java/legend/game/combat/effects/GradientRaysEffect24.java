@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -51,8 +52,6 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
   private final MV tempTransforms = new MV();
   private final MV finalTransforms = new MV();
   private final MV renderTransforms = new MV();
-
-  private Obj obj;
 
   public GradientRaysEffect24(final int count) {
     this.rays_00 = new GradientRaysEffectInstance04[count];
@@ -112,9 +111,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-    }
+
   }
 
   /** Used in Rose transform */
@@ -182,6 +179,7 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       //LAB_8010ad68
       //LAB_8010ad6c
       final PolyBuilder builder = new PolyBuilder("GradientRay", VertexOrder.TRIANGLE_STRIP)
+        .bufferUsage(BufferUsage.STREAMING)
         .translucency(Translucency.B_PLUS_F)
         .addVertex(this.sxy0.x, this.sxy0.y, 0)
         .monochrome(0);
@@ -207,11 +205,11 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
           .addVertex(this.sxy3.x, this.sxy3.y, 0);
       }
 
-      this.obj = builder.build();
-      this.obj.delete();
+      final Obj obj = builder.build();
+      obj.delete();
 
       this.renderTransforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), z * 4);
-      RENDERER.queueOrthoModel(this.obj, this.renderTransforms, QueuedModelStandard.class);
+      RENDERER.queueOrthoModel(obj, this.renderTransforms, QueuedModelStandard.class);
     }
     //LAB_8010ae18
   }

@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -134,7 +135,8 @@ public class WeaponTrailEffect3c implements Effect<EffectManagerParams.WeaponTra
       renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v2.x) > renderCoordThreshold || Math.abs(v2.y) > renderCoordThreshold;
 
       //LAB_800cdf94
-      final PolyBuilder builder = new PolyBuilder("Weapon trail", VertexOrder.TRIANGLES);
+      final PolyBuilder builder = new PolyBuilder("Weapon trail", VertexOrder.TRIANGLES)
+        .bufferUsage(BufferUsage.STREAMING);
 
       segment = segment.previousSegmentRef_24;
       for(int i = 0; i < this.segmentCount_0e && segment != null; i++) {

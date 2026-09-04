@@ -11,6 +11,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.McqBuilder;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
@@ -3443,6 +3444,7 @@ public class WMap extends EngineState<WMap> {
     GTE.setTransforms(transforms);
 
     final PolyBuilder builder = new PolyBuilder("Queen Fury wake", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING)
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_PLUS_F);
 

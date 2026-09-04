@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.renderer.QueuedModelTmd;
 import legend.core.gpu.Bpp;
@@ -454,7 +455,8 @@ public class AttachedSobjEffect {
 
     averageZ /= countZ;
 
-    final PolyBuilder builder = new PolyBuilder("Law pod trail", VertexOrder.TRIANGLES);
+    final PolyBuilder builder = new PolyBuilder("Law pod trail", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING);
 
     //LAB_800f09c0
     for(int i = 0; i < this.lawPodTrail_800d4f90.size(); i++) {

@@ -14,6 +14,7 @@ import legend.core.gte.ModelPart10;
 import legend.core.lang.I18nText;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.DepthComparator;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
@@ -3055,6 +3056,7 @@ public class SMap extends EngineState<SMap> {
 
   private void queueCollisionRectPacket(final Vector2f v0, final Vector2f v1, final float r, final float g, final float b) {
     final Obj obj = new PolyBuilder("Sobj collision", VertexOrder.TRIANGLE_STRIP)
+      .bufferUsage(BufferUsage.STREAMING)
       .translucency(Translucency.B_PLUS_F)
       .addVertex(v0.x, v0.y, 0.0f)
       .rgb(r, g, b)

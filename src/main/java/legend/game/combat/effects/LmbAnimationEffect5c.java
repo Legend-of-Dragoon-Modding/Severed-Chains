@@ -3,6 +3,7 @@ package legend.game.combat.effects;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
 import it.unimi.dsi.fastutil.floats.FloatList;
 import legend.core.MathHelper;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
@@ -447,6 +448,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         if((deffFlags & 0x400_0000) != 0) {
           if(this.builder == null) {
             this.builder = new PolyBuilder("LMB particles");
+            this.builder.bufferUsage(BufferUsage.STREAMING);
           }
         }
 
@@ -607,6 +609,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         if((deffFlags & 0x400_0000) != 0) {
           if(this.builder == null) {
             this.builder = new PolyBuilder("LMB particles");
+            this.builder.bufferUsage(BufferUsage.STREAMING);
           }
         }
 
@@ -878,6 +881,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         if((deffFlags & 0x400_0000) != 0) {
           if(this.builder == null) {
             this.builder = new PolyBuilder("LMB particles");
+            this.builder.bufferUsage(BufferUsage.STREAMING);
           }
         }
 
@@ -896,6 +900,7 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   private void renderPolyObj() {
     if(this.builder != null) {
       final Obj obj = this.builder.build();
+      obj.delete();
 
       for(int i = 0; i < this.zDepths.size(); i++) {
         this.transforms.identity();
@@ -904,7 +909,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
           .vertices(i * 6, 6);
       }
 
-      obj.delete();
       this.builder = null;
       this.zDepths.clear();
     }

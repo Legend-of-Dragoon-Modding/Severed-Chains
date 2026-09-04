@@ -2,6 +2,7 @@ package legend.game.combat.particles;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
 import legend.core.renderer.VertexOrder;
@@ -136,6 +137,7 @@ public class LineParticle extends ParticleEffectData98 {
   protected void renderLineParticles(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
       final Obj obj = new PolyBuilder("Line particle", VertexOrder.TRIANGLE_STRIP)
+        .bufferUsage(BufferUsage.STREAMING)
         .translucency(Translucency.B_PLUS_F)
         .addVertex(0.0f, 0.0f, 0.0f)
         .rgb(particleMetrics.colour0_40)
