@@ -24,10 +24,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.modding.coremod.CoreMod.AUTO_TEXT_CONFIG;
 import static legend.game.modding.coremod.CoreMod.AUTO_TEXT_DELAY_CONFIG;
 import static legend.game.modding.coremod.CoreMod.BATTLE_TRANSITION_MODE_CONFIG;
@@ -163,11 +165,13 @@ public final class ConfigPresetManager {
     final ConfigPreset vanilla = getVanillaDefaults();
     final ConfigPreset speedrunner = getSpeedrunnerDefaults();
 
-    return List.of(
-      new ConfigPresetEntry(null, severedChains.name, CompletableFuture.completedFuture(severedChains), false),
-      new ConfigPresetEntry(null, vanilla.name, CompletableFuture.completedFuture(vanilla), false),
-      new ConfigPresetEntry(null, speedrunner.name, CompletableFuture.completedFuture(speedrunner), false)
-    );
+    final List<ConfigPresetEntry> presets = new ArrayList<>();
+    presets.add(new ConfigPresetEntry(null, severedChains.name, CompletableFuture.completedFuture(severedChains), false));
+    presets.add(new ConfigPresetEntry(null, vanilla.name, CompletableFuture.completedFuture(vanilla), false));
+    presets.add(new ConfigPresetEntry(null, speedrunner.name, CompletableFuture.completedFuture(speedrunner), false));
+
+    EVENTS.postEvent(new ConfigDefaultPresetsEvent(presets));
+    return presets;
   }
 
   private static ConfigPreset getSeveredChainsDefaults() {
