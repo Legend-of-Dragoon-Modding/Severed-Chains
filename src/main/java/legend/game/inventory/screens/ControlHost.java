@@ -33,6 +33,8 @@ public abstract class ControlHost implements Iterable<Control> {
   protected abstract int getWidth();
   protected abstract int getHeight();
 
+  boolean deleted;
+
   public int calculateTotalX() {
     int x = this.getX();
 
@@ -69,6 +71,8 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected void delete() {
+    this.deleted = true;
+
     for(final Control control : this.controls) {
       control.delete();
     }
@@ -91,6 +95,10 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected void renderControls(final int parentX, final int parentY) {
+    if(this.deleted) {
+      return;
+    }
+
     this.controls.forEach(control -> control.renderControl(parentX, parentY));
   }
 

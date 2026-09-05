@@ -151,6 +151,10 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   final void renderScreen() {
+    if(this.deleted) {
+      return;
+    }
+
     this.runDeferredActions();
     this.render();
     this.renderControls(0, 0);
