@@ -26,7 +26,10 @@ public final class GameOverlay {
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = 1;
-      renderText(fps, RENDERER.getNativeWidth() - 4.0f + RENDERER.getWidescreenOrthoOffsetX(), 4.0f, FONT);
+      renderText(
+        fps, RENDERER.getNativeWidth() - 4.0f + RENDERER.getWidescreenOrthoOffsetX(), 4.0f, FONT,
+        (model, shadow) -> model.worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight())
+      );
       textZ_800bdf00 = oldZ;
     }
   }
