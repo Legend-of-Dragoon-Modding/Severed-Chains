@@ -1,7 +1,6 @@
 package legend.game.fmv;
 
 import legend.core.Config;
-import legend.core.MathHelper;
 import legend.core.audio.GenericSource;
 import legend.core.gpu.Bpp;
 import legend.core.platform.WindowEvents;
@@ -56,6 +55,8 @@ public final class VideoPlayer {
 
   private static GenericSource source;
   private static ByteBuffer pcmBuffer;
+  /** Used to end video when buffered audio loops */
+  private static float lastPosition;
 
   private static WindowEvents.KeyPressed keyPress;
   private static WindowEvents.ButtonPressed buttonPressed;
@@ -136,6 +137,7 @@ public final class VideoPlayer {
 
     pcmBuffer.flip();
     source.bufferOutput(pcmBuffer);
+    lastPosition = 0.0f;
 
     grabber.setFrameNumber(0);
     grabber.setCloseInputStream(true);
@@ -221,9 +223,11 @@ public final class VideoPlayer {
 
       DISCORD.tick();
 
-      if(!source.isActive() || MathHelper.flEq(source.getPosition(), 0.0f)) {
+      if(!source.isActive() || source.getPosition() < lastPosition) {
         stop();
       }
+
+      lastPosition = source.getPosition();
     });
   }
 
