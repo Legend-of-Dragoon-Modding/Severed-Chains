@@ -2,6 +2,7 @@ package legend.game.modding.coremod.config;
 
 import legend.core.IoHelper;
 import legend.core.audio.AudioThread;
+import legend.core.lang.RawText;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
@@ -16,7 +17,7 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
     super("", ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO, AudioDeviceConfig::serialize, bytes -> deserialize(bytes, ""));
 
     this.setEditControl((current, gameState) -> {
-      final Dropdown<String> dropdown = new Dropdown<>((i, s) -> s.replace("OpenAL Soft on ", ""));
+      final Dropdown<String> dropdown = new Dropdown<>((i, s) -> new RawText(s.replace("OpenAL Soft on ", "")));
       dropdown.onSelection(index -> gameState.setConfig(this, dropdown.getSelectedOption()));
       dropdown.addOption("<default>");
 
@@ -35,7 +36,10 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
   @Override
   public void onChange(final ConfigCollection configCollection, final String oldValue, final String newValue) {
     super.onChange(configCollection, oldValue, newValue);
-    AUDIO_THREAD.reinit();
+
+    if(!oldValue.equals(newValue)) {
+      AUDIO_THREAD.reinit();
+    }
   }
 
   private static byte[] serialize(final String val) {

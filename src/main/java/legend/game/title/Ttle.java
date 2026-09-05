@@ -39,12 +39,10 @@ import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
-import legend.game.inventory.screens.OptionsCategoryScreen;
+import legend.game.inventory.screens.OptionsPresetsScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.saves.ConfigStorage;
-import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.InvalidSaveException;
 import legend.game.saves.SaveFailedException;
 import legend.game.tim.Tim;
@@ -64,7 +62,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -517,10 +514,7 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForOptions() {
-    this.fadeOutToMenu(() -> new OptionsCategoryScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> {
-      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-      return false;
-    });
+    this.fadeOutToMenu(() -> new OptionsPresetsScreen((selectedIndex, presets) -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
   }
 
   private void fadeOutForLinks() {
