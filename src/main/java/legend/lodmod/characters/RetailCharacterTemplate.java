@@ -20,6 +20,7 @@ import legend.game.characters.LevelUpSource;
 import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.modding.events.characters.PostCharacterDragoonLevelUpEvent;
 import legend.game.modding.events.characters.PostCharacterLevelUpEvent;
@@ -156,10 +157,14 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
     final ListTag equipsTag = new ListTag();
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
-      final MapTag equipTag = new MapTag();
-      equipTag.set("slot", new EnumTag(slot));
-      equipTag.set("equipmentId", new RegistryIdTag(character.getEquipment(slot)));
-      equipsTag.add(equipTag);
+      final Equipment equipment = character.getEquipment(slot);
+
+      if(equipment != null) {
+        final MapTag equipTag = new MapTag();
+        equipTag.set("slot", new EnumTag(slot));
+        equipTag.set("equipmentId", new RegistryIdTag(equipment));
+        equipsTag.add(equipTag);
+      }
     }
     tag.set("equipment", equipsTag);
 
