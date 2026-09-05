@@ -25,6 +25,7 @@ import legend.game.i18n.I18n;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -310,6 +311,12 @@ public final class Fmv {
   private static void play(final String file, final boolean doubleSpeed) {
     LOGGER.info("Playing FMV %s", file);
 
+    // FMVs are borked on PAL, skipping for now. Wants a proper fix someday.
+    if(Unpacker.REGION.skipRetailFmvs) {
+      LOGGER.warn("Skipping FMV %s (%s video streams are not supported yet)", file, Unpacker.REGION);
+      return;
+    }
+
     shouldStop = false;
 
     final byte[] data = new byte[2352];
@@ -567,6 +574,11 @@ public final class Fmv {
             }
           }
         }
+      }
+
+      // PAL videos throw the odd 0x0 frame and GL chokes on it, just drop them
+      if(frameHeader.getWidth() <= 0 || frameHeader.getHeight() <= 0) {
+        return;
       }
 
       // Build YCbCr pixel array
