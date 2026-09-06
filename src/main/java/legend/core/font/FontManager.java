@@ -3,6 +3,7 @@ package legend.core.font;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
+import legend.core.lang.I18nText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class FontManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(FontManager.class);
 
-  private final Font INVALID = new Font(null, "INVALID", Char2ObjectMaps.emptyMap());
+  private final Font INVALID = new Font(null, new I18nText("lod_core.font.invalid.name"), Char2ObjectMaps.emptyMap());
 
   private final Map<Path, Font> fonts = new HashMap<>();
 
@@ -35,7 +36,7 @@ public class FontManager {
       final JSONObject jsonGlyphs = file.getJSONObject("glyphs");
 
       final Char2ObjectMap<Glyph> glyphs = new Char2ObjectOpenHashMap<>();
-      final Font font = new Font(path, name, glyphs);
+      final Font font = new Font(path, new I18nText(name), glyphs);
 
       for(final String key : jsonGlyphs.keySet()) {
         final char chr;

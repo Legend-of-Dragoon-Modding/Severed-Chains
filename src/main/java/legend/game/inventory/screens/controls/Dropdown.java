@@ -3,6 +3,7 @@ package legend.game.inventory.screens.controls;
 import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.font.Font;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
@@ -33,17 +34,13 @@ public class Dropdown<T> extends Control {
   private boolean allowWrapY = true;
 
   private final List<T> options = new ArrayList<>();
-  private final EntryToString<T> toString;
+  private final EntryToTextComponent<T> toString;
   private int hoverIndex = -1;
   private int selectedIndex = -1;
   private Font font = GameEngine.DEFAULT_FONT;
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
-  public Dropdown() {
-    this((i, e) -> e.toString());
-  }
-
-  public Dropdown(final EntryToString<T> toString) {
+  public Dropdown(final EntryToTextComponent<T> toString) {
     this.toString = toString;
     this.background = this.addControl(Panel.subtle());
 
@@ -244,7 +241,8 @@ public class Dropdown<T> extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(this.selectedIndex != -1) {
-      final String text = this.toString.toString(this.selectedIndex, this.options.get(this.selectedIndex));
+      final TextComponent textComponent = this.toString.toTextComponent(this.selectedIndex, this.options.get(this.selectedIndex));
+      final String text = textComponent.get();
 
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
@@ -286,7 +284,7 @@ public class Dropdown<T> extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.toString.toString(i, Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
+        renderText(Dropdown.this.toString.toTextComponent(i, Dropdown.this.options.get(i)).get(), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
       }
 
       textZ_800bdf00 = oldZ;
@@ -367,7 +365,7 @@ public class Dropdown<T> extends Control {
   }
 
   @FunctionalInterface
-  public interface EntryToString<T> {
-    String toString(final int index, final T entry);
+  public interface EntryToTextComponent<T> {
+    TextComponent toTextComponent(final int index, final T entry);
   }
 }

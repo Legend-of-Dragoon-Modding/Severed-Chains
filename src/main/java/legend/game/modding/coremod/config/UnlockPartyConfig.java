@@ -6,7 +6,7 @@ import legend.game.saves.ConfigStorageLocation;
 
 public class UnlockPartyConfig extends BoolConfigEntry {
   public UnlockPartyConfig() {
-    super(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(true, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
   }
 
   @Override

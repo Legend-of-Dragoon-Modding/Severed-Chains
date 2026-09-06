@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
+import legend.core.Config;
 import legend.core.GameEngine;
+import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
@@ -16,18 +18,26 @@ import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
+import legend.game.saves.CampaignType;
+import legend.game.saves.ConfigCollection;
+import legend.game.saves.ConfigEntry;
+import legend.game.saves.ConfigPresetEntry;
+import legend.game.saves.ConfigPresetManager;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveFailedException;
 import legend.game.types.GameState52c;
+import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
 import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +65,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private final Set<String> enabledMods = new HashSet<>();
 
   private final Textbox campaignName;
-  private final Dropdown<String> campaignType;
+  private final Dropdown<RegistryDelegate<CampaignType>> campaignType;
+  private final Dropdown<ConfigPresetEntry> optionPresets;
 
   private boolean unload;
 
@@ -76,24 +87,49 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignName.setZ(35);
     this.addRow(new I18nText("lod_core.ui.new_campaign.campaign_name"), this.campaignName);
 
-    this.campaignType = new Dropdown<>();
+    this.campaignType = new Dropdown<>((index, entry) -> new I18nText(entry.getTranslationKey()));
     this.campaignType.setZ(35);
     this.addRow(new I18nText("lod_core.ui.new_campaign.campaign"), this.campaignType);
 
-    final Map<String, RegistryId> campaignTypeIds = new HashMap<>();
-    final List<String> campaignTypeNames = new ArrayList<>();
+    final List<RegistryDelegate<CampaignType>> campaignTypes = new ArrayList<>();
     for(final RegistryId campaignTypeId : REGISTRIES.campaignTypes) {
-      final String name = I18n.translate(REGISTRIES.campaignTypes.getEntry(campaignTypeId));
-      campaignTypeNames.add(name);
-      campaignTypeIds.put(name, campaignTypeId);
+      campaignTypes.add(REGISTRIES.campaignTypes.getEntry(campaignTypeId));
     }
-    campaignTypeNames.sort(String::compareToIgnoreCase);
+    campaignTypes.sort(Comparator.comparing(e -> new I18nText(e.getTranslationKey()).get()));
+    campaignTypes.forEach(this.campaignType::addOption);
 
-    for(final String campaignTypeName : campaignTypeNames) {
-      this.campaignType.addOption(campaignTypeName);
+    this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = this.campaignType.getSelectedOption());
+    Scus94491BpeSegment_800b.campaignType = campaignTypes.getFirst();
+
+    this.optionPresets = new Dropdown<>((i, e) -> e.getName());
+    this.addRow(new I18nText("lod_core.ui.new_campaign.options_presets"), this.optionPresets);
+    ConfigPresetManager.loadDefaultPresets().forEach(this.optionPresets::addOption);
+    ConfigPresetManager.loadPresetList().forEach(this.optionPresets::addOption);
+    this.optionPresets.onSelection(this::onPresetSelected);
+
+    for(int i = 0; i < this.optionPresets.size(); i++) {
+      if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(Config.getLastConfigPreset())) {
+        this.optionPresets.setSelectedIndex(i);
+        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+        break;
+      }
     }
-    this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.get(index))));
-    Scus94491BpeSegment_800b.campaignType = REGISTRIES.campaignTypes.getEntry(campaignTypeIds.get(campaignTypeNames.getFirst()));
+
+    final Button editPresets = new Button(new I18nText("lod_core.ui.new_campaign.edit_presets"));
+    this.addRow(RawText.BLANK, editPresets);
+    editPresets.onPressed(() -> {
+      bootMods(MODS.getAllModIds());
+      this.deferAction(() -> this.getStack().pushScreen(new OptionsPresetsScreen((selectedIndex, presets) -> {
+        startFadeEffect(2, 10);
+        this.getStack().popScreen();
+        bootMods(this.enabledMods);
+
+        this.optionPresets.clearOptions();
+        presets.forEach(this.optionPresets::addOption);
+        this.optionPresets.setSelectedIndex(selectedIndex);
+        this.onPresetSelected(selectedIndex);
+      })));
+    });
 
     final Button options = new Button(new I18nText("lod_core.ui.new_campaign.options"));
     this.addRow(RawText.BLANK, options);
@@ -134,6 +170,39 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     saveSlots.setWidth(this.getWidth());
     saveSlots.getFontOptions().size(0.66f).horizontalAlign(HorizontalAlign.CENTRE);
     saveSlots.setY(200);
+  }
+
+  private void onPresetSelected(final int index) {
+    this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", this.optionPresets.getSelectedOption().getName()), MessageBoxType.CONFIRMATION, result -> {
+      if(result == MessageBoxResult.YES) {
+        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+      }
+    })));
+
+    Config.setLastConfigPreset(IoHelper.slugName(this.optionPresets.getSelectedOption().getName().get()));
+  }
+
+  private void updateConfig(final ConfigCollection newConfig) {
+    CONFIG.clearConfig();
+
+    final Map<RegistryId, Object> oldValues = new HashMap<>();
+
+    for(final RegistryId id : REGISTRIES.config) {
+      final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
+
+      if(config.storageLocation == ConfigStorageLocation.GLOBAL) {
+        oldValues.put(id, CONFIG.getConfig(config));
+      }
+    }
+
+    CONFIG.copyConfigFrom(newConfig);
+
+    for(final var entry : oldValues.entrySet()) {
+      final RegistryId id = entry.getKey();
+      final ConfigEntry config = REGISTRIES.config.getEntry(id).get();
+      config.onChange(CONFIG, oldValues.get(id), CONFIG.getConfig(config));
+    }
+    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
   }
 
   @Override
