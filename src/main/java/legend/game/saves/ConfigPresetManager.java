@@ -4,6 +4,7 @@ import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.memory.types.IntRef;
+import legend.core.tags.IntTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.StringTag;
 import legend.game.combat.BattleTransitionMode;
@@ -54,6 +55,7 @@ public final class ConfigPresetManager {
   private ConfigPresetManager() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(ConfigPresetManager.class);
+  private static final int FORMAT_VERSION = 1;
 
   private static final Path configPath = Path.of("config");
   public static final PathMatcher CONFIG_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.dpre");
@@ -122,6 +124,7 @@ public final class ConfigPresetManager {
       final IntRef offset = new IntRef();
       final MapTag tag = new MapTag();
       tag.deserialize(data, offset);
+      validatePresetFormat(tag);
 
       final String name = tag.get("name").asString().get();
 
@@ -142,6 +145,7 @@ public final class ConfigPresetManager {
     try {
       final MapTag tag = new MapTag();
       tag.set("name", new StringTag(name));
+      tag.set("formatVersion", new IntTag(FORMAT_VERSION));
 
       for(final ConfigStorageLocation location : ConfigStorageLocation.values()) {
         ConfigStorage.saveConfig(config, location, tag);
@@ -161,6 +165,13 @@ public final class ConfigPresetManager {
       GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_save_preset"));
       LOGGER.warn("Failed to save options preset %s", name, e);
       return null;
+    }
+  }
+
+  private static void validatePresetFormat(final MapTag tag) {
+    // Existing presets have no version tag and remain readable as legacy data.
+    if(tag.has("formatVersion") && tag.get("formatVersion").asInt().get() != FORMAT_VERSION) {
+      throw new IllegalArgumentException("Unsupported preset format version");
     }
   }
 
