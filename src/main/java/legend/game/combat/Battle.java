@@ -337,7 +337,8 @@ import static legend.lodmod.LodMod.disableRetailBattleActions;
 public class Battle extends EngineState<Battle> {
   private static final int DECLARATIVE_SPELL_EFFECTS_APPLIED = Integer.MIN_VALUE;
   private static final int BENT_TAKE_DAMAGE_ENTRYPOINT = 2;
-  private static final int SCRIPT_DAMAGE_STORAGE = 32;
+  private static final int BENT_APPLY_STATUS_ENTRYPOINT = 10;
+  private static final int SCRIPT_EFFECT_ARGUMENT_STORAGE = 32;
   private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
@@ -8705,6 +8706,7 @@ public class Battle extends EngineState<Battle> {
       (target, power) -> this.calculateDeclarativeSpellDamage(attacker, target, power)
     );
     final Map<BattleEntity27c, Integer> damageByTarget = new LinkedHashMap<>();
+    final Map<BattleEntity27c, Integer> statusByTarget = new LinkedHashMap<>();
     final Map<BattleEntity27c, Integer> remainingHpByTarget = new LinkedHashMap<>();
     boolean dealsDamage = false;
 
@@ -8720,7 +8722,10 @@ public class Battle extends EngineState<Battle> {
       final int remainingHp = remainingHpByTarget.computeIfAbsent(target, bent -> bent.stats.getStat(HP_STAT.get()).getCurrent());
       final int appliedVitalLoss = java.lang.Math.min(prepared.damage(), remainingHp);
       remainingHpByTarget.put(target, remainingHp - appliedVitalLoss);
-      this.spellEffectExecutor.complete(attacker, target, prepared, seed_800fa754, appliedVitalLoss);
+      final int statusEffect = this.spellEffectExecutor.complete(attacker, target, prepared, seed_800fa754, appliedVitalLoss);
+      if(statusEffect > 0) {
+        statusByTarget.putIfAbsent(target, statusEffect);
+      }
       damageByTarget.merge(target, prepared.damage(), Integer::sum);
     }
 
@@ -8729,8 +8734,11 @@ public class Battle extends EngineState<Battle> {
     }
 
     for(final Map.Entry<BattleEntity27c, Integer> entry : damageByTarget.entrySet()) {
-      if(entry.getValue() > 0) {
-        this.applyDeclarativeSpellDamage(entry.getKey(), entry.getValue());
+      final BattleEntity27c target = entry.getKey();
+      final ScriptState<?> damageContinuation = entry.getValue() > 0 ? this.applyDeclarativeSpellDamage(target, entry.getValue()) : null;
+      final Integer statusEffect = statusByTarget.get(target);
+      if(statusEffect != null) {
+        this.applyDeclarativeSpellStatus(target, statusEffect, damageContinuation);
       }
     }
 
@@ -8756,11 +8764,33 @@ public class Battle extends EngineState<Battle> {
     return damage;
   }
 
-  private void applyDeclarativeSpellDamage(final BattleEntity27c target, final int damage) {
+  private ScriptState<?> applyDeclarativeSpellDamage(final BattleEntity27c target, final int damage) {
     final ScriptState<? extends BattleEntity27c> targetState = battleState_8006e398.allBents_e0c.get(target.allBentSlot_274);
-    targetState.fork();
+    final ScriptState<?> continuation = targetState.fork();
     targetState.frame().offset = targetState.frame().file.getEntry(BENT_TAKE_DAMAGE_ENTRYPOINT);
-    targetState.setStor(SCRIPT_DAMAGE_STORAGE, damage);
+    targetState.setStor(SCRIPT_EFFECT_ARGUMENT_STORAGE, damage);
+    return continuation;
+  }
+
+  private void applyDeclarativeSpellStatus(final BattleEntity27c target, final int statusEffect, final ScriptState<?> damageContinuation) {
+    final ScriptState<? extends BattleEntity27c> targetState = battleState_8006e398.allBents_e0c.get(target.allBentSlot_274);
+    final ScriptState<?> pendingStatus = SCRIPTS.allocateScriptState("Declarative spell status", null);
+    pendingStatus.setTicker((state, ignored) -> {
+      if(SCRIPTS.getState(targetState.index) != targetState) {
+        state.deallocate();
+        return;
+      }
+
+      // The damage script consumes this continuation after shields, HP loss, and death handling.
+      if(damageContinuation != null && SCRIPTS.getState(damageContinuation.index) == damageContinuation) return;
+
+      if(target.stats.getStat(HP_STAT.get()).getCurrent() > 0) {
+        targetState.fork();
+        targetState.frame().offset = targetState.frame().file.getEntry(BENT_APPLY_STATUS_ENTRYPOINT);
+        targetState.setStor(SCRIPT_EFFECT_ARGUMENT_STORAGE, Integer.numberOfTrailingZeros(statusEffect));
+      }
+      state.deallocate();
+    });
   }
 
   private void validateDeclarativeSpellTargeting(final SpellStats0c spell, final List<SpellEffectPlan> plans) {
