@@ -125,9 +125,9 @@ public final class ConfigPresetManager {
       }
 
       return new ConfigPreset(new RawText(name), config);
-    } catch(final IOException e) {
+    } catch(final IOException | RuntimeException e) {
       GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_load_preset"));
-      LOGGER.warn("Failed to load options preset", e);
+      LOGGER.warn("Failed to load options preset %s", path, e);
       return null;
     }
   }
