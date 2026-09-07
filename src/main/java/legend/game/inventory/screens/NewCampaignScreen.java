@@ -6,6 +6,7 @@ import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputBindings;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.i18n.I18n;
@@ -74,6 +75,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     loadingNewGameState_800bdc34 = false;
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+    InputBindings.initBindings();
+    InputBindings.loadBindings(CONFIG);
     this.enabledMods.addAll(MODS.getAllModIds());
 
     deallocateRenderables(0xff);
@@ -196,6 +199,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     }
 
     CONFIG.copyConfigFrom(newConfig);
+    InputBindings.initBindings();
+    InputBindings.loadBindings(CONFIG);
 
     for(final var entry : oldValues.entrySet()) {
       final RegistryId id = entry.getKey();
