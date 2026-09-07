@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -26,10 +27,9 @@ public class ConfigPresetEntry {
   }
 
   public TextComponent getName() {
-    if(this.resolver.isDone()) {
-      try {
-        return this.resolver.get().name;
-      } catch(final InterruptedException | ExecutionException ignored) { }
+    if(this.resolver.isDone() && !this.resolver.isCompletedExceptionally()) {
+      final ConfigPreset preset = this.resolver.getNow(null);
+      if(preset != null) return preset.name;
     }
 
     return this.temporaryName;
@@ -38,9 +38,13 @@ public class ConfigPresetEntry {
   public @Nullable ConfigPreset getPreset() {
     try {
       return this.resolver.get();
-    } catch(final InterruptedException | ExecutionException e) {
-      LOGGER.warn("Failed to load preset " + this.getName(), e);
-      return null;
+    } catch(final InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOGGER.warn("Interrupted while loading preset " + this.temporaryName, e);
+    } catch(final ExecutionException | CancellationException e) {
+      LOGGER.warn("Failed to load preset " + this.temporaryName, e);
     }
+
+    return null;
   }
 }

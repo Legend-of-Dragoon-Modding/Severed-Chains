@@ -22,6 +22,7 @@ import legend.game.saves.Campaign;
 import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
+import legend.game.saves.ConfigPreset;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
 import legend.game.saves.ConfigStorage;
@@ -115,8 +116,9 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     for(int i = 0; i < this.optionPresets.size(); i++) {
       if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(Config.getLastConfigPreset())) {
         this.optionPresets.setSelectedIndex(i);
-        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
-        this.appliedPreset = Config.getLastConfigPreset();
+        if(this.applyPreset(this.optionPresets.getSelectedOption())) {
+          this.appliedPreset = Config.getLastConfigPreset();
+        }
         break;
       }
     }
@@ -181,14 +183,25 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private void onPresetSelected(final int index) {
     final ConfigPresetEntry preset = this.optionPresets.getOption(index);
     this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", preset.getName()), MessageBoxType.CONFIRMATION, result -> {
-      if(result == MessageBoxResult.YES) {
-        this.updateConfig(preset.getPreset().config);
+      if(result == MessageBoxResult.YES && this.applyPreset(preset)) {
         this.appliedPreset = IoHelper.slugName(preset.getName().get());
         Config.setLastConfigPreset(this.appliedPreset);
       } else {
         this.restorePresetSelection();
       }
     })));
+  }
+
+  private boolean applyPreset(final ConfigPresetEntry entry) {
+    final ConfigPreset preset = entry.getPreset();
+    if(preset == null) {
+      this.restorePresetSelection();
+      this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.options_presets.invalid_preset"), MessageBoxType.ALERT, result -> { })));
+      return false;
+    }
+
+    this.updateConfig(preset.config);
+    return true;
   }
 
   private void restorePresetSelection() {
