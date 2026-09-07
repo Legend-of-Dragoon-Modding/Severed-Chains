@@ -279,7 +279,7 @@ public class QuadBuilder {
       offset = this.setVertices(offset, vertices, quad);
     }
 
-    final Mesh mesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLE_STRIP, vertices, this.quads.size() * 4, (this.flags & TEXTURED_FLAG) != 0, this.translucency != null, this.translucency, this.bufferUsage);
+    final Mesh mesh = RENDERER.api().makeMesh(this.name, VertexOrder.TRIANGLE_STRIP, vertices, this.quads.size() * 4, (this.flags & TEXTURED_FLAG) != 0, this.translucency != null, this.translucency, this.bufferUsage);
 
     mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 

@@ -503,7 +503,7 @@ public class RenderEngine {
     this.scissorUniform = ShaderManager.addUniformBuffer("scissor", this.api.makeUniformBuffer((long)this.scissorBuffer.capacity() * Float.BYTES, ShaderUniformBuffer.SCISSOR));
     this.clutAnimationUniform = ShaderManager.addUniformBuffer("clutAnimation", this.api.makeUniformBuffer((long)this.clutAnimationBuffer.capacity() * Float.BYTES, ShaderUniformBuffer.CLUT_ANIMATION));
 
-    final Mesh postQuad = this.api.makeMesh(VertexOrder.TRIANGLES, new float[] {
+    final Mesh postQuad = this.api.makeMesh("Screen quad", VertexOrder.TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
        1.0f, -1.0f,  1.0f, 0.0f,
       -1.0f,  1.0f,  0.0f, 1.0f,
@@ -998,8 +998,9 @@ public class RenderEngine {
 
   /** Duplicates the passed in texture into a new texture. New texture must be deleted by the caller. Can only be called on the render thread. */
   public Texture copyTexture(final String copyName, final Texture texture) {
+    final String name = "Texture copier " + texture.name + " -> " + copyName;
     final Texture copy = Texture.copyAttributesFrom(copyName, texture);
-    final FrameBuffer buffer = FrameBuffer.create(builder -> builder.attachment(FrameBufferAttachmentType.COLOUR, copy));
+    final FrameBuffer buffer = FrameBuffer.create(name, builder -> builder.attachment(FrameBufferAttachmentType.COLOUR, copy));
     final Shader<CopyShaderOptions> shader = ShaderManager.getShader(COPY_SHADER);
     final CopyShaderOptions options = shader.makeOptions();
 
@@ -1018,7 +1019,7 @@ public class RenderEngine {
     shader.use();
     options.apply();
 
-    final Mesh mesh = this.api.makeMesh(VertexOrder.TRIANGLE_STRIP, new float[] {
+    final Mesh mesh = this.api.makeMesh(name, VertexOrder.TRIANGLE_STRIP, new float[] {
       0, 0, 0, 0,
       0, h, 0, 1,
       w, 0, 1, 0,
@@ -1317,7 +1318,7 @@ public class RenderEngine {
       }
 
       final int finalI = i;
-      this.renderBuffers[i] = FrameBuffer.create(builder -> {
+      this.renderBuffers[i] = FrameBuffer.create("Render buffer " + i, builder -> {
         builder.attachment(FrameBufferAttachmentType.COLOUR, this.renderTextures[finalI]);
         builder.attachment(FrameBufferAttachmentType.DEPTH, this.depthTexture);
       });

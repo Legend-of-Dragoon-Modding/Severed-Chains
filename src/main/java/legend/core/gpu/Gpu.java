@@ -161,7 +161,7 @@ public class Gpu {
     final float r = l + w;
     final float b = t + h;
 
-    this.displayMesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLE_STRIP, new float[] {
+    this.displayMesh = RENDERER.api().makeMesh("GPU display mesh", VertexOrder.TRIANGLE_STRIP, new float[] {
       l, t, 1.0f, 0, 0,
       l, b, 1.0f, 0, 1,
       r, t, 1.0f, 1, 0,

@@ -143,59 +143,39 @@ public class SdlWindow extends Window {
   }
 
   private void createOpenGlWindow(final String title, final int width, final int height, final long[] windowRef, final long[] contextRef) {
-    windowRef[0] = NULL;
-    contextRef[0] = NULL;
-
     LOGGER.info("Initializing OpenGL 3.3...");
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    if("true".equals(System.getenv("opengl_debug"))) {
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-    }
-
-    final long window = SDL_CreateWindow(title, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
-
-    if(window == NULL) {
-      LOGGER.warn("Failed to create SDL window: %s", SDL_GetError());
-      return;
-    }
-
-    final long context = this.createContext(window);
-
-    if(context == NULL) {
-      SDL_DestroyWindow(window);
-      return;
-    }
+    this.createGlWindow(title, width, height, SDL_GL_CONTEXT_PROFILE_CORE, 3, 3, windowRef, contextRef);
 
     final GLCapabilities caps = GL.createCapabilities();
 
     if(!caps.OpenGL33) {
       LOGGER.warn("OpenGL 3.3 is not supported");
-      SDL_DestroyWindow(window);
-      SDL_GL_DestroyContext(context);
-      return;
+      SDL_DestroyWindow(windowRef[0]);
+      SDL_GL_DestroyContext(contextRef[0]);
     }
-
-    windowRef[0] = window;
-    contextRef[0] = context;
   }
 
   private void createOpenGlesWindow(final String title, final int width, final int height, final long[] windowRef, final long[] contextRef) {
+    LOGGER.info("Initializing OpenGLES 3.2...");
+    this.createGlWindow(title, width, height, SDL_GL_CONTEXT_PROFILE_ES, 3, 2, windowRef, contextRef);
+
+    final GLESCapabilities caps = GLES.createCapabilities();
+
+    if(!caps.GLES32) {
+      LOGGER.warn("OpenGLES 3.2 is not supported");
+      SDL_DestroyWindow(windowRef[0]);
+      SDL_GL_DestroyContext(contextRef[0]);
+    }
+  }
+
+  private void createGlWindow(final String title, final int width, final int height, final int profile, final int majorVersion, final int minorVersion, final long[] windowRef, final long[] contextRef) {
     windowRef[0] = NULL;
     contextRef[0] = NULL;
 
-    LOGGER.info("Initializing OpenGLES 3.2...");
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-
-    if("true".equals(System.getenv("opengl_debug"))) {
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-    }
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, majorVersion);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minorVersion);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, profile);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
     final long window = SDL_CreateWindow(title, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
 
@@ -208,15 +188,6 @@ public class SdlWindow extends Window {
 
     if(context == NULL) {
       SDL_DestroyWindow(window);
-      return;
-    }
-
-    final GLESCapabilities caps = GLES.createCapabilities();
-
-    if(!caps.GLES32) {
-      LOGGER.warn("OpenGLES 3.2 is not supported");
-      SDL_DestroyWindow(window);
-      SDL_GL_DestroyContext(context);
       return;
     }
 

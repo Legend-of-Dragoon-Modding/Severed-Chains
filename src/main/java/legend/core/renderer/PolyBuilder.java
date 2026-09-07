@@ -188,7 +188,7 @@ public class PolyBuilder {
       this.setVertex(vertices, i);
     }
 
-    final Mesh mesh = RENDERER.api().makeMesh(this.vertexOrder, vertices, this.vertices.size(), (this.flags & TEXTURED_FLAG) != 0, this.translucency != null, this.translucency, this.bufferUsage);
+    final Mesh mesh = RENDERER.api().makeMesh(this.name, this.vertexOrder, vertices, this.vertices.size(), (this.flags & TEXTURED_FLAG) != 0, this.translucency != null, this.translucency, this.bufferUsage);
 
     mesh.attribute(0, 0L, POS_SIZE, VERTEX_SIZE);
 
