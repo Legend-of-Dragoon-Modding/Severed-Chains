@@ -89,8 +89,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
   }
 
   private void onDeleteResult(final MessageBoxResult result) {
-    if(result == MessageBoxResult.YES) {
-      ConfigPresetManager.deletePreset(this.presetList.getSelectedOption());
+    if(result == MessageBoxResult.YES && ConfigPresetManager.deletePreset(this.presetList.getSelectedOption())) {
       this.presetList.removeOption(this.presetList.getSelectedIndex());
       this.onPresetSelected(this.presetList.getSelectedIndex());
     }
@@ -130,6 +129,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
   private void onSaveChangesResult(final MessageBoxResult result, final String name, final ConfigCollection config, @Nullable final ConfigCollection originalConfig) {
     if(result == MessageBoxResult.YES) {
       final Path path = ConfigPresetManager.savePreset(name, config);
+      if(path == null) return;
 
       if(originalConfig == null) {
         // We aren't editing an existing preset, add a new one to the list
