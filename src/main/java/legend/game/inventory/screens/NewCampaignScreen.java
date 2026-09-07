@@ -68,6 +68,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private final Textbox campaignName;
   private final Dropdown<RegistryDelegate<CampaignType>> campaignType;
   private final Dropdown<ConfigPresetEntry> optionPresets;
+  private String appliedPreset;
 
   private boolean unload;
 
@@ -109,11 +110,13 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     ConfigPresetManager.loadDefaultPresets().forEach(this.optionPresets::addOption);
     ConfigPresetManager.loadPresetList().forEach(this.optionPresets::addOption);
     this.optionPresets.onSelection(this::onPresetSelected);
+    this.appliedPreset = IoHelper.slugName(this.optionPresets.getSelectedOption().getName().get());
 
     for(int i = 0; i < this.optionPresets.size(); i++) {
       if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(Config.getLastConfigPreset())) {
         this.optionPresets.setSelectedIndex(i);
         this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+        this.appliedPreset = Config.getLastConfigPreset();
         break;
       }
     }
@@ -176,13 +179,27 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   }
 
   private void onPresetSelected(final int index) {
-    this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", this.optionPresets.getSelectedOption().getName()), MessageBoxType.CONFIRMATION, result -> {
+    final ConfigPresetEntry preset = this.optionPresets.getOption(index);
+    this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", preset.getName()), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
-        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+        this.updateConfig(preset.getPreset().config);
+        this.appliedPreset = IoHelper.slugName(preset.getName().get());
+        Config.setLastConfigPreset(this.appliedPreset);
+      } else {
+        this.restorePresetSelection();
       }
     })));
+  }
 
-    Config.setLastConfigPreset(IoHelper.slugName(this.optionPresets.getSelectedOption().getName().get()));
+  private void restorePresetSelection() {
+    this.optionPresets.setSelectedIndex(-1);
+
+    for(int i = 0; i < this.optionPresets.size(); i++) {
+      if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(this.appliedPreset)) {
+        this.optionPresets.setSelectedIndex(i);
+        return;
+      }
+    }
   }
 
   private void updateConfig(final ConfigCollection newConfig) {
