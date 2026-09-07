@@ -84,6 +84,7 @@ import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
 import static org.lwjgl.opengl.GL14C.glBlendEquation;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER_BINDING;
 import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER_BINDING;
+import static org.lwjgl.opengl.GL20C.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.opengl.GL30C.GL_CONTEXT_FLAGS;
 import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
@@ -95,7 +96,10 @@ import static org.lwjgl.opengl.GL43C.GL_CONTEXT_FLAG_DEBUG_BIT;
 import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT_SYNCHRONOUS;
 import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_HIGH;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_LOW;
 import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_MEDIUM;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_NOTIFICATION;
+import static org.lwjgl.opengl.GL43C.GL_PROGRAM;
 import static org.lwjgl.opengl.GL43C.glDebugMessageCallback;
 import static org.lwjgl.opengl.GL43C.glDebugMessageControl;
 import static org.lwjgl.opengl.GL43C.glGetObjectLabel;
@@ -136,9 +140,13 @@ public class GlApi implements RenderApi {
 
       glEnable(GL_DEBUG_OUTPUT);
       glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, (int[])null, false);
+      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, (int[])null, false);
       glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, (int[])null, true);
+      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, (int[])null, true);
 
       final GLDebugMessageCallback customCallbackRef = GLDebugMessageCallback.create((source, type, id, severity, length, message, userParam) -> {
+        final String shaderName = this.getObjectName(GL_CURRENT_PROGRAM,  GL_PROGRAM);
         final String textureName = this.getObjectName(GL_TEXTURE_BINDING_2D, GL_TEXTURE);
         final String framebufferName = this.getObjectName(GL_FRAMEBUFFER_BINDING, GL_FRAMEBUFFER);
         final String vertexArrayName = this.getObjectName(GL_VERTEX_ARRAY_BINDING, GL_VERTEX_ARRAY);
@@ -154,6 +162,7 @@ public class GlApi implements RenderApi {
         };
 
         LOGGER.log(logLevel, "GL %s %d: %s", logLevel, id, msgText);
+        LOGGER.log(logLevel, "Active shader: %s", shaderName);
         LOGGER.log(logLevel, "Active texture: %s", textureName);
         LOGGER.log(logLevel, "Active framebuffer: %s", framebufferName);
         LOGGER.log(logLevel, "Active VAO: %s", vertexArrayName);
@@ -232,13 +241,13 @@ public class GlApi implements RenderApi {
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlShader<>(vert, frag, options);
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    return new GlShader<>(name, vert, frag, options);
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlShader<>(vert, geom, frag, options);
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    return new GlShader<>(name, vert, geom, frag, options);
   }
 
   @Override

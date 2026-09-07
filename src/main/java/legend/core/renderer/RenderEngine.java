@@ -127,7 +127,7 @@ public class RenderEngine {
   private boolean turnOrderModSearched;
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
-    options -> loadShader("simple", "simple", options),
+    options -> loadShader("Simple", "simple", "simple", options),
     shader -> {
       shader.bindUniformBlock("transforms", ShaderUniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", ShaderUniformBuffer.TRANSFORM2);
@@ -138,7 +138,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<CopyShaderOptions> COPY_SHADER = new ShaderType<>(
-    options -> loadShader("copy", "copy", options),
+    options -> loadShader("Copy", "copy", "copy", options),
     shader -> {
       final ShaderUniformMat4 projection = shader.uniformMat4("projection");
       return () -> new CopyShaderOptions(projection);
@@ -146,7 +146,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsStandard> STANDARD_SHADER = new ShaderType<>(
-    options -> loadShader("standard", "standard", options),
+    options -> loadShader("Standard", "standard", "standard", options),
     shader -> {
       shader.use();
       shader.uniformInt("tex24").set(0);
@@ -171,7 +171,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsTmd> TMD_SHADER = new ShaderType<>(
-    options -> loadShader("tmd", "tmd", "tmd", options),
+    options -> loadShader("TMD", "tmd", "tmd", "tmd", options),
     shader -> {
       shader.use();
       shader.uniformInt("tex24").set(0);
@@ -195,7 +195,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsBattleTmd> BATTLE_TMD_SHADER = new ShaderType<>(
-    options -> loadShader("battle_tmd", "tmd", "battle_tmd", options),
+    options -> loadShader("Battle TMD", "battle_tmd", "tmd", "battle_tmd", options),
     shader -> {
       shader.use();
       shader.uniformInt("tex24").set(0);
@@ -221,7 +221,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsScreen> SCREEN_SHADER = new ShaderType<>(
-    options -> loadShader("post", "screen", options),
+    options -> loadShader("Post", "post", "screen", options),
     shader -> {
       final ShaderUniformInt enableCrt = shader.uniformInt("enableCrt");
       final ShaderUniformFloat time = shader.uniformFloat("time");
@@ -440,17 +440,17 @@ public class RenderEngine {
     Texture.setShouldLog(true);
   }
 
-  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
+  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String name, final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
-      return RENDERER.api.makeShader(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+      return RENDERER.api.makeShader(name, Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String vsh, final String gsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
+  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String name, final String vsh, final String gsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
-      return RENDERER.api.makeShader(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+      return RENDERER.api.makeShader(name, Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
