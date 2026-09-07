@@ -186,8 +186,6 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   }
 
   private void updateConfig(final ConfigCollection newConfig) {
-    CONFIG.clearConfig();
-
     final Map<RegistryId, Object> oldValues = new HashMap<>();
 
     for(final RegistryId id : REGISTRIES.config) {
@@ -198,6 +196,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       }
     }
 
+    CONFIG.clearConfig();
     CONFIG.copyConfigFrom(newConfig);
     InputBindings.initBindings();
     InputBindings.loadBindings(CONFIG);
