@@ -16,8 +16,18 @@ import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.REGISTRIES;
 
 public class ConfigCollection {
+  private final boolean notifyChanges;
   private final Map<RegistryId, Object> configValues = new HashMap<>();
   private final Map<RegistryId, Set<String>> locked = new HashMap<>();
+
+  public ConfigCollection() {
+    this(true);
+  }
+
+  /** Use false for detached edits that must not change runtime state or post events. */
+  public ConfigCollection(final boolean notifyChanges) {
+    this.notifyChanges = notifyChanges;
+  }
 
   public <T> T getConfig(final ConfigEntry<T> config) {
     //noinspection unchecked
@@ -27,8 +37,10 @@ public class ConfigCollection {
   public <T> void setConfig(final ConfigEntry<T> config, final T value) {
     final T oldValue = this.getConfig(config);
     this.setConfigQuietly(config, value);
-    config.onChange(this, oldValue, value);
-    EVENTS.postEvent(new ConfigUpdatedEvent(config));
+    if(this.notifyChanges) {
+      config.onChange(this, oldValue, value);
+      EVENTS.postEvent(new ConfigUpdatedEvent(config));
+    }
   }
 
   /** Doesn't trigger onChange */

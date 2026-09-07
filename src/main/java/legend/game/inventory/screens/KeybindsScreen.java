@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -35,6 +36,7 @@ import static legend.game.sound.Audio.playMenuSound;
 public class KeybindsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
   private final ConfigCollection config;
+  private final ConfigCollection originalBindings;
 
   public KeybindsScreen(final ConfigCollection config, final Runnable unload) {
     deallocateRenderables(0xff);
@@ -42,6 +44,11 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
     this.config = config;
     this.unload = unload;
+
+    this.originalBindings = config != CONFIG ? new ConfigCollection(false) : null;
+    if(this.originalBindings != null) {
+      InputBindings.saveBindings(this.originalBindings);
+    }
 
     InputBindings.initBindings();
     InputBindings.loadBindings(config);
@@ -124,6 +131,10 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     if(action == INPUT_ACTION_MENU_BACK.get()) {
       playMenuSound(3);
       InputBindings.saveBindings(this.config);
+      if(this.originalBindings != null) {
+        InputBindings.initBindings();
+        InputBindings.loadBindings(this.originalBindings);
+      }
       this.unload.run();
       return InputPropagation.HANDLED;
     }
