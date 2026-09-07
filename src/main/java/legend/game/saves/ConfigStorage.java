@@ -2,10 +2,12 @@ package legend.game.saves;
 
 import legend.core.lang.I18nText;
 import legend.core.memory.types.IntRef;
+import legend.core.tags.IntTag;
 import legend.core.tags.ListTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.RawTag;
 import legend.core.tags.RegistryIdTag;
+import legend.core.tags.StringTag;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.ui.GameOverlay;
@@ -169,7 +171,7 @@ public final class ConfigStorage {
           throw new IllegalArgumentException("Incorrect storage location for " + configId);
         }
 
-        loadConfigValue(configs, configEntry, configTag);
+        loadConfigValue(configs, configEntry, configTag, tag.has("formatVersion"));
       } catch(final RuntimeException e) {
         skipped++;
         LOGGER.warn("Skipping preset setting %s at %s[%d]", configId, storageLocation, configIndex, e);
@@ -184,7 +186,15 @@ public final class ConfigStorage {
     RENDERER.setFrameSkipOption(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get()));
   }
 
-  private static <T> void loadConfigValue(final ConfigCollection configs, final ConfigEntry<T> configEntry, final MapTag configTag) {
+  private static <T> void loadConfigValue(final ConfigCollection configs, final ConfigEntry<T> configEntry, final MapTag configTag, final boolean requireSchema) {
+    if(requireSchema || configTag.has("valueType") || configTag.has("schemaVersion")) {
+      final String valueType = configTag.get("valueType").asString().get();
+      final int schemaVersion = configTag.get("schemaVersion").asInt().get();
+      if(!configEntry.getPresetValueType().equals(valueType) || schemaVersion <= 0 || schemaVersion != configEntry.getPresetSchemaVersion()) {
+        throw new IllegalArgumentException("Incompatible preset type/schema " + valueType + '/' + schemaVersion + " for " + configEntry.getRegistryId());
+      }
+    }
+
     final byte[] data = configTag.get("data").asRaw().get();
     final T value = Objects.requireNonNull(configEntry.deserializer.apply(data), "Config deserializer returned null");
     configs.setConfigQuietly(configEntry, value);
@@ -207,6 +217,7 @@ public final class ConfigStorage {
           locationTag.add(configTag);
 
           configTag.set("configId", new RegistryIdTag(configId));
+          saveConfigSchema(configEntry, configTag);
           //noinspection unchecked
           configTag.set("data", new RawTag((byte[])configEntry.serializer.apply(value)));
         } else {
@@ -214,5 +225,16 @@ public final class ConfigStorage {
         }
       }
     }
+  }
+
+  private static void saveConfigSchema(final ConfigEntry<?> configEntry, final MapTag configTag) {
+    final String valueType = configEntry.getPresetValueType();
+    final int schemaVersion = configEntry.getPresetSchemaVersion();
+    if(valueType == null || valueType.isBlank() || schemaVersion <= 0) {
+      throw new IllegalArgumentException("Invalid preset schema for " + configEntry.getRegistryId());
+    }
+
+    configTag.set("valueType", new StringTag(valueType));
+    configTag.set("schemaVersion", new IntTag(schemaVersion));
   }
 }
