@@ -136,7 +136,7 @@ public class GlApi implements RenderApi {
 
       glEnable(GL_DEBUG_OUTPUT);
       glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, (int[])null, true);
+      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, (int[])null, true);
 
       final GLDebugMessageCallback customCallbackRef = GLDebugMessageCallback.create((source, type, id, severity, length, message, userParam) -> {
         final String textureName = this.getObjectName(GL_TEXTURE_BINDING_2D, GL_TEXTURE);
