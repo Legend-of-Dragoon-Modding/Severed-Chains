@@ -690,7 +690,7 @@ public class RenderEngine {
 
         // bind backbuffer
         this.api.unbindFramebuffer();
-        this.api.clear(false, true, true);
+        this.api.clear(false, true, false);
 
         // use screen shader
         screenShader.use();
