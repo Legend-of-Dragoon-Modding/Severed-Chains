@@ -10,7 +10,6 @@ import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
 import static legend.core.GameEngine.AUDIO_THREAD;
-import static legend.core.GameEngine.CONFIG;
 
 public class AudioDeviceConfig extends ConfigEntry<String> {
   public AudioDeviceConfig() {
@@ -18,13 +17,13 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
 
     this.setEditControl((current, gameState) -> {
       final Dropdown<String> dropdown = new Dropdown<>((i, s) -> new RawText(s.replace("OpenAL Soft on ", "")));
-      dropdown.onSelection(index -> gameState.setConfig(this, dropdown.getSelectedOption()));
+      dropdown.onSelection(index -> gameState.setConfig(this, index == 0 ? "" : dropdown.getSelectedOption()));
       dropdown.addOption("<default>");
 
       for(final String device : AudioThread.getDevices()) {
         dropdown.addOption(device);
 
-        if(device.equals(CONFIG.getConfig(this))) {
+        if(device.equals(current)) {
           dropdown.setSelectedIndex(dropdown.size() - 1);
         }
       }
