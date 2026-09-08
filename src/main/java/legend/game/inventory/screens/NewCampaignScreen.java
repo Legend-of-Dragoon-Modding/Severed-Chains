@@ -106,7 +106,10 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = this.campaignType.getSelectedOption());
     Scus94491BpeSegment_800b.campaignType = campaignTypes.getFirst();
 
-    this.optionPresets = new Dropdown<>((i, e) -> e.getName());
+    this.optionPresets = new Dropdown<>((i, e) ->
+      IoHelper.slugName(e.getName().get()).equals(this.appliedPreset)
+        ? CONFIG.getPresetDisplayName() : e.getName()
+    );
     this.addRow(new I18nText("lod_core.ui.new_campaign.options_presets"), this.optionPresets);
     ConfigPresetManager.loadDefaultPresets().forEach(this.optionPresets::addOption);
     ConfigPresetManager.loadPresetList().forEach(this.optionPresets::addOption);
@@ -131,6 +134,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
         bootMods(this.enabledMods);
+        CONFIG.refreshPreset();
 
         this.optionPresets.clearOptions();
         presets.forEach(this.optionPresets::addOption);
@@ -143,6 +147,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, options);
     options.onPressed(() ->
       this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+        CONFIG.refreshPreset();
         startFadeEffect(2, 10);
         this.getStack().popScreen();
 
@@ -157,6 +162,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       this.deferAction(() ->
         this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
           bootMods(this.enabledMods);
+          CONFIG.refreshPreset();
 
           startFadeEffect(2, 10);
           this.getStack().popScreen();
@@ -201,6 +207,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     }
 
     this.updateConfig(preset.config);
+    CONFIG.setPreset(preset.name);
     return true;
   }
 
