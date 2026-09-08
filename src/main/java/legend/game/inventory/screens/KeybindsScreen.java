@@ -19,6 +19,7 @@ import legend.game.types.MessageBoxResult;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -31,12 +32,14 @@ import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.SItem.menuStack;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
+import static legend.game.modding.coremod.CoreMod.CONTROLLER_KEYBINDS_CONFIG;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class KeybindsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
   private final ConfigCollection config;
   private final ConfigCollection originalBindings;
+  private final byte[] openingBindings;
 
   public KeybindsScreen(final ConfigCollection config, final Runnable unload) {
     deallocateRenderables(0xff);
@@ -53,6 +56,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     InputBindings.initBindings();
     InputBindings.loadBindings(config);
 
+    this.openingBindings = snapshotBindings();
     this.addControl(new Background());
 
     final List<InputAction> actions = new ArrayList<>();
@@ -86,6 +90,13 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         this.addRow(new I18nText(action.getTranslationKey()), control);
       }
     }
+  }
+
+  private static byte[] snapshotBindings() {
+    final ConfigCollection bindings = new ConfigCollection(false);
+    InputBindings.saveBindings(bindings);
+    final var entry = CONTROLLER_KEYBINDS_CONFIG.get();
+    return entry.serializer.apply(bindings.getConfig(entry));
   }
 
   private String actionToString(final InputAction action) {
@@ -130,7 +141,9 @@ public class KeybindsScreen extends VerticalLayoutScreen {
 
     if(action == INPUT_ACTION_MENU_BACK.get()) {
       playMenuSound(3);
-      InputBindings.saveBindings(this.config);
+      if(!Arrays.equals(this.openingBindings, snapshotBindings())) {
+        InputBindings.saveBindings(this.config);
+      }
       if(this.originalBindings != null) {
         InputBindings.initBindings();
         InputBindings.loadBindings(this.originalBindings);
