@@ -18,6 +18,8 @@ lod_core.font.invalid.name=<INVALID>
 
 # Config presets
 lod_core.config_presets.severed_chains=Severed Chains
+lod_core.config_presets.modified=%s (Modified)
+lod_core.config_presets.custom=Custom configuration
 lod_core.config_presets.vanilla=Vanilla
 lod_core.config_presets.speedrunner=Speedrunner
 

@@ -81,6 +81,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
 
     final ConfigCollection newConfig = new ConfigCollection(false);
     newConfig.copyConfigFrom(preset.config);
+    newConfig.setPreset(preset.name);
     this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.allOf(ConfigStorageLocation.class), () -> this.onOptionsClosed(preset.name.get(), newConfig, preset.config))));
   }
 
@@ -114,6 +115,8 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
       if(oldConfig != null) {
         newConfig.copyConfigFrom(oldConfig);
       }
+
+      newConfig.setPreset(new RawText(name));
 
       // Open the regular config editor
       this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.allOf(ConfigStorageLocation.class), () -> this.onOptionsClosed(name, newConfig, null))));
