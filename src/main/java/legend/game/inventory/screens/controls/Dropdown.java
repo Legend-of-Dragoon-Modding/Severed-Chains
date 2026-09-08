@@ -26,9 +26,7 @@ import static legend.game.sound.Audio.playMenuSound;
 
 public class Dropdown<T> extends Control {
   private final Panel background;
-  private final Panel panel;
   private final Glyph downArrow;
-  private final Brackets highlight;
 
   /** Allows list wrapping, but only on new input */
   private boolean allowWrapY = true;
@@ -43,37 +41,6 @@ public class Dropdown<T> extends Control {
   public Dropdown(final EntryToTextComponent<T> toString) {
     this.toString = toString;
     this.background = this.addControl(Panel.subtle());
-
-    this.panel = Panel.panel();
-    this.panel.setZ(10);
-
-    this.highlight = this.panel.addControl(new Brackets());
-    this.highlight.setPos(6, 8);
-    this.highlight.setZ(this.panel.getZ() - 2);
-    this.highlight.setHeight((int)(16 * this.getScale()));
-
-    this.panel.onMouseMove((x, y) -> {
-      for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
-          this.hover(i);
-          return InputPropagation.HANDLED;
-        }
-      }
-
-      return InputPropagation.PROPAGATE;
-    });
-
-    this.panel.onMouseClick((x, y, button, mods) -> {
-      for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * this.getScale()), this.getWidth(), (int)(16 * this.getScale()))) {
-          this.select(i);
-          this.panel.getScreen().getStack().popScreen();
-          return InputPropagation.HANDLED;
-        }
-      }
-
-      return InputPropagation.PROPAGATE;
-    });
 
     this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.ignoreInput();
@@ -99,7 +66,6 @@ public class Dropdown<T> extends Control {
 
   public void clearOptions() {
     this.options.clear();
-    this.panel.setHeight(17);
     this.selectedIndex = -1;
   }
 
@@ -109,7 +75,6 @@ public class Dropdown<T> extends Control {
 
   public void addOption(final T option) {
     this.options.add(option);
-    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
 
     if(this.selectedIndex == -1) {
       this.setSelectedIndex(0);
@@ -118,13 +83,11 @@ public class Dropdown<T> extends Control {
 
   public void removeOption(final T option) {
     this.options.remove(option);
-    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
     this.setSelectedIndex(this.selectedIndex);
   }
 
   public void removeOption(final int index) {
     this.options.remove(index);
-    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
     this.setSelectedIndex(this.selectedIndex);
   }
 
@@ -172,8 +135,6 @@ public class Dropdown<T> extends Control {
     this.fontOptions.size(scale);
     this.downArrow.setScale(scale);
     this.downArrow.setPos(this.getWidth() - 1, (this.getHeight() - 17) / 2);
-    this.highlight.setHeight((int)(16 * this.getScale()));
-    this.panel.setHeight((int)(17 + this.options.size() * 16 * this.getScale()));
   }
 
   @Override
@@ -196,22 +157,6 @@ public class Dropdown<T> extends Control {
 
   private void showDropdown() {
     this.getScreen().getStack().pushScreen(new DropdownScreen());
-    this.hover(this.selectedIndex);
-  }
-
-  private void hover(final int index) {
-    if(index == -1) {
-      this.highlight.hide();
-    } else {
-      if(this.hoverIndex != -1 && this.hoverIndex != index) {
-        playMenuSound(1);
-      }
-
-      this.highlight.show();
-    }
-
-    this.hoverIndex = index;
-    this.highlight.setY((int)(8 + index * 16 * this.getScale()));
   }
 
   private void select(final int index) {
@@ -260,31 +205,80 @@ public class Dropdown<T> extends Control {
   @FunctionalInterface public interface Selection { void selection(final int index); }
 
   private class DropdownScreen extends MenuScreen {
+    private final Panel panel;
+    private final Brackets highlight;
+
     private DropdownScreen() {
-      final Panel panel = Dropdown.this.panel;
+      this.panel = this.addControl(Panel.panel());
+      this.panel.setZ(10);
 
-      this.addControl(panel);
-      panel.setPos(Dropdown.this.calculateTotalX() - 6, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
+      this.highlight = this.panel.addControl(new Brackets());
+      this.highlight.setPos(6, 8);
+      this.highlight.setZ(this.panel.getZ() - 2);
+      this.highlight.setHeight((int)(16 * Dropdown.this.getScale()));
 
-      if(panel.getY() + panel.getHeight() > this.getHeight()) {
-        panel.setY(Dropdown.this.calculateTotalY() - panel.getHeight());
+      this.panel.onMouseMove((x, y) -> {
+        for(int i = 0; i < Dropdown.this.options.size(); i++) {
+          if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * Dropdown.this.getScale()), Dropdown.this.getWidth(), (int)(16 * Dropdown.this.getScale()))) {
+            this.hover(i);
+            return InputPropagation.HANDLED;
+          }
+        }
+
+        return InputPropagation.PROPAGATE;
+      });
+
+      this.panel.onMouseClick((x, y, button, mods) -> {
+        for(int i = 0; i < Dropdown.this.options.size(); i++) {
+          if(MathHelper.inBox((int)x, (int)y, 6, (int)(10 + i * 16 * Dropdown.this.getScale()), Dropdown.this.getWidth(), (int)(16 * Dropdown.this.getScale()))) {
+            Dropdown.this.select(i);
+            this.panel.getScreen().getStack().popScreen();
+            return InputPropagation.HANDLED;
+          }
+        }
+
+        return InputPropagation.PROPAGATE;
+      });
+
+      this.panel.setHeight((int)(17 + Dropdown.this.options.size() * 16 * Dropdown.this.getScale()));
+      this.panel.setPos(Dropdown.this.calculateTotalX() - 6, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
+
+      if(this.panel.getY() + this.panel.getHeight() > this.getHeight()) {
+        this.panel.setY(Dropdown.this.calculateTotalY() - this.panel.getHeight());
       }
 
-      if(panel.getY() < 0) {
-        panel.setY(0);
+      if(this.panel.getY() < 0) {
+        this.panel.setY(0);
       }
 
-      panel.setWidth(Dropdown.this.getWidth() + 12);
-      Dropdown.this.highlight.setWidth(Dropdown.this.getWidth());
+      this.panel.setWidth(Dropdown.this.getWidth() + 12);
+      this.highlight.setWidth(Dropdown.this.getWidth());
+
+      this.hover(Dropdown.this.selectedIndex);
+    }
+
+    private void hover(final int index) {
+      if(index == -1) {
+        this.highlight.hide();
+      } else {
+        if(Dropdown.this.hoverIndex != -1 && Dropdown.this.hoverIndex != index) {
+          playMenuSound(1);
+        }
+
+        this.highlight.show();
+      }
+
+      Dropdown.this.hoverIndex = index;
+      this.highlight.setY((int)(8 + index * 16 * Dropdown.this.getScale()));
     }
 
     @Override
     protected void render() {
       final int oldZ = textZ_800bdf00;
-      textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
+      textZ_800bdf00 = this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.toString.toTextComponent(i, Dropdown.this.options.get(i)).get(), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
+        renderText(Dropdown.this.toString.toTextComponent(i, Dropdown.this.options.get(i)).get(), this.panel.getX() + 10, this.panel.getY() + 10 + i * 16 * Dropdown.this.getScale() - 1, Dropdown.this.fontOptions);
       }
 
       textZ_800bdf00 = oldZ;
@@ -310,9 +304,9 @@ public class Dropdown<T> extends Control {
       if(action == INPUT_ACTION_MENU_UP.get()) {
         final int optionCount = Dropdown.this.options.size();
         if(Dropdown.this.hoverIndex != 0) {
-          Dropdown.this.hover(Dropdown.this.hoverIndex - 1);
+          this.hover(Dropdown.this.hoverIndex - 1);
         } else if(optionCount > 1 && Dropdown.this.allowWrapY) {
-          Dropdown.this.hover(optionCount - 1);
+          this.hover(optionCount - 1);
         }
         Dropdown.this.allowWrapY = false;
         return InputPropagation.HANDLED;
@@ -321,9 +315,9 @@ public class Dropdown<T> extends Control {
       if(action == INPUT_ACTION_MENU_DOWN.get()) {
         final int optionCount = Dropdown.this.options.size();
         if(Dropdown.this.hoverIndex != optionCount - 1) {
-          Dropdown.this.hover(Dropdown.this.hoverIndex + 1);
+          this.hover(Dropdown.this.hoverIndex + 1);
         } else if(optionCount > 1 && Dropdown.this.allowWrapY) {
-          Dropdown.this.hover(0);
+          this.hover(0);
         }
         Dropdown.this.allowWrapY = false;
         return InputPropagation.HANDLED;
