@@ -111,6 +111,8 @@ import legend.game.modding.events.battle.BattleMusicEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.CombatantModelLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
+import legend.game.modding.events.battle.LoadDeffEvent;
+import legend.game.modding.events.battle.LoadEnemyEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -6708,22 +6710,24 @@ public class Battle extends EngineState<Battle> {
     this.loadedDeff_800c6938.script_14 = null;
     this.deffLoadingStage_800fafe8 = 1;
 
+    final LoadDeffEvent event = EVENTS.postEvent(new LoadDeffEvent(this, tims, deff));
+
     Loader
-      .loadDirectory(tims)
+      .loadDirectory(event.tims)
       .thenAccept(this::uploadTims)
     ;
 
     Loader
-      .loadDirectory(deff.resolve("0"))
+      .loadDirectory(event.deff.resolve("0"))
       .thenAccept(files -> {
         this.loadDeffPackage(files, this.loadedDeff_800c6938.managerState_18);
 
         // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
         Loader
-          .loadFile(deff.resolve("1"))
+          .loadFile(event.deff.resolve("1"))
           .thenAccept(file -> {
             LOGGER.info(DEFF, "Loading DEFF script");
-            this.loadedDeff_800c6938.script_14 = new ScriptFile(deff.toString(), file.getBytes());
+            this.loadedDeff_800c6938.script_14 = new ScriptFile(event.deff.toString(), file.getBytes());
           })
         ;
       })
@@ -9306,13 +9310,17 @@ public class Battle extends EngineState<Battle> {
       combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04, rewards.itemDrop_05.get()));
     }
 
-    final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00, rewards.gold_02, combatant.drops));
+    final EnemyRewardsEvent rewardsEvent = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00, rewards.gold_02, combatant.drops));
 
-    combatant.xp_194 = event.xp;
-    combatant.gold_196 = event.gold;
+    combatant.xp_194 = rewardsEvent.xp;
+    combatant.gold_196 = rewardsEvent.gold;
     combatant._19a = rewards._06;
 
-    loadDrgnFile(1, Integer.toString(enemyId + 1)).thenAccept(file -> this.loadCombatantScript(file.getBytes(), combatantIndex));
+    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
+    enemyEvent.scriptFuture = Loader.loadFile(enemyEvent.script).thenApply(data -> new ScriptFile("Combatant " + combatantIndex, data.getBytes()));
+    EVENTS.postEvent(enemyEvent);
+
+    enemyEvent.scriptFuture.thenAccept(script -> combatant.scriptPtr_10 = script);
   }
 
   @Method(0x8010989cL)

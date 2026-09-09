@@ -4,11 +4,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.renderer.BufferUsage;
 import legend.core.renderer.Mesh;
-import legend.core.renderer.VertexOrder;
 import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 
 import javax.annotation.Nullable;
 
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_LINE_LOOP;
@@ -16,6 +17,7 @@ import static org.lwjgl.opengl.GL11C.GL_LINE_STRIP;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11C.GL_VERTEX_ARRAY;
 import static org.lwjgl.opengl.GL11C.glDrawArrays;
 import static org.lwjgl.opengl.GL11C.glDrawElements;
 import static org.lwjgl.opengl.GL12C.glDrawRangeElements;
@@ -35,10 +37,14 @@ import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 import static org.lwjgl.opengl.GL32C.GL_TRIANGLES_ADJACENCY;
+import static org.lwjgl.opengl.GL43C.GL_BUFFER;
+import static org.lwjgl.opengl.GL43C.glObjectLabel;
 
 public class GlMesh implements Mesh {
   private static final Int2ObjectMap<Mesh> usedVaos = new Int2ObjectOpenHashMap<>();
   private static final Int2ObjectMap<Mesh> usedVbos = new Int2ObjectOpenHashMap<>();
+
+  public final String name;
 
   public final float[] vertexData;
   public final boolean textured;
@@ -54,7 +60,8 @@ public class GlMesh implements Mesh {
 
   private boolean deleted;
 
-  GlMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+  GlMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+    this.name = name;
     this.vertexData = vertexData;
     this.textured = textured;
     this.translucent = translucent;
@@ -75,13 +82,25 @@ public class GlMesh implements Mesh {
     this.vao = glGenVertexArrays();
     glBindVertexArray(this.vao);
 
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_VERTEX_ARRAY, this.vao, name);
+    }
+
     this.vbo = glGenBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
     glBufferData(GL_ARRAY_BUFFER, vertexData, usage);
 
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_BUFFER, this.vbo, name);
+    }
+
     this.ebo = glGenBuffers();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, usage);
+
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_BUFFER, this.ebo, name);
+    }
 
     glBindVertexArray(0);
 
@@ -97,7 +116,8 @@ public class GlMesh implements Mesh {
     usedVbos.put(this.vbo, this);
   }
 
-  GlMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+  GlMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+    this.name = name;
     this.vertexData = vertexData;
     this.textured = textured;
     this.translucent = translucent;

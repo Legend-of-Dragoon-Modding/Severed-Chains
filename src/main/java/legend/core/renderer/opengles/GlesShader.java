@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.opengles.GLES20.GL_COMPILE_STATUS;
 import static org.lwjgl.opengles.GLES20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengles.GLES20.GL_LINK_STATUS;
@@ -61,27 +62,33 @@ import static org.lwjgl.opengles.GLES30.GL_INVALID_INDEX;
 import static org.lwjgl.opengles.GLES30.glGetUniformBlockIndex;
 import static org.lwjgl.opengles.GLES30.glUniformBlockBinding;
 import static org.lwjgl.opengles.GLES32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengles.GLES32.GL_PROGRAM;
+import static org.lwjgl.opengles.GLES32.glObjectLabel;
 
 public class GlesShader<Options extends ShaderOptions> implements Shader<Options> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GlesShader.class);
+
+  public final String name;
 
   private final Map<Path, ShaderStage> stages = new HashMap<>();
   private final Function<Shader<Options>, Supplier<Options>> optionsSupplier;
   private Supplier<Options> options;
   private int shader = -1;
 
-  GlesShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    LOGGER.info("Compiling shader vs[%s] fs[%s]", vert, frag);
+  GlesShader(final String name, final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    LOGGER.info("Compiling shader %s vs[%s] fs[%s]", name, vert, frag);
 
+    this.name = name;
     this.stages.put(vert, ShaderStage.VERTEX);
     this.stages.put(frag, ShaderStage.FRAGMENT);
     this.optionsSupplier = options;
     this.reload();
   }
 
-  GlesShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    LOGGER.info("Compiling shader vs[%s] gs[%s] fs[%s]", vert, geom, frag);
+  GlesShader(final String name, final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    LOGGER.info("Compiling shader %s vs[%s] gs[%s] fs[%s]", name, vert, geom, frag);
 
+    this.name = name;
     this.stages.put(vert, ShaderStage.VERTEX);
     this.stages.put(geom, ShaderStage.GEOMETRY);
     this.stages.put(frag, ShaderStage.FRAGMENT);
@@ -91,6 +98,8 @@ public class GlesShader<Options extends ShaderOptions> implements Shader<Options
 
   @Override
   public void reload() throws IOException {
+    LOGGER.info("Recompiling shader %s", this.name);
+
     final int[] stages = new int[this.stages.size()];
     boolean error = false;
     int i = 0;
@@ -168,6 +177,10 @@ public class GlesShader<Options extends ShaderOptions> implements Shader<Options
 
     if(glGetProgrami(shader, GL_LINK_STATUS) == 0) {
       LOGGER.error("Program link error: %s", glGetProgramInfoLog(shader));
+    }
+
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_PROGRAM, shader, this.name);
     }
 
     return shader;

@@ -50,6 +50,7 @@ import static legend.game.Rumble.stopRumble;
 import static legend.game.SItem.UI_WHITE;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Text.renderText;
+import static legend.game.modding.coremod.CoreMod.ALLOW_WIDESCREEN_CONFIG;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_FMV_SKIP;
 import static legend.game.sound.Audio.sssqResetStuff;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
@@ -221,6 +222,7 @@ public final class Fmv {
 
   private static Runnable oldRenderer;
   private static int oldFps;
+  private static boolean oldAllowWidescreen;
   private static int sector;
   private static int frame;
 
@@ -327,9 +329,12 @@ public final class Fmv {
     skipText = null;
 
     oldFps = RENDERER.window().getFpsLimit();
+    oldAllowWidescreen = CONFIG.getConfig(ALLOW_WIDESCREEN_CONFIG.get());
     oldProjectionSize.set(RENDERER.getNativeWidth(), RENDERER.getNativeHeight());
     oldRenderMode = RENDERER.getRenderMode();
     oldClearColour.set(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
+
+    CONFIG.setConfig(ALLOW_WIDESCREEN_CONFIG.get(), true);
     RENDERER.setRenderMode(EngineState.RenderMode.PERSPECTIVE);
     RENDERER.setProjectionSize(320, 240);
     RENDERER.api().clearColour(0.0f, 0.0f, 0.0f);
@@ -669,6 +674,7 @@ public final class Fmv {
         buttonPressed = null;
       }
 
+      CONFIG.setConfig(ALLOW_WIDESCREEN_CONFIG.get(), oldAllowWidescreen);
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
       PLATFORM.setInputTickRate(oldFps);

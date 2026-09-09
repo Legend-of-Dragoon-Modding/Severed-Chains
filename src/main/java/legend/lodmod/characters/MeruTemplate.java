@@ -40,8 +40,8 @@ public class MeruTemplate extends RetailCharacterTemplate {
   private static final int[] MAGIC_DEFENSE = {4, 3, 3, 3, 3, 4, 3, 3, 3, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 4, 3, 4, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 3, 4, 3, 3, 4, 3, 4, 3};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c character = super.make(gameState);
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
+    final CharacterData2c character = super.makeCharacter(gameState);
 
     character.addAddition(LodAdditions.DOUBLE_SMACK.getId(), new CharacterAdditionInfo(List.of()));
     character.addAddition(LodAdditions.HAMMER_SPIN.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(21))));

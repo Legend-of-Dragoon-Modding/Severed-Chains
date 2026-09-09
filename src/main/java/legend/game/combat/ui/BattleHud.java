@@ -923,6 +923,8 @@ public class BattleHud {
 
       if(num.state_00 == 0) {
         this.addFloatingNumber(i, 0, 0, number, x, y, 60 / vsyncMode_8007a3b8 * 5, 0);
+        num.xOffset = 0;
+        num.yOffset = 0;
         break;
       }
     }
@@ -1961,6 +1963,8 @@ public class BattleHud {
 
       if(num.state_00 == 0) {
         this.addFloatingNumber(i, onHitTextType, onHitClutCol, rawDamage, x, y, ticks, colour);
+        num.xOffset = 0;
+        num.yOffset = 0;
         num.bentIndex_04 = bentIndex;
         return true;
       }

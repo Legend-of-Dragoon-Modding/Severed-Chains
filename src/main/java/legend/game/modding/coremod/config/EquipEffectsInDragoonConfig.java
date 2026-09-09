@@ -10,7 +10,7 @@ import static legend.core.GameEngine.CONFIG;
 
 public class EquipEffectsInDragoonConfig extends BoolConfigEntry implements ScriptReadable {
   public EquipEffectsInDragoonConfig() {
-    super(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
+    super(true, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
   }
 
   @Override

@@ -6,7 +6,7 @@ import legend.game.saves.ConfigStorageLocation;
 
 public class ElementIconConfig extends BoolConfigEntry {
   public ElementIconConfig() {
-    super(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
+    super(true, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 
   @Override

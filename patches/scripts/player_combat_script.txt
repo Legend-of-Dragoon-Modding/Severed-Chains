@@ -1215,8 +1215,6 @@ gosub inl[:LABEL_242] ; addr
 jmp_cmp ==, 0x0, stor[8], inl[:LABEL_177] ; operand, left, right, addr
 shr 0x1, stor[9] ; right, left
 LABEL_177:
-jmp_cmp >=, 0x63, stor[9], inl[:LABEL_178] ; operand, left, right, addr
-mov 0x63, stor[9] ; source, dest
 LABEL_178:
 call Battle::scriptAllocateSpTextEffect, stor[9], stor[15] ; p0, p1
 add stor[9], var[45][108] ; amount, operand
@@ -6513,7 +6511,7 @@ consume
 ; SUBROUTINE
 HANDLE_REGEN:
 call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:config], id[lod_core:equip_effects_in_dragoon], 0, stor[31]
-jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_1] ; 
+jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_1] ;
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:HANDLE_REGEN_EXIT] ; is dragoon
 
@@ -6580,7 +6578,7 @@ return
 GIVE_ON_HIT_VITALS:
 jmp_cmp &, 0x40, stor[7], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dead
 call Scus94491BpeSegment::scriptReadRegistryEntryVar, id[lod_core:config], id[lod_core:equip_effects_in_dragoon], 0, stor[31]
-jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_1] ; 
+jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_1] ;
 gosub inl[:IS_DRAGOON] ; addr
 jmp_cmp !=, 0x0, stor[31], inl[:GIVE_ON_HIT_VITALS_EXIT] ; is dragoon
 

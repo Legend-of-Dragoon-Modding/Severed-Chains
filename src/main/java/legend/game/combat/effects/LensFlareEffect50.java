@@ -2,6 +2,7 @@ package legend.game.combat.effects;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.Transformations;
 import legend.core.gpu.Bpp;
@@ -48,8 +49,6 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
 
   private final IntList visibleFlareIndices = new IntArrayList();
   private final MV transforms = new MV();
-  private PolyBuilder builder;
-  private Obj obj;
 
   public LensFlareEffect50() {
     Arrays.setAll(this.instances_38, i -> new LensFlareEffectInstance3c());
@@ -109,7 +108,10 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
       final int flags = manager.params_10.flags_00;
 
       //LAB_8010c9fc
-      this.builder = new PolyBuilder("Lens flare").bpp(Bpp.BITS_4);
+      final PolyBuilder builder = new PolyBuilder("Lens flare")
+        .bufferUsage(BufferUsage.STREAMING)
+        .bpp(Bpp.BITS_4);
+
       for(int i = 0; i < 5; i++) {
         final LensFlareEffectInstance3c inst = this.instances_38[i];
 
@@ -158,7 +160,7 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
                 .uv(2, u, v + h - 1)
                 .uv(3, u + w - 1, v + h - 1);
 
-              this.builder
+              builder
                 .addVertex(flareVertexPositions[lensFlareVertexIndices_800fb930[j][0]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][0]][1], 0)
                 .clut(clutX, clutY)
                 .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
@@ -204,7 +206,7 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
               .uv(2, u, v + h - 1)
               .uv(3, u + w - 1, v + h - 1);
 
-            this.builder
+            builder
               .addVertex(x, y, 0)
               .clut(clutX, clutY)
               .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
@@ -232,47 +234,40 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
         //LAB_8010d19c
       }
 
-      if((flags >>> 30 & 1) != 0 && this.builder != null) {
-        this.builder.translucency(Translucency.of(flags >>> 28 & 0b11));
+      if((flags >>> 30 & 1) != 0 && builder != null) {
+        builder.translucency(Translucency.of(flags >>> 28 & 0b11));
       }
 
-      this.renderPolyObj();
+      this.renderPolyObj(builder);
     }
     //LAB_8010d1ac
   }
 
-  private void renderPolyObj() {
-    if(this.builder != null) {
-      this.obj = this.builder.build();
+  private void renderPolyObj(final PolyBuilder builder) {
+    final Obj obj = builder.build();
+    obj.delete();
 
-      int vertexIndexOffset = 0;
-      for(int i = 0; i < this.visibleFlareIndices.size(); i++) {
-        final int flareIndex = this.visibleFlareIndices.getInt(i);
-        this.transforms.identity();
-        this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
-        if(flareIndex == 0) {
-          vertexIndexOffset = 18;
-          RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
-            .vertices(i * 24, 24);
-        } else {
-          RENDERER.queueOrthoModel(this.obj, this.transforms, QueuedModelStandard.class)
-            .vertices(vertexIndexOffset + i * 6, 6);
-        }
+    int vertexIndexOffset = 0;
+    for(int i = 0; i < this.visibleFlareIndices.size(); i++) {
+      final int flareIndex = this.visibleFlareIndices.getInt(i);
+      this.transforms.identity();
+      this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 120.0f);
+      if(flareIndex == 0) {
+        vertexIndexOffset = 18;
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
+          .vertices(i * 24, 24);
+      } else {
+        RENDERER.queueOrthoModel(obj, this.transforms, QueuedModelStandard.class)
+          .vertices(vertexIndexOffset + i * 6, 6);
       }
-
-      this.obj.delete();
-      this.obj = null;
-      this.builder = null;
-      this.visibleFlareIndices.clear();
     }
+
+    this.visibleFlareIndices.clear();
   }
 
   @Override
   public void destroy(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
-    if(this.obj != null) {
-      this.obj.delete();
-      this.obj = null;
-    }
+
   }
 
   private static final int[] lensFlareGlowScales_800fb8fc = {0xf0, 0xa0, 0x60, 0x30, 0x10};

@@ -40,8 +40,8 @@ public class RoseTemplate extends RetailCharacterTemplate {
   private static final int[] MAGIC_DEFENSE = {5, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 1, 2, 2, 2, 2, 2, 2, 2};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c character = super.make(gameState);
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
+    final CharacterData2c character = super.makeCharacter(gameState);
 
     character.addAddition(LodAdditions.WHIP_SMACK.getId(), new CharacterAdditionInfo(List.of()));
     character.addAddition(LodAdditions.MORE_MORE.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(14))));

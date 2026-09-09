@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -46,6 +47,7 @@ public class RadialGradientEffect14 implements Effect<EffectManagerParams.Radial
   private void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final Translucency translucency) {
     if(manager.params_10.flags_00 >= 0) {
       final Obj obj = new PolyBuilder("Ring gradient triangle", VertexOrder.TRIANGLES)
+        .bufferUsage(BufferUsage.STREAMING)
         .translucency(translucency)
         .addVertex(vertices[0].x, vertices[0].y, 0.0f)
         .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
@@ -94,6 +96,7 @@ public class RadialGradientEffect14 implements Effect<EffectManagerParams.Radial
       FUN_800cfb14(manager, sp0x30, screenVert1);
 
       final Obj obj = new PolyBuilder("Ring gradient quad", VertexOrder.TRIANGLE_STRIP)
+        .bufferUsage(BufferUsage.STREAMING)
         .translucency(translucency)
         .addVertex(screenVert0.x, screenVert0.y, 0.0f)
         .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)

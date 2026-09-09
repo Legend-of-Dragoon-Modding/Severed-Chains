@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11C.glGetError;
 import static org.lwjgl.opengl.GL20C.GL_COMPILE_STATUS;
@@ -58,27 +59,33 @@ import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
 import static org.lwjgl.opengl.GL31C.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL32C.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL43C.GL_PROGRAM;
+import static org.lwjgl.opengl.GL43C.glObjectLabel;
 
 public class GlShader<Options extends ShaderOptions> implements Shader<Options> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GlShader.class);
+
+  public final String name;
 
   private final Object2IntMap<Path> stages = new Object2IntOpenHashMap<>();
   private final Function<Shader<Options>, Supplier<Options>> optionsSupplier;
   private Supplier<Options> options;
   private int shader = -1;
 
-  GlShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    LOGGER.info("Compiling shader vs[%s] fs[%s]", vert, frag);
+  GlShader(final String name, final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    LOGGER.info("Compiling shader %s vs[%s] fs[%s]", name, vert, frag);
 
+    this.name = name;
     this.stages.put(vert, GL_VERTEX_SHADER);
     this.stages.put(frag, GL_FRAGMENT_SHADER);
     this.optionsSupplier = options;
     this.reload();
   }
 
-  GlShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    LOGGER.info("Compiling shader vs[%s] gs[%s] fs[%s]", vert, geom, frag);
+  GlShader(final String name, final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    LOGGER.info("Compiling shader %s vs[%s] gs[%s] fs[%s]", name, vert, geom, frag);
 
+    this.name = name;
     this.stages.put(vert, GL_VERTEX_SHADER);
     this.stages.put(geom, GL_GEOMETRY_SHADER);
     this.stages.put(frag, GL_FRAGMENT_SHADER);
@@ -88,6 +95,8 @@ public class GlShader<Options extends ShaderOptions> implements Shader<Options> 
 
   @Override
   public void reload() throws IOException {
+    LOGGER.info("Recompiling shader %s", this.name);
+
     final int[] stages = new int[this.stages.size()];
     boolean error = false;
     int i = 0;
@@ -156,6 +165,10 @@ public class GlShader<Options extends ShaderOptions> implements Shader<Options> 
 
     if(glGetProgrami(shader, GL_LINK_STATUS) == 0) {
       LOGGER.error("Program link error: %s", glGetProgramInfoLog(shader));
+    }
+
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_PROGRAM, shader, this.name);
     }
 
     return shader;

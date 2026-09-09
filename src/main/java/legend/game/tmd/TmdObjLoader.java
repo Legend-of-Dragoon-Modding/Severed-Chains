@@ -310,15 +310,15 @@ public final class TmdObjLoader {
     int meshIndex = 0;
 
     if(tmdMeshes.opaque != null) {
-      meshes[meshIndex++] = createMesh(tmdMeshes.opaque);
+      meshes[meshIndex++] = createMesh(name + " (opaque)", tmdMeshes.opaque);
     }
 
     if(tmdMeshes.untexturedTranslucent != null) {
-      meshes[meshIndex++] = createMesh(tmdMeshes.untexturedTranslucent);
+      meshes[meshIndex++] = createMesh(name + " (untextured translucent)", tmdMeshes.untexturedTranslucent);
     }
 
     for(int i = 0; i < tmdMeshes.translucent.length; i++) {
-      meshes[meshIndex++] = createMesh(tmdMeshes.translucent[i]);
+      meshes[meshIndex++] = createMesh(name + " (" + tmdMeshes.translucent[i].translucency + ')', tmdMeshes.translucent[i]);
     }
 
     final Mesh[] reversed = new Mesh[meshes.length];
@@ -326,8 +326,8 @@ public final class TmdObjLoader {
     return new TmdMeshObj(name, reversed, backfaceCulling);
   }
 
-  private static Mesh createMesh(final TmdObjLoaderMesh tmdMesh) {
-    final Mesh mesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLES_ADJACENCY, tmdMesh.vertices, tmdMesh.indices, tmdMesh.textured, tmdMesh.translucent, tmdMesh.translucency, BufferUsage.STATIC);
+  private static Mesh createMesh(final String name, final TmdObjLoaderMesh tmdMesh) {
+    final Mesh mesh = RENDERER.api().makeMesh(name, VertexOrder.TRIANGLES_ADJACENCY, tmdMesh.vertices, tmdMesh.indices, tmdMesh.textured, tmdMesh.translucent, tmdMesh.translucency, BufferUsage.STATIC);
 
     mesh.attribute(0, 0L, POS_SIZE, VERTEX_SIZE);
 

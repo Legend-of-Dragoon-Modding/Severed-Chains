@@ -39,7 +39,7 @@ import static legend.lodmod.LodMod.SP_STAT;
 
 public class MirandaTemplate extends ShanaTemplate {
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
     final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
     final CharacterData2c character = new CharacterData2c(gameState, this, stats);
 

@@ -305,13 +305,14 @@ public class Credits extends EngineState<Credits> {
           .clut(896, creditSlot)
           .monochrome(1.0f)
           .uv(0, creditSlot % 8 * 64)
-          .size(credit.w * 4, credit.h);
+          .posSize(credit.w * 4, credit.h)
+          .uvSize(credit.w * 4, credit.h - 1)
+        ;
 
         creditSlot = (creditSlot + 1) % 16;
       }
 
       this.credits = builder.build();
-      GPU.clearData(512, 0, 256, 512);
       this.loadingStage++;
     }
     //LAB_800ead9c

@@ -2,6 +2,7 @@ package legend.core.renderer.opengl;
 
 import legend.core.Version;
 import legend.core.gpu.Rect4i;
+import legend.core.lang.RawText;
 import legend.core.renderer.BufferUsage;
 import legend.core.renderer.DepthComparator;
 import legend.core.renderer.FrameBuffer;
@@ -22,9 +23,13 @@ import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.ui.GameOverlay;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.GLDebugMessageCallback;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -41,6 +46,7 @@ import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.GL_DONT_CARE;
 import static org.lwjgl.opengl.GL11C.GL_EQUAL;
 import static org.lwjgl.opengl.GL11C.GL_FILL;
 import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
@@ -56,8 +62,11 @@ import static org.lwjgl.opengl.GL11C.GL_ONE;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_BINDING_2D;
 import static org.lwjgl.opengl.GL11C.GL_VENDOR;
 import static org.lwjgl.opengl.GL11C.GL_VERSION;
+import static org.lwjgl.opengl.GL11C.GL_VERTEX_ARRAY;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
@@ -65,6 +74,7 @@ import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glGetInteger;
 import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
@@ -72,9 +82,27 @@ import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
 import static org.lwjgl.opengl.GL14C.glBlendEquation;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER_BINDING;
+import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER_BINDING;
+import static org.lwjgl.opengl.GL20C.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.opengl.GL30C.GL_CONTEXT_FLAGS;
 import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30C.GL_FRAMEBUFFER_BINDING;
+import static org.lwjgl.opengl.GL30C.GL_VERTEX_ARRAY_BINDING;
 import static org.lwjgl.opengl.GL30C.glBindFramebuffer;
+import static org.lwjgl.opengl.GL43C.GL_BUFFER;
+import static org.lwjgl.opengl.GL43C.GL_CONTEXT_FLAG_DEBUG_BIT;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_OUTPUT_SYNCHRONOUS;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_HIGH;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_LOW;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_MEDIUM;
+import static org.lwjgl.opengl.GL43C.GL_DEBUG_SEVERITY_NOTIFICATION;
+import static org.lwjgl.opengl.GL43C.GL_PROGRAM;
+import static org.lwjgl.opengl.GL43C.glDebugMessageCallback;
+import static org.lwjgl.opengl.GL43C.glDebugMessageControl;
+import static org.lwjgl.opengl.GL43C.glGetObjectLabel;
 
 public class GlApi implements RenderApi {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GlApi.class);
@@ -98,17 +126,81 @@ public class GlApi implements RenderApi {
 
   private boolean wireframeEnabled;
 
+  private boolean debugEnabled;
+
   @Override
   public void init() {
     LOGGER.info("OpenGL version: %s", glGetString(GL_VERSION));
     LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
 
-    if("true".equals(System.getenv("opengl_debug"))) {
-      GLUtil.setupDebugMessageCallback(System.err);
+    final GLCapabilities caps = GL.getCapabilities();
+    if((caps.OpenGL43 || caps.GL_KHR_debug) && (glGetInteger(GL_CONTEXT_FLAGS) & GL_CONTEXT_FLAG_DEBUG_BIT) != 0) {
+      this.debugEnabled = true;
+
+      glEnable(GL_DEBUG_OUTPUT);
+      glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+      if(!"true".equalsIgnoreCase(System.getenv("opengl_debug"))) {
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, (int[])null, false);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, (int[])null, false);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, (int[])null, false);
+      }
+
+      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, (int[])null, true);
+
+      final GLDebugMessageCallback customCallbackRef = GLDebugMessageCallback.create((source, type, id, severity, length, message, userParam) -> {
+        final String shaderName = this.getObjectName(GL_CURRENT_PROGRAM,  GL_PROGRAM);
+        final String textureName = this.getObjectName(GL_TEXTURE_BINDING_2D, GL_TEXTURE);
+        final String framebufferName = this.getObjectName(GL_FRAMEBUFFER_BINDING, GL_FRAMEBUFFER);
+        final String vertexArrayName = this.getObjectName(GL_VERTEX_ARRAY_BINDING, GL_VERTEX_ARRAY);
+        final String arrayBufferName = this.getObjectName(GL_ARRAY_BUFFER_BINDING, GL_BUFFER);
+        final String elementArrayBufferName = this.getObjectName(GL_ELEMENT_ARRAY_BUFFER_BINDING, GL_BUFFER);
+
+        final String msgText = GLDebugMessageCallback.getMessage(length, message);
+
+        final Level logLevel = switch(severity) {
+          case GL_DEBUG_SEVERITY_HIGH -> Level.ERROR;
+          case GL_DEBUG_SEVERITY_MEDIUM -> Level.WARN;
+          default -> Level.INFO;
+        };
+
+        LOGGER.log(logLevel, "GL %s %d: %s", logLevel, id, msgText);
+        LOGGER.log(logLevel, "Active shader: %s", shaderName);
+        LOGGER.log(logLevel, "Active texture: %s", textureName);
+        LOGGER.log(logLevel, "Active framebuffer: %s", framebufferName);
+        LOGGER.log(logLevel, "Active VAO: %s", vertexArrayName);
+        LOGGER.log(logLevel, "Active VBO: %s", arrayBufferName);
+        LOGGER.log(logLevel, "Active EBO: %s", elementArrayBufferName);
+
+        LOGGER.log(logLevel, "", new Throwable());
+
+        if(severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM) {
+          GameOverlay.addNotification(5, new RawText("GL %s %d: %s".formatted(logLevel, id, msgText)));
+        }
+      });
+
+      // Attach it to the active driver instance
+      glDebugMessageCallback(customCallbackRef, 0L);
     }
 
     glEnable(GL_LINE_SMOOTH);
+  }
+
+  private String getObjectName(final int bindingType, final int objectType) {
+    final int id = glGetInteger(bindingType);
+
+    if(id == 0) {
+      return "NONE";
+    }
+
+    final String name = glGetObjectLabel(objectType, id);
+
+    if(name.isEmpty()) {
+      return "UNKNOWN";
+    }
+
+    return name;
   }
 
   @Override
@@ -123,23 +215,23 @@ public class GlApi implements RenderApi {
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
-    return new GlMesh(vertexOrder, vertexData, indices, false, false, null, BufferUsage.STATIC);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
+    return new GlMesh(name, vertexOrder, vertexData, indices, false, false, null, BufferUsage.STATIC);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
-    return new GlMesh(vertexOrder, vertexData, indices, textured, translucent, translucencyMode, bufferUsage);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+    return new GlMesh(name, vertexOrder, vertexData, indices, textured, translucent, translucencyMode, bufferUsage);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
-    return new GlMesh(vertexOrder, vertexData, vertexCount, false, false, null, BufferUsage.STATIC);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
+    return new GlMesh(name, vertexOrder, vertexData, vertexCount, false, false, null, BufferUsage.STATIC);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
-    return new GlMesh(vertexOrder, vertexData, vertexCount, textured, translucent, translucencyMode, bufferUsage);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+    return new GlMesh(name, vertexOrder, vertexData, vertexCount, textured, translucent, translucencyMode, bufferUsage);
   }
 
   @Override
@@ -148,18 +240,18 @@ public class GlApi implements RenderApi {
   }
 
   @Override
-  public FrameBuffer makeFrameBuffer(final FrameBufferAttachment[] attachments) {
-    return new GlFrameBuffer(attachments);
+  public FrameBuffer makeFrameBuffer(final String name, final FrameBufferAttachment[] attachments) {
+    return new GlFrameBuffer(name, attachments);
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlShader<>(vert, frag, options);
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    return new GlShader<>(name, vert, frag, options);
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlShader<>(vert, geom, frag, options);
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    return new GlShader<>(name, vert, geom, frag, options);
   }
 
   @Override
@@ -336,6 +428,11 @@ public class GlApi implements RenderApi {
       glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
       this.wireframeEnabled = enable;
     }
+  }
+
+  @Override
+  public boolean debugEnabled() {
+    return this.debugEnabled;
   }
 
   private void applyScissor(final FloatBuffer scissorBuffer, final ShaderUniformBuffer scissorUniform) {

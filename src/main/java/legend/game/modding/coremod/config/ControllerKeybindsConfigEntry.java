@@ -62,7 +62,9 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDeleg
       }
     }
 
-    return out.getBytes();
+    final byte[] bytes = new byte[offset.get()];
+    out.read(0, bytes, 0, offset.get());
+    return bytes;
   }
 
   private static Map<RegistryDelegate<InputAction>, List<InputActivation>> deserializer(final byte[] data) {

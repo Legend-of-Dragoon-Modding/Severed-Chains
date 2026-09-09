@@ -23,9 +23,12 @@ import legend.core.renderer.VertexOrder;
 import legend.game.EngineState;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.ui.GameOverlay;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengles.GLDebugMessageCallback;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -37,13 +40,18 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.opengles.GLES20.GL_ALWAYS;
+import static org.lwjgl.opengles.GLES20.GL_ARRAY_BUFFER_BINDING;
 import static org.lwjgl.opengles.GLES20.GL_BLEND;
 import static org.lwjgl.opengles.GLES20.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengles.GLES20.GL_CULL_FACE;
+import static org.lwjgl.opengles.GLES20.GL_CURRENT_PROGRAM;
 import static org.lwjgl.opengles.GLES20.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengles.GLES20.GL_DEPTH_TEST;
+import static org.lwjgl.opengles.GLES20.GL_DONT_CARE;
+import static org.lwjgl.opengles.GLES20.GL_ELEMENT_ARRAY_BUFFER_BINDING;
 import static org.lwjgl.opengles.GLES20.GL_EQUAL;
 import static org.lwjgl.opengles.GLES20.GL_FRAMEBUFFER;
+import static org.lwjgl.opengles.GLES20.GL_FRAMEBUFFER_BINDING;
 import static org.lwjgl.opengles.GLES20.GL_FUNC_ADD;
 import static org.lwjgl.opengles.GLES20.GL_FUNC_REVERSE_SUBTRACT;
 import static org.lwjgl.opengles.GLES20.GL_GEQUAL;
@@ -57,6 +65,8 @@ import static org.lwjgl.opengles.GLES20.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengles.GLES20.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.opengles.GLES20.GL_SRC_ALPHA;
 import static org.lwjgl.opengles.GLES20.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE_BINDING_2D;
 import static org.lwjgl.opengles.GLES20.GL_VENDOR;
 import static org.lwjgl.opengles.GLES20.GL_VERSION;
 import static org.lwjgl.opengles.GLES20.glBindFramebuffer;
@@ -68,9 +78,24 @@ import static org.lwjgl.opengles.GLES20.glDepthFunc;
 import static org.lwjgl.opengles.GLES20.glDepthMask;
 import static org.lwjgl.opengles.GLES20.glDisable;
 import static org.lwjgl.opengles.GLES20.glEnable;
+import static org.lwjgl.opengles.GLES20.glGetInteger;
+import static org.lwjgl.opengles.GLES20.glGetIntegerv;
 import static org.lwjgl.opengles.GLES20.glGetString;
 import static org.lwjgl.opengles.GLES20.glLineWidth;
 import static org.lwjgl.opengles.GLES20.glViewport;
+import static org.lwjgl.opengles.GLES30.GL_VERTEX_ARRAY_BINDING;
+import static org.lwjgl.opengles.GLES32.GL_BUFFER;
+import static org.lwjgl.opengles.GLES32.GL_CONTEXT_FLAG_DEBUG_BIT;
+import static org.lwjgl.opengles.GLES32.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengles.GLES32.GL_DEBUG_OUTPUT_SYNCHRONOUS;
+import static org.lwjgl.opengles.GLES32.GL_DEBUG_SEVERITY_HIGH;
+import static org.lwjgl.opengles.GLES32.GL_DEBUG_SEVERITY_LOW;
+import static org.lwjgl.opengles.GLES32.GL_DEBUG_SEVERITY_MEDIUM;
+import static org.lwjgl.opengles.GLES32.GL_DEBUG_SEVERITY_NOTIFICATION;
+import static org.lwjgl.opengles.GLES32.GL_PROGRAM;
+import static org.lwjgl.opengles.GLES32.glDebugMessageCallback;
+import static org.lwjgl.opengles.GLES32.glDebugMessageControl;
+import static org.lwjgl.opengles.GLES32.glGetObjectLabel;
 
 public class GlesApi implements RenderApi {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GlesApi.class);
@@ -92,15 +117,82 @@ public class GlesApi implements RenderApi {
 
   private Translucency translucency;
 
+  private boolean debugEnabled;
+
   @Override
   public void init() {
     LOGGER.info("OpenGLES version: %s", glGetString(GL_VERSION));
     LOGGER.info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
     LOGGER.info("Device manufacturer: %s", glGetString(GL_VENDOR));
 
-    if("true".equals(System.getenv("opengl_debug"))) {
-      GLUtil.setupDebugMessageCallback(System.err);
+    //TODO there are a couple GL*C constants used here that aren't available in the lwjgl GLES packages right now, Spasi is adding them so they can be imported from the right packages when that's done
+    final int[] flags = new int[1];
+    glGetIntegerv(GL30C.GL_CONTEXT_FLAGS, flags);
+
+    if((flags[0] & GL_CONTEXT_FLAG_DEBUG_BIT) != 0) {
+      this.debugEnabled = true;
+
+      glEnable(GL_DEBUG_OUTPUT);
+      glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+      if(!"true".equalsIgnoreCase(System.getenv("opengl_debug"))) {
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, new int[0], false);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, new int[0], false);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, new int[0], false);
+      }
+
+      glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, new int[0], true);
+
+      final GLDebugMessageCallback customCallbackRef = GLDebugMessageCallback.create((source, type, id, severity, length, message, userParam) -> {
+        final String shaderName = this.getObjectName(GL_CURRENT_PROGRAM,  GL_PROGRAM);
+        final String textureName = this.getObjectName(GL_TEXTURE_BINDING_2D, GL_TEXTURE);
+        final String framebufferName = this.getObjectName(GL_FRAMEBUFFER_BINDING, GL_FRAMEBUFFER);
+        final String vertexArrayName = this.getObjectName(GL_VERTEX_ARRAY_BINDING, GL11C.GL_VERTEX_ARRAY);
+        final String arrayBufferName = this.getObjectName(GL_ARRAY_BUFFER_BINDING, GL_BUFFER);
+        final String elementArrayBufferName = this.getObjectName(GL_ELEMENT_ARRAY_BUFFER_BINDING, GL_BUFFER);
+
+        final String msgText = GLDebugMessageCallback.getMessage(length, message);
+
+        final Level logLevel = switch(severity) {
+          case GL_DEBUG_SEVERITY_HIGH -> Level.ERROR;
+          case GL_DEBUG_SEVERITY_MEDIUM -> Level.WARN;
+          default -> Level.INFO;
+        };
+
+        LOGGER.log(logLevel, "GL %s %d: %s", logLevel, id, msgText);
+        LOGGER.log(logLevel, "Active shader: %s", shaderName);
+        LOGGER.log(logLevel, "Active texture: %s", textureName);
+        LOGGER.log(logLevel, "Active framebuffer: %s", framebufferName);
+        LOGGER.log(logLevel, "Active VAO: %s", vertexArrayName);
+        LOGGER.log(logLevel, "Active VBO: %s", arrayBufferName);
+        LOGGER.log(logLevel, "Active EBO: %s", elementArrayBufferName);
+
+        LOGGER.log(logLevel, "", new Throwable());
+
+        if(severity == GL_DEBUG_SEVERITY_HIGH || severity == GL_DEBUG_SEVERITY_MEDIUM) {
+          GameOverlay.addNotification(5, new RawText("GL %s %d: %s".formatted(logLevel, id, msgText)));
+        }
+      });
+
+      // Attach it to the active driver instance
+      glDebugMessageCallback(customCallbackRef, 0L);
     }
+  }
+
+  private String getObjectName(final int bindingType, final int objectType) {
+    final int id = glGetInteger(bindingType);
+
+    if(id == 0) {
+      return "NONE";
+    }
+
+    final String name = glGetObjectLabel(objectType, id);
+
+    if(name.isEmpty()) {
+      return "UNKNOWN";
+    }
+
+    return name;
   }
 
   @Override
@@ -112,23 +204,23 @@ public class GlesApi implements RenderApi {
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
-    return new GlesMesh(vertexOrder, vertexData, indices, false, false, null, BufferUsage.STATIC);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
+    return new GlesMesh(name, vertexOrder, vertexData, indices, false, false, null, BufferUsage.STATIC);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
-    return new GlesMesh(vertexOrder, vertexData, indices, textured, translucent, translucencyMode, bufferUsage);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+    return new GlesMesh(name, vertexOrder, vertexData, indices, textured, translucent, translucencyMode, bufferUsage);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
-    return new GlesMesh(vertexOrder, vertexData, vertexCount, false, false, null, BufferUsage.STATIC);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
+    return new GlesMesh(name, vertexOrder, vertexData, vertexCount, false, false, null, BufferUsage.STATIC);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
-    return new GlesMesh(vertexOrder, vertexData, vertexCount, textured, translucent, translucencyMode, bufferUsage);
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+    return new GlesMesh(name, vertexOrder, vertexData, vertexCount, textured, translucent, translucencyMode, bufferUsage);
   }
 
   @Override
@@ -137,18 +229,18 @@ public class GlesApi implements RenderApi {
   }
 
   @Override
-  public FrameBuffer makeFrameBuffer(final FrameBufferAttachment[] attachments) {
-    return new GlesFrameBuffer(attachments);
+  public FrameBuffer makeFrameBuffer(final String name, final FrameBufferAttachment[] attachments) {
+    return new GlesFrameBuffer(name, attachments);
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlesShader<>(vert, frag, options);
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    return new GlesShader<>(name, vert, frag, options);
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
-    return new GlesShader<>(vert, geom, frag, options);
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+    return new GlesShader<>(name, vert, geom, frag, options);
   }
 
   @Override
@@ -324,6 +416,11 @@ public class GlesApi implements RenderApi {
     if(enable) {
       GameOverlay.addNotification(3, new RawText("Wireframe not supported in OpenGLES"));
     }
+  }
+
+  @Override
+  public boolean debugEnabled() {
+    return this.debugEnabled;
   }
 
   private void applyScissor(final FloatBuffer scissorBuffer, final ShaderUniformBuffer scissorUniform) {

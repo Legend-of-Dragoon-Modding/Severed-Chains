@@ -22,8 +22,32 @@ fi
 
 # Apply GPU preference
 case "$GPU_PREFERENCE" in
-  1) export DRI_PRIME=1 ;;
-  2) export DRI_PRIME=0 ;;
+  1)
+    # High Performance (Dedicated AMD or NVIDIA GPU)
+    export DRI_PRIME=1
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    ;;
+  2)
+    # Integrated Graphics Only
+    export __NV_PRIME_RENDER_OFFLOAD=0
+    unset __GLX_VENDOR_LIBRARY_NAME
+
+    # Cascade fallback string for Intel and AMD open-source stacks
+    export MESA_LOADER_DRIVER_OVERRIDE=iris:crocus
+    export MESA_LOADER_DRIVER_OVERRIDE_AMD=radeonsi
+
+    # Universal fallback layout matching standard motherboard PCI architectures
+    export DRI_PRIME=pci-0000_00_02_0
+    ;;
+  0|*)
+    # Let the OS Decide
+    unset DRI_PRIME
+    unset __NV_PRIME_RENDER_OFFLOAD
+    unset __GLX_VENDOR_LIBRARY_NAME
+    unset MESA_LOADER_DRIVER_OVERRIDE
+    unset MESA_LOADER_DRIVER_OVERRIDE_AMD
+    ;;
 esac
 
 if [[ $(pwd) == *":"* ]]; then

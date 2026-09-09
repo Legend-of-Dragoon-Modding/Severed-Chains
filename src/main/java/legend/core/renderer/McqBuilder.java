@@ -123,7 +123,7 @@ public class McqBuilder {
       }
     }
 
-    final Mesh mesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLES, vertices, indices, true, this.translucency != null, this.translucency, this.bufferUsage);
+    final Mesh mesh = RENDERER.api().makeMesh(this.name, VertexOrder.TRIANGLES, vertices, indices, true, this.translucency != null, this.translucency, this.bufferUsage);
 
     mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 

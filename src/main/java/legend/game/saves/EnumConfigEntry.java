@@ -1,7 +1,8 @@
 package legend.game.saves;
 
 import legend.core.IoHelper;
-import legend.game.i18n.I18n;
+import legend.core.lang.I18nText;
+import legend.core.lang.TextComponent;
 import legend.game.inventory.screens.controls.Dropdown;
 
 /** Convenience class for simple enum-backed configs */
@@ -20,11 +21,11 @@ public class EnumConfigEntry<T extends Enum<T>> extends ConfigEntry<T> {
     this.cls = cls;
 
     this.setEditControl((current, gameState) -> {
-      final Dropdown<String> dropdown = new Dropdown<>();
+      final Dropdown<TextComponent> dropdown = new Dropdown<>((index, e) -> e);
       dropdown.onSelection(index -> gameState.setConfig(this, this.cls.getEnumConstants()[index]));
 
       for(final T mode : this.cls.getEnumConstants()) {
-        dropdown.addOption(I18n.translate(this.getRegistryId().modId() + ".config." + this.getRegistryId().entryId() + '.' + mode.name()));
+        dropdown.addOption(new I18nText(this.getRegistryId().modId() + ".config." + this.getRegistryId().entryId() + '.' + mode.name()));
 
         if(mode == current) {
           dropdown.setSelectedIndex(dropdown.size() - 1);

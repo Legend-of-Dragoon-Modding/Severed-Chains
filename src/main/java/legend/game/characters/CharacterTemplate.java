@@ -20,8 +20,17 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.EVENTS;
+
 public abstract class CharacterTemplate extends RegistryEntry {
-  public abstract CharacterData2c make(final GameState52c gameState);
+  public CharacterData2c make(final GameState52c gameState) {
+    final CharacterData2c character = this.makeCharacter(gameState);
+    EVENTS.postEvent(new CharacterCreatedEvent(gameState, this, character));
+    return character;
+  }
+
+  protected abstract CharacterData2c makeCharacter(final GameState52c gameState);
+
   public void copy(final CharacterData2c from, final CharacterData2c to) {
 
   }

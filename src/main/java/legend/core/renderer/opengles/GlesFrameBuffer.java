@@ -3,6 +3,7 @@ package legend.core.renderer.opengles;
 import legend.core.renderer.FrameBuffer;
 import legend.core.renderer.FrameBufferAttachment;
 
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.opengles.GLES20.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengles.GLES20.GL_DEPTH_ATTACHMENT;
 import static org.lwjgl.opengles.GLES20.GL_FRAMEBUFFER;
@@ -15,15 +16,22 @@ import static org.lwjgl.opengles.GLES20.glDeleteFramebuffers;
 import static org.lwjgl.opengles.GLES20.glFramebufferTexture2D;
 import static org.lwjgl.opengles.GLES20.glGenFramebuffers;
 import static org.lwjgl.opengles.GLES20.glGetInteger;
+import static org.lwjgl.opengles.GLES32.glObjectLabel;
 
 public class GlesFrameBuffer implements FrameBuffer {
+  public final String name;
   private final int id;
 
-  GlesFrameBuffer(final FrameBufferAttachment[] attachments) {
+  GlesFrameBuffer(final String name, final FrameBufferAttachment[] attachments) {
+    this.name = name;
     final int oldFramebuffer = glGetInteger(GL_FRAMEBUFFER_BINDING);
 
     this.id = glGenFramebuffers();
     this.bind();
+
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_FRAMEBUFFER, this.id, name);
+    }
 
     for(final FrameBufferAttachment attachment : attachments) {
       final int attachmentType = switch(attachment.type) {

@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelBattleTmd;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.renderer.QueuedModelTmd;
@@ -471,6 +472,7 @@ public final class SEffe {
     if(z >= 40) {
       //LAB_800e7610
       final QuadBuilder builder = new QuadBuilder("Sprite")
+        .bufferUsage(BufferUsage.STREAMING)
         .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
         .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
         .rgb(spriteEffect.r_14 / 255.0f, spriteEffect.g_15 / 255.0f, spriteEffect.b_16 / 255.0f)
@@ -1049,6 +1051,7 @@ public final class SEffe {
     final Translucency translucency = Translucency.of(data._10 >>> 28 & 0x3);
 
     final PolyBuilder builder = new PolyBuilder("Thunder arrow effect", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING)
       .translucency(translucency);
 
     for(int s7 = 0; s7 < data.count_00; s7++) {

@@ -70,7 +70,7 @@ public class LineBuilder {
       vertices[(i + 1) * vertexSize - 1] = this.flags;
     }
 
-    final Mesh mesh = RENDERER.api().makeMesh(this.closed ? VertexOrder.LINE_LOOP : VertexOrder.LINE_STRIP, vertices, this.pos.size(), false, this.translucency != null, this.translucency, this.bufferUsage);
+    final Mesh mesh = RENDERER.api().makeMesh(this.name, this.closed ? VertexOrder.LINE_LOOP : VertexOrder.LINE_STRIP, vertices, this.pos.size(), false, this.translucency != null, this.translucency, this.bufferUsage);
 
     mesh.attribute(0, 0L, 3, vertexSize);
 

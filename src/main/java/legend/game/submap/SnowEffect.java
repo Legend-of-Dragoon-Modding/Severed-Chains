@@ -129,16 +129,18 @@ public class SnowEffect {
     this.snowEffectTick = 0;
     this.snowOffsetXTick = 0;
 
-    this.particle = new QuadBuilder("Snowflake")
-      .bpp(Bpp.BITS_4)
-      .clut(960, 464)
-      .monochrome(1.0f)
-      .translucency(Translucency.B_PLUS_F)
-      .vramPos(960, 256)
-      .uv(0.0f, 64.0f)
-      .size(1.0f, 1.0f)
-      .uvSize(24, 24)
-      .build();
+    if(this.particle == null) {
+      this.particle = new QuadBuilder("Snowflake")
+        .bpp(Bpp.BITS_4)
+        .clut(960, 464)
+        .monochrome(1.0f)
+        .translucency(Translucency.B_PLUS_F)
+        .vramPos(960, 256)
+        .uv(0.0f, 64.0f)
+        .size(1.0f, 1.0f)
+        .uvSize(24, 24)
+        .build();
+    }
   }
 
   public void render() {

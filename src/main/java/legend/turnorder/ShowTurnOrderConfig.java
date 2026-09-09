@@ -6,6 +6,6 @@ import legend.game.saves.ConfigStorageLocation;
 
 public class ShowTurnOrderConfig extends BoolConfigEntry {
   public ShowTurnOrderConfig() {
-    super(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
+    super(true, ConfigStorageLocation.CAMPAIGN, ConfigCategory.USER_INTERFACE);
   }
 }

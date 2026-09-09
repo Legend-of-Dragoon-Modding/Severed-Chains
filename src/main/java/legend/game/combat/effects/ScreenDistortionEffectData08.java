@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
@@ -73,6 +74,7 @@ public class ScreenDistortionEffectData08 implements Effect<EffectManagerParams.
     final float inverseScreenHeight = 1.0f / 240.0f;
 
     final PolyBuilder builder = new PolyBuilder("Wave effect", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3));
 

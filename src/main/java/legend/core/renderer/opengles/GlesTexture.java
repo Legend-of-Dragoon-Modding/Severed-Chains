@@ -13,15 +13,16 @@ import javax.annotation.Nullable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.opengles.GLES20.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengles.GLES20.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengles.GLES20.GL_FLOAT;
 import static org.lwjgl.opengles.GLES20.GL_LINEAR;
 import static org.lwjgl.opengles.GLES20.GL_NEAREST;
-import static org.lwjgl.opengles.GLES20.GL_NO_ERROR;
 import static org.lwjgl.opengles.GLES20.GL_REPEAT;
 import static org.lwjgl.opengles.GLES20.GL_RGB;
 import static org.lwjgl.opengles.GLES20.GL_RGBA;
+import static org.lwjgl.opengles.GLES20.GL_TEXTURE;
 import static org.lwjgl.opengles.GLES20.GL_TEXTURE0;
 import static org.lwjgl.opengles.GLES20.GL_TEXTURE_2D;
 import static org.lwjgl.opengles.GLES20.GL_TEXTURE_MAG_FILTER;
@@ -34,7 +35,6 @@ import static org.lwjgl.opengles.GLES20.glActiveTexture;
 import static org.lwjgl.opengles.GLES20.glBindTexture;
 import static org.lwjgl.opengles.GLES20.glDeleteTextures;
 import static org.lwjgl.opengles.GLES20.glGenTextures;
-import static org.lwjgl.opengles.GLES20.glGetError;
 import static org.lwjgl.opengles.GLES20.glTexImage2D;
 import static org.lwjgl.opengles.GLES20.glTexParameteri;
 import static org.lwjgl.opengles.GLES20.glTexSubImage2D;
@@ -42,6 +42,7 @@ import static org.lwjgl.opengles.GLES30.GL_R32UI;
 import static org.lwjgl.opengles.GLES30.GL_RED_INTEGER;
 import static org.lwjgl.opengles.GLES30.GL_RGB8;
 import static org.lwjgl.opengles.GLES30.GL_RGBA8;
+import static org.lwjgl.opengles.GLES32.glObjectLabel;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
 public final class GlesTexture extends Texture {
@@ -84,6 +85,10 @@ public final class GlesTexture extends Texture {
     this.wrapT = wrapT;
     this.use();
 
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_TEXTURE, this.id, name);
+    }
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS ? GL_REPEAT : GL_CLAMP_TO_EDGE);
@@ -100,11 +105,6 @@ public final class GlesTexture extends Texture {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormatVal, w, h, 0, this.getDataFormat(dataFormat), this.getDataType(dataType), memAddress(buffer));
     } else {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormatVal, w, h, 0, this.getDataFormat(dataFormat), this.getDataType(dataType), (ByteBuffer)null);
-    }
-
-    final int error = glGetError();
-    if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error, 16));
     }
   }
 

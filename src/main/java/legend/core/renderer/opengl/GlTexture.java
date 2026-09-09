@@ -13,16 +13,17 @@ import javax.annotation.Nullable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11C.GL_REPEAT;
 import static org.lwjgl.opengl.GL11C.GL_RGB;
 import static org.lwjgl.opengl.GL11C.GL_RGB8;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_RGBA8;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
@@ -33,7 +34,6 @@ import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glBindTexture;
 import static org.lwjgl.opengl.GL11C.glDeleteTextures;
 import static org.lwjgl.opengl.GL11C.glGenTextures;
-import static org.lwjgl.opengl.GL11C.glGetError;
 import static org.lwjgl.opengl.GL11C.glTexImage2D;
 import static org.lwjgl.opengl.GL11C.glTexParameteri;
 import static org.lwjgl.opengl.GL11C.glTexSubImage2D;
@@ -42,6 +42,7 @@ import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13C.glActiveTexture;
 import static org.lwjgl.opengl.GL30C.GL_R32UI;
 import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
+import static org.lwjgl.opengl.GL43C.glObjectLabel;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
 public final class GlTexture extends Texture {
@@ -75,6 +76,7 @@ public final class GlTexture extends Texture {
   GlTexture(@Nullable final Buffer buffer, final String name, final int w, final int h, final TextureInternalFormat internalFormat, final TextureDataFormat dataFormat, final TextureDataType dataType, final boolean minFilter, final boolean magFilter, final boolean wrapS, final boolean wrapT) {
     super(name, w, h);
     this.id = glGenTextures();
+
     this.internalFormat = internalFormat;
     this.dataFormat = dataFormat;
     this.dataType = dataType;
@@ -83,6 +85,10 @@ public final class GlTexture extends Texture {
     this.wrapS = wrapS;
     this.wrapT = wrapT;
     this.use();
+
+    if(RENDERER.api().debugEnabled()) {
+      glObjectLabel(GL_TEXTURE, this.id, name);
+    }
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter ? GL_LINEAR : GL_NEAREST);
@@ -100,11 +106,6 @@ public final class GlTexture extends Texture {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormatVal, w, h, 0, this.getDataFormat(dataFormat), this.getDataType(dataType), memAddress(buffer));
     } else {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormatVal, w, h, 0, this.getDataFormat(dataFormat), this.getDataType(dataType), (ByteBuffer)null);
-    }
-
-    final int error = glGetError();
-    if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error, 16));
     }
   }
 

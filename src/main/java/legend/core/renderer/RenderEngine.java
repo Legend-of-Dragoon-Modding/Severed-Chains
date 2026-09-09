@@ -127,7 +127,7 @@ public class RenderEngine {
   private boolean turnOrderModSearched;
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
-    options -> loadShader("simple", "simple", options),
+    options -> loadShader("Simple", "simple", "simple", options),
     shader -> {
       shader.bindUniformBlock("transforms", ShaderUniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", ShaderUniformBuffer.TRANSFORM2);
@@ -138,7 +138,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<CopyShaderOptions> COPY_SHADER = new ShaderType<>(
-    options -> loadShader("copy", "copy", options),
+    options -> loadShader("Copy", "copy", "copy", options),
     shader -> {
       final ShaderUniformMat4 projection = shader.uniformMat4("projection");
       return () -> new CopyShaderOptions(projection);
@@ -146,7 +146,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsStandard> STANDARD_SHADER = new ShaderType<>(
-    options -> loadShader("standard", "standard", options),
+    options -> loadShader("Standard", "standard", "standard", options),
     shader -> {
       shader.use();
       shader.uniformInt("tex24").set(0);
@@ -171,7 +171,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsTmd> TMD_SHADER = new ShaderType<>(
-    options -> loadShader("tmd", "tmd", "tmd", options),
+    options -> loadShader("TMD", "tmd", "tmd", "tmd", options),
     shader -> {
       shader.use();
       shader.uniformInt("tex24").set(0);
@@ -195,7 +195,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsBattleTmd> BATTLE_TMD_SHADER = new ShaderType<>(
-    options -> loadShader("battle_tmd", "tmd", "battle_tmd", options),
+    options -> loadShader("Battle TMD", "battle_tmd", "tmd", "battle_tmd", options),
     shader -> {
       shader.use();
       shader.uniformInt("tex24").set(0);
@@ -221,7 +221,7 @@ public class RenderEngine {
   );
 
   public static final ShaderType<ShaderOptionsScreen> SCREEN_SHADER = new ShaderType<>(
-    options -> loadShader("post", "screen", options),
+    options -> loadShader("Post", "post", "screen", options),
     shader -> {
       final ShaderUniformInt enableCrt = shader.uniformInt("enableCrt");
       final ShaderUniformFloat time = shader.uniformFloat("time");
@@ -440,17 +440,17 @@ public class RenderEngine {
     Texture.setShouldLog(true);
   }
 
-  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
+  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String name, final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
-      return RENDERER.api.makeShader(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+      return RENDERER.api.makeShader(name, Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String vsh, final String gsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
+  public static <Options extends ShaderOptions> Shader<Options> loadShader(final String name, final String vsh, final String gsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
     try {
-      return RENDERER.api.makeShader(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+      return RENDERER.api.makeShader(name, Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + gsh + ".gsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
@@ -503,7 +503,7 @@ public class RenderEngine {
     this.scissorUniform = ShaderManager.addUniformBuffer("scissor", this.api.makeUniformBuffer((long)this.scissorBuffer.capacity() * Float.BYTES, ShaderUniformBuffer.SCISSOR));
     this.clutAnimationUniform = ShaderManager.addUniformBuffer("clutAnimation", this.api.makeUniformBuffer((long)this.clutAnimationBuffer.capacity() * Float.BYTES, ShaderUniformBuffer.CLUT_ANIMATION));
 
-    final Mesh postQuad = this.api.makeMesh(VertexOrder.TRIANGLES, new float[] {
+    final Mesh postQuad = this.api.makeMesh("Screen quad", VertexOrder.TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
        1.0f, -1.0f,  1.0f, 0.0f,
       -1.0f,  1.0f,  0.0f, 1.0f,
@@ -690,7 +690,7 @@ public class RenderEngine {
 
         // bind backbuffer
         this.api.unbindFramebuffer();
-        this.api.clear(false, true, true);
+        this.api.clear(false, true, false);
 
         // use screen shader
         screenShader.use();
@@ -998,8 +998,9 @@ public class RenderEngine {
 
   /** Duplicates the passed in texture into a new texture. New texture must be deleted by the caller. Can only be called on the render thread. */
   public Texture copyTexture(final String copyName, final Texture texture) {
+    final String name = "Texture copier " + texture.name + " -> " + copyName;
     final Texture copy = Texture.copyAttributesFrom(copyName, texture);
-    final FrameBuffer buffer = FrameBuffer.create(builder -> builder.attachment(FrameBufferAttachmentType.COLOUR, copy));
+    final FrameBuffer buffer = FrameBuffer.create(name, builder -> builder.attachment(FrameBufferAttachmentType.COLOUR, copy));
     final Shader<CopyShaderOptions> shader = ShaderManager.getShader(COPY_SHADER);
     final CopyShaderOptions options = shader.makeOptions();
 
@@ -1018,7 +1019,7 @@ public class RenderEngine {
     shader.use();
     options.apply();
 
-    final Mesh mesh = this.api.makeMesh(VertexOrder.TRIANGLE_STRIP, new float[] {
+    final Mesh mesh = this.api.makeMesh(name, VertexOrder.TRIANGLE_STRIP, new float[] {
       0, 0, 0, 0,
       0, h, 0, 1,
       w, 0, 1, 0,
@@ -1317,7 +1318,7 @@ public class RenderEngine {
       }
 
       final int finalI = i;
-      this.renderBuffers[i] = FrameBuffer.create(builder -> {
+      this.renderBuffers[i] = FrameBuffer.create("Render buffer " + i, builder -> {
         builder.attachment(FrameBufferAttachmentType.COLOUR, this.renderTextures[finalI]);
         builder.attachment(FrameBufferAttachmentType.DEPTH, this.depthTexture);
       });

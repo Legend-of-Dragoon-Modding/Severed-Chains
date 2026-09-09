@@ -20,6 +20,7 @@ import legend.game.characters.LevelUpSource;
 import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.modding.events.characters.PostCharacterDragoonLevelUpEvent;
 import legend.game.modding.events.characters.PostCharacterLevelUpEvent;
@@ -71,7 +72,7 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
   private final int[][] spBarColours = {{16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
     final StatCollection stats = new StatCollection(HP_STAT.get(), MP_STAT.get(), SP_STAT.get(), SPEED_STAT.get(), ATTACK_STAT.get(), MAGIC_ATTACK_STAT.get(), DEFENSE_STAT.get(), MAGIC_DEFENSE_STAT.get(), ATTACK_HIT_STAT.get(), MAGIC_HIT_STAT.get(), ATTACK_AVOID_STAT.get(), MAGIC_AVOID_STAT.get(), DRAGOON_ATTACK_STAT.get(), DRAGOON_MAGIC_ATTACK_STAT.get(), DRAGOON_DEFENSE_STAT.get(), DRAGOON_MAGIC_DEFENSE_STAT.get(), GUARD_HEAL_STAT.get());
     final CharacterData2c character = new CharacterData2c(gameState, this, stats);
 
@@ -156,10 +157,14 @@ public abstract class RetailCharacterTemplate extends CharacterTemplate {
 
     final ListTag equipsTag = new ListTag();
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
-      final MapTag equipTag = new MapTag();
-      equipTag.set("slot", new EnumTag(slot));
-      equipTag.set("equipmentId", new RegistryIdTag(character.getEquipment(slot)));
-      equipsTag.add(equipTag);
+      final Equipment equipment = character.getEquipment(slot);
+
+      if(equipment != null) {
+        final MapTag equipTag = new MapTag();
+        equipTag.set("slot", new EnumTag(slot));
+        equipTag.set("equipmentId", new RegistryIdTag(equipment));
+        equipsTag.add(equipTag);
+      }
     }
     tag.set("equipment", equipsTag);
 

@@ -161,7 +161,7 @@ public class Gpu {
     final float r = l + w;
     final float b = t + h;
 
-    this.displayMesh = RENDERER.api().makeMesh(VertexOrder.TRIANGLE_STRIP, new float[] {
+    this.displayMesh = RENDERER.api().makeMesh("GPU display mesh", VertexOrder.TRIANGLE_STRIP, new float[] {
       l, t, 1.0f, 0, 0,
       l, b, 1.0f, 0, 1,
       r, t, 1.0f, 1, 0,
@@ -203,22 +203,6 @@ public class Gpu {
     LOGGER.trace("Clear display RGB %06x", colour);
 
     this.getDrawBuffer().fill(colour);
-  }
-
-  public void clearData(final int x, final int y, final int w, final int h) {
-    assert x + w <= this.vramWidth : "Rect right (" + (x + w) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert y + h <= this.vramHeight : "Rect bottom (" + (y + h) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    synchronized(this.vramLock) {
-      int offset;
-      for(int i = y; i < y + h; i++) {
-        offset = i * this.vramWidth + x;
-        Arrays.fill(this.vram15, offset, offset + w, 0);
-        Arrays.fill(this.vram24, offset, offset + w, 0);
-      }
-
-      this.vramDirty = true;
-    }
   }
 
   public void uploadData15(final Rect4i rect, final FileData data) {

@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -112,6 +113,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     final float[] baseAngle = {MathHelper.psxDegToRad(-16), MathHelper.psxDegToRad(16)};
 
     final PolyBuilder builder = new PolyBuilder("Addition starburst", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING)
       .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d128c
@@ -185,6 +187,7 @@ public class AdditionStarburstEffect10 implements Effect<EffectManagerParams.Voi
     final float[] yArray = new float[3];
 
     final PolyBuilder builder = new PolyBuilder("Addition completed starburst", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING)
       .translucency(Translucency.B_PLUS_F);
 
     //LAB_800d16fc

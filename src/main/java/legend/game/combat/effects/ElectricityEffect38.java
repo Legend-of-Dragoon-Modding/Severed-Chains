@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -299,6 +300,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
     final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
 
     final PolyBuilder builder = new PolyBuilder("Electricity effect type 0", VertexOrder.TRIANGLES)
+      .bufferUsage(BufferUsage.STREAMING)
       .translucency(translucency);
 
     //LAB_80103200
@@ -472,6 +474,7 @@ public class ElectricityEffect38 implements Effect<EffectManagerParams.Electrici
       final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
 
       final PolyBuilder builder = new PolyBuilder("Lightning effect type 1", VertexOrder.TRIANGLES)
+        .bufferUsage(BufferUsage.STREAMING)
         .translucency(translucency);
 
       //LAB_80103f18

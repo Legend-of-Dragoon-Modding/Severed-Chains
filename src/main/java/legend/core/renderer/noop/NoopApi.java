@@ -42,22 +42,22 @@ public class NoopApi implements RenderApi {
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices) {
     return new NoopMesh(vertexData, false, false, null);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int[] indices, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
     return new NoopMesh(vertexData, false, false, null);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount) {
     return new NoopMesh(vertexData, false, false, null);
   }
 
   @Override
-  public Mesh makeMesh(final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
+  public Mesh makeMesh(final String name, final VertexOrder vertexOrder, final float[] vertexData, final int vertexCount, final boolean textured, final boolean translucent, @Nullable final Translucency translucencyMode, final BufferUsage bufferUsage) {
     return new NoopMesh(vertexData, false, false, null);
   }
 
@@ -67,17 +67,17 @@ public class NoopApi implements RenderApi {
   }
 
   @Override
-  public FrameBuffer makeFrameBuffer(final FrameBufferAttachment[] attachments) {
+  public FrameBuffer makeFrameBuffer(final String name, final FrameBufferAttachment[] attachments) {
     return new NoopFrameBuffer();
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) {
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) {
     return new NoopShader<>(options);
   }
 
   @Override
-  public <Options extends ShaderOptions> Shader<Options> makeShader(final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
+  public <Options extends ShaderOptions> Shader<Options> makeShader(final String name, final Path vert, final Path geom, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
     return new NoopShader<>(options);
   }
 
@@ -144,5 +144,10 @@ public class NoopApi implements RenderApi {
   @Override
   public void wireframe(final boolean enable) {
 
+  }
+
+  @Override
+  public boolean debugEnabled() {
+    return false;
   }
 }
