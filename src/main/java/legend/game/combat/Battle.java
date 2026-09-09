@@ -8612,6 +8612,7 @@ public class Battle extends EngineState<Battle> {
     final BattleEntity27c attacker = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntity27c defender = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
 
+    this.hud.currentAttackElements.clear();
     this.hud.currentAttackElements.add(ELEMENT_ICON_PHYSICAL.get());
     if(attacker instanceof final PlayerBattleEntity player) {
       for(final Element element : player.getAttackElements()) {
@@ -8653,6 +8654,7 @@ public class Battle extends EngineState<Battle> {
       damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.DRAGOON_MAGIC_STATUS_ITEMS);
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08.get());
       damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
+      this.hud.currentAttackElements.clear();
       this.addElementIcon(attacker.spell_94.element_08.get());
     }
 
@@ -8687,6 +8689,7 @@ public class Battle extends EngineState<Battle> {
       damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.ITEM_MAGIC);
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.item_d4.getAttackElement());
       damage = EVENTS.postEvent(new AttackEvent(this, attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
+      this.hud.currentAttackElements.clear();
       this.addElementIcon(attacker.item_d4.getAttackElement());
     }
 
