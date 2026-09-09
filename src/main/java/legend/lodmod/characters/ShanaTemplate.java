@@ -34,8 +34,8 @@ public class ShanaTemplate extends RetailCharacterTemplate {
   private static final int[] MAGIC_DEFENSE = {3, 3, 3, 3, 3, 4, 3, 3, 3, 3, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 6, 5, 6, 5, 6, 5, 6, 5, 5, 5, 5, 6, 5, 5, 5, 5, 6, 2, 3, 2, 3, 3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c character = super.make(gameState);
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
+    final CharacterData2c character = super.makeCharacter(gameState);
 
     character.addSpell(LodSpells.MOON_LIGHT.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion()))).unlock(gameState.timestamp_a0);
     character.addSpell(LodSpells.STAR_CHILDREN.getId(), new CharacterSpellInfo(List.of(new SpellDragoonSpiritUnlockCriterion(), new SpellDragoonLevelUnlockCriterion(2))));

@@ -47,8 +47,8 @@ public class DartTemplate extends RetailCharacterTemplate {
   private static final int[] MAGIC_DEFENSE = {4, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 3, 3, 2, 3, 3, 2, 3, 3, 3, 2, 2, 2, 3, 2, 2, 3, 2, 2, 3, 2, 3, 3, 2, 3, 3, 2, 3, 3, 3, 2, 2, 2, 3, 2, 2, 3, 2, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c original = super.make(gameState);
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
+    final CharacterData2c original = super.makeCharacter(gameState);
     final DartCharacterData character = new DartCharacterData(gameState, this, original.stats);
     character.set(original);
 

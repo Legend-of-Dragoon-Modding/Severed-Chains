@@ -40,8 +40,8 @@ public class HaschelTemplate extends RetailCharacterTemplate {
   private static final int[] MAGIC_DEFENSE = {2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 4, 3, 3, 3, 4, 3, 3, 3, 4, 3, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 5, 4, 4, 4, 4, 4, 5, 4, 4, 4, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 4, 5, 4, 5, 4, 5, 4, 5, 4};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c character = super.make(gameState);
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
+    final CharacterData2c character = super.makeCharacter(gameState);
 
     character.addAddition(LodAdditions.DOUBLE_PUNCH.getId(), new CharacterAdditionInfo(List.of()));
     character.addAddition(LodAdditions.FERRY_OF_STYX.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(14))));

@@ -40,8 +40,8 @@ public class KongolTemplate extends RetailCharacterTemplate {
   private static final int[] MAGIC_DEFENSE = {3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2};
 
   @Override
-  public CharacterData2c make(final GameState52c gameState) {
-    final CharacterData2c character = super.make(gameState);
+  protected CharacterData2c makeCharacter(final GameState52c gameState) {
+    final CharacterData2c character = super.makeCharacter(gameState);
 
     character.addAddition(LodAdditions.PURSUIT.getId(), new CharacterAdditionInfo(List.of()));
     character.addAddition(LodAdditions.INFERNO.getId(), new CharacterAdditionInfo(List.of(new AdditionLevelUnlockCriterion(23))));
