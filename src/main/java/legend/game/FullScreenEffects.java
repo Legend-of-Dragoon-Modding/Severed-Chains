@@ -159,7 +159,8 @@ public final class FullScreenEffects {
     ;
 
     RENDERER.queueOrthoModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms, QueuedModelStandard.class)
-      .monochrome(colour / 255.0f);
+      .monochrome(colour / 255.0f)
+      .worldScissor().set(0, 0, RENDERER.getRenderWidth(), RENDERER.getRenderHeight());
   }
 
   @Method(0x80013d78L)

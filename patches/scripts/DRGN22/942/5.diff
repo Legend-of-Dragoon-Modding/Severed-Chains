@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -450,7 +450,7 @@
+ mov inl[:LABEL_128[stor[28]]], stor[25]
+ incr stor[28]
+ mov inl[:LABEL_128[stor[28]]], stor[26]
+-call 257, stor[27], stor[31]
++call 257, stor[31], stor[27]
+ sub stor[27], stor[24]
+ sub stor[31], stor[25]
+ shl 0x10, stor[24]
+@@ -467,7 +467,7 @@
+ shr 0x10, stor[29]
+ shr 0x10, stor[30]
+ call 264, 0x2, 0x0, 0x0
+-call 258, stor[29], stor[30]
++call 258, stor[30], stor[29]
+ yield
+ decr stor[26]
+ jmp_cmp !=, 0x0, stor[26], inl[:LABEL_56]

@@ -1,9 +1,19 @@
 Zenebatos
 Dart
 Skip hiding body parts during cutscene
+Also fixed instant quick speed freeze (#2770)
 --- original
 +++ modified
-@@ -1294,6 +1294,7 @@
+@@ -1259,6 +1259,8 @@
+ call 2, 0x16, 0x1
+ gosub inl[:LABEL_216]
+ gosub inl[:LABEL_217]
++mov 0x8, stor[23]
++wait stor[23]
+ call 2, 0x16, 0x0
+ call 97, 0xa
+ gosub inl[:LABEL_218]
+@@ -1294,6 +1296,7 @@
  call 97, 0x7
  gosub inl[:LABEL_14]
  call 99, 0x1
@@ -11,7 +21,7 @@ Skip hiding body parts during cutscene
  call 288, 0x0
  call 288, 0x1
  call 288, 0x4
-@@ -1304,6 +1305,7 @@
+@@ -1304,6 +1307,7 @@
  call 288, 0xc
  call 288, 0xd
  call 288, 0xe

@@ -272,6 +272,7 @@ diff,SECT/DRGN24.BIN/234/6,scripts/DRGN22/837/6.diff,"Queen Fury, lights clip th
 diff,SECT/DRGN24.BIN/258/1,scripts/DRGN22/861/1.diff,"Queen Fury, party changes, fix Meru rotation, GH#1705, but disk 4"
 diff,SECT/DRGN22.BIN/873/1,scripts/DRGN22/873/1.diff,"Phantom Ship, fix overlapping arrows for chest puzzle textbox, GH#1387"
 diff,SECT/DRGN22.BIN/933/3,scripts/DRGN22/933/3.diff,"Fueno, rotate lady outside inn to face player for dialogue GH#1445"
+diff,SECT/DRGN22.BIN/942/5,scripts/DRGN22/942/5.diff,"Fueno, fix widescreen jank GH#2736"
 diff,SECT/DRGN22.BIN/1098/1,scripts/DRGN22/1098/1.diff,"Princess Emille's room, fix Dart animation GH#1115"
 diff,SECT/DRGN22.BIN/1104/1,scripts/DRGN22/1104/1.diff,"Princess Emille's painting prison, Dart, widescreen patch, GH#2027"
 diff,SECT/DRGN22.BIN/1104/2,scripts/DRGN22/1104/2.diff,"Princess Emille's painting prison, Emille, widescreen patch, GH#2027"
