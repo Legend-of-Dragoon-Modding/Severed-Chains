@@ -37,8 +37,8 @@ import legend.game.characters.VitalsStatType;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
-import legend.game.combat.bent.ElementIconRegistryEvent;
 import legend.game.combat.bent.ElementIcon;
+import legend.game.combat.bent.ElementIconRegistryEvent;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.RegisterDeffsEvent;
@@ -89,12 +89,15 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
@@ -906,6 +909,21 @@ public class LodMod {
         buffer.get(0, frame);
         event.add(id(DIVINE_ELEMENT.getId().entryId() + "_overlay_" + i), new Image(frame, 8, 16));
       }
+    }
+
+    GoodsIcon.clear();
+
+    try(final Stream<Path> stream = Files.list(Path.of("gfx/goods"))) {
+      stream
+        .filter(file -> file.toString().endsWith(".png"))
+        .forEach(file -> {
+          final String filename = file.getFileName().toString();
+          final RegistryId id = id(filename.substring(0, filename.length() - ".png".length()));
+          event.add(id, Image.load(file));
+        })
+      ;
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
     }
   }
 

@@ -11,9 +11,12 @@ import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.ListBox;
 import legend.game.types.MenuEntryStruct04;
+import legend.game.types.UiType;
+import legend.lodmod.GoodsIcon;
 
 import java.util.Comparator;
 
+import static legend.game.SItem.buildUiRenderable;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -113,7 +116,12 @@ public class GoodsScreen extends MenuScreen {
 
   @Override
   protected void render() {
+    final UiType type = GoodsIcon.getType();
 
+    if(type.obj == null) {
+      type.obj = buildUiRenderable(type, "Goods Icons");
+      type.obj.persistent = true;
+    }
   }
 
   private void menuEscape() {

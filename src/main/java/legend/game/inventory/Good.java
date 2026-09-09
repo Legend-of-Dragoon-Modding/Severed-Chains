@@ -1,27 +1,30 @@
 package legend.game.inventory;
 
 import legend.game.types.Renderable58;
+import legend.lodmod.GoodsIcon;
+import org.legendofdragoon.modloader.Latch;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import javax.annotation.Nullable;
 
 public class Good extends RegistryEntry implements InventoryEntry<Good> {
   public final int sortingIndex;
-  @Nullable
-  public final ItemIcon icon;
+  private final Latch<ItemIcon> icon;
 
   public Good(final int sortingIndex) {
-    this(sortingIndex, null);
+    this.sortingIndex = sortingIndex;
+    this.icon = new Latch<>(() -> new GoodsIcon(this.getRegistryId()));
   }
 
   public Good(final int sortingIndex, final ItemIcon icon) {
     this.sortingIndex = sortingIndex;
-    this.icon = icon;
+    this.icon = new Latch<>(() -> icon);
   }
 
+  @Override
   @Nullable
   public ItemIcon getIcon() {
-    return this.icon;
+    return this.icon.get();
   }
 
   @Override
@@ -59,6 +62,7 @@ public class Good extends RegistryEntry implements InventoryEntry<Good> {
     return false;
   }
 
+  @Override
   public Renderable58 renderIcon(final int x, final int y, final int flags) {
     final ItemIcon icon = this.getIcon();
 
