@@ -3,12 +3,15 @@ package legend.game.inventory;
 import legend.game.characters.Element;
 import legend.game.combat.Battle;
 import legend.game.combat.effects.ScriptDeffEffect;
+import legend.game.combat.spells.SpellEffectPlan;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptReadable;
 import legend.game.scripting.ScriptState;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
+
+import java.util.List;
 
 public abstract class SpellStats0c extends RegistryEntry implements ScriptReadable {
   /**
@@ -46,6 +49,7 @@ public abstract class SpellStats0c extends RegistryEntry implements ScriptReadab
    */
   public final int buffType_0a;
   public final int _0b;
+  private List<SpellEffectPlan> effectPlans = List.of(SpellEffectPlan.legacy());
 
   public SpellStats0c(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final RegistryDelegate<Element> element, final int statusType, final int buffType, final int _0b) {
     this.targetType_00 = targetType;
@@ -67,6 +71,39 @@ public abstract class SpellStats0c extends RegistryEntry implements ScriptReadab
   /** A battle stage ID if this spell changes the battle stage, or -1 if it doesn't */
   public int getBattleStage() {
     return -1;
+  }
+
+    /**
+     * Returns the immutable effect plans currently attached to this spell.
+     *
+     * @return immutable, non-empty effect-plan list
+     */
+    public List<SpellEffectPlan> getEffectPlans() {
+        return this.effectPlans;
+    }
+
+    /**
+     * Replaces all effect plans attached to this spell.
+     *
+     * <p>The list is defensively copied. Plans are evaluated in list order when the spell is cast,
+     * and only {@link legend.game.combat.spells.ExecutionMode#DECLARATIVE} plans are interpreted by
+     * the declarative runtime.</p>
+     *
+     * @param effectPlans non-null, non-empty plans with no null entries
+     * @throws IllegalArgumentException if the list is null, empty, or contains a null plan
+     */
+    public final void setEffectPlans(final List<SpellEffectPlan> effectPlans) {
+    if(effectPlans == null || effectPlans.isEmpty()) {
+      throw new IllegalArgumentException("Spell effect plans cannot be null or empty");
+    }
+
+    for(final SpellEffectPlan effectPlan : effectPlans) {
+      if(effectPlan == null) {
+        throw new IllegalArgumentException("Spell effect plan cannot be null");
+      }
+    }
+
+    this.effectPlans = List.copyOf(effectPlans);
   }
 
   @Override

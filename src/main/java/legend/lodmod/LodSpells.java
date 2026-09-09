@@ -1,11 +1,20 @@
 package legend.lodmod;
 
+import legend.game.combat.spells.ApplyStatusSpellEffect;
+import legend.game.combat.spells.CleanseSpellEffect;
+import legend.game.combat.spells.DamageSpellEffect;
+import legend.game.combat.spells.DrainHpSpellEffect;
+import legend.game.combat.spells.HealHpSpellEffect;
+import legend.game.combat.spells.TargetLifeState;
+import legend.game.combat.spells.TargetScope;
 import legend.game.inventory.SpellRegistryEvent;
 import legend.game.inventory.SpellStats0c;
 import legend.lodmod.spells.DragonSpell;
 import legend.lodmod.spells.RetailSpell;
 import org.legendofdragoon.modloader.registries.Registrar;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
+
+import java.util.List;
 
 import static legend.core.GameEngine.REGISTRIES;
 
@@ -14,41 +23,41 @@ public final class LodSpells {
 
   private static final Registrar<SpellStats0c, SpellRegistryEvent> REGISTRAR = new Registrar<>(REGISTRIES.spells, LodMod.MOD_ID);
 
-  public static final RegistryDelegate<RetailSpell> FLAMESHOT = REGISTRAR.register("flameshot", () -> new RetailSpell(0xc0, 0, 0, 0x20, 0, 100, 10, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 0));
-  public static final RegistryDelegate<RetailSpell> EXPLOSION = REGISTRAR.register("explosion", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 1));
-  public static final RegistryDelegate<RetailSpell> FINAL_BURST = REGISTRAR.register("final_burst", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 2));
-  public static final RegistryDelegate<RetailSpell> RED_EYED_DRAGON = REGISTRAR.register("red_eyed_dragon", () -> new DragonSpell(0xc8, 0, 0, 0x10, 0, 100, 80, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 3, 71));
-  public static final RegistryDelegate<RetailSpell> DIVINE_DG_CANNON = REGISTRAR.register("divine_dg_cannon", () -> new RetailSpell(0xc0, 0, 0, 0x2, 0, 100, 50, 0, LodMod.DIVINE_ELEMENT, 0, 0, 0, 4));
-  public static final RegistryDelegate<RetailSpell> WING_BLASTER = REGISTRAR.register("wing_blaster", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 5));
-  public static final RegistryDelegate<RetailSpell> GASPLESS = REGISTRAR.register("gaspless", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 6));
-  public static final RegistryDelegate<RetailSpell> BLOSSOM_STORM = REGISTRAR.register("blossom_storm", () -> new RetailSpell(0x88, 0x4, 0x10, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0xc0, 0, 7));
-  public static final RegistryDelegate<RetailSpell> JADE_DRAGON = REGISTRAR.register("jade_dragon", () -> new DragonSpell(0xc8, 0, 0, 0x10, 0, 100, 80, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 8, 72));
-  public static final RegistryDelegate<RetailSpell> DIVINE_DG_BALL = REGISTRAR.register("divine_dg_ball", () -> new RetailSpell(0xc8, 0, 0, 0x8, 0, 100, 50, 0, LodMod.DIVINE_ELEMENT, 0, 0, 0, 9));
-  public static final RegistryDelegate<RetailSpell> STAR_CHILDREN = REGISTRAR.register("star_children", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 10));
-  public static final RegistryDelegate<RetailSpell> MOON_LIGHT = REGISTRAR.register("moon_light", () -> new RetailSpell(0x80, 4, 0x2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 11));
-  public static final RegistryDelegate<RetailSpell> GATES_OF_HEAVEN = REGISTRAR.register("gates_of_heaven", () -> new RetailSpell(0x88, 0x4, 0x2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 12));
-  public static final RegistryDelegate<RetailSpell> WHITE_SILVER_DRAGON = REGISTRAR.register("white_silver_dragon", () -> new DragonSpell(0xc8, 0x2, 0, 0x10, 0, 100, 80, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 13, 75));
-  public static final RegistryDelegate<RetailSpell> ALBERT_WING_BLASTER = REGISTRAR.register("albert_wing_blaster", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 14));
-  public static final RegistryDelegate<RetailSpell> ASTRAL_DRAIN = REGISTRAR.register("astral_drain", () -> new RetailSpell(0xc0, 0x2, 0, 0x20, 0, 100, 10, 0, LodMod.DARK_ELEMENT, 0, 0, 0, 15));
-  public static final RegistryDelegate<RetailSpell> DEATH_DIMENSION = REGISTRAR.register("death_dimension", () -> new RetailSpell(0xc8, 0, 0x20, 0, 0, 100, 20, 100, LodMod.DARK_ELEMENT, 0x8, 0, 0, 16));
-  public static final RegistryDelegate<RetailSpell> ALBERT_GASPLESS = REGISTRAR.register("albert_gaspless", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 17));
-  public static final RegistryDelegate<RetailSpell> DEMONS_GATE = REGISTRAR.register("demons_gate", () -> new RetailSpell(0xc8, 0x80, 0, 0, 0, 100, 30, 100, LodMod.DARK_ELEMENT, 0, 0, 0, 18));
-  public static final RegistryDelegate<RetailSpell> DARK_DRAGON = REGISTRAR.register("dark_dragon", () -> new DragonSpell(0xc0, 0, 0, 0x8, 0, 100, 80, 0, LodMod.DARK_ELEMENT, 0, 0, 0, 19, 74));
-  public static final RegistryDelegate<RetailSpell> ATOMIC_MIND = REGISTRAR.register("atomic_mind", () -> new RetailSpell(0xc0, 0, 0, 0, 0, 100, 10, 0, LodMod.THUNDER_ELEMENT, 0, 0, 0, 20));
-  public static final RegistryDelegate<RetailSpell> THUNDER_KID = REGISTRAR.register("thunder_kid", () -> new RetailSpell(0xc0, 0, 0x20, 0x20, 0, 100, 20, 100, LodMod.THUNDER_ELEMENT, 0x10, 0, 0, 21));
-  public static final RegistryDelegate<RetailSpell> THUNDER_GOD = REGISTRAR.register("thunder_god", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.THUNDER_ELEMENT, 0, 0, 0, 22));
-  public static final RegistryDelegate<RetailSpell> VIOLET_DRAGON = REGISTRAR.register("violet_dragon", () -> new DragonSpell(0xc0, 0, 0, 0x8, 0, 100, 80, 0, LodMod.THUNDER_ELEMENT, 0, 0, 0, 23, 77));
-  public static final RegistryDelegate<RetailSpell> FREEZING_RING = REGISTRAR.register("freezing_ring", () -> new RetailSpell(0xc0, 0, 0, 0x20, 0, 100, 10, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 24));
-  public static final RegistryDelegate<RetailSpell> RAINBOW_BREATH = REGISTRAR.register("rainbow_breath", () -> new RetailSpell(0x88, 0x4, 0x2, 0, 50, 100, 20, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 25));
-  public static final RegistryDelegate<RetailSpell> ROSE_STORM = REGISTRAR.register("rose_storm", () -> new RetailSpell(0x88, 4, 0x10, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0xc0, 0, 26));
-  public static final RegistryDelegate<RetailSpell> DIAMOND_DUST = REGISTRAR.register("diamond_dust", () -> new RetailSpell(0xc8, 0, 0, 0x20, 0, 100, 30, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 27));
-  public static final RegistryDelegate<RetailSpell> BLUE_SEA_DRAGON = REGISTRAR.register("blue_sea_dragon", () -> new DragonSpell(0xc0, 0, 0, 0x8, 0, 100, 80, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 28, 73));
-  public static final RegistryDelegate<RetailSpell> GRAND_STREAM = REGISTRAR.register("grand_stream", () -> new RetailSpell(0xc8, 0, 0, 0x40, 0, 100, 20, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 29));
-  public static final RegistryDelegate<RetailSpell> METEOR_STRIKE = REGISTRAR.register("meteor_strike", () -> new RetailSpell(0xc8, 0, 0, 0x20, 0, 100, 30, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 30));
-  public static final RegistryDelegate<RetailSpell> GOLDEN_DRAGON = REGISTRAR.register("golden_dragon", () -> new DragonSpell(0xc8, 0, 0, 0x10, 0, 100, 80, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 31, 76));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_STAR_CHILDREN = REGISTRAR.register("miranda_star_children", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 65));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_MOON_LIGHT = REGISTRAR.register("miranda_moon_light", () -> new RetailSpell(0x80, 0x4, 0x2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 66));
-  public static final RegistryDelegate<RetailSpell> MIRANDA_GATES_OF_HEAVEN = REGISTRAR.register("miranda_gates_of_heaven", () -> new RetailSpell(0x88, 0x4, 0x2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 67));
+  public static final RegistryDelegate<RetailSpell> FLAMESHOT = REGISTRAR.register("flameshot", () -> new RetailSpell(0xc0, 0, 0, 0x20, 0, 100, 10, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 0, LodSpellEffectPlans.damage(TargetScope.SINGLE, 50)));
+  public static final RegistryDelegate<RetailSpell> EXPLOSION = REGISTRAR.register("explosion", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 1, LodSpellEffectPlans.damage(TargetScope.ALL, 25)));
+  public static final RegistryDelegate<RetailSpell> FINAL_BURST = REGISTRAR.register("final_burst", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 2, LodSpellEffectPlans.damage(TargetScope.SINGLE, 75)));
+  public static final RegistryDelegate<RetailSpell> RED_EYED_DRAGON = REGISTRAR.register("red_eyed_dragon", () -> new DragonSpell(0xc8, 0, 0, 0x10, 0, 100, 80, 0, LodMod.FIRE_ELEMENT, 0, 0, 0, 3, 71, LodSpellEffectPlans.damage(TargetScope.ALL, 75)));
+  public static final RegistryDelegate<RetailSpell> DIVINE_DG_CANNON = REGISTRAR.register("divine_dg_cannon", () -> new RetailSpell(0xc0, 0, 0, 0x2, 0, 100, 50, 0, LodMod.DIVINE_ELEMENT, 0, 0, 0, 4, LodSpellEffectPlans.damage(TargetScope.SINGLE, 150)));
+  public static final RegistryDelegate<RetailSpell> WING_BLASTER = REGISTRAR.register("wing_blaster", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 5, LodSpellEffectPlans.damage(TargetScope.ALL, 25)));
+  public static final RegistryDelegate<RetailSpell> GASPLESS = REGISTRAR.register("gaspless", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 6, LodSpellEffectPlans.damage(TargetScope.SINGLE, 75)));
+  public static final RegistryDelegate<RetailSpell> BLOSSOM_STORM = REGISTRAR.register("blossom_storm", () -> new RetailSpell(0x88, 0x4, 0x10, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0xc0, 0, 7, LodSpellEffectPlans.damageResistance()));
+  public static final RegistryDelegate<RetailSpell> JADE_DRAGON = REGISTRAR.register("jade_dragon", () -> new DragonSpell(0xc8, 0, 0, 0x10, 0, 100, 80, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 8, 72, LodSpellEffectPlans.damage(TargetScope.ALL, 75)));
+  public static final RegistryDelegate<RetailSpell> DIVINE_DG_BALL = REGISTRAR.register("divine_dg_ball", () -> new RetailSpell(0xc8, 0, 0, 0x8, 0, 100, 50, 0, LodMod.DIVINE_ELEMENT, 0, 0, 0, 9, LodSpellEffectPlans.damage(TargetScope.ALL, 100)));
+  public static final RegistryDelegate<RetailSpell> STAR_CHILDREN = REGISTRAR.register("star_children", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 10, LodSpellEffectPlans.damage(TargetScope.ALL, 25)));
+  public static final RegistryDelegate<RetailSpell> MOON_LIGHT = REGISTRAR.register("moon_light", () -> new RetailSpell(0x80, 4, 0x2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 11, LodSpellEffectPlans.reviveAndRecover(TargetScope.SINGLE, 100)));
+  public static final RegistryDelegate<RetailSpell> GATES_OF_HEAVEN = REGISTRAR.register("gates_of_heaven", () -> new RetailSpell(0x88, 0x4, 0x2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 12, LodSpellEffectPlans.reviveAndRecover(TargetScope.ALL, 50)));
+  public static final RegistryDelegate<RetailSpell> WHITE_SILVER_DRAGON = REGISTRAR.register("white_silver_dragon", () -> new DragonSpell(0xc8, 0x2, 0, 0x10, 0, 100, 80, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 13, 75, List.of(LodSpellEffectPlans.enemies(TargetScope.ALL, new DamageSpellEffect(75)), LodSpellEffectPlans.allies(TargetScope.ALL, TargetLifeState.LIVING, new HealHpSpellEffect(100, true)))));
+  public static final RegistryDelegate<RetailSpell> ALBERT_WING_BLASTER = REGISTRAR.register("albert_wing_blaster", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 14, LodSpellEffectPlans.damage(TargetScope.ALL, 25)));
+  public static final RegistryDelegate<RetailSpell> ASTRAL_DRAIN = REGISTRAR.register("astral_drain", () -> new RetailSpell(0xc0, 0x2, 0, 0x20, 0, 100, 10, 0, LodMod.DARK_ELEMENT, 0, 0, 0, 15, LodSpellEffectPlans.enemies(TargetScope.SINGLE, new DamageSpellEffect(50), new DrainHpSpellEffect(100))));
+  public static final RegistryDelegate<RetailSpell> DEATH_DIMENSION = REGISTRAR.register("death_dimension", () -> new RetailSpell(0xc8, 0, 0x20, 0, 0, 100, 20, 100, LodMod.DARK_ELEMENT, 0x8, 0, 0, 16, LodSpellEffectPlans.enemies(TargetScope.ALL, new DamageSpellEffect(25), new ApplyStatusSpellEffect(0x8, 100))));
+  public static final RegistryDelegate<RetailSpell> ALBERT_GASPLESS = REGISTRAR.register("albert_gaspless", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.WIND_ELEMENT, 0, 0, 0, 17, LodSpellEffectPlans.damage(TargetScope.SINGLE, 75)));
+  public static final RegistryDelegate<RetailSpell> DEMONS_GATE = REGISTRAR.register("demons_gate", () -> new RetailSpell(0xc8, 0x80, 0, 0, 0, 100, 30, 100, LodMod.DARK_ELEMENT, 0, 0, 0, 18, LodSpellEffectPlans.enemies(TargetScope.ALL)));
+  public static final RegistryDelegate<RetailSpell> DARK_DRAGON = REGISTRAR.register("dark_dragon", () -> new DragonSpell(0xc0, 0, 0, 0x8, 0, 100, 80, 0, LodMod.DARK_ELEMENT, 0, 0, 0, 19, 74, LodSpellEffectPlans.damage(TargetScope.ALL, 100)));
+  public static final RegistryDelegate<RetailSpell> ATOMIC_MIND = REGISTRAR.register("atomic_mind", () -> new RetailSpell(0xc0, 0, 0, 0, 0, 100, 10, 0, LodMod.THUNDER_ELEMENT, 0, 0, 0, 20, LodSpellEffectPlans.damage(TargetScope.ALL, 25)));
+  public static final RegistryDelegate<RetailSpell> THUNDER_KID = REGISTRAR.register("thunder_kid", () -> new RetailSpell(0xc0, 0, 0x20, 0x20, 0, 100, 20, 100, LodMod.THUNDER_ELEMENT, 0x10, 0, 0, 21, LodSpellEffectPlans.enemies(TargetScope.SINGLE, new DamageSpellEffect(50), new ApplyStatusSpellEffect(0x10, 100))));
+  public static final RegistryDelegate<RetailSpell> THUNDER_GOD = REGISTRAR.register("thunder_god", () -> new RetailSpell(0xc0, 0, 0, 0x10, 0, 100, 30, 0, LodMod.THUNDER_ELEMENT, 0, 0, 0, 22, LodSpellEffectPlans.damage(TargetScope.SINGLE, 75)));
+  public static final RegistryDelegate<RetailSpell> VIOLET_DRAGON = REGISTRAR.register("violet_dragon", () -> new DragonSpell(0xc0, 0, 0, 0x8, 0, 100, 80, 0, LodMod.THUNDER_ELEMENT, 0, 0, 0, 23, 77, LodSpellEffectPlans.damage(TargetScope.ALL, 100)));
+  public static final RegistryDelegate<RetailSpell> FREEZING_RING = REGISTRAR.register("freezing_ring", () -> new RetailSpell(0xc0, 0, 0, 0x20, 0, 100, 10, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 24, LodSpellEffectPlans.damage(TargetScope.SINGLE, 50)));
+  public static final RegistryDelegate<RetailSpell> RAINBOW_BREATH = REGISTRAR.register("rainbow_breath", () -> new RetailSpell(0x88, 0x4, 0x2, 0, 50, 100, 20, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 25, LodSpellEffectPlans.allies(TargetScope.ALL, TargetLifeState.LIVING, new CleanseSpellEffect(0xff), new HealHpSpellEffect(50, true))));
+  public static final RegistryDelegate<RetailSpell> ROSE_STORM = REGISTRAR.register("rose_storm", () -> new RetailSpell(0x88, 4, 0x10, 0, 0, 100, 20, 0, LodMod.WIND_ELEMENT, 0, 0xc0, 0, 26, LodSpellEffectPlans.damageResistance()));
+  public static final RegistryDelegate<RetailSpell> DIAMOND_DUST = REGISTRAR.register("diamond_dust", () -> new RetailSpell(0xc8, 0, 0, 0x20, 0, 100, 30, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 27, LodSpellEffectPlans.damage(TargetScope.ALL, 50)));
+  public static final RegistryDelegate<RetailSpell> BLUE_SEA_DRAGON = REGISTRAR.register("blue_sea_dragon", () -> new DragonSpell(0xc0, 0, 0, 0x8, 0, 100, 80, 0, LodMod.WATER_ELEMENT, 0, 0, 0, 28, 73, LodSpellEffectPlans.damage(TargetScope.ALL, 100)));
+  public static final RegistryDelegate<RetailSpell> GRAND_STREAM = REGISTRAR.register("grand_stream", () -> new RetailSpell(0xc8, 0, 0, 0x40, 0, 100, 20, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 29, LodSpellEffectPlans.damage(TargetScope.ALL, 38)));
+  public static final RegistryDelegate<RetailSpell> METEOR_STRIKE = REGISTRAR.register("meteor_strike", () -> new RetailSpell(0xc8, 0, 0, 0x20, 0, 100, 30, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 30, LodSpellEffectPlans.damage(TargetScope.ALL, 50)));
+  public static final RegistryDelegate<RetailSpell> GOLDEN_DRAGON = REGISTRAR.register("golden_dragon", () -> new DragonSpell(0xc8, 0, 0, 0x10, 0, 100, 80, 0, LodMod.EARTH_ELEMENT, 0, 0, 0, 31, 76, LodSpellEffectPlans.damage(TargetScope.ALL, 75)));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_STAR_CHILDREN = REGISTRAR.register("miranda_star_children", () -> new RetailSpell(0xc8, 0, 0, 0, 0, 100, 20, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 65, LodSpellEffectPlans.damage(TargetScope.ALL, 25)));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_MOON_LIGHT = REGISTRAR.register("miranda_moon_light", () -> new RetailSpell(0x80, 0x4, 0x2, 0, 100, 100, 10, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 66, LodSpellEffectPlans.reviveAndRecover(TargetScope.SINGLE, 100)));
+  public static final RegistryDelegate<RetailSpell> MIRANDA_GATES_OF_HEAVEN = REGISTRAR.register("miranda_gates_of_heaven", () -> new RetailSpell(0x88, 0x4, 0x2, 0, 50, 100, 30, 0, LodMod.LIGHT_ELEMENT, 0, 0, 0, 67, LodSpellEffectPlans.reviveAndRecover(TargetScope.ALL, 50)));
 
   public static final RegistryDelegate<RetailSpell> SPELL32 = REGISTRAR.register("spell32", () -> new RetailSpell(0x40, 0, 0, 0x80, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 32));
   public static final RegistryDelegate<RetailSpell> SPELL33 = REGISTRAR.register("spell33", () -> new RetailSpell(0x40, 0, 0, 0, 0, 100, 0, 0, LodMod.NO_ELEMENT, 0, 0, 0, 33));
