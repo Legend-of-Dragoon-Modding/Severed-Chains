@@ -5003,6 +5003,10 @@ public class SMap extends EngineState<SMap> {
         script.params_20[2].neg();
       }
 
+      if(this.snow_800d4bd8 != null) {
+        this.snow_800d4bd8.deallocate();
+      }
+
       //LAB_800f2210
       this.snow_800d4bd8 = new SnowEffect(psxDegToRad(script.params_20[4].get()), script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
       this.snow_800d4bd8.initSnowEffect();
