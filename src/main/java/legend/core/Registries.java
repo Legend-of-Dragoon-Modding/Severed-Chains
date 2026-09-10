@@ -1,5 +1,4 @@
 package legend.core;
-
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActionRegistry;
 import legend.core.platform.input.InputActionRegistryEvent;
@@ -27,9 +26,9 @@ import legend.game.characters.StatTypeRegistryEvent;
 import legend.game.combat.bent.BattleEntityType;
 import legend.game.combat.bent.BattleEntityTypeRegistry;
 import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
+import legend.game.combat.bent.ElementIcon;
 import legend.game.combat.bent.ElementIconRegistry;
 import legend.game.combat.bent.ElementIconRegistryEvent;
-import legend.game.combat.bent.ElementIcon;
 import legend.game.combat.deff.DeffPackage;
 import legend.game.combat.deff.DeffRegistry;
 import legend.game.combat.deff.RegisterDeffsEvent;
@@ -63,6 +62,39 @@ import legend.game.saves.ConfigRegistry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.types.Shop;
+import legend.game.wmap.registries.RegisterWorldMapBehavioursEvent;
+import legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent;
+import legend.game.wmap.registries.RegisterWorldMapEncounterPoolsEvent;
+import legend.game.wmap.registries.RegisterWorldMapGeometryEvent;
+import legend.game.wmap.registries.RegisterWorldMapNodesEvent;
+import legend.game.wmap.registries.RegisterWorldMapPlacesEvent;
+import legend.game.wmap.registries.RegisterWorldMapPortalsEvent;
+import legend.game.wmap.registries.RegisterWorldMapPresentationProfilesEvent;
+import legend.game.wmap.registries.RegisterWorldMapRoutesEvent;
+import legend.game.wmap.registries.RegisterWorldMapStoryPresetsEvent;
+import legend.game.wmap.registries.RegisterWorldMapTeleportLinksEvent;
+import legend.game.wmap.registries.WorldMapBehaviourRegistry;
+import legend.game.wmap.registries.WorldMapCoolonDestinationEntry;
+import legend.game.wmap.registries.WorldMapCoolonDestinationRegistry;
+import legend.game.wmap.registries.WorldMapEncounterPoolEntry;
+import legend.game.wmap.registries.WorldMapEncounterPoolRegistry;
+import legend.game.wmap.registries.WorldMapGeometryEntry;
+import legend.game.wmap.registries.WorldMapGeometryRegistry;
+import legend.game.wmap.registries.WorldMapNodeEntry;
+import legend.game.wmap.registries.WorldMapNodeRegistry;
+import legend.game.wmap.registries.WorldMapPlaceEntry;
+import legend.game.wmap.registries.WorldMapPlaceRegistry;
+import legend.game.wmap.registries.WorldMapPortalEntry;
+import legend.game.wmap.registries.WorldMapPortalRegistry;
+import legend.game.wmap.registries.WorldMapPresentationProfileEntry;
+import legend.game.wmap.registries.WorldMapPresentationProfileRegistry;
+import legend.game.wmap.registries.WorldMapRouteEntry;
+import legend.game.wmap.registries.WorldMapRouteRegistry;
+import legend.game.wmap.registries.WorldMapStoryPresetEntry;
+import legend.game.wmap.registries.WorldMapStoryPresetRegistry;
+import legend.game.wmap.registries.WorldMapTeleportLinkEntry;
+import legend.game.wmap.registries.WorldMapTeleportLinkRegistry;
+import legend.game.wmap.world.WorldMapBehaviour;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.events.registries.RegistryEvent;
 import org.legendofdragoon.modloader.registries.MutableRegistry;
@@ -94,6 +126,19 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<BattleAction> battleActions = this.addRegistry(new BattleActionRegistry(), RegisterBattleActionsEvent::new);
   public final Registry<PostBattleAction<?, ?>> postBattleActions = this.addRegistry(new PostBattleActionRegistry(), RegisterPostBattleActionsEvent::new);
   public final Registry<ElementIcon> elementIcons = this.addRegistry(new ElementIconRegistry(), ElementIconRegistryEvent::new);
+
+  public final Registry<WorldMapNodeEntry> worldMapNodes = this.addRegistry(new WorldMapNodeRegistry(), RegisterWorldMapNodesEvent::new);
+  public final Registry<WorldMapGeometryEntry> worldMapGeometry = this.addRegistry(new WorldMapGeometryRegistry(), RegisterWorldMapGeometryEvent::new);
+  public final Registry<WorldMapRouteEntry> worldMapRoutes = this.addRegistry(new WorldMapRouteRegistry(), RegisterWorldMapRoutesEvent::new);
+  public final Registry<WorldMapPlaceEntry> worldMapPlaces = this.addRegistry(new WorldMapPlaceRegistry(), RegisterWorldMapPlacesEvent::new);
+  public final Registry<WorldMapPortalEntry> worldMapPortals = this.addRegistry(new WorldMapPortalRegistry(), RegisterWorldMapPortalsEvent::new);
+
+  public final Registry<WorldMapStoryPresetEntry> worldMapStoryPresets = this.addRegistry(new WorldMapStoryPresetRegistry(), RegisterWorldMapStoryPresetsEvent::new);
+  public final Registry<WorldMapCoolonDestinationEntry> worldMapCoolonDestinations = this.addRegistry(new WorldMapCoolonDestinationRegistry(), RegisterWorldMapCoolonDestinationsEvent::new);
+  public final Registry<WorldMapTeleportLinkEntry> worldMapTeleportLinks = this.addRegistry(new WorldMapTeleportLinkRegistry(), RegisterWorldMapTeleportLinksEvent::new);
+  public final Registry<WorldMapEncounterPoolEntry> worldMapEncounterPools = this.addRegistry(new WorldMapEncounterPoolRegistry(), RegisterWorldMapEncounterPoolsEvent::new);
+  public final Registry<WorldMapPresentationProfileEntry> worldMapPresentationProfiles = this.addRegistry(new WorldMapPresentationProfileRegistry(), RegisterWorldMapPresentationProfilesEvent::new);
+  public final Registry<WorldMapBehaviour> worldMapBehaviours = this.addRegistry(new WorldMapBehaviourRegistry(), RegisterWorldMapBehavioursEvent::new);
 
   protected Registries(final EventManager events, final Consumer<Access> access) {
     super(events, access);
