@@ -1,4 +1,5 @@
-name: promote-devbuild.yml
+name: Promote Devbuild
+
 on:
   workflow_dispatch:
     inputs:
@@ -17,46 +18,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Copy and Modify Release
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const sourceTag = 'devbuild';
-            const newTag = '${{ inputs.version }}';
-            const newName = 'Release ${{ inputs.version }}';
-            
-            const { owner, repo } = context.repo;
+      - name: Fetch and Duplicate Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SRC_TAG: devbuild
+          NEW_TAG: ${{ inputs.version }}
+          NEW_NAME: Release ${{ inputs.version }}
+        run: |
+          echo "Downloading assets from release tag: $SRC_TAG..."
+          mkdir -p ./release-assets
+          gh release download "$SRC_TAG" --dir ./release-assets
 
-            console.log(`Fetching source release for tag: ${sourceTag}`);
-            let sourceRelease;
-            try {
-              const response = await github.rest.repos.getReleaseByTag({
-                owner,
-                repo,
-                tag: sourceTag,
-              });
-              sourceRelease = response.data;
-            } catch(error) {
-              core.setFailed(`Failed to find a release with tag "${sourceTag}": ${error.message}`);
-              return;
-            }
+          echo "Fetching release notes..."
+          gh release view "$SRC_TAG" --json body --jq '.body' > release_notes.md
 
-            // Create the new release
-            console.log(`Creating new release "${newName}" with tag "${newTag}"...`);
-            try {
-              const newReleaseResponse = await github.rest.repos.createRelease({
-                owner,
-                repo,
-                tag_name: newTag,
-                name: newName,
-                body: "",
-                draft: true,
-                prerelease: false,
-                target_commitish: sourceRelease.target_commitish
-              });
-            
-              console.log(`Successfully created release! URL: ${newReleaseResponse.data.html_url}`);
-            } catch (error) {
-              core.setFailed(`Failed to create new release: ${error.message}`);
-            }
+          echo "Creating new release '$NEW_NAME' with tag '$NEW_TAG'..."
+          gh release create "$NEW_TAG" \
+            --title "$NEW_NAME" \
+            --notes-file release_notes.md \
+            --draft
+
+          echo "Uploading assets to the new release..."
+          gh release upload "$NEW_TAG" ./release-assets/*
+          echo "Bye now"
