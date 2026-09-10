@@ -73,7 +73,7 @@ public final class LodWorldMapTravelData {
     final RegistryId portal = eventDefinition.portal(destination.locationIndex_10).id();
     final RegistryId defaultDestination = coolonDestinationId(destination.defaultDestLocationIndex_14);
     final WorldMapPoint position = point(destination.destPosition_00.x, destination.destPosition_00.y, destination.destPosition_00.z);
-    return new WorldMapCoolonDestinationEntry(id -> new WorldMapCoolonDestination(index, portal, defaultDestination, position, destination.x_18, destination.y_1a, destination.placeName_1c, index != 8));
+    return new WorldMapCoolonDestinationEntry(id -> new WorldMapCoolonDestination(index, portal, defaultDestination, position, destination.x_18, destination.y_1a, destination.placeName_1c, index != 8, index == 8));
   }
 
   private static WorldMapTeleportLinkEntry teleportLinkEntry(final int index) {
@@ -82,7 +82,7 @@ public final class LodWorldMapTravelData {
     final RegistryId sourcePortal = eventDefinition.portal(endpoints[0]).id();
     final RegistryId destinationPortal = eventDefinition.portal(endpoints[1]).id();
     final WorldMapPoint translation = point(source.translation_04);
-    return new WorldMapTeleportLinkEntry(id -> new WorldMapTeleportLink(index, sourcePortal, destinationPortal, translation));
+    return new WorldMapTeleportLinkEntry(id -> new WorldMapTeleportLink(index, sourcePortal, destinationPortal, translation, index != 4));
   }
 
   private static WorldMapEncounterPoolEntry encounterPoolEntry(final int index) {

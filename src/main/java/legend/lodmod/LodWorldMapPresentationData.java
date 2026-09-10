@@ -23,6 +23,7 @@ public final class LodWorldMapPresentationData {
   public static final RegistryDelegate<WorldMapBehaviour> BEHAVIOUR = BEHAVIOUR_REGISTRAR.register("wmap_behaviour", () -> new WorldMapBehaviour(0, (definition, rules) -> {
     rules.capability(WorldMapTravel.Capability.COOLON, progression -> progression.storyFlag(0x15a));
     rules.capability(WorldMapTravel.Capability.QUEEN_FURY_BOARDING, progression -> progression.storyFlag(0x97));
+    rules.departure((origin, progression) -> WorldMapTravel.departure(origin, progression::storyFlag));
   }));
 
   public static void register(final RegisterWorldMapPresentationProfilesEvent event) {

@@ -299,7 +299,7 @@ tasks.register('wmapCompatibilityTest', Test) {
   testClassesDirs = sourceSets.test.output.classesDirs
   classpath = sourceSets.test.runtimeClasspath
   useJUnitPlatform()
-  filter { includeTestsMatching 'legend.game.wmap.world.WorldMapCompatibilityTest' }
+  filter { includeTestsMatching 'legend.game.wmap.world.WorldMap*Test' }
   maxHeapSize = '1g'
 }
 
