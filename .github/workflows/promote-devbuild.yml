@@ -1,0 +1,62 @@
+name: promote-devbuild.yml
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The release version'
+        required: true
+        type: string
+
+jobs:
+  copy-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy and Modify Release
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const sourceTag = 'devbuild';
+            const newTag = '${{ inputs.version }}';
+            const newName = 'Release ${{ inputs.version }}';
+            
+            const { owner, repo } = context.repo;
+
+            console.log(`Fetching source release for tag: ${sourceTag}`);
+            let sourceRelease;
+            try {
+              const response = await github.rest.repos.getReleaseByTag({
+                owner,
+                repo,
+                tag: sourceTag,
+              });
+              sourceRelease = response.data;
+            } catch(error) {
+              core.setFailed(`Failed to find a release with tag "${sourceTag}": ${error.message}`);
+              return;
+            }
+
+            // Create the new release
+            console.log(`Creating new release "${newName}" with tag "${newTag}"...`);
+            try {
+              const newReleaseResponse = await github.rest.repos.createRelease({
+                owner,
+                repo,
+                tag_name: newTag,
+                name: newName,
+                body: "",
+                draft: true,
+                prerelease: false,
+                target_commitish: sourceRelease.target_commitish
+              });
+            
+              console.log(`Successfully created release! URL: ${newReleaseResponse.data.html_url}`);
+            } catch (error) {
+              core.setFailed(`Failed to create new release: ${error.message}`);
+            }
