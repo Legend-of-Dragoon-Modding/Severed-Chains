@@ -82,6 +82,17 @@ import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.game.wmap.registries.RegisterWorldMapBehavioursEvent;
+import legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent;
+import legend.game.wmap.registries.RegisterWorldMapEncounterPoolsEvent;
+import legend.game.wmap.registries.RegisterWorldMapGeometryEvent;
+import legend.game.wmap.registries.RegisterWorldMapNodesEvent;
+import legend.game.wmap.registries.RegisterWorldMapPlacesEvent;
+import legend.game.wmap.registries.RegisterWorldMapPortalsEvent;
+import legend.game.wmap.registries.RegisterWorldMapPresentationProfilesEvent;
+import legend.game.wmap.registries.RegisterWorldMapRoutesEvent;
+import legend.game.wmap.registries.RegisterWorldMapStoryPresetsEvent;
+import legend.game.wmap.registries.RegisterWorldMapTeleportLinksEvent;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -423,6 +434,31 @@ public class LodMod {
   @EventListener
   public static void registerLevelUpActions(final RegisterLevelUpActionsEvent event) {
     LodLevelUpActions.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapNodes(final RegisterWorldMapNodesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapGeometry(final RegisterWorldMapGeometryEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapRoutes(final RegisterWorldMapRoutesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapPlaces(final RegisterWorldMapPlacesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapPortals(final RegisterWorldMapPortalsEvent event) {
+    LodWorldMap.register(event);
   }
 
   @EventListener
@@ -968,5 +1004,34 @@ public class LodMod {
       event.addMapping(ItemIcon.HORN, ItemIcon.RING);
       event.addMapping(ItemIcon.SHIELD, ItemIcon.RING);
     }
+  }
+  @EventListener
+  public static void registerWorldMapStoryPresets(final RegisterWorldMapStoryPresetsEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapCoolonDestinations(final RegisterWorldMapCoolonDestinationsEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapTeleportLinks(final RegisterWorldMapTeleportLinksEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapEncounterPools(final RegisterWorldMapEncounterPoolsEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapPresentationProfiles(final RegisterWorldMapPresentationProfilesEvent event) {
+    LodWorldMapPresentationData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapBehaviours(final RegisterWorldMapBehavioursEvent event) {
+    LodWorldMapPresentationData.register(event);
   }
 }
