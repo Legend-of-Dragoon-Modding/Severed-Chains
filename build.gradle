@@ -293,6 +293,16 @@ test {
   exclude '**/*'
 }
 
+// Pure WMAP compatibility checks do not boot the engine or require extracted game assets.
+tasks.register('wmapCompatibilityTest', Test) {
+  dependsOn testClasses
+  testClassesDirs = sourceSets.test.output.classesDirs
+  classpath = sourceSets.test.runtimeClasspath
+  useJUnitPlatform()
+  filter { includeTestsMatching 'legend.game.wmap.world.WorldMapCompatibilityTest' }
+  maxHeapSize = '1g'
+}
+
 sourceSets {
   main {
     java {

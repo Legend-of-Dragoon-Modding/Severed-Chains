@@ -79,7 +79,7 @@ public class MapState100 {
    * Array of temp positions of the second or second to last small dot of a path,
    * depending on direction of approach of segment
    */
-  public final Vector3f[] tempPathSegmentStartOffsets_40 = new Vector3f[7];
+  public Vector3f[] tempPathSegmentStartOffsets_40 = new Vector3f[7];
   /**
    * 800c6848
    * The correct starting point of the path segment the player is entering based on direction
@@ -110,7 +110,7 @@ public class MapState100 {
    * 800c6874
    * Array of temp indices of paths branching off a location point
    */
-  public final int[] tempPathSegmentIndices_dc = new int[7];
+  public int[] tempPathSegmentIndices_dc = new int[7];
   /**
    * 800c6890
    * What path segment Dart is moving into. Segment order is absolute based on order of paths,
@@ -135,5 +135,20 @@ public class MapState100 {
 
   public MapState100() {
     Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());
+  }
+
+  /** Open-world policies can expose more branches than the seven retail scratch slots. */
+  public void ensurePathCapacity(final int count) {
+    if(count <= this.tempPathSegmentIndices_dc.length) {
+      return;
+    }
+
+    final int previousSize = this.tempPathSegmentIndices_dc.length;
+    this.tempPathSegmentIndices_dc = Arrays.copyOf(this.tempPathSegmentIndices_dc, count);
+    Arrays.fill(this.tempPathSegmentIndices_dc, previousSize, count, -1);
+    this.tempPathSegmentStartOffsets_40 = Arrays.copyOf(this.tempPathSegmentStartOffsets_40, count);
+    for(int i = previousSize; i < count; i++) {
+      this.tempPathSegmentStartOffsets_40[i] = new Vector3f();
+    }
   }
 }
