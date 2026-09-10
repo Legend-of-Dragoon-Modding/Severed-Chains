@@ -13,6 +13,7 @@ import legend.game.inventory.EquipmentTypes;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
+import legend.game.modding.events.gamestate.SaveGamestateFileEvent;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.ExpandableFileData;
 import legend.game.unpacker.FileData;
@@ -363,6 +364,7 @@ public final class SaveManager {
 
       Files.createDirectories(gameState.campaign.path);
       Files.write(file, bytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      EVENTS.postEvent(new SaveGamestateFileEvent(fileName, saveName, gameState));
       return file;
     } catch(final IOException e) {
       throw new SaveFailedException("Failed to save game", e);
