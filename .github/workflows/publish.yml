@@ -171,7 +171,7 @@ jobs:
 
     - name: Update build variable
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.VARIABLE_UPDATE_TOKEN }}
       run: |
         gh api \
           --method PATCH \
