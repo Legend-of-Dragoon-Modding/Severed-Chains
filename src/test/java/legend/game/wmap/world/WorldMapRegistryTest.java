@@ -264,6 +264,23 @@ class WorldMapRegistryTest {
   }
 
   @Test
+  void coolonFallbackFollowsRegisteredOriginAfterReordering() {
+    final WorldMapRegistrySnapshot vanilla = WorldMapRegistrySnapshot.read(bootstrap(event -> { }));
+    final WorldMapRegistrySnapshot.Value<WorldMapCoolonDestination> menuOrigin = vanilla.coolon().get(8);
+    final WorldMapCoolonDestination value = menuOrigin.data();
+    final SubmapEndpoint origin = vanilla.definition().portal(value.portal()).from();
+    assertEquals(8, vanilla.coolonOriginFallback(origin, vanilla.definition()));
+    final WorldMapRegistrySnapshot reordered = WorldMapRegistrySnapshot.read(bootstrap(event -> {
+      if(event instanceof final legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent destinations) {
+        destinations.register(id("first_menu_origin"), new legend.game.wmap.registries.WorldMapCoolonDestinationEntry(menuOrigin.id(), 20, effective -> new WorldMapCoolonDestination(-1, value.portal(), value.defaultDestination(), value.position(), value.x(), value.y(), value.label(), value.worldMapArrival(), true)));
+      }
+    }));
+    assertEquals(0, reordered.coolonOriginFallback(origin, reordered.definition()));
+    assertEquals(menuOrigin.id(), reordered.coolon().getFirst().id());
+    assertEquals(0, reordered.coolonOriginFallback(new SubmapEndpoint(-1, -1), reordered.definition()));
+  }
+
+  @Test
   void revalidatesDefinitionAfterBehaviourConfiguration() {
     final WorldMapRegistrySnapshot snapshot = WorldMapRegistrySnapshot.read(bootstrap(event -> { }));
     final WorldMapDefinition original = snapshot.definition();
