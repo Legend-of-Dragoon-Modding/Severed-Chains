@@ -161,7 +161,7 @@ jobs:
         commit: ${{ github.sha }}
         draft: 'true'
         generateReleaseNotes: 'false'
-        name: 'Latest Development Build'
+        name: 'Release ${{ inputs.version }}'
         prerelease: 'false'
         tag: '${{ inputs.version }}'
         token: ${{ secrets.GITHUB_TOKEN }}
