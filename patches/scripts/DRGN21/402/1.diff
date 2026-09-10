@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -678,7 +678,7 @@
+ call 256, 0x83, 0x20
+ return
+ LABEL_58:
+-call 5, 0x3b, stor[24]
++call 914, id[lod:life_water], stor[24]
+ jmp_cmp !=, 0x0, stor[24], inl[:LABEL_59]
+ call 0, 0x1
+ mov 0xffffff84, stor[24]
