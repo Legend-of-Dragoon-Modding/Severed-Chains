@@ -1,26 +1,29 @@
 # World map definitions and runtime
 
+Registry contracts, extension rules, and initialization ordering are documented in [world-map-registries.md](world-map-registries.md).
+
 WMAP imports the retail tables into an immutable definition, resolves progression into an immutable view, and adapts those results to the existing map renderer, movement controller, and engine transitions. With no subscribing mods, retail story presets, route ordering, entry scenes, movement, encounters, and presentation remain the defaults.
 
 ## Responsibilities
 
 ```mermaid
 flowchart TD
-  A[Legacy tables / existing table edits] --> B[LegacyWorldMap import]
-  B --> C[WorldMapConfigureEvent: definition and rules]
-  C --> D[Validated WorldMapDefinition]
-  D --> E[Legacy renderer and movement projections]
-  D --> F[WorldMapRuntime and precomputed adjacency]
-  G[Story and location flags] --> H[WorldMapProgressionEvent: facts and objective]
-  H --> I[Immutable WorldMapView]
-  F --> I
-  I --> J[SEE: paths, labels and camera targets]
-  I --> K[TRAVERSE: junction choices]
-  I --> L[ENTER: location confirmation]
-  I --> M[Transport capabilities and objective]
-  L --> N[Existing prompt / animation / fade states]
-  N --> O[WorldMapTravelEvent: destination]
-  O --> P[Existing engine transition]
+    A[Legacy tables] --> B[World-map registration events]
+    B --> C[WorldMapRegistrySnapshot]
+    C --> D[Behaviours and WorldMapConfigureEvent]
+    D --> E[Validated WorldMapDefinition]
+    E --> F[Legacy renderer and movement projections]
+    E --> G[WorldMapRuntime and precomputed adjacency]
+    H[Story and location flags] --> I[WorldMapProgressionEvent: facts and objective]
+    I --> J[Immutable WorldMapView]
+    G --> J
+    J --> K[SEE: paths, labels and camera targets]
+    J --> L[TRAVERSE: junction choices]
+    J --> M[ENTER: location confirmation]
+    J --> N[Transport capabilities and objective]
+    M --> O[Existing prompt / animation / fade states]
+    O --> P[WorldMapTravelEvent: destination]
+    P --> Q[Existing engine transition]
 ```
 
 Definitions distinguish place metadata, physical endpoint nodes, directed routes, geometry, and portals binding traversal to submap entry/exit data. Imported IDs use `lod:wmap_location_N`, `lod:wmap_route_N`, `lod:wmap_place_N`, and `lod:wmap_node_N`. Numeric suffixes identify legacy slots, not discovered semantic names. A shared place name does not imply that two portals have the same source, destination, story rule, or presentation.
@@ -92,11 +95,11 @@ final WorldMapPortal portal = LegacyWorldMap.importDefinition().portal(7);
 event.definition.replacePortal(portal.withDestination(new SubmapEndpoint(13, 17)));
 ```
 
-An overlay must retain dense slot indices. IDs may be changed only when all dependent references are changed consistently; retaining IDs is recommended. Rules naming unknown portals fail during configuration. Geometry can be replaced with `.geometry(segmentIndex, points)` and existing nodes with `.node(node)`. Every directed route's start/end must still match the physical segment endpoints. Moving a shared junction requires updating all attached geometry and its node. Segment lengths are regenerated; segment and node counts do not grow.
+The configure-event builder retains the established slots: it replaces existing records, geometry and nodes, and cannot append them. Use the world-map registries to add dense geometry, routes, places or encounter pools before the snapshot is created; portal projection remains fixed at 256 slots. Rules naming unknown portals fail during configuration. Geometry can be replaced with `.geometry(segmentIndex, points)` and existing nodes with `.node(node)`. Every directed route's start/end must still match the physical segment endpoints. Moving a shared junction requires updating all attached geometry and its node. Segment lengths are regenerated.
 
-This implementation supports replacement within the retail slots, including reusing unused portal slots with valid route/place bindings. It does **not** append an unlimited number of places, nodes, routes, or geometry segments. Scripts, visited bits, encounter/model indices, thumbnails, transport destination lists, and rendering resources still use the established retail contracts. Mods must supply indices valid for those existing resources. New map resources and unbounded graph expansion require a separate migration of those adapters.
+The registry pipeline can append nodes plus dense geometry, routes, places and encounter pools. It supports portal changes only by replacing one of the 256 legacy slots, including an unused portal slot with valid route/place bindings. Scripts, visited bits, encounter/model indices, thumbnails, transport destination lists, and rendering resources still use the established retail contracts. Mods must supply indices valid for those existing resources. New portal capacity beyond 256 requires a separate migration of those adapters.
 
-Existing global table edits made before map initialization are imported. Edits to `WmapStatics` after import are not live changes to the active immutable definition. Move such edits to `WorldMapConfigureEvent`; progression changes belong in rules/facts and invalidation. Multiple listeners replacing the same slot or rule follow the mod loader's existing event order, with the last replacement winning; there is no new mod-priority mechanism.
+Retail legacy tables are imported by Lod's registry listeners. Edits to `WmapStatics` after registration are not live changes to the active immutable definition. Register a world-map entry to supply or overlay graph/travel data; use `WorldMapConfigureEvent` for a per-configuration definition or rule adjustment; progression changes belong in rules/facts and invalidation. Registry overlays use explicit replacement priorities, while configure-event listeners retain mod-loader event order.
 
 ## Travel and closure semantics
 
