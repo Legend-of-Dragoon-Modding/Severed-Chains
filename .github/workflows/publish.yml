@@ -168,3 +168,15 @@ jobs:
         prerelease: 'false'
         tag: 'devbuild'
         token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update build variable
+      env:
+        GH_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+      run: |
+        gh api \
+          --method PATCH \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/${{ github.repository }}/actions/variables/BUILD_NUMBER \
+          -f name='BUILD_NUMBER' \
+          -f value='${{ github.run_number }}'
