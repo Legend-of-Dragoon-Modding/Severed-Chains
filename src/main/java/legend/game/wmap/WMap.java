@@ -29,9 +29,13 @@ import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.worldmap.WorldMapArrivalEvent;
 import legend.game.modding.events.worldmap.WorldMapConfigureEvent;
 import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
+import legend.game.modding.events.worldmap.WorldMapEnterEvent;
+import legend.game.modding.events.worldmap.WorldMapJunctionEvent;
 import legend.game.modding.events.worldmap.WorldMapProgressionEvent;
+import legend.game.modding.events.worldmap.WorldMapResolvedEvent;
 import legend.game.modding.events.worldmap.WorldMapTravelEvent;
 import legend.game.saves.SavedGame;
 import legend.game.sound.SoundFile;
@@ -58,6 +62,7 @@ import legend.game.wmap.world.WorldMapAccess;
 import legend.game.wmap.world.WorldMapAction;
 import legend.game.wmap.world.WorldMapDefinition;
 import legend.game.wmap.world.WorldMapObjective;
+import legend.game.wmap.world.WorldMapPoint;
 import legend.game.wmap.world.WorldMapPresentation;
 import legend.game.wmap.world.WorldMapProgression;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
@@ -65,6 +70,7 @@ import legend.game.wmap.world.WorldMapRules;
 import legend.game.wmap.world.WorldMapRuntime;
 import legend.game.wmap.world.WorldMapSave;
 import legend.game.wmap.world.WorldMapTravel;
+import legend.game.wmap.world.WorldMapTraversal;
 import legend.game.wmap.world.WorldMapView;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
@@ -290,6 +296,7 @@ public class WMap extends EngineState<WMap> {
   private int loadWait = 60 / vsyncMode_8007a3b8;
   private RegistryId savedWorldMapRoute;
   private boolean resolvingWorldMap;
+  private boolean notifyingWorldMap;
   private boolean worldMapPresentationDirty;
   private WorldMapObjective renderedWorldMapObjective;
   private Location14[] locations_800f0e34;
@@ -358,6 +365,8 @@ public class WMap extends EngineState<WMap> {
   }
 
   private void refreshWorldMap() {
+    // Observers see the published view; any invalidation they request remains pending for the next caller.
+    if(this.notifyingWorldMap) return;
     if(this.resolvingWorldMap) {
       throw new IllegalStateException("WorldMapProgressionEvent must not re-enter world-map queries");
     }
@@ -370,11 +379,24 @@ public class WMap extends EngineState<WMap> {
       } finally {
         this.resolvingWorldMap = false;
       }
+      this.notifyingWorldMap = true;
+      try {
+        EVENTS.postEvent(new WorldMapResolvedEvent(this, gameState_800babc8, this.worldMap.view()));
+      } finally {
+        this.notifyingWorldMap = false;
+      }
     }
   }
 
   private boolean hasWorldMapCapability(final WorldMapTravel.Capability capability) {
     return this.getWorldMapView().hasCapability(capability);
+  }
+
+  private List<WorldMapTraversal.Connection> worldMapConnections(final Vector3f position) {
+    final WorldMapView view = this.getWorldMapView();
+    final var available = this.worldMap.traversal().connections(position, this.mapState_800c6798.continent_00, this.mapState_800c6798.facing_1c, view);
+    final WorldMapJunctionEvent event = EVENTS.postEvent(new WorldMapJunctionEvent(this, gameState_800babc8, new WorldMapPoint(position.x, position.y, position.z), view.version(), available));
+    return event.validatedConnections();
   }
 
   private SubmapEndpoint resolveWorldMapDestination(final int index, final WorldMapTravel.Kind kind, final boolean worldMapArrival) {
@@ -4403,6 +4425,10 @@ public class WMap extends EngineState<WMap> {
               playMenuSound(3);
               return;
             }
+            final var portal = this.worldMap.definition().portal(this.mapState_800c6798.locationIndex_10);
+            final int scene = this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 1 ? this.mapState_800c6798.submapSceneTo_ca >>> 4 & 0xffff : this.mapState_800c6798.submapSceneTo_ca & 0xf;
+            final SubmapEndpoint destination = this.mapState_800c6798.submapCutTo_c8 == 999 ? new SubmapEndpoint(portal.from().cut(), scene) : new SubmapEndpoint(this.mapState_800c6798.submapCutTo_c8, this.mapState_800c6798.submapSceneTo_ca);
+            if(EVENTS.postEvent(new WorldMapEnterEvent(this, gameState_800babc8, portal.id(), destination)).cancelled) return;
             //LAB_800e640c
             this.initTransitionAnimation(FadeAnimationType.FADE_OUT_2);
             setTextAndTextboxesToUninitialized(6, 1);
@@ -4750,6 +4776,11 @@ public class WMap extends EngineState<WMap> {
       this.mapState_800c6798.submapSceneFrom_c6 = 17;
       locationIndex = 5;
     }
+
+    final WorldMapArrivalEvent arrival = EVENTS.postEvent(new WorldMapArrivalEvent(this, gameState_800babc8, new SubmapEndpoint(this.mapState_800c6798.submapCutFrom_c4, this.mapState_800c6798.submapSceneFrom_c6), this.worldMap.definition().portal(locationIndex).id()));
+    locationIndex = arrival.validate(this.worldMap.definition(), this.worldMap::arrivalAllowed).legacyIndex();
+    this.mapState_800c6798.submapCutFrom_c4 = arrival.origin.cut();
+    this.mapState_800c6798.submapSceneFrom_c6 = arrival.origin.scene();
 
     this.mapState_800c6798.pathDots = new PathDots();
 
@@ -5227,7 +5258,7 @@ public class WMap extends EngineState<WMap> {
       pos.set(nextDotPos);
     }
 
-    final var connections = this.worldMap.traversal().connections(pos, this.mapState_800c6798.continent_00, this.mapState_800c6798.facing_1c, this.getWorldMapView());
+    final var connections = this.worldMapConnections(pos);
     this.mapState_800c6798.ensurePathCapacity(connections.size());
     final int index = connections.size();
     for(int i = 0; i < index; i++) {
@@ -5283,7 +5314,7 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800e9e20
     // Finish an active segment, but resolve junction choices against current progression.
-    final var connections = this.worldMap.traversal().connections(this.mapState_800c6798.correctPathSegmentStartPos, this.mapState_800c6798.continent_00, this.mapState_800c6798.facing_1c, this.getWorldMapView());
+    final var connections = this.worldMapConnections(this.mapState_800c6798.correctPathSegmentStartPos);
     this.mapState_800c6798.ensurePathCapacity(connections.size());
     Arrays.fill(this.mapState_800c6798.tempPathSegmentIndices_dc, -1);
     for(int i = 0; i < connections.size(); i++) {
