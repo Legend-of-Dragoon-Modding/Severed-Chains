@@ -25,6 +25,12 @@ public final class WorldMapTravel {
     FORCED_QUEEN_FURY,
   }
 
+  public enum Arrival {
+    NORMAL,
+    TELEPORT,
+    COOLON,
+  }
+
   private WorldMapTravel() { }
 
   public static boolean hasCapability(final Capability capability, final IntPredicate storyFlag) {

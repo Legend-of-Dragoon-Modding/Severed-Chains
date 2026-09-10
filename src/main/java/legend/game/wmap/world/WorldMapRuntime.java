@@ -31,6 +31,14 @@ public final class WorldMapRuntime {
     return this.traversal;
   }
 
+  public WorldMapTravel.Departure departure(final SubmapEndpoint origin) {
+    return this.rules.departure(origin, this.view().progression());
+  }
+
+  public WorldMapTravel.Arrival arrival(final SubmapEndpoint origin) {
+    return this.rules.arrival(origin, this.view().progression(), this.definition);
+  }
+
   public WorldMapView view() {
     if(this.view == null) {
       throw new IllegalStateException("World-map progression has not been resolved");
