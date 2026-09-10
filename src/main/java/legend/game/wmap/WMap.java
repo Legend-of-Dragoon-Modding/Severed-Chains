@@ -20,9 +20,6 @@ import legend.core.renderer.QueuedModelStandard;
 import legend.core.renderer.QueuedModelTmd;
 import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
-import legend.core.tags.FloatTag;
-import legend.core.tags.IntTag;
-import legend.core.tags.MapTag;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.EngineStateType;
@@ -32,7 +29,10 @@ import legend.game.combat.encounters.Encounter;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.worldmap.WorldMapConfigureEvent;
 import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
+import legend.game.modding.events.worldmap.WorldMapProgressionEvent;
+import legend.game.modding.events.worldmap.WorldMapTravelEvent;
 import legend.game.saves.SavedGame;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SoundFileIndices;
@@ -53,6 +53,20 @@ import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.game.wmap.world.LegacyWorldMap;
+import legend.game.wmap.world.SubmapEndpoint;
+import legend.game.wmap.world.WorldMapAccess;
+import legend.game.wmap.world.WorldMapAction;
+import legend.game.wmap.world.WorldMapDefinition;
+import legend.game.wmap.world.WorldMapObjective;
+import legend.game.wmap.world.WorldMapPresentation;
+import legend.game.wmap.world.WorldMapProgression;
+import legend.game.wmap.world.WorldMapRules;
+import legend.game.wmap.world.WorldMapRuntime;
+import legend.game.wmap.world.WorldMapSave;
+import legend.game.wmap.world.WorldMapStory;
+import legend.game.wmap.world.WorldMapTravel;
+import legend.game.wmap.world.WorldMapView;
 import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
@@ -63,8 +77,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -164,17 +180,12 @@ import static legend.game.wmap.WMapModelAndAnimData258.FastTravelTransitionMode;
 import static legend.game.wmap.WMapModelAndAnimData258.TeleportAnimationState;
 import static legend.game.wmap.WMapModelAndAnimData258.ZoomState;
 import static legend.game.wmap.WmapStatics.coolonWarpDest_800ef228;
-import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
 import static legend.game.wmap.WmapStatics.loadWait;
-import static legend.game.wmap.WmapStatics.locations_800f0e34;
 import static legend.game.wmap.WmapStatics.mapPositions_800ef1a8;
 import static legend.game.wmap.WmapStatics.negativeDirectionMovementMask_800f0210;
-import static legend.game.wmap.WmapStatics.pathDotPosArr_800f591c;
-import static legend.game.wmap.WmapStatics.pathSegmentLengths_800f5810;
 import static legend.game.wmap.WmapStatics.placeIndices_800c84c8;
 import static legend.game.wmap.WmapStatics.placePositionVectors_800c74b8;
-import static legend.game.wmap.WmapStatics.places_800f0234;
 import static legend.game.wmap.WmapStatics.playerAvatarVramSlots_800ef694;
 import static legend.game.wmap.WmapStatics.positiveDirectionMovementMask_800f0204;
 import static legend.game.wmap.WmapStatics.regions_800f01ec;
@@ -278,6 +289,95 @@ public class WMap extends EngineState<WMap> {
   private float mcqColour_800c6794;
 
   public final MapState100 mapState_800c6798 = new MapState100();
+
+  private WorldMapRuntime worldMap;
+  private RegistryId savedWorldMapRoute;
+  private boolean resolvingWorldMap;
+  private boolean worldMapPresentationDirty;
+  private WorldMapObjective renderedWorldMapObjective;
+  private Location14[] locations_800f0e34 = WmapStatics.locations_800f0e34;
+  private Place0c[] places_800f0234 = WmapStatics.places_800f0234;
+  private DirectionalPathSegmentData08[] directionalPathSegmentData_800f2248 = WmapStatics.directionalPathSegmentData_800f2248;
+  private Vector3f[][] pathDotPosArr_800f591c = WmapStatics.pathDotPosArr_800f591c;
+  private int[] pathSegmentLengths_800f5810 = WmapStatics.pathSegmentLengths_800f5810;
+
+  private void configureWorldMap() {
+    final WorldMapConfigureEvent event = EVENTS.postEvent(new WorldMapConfigureEvent(this, gameState_800babc8, LegacyWorldMap.importDefinition().toBuilder(), new WorldMapRules.Builder()));
+    final WorldMapDefinition definition = event.definition.build();
+    this.worldMap = new WorldMapRuntime(definition, event.rules.build());
+    if(this.savedWorldMapRoute != null) {
+      WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute);
+      this.savedWorldMapRoute = null;
+    }
+    this.locations_800f0e34 = definition.locationData();
+    this.places_800f0234 = definition.placeData();
+    this.directionalPathSegmentData_800f2248 = definition.directionalPathData();
+    this.pathDotPosArr_800f591c = definition.pathData();
+    this.pathSegmentLengths_800f5810 = definition.pathLengths();
+    this.refreshWorldMap();
+  }
+
+  public WorldMapDefinition getWorldMapDefinition() {
+    if(this.worldMap == null) {
+      throw new IllegalStateException("World map is not configured yet; use WorldMapConfigureEvent to configure its definition");
+    }
+    return this.worldMap.definition();
+  }
+
+  public WorldMapView getWorldMapView() {
+    this.getWorldMapDefinition();
+    this.refreshWorldMap();
+    return this.worldMap.view();
+  }
+
+  /** Call when mod-owned progression changes. Legacy flag changes are detected automatically. */
+  public void invalidateWorldMap() {
+    if(this.worldMap != null) {
+      this.worldMap.invalidate();
+    }
+  }
+
+  public WorldMapAccess queryWorldMap(final RegistryId portal, final WorldMapAction action) {
+    this.getWorldMapDefinition();
+    this.refreshWorldMap();
+    return this.worldMap.access(portal, action, this.mapState_800c6798.continent_00);
+  }
+
+  private void refreshWorldMap() {
+    if(this.resolvingWorldMap) {
+      throw new IllegalStateException("WorldMapProgressionEvent must not re-enter world-map queries");
+    }
+    if(this.worldMap != null && this.worldMap.needsRefresh(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c)) {
+      this.resolvingWorldMap = true;
+      try {
+        final WorldMapProgressionEvent event = EVENTS.postEvent(new WorldMapProgressionEvent(this, gameState_800babc8, new WorldMapProgression.Builder(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c).objective(WorldMapObjective.legacy(gameState_800babc8.scriptFlags2_bc, this.worldMap.definition()))));
+        this.worldMap.resolve(event.progression.build());
+        this.worldMapPresentationDirty = true;
+      } finally {
+        this.resolvingWorldMap = false;
+      }
+    }
+  }
+
+  private boolean hasWorldMapCapability(final WorldMapTravel.Capability capability) {
+    return this.getWorldMapView().hasCapability(capability);
+  }
+
+  private SubmapEndpoint resolveWorldMapDestination(final int index, final WorldMapTravel.Kind kind, final boolean worldMapArrival) {
+    final var portal = this.worldMap.definition().portal(index);
+    // Region menu data is not a destination. Resolve it after the player chooses a region.
+    if(!worldMapArrival && portal.to().cut() == 999) {
+      return portal.to();
+    }
+    final WorldMapTravelEvent event = EVENTS.postEvent(new WorldMapTravelEvent(this, gameState_800babc8, kind, portal.id(), WorldMapTravel.destination(portal, worldMapArrival), worldMapArrival));
+    return Objects.requireNonNull(event.destination, "World-map destination for " + portal.id());
+  }
+
+  private void prepareWorldMapDestination(final int index, final WorldMapTravel.Kind kind) {
+    final SubmapEndpoint destination = this.resolveWorldMapDestination(index, kind, false);
+    this.mapState_800c6798.submapCutTo_c8 = destination.cut();
+    this.mapState_800c6798.submapSceneTo_ca = destination.scene();
+  }
 
   private int cancelLocationEntryDelayTick_800c68a0;
   /**
@@ -437,28 +537,12 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public Tag writeSaveData(final GameState52c gameState) {
-    final MapTag tag = new MapTag();
-    tag.set("pathIndex", new IntTag(gameState.pathIndex_4d8));
-    tag.set("dotIndex", new IntTag(gameState.dotIndex_4da));
-    tag.set("dotOffset", new FloatTag(gameState.dotOffset_4dc));
-    tag.set("facing", new IntTag(gameState.facing_4dd));
-    tag.set("directionalPathIndex", new IntTag(gameState.directionalPathIndex_4de));
-    return tag;
+    return WorldMapSave.write(gameState, this.worldMap == null ? null : this.worldMap.definition());
   }
 
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
-    final MapTag map = tag.asMap();
-
-    if(!map.has("pathIndex")) {
-      return;
-    }
-
-    gameState.pathIndex_4d8 = map.get("pathIndex").asInt().get();
-    gameState.dotIndex_4da = map.get("dotIndex").asInt().get();
-    gameState.dotOffset_4dc = map.get("dotOffset").asFloat().get();
-    gameState.facing_4dd = map.get("facing").asInt().get();
-    gameState.directionalPathIndex_4de = map.get("directionalPathIndex").asInt().get();
+    this.savedWorldMapRoute = WorldMapSave.read(gameState, tag);
   }
 
   @Override
@@ -589,6 +673,11 @@ public class WMap extends EngineState<WMap> {
   public void tick() {
     super.tick();
 
+    this.refreshWorldMap();
+    if(this.worldMapPresentationDirty && this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
+      this.setPositionsOfValidMapPlaces();
+      this.worldMapPresentationDirty = false;
+    }
     this.wmapStates_800ef000[this.wmapState_800bb10c.state].run();
   }
 
@@ -703,6 +792,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800ccbe0L)
   private void initWmap() {
+    this.configureWorldMap();
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8 = 1;
     unloadSoundFile(9);
@@ -832,7 +922,7 @@ public class WMap extends EngineState<WMap> {
   }
 
   private void initCoolonMovePrompt() {
-    if(gameState_800babc8.scriptFlags2_bc.get(0x15a)) {
+    if(this.hasWorldMapCapability(WorldMapTravel.Capability.COOLON)) {
       this.coolonPromptPopup = new WmapPromptPopup()
         .setPrompt("Move?")
         .addOptionText("No")
@@ -1101,9 +1191,9 @@ public class WMap extends EngineState<WMap> {
     int count = 0;
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800d1e38
-      if(places_800f0234[locations_800f0e34[i].placeIndex_02].name_00 != null) {
+      if(this.worldMap.definition().portal(i).place() != null && this.places_800f0234[this.locations_800f0e34[i].placeIndex_02].name_00 != null) {
         //LAB_800d1e90
-        if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, cameraAndLights.locationDistances_154[count].position_08) == 0) {
+        if(this.checkLocationIsVisibleAndOptionallySetPathStart(i, 1, cameraAndLights.locationDistances_154[count].position_08) == 0) {
           //LAB_800d1ee0
           final float dx = x - cameraAndLights.locationDistances_154[count].position_08.x;
           final float dy = y - cameraAndLights.locationDistances_154[count].position_08.y;
@@ -1521,31 +1611,28 @@ public class WMap extends EngineState<WMap> {
 
     if(modelAndAnimData.zoomState_1f8 == ZoomState.WORLD_3) {
       //LAB_800d44d0
-      int destinationIndex = 0;
-
-      //LAB_800d44d8
-      for(int i = 0; i < 49; i++) {
-        //LAB_800d4518
-        if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c[i].packedFlag_00)) {
-          //LAB_800d45cc
-          destinationIndex = i;
-        }
-        //LAB_800d45d8
+      final WorldMapObjective objective = this.getWorldMapView().progression().objective();
+      if(!Objects.equals(objective, this.renderedWorldMapObjective)) {
+        this.renderedWorldMapObjective = objective;
+        this.shouldSetDestLabelMetrics = true;
+        this.destLabelName = null;
+        this.destinationLabelStage_800c86f0 = 0;
+        setTextAndTextboxesToUninitialized(7, 0);
       }
 
       //LAB_800d45f0
-      if(destinationIndex != 0) {
+      if(objective != null) {
         //LAB_800d4608
         // Destination arrow on map
-        x = GPU.getOffsetX() + wmapDestinationMarkers_800f5a6c[destinationIndex].x_24 - 160;
-        y = GPU.getOffsetY() + wmapDestinationMarkers_800f5a6c[destinationIndex].y_26 - 120;
+        x = GPU.getOffsetX() + objective.x() - 160;
+        y = GPU.getOffsetY() + objective.y() - 120;
         modelAndAnimData.mapArrow.render(u, 1, x, y, 100.0f);
 
-        final String placeName = places_800f0234[wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28].name_00;
+        final String placeName = objective.label();
         if(placeName != null) {
           //LAB_800d4878
-          final int textboxX = wmapDestinationMarkers_800f5a6c[destinationIndex].x_24;
-          final int textboxY = wmapDestinationMarkers_800f5a6c[destinationIndex].y_26 - 8;
+          final int textboxX = objective.x();
+          final int textboxY = objective.y() - 8;
 
           final IntRef width = new IntRef();
           final IntRef lines = new IntRef();
@@ -2045,7 +2132,7 @@ public class WMap extends EngineState<WMap> {
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800d7d90
-      if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, intersectionPoint) == 0) {
+      if(this.checkLocationIsVisibleAndOptionallySetPathStart(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
         if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7 || i == 31 || i == 78) {
           this.mapState_800c6798.pathDots.transforms.set(this.pathLw)
@@ -2083,19 +2170,19 @@ public class WMap extends EngineState<WMap> {
     //LAB_800d8540
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800d8564
-      if(this.checkLocationIsValidAndOptionallySetPathStart(i, 0, null) == 0) {
+      if(this.checkLocationIsVisibleAndOptionallySetPathStart(i, 0, null) == 0) {
         //LAB_800d8584
         if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7 || i == 31 || i == 78) {
           //LAB_800d85c0
-          final int pathIndexAndDirection = directionalPathSegmentData_800f2248[locations_800f0e34[i].directionalPathIndex_00].pathSegmentIndexAndDirection_00;
+          final int pathIndexAndDirection = this.directionalPathSegmentData_800f2248[this.locations_800f0e34[i].directionalPathIndex_00].pathSegmentIndexAndDirection_00;
           final int pathSegmentIndex = Math.abs(pathIndexAndDirection) - 1;
 
           if(!this.pathSegmentsRendered[pathSegmentIndex]) {
             //LAB_800d863c
             this.pathSegmentsRendered[pathSegmentIndex] = true;
-            final int pathPointCount = pathSegmentLengths_800f5810[pathSegmentIndex] - 1;
+            final int pathPointCount = this.pathSegmentLengths_800f5810[pathSegmentIndex] - 1;
 
-            final Vector3f[] dots = pathDotPosArr_800f591c[pathSegmentIndex];
+            final Vector3f[] dots = this.pathDotPosArr_800f591c[pathSegmentIndex];
             final int pathPointIndexBase = pathIndexAndDirection >= 0 ? 0 : pathPointCount - 1;
 
             //LAB_800d86d0
@@ -2477,7 +2564,7 @@ public class WMap extends EngineState<WMap> {
     //LAB_800da360
     // Show square prompt while sailing Queen Fury
     if(modelAndAnimData.modelIndex_1e4 == 1) {
-      if(gameState_800babc8.scriptFlags2_bc.get(0x97) && this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
+      if(this.hasWorldMapCapability(WorldMapTravel.Capability.QUEEN_FURY_BOARDING) && this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
         this.coolonQueenFuryOverlay.render(1);
       }
 
@@ -2492,11 +2579,14 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800da468
     //Flag for Coolon usable
-    if(!gameState_800babc8.scriptFlags2_bc.get(0x15a)) {
+    if(!this.hasWorldMapCapability(WorldMapTravel.Capability.COOLON)) {
       return;
     }
 
     //LAB_800da4ec
+    if(this.coolonPromptPopup == null) {
+      this.initCoolonMovePrompt();
+    }
     this.coolonQueenFuryOverlay.render(0);
 
     if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get())) {
@@ -2599,7 +2689,7 @@ public class WMap extends EngineState<WMap> {
         final List<Integer> possibleOriginIndices = new ArrayList<>();
         for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
-          if(locations_800f0e34[coolonWarpDest_800ef228[i].locationIndex_10].continent_0e == this.mapState_800c6798.continent_00) {
+          if(this.locations_800f0e34[coolonWarpDest_800ef228[i].locationIndex_10].continent_0e == this.mapState_800c6798.continent_00) {
             possibleOriginIndices.add(i);
           }
           //LAB_800dad14
@@ -2659,8 +2749,7 @@ public class WMap extends EngineState<WMap> {
           //LAB_800daf44
           // Closing Coolon map when traveling out of Zenebatos
           if(modelAndAnimData.usingCoolonFromZenebatos_254) {
-            this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCutTo_08;
-            this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapSceneTo_0a;
+            this.prepareWorldMapDestination(this.mapState_800c6798.locationIndex_10, WorldMapTravel.Kind.COOLON);
             submapCut_80052c30 = this.mapState_800c6798.submapCutTo_c8;
             submapScene_80052c34 = this.mapState_800c6798.submapSceneTo_ca;
 
@@ -2775,14 +2864,14 @@ public class WMap extends EngineState<WMap> {
           gameState_800babc8.visitedLocations_17c.set(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10, true);
 
           //LAB_800db8f4
-          this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10].submapCutTo_08;
-          this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10].submapSceneTo_0a;
+          this.prepareWorldMapDestination(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10, WorldMapTravel.Kind.COOLON);
           submapCut_80052c30 = this.mapState_800c6798.submapCutTo_c8;
           submapScene_80052c34 = this.mapState_800c6798.submapSceneTo_ca;
         } else {
           //LAB_800db9bc
-          this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10].submapCutFrom_04;
-          this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10].submapSceneFrom_06;
+          final SubmapEndpoint arrivalDestination = this.resolveWorldMapDestination(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10, WorldMapTravel.Kind.COOLON, true);
+          this.mapState_800c6798.submapCutTo_c8 = arrivalDestination.cut();
+          this.mapState_800c6798.submapSceneTo_ca = arrivalDestination.scene();
           submapCut_80052c30 = this.mapState_800c6798.submapCutTo_c8;
           collidedPrimitiveIndex_80052c38 = this.mapState_800c6798.submapSceneTo_ca;
           modelAndAnimData.fastTravelTransitionMode_250 = FastTravelTransitionMode.COOLON_ARRIVAL_3;
@@ -3111,7 +3200,7 @@ public class WMap extends EngineState<WMap> {
     modelAndAnimData.shadowObj = shadowBuilder.build();
 
     //LAB_800e002c
-    modelAndAnimData.modelIndex_1e4 = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
+    modelAndAnimData.modelIndex_1e4 = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
     this.initQueenFuryWake(40 * (4 - vsyncMode_8007a3b8), 1);
 
     final int modelIndex = modelAndAnimData.modelIndex_1e4;
@@ -3145,7 +3234,7 @@ public class WMap extends EngineState<WMap> {
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
     if(modelAndAnimData.fastTravelTransitionMode_250 != FastTravelTransitionMode.OPEN_COOLON_MAP_2) {
-      modelAndAnimData.modelIndex_1e4 = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
+      modelAndAnimData.modelIndex_1e4 = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
     } else {
       //LAB_800e02d0
       modelAndAnimData.modelIndex_1e4 = 2;
@@ -3258,8 +3347,7 @@ public class WMap extends EngineState<WMap> {
           gameState_800babc8.visitedLocations_17c.set(targetLocationIndex, true);
 
           //LAB_800e0b64
-          this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[targetLocationIndex].submapCutTo_08;
-          this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[targetLocationIndex].submapSceneTo_0a;
+          this.prepareWorldMapDestination(targetLocationIndex, WorldMapTravel.Kind.TELEPORT);
           submapCut_80052c30 = this.mapState_800c6798.submapCutTo_c8;
           submapScene_80052c34 = this.mapState_800c6798.submapSceneTo_ca;
 
@@ -3686,7 +3774,7 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800e3780
     //LAB_800e3794
-    final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
+    final DirectionalPathSegmentData08 directionalPathSegment = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
     this.encounterAccumulator_800c6ae8 += Math.round(directionalPathSegment.encounterRate_03 * encounterRateMultiplier * 70 / (3.0f / vsyncMode_8007a3b8));
 
     if(this.encounterAccumulator_800c6ae8 >= 5120) {
@@ -4068,19 +4156,22 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800e5248
-    final int placeIndex = locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02;
+    final int placeIndex = this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02;
     switch(this.mapTransitionState_800c68a4) {
       case INIT_0:
-        final int pathIndexAndReverseDirection = -directionalPathSegmentData_800f2248[this.mapState_800c6798.tempPathSegmentIndices_dc[0]].pathSegmentIndexAndDirection_00;
+        final int pathIndexAndReverseDirection = -this.directionalPathSegmentData_800f2248[this.mapState_800c6798.tempPathSegmentIndices_dc[0]].pathSegmentIndexAndDirection_00;
 
         //LAB_800e52cc
         int pathIndex;
-        for(pathIndex = 0; pathIndex < this.mapState_800c6798.directionalPathCount_0c && directionalPathSegmentData_800f2248[pathIndex].pathSegmentIndexAndDirection_00 != pathIndexAndReverseDirection; pathIndex++) {
+        for(pathIndex = 0; pathIndex < this.mapState_800c6798.directionalPathCount_0c && this.directionalPathSegmentData_800f2248[pathIndex].pathSegmentIndexAndDirection_00 != pathIndexAndReverseDirection; pathIndex++) {
           // intentionally empty
         }
 
         //LAB_800e533c
-        this.identifyNewPathSegmentAndSetStateInfo(pathIndex);
+        if(!this.identifyNewPathSegmentAndSetStateInfo(pathIndex)) {
+          this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.INTERSECTION_2;
+          return;
+        }
 
         this.mapState_800c6798.facing_1c = -this.mapState_800c6798.facing_1c;
 
@@ -4097,11 +4188,10 @@ public class WMap extends EngineState<WMap> {
 
         //LAB_800e53e0
         textZ_800bdf00 = 13;
-        this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCutTo_08;
-        this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapSceneTo_0a;
+        this.prepareWorldMapDestination(this.mapState_800c6798.locationIndex_10, WorldMapTravel.Kind.LOCATION);
         this.mapTransitionState_800c68a4 = MapTransitionState.LOAD_FILES_1;
 
-        if(places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].name_00 == null) {
+        if(this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].name_00 == null) {
           this.mapTransitionState_800c68a4 = MapTransitionState.END_MOVEMENT_8;
         }
 
@@ -4111,7 +4201,7 @@ public class WMap extends EngineState<WMap> {
       case LOAD_FILES_1:
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
-        loadDrgnFileSync(0, 5655 + places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].fileIndex_04, data -> this.loadLocationThumbnailImage(new Tim(data)));
+        loadDrgnFileSync(0, 5655 + this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].fileIndex_04, data -> this.loadLocationThumbnailImage(new Tim(data)));
         clearTextbox(6);
         initTextbox(textboxes_800be358[6], true, 240, 120, 14, 16);
 
@@ -4122,7 +4212,7 @@ public class WMap extends EngineState<WMap> {
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
           //LAB_800e560c
-          final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
+          final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
             playSound(this.soundFile, soundIndex, (short)0, (short)0);
@@ -4141,7 +4231,7 @@ public class WMap extends EngineState<WMap> {
           this.mapTransitionState_800c68a4 = MapTransitionState.MAIN_LOOP_3;
 
           // Build Objs
-          this.wmapLocationPromptPopup = new WmapPromptPopup(Objects.requireNonNull(places_800f0234[placeIndex].name_00), textZ_800bdf00 * 4.0f)
+          this.wmapLocationPromptPopup = new WmapPromptPopup(Objects.requireNonNull(this.places_800f0234[placeIndex].name_00), textZ_800bdf00 * 4.0f)
             .addOptionText("Don't enter");
 
           if(this.mapState_800c6798.submapCutTo_c8 == 999) { // Going to a different region
@@ -4157,7 +4247,7 @@ public class WMap extends EngineState<WMap> {
             this.wmapLocationPromptPopup.addOptionText("Enter");
           }
 
-          final int servicesFlag = places_800f0234[placeIndex].servicesFlag_05;
+          final int servicesFlag = this.places_800f0234[placeIndex].servicesFlag_05;
           int servicesCount = 0;
           for(int i = 0; i < 5; i++) {
             if((servicesFlag & 0x1 << i) != 0) {
@@ -4233,7 +4323,7 @@ public class WMap extends EngineState<WMap> {
         final float currentBrightness = this.wmapLocationPromptPopup.getThumbnailBrightness();
         if(
           gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
-            locations_800f0e34[this.mapState_800c6798.locationIndex_10].thumbnailShouldUseFullBrightness_10
+            this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].thumbnailShouldUseFullBrightness_10
         ) {
           //LAB_800e5e98
           newBrightness = currentBrightness;
@@ -4299,7 +4389,7 @@ public class WMap extends EngineState<WMap> {
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
               //LAB_800e636c
-              final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
+              final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
                 stopSound(this.soundFile, soundIndex, 1);
@@ -4310,6 +4400,11 @@ public class WMap extends EngineState<WMap> {
 
             //LAB_800e6404
           } else {
+            // Revalidate against current progression before committing the Enter intent.
+            if(!this.getWorldMapView().access(this.mapState_800c6798.locationIndex_10, WorldMapAction.ENTER).allowed()) {
+              playMenuSound(3);
+              return;
+            }
             //LAB_800e640c
             this.initTransitionAnimation(FadeAnimationType.FADE_OUT_2);
             setTextAndTextboxesToUninitialized(6, 1);
@@ -4321,7 +4416,7 @@ public class WMap extends EngineState<WMap> {
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
               //LAB_800e6484
-              final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
+              final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
                 stopSound(this.soundFile, soundIndex, 1);
@@ -4339,7 +4434,7 @@ public class WMap extends EngineState<WMap> {
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
               //LAB_800e657c
-              final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
+              final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
                 stopSound(this.soundFile, soundIndex, 1);
@@ -4421,7 +4516,6 @@ public class WMap extends EngineState<WMap> {
           submapScene_80052c34 = this.mapState_800c6798.submapSceneTo_ca;
         } else {
           //LAB_800e693c
-          submapCut_80052c30 = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCutFrom_04;
 
           final int continentIndex;
           if(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 1) {
@@ -4432,7 +4526,11 @@ public class WMap extends EngineState<WMap> {
           }
 
           //LAB_800e69b8
-          collidedPrimitiveIndex_80052c38 = continentIndex;
+          final var portal = this.worldMap.definition().portal(this.mapState_800c6798.locationIndex_10);
+          final WorldMapTravelEvent event = EVENTS.postEvent(new WorldMapTravelEvent(this, gameState_800babc8, WorldMapTravel.Kind.REGION, portal.id(), new SubmapEndpoint(portal.from().cut(), continentIndex), true));
+          final SubmapEndpoint destination = Objects.requireNonNull(event.destination, "World-map region destination");
+          submapCut_80052c30 = destination.cut();
+          collidedPrimitiveIndex_80052c38 = destination.scene();
         }
 
         //LAB_800e69c4
@@ -4515,7 +4613,7 @@ public class WMap extends EngineState<WMap> {
     final MV transforms = new MV();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
-      if(places_800f0234[locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 != null) {
+      if(this.places_800f0234[this.locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 != null) {
         //LAB_800e6ccc
         GsGetLs(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
         GTE.setTransforms(transforms);
@@ -4561,9 +4659,9 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e6ff4
       final float x = label.xy_08.x + 160;
       final float y = label.xy_08.y + 104;
-      final int place = locations_800f0e34[label.locationIndex_04].placeIndex_02;
+      final int place = this.locations_800f0e34[label.locationIndex_04].placeIndex_02;
 
-      final String placeName = places_800f0234[place].name_00;
+      final String placeName = this.places_800f0234[place].name_00;
       if(placeName != null) {
         //LAB_800e70f4
         final IntRef width = new IntRef();
@@ -4632,19 +4730,8 @@ public class WMap extends EngineState<WMap> {
   private void initFlagsPathsCutsAndPlaces() {
     //LAB_800e7940
     //LAB_800e7944
-    // Set all destination flags in the gameState
-    for(int i = 0; i < 49; i++) {
-      //LAB_800e7984
-      if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c[i].packedFlag_00)) {
-        //LAB_800e7a38
-        //LAB_800e7a3c
-        for(int flagIndex = 0; flagIndex < 8; flagIndex++) {
-          //LAB_800e7a58
-          gameState_800babc8.wmapFlags_15c.setRaw(flagIndex, wmapDestinationMarkers_800f5a6c[i].flags_04[flagIndex]);
-        }
-      }
-      //LAB_800e7acc
-    }
+    WorldMapStory.apply(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c, wmapDestinationMarkers_800f5a6c);
+    this.refreshWorldMap();
 
     //LAB_800e7ae4
     this.mapState_800c6798.submapCutFrom_c4 = submapCut_80052c30;
@@ -4658,24 +4745,10 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800e7b44
     //LAB_800e7b54
-    boolean locationExists = false;
-    int locationIndex;
-    for(locationIndex = 0; locationIndex < 0x100; locationIndex++) {
-      //LAB_800e7b70
-      if(
-        locations_800f0e34[locationIndex].submapCutFrom_04 == this.mapState_800c6798.submapCutFrom_c4 &&
-          locations_800f0e34[locationIndex].submapSceneFrom_06 == this.mapState_800c6798.submapSceneFrom_c6
-      ) {
-        locationExists = true;
-        break;
-      }
-      //LAB_800e7bc0
-    }
-
-    //LAB_800e7be8
-    //LAB_800e7c18
-    if(!locationExists || !gameState_800babc8.wmapFlags_15c.get(locationIndex)) {
-      this.mapState_800c6798.submapCutFrom_c4 = 13; // Hellena
+    int locationIndex = this.worldMap.findArrival(new SubmapEndpoint(this.mapState_800c6798.submapCutFrom_c4, this.mapState_800c6798.submapSceneFrom_c6));
+    // Preserve retail's first-match fallback, including its historical slot 5 assignment.
+    if(locationIndex == -1 || !this.worldMap.arrivalAllowed(locationIndex)) {
+      this.mapState_800c6798.submapCutFrom_c4 = 13;
       this.mapState_800c6798.submapSceneFrom_c6 = 17;
       locationIndex = 5;
     }
@@ -4685,11 +4758,11 @@ public class WMap extends EngineState<WMap> {
     //LAB_800e7cb8
     //LAB_800e7cbc
     //LAB_800e7d0c
-    this.mapState_800c6798.locationCount_08 = locations_800f0e34.length;
+    this.mapState_800c6798.locationCount_08 = this.locations_800f0e34.length;
 
     //LAB_800e7d1c
     int directionalPathSegmentIndex;
-    for(directionalPathSegmentIndex = 0; directionalPathSegmentData_800f2248[directionalPathSegmentIndex].pathSegmentIndexAndDirection_00 != 0; directionalPathSegmentIndex++) {
+    for(directionalPathSegmentIndex = 0; this.directionalPathSegmentData_800f2248[directionalPathSegmentIndex].pathSegmentIndexAndDirection_00 != 0; directionalPathSegmentIndex++) {
       // intentionally empty
     }
 
@@ -4698,7 +4771,7 @@ public class WMap extends EngineState<WMap> {
 
     GsInitCoordinate2(null, this.modelAndAnimData_800c66a8.coord2_34);
 
-    this.mapState_800c6798.continent_00 = locations_800f0e34[locationIndex].continent_0e;
+    this.mapState_800c6798.continent_00 = this.locations_800f0e34[locationIndex].continent_0e;
     continentIndex_800bf0b0 = this.mapState_800c6798.continent_00.continentNum;
 
     this.setNewPathSegmentStateInfo(locationIndex);
@@ -4732,7 +4805,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e7f00
       for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
         //LAB_800e7f24
-        final int directionalPathIndex = locations_800f0e34[i].directionalPathIndex_00;
+        final int directionalPathIndex = this.locations_800f0e34[i].directionalPathIndex_00;
           //LAB_800e7f68
         if(this.checkLocationIsValidAndOptionallySetPathStart(i, -1, null) == 0) {
           //LAB_800e7f88
@@ -4746,14 +4819,14 @@ public class WMap extends EngineState<WMap> {
 
       //LAB_800e7fcc
       this.mapState_800c6798.locationIndex_10 = locationIndex;
-      this.mapState_800c6798.continent_00 = locations_800f0e34[locationIndex].continent_0e;
+      this.mapState_800c6798.continent_00 = this.locations_800f0e34[locationIndex].continent_0e;
       continentIndex_800bf0b0 = this.mapState_800c6798.continent_00.continentNum;
 
-      final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
+      final DirectionalPathSegmentData08 directionalPathSegment = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
 
       //LAB_800e8064
       //LAB_800e8068
-      final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
+      final Vector3f[] dots = this.pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
       final float dx;
       final float dz;
@@ -4766,7 +4839,7 @@ public class WMap extends EngineState<WMap> {
         this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
       } else {
         //LAB_800e8190
-        final int index = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 1;
+        final int index = this.pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 1;
         dx = dots[index].x - dots[index - 1].x;
         dz = dots[index].z - dots[index - 1].z;
 
@@ -4791,8 +4864,7 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800e8494
-    this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[locationIndex].submapCutTo_08;
-    this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[locationIndex].submapSceneTo_0a;
+    this.prepareWorldMapDestination(locationIndex, WorldMapTravel.Kind.LOCATION);
 
     final Vector3f avg = new Vector3f();
     final Vector3f prevDotPos = new Vector3f();
@@ -4804,21 +4876,19 @@ public class WMap extends EngineState<WMap> {
     this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.set(avg);
     this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y -= 2.0f;
 
-    if(this.mapState_800c6798.submapCutFrom_c4 == 242 && this.mapState_800c6798.submapSceneFrom_c6 == 3) { // Donau
-      // First time Queen Fury leaves Donau, with forced movement
-      if(gameState_800babc8.scriptFlags2_bc.get(0x8f)) {
+    final SubmapEndpoint origin = new SubmapEndpoint(this.mapState_800c6798.submapCutFrom_c4, this.mapState_800c6798.submapSceneFrom_c6);
+    switch(WorldMapTravel.departure(origin, this.getWorldMapView().progression()::storyFlag)) {
+      case FIRST_QUEEN_FURY -> {
         this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
         this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.WALK_1;
         this.mapState_800c6798.disableInput_d0 = true;
       }
-
-      //LAB_800e8684
-      // Queen Fury leaving Donau after first time
-      if(gameState_800babc8.scriptFlags2_bc.get(0x90)) {
+      case LATER_QUEEN_FURY -> {
         this.mapState_800c6798.disableInput_d0 = true;
         this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.WALK_1;
         this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.NONE_0;
       }
+      case NONE -> { }
     }
 
     //LAB_800e8720
@@ -4830,19 +4900,13 @@ public class WMap extends EngineState<WMap> {
     //LAB_800e87d0
     //LAB_800e8800
     // Teleport
-    if(
-      this.mapState_800c6798.submapCutFrom_c4 == 528 && this.mapState_800c6798.submapSceneFrom_c6 == 13 ||    // Zenebatos to Mayfil (first time)
-        this.mapState_800c6798.submapCutFrom_c4 == 528 && this.mapState_800c6798.submapSceneFrom_c6 == 14 ||  // Zenebatos to Aglis
-        this.mapState_800c6798.submapCutFrom_c4 == 528 && this.mapState_800c6798.submapSceneFrom_c6 == 15 ||  // Zenebatos to Mayfil
-        this.mapState_800c6798.submapCutFrom_c4 == 540 && this.mapState_800c6798.submapSceneFrom_c6 == 19 ||  // Mayfil to Zenebatos
-        this.mapState_800c6798.submapCutFrom_c4 == 572 && this.mapState_800c6798.submapSceneFrom_c6 == 23     // Aglis to Zenebatos
-    ) {
+    if(WorldMapTravel.isTeleportOrigin(origin)) {
       //LAB_800e8830
       this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 = FastTravelTransitionMode.TELEPORT_1;
       //LAB_800e8848
 
       // Zenebatos to Coolon map
-    } else if(this.mapState_800c6798.submapCutFrom_c4 == 529 && this.mapState_800c6798.submapSceneFrom_c6 == 41) {
+    } else if(WorldMapTravel.isCoolonOrigin(origin)) {
       this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 = FastTravelTransitionMode.OPEN_COOLON_MAP_2;
       this.modelAndAnimData_800c66a8.usingCoolonFromZenebatos_254 = true;
       gameState_800babc8.visitedLocations_17c.set(this.mapState_800c6798.locationIndex_10, true);
@@ -4900,7 +4964,7 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800e8b2c
     int movement;
-    if(directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].pathSegmentIndexAndDirection_00 < 0) {
+    if(this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].pathSegmentIndexAndDirection_00 < 0) {
       movement = -1;
     } else {
       //LAB_800e8b64
@@ -4961,7 +5025,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e8d48
       this.mapState_800c6798.dotOffset_18 %= 4.0f;
 
-      final int maxDotIndex = pathSegmentLengths_800f5810[Math.abs(directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].pathSegmentIndexAndDirection_00) - 1] - 1;
+      final int maxDotIndex = this.pathSegmentLengths_800f5810[Math.abs(this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].pathSegmentIndexAndDirection_00) - 1] - 1;
 
       if(this.mapState_800c6798.dotIndex_16 >= maxDotIndex) {
         this.mapState_800c6798.dotIndex_16 = maxDotIndex - 1;
@@ -4990,7 +5054,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e8e94L)
   private void initEnterQueenFuryTransition() {
-    if(gameState_800babc8.scriptFlags2_bc.get(0x97)) {
+    if(this.hasWorldMapCapability(WorldMapTravel.Capability.QUEEN_FURY_BOARDING)) {
       //LAB_800e8f24
       if(this.modelAndAnimData_800c66a8.modelIndex_1e4 == 1) {
         //LAB_800e8f48
@@ -5013,8 +5077,7 @@ public class WMap extends EngineState<WMap> {
                         //LAB_800e9078
                         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get())) {
                           if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
-                            this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[93].submapCutTo_08;
-                            this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[93].submapSceneTo_0a;
+                            this.prepareWorldMapDestination(93, WorldMapTravel.Kind.QUEEN_FURY);
                             submapCut_80052c30 = this.mapState_800c6798.submapCutTo_c8;
                             submapScene_80052c34 = this.mapState_800c6798.submapSceneTo_ca;
                             this.initTransitionAnimation(FadeAnimationType.FADE_OUT_2);
@@ -5118,7 +5181,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e9418L)
   private void getPathPositions(final Vector3f prevDotPos, final Vector3f nextDotPos) {
-    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = this.pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
     dots[this.mapState_800c6798.dotIndex_16].get(prevDotPos);
     dots[this.mapState_800c6798.dotIndex_16 + 1].get(nextDotPos);
   }
@@ -5147,7 +5210,7 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800e9784
     //LAB_800e9788
-    for(int i = 0; i < 7; i++) {
+    for(int i = 0; i < this.mapState_800c6798.tempPathSegmentIndices_dc.length; i++) {
       //LAB_800e97a4
       this.mapState_800c6798.tempPathSegmentIndices_dc[i] = -1;
     }
@@ -5166,44 +5229,14 @@ public class WMap extends EngineState<WMap> {
       pos.set(nextDotPos);
     }
 
-    //LAB_800e985c
-    int index = 0;
-
-    //LAB_800e9864
-    for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
-      //LAB_800e9888
-      if(this.checkLocationIsValidAndOptionallySetPathStart(i, 0, null) == 0) {
-        //LAB_800e98a8
-        if(locations_800f0e34[i].unknownIndex_0c != -1) {
-          //LAB_800e98e0
-          final int directionalPathIndex = locations_800f0e34[i].directionalPathIndex_00;
-          final int pathIndexAndDirection = directionalPathSegmentData_800f2248[directionalPathIndex].pathSegmentIndexAndDirection_00;
-
-          if(this.mapState_800c6798.facing_1c <= 0 || pathIndexAndDirection >= 0) {
-            //LAB_800e995c
-            if(this.mapState_800c6798.facing_1c >= 0 || pathIndexAndDirection <= 0) {
-              //LAB_800e9988
-              final int pathIndex = Math.abs(pathIndexAndDirection) - 1;
-              final int dotCount = pathSegmentLengths_800f5810[pathIndex];
-              final Vector3f[] dots = pathDotPosArr_800f591c[pathIndex];
-              dots[dotCount - 1].get(prevDotPos);
-              dots[0].get(nextDotPos);
-
-              if(flEq(pos.x, prevDotPos.x) && flEq(pos.y, prevDotPos.y) && flEq(pos.z, prevDotPos.z)) {
-                dots[dotCount - 2].get(this.mapState_800c6798.tempPathSegmentStartOffsets_40[index]);
-                this.mapState_800c6798.tempPathSegmentIndices_dc[index] = directionalPathIndex;
-                index++;
-                //LAB_800e9bd8
-              } else if(flEq(pos.x, nextDotPos.x) && flEq(pos.y, nextDotPos.y) && flEq(pos.z, nextDotPos.z)) {
-                dots[1].get(this.mapState_800c6798.tempPathSegmentStartOffsets_40[index]);
-                this.mapState_800c6798.tempPathSegmentIndices_dc[index] = directionalPathIndex;
-                index++;
-              }
-            }
-          }
-        }
-      }
-      //LAB_800e9ce0
+    final var connections = this.worldMap.traversal().connections(pos, this.mapState_800c6798.continent_00, this.mapState_800c6798.facing_1c, this.getWorldMapView());
+    this.mapState_800c6798.ensurePathCapacity(connections.size());
+    final int index = connections.size();
+    for(int i = 0; i < index; i++) {
+      final var connection = connections.get(i);
+      this.mapState_800c6798.tempPathSegmentIndices_dc[i] = connection.routeIndex();
+      final var point = connection.nextPoint();
+      this.mapState_800c6798.tempPathSegmentStartOffsets_40[i].set(point.x(), point.y(), point.z());
     }
 
     //LAB_800e9cf8
@@ -5234,8 +5267,10 @@ public class WMap extends EngineState<WMap> {
     if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
       if(this.mapState_800c6798.queenFuryForceMovementMode_d8.modeIndex < ForcedMovementMode.FADE_OUT_3.modeIndex) {
         this.initTransitionAnimation(FadeAnimationType.FADE_OUT_2);
-        submapCut_80052c30 = 285; // A Queen Fury cut
-        submapScene_80052c34 = 32;
+        final WorldMapTravelEvent event = EVENTS.postEvent(new WorldMapTravelEvent(this, gameState_800babc8, WorldMapTravel.Kind.FORCED_QUEEN_FURY, null, new SubmapEndpoint(285, 32), false));
+        final SubmapEndpoint destination = Objects.requireNonNull(event.destination, "Forced Queen Fury destination");
+        submapCut_80052c30 = destination.cut();
+        submapScene_80052c34 = destination.scene();
         this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.FADE_OUT_3;
       }
 
@@ -5249,6 +5284,17 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800e9e20
+    // Finish an active segment, but resolve junction choices against current progression.
+    final var connections = this.worldMap.traversal().connections(this.mapState_800c6798.correctPathSegmentStartPos, this.mapState_800c6798.continent_00, this.mapState_800c6798.facing_1c, this.getWorldMapView());
+    this.mapState_800c6798.ensurePathCapacity(connections.size());
+    Arrays.fill(this.mapState_800c6798.tempPathSegmentIndices_dc, -1);
+    for(int i = 0; i < connections.size(); i++) {
+      final var connection = connections.get(i);
+      this.mapState_800c6798.tempPathSegmentIndices_dc[i] = connection.routeIndex();
+      final var point = connection.nextPoint();
+      this.mapState_800c6798.tempPathSegmentStartOffsets_40[i].set(point.x(), point.y(), point.z());
+    }
+
     int movementX = 0;
     int movementY = 0;
 
@@ -5275,7 +5321,7 @@ public class WMap extends EngineState<WMap> {
     int newPathIndex = 0;
     boolean newPathSelected = false;
     float currentMovementToPathAngle = MathHelper.TWO_PI;
-    for(int i = 0; i < 7; i++) {
+    for(int i = 0; i < this.mapState_800c6798.tempPathSegmentIndices_dc.length; i++) {
       //LAB_800e9eac
       if(this.mapState_800c6798.tempPathSegmentIndices_dc[i] < 0) {
         break;
@@ -5315,19 +5361,22 @@ public class WMap extends EngineState<WMap> {
     //LAB_800ea174
     this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT_0;
 
-    this.identifyNewPathSegmentAndSetStateInfo(this.mapState_800c6798.tempPathSegmentIndices_dc[newPathIndex]);
+    if(!this.identifyNewPathSegmentAndSetStateInfo(this.mapState_800c6798.tempPathSegmentIndices_dc[newPathIndex])) {
+      this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.INTERSECTION_2;
+      return;
+    }
 
-    final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
+    final DirectionalPathSegmentData08 directionalPathSegment = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
 
     //LAB_800ea1dc
-    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = this.pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final Vector3f dot;
     if(directionalPathSegment.pathSegmentIndexAndDirection_00 >= 0) {
       dot = dots[0];
     } else {
       //LAB_800ea248
-      dot = dots[pathSegmentLengths_800f5810[this.mapState_800c6798.pathIndex_14] - 1];
+      dot = dots[this.pathSegmentLengths_800f5810[this.mapState_800c6798.pathIndex_14] - 1];
     }
 
     //LAB_800ea2a8
@@ -5336,7 +5385,7 @@ public class WMap extends EngineState<WMap> {
     if(this.mapState_800c6798.correctPathSegmentStartPos.x != dot.x || this.mapState_800c6798.correctPathSegmentStartPos.y != dot.y || this.mapState_800c6798.correctPathSegmentStartPos.z != dot.z) {
       //LAB_800ea2f8
       if(directionalPathSegment.pathSegmentIndexAndDirection_00 >= 0) {
-        this.mapState_800c6798.dotIndex_16 = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 2;
+        this.mapState_800c6798.dotIndex_16 = this.pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 2;
         this.mapState_800c6798.dotOffset_18 = 2.0f;
         this.mapState_800c6798.facing_1c = -1;
         this.mapState_800c6798.playerDestAngle_c0 = MathHelper.PI;
@@ -5367,26 +5416,14 @@ public class WMap extends EngineState<WMap> {
   }
 
   @Method(0x800ea4dcL)
-  private void identifyNewPathSegmentAndSetStateInfo(final int directionalPathIndex) {
-    this.mapState_800c6798.directionalPathIndex_12 = directionalPathIndex;
-
-    //LAB_800ea4fc
-    int i;
-    for(i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
-      //LAB_800ea520
-      //LAB_800ea558
-      if(this.checkLocationIsValidAndOptionallySetPathStart(i, 0, null) == 0) {
-        //LAB_800ea578
-        //LAB_800ea5bc
-        if(locations_800f0e34[i].directionalPathIndex_00 == directionalPathIndex) {
-          break;
-        }
-      }
-      //LAB_800ea5f8
+  private boolean identifyNewPathSegmentAndSetStateInfo(final int directionalPathIndex) {
+    this.refreshWorldMap();
+    final int portalIndex = this.worldMap.findRoutePortal(directionalPathIndex, this.mapState_800c6798.continent_00);
+    if(portalIndex == -1) {
+      return false;
     }
-
-    //LAB_800ea610
-    this.setNewPathSegmentStateInfo(i);
+    this.setNewPathSegmentStateInfo(portalIndex);
+    return true;
   }
 
   /** Sets relevant state fields for the path segment the player is either loading into or entering. */
@@ -5399,14 +5436,14 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800ea6dc
     this.mapState_800c6798.locationIndex_10 = locationIndex;
-    this.mapState_800c6798.directionalPathIndex_12 = locations_800f0e34[locationIndex].directionalPathIndex_00;
+    this.mapState_800c6798.directionalPathIndex_12 = this.locations_800f0e34[locationIndex].directionalPathIndex_00;
 
-    final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
+    final DirectionalPathSegmentData08 directionalPathSegment = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
     this.mapState_800c6798.pathIndex_14 = Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1; // Transition to a different path
 
     //LAB_800ea790
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = this.pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final float dx;
     final float dz;
@@ -5422,7 +5459,7 @@ public class WMap extends EngineState<WMap> {
       this.mapState_800c6798.facing_1c = 1;
     } else {
       //LAB_800ea8d4
-      final int dotIndex = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 1;
+      final int dotIndex = this.pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 1;
       dx = dots[dotIndex].x - dots[dotIndex - 1].x;
       dz = dots[dotIndex].z - dots[dotIndex - 1].z;
 
@@ -5454,18 +5491,18 @@ public class WMap extends EngineState<WMap> {
 
     //LAB_800eac40
     this.mapState_800c6798.locationIndex_10 = locationIndex;
-    this.mapState_800c6798.directionalPathIndex_12 = locations_800f0e34[locationIndex].directionalPathIndex_00;
+    this.mapState_800c6798.directionalPathIndex_12 = this.locations_800f0e34[locationIndex].directionalPathIndex_00;
 
-    final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
+    final DirectionalPathSegmentData08 directionalPathSegment = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
     this.mapState_800c6798.pathIndex_14 = Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1;
 
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = this.pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final float dx;
     final float dz;
     if(this.mapState_800c6798.facing_1c > 0) {
-      final int dotIndex = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 1;
+      final int dotIndex = this.pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00) - 1] - 1;
       modelAndAnimData.coord2_34.coord.transfer.set(dots[dotIndex].x, dots[dotIndex].y - 2, dots[dotIndex].z);
       this.mapState_800c6798.dotIndex_16 = dotIndex - 1;
       this.mapState_800c6798.dotOffset_18 = 3.0f;
@@ -5503,51 +5540,13 @@ public class WMap extends EngineState<WMap> {
    */
   @Method(0x800eb09cL)
   private int checkLocationIsValidAndOptionallySetPathStart(final int locationIndex, final int mode, @Nullable final Vector3f dotPos) {
-    if(locations_800f0e34[locationIndex].directionalPathIndex_00 == -1) {
-      return -1;
-    }
+    this.refreshWorldMap();
+    return this.worldMap.legacyValidity(locationIndex, mode, this.mapState_800c6798.continent_00, dotPos, WorldMapAction.TRAVERSE);
+  }
 
-    //LAB_800eb0ec
-    if(mode != -1) {
-      if(locations_800f0e34[locationIndex].continent_0e != this.mapState_800c6798.continent_00) {
-        return -2;
-      }
-    }
-
-    //LAB_800eb144
-    if(!gameState_800babc8.wmapFlags_15c.get(locationIndex)) {
-      return 1;
-    }
-
-    //LAB_800eb1d0
-    if(mode == 0 || mode == -1) {
-      //LAB_800eb1f8
-      return 0;
-    }
-
-    //LAB_800eb204
-    final int pathIndexAndDirection = directionalPathSegmentData_800f2248[locations_800f0e34[locationIndex].directionalPathIndex_00].pathSegmentIndexAndDirection_00;
-
-    // This should only be the zeroed entry at the end of the array. Used to indicate its endpoint
-    if(pathIndexAndDirection == 0) {
-      return -3;
-    }
-
-    //LAB_800eb264
-    final int pathIndex = Math.abs(pathIndexAndDirection) - 1;
-    final Vector3f[] dots = pathDotPosArr_800f591c[pathIndex];
-
-    assert dotPos != null;
-    if(pathIndexAndDirection > 0) {
-      dots[0].get(dotPos);
-    } else {
-      //LAB_800eb2fc
-      dots[pathSegmentLengths_800f5810[pathIndex] - 1].get(dotPos);
-    }
-
-    //LAB_800eb3a8
-    //LAB_800eb3b4
-    return 0;
+  private int checkLocationIsVisibleAndOptionallySetPathStart(final int locationIndex, final int mode, @Nullable final Vector3f dotPos) {
+    this.refreshWorldMap();
+    return this.worldMap.legacyValidity(locationIndex, mode, this.mapState_800c6798.continent_00, dotPos, WorldMapAction.SEE);
   }
 
   /** In this context, places are locations that have submaps and that the player has unlocked. */
@@ -5566,30 +5565,30 @@ public class WMap extends EngineState<WMap> {
     //LAB_800eb424
     for(int locationIndex0 = 0; locationIndex0 < this.mapState_800c6798.locationCount_08; locationIndex0++) {
       //LAB_800eb448
-      if(this.checkLocationIsValidAndOptionallySetPathStart(locationIndex0, 0, null) == 0) {
+      if(this.checkLocationIsVisibleAndOptionallySetPathStart(locationIndex0, 0, null) == 0) {
         //LAB_800eb468
         if(!locationsChecked[locationIndex0]) {
           //LAB_800eb48c
-          final int placeIndex0 = locations_800f0e34[locationIndex0].placeIndex_02;
+          final int placeIndex0 = this.locations_800f0e34[locationIndex0].placeIndex_02;
           int matchCount = 0;
 
           //LAB_800eb4c8
           for(int locationIndex1 = locationIndex0; locationIndex1 < this.mapState_800c6798.locationCount_08; locationIndex1++) {
             //LAB_800eb4ec
-            if(this.checkLocationIsValidAndOptionallySetPathStart(locationIndex1, 0, null) == 0) {
+            if(this.checkLocationIsVisibleAndOptionallySetPathStart(locationIndex1, 0, null) == 0) {
               //LAB_800eb50c
               if(!locationsChecked[locationIndex1]) {
                 //LAB_800eb530
-                final int placeIndex1 = locations_800f0e34[locationIndex1].placeIndex_02;
+                final int placeIndex1 = this.locations_800f0e34[locationIndex1].placeIndex_02;
 
-                final String placeName0 = places_800f0234[placeIndex0].name_00;
-                final String placeName1 = places_800f0234[placeIndex1].name_00;
+                final String placeName0 = this.places_800f0234[placeIndex0].name_00;
+                final String placeName1 = this.places_800f0234[placeIndex1].name_00;
                 if(placeName0 != null || placeName1 != null) {
                   // Added this check since these pointers can be null
                   if(placeName0 != null && placeName1 != null) {
                     //LAB_800eb5d8
                     if(placeName0.compareToIgnoreCase(placeName1) == 0) {
-                      this.checkLocationIsValidAndOptionallySetPathStart(locationIndex1, 1, matchPositions[matchCount]);
+                      this.checkLocationIsVisibleAndOptionallySetPathStart(locationIndex1, 1, matchPositions[matchCount]);
 
                       matchCount++;
                       locationsChecked[locationIndex1] = true;
@@ -5638,7 +5637,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800eb914L)
   private void allocateSmoke() {
-    this.currentWmapEffect_800f6598 = (locations_800f0e34[this.mapState_800c6798.locationIndex_10].effectFlags_12 & 0x30) >>> 4;
+    this.currentWmapEffect_800f6598 = WorldMapPresentation.from(this.worldMap.definition().portal(this.mapState_800c6798.locationIndex_10)).atmosphere().ordinal();
     this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
 
     this.smokeInstances_800c86f8 = new WmapSmokeInstance60[48];
@@ -6005,7 +6004,7 @@ public class WMap extends EngineState<WMap> {
       //LAB_800edaa4
       case 5 -> {
         this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
-        this.currentWmapEffect_800f6598 = (locations_800f0e34[this.mapState_800c6798.locationIndex_10].effectFlags_12 & 0x30) >>> 4;
+        this.currentWmapEffect_800f6598 = WorldMapPresentation.from(this.worldMap.definition().portal(this.mapState_800c6798.locationIndex_10)).atmosphere().ordinal();
         if(this.currentWmapEffect_800f6598 != this.previousWmapEffect_800f659c) {
           this.deallocateAtmosphericEffect();
           this.atmosphericEffectStage_800c66a4 = 3;
@@ -6056,18 +6055,18 @@ public class WMap extends EngineState<WMap> {
     //LAB_800edca8
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800edccc
-      if(places_800f0234[locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 == null) {
+      if(this.places_800f0234[this.locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 == null) {
         continue;
       }
 
       //LAB_800edd3c
-      final int mode = locations_800f0e34[placeIndices_800c84c8[i]].effectFlags_12 & 0xc;
+      final int mode = WorldMapPresentation.from(this.worldMap.definition().portal(placeIndices_800c84c8[i])).smoke().legacyMode();
       if(mode == 0) {
         continue;
       }
 
       //LAB_800edda0
-      if(locations_800f0e34[placeIndices_800c84c8[i]].continent_0e == this.mapState_800c6798.continent_00) {
+      if(this.locations_800f0e34[placeIndices_800c84c8[i]].continent_0e == this.mapState_800c6798.continent_00) {
         //LAB_800eddfc
         if(i >= 9) {
           break;
