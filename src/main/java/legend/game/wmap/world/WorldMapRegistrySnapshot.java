@@ -128,6 +128,25 @@ public final class WorldMapRegistrySnapshot {
   public List<WorldMapStoryPreset> story() { return this.story; }
   public List<Value<WorldMapCoolonDestination>> coolon() { return this.coolon; }
 
+  /** Menu-only origins are not projected onto the current continent's route geometry. */
+  public int coolonOriginFallback(final SubmapEndpoint origin, final WorldMapDefinition definition) {
+    int fallback = 0;
+    boolean found = false;
+    for(int i = 0; i < this.coolon.size(); i++) {
+      final WorldMapCoolonDestination destination = this.coolon.get(i).data();
+      if(destination.opensMenuOnArrival()) {
+        if(definition.portal(destination.portal()).from().equals(origin)) {
+          return i;
+        }
+        if(!found) {
+          fallback = i;
+          found = true;
+        }
+      }
+    }
+    return fallback;
+  }
+
   public void configureBehaviours(final Registries registries, final WorldMapDefinition.Builder definition, final WorldMapRules.Builder rules) {
     rules.arrival((origin, progression, world) -> this.arrival(origin, world));
     final List<WorldMapBehaviour> behaviours = new ArrayList<>();
@@ -220,10 +239,11 @@ public final class WorldMapRegistrySnapshot {
   }
 
   private void validate(final Registries registries) {
-    int previous = Integer.MIN_VALUE;
+    final HashSet<Integer> storyOrders = new HashSet<>();
     for(final WorldMapStoryPreset preset : this.story) {
-      if(preset.order() == previous) throw new IllegalArgumentException("Duplicate WMAP story order " + previous);
-      previous = preset.order();
+      if(!storyOrders.add(preset.order())) {
+        throw new IllegalArgumentException("Duplicate WMAP story order " + preset.order());
+      }
       if(preset.storyFlag() < 0 || preset.storyFlag() >= 1024) {
         throw new IllegalArgumentException("WMAP story flag outside save range: " + preset.storyFlag());
       }

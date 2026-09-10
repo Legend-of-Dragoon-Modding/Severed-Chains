@@ -2714,7 +2714,7 @@ public class WMap extends EngineState<WMap> {
           modelAndAnimData.coolonOriginIndex_221 = possibleOriginIndices.get(0);
         } else if(possibleOriginIndices.size() > 1) {
           int posIndex = this.findPlaceMatch(this.coolonWarpDest_800ef228[possibleOriginIndices.get(0)].locationIndex_10);
-          Vector3f placePos = this.placePositionVectors_800c74b8[posIndex];
+            Vector3f placePos = posIndex == -1 ? this.coolonWarpDest_800ef228[possibleOriginIndices.get(0)].destPosition_00 : this.placePositionVectors_800c74b8[posIndex];
           float diffX = placePos.x - modelAndAnimData.currPlayerPos_94.x;
           float diffZ = placePos.z - modelAndAnimData.currPlayerPos_94.z;
           float minDistance = Math.sqrt(diffX * diffX + diffZ * diffZ);
@@ -2726,7 +2726,7 @@ public class WMap extends EngineState<WMap> {
             index = possibleOriginIndices.get(i);
             posIndex = this.findPlaceMatch(this.coolonWarpDest_800ef228[possibleOriginIndices.get(i)].locationIndex_10);
 
-            placePos = this.placePositionVectors_800c74b8[posIndex];
+              placePos = posIndex == -1 ? this.coolonWarpDest_800ef228[index].destPosition_00 : this.placePositionVectors_800c74b8[posIndex];
             diffX = placePos.x - modelAndAnimData.currPlayerPos_94.x;
             diffZ = placePos.z - modelAndAnimData.currPlayerPos_94.z;
             distance = Math.sqrt(diffX * diffX + diffZ * diffZ);
@@ -2736,7 +2736,7 @@ public class WMap extends EngineState<WMap> {
             }
           }
         } else {
-          modelAndAnimData.coolonOriginIndex_221 = 8;
+          modelAndAnimData.coolonOriginIndex_221 = this.worldMapData.coolonOriginFallback(new SubmapEndpoint(this.mapState_800c6798.submapCutFrom_c4, this.mapState_800c6798.submapSceneFrom_c6), this.worldMap.definition());
         }
 
         //LAB_800dad4c
