@@ -6,6 +6,7 @@ import legend.core.MathHelper;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.memory.types.IntRef;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.combat.Battle;
@@ -13,10 +14,12 @@ import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.inventory.ScriptFlags1ChangedEvent;
 import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
+import legend.game.modding.events.scripting.ReadGlobalFlagsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.NotImplementedException;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptFlagArrayEnum;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptReadable;
 import legend.game.submap.SubmapEnvState;
@@ -122,6 +125,10 @@ public final class Scus94491BpeSegment {
   };
 
   private static final RenderEvent RENDER_EVENT = new RenderEvent();
+  private static final IntRef GlobalFlagIndexRef = new IntRef();
+
+  private static final ReadGlobalFlagsEvent READ_GLOBAL_FLAGS1_EVENT = new ReadGlobalFlagsEvent(GlobalFlagIndexRef, ScriptFlagArrayEnum.FLAGS1);
+  private static final ReadGlobalFlagsEvent READ_GLOBAL_FLAGS2_EVENT = new ReadGlobalFlagsEvent(GlobalFlagIndexRef, ScriptFlagArrayEnum.FLAGS1);
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
@@ -309,7 +316,11 @@ public final class Scus94491BpeSegment {
       return FlowControl.CONTINUE;
     }
 
-    script.params_20[1].set(gameState_800babc8.scriptFlags1_13c.get(value) ? 1 : 0);
+    GlobalFlagIndexRef.set(value);
+    READ_GLOBAL_FLAGS1_EVENT.flagValue = gameState_800babc8.scriptFlags1_13c.get(value);
+
+    EVENTS.postEvent(READ_GLOBAL_FLAGS1_EVENT);
+    script.params_20[1].set(READ_GLOBAL_FLAGS1_EVENT.flagValue ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }
@@ -341,7 +352,11 @@ public final class Scus94491BpeSegment {
       return FlowControl.CONTINUE;
     }
 
-    script.params_20[1].set(gameState_800babc8.scriptFlags2_bc.get(val) ? 1 : 0);
+    GlobalFlagIndexRef.set(val);
+    READ_GLOBAL_FLAGS2_EVENT.flagValue = gameState_800babc8.scriptFlags2_bc.get(val);
+
+    EVENTS.postEvent(READ_GLOBAL_FLAGS2_EVENT);
+    script.params_20[1].set(READ_GLOBAL_FLAGS2_EVENT.flagValue ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }
