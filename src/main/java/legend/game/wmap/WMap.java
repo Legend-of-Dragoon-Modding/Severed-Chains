@@ -295,6 +295,8 @@ public class WMap extends EngineState<WMap> {
   private int[] placeIndices_800c84c8 = new int[0];
   private int loadWait = 60 / vsyncMode_8007a3b8;
   private RegistryId savedWorldMapRoute;
+  @Nullable
+  private Tag savedWorldMapData;
   private boolean resolvingWorldMap;
   private boolean notifyingWorldMap;
   private boolean worldMapPresentationDirty;
@@ -316,10 +318,12 @@ public class WMap extends EngineState<WMap> {
     final int flagWords = (definition.portals().size() + 31) / 32;
     gameState_800babc8.wmapFlags_15c.ensureCapacity(flagWords);
     gameState_800babc8.visitedLocations_17c.ensureCapacity(flagWords);
+    gameState_800babc8.worldMapPortalState.bind(definition, gameState_800babc8.wmapFlags_15c, gameState_800babc8.visitedLocations_17c);
     this.worldMap = new WorldMapRuntime(definition, event.rules.build());
     if(this.savedWorldMapRoute != null) {
-      WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute);
+      WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute, this.savedWorldMapData);
       this.savedWorldMapRoute = null;
+      this.savedWorldMapData = null;
     }
     this.locations_800f0e34 = definition.locationData();
     this.places_800f0234 = definition.placeData();
@@ -584,6 +588,7 @@ public class WMap extends EngineState<WMap> {
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
     this.savedWorldMapRoute = WorldMapSave.read(gameState, tag);
+    this.savedWorldMapData = tag;
   }
 
   @Override
