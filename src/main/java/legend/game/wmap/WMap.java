@@ -291,8 +291,8 @@ public class WMap extends EngineState<WMap> {
   private int[] playerAvatarVramSlots_800ef694;
   private int[] waterClutYs_800ef348;
   private UvAdjustmentMetrics14[] tmdUvAdjustmentMetrics_800eee48;
-  private final Vector3f[] placePositionVectors_800c74b8 = new Vector3f[257];
-  private final int[] placeIndices_800c84c8 = new int[257];
+  private Vector3f[] placePositionVectors_800c74b8 = new Vector3f[0];
+  private int[] placeIndices_800c84c8 = new int[0];
   private int loadWait = 60 / vsyncMode_8007a3b8;
   private RegistryId savedWorldMapRoute;
   private boolean resolvingWorldMap;
@@ -313,6 +313,9 @@ public class WMap extends EngineState<WMap> {
     final WorldMapConfigureEvent event = EVENTS.postEvent(new WorldMapConfigureEvent(this, gameState_800babc8, definitionBuilder, rulesBuilder));
     final WorldMapDefinition definition = event.definition.build();
     this.worldMapData.validateDefinition(definition);
+    final int flagWords = (definition.portals().size() + 31) / 32;
+    gameState_800babc8.wmapFlags_15c.ensureCapacity(flagWords);
+    gameState_800babc8.visitedLocations_17c.ensureCapacity(flagWords);
     this.worldMap = new WorldMapRuntime(definition, event.rules.build());
     if(this.savedWorldMapRoute != null) {
       WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute);
@@ -334,6 +337,8 @@ public class WMap extends EngineState<WMap> {
     this.playerAvatarVramSlots_800ef694 = presentation.playerAvatarVramSlots().stream().mapToInt(Integer::intValue).toArray();
     this.waterClutYs_800ef348 = presentation.waterClutYs().stream().mapToInt(Integer::intValue).toArray();
     this.tmdUvAdjustmentMetrics_800eee48 = presentation.textureAdjustments().toArray(UvAdjustmentMetrics14[]::new);
+    this.placePositionVectors_800c74b8 = new Vector3f[definition.portals().size() + 1];
+    this.placeIndices_800c84c8 = new int[definition.portals().size() + 1];
     Arrays.setAll(this.placePositionVectors_800c74b8, i -> new Vector3f());
     this.refreshWorldMap();
   }
@@ -5581,13 +5586,13 @@ public class WMap extends EngineState<WMap> {
   /** In this context, places are locations that have submaps and that the player has unlocked. */
   @Method(0x800eb3c8L)
   private void setPositionsOfValidMapPlaces() {
-    final boolean[] locationsChecked = new boolean[0x101];
+    final boolean[] locationsChecked = new boolean[this.locations_800f0e34.length + 1];
     int placeIndex = 0;
 
     final Vector3f pos0 = new Vector3f();
     final Vector3f pos1 = new Vector3f();
     final Vector3f avgPos = new Vector3f();
-    final Vector3f[] matchPositions = new Vector3f[0x101];
+    final Vector3f[] matchPositions = new Vector3f[this.locations_800f0e34.length + 1];
     Arrays.setAll(matchPositions, i -> new Vector3f());
 
     //LAB_800eb420

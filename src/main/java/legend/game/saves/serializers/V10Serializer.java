@@ -86,11 +86,13 @@ public final class V10Serializer {
     }
 
     final ListTag wmapFlagsTag = tag.get("wmapFlags").asList();
+    savedGame.wmapFlags.ensureCapacity(wmapFlagsTag.size());
     for(int i = 0; i < savedGame.wmapFlags.count(); i++) {
       savedGame.wmapFlags.setRaw(i, wmapFlagsTag.get(i).asInt().get());
     }
 
     final ListTag visitedLocationsTag = tag.get("visitedLocations").asList();
+    savedGame.visitedLocations.ensureCapacity(visitedLocationsTag.size());
     for(int i = 0; i < savedGame.visitedLocations.count(); i++) {
       savedGame.visitedLocations.setRaw(i, visitedLocationsTag.get(i).asInt().get());
     }
