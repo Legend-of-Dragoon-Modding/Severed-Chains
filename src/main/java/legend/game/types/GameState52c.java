@@ -7,6 +7,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
 import legend.game.saves.Campaign;
+import legend.game.wmap.world.WorldMapPortalState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,6 +52,7 @@ public class GameState52c {
   public final Flags scriptFlags1_13c = new Flags(8);
   public final Flags wmapFlags_15c = new Flags(8);
   public final Flags visitedLocations_17c = new Flags(8);
+  public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
   public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];

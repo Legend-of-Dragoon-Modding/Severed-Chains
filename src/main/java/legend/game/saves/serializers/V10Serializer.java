@@ -92,6 +92,7 @@ public final class V10Serializer {
     }
 
     final ListTag visitedLocationsTag = tag.get("visitedLocations").asList();
+    savedGame.worldMapPortalState.read(tag.get("worldMapPortals"));
     savedGame.visitedLocations.ensureCapacity(visitedLocationsTag.size());
     for(int i = 0; i < savedGame.visitedLocations.count(); i++) {
       savedGame.visitedLocations.setRaw(i, visitedLocationsTag.get(i).asInt().get());
@@ -215,6 +216,9 @@ public final class V10Serializer {
     }
 
     final ListTag visitedLocationsTag = new ListTag();
+    if(gameState.worldMapPortalState.hasIdentities()) {
+      tag.set("worldMapPortals", gameState.worldMapPortalState.write(gameState.wmapFlags_15c, gameState.visitedLocations_17c));
+    }
     tag.set("visitedLocations", visitedLocationsTag);
     for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {
       visitedLocationsTag.add(new IntTag(gameState.visitedLocations_17c.getRaw(i)));

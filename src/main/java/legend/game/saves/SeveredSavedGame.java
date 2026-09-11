@@ -12,6 +12,7 @@ import legend.game.inventory.screens.controls.SeveredSaveCard;
 import legend.game.characters.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.GameState52c;
+import legend.game.wmap.world.WorldMapPortalState;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,6 +50,7 @@ public class SeveredSavedGame extends SavedGame {
   public final Flags scriptFlags1 = new Flags(8);
   public final Flags wmapFlags = new Flags(8);
   public final Flags visitedLocations = new Flags(8);
+  public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
   public final List<RegistryId> goodsIds = new ArrayList<>();
   public final int[] _1a4 = new int[8];
   public final int[] chestFlags = new int[8];
@@ -92,6 +94,7 @@ public class SeveredSavedGame extends SavedGame {
     gameState.scriptFlags1_13c.set(this.scriptFlags1);
     gameState.wmapFlags_15c.set(this.wmapFlags);
     gameState.visitedLocations_17c.set(this.visitedLocations);
+    gameState.worldMapPortalState.set(this.worldMapPortalState);
     this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
     System.arraycopy(this._1a4, 0, gameState._1a4, 0, this._1a4.length);
     System.arraycopy(this.chestFlags, 0, gameState.chestFlags_1c4, 0, this.chestFlags.length);
