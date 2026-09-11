@@ -23,6 +23,7 @@ import java.util.Objects;
 /** Compiles registered data once per map initialization; never relies on registry iteration order. */
 public final class WorldMapRegistrySnapshot {
   public record Value<T>(RegistryId id, T data) { }
+  private final Map<RegistryId, WorldMapAvatar> avatars;
 
   private final WorldMapDefinition definition;
   private final List<WorldMapStoryPreset> story;
@@ -32,6 +33,9 @@ public final class WorldMapRegistrySnapshot {
   private final WorldMapPresentationProfile presentation;
 
   private WorldMapRegistrySnapshot(final Registries registries) {
+    final Map<RegistryId, WorldMapAvatar> avatars = new HashMap<>();
+    for(final Value<WorldMapAvatar> value : resolve(registries.worldMapAvatars)) avatars.put(value.id(), value.data());
+    this.avatars = Map.copyOf(avatars);
     final List<WorldMapPortal> portals = data(resolve(registries.worldMapPortals)).stream().sorted(Comparator.comparingInt(WorldMapPortal::legacyIndex)).toList();
     final List<Value<WorldMapGeometry>> registeredGeometry = resolve(registries.worldMapGeometry);
     final List<Value<WorldMapEncounterPool>> registeredPools = resolve(registries.worldMapEncounterPools);
@@ -47,7 +51,7 @@ public final class WorldMapRegistrySnapshot {
       final Integer geometryIndex = geometryIndices.get(route.geometry());
       final Integer poolIndex = route.encounterPool() == null ? Integer.valueOf(route.legacyEncounterPlaceholder()) : poolIndices.get(route.encounterPool());
       if(geometryIndex == null || poolIndex == null) throw new IllegalArgumentException("Unresolved geometry " + route.geometry() + " or encounter pool " + route.encounterPool() + " on WMAP route " + value.id());
-      return new WorldMapRoute(value.id(), route.legacyIndex(), route.start(), route.end(), geometryIndex, route.direction(), route.encounterRate(), route.battleStage(), poolIndex, route.modelIndex());
+      return new WorldMapRoute(value.id(), route.legacyIndex(), route.start(), route.end(), geometryIndex, route.direction(), route.encounterRate(), route.battleStage(), poolIndex, route.modelIndex(), route.avatar());
     }).sorted(Comparator.comparingInt(WorldMapRoute::legacyIndex)).toList();
     final List<WorldMapPlace> places = data(resolve(registries.worldMapPlaces)).stream().sorted(Comparator.comparingInt(WorldMapPlace::legacyIndex)).toList();
     final List<WorldMapGeometry> geometry = data(registeredGeometry).stream().sorted(Comparator.comparingInt(WorldMapGeometry::legacyIndex)).toList();
@@ -124,6 +128,11 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public WorldMapDefinition definition() { return this.definition; }
+  public WorldMapAvatar avatar(final RegistryId id) {
+    final WorldMapAvatar avatar = this.avatars.get(id);
+    if(avatar == null) throw new IllegalArgumentException("Unknown WMAP avatar " + id);
+    return avatar;
+  }
   public WorldMapPresentationProfile presentation() { return this.presentation; }
   public List<WorldMapStoryPreset> story() { return this.story; }
   public List<Value<WorldMapCoolonDestination>> coolon() { return this.coolon; }
@@ -303,6 +312,7 @@ public final class WorldMapRegistrySnapshot {
       }
     }
     for(final WorldMapRoute route : definition.routes()) {
+      if(route.avatar() != null && !this.avatars.containsKey(route.avatar())) throw new IllegalArgumentException("Unknown WMAP avatar " + route.avatar() + " on route " + route.id());
       if(route.encounterRate() != 0 && (route.encounterIndex() < -1 || route.encounterIndex() >= this.encounters.size())) throw new IllegalArgumentException("Unknown encounter pool on WMAP route " + route.id());
     }
     this.coolonData(definition);

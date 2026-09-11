@@ -60,6 +60,7 @@ import legend.game.unpacker.Loader;
 import legend.game.wmap.world.SubmapEndpoint;
 import legend.game.wmap.world.WorldMapAccess;
 import legend.game.wmap.world.WorldMapAction;
+import legend.game.wmap.world.WorldMapAvatarRenderer;
 import legend.game.wmap.world.WorldMapDefinition;
 import legend.game.wmap.world.WorldMapObjective;
 import legend.game.wmap.world.WorldMapPoint;
@@ -298,6 +299,9 @@ public class WMap extends EngineState<WMap> {
   @Nullable
   private Tag savedWorldMapData;
   private boolean resolvingWorldMap;
+  private final WorldMapAvatarRenderer routeAvatar = new WorldMapAvatarRenderer();
+  private volatile Tim leaderWorldMapTexture;
+  private int routeAvatarMovementAnimation = 2;
   private boolean notifyingWorldMap;
   private boolean worldMapPresentationDirty;
   private WorldMapObjective renderedWorldMapObjective;
@@ -1989,6 +1993,7 @@ public class WMap extends EngineState<WMap> {
 
     final UvAdjustmentMetrics14 vramSlot = this.tmdUvAdjustmentMetrics_800eee48[this.playerAvatarVramSlots_800ef694[0]];
     final Tim tim = new Tim(files.get(1));
+    this.leaderWorldMapTexture = tim;
     final Rect4i originalImage = tim.getImageRect();
     final Rect4i originalClut = tim.getClutRect();
     final Rect4i image = new Rect4i(vramSlot.tpageX, vramSlot.tpageY, originalImage.w, originalImage.h);
@@ -3157,6 +3162,8 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800dfa70L)
   private void loadPlayerAvatarTextureAndModelFiles() {
+    this.routeAvatar.delete();
+    this.leaderWorldMapTexture = null;
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x2a8);
 
     loadDrgnDir(0, 5713).thenAccept(files -> {
@@ -3279,6 +3286,11 @@ public class WMap extends EngineState<WMap> {
   private void renderPlayer() {
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
+    final RegistryId avatarId = modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0 && modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL_0 && modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE_0 && modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.NONE_0 ? this.worldMap.definition().route(this.mapState_800c6798.directionalPathIndex_12).avatar() : null;
+    final UvAdjustmentMetrics14[] avatarSlots = new UvAdjustmentMetrics14[4];
+    for(int i = 0; i < avatarSlots.length; i++) avatarSlots[i] = this.tmdUvAdjustmentMetrics_800eee48[this.playerAvatarVramSlots_800ef694[i]];
+    final Model124 avatarModel = this.routeAvatar.prepare(avatarId, avatarId == null ? null : this.worldMapData.avatar(avatarId), gameState_800babc8, this.leaderWorldMapTexture, avatarSlots);
+
     if(modelAndAnimData.fastTravelTransitionMode_250 != FastTravelTransitionMode.OPEN_COOLON_MAP_2) {
       modelAndAnimData.modelIndex_1e4 = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].modelIndex_06;
     } else {
@@ -3317,7 +3329,12 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800e04fc
-    this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
+    if(avatarModel != null) {
+      this.routeAvatar.animate(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4], this.routeAvatarMovementAnimation, 4 / vsyncMode_8007a3b8);
+      this.renderWmapModel(avatarModel);
+    } else {
+      this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
+    }
     GTE.setBackgroundColour(this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.x, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.y, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.z);
     this.handlePlayerMovement();
     this.updatePlayerModelPosition();
@@ -3325,6 +3342,8 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e05c4L)
   private void unloadWmapPlayerModels() {
+    this.routeAvatar.delete();
+    this.leaderWorldMapTexture = null;
     //LAB_800e05d8
     for(int i = 0; i < 4; i++) {
       //LAB_800e05f4
@@ -3464,6 +3483,12 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800e10a0L)
   private void updateEncounterAndMovementAnimation() {
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
+    this.routeAvatarMovementAnimation = 2;
+    if(!flEq(modelAndAnimData.prevPlayerPos_84.x, modelAndAnimData.currPlayerPos_94.x) || !flEq(modelAndAnimData.prevPlayerPos_84.y, modelAndAnimData.currPlayerPos_94.y) || !flEq(modelAndAnimData.prevPlayerPos_84.z, modelAndAnimData.currPlayerPos_94.z)) {
+      final float magnitude = this.getAnalogueMagnitude();
+      final boolean running = magnitude == 0.0f && CONFIG.getConfig(RUN_BY_DEFAULT.get()) != PLATFORM.isActionHeld(INPUT_ACTION_GENERAL_RUN.get()) || magnitude >= 0.75f;
+      this.routeAvatarMovementAnimation = running ? 4 : 3;
+    }
 
     final int modelIndex = modelAndAnimData.modelIndex_1e4;
     modelAndAnimData.prevAnimIndex_ac = modelAndAnimData.currAnimIndex_b0;
@@ -3546,7 +3571,10 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e1740L)
   private void renderDartShadow() {
+    final float avatarShadow = this.routeAvatar.shadowScale();
+    if(avatarShadow == 0) return;
     GsGetLw(this.modelAndAnimData_800c66a8.models_0c[this.modelAndAnimData_800c66a8.modelIndex_1e4].coord2_14, this.modelAndAnimData_800c66a8.shadowTransforms);
+    this.modelAndAnimData_800c66a8.shadowTransforms.scale(avatarShadow);
     RENDERER.queueModel(this.modelAndAnimData_800c66a8.shadowObj, this.modelAndAnimData_800c66a8.shadowTransforms, QueuedModelStandard.class);
   }
 

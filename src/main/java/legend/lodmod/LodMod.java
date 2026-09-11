@@ -82,6 +82,7 @@ import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.game.wmap.registries.RegisterWorldMapAvatarsEvent;
 import legend.game.wmap.registries.RegisterWorldMapBehavioursEvent;
 import legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent;
 import legend.game.wmap.registries.RegisterWorldMapEncounterPoolsEvent;
@@ -438,6 +439,11 @@ public class LodMod {
 
   @EventListener
   public static void registerWorldMapNodes(final RegisterWorldMapNodesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapAvatars(final RegisterWorldMapAvatarsEvent event) {
     LodWorldMap.register(event);
   }
 
