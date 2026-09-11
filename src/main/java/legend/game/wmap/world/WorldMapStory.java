@@ -21,7 +21,7 @@ public final class WorldMapStory {
     final int selected = select(story, presets);
     if(selected >= 0) {
       for(int i = 0; i < locations.count(); i++) {
-        locations.setRaw(i, presets[selected].flags_04[i]);
+        locations.setRaw(i, i < presets[selected].flags_04.length ? presets[selected].flags_04[i] : 0);
       }
     }
     return selected;

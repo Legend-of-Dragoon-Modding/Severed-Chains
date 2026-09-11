@@ -1,7 +1,13 @@
 package legend.game.types;
 
 public class Flags {
-  private final int[] flags;
+  private int[] flags;
+
+  public void ensureCapacity(final int count) {
+    if(count > this.flags.length) {
+      this.flags = java.util.Arrays.copyOf(this.flags, count);
+    }
+  }
 
   public Flags(final int count) {
     this.flags = new int[count];
@@ -40,6 +46,8 @@ public class Flags {
   }
 
   public void set(final Flags other) {
-    System.arraycopy(other.flags, 0, this.flags, 0, this.flags.length);
+    this.ensureCapacity(other.flags.length);
+    System.arraycopy(other.flags, 0, this.flags, 0, other.flags.length);
+    java.util.Arrays.fill(this.flags, other.flags.length, this.flags.length, 0);
   }
 }
