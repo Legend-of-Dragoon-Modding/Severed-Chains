@@ -51,8 +51,8 @@ public final class WorldMapRegistrySnapshot {
     }).sorted(Comparator.comparingInt(WorldMapRoute::legacyIndex)).toList();
     final List<WorldMapPlace> places = data(resolve(registries.worldMapPlaces)).stream().sorted(Comparator.comparingInt(WorldMapPlace::legacyIndex)).toList();
     final List<WorldMapGeometry> geometry = data(registeredGeometry).stream().sorted(Comparator.comparingInt(WorldMapGeometry::legacyIndex)).toList();
-    if(portals.size() != 256) {
-      throw new IllegalArgumentException("WMAP requires 256 legacy portal slots; replace an unused slot to add an entry point");
+    if(portals.size() < 256) {
+      throw new IllegalArgumentException("WMAP requires at least the 256 legacy portal slots");
     }
     for(int i = 0; i < geometry.size(); i++) {
       if(geometry.get(i).legacyIndex() != i) {
@@ -186,6 +186,7 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public void applyStory(final Flags story, final Flags locations, final WorldMapDefinition definition) {
+    locations.ensureCapacity((definition.portals().size() + 31) / 32);
     final WorldMapStoryPreset selected = this.selected(story);
     if(selected != null) {
       for(int i = 0; i < locations.count(); i++) {
@@ -290,8 +291,8 @@ public final class WorldMapRegistrySnapshot {
 
   /** Validate cross-registry references again after registered behaviours and configure listeners. */
   public void validateDefinition(final WorldMapDefinition definition) {
-    if(definition.portals().size() != 256) {
-      throw new IllegalArgumentException("WMAP requires 256 portal slots for save compatibility");
+    if(definition.portals().size() < 256) {
+      throw new IllegalArgumentException("WMAP requires at least 256 portal slots for save compatibility");
     }
     for(final WorldMapStoryPreset preset : this.story) {
       for(final RegistryId id : preset.enabledPortals()) {
