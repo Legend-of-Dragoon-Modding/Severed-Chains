@@ -1,6 +1,7 @@
 package legend.lodmod;
 
 import legend.core.GameEngine;
+import legend.game.wmap.registries.RegisterWorldMapAvatarsEvent;
 import legend.game.wmap.registries.RegisterWorldMapGeometryEvent;
 import legend.game.wmap.registries.RegisterWorldMapNodesEvent;
 import legend.game.wmap.registries.RegisterWorldMapPlacesEvent;
@@ -31,6 +32,9 @@ import java.util.function.IntFunction;
 
 /** Retail graph registration; each registry event imports fresh legacy source data. */
 public final class LodWorldMap {
+  static void register(final RegisterWorldMapAvatarsEvent event) {
+    LodWorldMapAvatars.register(event);
+  }
   private LodWorldMap() { }
 
   private static final Registrar<WorldMapNodeEntry, RegisterWorldMapNodesEvent> NODES = new Registrar<>(GameEngine.REGISTRIES.worldMapNodes, LodMod.MOD_ID);

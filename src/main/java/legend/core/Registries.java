@@ -62,6 +62,7 @@ import legend.game.saves.ConfigRegistry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
 import legend.game.types.Shop;
+import legend.game.wmap.registries.RegisterWorldMapAvatarsEvent;
 import legend.game.wmap.registries.RegisterWorldMapBehavioursEvent;
 import legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent;
 import legend.game.wmap.registries.RegisterWorldMapEncounterPoolsEvent;
@@ -73,6 +74,8 @@ import legend.game.wmap.registries.RegisterWorldMapPresentationProfilesEvent;
 import legend.game.wmap.registries.RegisterWorldMapRoutesEvent;
 import legend.game.wmap.registries.RegisterWorldMapStoryPresetsEvent;
 import legend.game.wmap.registries.RegisterWorldMapTeleportLinksEvent;
+import legend.game.wmap.registries.WorldMapAvatarEntry;
+import legend.game.wmap.registries.WorldMapAvatarRegistry;
 import legend.game.wmap.registries.WorldMapBehaviourRegistry;
 import legend.game.wmap.registries.WorldMapCoolonDestinationEntry;
 import legend.game.wmap.registries.WorldMapCoolonDestinationRegistry;
@@ -129,6 +132,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
 
   public final Registry<WorldMapNodeEntry> worldMapNodes = this.addRegistry(new WorldMapNodeRegistry(), RegisterWorldMapNodesEvent::new);
   public final Registry<WorldMapGeometryEntry> worldMapGeometry = this.addRegistry(new WorldMapGeometryRegistry(), RegisterWorldMapGeometryEvent::new);
+  public final Registry<WorldMapAvatarEntry> worldMapAvatars = this.addRegistry(new WorldMapAvatarRegistry(), RegisterWorldMapAvatarsEvent::new);
   public final Registry<WorldMapRouteEntry> worldMapRoutes = this.addRegistry(new WorldMapRouteRegistry(), RegisterWorldMapRoutesEvent::new);
   public final Registry<WorldMapPlaceEntry> worldMapPlaces = this.addRegistry(new WorldMapPlaceRegistry(), RegisterWorldMapPlacesEvent::new);
   public final Registry<WorldMapPortalEntry> worldMapPortals = this.addRegistry(new WorldMapPortalRegistry(), RegisterWorldMapPortalsEvent::new);
