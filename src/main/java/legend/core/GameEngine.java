@@ -361,8 +361,13 @@ public final class GameEngine {
     loadLangOverrides(locale);
   }
 
-  public static void bootRegistries() {
+  /** Initialize registered data for authoring/menu consumers without recreating renderer resources. */
+  public static void initializeRemainingRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
+  }
+
+  public static void bootRegistries() {
+    initializeRemainingRegistries();
     ItemIcon.loadIconMap();
 
     LOGGER.info("Creating texture atlas...");
