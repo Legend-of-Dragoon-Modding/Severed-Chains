@@ -13,6 +13,7 @@ public class WorldMapLabelEvent extends InGameEvent<WMap> implements WorldMapEve
     LOCATION,
     OBJECTIVE,
     REGION,
+    COOLON,
   }
 
   public final Kind kind;

@@ -3333,8 +3333,19 @@ public class WMap extends EngineState<WMap> {
       final IntRef widthRef = new IntRef();
       final IntRef linesRef = new IntRef();
       this.measureText(this.coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].placeName_1c, widthRef, linesRef);
+      final var destination = this.worldMapData.coolon().get(modelAndAnimData.coolonDestIndex_222).data();
+      final WorldMapLabelEvent label = this.resolveWorldMapLabel(WorldMapLabelEvent.Kind.COOLON, destination.portal(), destination.label(), x, y - linesRef.get() * 7 - 3);
+      if(!label.visible) {
+        this.coolonWarpDestLabelName = null;
+        setTextAndTextboxesToUninitialized(7, 0);
+        this.destinationLabelStage_800c86f0 = 0;
+        return;
+      }
+      this.measureText(label.text, widthRef, linesRef);
       final int width = widthRef.get();
       final int lines = linesRef.get();
+      x = Math.round(label.x);
+      y = Math.round(label.y) + lines * 7 + 3;
 
       final int destStage = this.destinationLabelStage_800c86f0;
       final Textbox4c textbox = textboxes_800be358[7];
@@ -3372,7 +3383,7 @@ public class WMap extends EngineState<WMap> {
       textbox.z_0c = 19;
 
       if(this.shouldSetCoolonWarpDestLabelMetrics) {
-        this.coolonWarpDestLabelName = this.coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].placeName_1c;
+        this.coolonWarpDestLabelName = label.text;
         this.coolonWarpDestLabelX = x;
         this.coolonWarpDestLabelY = y - lines * 7 - 3;
       }
