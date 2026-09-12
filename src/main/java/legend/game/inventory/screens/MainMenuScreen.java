@@ -163,9 +163,17 @@ public class MainMenuScreen extends MenuScreen {
       this.playTickSound = true;
     });
 
-    button.onPressed(onClick::run);
+    button.onPressed(() -> {
+      if(this.loadingStage == 2) {
+        onClick.run();
+      }
+    });
 
     button.onInputActionPressed((action, repeat) -> {
+      if(this.loadingStage != 2) {
+        return InputPropagation.HANDLED;
+      }
+
       if(action == INPUT_ACTION_MENU_DOWN.get()) {
         for(int i = 1; i < this.menuButtons.size(); i++) {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
