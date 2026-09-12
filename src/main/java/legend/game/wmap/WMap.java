@@ -2497,7 +2497,7 @@ public class WMap extends EngineState<WMap> {
     if(!Float.isFinite(event.x) || !Float.isFinite(event.y)) {
       throw new IllegalArgumentException("WorldMapLabelEvent requires finite logical screen coordinates");
     }
-    if(event.visible) {
+    if(event.visible && (kind != WorldMapLabelEvent.Kind.COOLON || event.x != x || event.y != y || !event.text.equals(text))) {
       final IntRef width = new IntRef();
       final IntRef lines = new IntRef();
       this.measureText(event.text, width, lines);
