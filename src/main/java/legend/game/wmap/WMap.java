@@ -2369,7 +2369,7 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800d8e4cL)
   private void loadMapModelAndTexture(final int index) {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x6);
-    this.regionRenderer.load(this.getWorldMapRegion(), gameState_800babc8, () -> loadDrgnFile(0, 5705 + index).thenApply(file -> new TmdWithId("World map transform anchor DRGN0/" + (5705 + index), file)));
+    this.regionRenderer.load(this.getWorldMapRegionId(), this.getWorldMapRegion(), gameState_800babc8, () -> loadDrgnFile(0, 5705 + index).thenApply(file -> new TmdWithId("World map transform anchor DRGN0/" + (5705 + index), file)));
   }
 
   public RegistryId getWorldMapRegionId() {
