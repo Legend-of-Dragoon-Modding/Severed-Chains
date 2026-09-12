@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Immutable, dense legacy world map definition. Builder replacement is limited to existing slots
- * because the renderer and save formats use the legacy slot indices as their ABI.
+ * Immutable world map graph. Numeric slots are assigned by the legacy adapter; configure-time
+ * authoring can use registry identities without allocating slots.
  */
 public final class WorldMapDefinition {
   private final List<WorldMapPortal> portals;
@@ -29,12 +29,22 @@ public final class WorldMapDefinition {
   private final Map<RegistryId, WorldMapRoute> routesById;
   private final Map<RegistryId, WorldMapPlace> placesById;
   private final Map<RegistryId, WorldMapNode> nodesById;
+  private final Map<RegistryId, Integer> geometryIndices;
+  private final Map<RegistryId, Integer> encounterPoolIndices;
 
   public WorldMapDefinition(final List<WorldMapPortal> portals, final List<WorldMapRoute> routes, final List<WorldMapPlace> places, final List<WorldMapNode> nodes, final List<List<WorldMapPoint>> geometry) {
     this(portals, routes, places, nodes, geometry, defaultRouteIndices(portals, routes), defaultPlaceIndices(portals, places), defaultPathLengths(geometry));
   }
 
+  WorldMapDefinition(final List<WorldMapPortal> portals, final List<WorldMapRoute> routes, final List<WorldMapPlace> places, final List<WorldMapNode> nodes, final List<List<WorldMapPoint>> geometry, final Map<RegistryId, Integer> geometryIndices, final Map<RegistryId, Integer> encounterPoolIndices) {
+    this(portals, routes, places, nodes, geometry, defaultRouteIndices(portals, routes), defaultPlaceIndices(portals, places), defaultPathLengths(geometry), geometryIndices, encounterPoolIndices);
+  }
+
   WorldMapDefinition(final List<WorldMapPortal> portals, final List<WorldMapRoute> routes, final List<WorldMapPlace> places, final List<WorldMapNode> nodes, final List<List<WorldMapPoint>> geometry, final List<Integer> portalRouteIndices, final List<Integer> portalPlaceIndices, final int[] pathLengths) {
+    this(portals, routes, places, nodes, geometry, portalRouteIndices, portalPlaceIndices, pathLengths, Map.of(), Map.of());
+  }
+
+  private WorldMapDefinition(final List<WorldMapPortal> portals, final List<WorldMapRoute> routes, final List<WorldMapPlace> places, final List<WorldMapNode> nodes, final List<List<WorldMapPoint>> geometry, final List<Integer> portalRouteIndices, final List<Integer> portalPlaceIndices, final int[] pathLengths, final Map<RegistryId, Integer> geometryIndices, final Map<RegistryId, Integer> encounterPoolIndices) {
     this.portals = List.copyOf(portals);
     this.routes = List.copyOf(routes);
     this.places = List.copyOf(places);
@@ -47,6 +57,8 @@ public final class WorldMapDefinition {
     this.routesById = index(this.routes, WorldMapRoute::id, "route");
     this.placesById = index(this.places, WorldMapPlace::id, "place");
     this.nodesById = index(this.nodes, WorldMapNode::id, "node");
+    this.geometryIndices = Map.copyOf(geometryIndices);
+    this.encounterPoolIndices = Map.copyOf(encounterPoolIndices);
     this.validate();
   }
 
@@ -88,6 +100,14 @@ public final class WorldMapDefinition {
 
   public WorldMapPlace place(final int legacyIndex) {
     return this.places.get(legacyIndex);
+  }
+
+  public WorldMapPlace place(final RegistryId id) {
+    return get(this.placesById, id, "place");
+  }
+
+  public List<WorldMapPoint> geometry(final RegistryId id) {
+    return this.geometry.get(get(this.geometryIndices, id, "geometry"));
   }
 
   public WorldMapNode node(final RegistryId id) {
@@ -247,6 +267,8 @@ public final class WorldMapDefinition {
     private final List<List<WorldMapPoint>> geometry;
     private final List<Integer> portalRouteIndices;
     private final List<Integer> portalPlaceIndices;
+    private final Map<RegistryId, Integer> geometryIndices;
+    private final Map<RegistryId, Integer> encounterPoolIndices;
 
     private Builder(final WorldMapDefinition definition) {
       this.portals = new ArrayList<>(definition.portals);
@@ -254,22 +276,27 @@ public final class WorldMapDefinition {
       this.places = new ArrayList<>(definition.places);
       this.nodes = new ArrayList<>(definition.nodes);
       this.geometry = new ArrayList<>(definition.geometry);
-      this.portalRouteIndices = definition.portalRouteIndices;
-      this.portalPlaceIndices = definition.portalPlaceIndices;
+      this.portalRouteIndices = new ArrayList<>(definition.portalRouteIndices);
+      this.portalPlaceIndices = new ArrayList<>(definition.portalPlaceIndices);
+      this.geometryIndices = new HashMap<>(definition.geometryIndices);
+      this.encounterPoolIndices = definition.encounterPoolIndices;
     }
 
     public Builder replacePortal(final WorldMapPortal portal) {
-      this.portals.set(checkedIndex(portal.legacyIndex(), this.portals.size(), "portal"), portal);
+      final int index = idIndex(this.portals, portal.id(), WorldMapPortal::id, "portal");
+      this.portals.set(index, portal.withLegacyIndex(index));
       return this;
     }
 
     public Builder replaceRoute(final WorldMapRoute route) {
-      this.routes.set(checkedIndex(route.legacyIndex(), this.routes.size(), "route"), route);
+      final int index = idIndex(this.routes, route.id(), WorldMapRoute::id, "route");
+      this.routes.set(index, routeAt(route, index, route.segmentIndex()));
       return this;
     }
 
     public Builder replacePlace(final WorldMapPlace place) {
-      this.places.set(checkedIndex(place.legacyIndex(), this.places.size(), "place"), place);
+      final int index = idIndex(this.places, place.id(), WorldMapPlace::id, "place");
+      this.places.set(index, place.withLegacyIndex(index));
       return this;
     }
 
@@ -281,7 +308,8 @@ public final class WorldMapDefinition {
           return this;
         }
       }
-      throw new IllegalArgumentException("World map node replacement id " + node.id() + " is outside existing slots");
+      this.nodes.add(node);
+      return this;
     }
 
     public Builder geometry(final int segmentIndex, final List<WorldMapPoint> geometry) {
@@ -289,14 +317,120 @@ public final class WorldMapDefinition {
       return this;
     }
 
+    /** Adds or replaces named geometry. Routes refer to this identity through WorldMapRouteData. */
+    public Builder geometry(final RegistryId id, final List<WorldMapPoint> geometry) {
+      Objects.requireNonNull(id, "id");
+      final Integer index = this.geometryIndices.get(id);
+      if(index == null) {
+        this.geometryIndices.put(id, this.geometry.size());
+        this.geometry.add(List.copyOf(geometry));
+      } else {
+        this.geometry.set(index, List.copyOf(geometry));
+      }
+      return this;
+    }
+
+    public Builder portal(final WorldMapPortal portal) {
+      if(this.portals.stream().anyMatch(value -> value.id().equals(portal.id()))) {
+        return this.replacePortal(portal);
+      }
+      this.portals.add(portal.withLegacyIndex(this.portals.size()));
+      this.portalRouteIndices.add(-1);
+      this.portalPlaceIndices.add(-1);
+      return this;
+    }
+
+    public Builder place(final WorldMapPlace place) {
+      if(this.places.stream().anyMatch(value -> value.id().equals(place.id()))) {
+        return this.replacePlace(place);
+      }
+      this.places.add(place.withLegacyIndex(this.places.size()));
+      return this;
+    }
+
+    public Builder route(final RegistryId id, final WorldMapRouteData data) {
+      final int geometry = get(this.geometryIndices, data.geometry(), "geometry");
+      final int encounter = data.encounterPool() == null ? data.legacyEncounterPlaceholder() : get(this.encounterPoolIndices, data.encounterPool(), "encounter pool");
+      return this.route(new WorldMapRoute(id, -1, data.start(), data.end(), geometry, data.direction(), data.encounterRate(), data.battleStage(), encounter, data.modelIndex(), data.avatar()));
+    }
+
+    public Builder route(final WorldMapRoute route) {
+      if(this.routes.stream().anyMatch(value -> value.id().equals(route.id()))) {
+        return this.replaceRoute(route);
+      }
+      this.routes.add(routeAt(route, this.routes.size(), route.segmentIndex()));
+      return this;
+    }
+
+    public Builder removePortal(final RegistryId id) {
+      final int index = idIndex(this.portals, id, WorldMapPortal::id, "portal");
+      if(index < 256) {
+        throw new IllegalArgumentException("Cannot remove vanilla WMAP script portal slot " + index);
+      }
+      this.portals.remove(index);
+      this.portalRouteIndices.remove(index);
+      this.portalPlaceIndices.remove(index);
+      for(int i = index; i < this.portals.size(); i++) {
+        this.portals.set(i, this.portals.get(i).withLegacyIndex(i));
+      }
+      return this;
+    }
+
+    public Builder removeRoute(final RegistryId id) {
+      if(this.portals.stream().anyMatch(portal -> id.equals(portal.route()))) {
+        throw new IllegalArgumentException("Cannot remove WMAP route referenced by a portal: " + id);
+      }
+      this.routes.remove(idIndex(this.routes, id, WorldMapRoute::id, "route"));
+      for(int i = 0; i < this.routes.size(); i++) {
+        this.routes.set(i, routeAt(this.routes.get(i), i, this.routes.get(i).segmentIndex()));
+      }
+      return this;
+    }
+
+    public Builder removePlace(final RegistryId id) {
+      if(this.portals.stream().anyMatch(portal -> id.equals(portal.place()))) {
+        throw new IllegalArgumentException("Cannot remove WMAP place referenced by a portal: " + id);
+      }
+      this.places.remove(idIndex(this.places, id, WorldMapPlace::id, "place"));
+      for(int i = 0; i < this.places.size(); i++) {
+        this.places.set(i, this.places.get(i).withLegacyIndex(i));
+      }
+      return this;
+    }
+
+    public Builder removeNode(final RegistryId id) {
+      if(this.routes.stream().anyMatch(route -> id.equals(route.start()) || id.equals(route.end()))) {
+        throw new IllegalArgumentException("Cannot remove WMAP node referenced by a route: " + id);
+      }
+      this.nodes.remove(idIndex(this.nodes, id, WorldMapNode::id, "node"));
+      return this;
+    }
+
+    public Builder removeGeometry(final RegistryId id) {
+      final int index = get(this.geometryIndices, id, "geometry");
+      if(this.routes.stream().anyMatch(route -> route.segmentIndex() == index)) {
+        throw new IllegalArgumentException("Cannot remove WMAP geometry referenced by a route: " + id);
+      }
+      this.geometry.remove(index);
+      this.geometryIndices.remove(id);
+      this.geometryIndices.replaceAll((key, value) -> value > index ? value - 1 : value);
+      for(int i = 0; i < this.routes.size(); i++) {
+        final WorldMapRoute route = this.routes.get(i);
+        if(route.segmentIndex() > index) {
+          this.routes.set(i, routeAt(route, i, route.segmentIndex() - 1));
+        }
+      }
+      return this;
+    }
+
     public WorldMapDefinition build() {
-      return new WorldMapDefinition(this.portals, this.routes, this.places, this.nodes, this.geometry, this.replacementRouteIndices(), this.replacementPlaceIndices(), defaultPathLengths(this.geometry));
+      return new WorldMapDefinition(this.portals, this.routes, this.places, this.nodes, this.geometry, this.replacementRouteIndices(), this.replacementPlaceIndices(), defaultPathLengths(this.geometry), this.geometryIndices, this.encounterPoolIndices);
     }
 
     private List<Integer> replacementRouteIndices() {
       final List<Integer> indices = defaultRouteIndices(this.portals, this.routes);
       for(int i = 0; i < indices.size(); i++) {
-        if(this.portals.get(i).route() == null && this.portalRouteIndices.get(i) < 0) indices.set(i, this.portalRouteIndices.get(i));
+        if(this.portals.get(i).route() == null) indices.set(i, this.portalRouteIndices.get(i));
       }
       return indices;
     }
@@ -304,7 +438,7 @@ public final class WorldMapDefinition {
     private List<Integer> replacementPlaceIndices() {
       final List<Integer> indices = defaultPlaceIndices(this.portals, this.places);
       for(int i = 0; i < indices.size(); i++) {
-        if(this.portals.get(i).place() == null && (this.portalPlaceIndices.get(i) < 0 || this.portalPlaceIndices.get(i) >= this.places.size())) indices.set(i, this.portalPlaceIndices.get(i));
+        if(this.portals.get(i).place() == null) indices.set(i, this.portalPlaceIndices.get(i));
       }
       return indices;
     }
@@ -312,6 +446,19 @@ public final class WorldMapDefinition {
     private static int checkedIndex(final int index, final int size, final String type) {
       if(index < 0 || index >= size) throw new IllegalArgumentException("World map " + type + " replacement index " + index + " is outside existing slots");
       return index;
+    }
+
+    private static <T> int idIndex(final List<T> values, final RegistryId id, final java.util.function.Function<T, RegistryId> identity, final String type) {
+      for(int i = 0; i < values.size(); i++) {
+        if(identity.apply(values.get(i)).equals(id)) {
+          return i;
+        }
+      }
+      throw new IllegalArgumentException("Unknown world map " + type + " " + id);
+    }
+
+    private static WorldMapRoute routeAt(final WorldMapRoute route, final int index, final int geometry) {
+      return new WorldMapRoute(route.id(), index, route.start(), route.end(), geometry, route.direction(), route.encounterRate(), route.battleStage(), route.encounterIndex(), route.modelIndex(), route.avatar());
     }
   }
 }
