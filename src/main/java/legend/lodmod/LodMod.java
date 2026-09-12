@@ -91,6 +91,7 @@ import legend.game.wmap.registries.RegisterWorldMapNodesEvent;
 import legend.game.wmap.registries.RegisterWorldMapPlacesEvent;
 import legend.game.wmap.registries.RegisterWorldMapPortalsEvent;
 import legend.game.wmap.registries.RegisterWorldMapPresentationProfilesEvent;
+import legend.game.wmap.registries.RegisterWorldMapRegionsEvent;
 import legend.game.wmap.registries.RegisterWorldMapRoutesEvent;
 import legend.game.wmap.registries.RegisterWorldMapStoryPresetsEvent;
 import legend.game.wmap.registries.RegisterWorldMapTeleportLinksEvent;
@@ -445,6 +446,11 @@ public class LodMod {
   @EventListener
   public static void registerWorldMapAvatars(final RegisterWorldMapAvatarsEvent event) {
     LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapRegions(final RegisterWorldMapRegionsEvent event) {
+    LodWorldMapRegions.register(event);
   }
 
   @EventListener
