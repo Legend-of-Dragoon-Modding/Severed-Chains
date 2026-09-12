@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
-/** Explicit endpoint adjacency, retaining retail candidate order and duplicate portal bindings. */
+/** Node-identity adjacency. Portal order and duplicate bindings retain the retail candidate order. */
 public final class WorldMapTraversal {
   public record Connection(int portalIndex, int routeIndex, int direction, Continent continent, WorldMapPoint nextPoint) { }
 
-  private final Map<WorldMapPoint, List<Connection>> adjacency = new LinkedHashMap<>();
+  private final Map<RegistryId, List<Connection>> adjacency = new LinkedHashMap<>();
   private final WorldMapDefinition definition;
 
   public WorldMapTraversal(final WorldMapDefinition definition) {
@@ -24,51 +25,75 @@ public final class WorldMapTraversal {
         if(portal.route() == null || portal.junctionIndex() == -1) {
           continue;
         }
-
         final WorldMapRoute route = definition.route(portal.route());
         final var points = definition.geometry().get(route.segmentIndex());
-        // Retail checks the physical final endpoint before the first, irrespective of direction.
-        final WorldMapPoint last = points.get(points.size() - 1);
-        final WorldMapPoint first = points.getFirst();
+        final RegistryId first = route.direction() > 0 ? route.start() : route.end();
+        final RegistryId last = route.direction() > 0 ? route.end() : route.start();
         final WorldMapPoint next;
-        if(matches(node.position(), last)) {
+        // Last endpoint takes precedence for a loop, matching retail ordering.
+        if(node.id().equals(last)) {
           next = points.get(points.size() - 2);
-        } else if(matches(node.position(), first)) {
+        } else if(node.id().equals(first)) {
           next = points.get(1);
         } else {
           continue;
         }
         connections.add(new Connection(portal.legacyIndex(), route.legacyIndex(), route.direction(), portal.continent(), next));
       }
-      this.adjacency.put(node.position(), List.copyOf(connections));
+      this.adjacency.put(node.id(), List.copyOf(connections));
     }
   }
 
+  /** Resolve from the active route, never from a global position search. */
+  public RegistryId endpoint(final WorldMapRoute route, final boolean lastGeometryPoint) {
+    return lastGeometryPoint == (route.direction() > 0) ? route.end() : route.start();
+  }
+
+  public List<Connection> connections(final RegistryId node, final RegistryId region, final int facing, final WorldMapView view) {
+    return this.connections(node, connection -> WorldMapRegion.idFor(this.definition.portal(connection.portalIndex())).equals(region), facing, view);
+  }
+
+  private List<Connection> connections(final RegistryId node, final Predicate<Connection> region, final int facing, final WorldMapView view) {
+    this.definition.node(node);
+    return this.adjacency.get(node).stream()
+      .filter(region)
+      .filter(connection -> (facing == 0 || Integer.signum(facing) == connection.direction()) && view.access(connection.portalIndex(), WorldMapAction.TRAVERSE).allowed())
+      .toList();
+  }
+
+  /**
+   * Compatibility query for callers without an active route. Ambiguous co-located nodes are
+   * rejected instead of silently joining independent paths. Prefer the node-ID overload.
+   */
+  @Deprecated
+  public List<Connection> connections(final Vector3f position, final RegistryId region, final int facing, final WorldMapView view) {
+    final Predicate<Connection> belongs = connection -> WorldMapRegion.idFor(this.definition.portal(connection.portalIndex())).equals(region);
+    return this.connections(this.uniqueNode(position, belongs), belongs, facing, view);
+  }
+
+  @Deprecated
   public List<Connection> connections(final Vector3f position, final Continent continent, final int facing, final WorldMapView view) {
-    final List<Connection> result = new ArrayList<>();
-    final List<Connection> candidates = this.adjacency.get(new WorldMapPoint(position.x, position.y, position.z));
-    if(candidates == null) {
-      throw new IllegalArgumentException("World-map junction is not a defined endpoint: " + position);
-    }
-    for(final Connection connection : candidates) {
-      if(connection.continent == continent && (facing == 0 || Integer.signum(facing) == connection.direction) && view.access(connection.portalIndex, WorldMapAction.TRAVERSE).allowed()) {
-        result.add(connection);
+    final Predicate<Connection> belongs = connection -> connection.continent() == continent;
+    return this.connections(this.uniqueNode(position, belongs), belongs, facing, view);
+  }
+
+  private RegistryId uniqueNode(final Vector3f position, final Predicate<Connection> belongs) {
+    RegistryId selected = null;
+    for(final WorldMapNode node : this.definition.nodes()) {
+      if(matches(node.position(), position) && this.adjacency.get(node.id()).stream().anyMatch(belongs)) {
+        if(selected != null) {
+          throw new IllegalArgumentException("Ambiguous world map junction at " + position + ": " + selected + " and " + node.id() + "; query by node ID");
+        }
+        selected = node.id();
       }
     }
-    return List.copyOf(result);
-  }
-
-  private static boolean matches(final WorldMapPoint a, final WorldMapPoint b) {
-    return Math.abs(a.x() - b.x()) < 0.00001f && Math.abs(a.y() - b.y()) < 0.00001f && Math.abs(a.z() - b.z()) < 0.00001f;
-  }
-
-  public List<Connection> connections(final Vector3f position, final RegistryId region, final int facing, final WorldMapView view) {
-    final List<Connection> candidates = this.adjacency.get(new WorldMapPoint(position.x, position.y, position.z));
-    if(candidates == null) {
-      throw new IllegalArgumentException("World-map junction is not a defined endpoint: " + position);
+    if(selected == null) {
+      throw new IllegalArgumentException("World-map junction has no node in the requested region at " + position);
     }
-    return candidates.stream().filter(connection -> WorldMapRegion.idFor(this.definition.portal(connection.portalIndex())).equals(region)
-      && (facing == 0 || Integer.signum(facing) == connection.direction())
-      && view.access(connection.portalIndex(), WorldMapAction.TRAVERSE).allowed()).toList();
+    return selected;
+  }
+
+  private static boolean matches(final WorldMapPoint point, final Vector3f position) {
+    return Math.abs(point.x() - position.x) < 0.0001f && Math.abs(point.y() - position.y) < 0.0001f && Math.abs(point.z() - position.z) < 0.0001f;
   }
 }
