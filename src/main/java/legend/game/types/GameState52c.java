@@ -53,6 +53,8 @@ public class GameState52c {
   public final Flags wmapFlags_15c = new Flags(8);
   public final Flags visitedLocations_17c = new Flags(8);
   public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
+  /** Immutable campaign package digest; empty retains registered defaults for pre-preset saves. */
+  public String worldMapPreset = "";
   public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];
