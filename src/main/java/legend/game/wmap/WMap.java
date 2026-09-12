@@ -37,6 +37,7 @@ import legend.game.modding.events.worldmap.WorldMapJunctionEvent;
 import legend.game.modding.events.worldmap.WorldMapProgressionEvent;
 import legend.game.modding.events.worldmap.WorldMapResolvedEvent;
 import legend.game.modding.events.worldmap.WorldMapTravelEvent;
+import legend.game.modding.events.worldmap.WorldMapTraversalEvent;
 import legend.game.modding.events.worldmap.WorldMapWarpEvent;
 import legend.game.modding.events.worldmap.WorldMapWarpedEvent;
 import legend.game.saves.SavedGame;
@@ -69,6 +70,7 @@ import legend.game.wmap.world.WorldMapPoint;
 import legend.game.wmap.world.WorldMapPresentation;
 import legend.game.wmap.world.WorldMapProgression;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
+import legend.game.wmap.world.WorldMapRoute;
 import legend.game.wmap.world.WorldMapRules;
 import legend.game.wmap.world.WorldMapRuntime;
 import legend.game.wmap.world.WorldMapSave;
@@ -76,6 +78,7 @@ import legend.game.wmap.world.WorldMapTravel;
 import legend.game.wmap.world.WorldMapTravelTarget;
 import legend.game.wmap.world.WorldMapTravelPosition;
 import legend.game.wmap.world.WorldMapTraversal;
+import legend.game.wmap.world.WorldMapTraversalState;
 import legend.game.wmap.world.WorldMapView;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodMod;
@@ -287,6 +290,9 @@ public class WMap extends EngineState<WMap> {
 
   private WorldMapRuntime worldMap;
   private WorldMapRegistrySnapshot worldMapData;
+  private WorldMapTraversalState worldMapTraversal;
+  private boolean worldMapTraversalTick;
+  private WorldMapTraversalEvent.Cause worldMapTraversalArrival = WorldMapTraversalEvent.Cause.ARRIVAL;
   private CoolonWarpDestination20[] coolonWarpDest_800ef228;
   private int[][] teleportationEndpointIndices_800ef698;
   private TeleportationLocation0c[] teleportationLocations_800ef6c8;
@@ -325,6 +331,7 @@ public class WMap extends EngineState<WMap> {
 
   private void configureWorldMap() {
     this.worldMapData = WorldMapRegistrySnapshot.read(REGISTRIES);
+    this.worldMapTraversal = new WorldMapTraversalState(this.worldMapData.traversalProfiles());
     final WorldMapDefinition.Builder definitionBuilder = this.worldMapData.definition().toBuilder();
     final WorldMapRules.Builder rulesBuilder = new WorldMapRules.Builder();
     this.worldMapData.configureBehaviours(REGISTRIES, definitionBuilder, rulesBuilder);
@@ -403,6 +410,11 @@ public class WMap extends EngineState<WMap> {
 
   public boolean travelToWorldMapPortal(final RegistryId portal) {
     return this.travelToWorldMap(new WorldMapTravelTarget.Portal(portal));
+  }
+
+  /** A traversal callback can use this to stop processing the route after a travel request. */
+  public boolean isWorldMapTravelPending() {
+    return this.queuedWorldMapTravel != null || this.arrivingWorldMapTravel != null;
   }
 
   private void beginWorldMapTravel() {
@@ -687,6 +699,7 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public void inputActionPressed(final InputAction action, final boolean repeat) {
+    if(this.isWorldMapTravelPending()) return;
     if(action == LodMod.INPUT_ACTION_GENERAL_OPEN_INVENTORY.get() && !repeat) {
       if(Loader.getLoadingFileCount() == 0) {
         if(this.wmapState_800bb10c == WmapState.PLAY) {
@@ -756,6 +769,10 @@ public class WMap extends EngineState<WMap> {
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
         GsGetLw(dobj2.coord2_04, this.modelLw);
+        if(this.worldMapTraversal != null && this.isWorldMapTraversalLocal()) {
+          final WorldMapPoint offset = this.worldMapTraversal.visualOffset();
+          this.modelLw.transfer.add(offset.x(), offset.y(), offset.z());
+        }
 
         float screenOffsetY = 0.0f;
         if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3 || this.modelAndAnimData_800c66a8.coolonWarpState_220.state > 2) {
@@ -852,6 +869,7 @@ public class WMap extends EngineState<WMap> {
   /** Checks for triangle press and transitions into the inv screen */
   @Method(0x800cc83cL)
   private void handleInventoryTransition() {
+    if(this.isWorldMapTravelPending()) return;
     if(Loader.getLoadingFileCount() != 0 || this.tickMainMenuOpenTransition_800c6690 == 0) {
       return;
     }
@@ -1185,6 +1203,10 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800cd278L)
   private void deallocate() {
+    if(this.worldMapTraversal != null) {
+      final boolean travelling = this.arrivingWorldMapTravel != null || this.wmapState_800bb10c == WmapState.TRANSITION_TO_WORLD_MAP || this.wmapState_800bb10c == WmapState.TRANSITION_TO_ENGINE_STATE;
+      this.worldMapTraversal.leave(this, gameState_800babc8, travelling ? WorldMapTraversalEvent.Cause.TRAVEL : WorldMapTraversalEvent.Cause.UNLOAD);
+    }
     if(this.modelAndAnimData_800c66a8.mapContinentNameObj != null) {
       this.modelAndAnimData_800c66a8.mapContinentNameObj.delete();
       this.modelAndAnimData_800c66a8.mapContinentNameObj = null;
@@ -3347,9 +3369,10 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e0274L)
   private void renderPlayer() {
+    this.prepareWorldMapTraversalFrame();
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
-    final RegistryId avatarId = modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0 && modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL_0 && modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE_0 && modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.NONE_0 ? this.worldMap.definition().route(this.mapState_800c6798.directionalPathIndex_12).avatar() : null;
+    final RegistryId avatarId = this.isWorldMapTraversalLocal() ? this.worldMapTraversal.avatar() : null;
     final UvAdjustmentMetrics14[] avatarSlots = new UvAdjustmentMetrics14[4];
     for(int i = 0; i < avatarSlots.length; i++) avatarSlots[i] = this.tmdUvAdjustmentMetrics_800eee48[this.playerAvatarVramSlots_800ef694[i]];
     final Model124 avatarModel = this.routeAvatar.prepare(avatarId, avatarId == null ? null : this.worldMapData.avatar(avatarId), gameState_800babc8, this.leaderWorldMapTexture, avatarSlots);
@@ -3890,6 +3913,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e367cL)
   private void handleEncounters(final float encounterRateMultiplier) {
+    if(this.isWorldMapTravelPending()) return;
     if(
       Loader.getLoadingFileCount() != 0 ||
         this.worldMapState_800c6698 != WorldMapState.RENDER_5 ||
@@ -4253,6 +4277,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e5150L)
   private void handleMapTransitions() {
+    if(this.isWorldMapTravelPending()) return;
     if(Loader.getLoadingFileCount() != 0 || this.tickMainMenuOpenTransition_800c6690 != 0) {
       return;
     }
@@ -4857,7 +4882,9 @@ public class WMap extends EngineState<WMap> {
   private void initFlagsPathsCutsAndPlaces() {
     //LAB_800e7940
     //LAB_800e7944
-    this.worldMapData.applyStory(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c, this.worldMap.definition());
+    if(this.arrivingWorldMapTravel == null) {
+      this.worldMapData.applyStory(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c, this.worldMap.definition());
+    }
     this.refreshWorldMap();
 
     //LAB_800e7ae4
@@ -5081,6 +5108,8 @@ public class WMap extends EngineState<WMap> {
       this.arrivingWorldMapTravel = null;
     }
 
+    this.worldMapTraversalArrival = travelPosition == null ? WorldMapTraversalEvent.Cause.ARRIVAL : WorldMapTraversalEvent.Cause.TRAVEL;
+
     //LAB_800e8990
     this.mapTransitionState_800c68a4 = MapTransitionState.INIT_0;
     this.startLocationLabelsActive_800c68a8 = false;
@@ -5096,15 +5125,54 @@ public class WMap extends EngineState<WMap> {
     this.setPositionsOfValidMapPlaces();
   }
 
+  private boolean isWorldMapTraversalLocal() {
+    final WMapModelAndAnimData258 model = this.modelAndAnimData_800c66a8;
+    return model.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0 && model.zoomState_1f8 == ZoomState.LOCAL_0 && model.coolonWarpState_220 == CoolonWarpState.NONE_0 && model.fadeAnimationType_05 == FadeAnimationType.NONE_0;
+  }
+
+  private float worldMapTraversalProgress() {
+    final int intervals = this.pathSegmentLengths_800f5810[this.mapState_800c6798.pathIndex_14] - 1;
+    return Math.max(0.0f, Math.min(1.0f, (this.mapState_800c6798.dotIndex_16 + this.mapState_800c6798.dotOffset_18 / 4.0f) / intervals));
+  }
+
+  /** Resolve visuals before rendering and use that same frame's modifiers for subsequent movement. */
+  private void prepareWorldMapTraversalFrame() {
+    this.worldMapTraversalTick = false;
+    if(this.isWorldMapTravelPending()) return;
+    this.worldMapTraversal.synchronize(this, gameState_800babc8, this.worldMap.definition().route(this.mapState_800c6798.directionalPathIndex_12), this.worldMapTraversalProgress(), this.worldMapTraversalArrival);
+    if(this.isWorldMapTravelPending()) return;
+    if(this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698 == WorldMapState.RENDER_5 && this.playerState_800c669c == PlayerState.RENDER_5 && this.isWorldMapTraversalLocal() && !this.mapState_800c6798.disableInput_d0 && this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0 && this.mapState_800c6798.shortForceMovementMode_d4 == ForcedMovementMode.NONE_0 && this.tickMainMenuOpenTransition_800c6690 == 0 && Loader.getLoadingFileCount() == 0 && this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0 && this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110 == MapRotationState.MAIN_LOOP_0) {
+      this.worldMapTraversal.tick(this, gameState_800babc8);
+      this.worldMapTraversalTick = !this.isWorldMapTravelPending();
+    }
+  }
+
   @Method(0x800e8a10L)
   private void handlePlayerMovementOnPath() {
     //LAB_800e8a38
     if(this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
+      if(this.isWorldMapTravelPending()) return;
+      final WorldMapRoute route = this.worldMap.definition().route(this.mapState_800c6798.directionalPathIndex_12);
+      final float previousProgress = this.worldMapTraversalProgress();
+      final long revision = this.worldMapTraversal.revision();
+      final boolean continuousMovement = this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 == PathSegmentEntering.CURRENT_0 && this.isWorldMapTraversalLocal() && this.wmapState_800bb10c == WmapState.PLAY && this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0 && this.tickMainMenuOpenTransition_800c6690 == 0 && this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0 && this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110 == MapRotationState.MAIN_LOOP_0;
       //LAB_800e8a58
       this.handleTravelAlongPathSegment();
+      if(continuousMovement) {
+        final float progress = switch(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8) {
+          case PREVIOUS_1 -> 0.0f;
+          case NEXT_2 -> 1.0f;
+          default -> this.worldMapTraversalProgress();
+        };
+        this.worldMapTraversal.moved(this, gameState_800babc8, route, previousProgress, progress);
+        if(this.isWorldMapTravelPending() || this.worldMapTraversal.revision() != revision) return;
+      }
       this.checkAndInitPathSegmentChange();
+      if(this.isWorldMapTravelPending()) return;
       this.selectNewPathAtIntersection();
+      if(this.isWorldMapTravelPending()) return;
       this.updatePlayer();
+      this.worldMapTraversal.synchronize(this, gameState_800babc8, this.worldMap.definition().route(this.mapState_800c6798.directionalPathIndex_12), this.worldMapTraversalProgress(), WorldMapTraversalEvent.Cause.WALK);
     }
     //LAB_800e8a80
   }
@@ -5180,11 +5248,34 @@ public class WMap extends EngineState<WMap> {
       return;
     }
 
+    final float previousOffset = this.mapState_800c6798.dotOffset_18;
     //LAB_800e8cd8
     this.handleForcedMovement();
 
     if(!this.mapState_800c6798.disableInput_d0) {
       this.processInput();
+    }
+
+    final float speed = this.worldMapTraversalTick ? this.worldMapTraversal.speedMultiplier() : 1.0f;
+    if(speed != 1.0f) {
+      // Modified motion can cross several dots, but stops at the first route endpoint. The unchanged
+      // vanilla branch below preserves its existing rounding and endpoint representation by default.
+      final int lastDot = this.pathSegmentLengths_800f5810[this.mapState_800c6798.pathIndex_14] - 1;
+      final double position = this.mapState_800c6798.dotIndex_16 * 4.0 + previousOffset + (this.mapState_800c6798.dotOffset_18 - previousOffset) * (double)speed;
+      if(position >= lastDot * 4.0) {
+        this.mapState_800c6798.dotIndex_16 = lastDot - 1;
+        this.mapState_800c6798.dotOffset_18 = 3.0f;
+        this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.NEXT_2;
+      } else if(position < 0.0) {
+        this.mapState_800c6798.dotIndex_16 = 0;
+        this.mapState_800c6798.dotOffset_18 = 0.0f;
+        this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.PREVIOUS_1;
+      } else {
+        this.mapState_800c6798.dotIndex_16 = (int)(position / 4.0);
+        this.mapState_800c6798.dotOffset_18 = (float)(position - this.mapState_800c6798.dotIndex_16 * 4.0);
+      }
+      this.initEnterQueenFuryTransition();
+      return;
     }
 
     //LAB_800e8cfc
