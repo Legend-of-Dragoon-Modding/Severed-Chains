@@ -341,7 +341,9 @@ public final class WorldMapRegistrySnapshot {
     final Map<RegistryId, RegistryId> routeRegions = new HashMap<>();
     for(final WorldMapPortal portal : definition.portals()) {
       if(portal.region() != null || portal.route() != null) {
-        this.regionForPortal(portal);
+        if(this.regionForPortal(portal).legacyTemplate() != portal.continent()) {
+          throw new IllegalArgumentException("WMAP portal " + portal.id() + " must use its region's legacy continent template");
+        }
       }
       if(portal.route() != null) {
         final RegistryId region = this.regionId(portal);

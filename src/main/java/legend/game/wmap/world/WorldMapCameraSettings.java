@@ -8,14 +8,29 @@ public record WorldMapCameraSettings(WorldMapPoint viewpoint, WorldMapPoint refp
   public WorldMapCameraSettings {
     Objects.requireNonNull(viewpoint, "viewpoint");
     Objects.requireNonNull(refpoint, "refpoint");
+    requireFinite(viewpoint);
+    requireFinite(refpoint);
+    if(overviewPosition != null) {
+      requireFinite(overviewPosition);
+    }
     if(!Float.isFinite(projectionDistance) || projectionDistance <= 0) {
       throw new IllegalArgumentException("World map projection distance must be positive");
     }
     if((minimum == null) != (maximum == null)) {
       throw new IllegalArgumentException("World map camera bounds require both corners");
     }
+    if(minimum != null) {
+      requireFinite(minimum);
+      requireFinite(maximum);
+    }
     if(minimum != null && (minimum.x() > maximum.x() || minimum.y() > maximum.y() || minimum.z() > maximum.z())) {
       throw new IllegalArgumentException("World map camera bounds are inverted");
+    }
+  }
+
+  private static void requireFinite(final WorldMapPoint point) {
+    if(!Float.isFinite(point.x()) || !Float.isFinite(point.y()) || !Float.isFinite(point.z())) {
+      throw new IllegalArgumentException("World map camera coordinates must be finite");
     }
   }
 

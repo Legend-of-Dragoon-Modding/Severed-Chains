@@ -70,12 +70,38 @@ public final class WorldMapRuntime {
     return this.view().access(portal.legacyIndex(), action);
   }
 
+  public WorldMapAccess access(final RegistryId portalId, final WorldMapAction action, final RegistryId region) {
+    final WorldMapPortal portal = this.definition.portal(portalId);
+    if(portal.route() == null) {
+      return WorldMapAccess.NO_PATH;
+    }
+    if(!WorldMapRegion.idFor(portal).equals(region)) {
+      return WorldMapAccess.WRONG_CONTINENT;
+    }
+    return this.view().access(portal.legacyIndex(), action);
+  }
+
   /** A stale command must be submitted against the newly resolved view. */
   public WorldMapAccess validateIntent(final RegistryId portal, final WorldMapAction action, final Continent continent, final long expectedVersion) {
     if(this.view().version() != expectedVersion) {
       return WorldMapAccess.denied("World-map state changed; resolve the action again");
     }
     return this.access(portal, action, continent);
+  }
+
+  public WorldMapAccess validateIntent(final RegistryId portal, final WorldMapAction action, final RegistryId region, final long expectedVersion) {
+    if(this.view().version() != expectedVersion) {
+      return WorldMapAccess.denied("World-map state changed; resolve the action again");
+    }
+    return this.access(portal, action, region);
+  }
+
+  public int legacyValidity(final int index, final int mode, final RegistryId region, @Nullable final Vector3f position, final WorldMapAction action) {
+    final WorldMapPortal portal = this.definition.portal(index);
+    if(mode != -1 && portal.route() != null && !WorldMapRegion.idFor(portal).equals(region)) {
+      return -2;
+    }
+    return this.legacyValidity(index, mode, portal.continent(), position, action);
   }
 
   public int legacyValidity(final int index, final int mode, final Continent continent, @Nullable final Vector3f position, final WorldMapAction action) {
@@ -122,6 +148,15 @@ public final class WorldMapRuntime {
   public int findRoutePortal(final int directionalPath, final Continent continent) {
     for(final WorldMapPortal portal : this.definition.portals()) {
       if(portal.route() != null && this.definition.route(portal.route()).legacyIndex() == directionalPath && this.access(portal.id(), WorldMapAction.TRAVERSE, continent).allowed()) {
+        return portal.legacyIndex();
+      }
+    }
+    return -1;
+  }
+
+  public int findRoutePortal(final int directionalPath, final RegistryId region) {
+    for(final WorldMapPortal portal : this.definition.portals()) {
+      if(portal.route() != null && this.definition.route(portal.route()).legacyIndex() == directionalPath && this.access(portal.id(), WorldMapAction.TRAVERSE, region).allowed()) {
         return portal.legacyIndex();
       }
     }
