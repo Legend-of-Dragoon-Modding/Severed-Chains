@@ -220,7 +220,7 @@ public final class WorldMapPresetManager {
         for(var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
           final String name = entry.getName();
           requireRelative(name);
-          if(!names.add(name) || names.size() > MAX_FILES) {
+          if(!names.add(name.toLowerCase(java.util.Locale.ROOT)) || names.size() > MAX_FILES) {
             throw new IOException("Duplicate ZIP entry or too many files: " + name);
           }
           final Path target = staging.resolve(name).normalize();
@@ -318,6 +318,9 @@ public final class WorldMapPresetManager {
   }
 
   private static String freeze(final WorldMapPreset preset, final Path directory) throws IOException {
+    if(preset.assetPaths().size() >= MAX_FILES) {
+      throw new IOException("World map package contains too many assets");
+    }
     Files.createDirectories(directory);
     final Path staging = Files.createTempDirectory(directory, ".package-");
     try {
@@ -356,15 +359,16 @@ public final class WorldMapPresetManager {
       final MessageDigest digest = MessageDigest.getInstance("SHA-256");
       try(final var files = Files.walk(directory)) {
         for(final Path file : files.filter(Files::isRegularFile).sorted().toList()) {
-          digest.update(directory.relativize(file).toString().replace('\\', '/').getBytes(java.nio.charset.StandardCharsets.UTF_8));
-          digest.update((byte)0);
+          final byte[] name = directory.relativize(file).toString().replace('\\', '/').getBytes(java.nio.charset.StandardCharsets.UTF_8);
+          digest.update(java.nio.ByteBuffer.allocate(4).putInt(name.length).array());
+          digest.update(name);
+          digest.update(java.nio.ByteBuffer.allocate(8).putLong(Files.size(file)).array());
           try(final InputStream stream = Files.newInputStream(file)) {
             final byte[] buffer = new byte[8192];
             for(int length = stream.read(buffer); length != -1; length = stream.read(buffer)) {
               digest.update(buffer, 0, length);
             }
           }
-          digest.update((byte)0);
         }
       }
       return HexFormat.of().formatHex(digest.digest());
