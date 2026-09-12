@@ -220,6 +220,9 @@ public final class WorldMapPresetManager {
         for(var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
           final String name = entry.getName();
           requireRelative(name);
+          if(!entry.isDirectory() && name.toLowerCase(java.util.Locale.ROOT).endsWith(".wmap") && !name.equals("preset.wmap")) {
+            throw new IOException("World map package must contain only root preset.wmap as its document");
+          }
           if(!names.add(name.toLowerCase(java.util.Locale.ROOT)) || names.size() > MAX_FILES) {
             throw new IOException("Duplicate ZIP entry or too many files: " + name);
           }
