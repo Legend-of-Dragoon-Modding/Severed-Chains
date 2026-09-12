@@ -40,6 +40,7 @@ import legend.game.modding.events.worldmap.WorldMapJunctionEvent;
 import legend.game.modding.events.worldmap.WorldMapLabelEvent;
 import legend.game.modding.events.worldmap.WorldMapLocationThumbnailEvent;
 import legend.game.modding.events.worldmap.WorldMapProgressionEvent;
+import legend.game.modding.events.worldmap.WorldMapRegionLifecycleEvent;
 import legend.game.modding.events.worldmap.WorldMapResolvedEvent;
 import legend.game.modding.events.worldmap.WorldMapRouteVisibilityEvent;
 import legend.game.modding.events.worldmap.WorldMapTravelEvent;
@@ -335,6 +336,7 @@ public class WMap extends EngineState<WMap> {
   private final WorldMapRegionRenderer regionRenderer = new WorldMapRegionRenderer();
   private RegistryId worldMapRegionId;
   private boolean regionFrameTicked;
+  @Nullable private WorldMapRenderContext loadedWorldMapRegion;
   private volatile Tim leaderWorldMapTexture;
   private int routeAvatarMovementAnimation = 2;
   private boolean notifyingWorldMap;
@@ -830,12 +832,29 @@ public class WMap extends EngineState<WMap> {
   @Override
   @Method(0x800cc738L)
   public void tick() {
+    try {
+      this.tickWorldMapFrame();
+    } catch(final RuntimeException | Error failure) {
+      try {
+        this.deleteWorldMapRegion();
+      } catch(final RuntimeException | Error cleanupFailure) {
+        failure.addSuppressed(cleanupFailure);
+      }
+      throw failure;
+    }
+  }
+
+  private void tickWorldMapFrame() {
     super.tick();
 
     this.beginWorldMapTravel();
     this.refreshWorldMap();
     if(this.regionRenderer.adopt(this::initializeWorldMapTmd, this::getWorldMapRenderContext)) {
       this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x6);
+      if(this.loadedWorldMapRegion == null) {
+        this.loadedWorldMapRegion = this.getWorldMapRenderContext();
+        EVENTS.postEvent(new WorldMapRegionLifecycleEvent(this, gameState_800babc8, WorldMapRegionLifecycleEvent.Phase.INIT, this.loadedWorldMapRegion));
+      }
     }
     if(this.worldMapPresentationDirty && this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
       this.setPositionsOfValidMapPlaces();
@@ -845,7 +864,8 @@ public class WMap extends EngineState<WMap> {
     this.wmapStates_800ef000[this.wmapState_800bb10c.state].run();
 
     if(this.regionFrameTicked && this.wmapState_800bb10c == WmapState.PLAY) {
-      this.regionRenderer.renderPresentation(this.getWorldMapRenderContext());
+      this.loadedWorldMapRegion = this.getWorldMapRenderContext();
+      this.regionRenderer.renderPresentation(this.loadedWorldMapRegion);
     }
 
     if(this.completedWorldMapTravel != null && this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698 == WorldMapState.RENDER_5 && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state && this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
@@ -2387,6 +2407,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800d8e4cL)
   private void loadMapModelAndTexture(final int index) {
+    this.deleteWorldMapRegion();
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x6);
     this.regionRenderer.load(this.getWorldMapRegionId(), this.getWorldMapRegion(), gameState_800babc8, () -> loadDrgnFile(0, 5705 + index).thenApply(file -> new TmdWithId("World map transform anchor DRGN0/" + (5705 + index), file)));
   }
@@ -3391,9 +3412,27 @@ public class WMap extends EngineState<WMap> {
     //LAB_800dcc0c
   }
 
+  private void deleteWorldMapRegion() {
+    final WorldMapRenderContext context = this.loadedWorldMapRegion;
+    this.loadedWorldMapRegion = null;
+    try {
+      if(context != null) {
+        EVENTS.postEvent(new WorldMapRegionLifecycleEvent(this, gameState_800babc8, WorldMapRegionLifecycleEvent.Phase.DELETE, context));
+      }
+    } catch(final RuntimeException | Error failure) {
+      try {
+        this.regionRenderer.delete();
+      } catch(final RuntimeException | Error cleanupFailure) {
+        failure.addSuppressed(cleanupFailure);
+      }
+      throw failure;
+    }
+    this.regionRenderer.delete();
+  }
+
   @Method(0x800dcde8L)
   private void deallocateWorldMap() {
-    this.regionRenderer.delete();
+    this.deleteWorldMapRegion();
     for(int i = 0; i < this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
       this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08.delete();
     }
