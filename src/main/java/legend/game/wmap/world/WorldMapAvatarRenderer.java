@@ -29,6 +29,8 @@ public final class WorldMapAvatarRenderer {
   private Pending pending;
   private WorldMapAvatarAssets assets;
   private Model124 model;
+  private WorldMapAvatarVisual visual;
+  private boolean visualInitialized;
   private Tim leader;
   private UvAdjustmentMetrics14 leaderSlot;
   private boolean textureBorrowed;
@@ -60,24 +62,29 @@ public final class WorldMapAvatarRenderer {
       if(pending.generation() == this.generation) {
         try {
           final WorldMapAvatarAssets assets = Objects.requireNonNull(pending.future().join(), "Avatar loader returned null assets");
-          assets.validateTextureAllocation(leader);
-          final Model124 model = new Model124("World map avatar " + id);
-          this.model = model;
-          model.uvAdjustments_9d = slots[assets.textureSlot()];
-          initModel(model, assets.model(), assets.animations().get(assets.idleAnimation()));
-          loadModelStandardAnimation(model, assets.animations().get(assets.idleAnimation()));
-          TmdObjLoader.fromModel("World map avatar " + id, model);
+          if(assets.visual() != null) {
+            this.visual = Objects.requireNonNull(assets.visual().get(), "Avatar visual factory returned null");
+          } else {
+            assets.validateTextureAllocation(leader);
+            final Model124 model = new Model124("World map avatar " + id);
+            this.model = model;
+            model.uvAdjustments_9d = slots[assets.textureSlot()];
+            initModel(model, assets.model(), assets.animations().get(assets.idleAnimation()));
+            loadModelStandardAnimation(model, assets.animations().get(assets.idleAnimation()));
+            TmdObjLoader.fromModel("World map avatar " + id, model);
+          }
           this.assets = assets;
           this.animation = assets.idleAnimation();
         } catch(final RuntimeException exception) {
           if(this.model != null) this.model.deleteModelParts();
           this.model = null;
+          this.deleteVisual();
           this.assets = null;
           LOGGER.error("Failed to adopt world map avatar {}; retaining vanilla model", id, exception);
         }
       }
     }
-    if(this.model == null) return null;
+    if(this.model == null && this.visual == null) return null;
     if(this.assets.texture() != null && !this.textureBorrowed) {
       upload(this.assets.texture(), this.leaderSlot);
       this.textureBorrowed = true;
@@ -87,7 +94,7 @@ public final class WorldMapAvatarRenderer {
   }
 
   public void animate(final Model124 vanilla, final int movementAnimation, final int framesPerTick) {
-    if(!this.active) return;
+    if(!this.active || this.model == null) return;
     final int animation = this.assets.animation(movementAnimation);
     if(animation != this.animation) {
       loadModelStandardAnimation(this.model, this.assets.animations().get(animation));
@@ -112,6 +119,45 @@ public final class WorldMapAvatarRenderer {
     GPU.uploadData15(new Rect4i(slot.clutX, slot.clutY, clut.w, clut.h), texture.getClutData());
   }
 
+  public boolean hasCustomVisual() {
+    return this.active && this.visual != null;
+  }
+
+  /** Returns false on provider failure so the caller can render the vanilla player this frame. */
+  public boolean renderCustomVisual(final WorldMapAvatarContext context) {
+    if(!this.hasCustomVisual()) return false;
+    try {
+      final WorldMapPoint scale = this.assets.scale();
+      context.transform().scale(scale.x(), scale.y(), scale.z());
+      if(!this.visualInitialized) {
+        this.visual.init(context);
+        this.visualInitialized = true;
+      }
+      this.visual.tick(context);
+      this.visual.render(context);
+      return true;
+    } catch(final RuntimeException exception) {
+      LOGGER.error("Failed to render world map avatar {}", this.requested, exception);
+      this.deleteVisual();
+      this.assets = null;
+      this.active = false;
+      return false;
+    }
+  }
+
+  private void deleteVisual() {
+    final WorldMapAvatarVisual visual = this.visual;
+    this.visual = null;
+    this.visualInitialized = false;
+    if(visual != null) {
+      try {
+        visual.delete();
+      } catch(final RuntimeException exception) {
+        LOGGER.error("Failed to release world map avatar {}", this.requested, exception);
+      }
+    }
+  }
+
   private void restoreLeader() {
     if(this.textureBorrowed) {
       upload(this.leader, this.leaderSlot);
@@ -123,6 +169,7 @@ public final class WorldMapAvatarRenderer {
   public void delete() {
     this.generation++;
     this.restoreLeader();
+    this.deleteVisual();
     if(this.model != null) this.model.deleteModelParts();
     this.model = null;
     this.assets = null;
