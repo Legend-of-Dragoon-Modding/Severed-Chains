@@ -33,6 +33,7 @@ import legend.game.modding.events.worldmap.WorldMapArrivalEvent;
 import legend.game.modding.events.worldmap.WorldMapCameraEvent;
 import legend.game.modding.events.worldmap.WorldMapConfigureEvent;
 import legend.game.modding.events.worldmap.WorldMapEncounterEvent;
+import legend.game.modding.events.worldmap.WorldMapEncounterRateEvent;
 import legend.game.modding.events.worldmap.WorldMapEnterEvent;
 import legend.game.modding.events.worldmap.WorldMapJunctionEvent;
 import legend.game.modding.events.worldmap.WorldMapLabelEvent;
@@ -4070,9 +4071,14 @@ public class WMap extends EngineState<WMap> {
     //LAB_800e3780
     //LAB_800e3794
     final DirectionalPathSegmentData08 directionalPathSegment = this.directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
-    this.encounterAccumulator_800c6ae8 += Math.round(directionalPathSegment.encounterRate_03 * encounterRateMultiplier * 70 / (3.0f / vsyncMode_8007a3b8));
+    final WorldMapEncounterRateEvent rate = EVENTS.postEvent(new WorldMapEncounterRateEvent(this, gameState_800babc8, this.getWorldMapRoute(), this.encounterAccumulator_800c6ae8, Math.round(directionalPathSegment.encounterRate_03 * encounterRateMultiplier * 70 / (3.0f / vsyncMode_8007a3b8))));
+    rate.validate();
+    if(this.isWorldMapTravelPending()) {
+      return;
+    }
+    this.encounterAccumulator_800c6ae8 = (int)Math.min(Integer.MAX_VALUE, (long)this.encounterAccumulator_800c6ae8 + rate.increment);
 
-    if(this.encounterAccumulator_800c6ae8 >= 5120) {
+    if(this.encounterAccumulator_800c6ae8 >= rate.threshold) {
       this.encounterAccumulator_800c6ae8 = 0;
 
       final int battleStageId;
