@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
-import static legend.core.GameEngine.bootRegistries;
+import static legend.core.GameEngine.REGISTRY_ACCESS;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -60,7 +60,7 @@ public class WorldMapPresetsScreen extends VerticalLayoutScreen {
     this.button("import", this::importPreset);
     this.button("export", () -> {
       try {
-        bootRegistries();
+        REGISTRY_ACCESS.initializeRemaining();
         this.message(I18n.translate("lod_core.ui.world_map_presets.exported", WorldMapPresetManager.exportRegistered()));
       } catch(final Exception e) {
         this.error(e);
@@ -68,6 +68,7 @@ public class WorldMapPresetsScreen extends VerticalLayoutScreen {
     });
     this.button("details", () -> {
       try {
+        REGISTRY_ACCESS.initializeRemaining();
         final WorldMapPreset preset = this.presets.getSelectedOption().load();
         this.message(preset == null ? I18n.translate("lod_core.ui.world_map_presets.vanilla") : preset.name() + "\n" + preset.description() + "\n" + String.join(", ", preset.requiredMods()));
       } catch(final Exception e) {
