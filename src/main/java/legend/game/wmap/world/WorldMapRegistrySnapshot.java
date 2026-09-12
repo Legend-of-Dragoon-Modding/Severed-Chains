@@ -43,7 +43,7 @@ public final class WorldMapRegistrySnapshot {
       regions.put(value.id(), value.data());
     }
     this.regions = Map.copyOf(regions);
-    this.traversalProfiles = resolve(registries.worldMapTraversalProfiles).stream().sorted(Comparator.<Value<WorldMapTraversalProfile>>comparingInt(value -> value.data().priority()).thenComparing(value -> value.id().toString())).map(Value::data).toList();
+    this.traversalProfiles = resolve(registries.worldMapTraversalProfiles).stream().sorted(Comparator.<Value<WorldMapTraversalProfile>>comparingInt(value -> value.data().priority()).thenComparing(value -> value.id().toString())).map(WorldMapRegistrySnapshot::attributedProfile).toList();
     final List<WorldMapPortal> portals = data(WorldMapSlots.allocate(resolve(registries.worldMapPortals)));
     final List<Value<WorldMapGeometry>> registeredGeometry = WorldMapSlots.allocate(resolve(registries.worldMapGeometry));
     final List<Value<WorldMapEncounterPool>> registeredPools = WorldMapSlots.allocate(resolve(registries.worldMapEncounterPools));
@@ -162,6 +162,17 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public List<WorldMapTraversalProfile> traversalProfiles() { return this.traversalProfiles; }
+
+  private static WorldMapTraversalProfile attributedProfile(final Value<WorldMapTraversalProfile> value) {
+    final WorldMapTraversalProfile profile = value.data();
+    return new WorldMapTraversalProfile(profile.priority(), profile.routes(), profile.markers(), event -> {
+      try {
+        profile.handler().accept(event);
+      } catch(final RuntimeException failure) {
+        throw new IllegalStateException("World map traversal profile " + value.id() + " failed during " + event.phase + " on route " + event.route.id(), failure);
+      }
+    }, profile.includeReverseRoutes());
+  }
 
   /** Materialize route selectors against the final configured graph, not the registry snapshot. */
   public List<WorldMapTraversalProfile> traversalProfiles(final WorldMapDefinition definition) {
