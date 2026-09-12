@@ -13,6 +13,7 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Models.animateModel;
@@ -49,7 +50,8 @@ public final class WorldMapAvatarRenderer {
       this.delete();
       this.requested = id;
       try {
-        this.pending = new Pending(this.generation, Objects.requireNonNull(avatar, "avatar").load(state));
+        // Time out our dependent future, never the provider's potentially shared future.
+        this.pending = new Pending(this.generation, Objects.requireNonNull(avatar, "avatar").load(state).thenApply(assets -> assets).orTimeout(60, TimeUnit.SECONDS));
       } catch(final RuntimeException exception) {
         LOGGER.error("Failed to request world map avatar {}", id, exception);
       }

@@ -2,33 +2,49 @@ package legend.game.wmap.world;
 
 import legend.game.tmd.TmdWithId;
 import legend.game.types.GameState52c;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/** Owns one map asset request and its render-thread lifecycle; abandoned loads never allocate GPU resources. */
+/** Render-thread ownership, bounded CPU loading and registry-attributed failures. */
 public final class WorldMapRegionRenderer {
   private CompletableFuture<WorldMapModelAssets> pending;
   private WorldMapModelAssets assets;
   private WorldMapModelRenderer renderer;
   private WorldMapPresentationController presentation;
   private Supplier<WorldMapPresentationController> presentationFactory;
+  private RegistryId regionId;
+  private boolean ready;
 
+  /** Compatibility overload; custom regions should pass their actual registry identity. */
   public void load(final WorldMapRegion region, final GameState52c state, final Supplier<CompletableFuture<TmdWithId>> legacyAnchor) {
-    this.delete();
-    this.presentationFactory = region.presentation();
-    this.pending = Objects.requireNonNull(region.model().load(state), "World map model loader returned null future").thenCompose(assets -> {
-      Objects.requireNonNull(assets, "World map model loader returned null assets");
-      if(assets.model() != null) {
-        return CompletableFuture.completedFuture(assets);
-      }
-      return legacyAnchor.get().thenApply(anchor -> new WorldMapModelAssets(anchor, assets.textures(), assets.renderer(), assets.retailAnimations()));
-    });
+    this.load(WorldMapRegion.legacyId(region.legacyTemplate()), region, state, legacyAnchor);
   }
 
-  /** Returns true once, after every CPU asset is ready and the map has been initialized on this thread. */
+  public void load(final RegistryId regionId, final WorldMapRegion region, final GameState52c state, final Supplier<CompletableFuture<TmdWithId>> legacyAnchor) {
+    this.delete();
+    this.regionId = Objects.requireNonNull(regionId, "regionId");
+    this.presentationFactory = region.presentation();
+    try {
+      // thenCompose creates an owned future: timing it out does not alter a provider's shared one.
+      this.pending = Objects.requireNonNull(region.model().load(state), "World map model loader returned null future").thenCompose(assets -> {
+        Objects.requireNonNull(assets, "World map model loader returned null assets");
+        if(assets.model() != null) {
+          return CompletableFuture.completedFuture(assets);
+        }
+        return Objects.requireNonNull(legacyAnchor.get(), "World map anchor loader returned null future")
+          .thenApply(anchor -> new WorldMapModelAssets(Objects.requireNonNull(anchor, "World map anchor loader returned null TMD"), assets.textures(), assets.renderer(), assets.retailAnimations()));
+      }).orTimeout(60, TimeUnit.SECONDS);
+    } catch(final RuntimeException failure) {
+      throw this.failed("request assets", failure);
+    }
+  }
+
+  /** Ready is published only after both owners have initialized successfully. */
   public boolean adopt(final Consumer<TmdWithId> initializeMap, final Supplier<WorldMapRenderContext> context) {
     if(this.pending == null || !this.pending.isDone()) {
       return false;
@@ -47,19 +63,18 @@ public final class WorldMapRegionRenderer {
       }
       this.presentation = Objects.requireNonNull(this.presentationFactory.get(), "World map presentation factory returned null");
       this.presentation.init(context.get());
+      this.ready = true;
       return true;
-    } catch(final RuntimeException | Error failure) {
-      try {
-        this.delete();
-      } catch(final RuntimeException | Error cleanupFailure) {
-        failure.addSuppressed(cleanupFailure);
-      }
+    } catch(final RuntimeException failure) {
+      throw this.failed("load or initialize assets (60 second loading limit)", failure);
+    } catch(final Error failure) {
+      this.cleanup(failure);
       throw failure;
     }
   }
 
   public boolean ready() {
-    return this.assets != null;
+    return this.ready;
   }
 
   public boolean customModel() {
@@ -71,43 +86,75 @@ public final class WorldMapRegionRenderer {
   }
 
   public boolean useVanillaAtmosphere() {
-    return this.presentation == null || this.presentation.useVanillaAtmosphere();
+    return this.invoke("select atmosphere", () -> this.presentation == null || this.presentation.useVanillaAtmosphere());
   }
 
   public boolean useVanillaSmoke() {
-    return this.presentation == null || this.presentation.useVanillaSmoke();
+    return this.invoke("select smoke", () -> this.presentation == null || this.presentation.useVanillaSmoke());
   }
 
   public boolean routeVisible(final WorldMapPortal portal, final boolean visible) {
-    return this.presentation == null ? visible : this.presentation.routeVisible(portal, visible);
+    return this.invoke("select route visibility for " + portal.id(), () -> this.presentation == null ? visible : this.presentation.routeVisible(portal, visible));
   }
 
   public String regionLabel() {
-    return this.presentation == null ? "" : Objects.requireNonNull(this.presentation.regionLabel(), "World map region label is null");
+    return this.invoke("select region label", () -> this.presentation == null ? "" : Objects.requireNonNull(this.presentation.regionLabel(), "World map region label is null"));
   }
 
   public void tick(final WorldMapRenderContext context) {
-    if(this.renderer != null) {
-      this.renderer.tick(context);
-    }
-    if(this.presentation != null) {
-      this.presentation.tick(context);
-    }
+    this.invoke("tick renderer or presentation", () -> {
+      if(this.renderer != null) {
+        this.renderer.tick(context);
+      }
+      if(this.presentation != null) {
+        this.presentation.tick(context);
+      }
+      return null;
+    });
   }
 
   public void renderModel(final WorldMapRenderContext context) {
-    if(this.renderer != null) {
-      this.renderer.render(context);
-    }
+    this.invoke("render model", () -> {
+      if(this.renderer != null) {
+        this.renderer.render(context);
+      }
+      return null;
+    });
   }
 
   public void renderPresentation(final WorldMapRenderContext context) {
-    if(this.presentation != null) {
-      this.presentation.render(context);
+    this.invoke("render presentation", () -> {
+      if(this.presentation != null) {
+        this.presentation.render(context);
+      }
+      return null;
+    });
+  }
+
+  private <T> T invoke(final String operation, final Supplier<T> callback) {
+    try {
+      return callback.get();
+    } catch(final RuntimeException failure) {
+      throw this.failed(operation, failure);
+    }
+  }
+
+  private IllegalStateException failed(final String operation, final RuntimeException cause) {
+    final IllegalStateException failure = new IllegalStateException("World map region " + this.regionId + " failed to " + operation, cause);
+    this.cleanup(failure);
+    return failure;
+  }
+
+  private void cleanup(final Throwable failure) {
+    try {
+      this.delete();
+    } catch(final RuntimeException | Error cleanupFailure) {
+      failure.addSuppressed(cleanupFailure);
     }
   }
 
   public void delete() {
+    this.ready = false;
     this.pending = null;
     this.assets = null;
     final WorldMapModelRenderer renderer = this.renderer;
