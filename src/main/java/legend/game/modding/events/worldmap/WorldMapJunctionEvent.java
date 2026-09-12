@@ -5,6 +5,8 @@ import legend.game.types.GameState52c;
 import legend.game.wmap.WMap;
 import legend.game.wmap.world.WorldMapPoint;
 import legend.game.wmap.world.WorldMapTraversal;
+import org.legendofdragoon.modloader.registries.RegistryId;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +19,19 @@ import java.util.Objects;
  */
 public class WorldMapJunctionEvent extends InGameEvent<WMap> implements WorldMapEvent {
   public final WorldMapPoint position;
+  /** Authoritative junction identity; null only for the legacy event constructor. */
+  @Nullable public final RegistryId node;
   public final long viewVersion;
   public final List<WorldMapTraversal.Connection> available;
   public final List<WorldMapTraversal.Connection> connections;
 
   public WorldMapJunctionEvent(final WMap engineState, final GameState52c gameState, final WorldMapPoint position, final long viewVersion, final List<WorldMapTraversal.Connection> available) {
+    this(engineState, gameState, null, position, viewVersion, available);
+  }
+
+  public WorldMapJunctionEvent(final WMap engineState, final GameState52c gameState, @Nullable final RegistryId node, final WorldMapPoint position, final long viewVersion, final List<WorldMapTraversal.Connection> available) {
     super(Objects.requireNonNull(engineState, "engineState"), Objects.requireNonNull(gameState, "gameState"));
+    this.node = node;
     this.position = Objects.requireNonNull(position, "position");
     this.viewVersion = viewVersion;
     this.available = List.copyOf(available);

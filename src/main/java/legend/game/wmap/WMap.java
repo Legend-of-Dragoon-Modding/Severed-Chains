@@ -343,13 +343,13 @@ public class WMap extends EngineState<WMap> {
 
   private void configureWorldMap() {
     this.worldMapData = WorldMapRegistrySnapshot.read(REGISTRIES);
-    this.worldMapTraversal = new WorldMapTraversalState(this.worldMapData.traversalProfiles());
     final WorldMapDefinition.Builder definitionBuilder = this.worldMapData.definition().toBuilder();
     final WorldMapRules.Builder rulesBuilder = new WorldMapRules.Builder();
     this.worldMapData.configureBehaviours(REGISTRIES, definitionBuilder, rulesBuilder);
     final WorldMapConfigureEvent event = EVENTS.postEvent(new WorldMapConfigureEvent(this, gameState_800babc8, definitionBuilder, rulesBuilder));
     final WorldMapDefinition definition = event.definition.build();
     this.worldMapData.validateDefinition(definition);
+    this.worldMapTraversal = new WorldMapTraversalState(this.worldMapData.traversalProfiles(definition));
     final int flagWords = (definition.portals().size() + 31) / 32;
     gameState_800babc8.wmapFlags_15c.ensureCapacity(flagWords);
     gameState_800babc8.visitedLocations_17c.ensureCapacity(flagWords);
@@ -487,8 +487,13 @@ public class WMap extends EngineState<WMap> {
 
   private List<WorldMapTraversal.Connection> worldMapConnections(final Vector3f position) {
     final WorldMapView view = this.getWorldMapView();
-    final var available = this.worldMap.traversal().connections(position, this.worldMapRegionId, this.mapState_800c6798.facing_1c, view);
-    final WorldMapJunctionEvent event = EVENTS.postEvent(new WorldMapJunctionEvent(this, gameState_800babc8, new WorldMapPoint(position.x, position.y, position.z), view.version(), available));
+    final WorldMapRoute route = this.getWorldMapRoute();
+    final var points = this.worldMap.definition().geometry().get(route.segmentIndex());
+    final WorldMapPoint point = new WorldMapPoint(position.x, position.y, position.z);
+    final boolean last = point.equals(points.getLast()) && (!point.equals(points.getFirst()) || this.mapState_800c6798.dotIndex_16 >= (points.size() - 1) / 2.0f);
+    final RegistryId node = this.worldMap.traversal().endpoint(route, last);
+    final var available = this.worldMap.traversal().connections(node, this.worldMapRegionId, this.mapState_800c6798.facing_1c, view);
+    final WorldMapJunctionEvent event = EVENTS.postEvent(new WorldMapJunctionEvent(this, gameState_800babc8, node, point, view.version(), available));
     return event.validatedConnections();
   }
 
