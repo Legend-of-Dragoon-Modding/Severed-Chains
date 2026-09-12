@@ -24,6 +24,8 @@ import java.util.Objects;
 public final class WorldMapRegistrySnapshot {
   public record Value<T>(RegistryId id, T data) { }
   private final Map<RegistryId, WorldMapAvatar> avatars;
+  private final Map<RegistryId, WorldMapRegion> regions;
+  private final List<WorldMapTraversalProfile> traversalProfiles;
 
   private final WorldMapDefinition definition;
   private final List<WorldMapStoryPreset> story;
@@ -36,14 +38,20 @@ public final class WorldMapRegistrySnapshot {
     final Map<RegistryId, WorldMapAvatar> avatars = new HashMap<>();
     for(final Value<WorldMapAvatar> value : resolve(registries.worldMapAvatars)) avatars.put(value.id(), value.data());
     this.avatars = Map.copyOf(avatars);
-    final List<WorldMapPortal> portals = data(resolve(registries.worldMapPortals)).stream().sorted(Comparator.comparingInt(WorldMapPortal::legacyIndex)).toList();
-    final List<Value<WorldMapGeometry>> registeredGeometry = resolve(registries.worldMapGeometry);
-    final List<Value<WorldMapEncounterPool>> registeredPools = resolve(registries.worldMapEncounterPools);
+    final Map<RegistryId, WorldMapRegion> regions = new HashMap<>();
+    for(final Value<WorldMapRegion> value : resolve(registries.worldMapRegions)) {
+      regions.put(value.id(), value.data());
+    }
+    this.regions = Map.copyOf(regions);
+    this.traversalProfiles = resolve(registries.worldMapTraversalProfiles).stream().sorted(Comparator.<Value<WorldMapTraversalProfile>>comparingInt(value -> value.data().priority()).thenComparing(value -> value.id().toString())).map(Value::data).toList();
+    final List<WorldMapPortal> portals = data(WorldMapSlots.allocate(resolve(registries.worldMapPortals)));
+    final List<Value<WorldMapGeometry>> registeredGeometry = WorldMapSlots.allocate(resolve(registries.worldMapGeometry));
+    final List<Value<WorldMapEncounterPool>> registeredPools = WorldMapSlots.allocate(resolve(registries.worldMapEncounterPools));
     final Map<RegistryId, Integer> geometryIndices = new HashMap<>();
     for(final Value<WorldMapGeometry> value : registeredGeometry) geometryIndices.put(value.id(), value.data().legacyIndex());
     final Map<RegistryId, Integer> poolIndices = new HashMap<>();
     for(final Value<WorldMapEncounterPool> value : registeredPools) poolIndices.put(value.id(), value.data().legacyIndex());
-    final List<WorldMapRoute> routes = resolve(registries.worldMapRoutes).stream().map(value -> {
+    final List<WorldMapRoute> routes = WorldMapSlots.allocate(resolve(registries.worldMapRoutes)).stream().map(value -> {
       final WorldMapRouteData route = value.data();
       if(route.encounterPool() == null && route.encounterRate() != 0 && route.legacyEncounterPlaceholder() != -1) {
         throw new IllegalArgumentException("Active WMAP route requires an encounter pool ID: " + value.id());
@@ -53,7 +61,7 @@ public final class WorldMapRegistrySnapshot {
       if(geometryIndex == null || poolIndex == null) throw new IllegalArgumentException("Unresolved geometry " + route.geometry() + " or encounter pool " + route.encounterPool() + " on WMAP route " + value.id());
       return new WorldMapRoute(value.id(), route.legacyIndex(), route.start(), route.end(), geometryIndex, route.direction(), route.encounterRate(), route.battleStage(), poolIndex, route.modelIndex(), route.avatar());
     }).sorted(Comparator.comparingInt(WorldMapRoute::legacyIndex)).toList();
-    final List<WorldMapPlace> places = data(resolve(registries.worldMapPlaces)).stream().sorted(Comparator.comparingInt(WorldMapPlace::legacyIndex)).toList();
+    final List<WorldMapPlace> places = data(WorldMapSlots.allocate(resolve(registries.worldMapPlaces)));
     final List<WorldMapGeometry> geometry = data(registeredGeometry).stream().sorted(Comparator.comparingInt(WorldMapGeometry::legacyIndex)).toList();
     if(portals.size() < 256) {
       throw new IllegalArgumentException("WMAP requires at least the 256 legacy portal slots");
@@ -63,7 +71,7 @@ public final class WorldMapRegistrySnapshot {
         throw new IllegalArgumentException("WMAP geometry indices must be unique and dense at " + i);
       }
     }
-    this.definition = new WorldMapDefinition(portals, routes, places, data(resolve(registries.worldMapNodes)), geometry.stream().map(WorldMapGeometry::points).toList());
+    this.definition = new WorldMapDefinition(portals, routes, places, data(resolve(registries.worldMapNodes)), geometry.stream().map(WorldMapGeometry::points).toList(), geometryIndices, poolIndices);
     this.story = data(resolve(registries.worldMapStoryPresets)).stream().sorted(Comparator.comparingInt(WorldMapStoryPreset::order)).toList();
     this.coolon = resolve(registries.worldMapCoolonDestinations).stream().sorted(Comparator.comparingInt(value -> value.data().order())).toList();
     this.teleports = data(resolve(registries.worldMapTeleportLinks)).stream().sorted(Comparator.comparingInt(WorldMapTeleportLink::order)).toList();
@@ -97,6 +105,7 @@ public final class WorldMapRegistrySnapshot {
         replacements.computeIfAbsent(entry.replaces, key -> new ArrayList<>()).add(entry);
       }
     }
+    final Map<RegistryId, WorldMapDataEntry<T>> originals = Map.copyOf(base);
     for(final var replacement : replacements.entrySet()) {
       if(!base.containsKey(replacement.getKey())) {
         throw new IllegalArgumentException("WMAP replacement target is not a base entry: " + replacement.getKey());
@@ -111,7 +120,16 @@ public final class WorldMapRegistrySnapshot {
       base.put(replacement.getKey(), candidates.getLast());
     }
     return base.entrySet().stream().map(entry -> {
-      final T value = entry.getValue().create(entry.getKey());
+      T value = entry.getValue().create(entry.getKey());
+      if(entry.getValue() != originals.get(entry.getKey())) {
+        final int originalIndex = WorldMapSlots.index(originals.get(entry.getKey()).create(entry.getKey()));
+        if(originalIndex >= 0) {
+          if(WorldMapSlots.index(value) >= 0 && WorldMapSlots.index(value) != originalIndex) {
+            throw new IllegalArgumentException("WMAP replacement changes reserved slot for " + entry.getKey());
+          }
+          value = WorldMapSlots.assign(value, originalIndex);
+        }
+      }
       final RegistryId identity = switch(value) {
         case WorldMapPortal portal -> portal.id();
         case WorldMapPlace place -> place.id();
@@ -128,6 +146,22 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public WorldMapDefinition definition() { return this.definition; }
+
+  public Map<RegistryId, WorldMapRegion> regions() { return this.regions; }
+
+  public WorldMapRegion region(final RegistryId id) {
+    return Objects.requireNonNull(this.regions.get(id), "Unknown WMAP region " + id);
+  }
+
+  public RegistryId regionId(final WorldMapPortal portal) {
+    return portal.region() == null ? WorldMapRegion.legacyId(portal.continent()) : portal.region();
+  }
+
+  public WorldMapRegion regionForPortal(final WorldMapPortal portal) {
+    return this.region(this.regionId(portal));
+  }
+
+  public List<WorldMapTraversalProfile> traversalProfiles() { return this.traversalProfiles; }
   public WorldMapAvatar avatar(final RegistryId id) {
     final WorldMapAvatar avatar = this.avatars.get(id);
     if(avatar == null) throw new IllegalArgumentException("Unknown WMAP avatar " + id);
@@ -295,11 +329,35 @@ public final class WorldMapRegistrySnapshot {
       if(pool.legacyIndex() != i || pool.encounters().size() != 4) throw new IllegalArgumentException("WMAP encounter pools require dense indices and four weighted slots at " + i);
       for(final RegistryId id : pool.encounters()) Objects.requireNonNull(registries.encounters.getEntry(id).get(), "Unknown encounter " + id);
     }
-    this.validateDefinition(this.definition);
+    this.validateDefinition(this.definition, false);
   }
 
   /** Validate cross-registry references again after registered behaviours and configure listeners. */
   public void validateDefinition(final WorldMapDefinition definition) {
+    this.validateDefinition(definition, true);
+  }
+
+  private void validateDefinition(final WorldMapDefinition definition, final boolean configured) {
+    final Map<RegistryId, RegistryId> routeRegions = new HashMap<>();
+    for(final WorldMapPortal portal : definition.portals()) {
+      if(portal.region() != null || portal.route() != null) {
+        this.regionForPortal(portal);
+      }
+      if(portal.route() != null) {
+        final RegistryId region = this.regionId(portal);
+        final RegistryId previous = routeRegions.putIfAbsent(portal.route(), region);
+        if(previous != null && !previous.equals(region)) {
+          throw new IllegalArgumentException("WMAP route belongs to multiple regions: " + portal.route());
+        }
+      }
+    }
+    if(configured) {
+      for(final WorldMapTraversalProfile profile : this.traversalProfiles) {
+        for(final RegistryId route : profile.routes()) {
+          definition.route(route);
+        }
+      }
+    }
     if(definition.portals().size() < 256) {
       throw new IllegalArgumentException("WMAP requires at least 256 portal slots for save compatibility");
     }
