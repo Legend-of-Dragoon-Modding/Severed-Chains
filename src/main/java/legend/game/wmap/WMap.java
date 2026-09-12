@@ -2488,10 +2488,10 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800d9044L)
   private void renderWorldMap() {
-    this.renderAndHandleWorldMap();
-    this.handleCoolonAndQueenFuryPrompts();
     this.regionRenderer.tick(this.getWorldMapRenderContext());
     this.regionFrameTicked = true;
+    this.renderAndHandleWorldMap();
+    this.handleCoolonAndQueenFuryPrompts();
 
     if(
       this.modelAndAnimData_800c66a8.coolonWarpState_220.state >= 2 &&

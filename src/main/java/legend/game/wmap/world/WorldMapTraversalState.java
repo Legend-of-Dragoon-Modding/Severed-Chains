@@ -118,9 +118,6 @@ public final class WorldMapTraversalState {
     if(this.route == null || !this.route.id().equals(route.id()) || previousProgress == progress) return;
     final long expected = this.revision;
     this.progress = progress;
-    this.dispatch(engine, gameState, WorldMapTraversalEvent.Phase.MOVE, WorldMapTraversalEvent.Cause.WALK, route, previousProgress, progress, null, null);
-    if(this.revision != expected || engine.isWorldMapTravelPending()) return;
-
     final boolean forwards = progress > previousProgress;
     float crossingStart = previousProgress;
     if(!Float.isNaN(this.endpointContact)) {
@@ -135,6 +132,9 @@ public final class WorldMapTraversalState {
     if(progress == 0.0f || progress == 1.0f) {
       this.endpointContact = progress;
     }
+    this.dispatch(engine, gameState, WorldMapTraversalEvent.Phase.MOVE, WorldMapTraversalEvent.Cause.WALK, route, crossingStart, progress, null, null);
+    if(this.revision != expected || engine.isWorldMapTravelPending()) return;
+
     final List<Crossing> crossings = new ArrayList<>();
     for(final WorldMapTraversalProfile profile : this.profiles) {
       if(!profile.appliesTo(route)) continue;
@@ -148,7 +148,7 @@ public final class WorldMapTraversalState {
     crossings.sort(forwards ? order : order.reversed());
     for(final Crossing crossing : crossings) {
       // CROSS belongs to its declaring profile; global listeners also receive the marker's stable ID.
-      this.dispatch(engine, gameState, WorldMapTraversalEvent.Phase.CROSS, WorldMapTraversalEvent.Cause.WALK, route, previousProgress, crossing.marker().progress(), crossing.marker().id(), crossing.profile());
+      this.dispatch(engine, gameState, WorldMapTraversalEvent.Phase.CROSS, WorldMapTraversalEvent.Cause.WALK, route, crossingStart, crossing.marker().progress(), crossing.marker().id(), crossing.profile());
       if(this.revision != expected || engine.isWorldMapTravelPending()) return;
     }
   }
