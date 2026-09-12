@@ -41,6 +41,7 @@ import legend.game.modding.events.worldmap.WorldMapLabelEvent;
 import legend.game.modding.events.worldmap.WorldMapLocationThumbnailEvent;
 import legend.game.modding.events.worldmap.WorldMapProgressionEvent;
 import legend.game.modding.events.worldmap.WorldMapRegionLifecycleEvent;
+import legend.game.modding.events.worldmap.WorldMapRenderEvent;
 import legend.game.modding.events.worldmap.WorldMapResolvedEvent;
 import legend.game.modding.events.worldmap.WorldMapRouteVisibilityEvent;
 import legend.game.modding.events.worldmap.WorldMapTravelEvent;
@@ -866,6 +867,7 @@ public class WMap extends EngineState<WMap> {
     if(this.regionFrameTicked && this.wmapState_800bb10c == WmapState.PLAY) {
       this.loadedWorldMapRegion = this.getWorldMapRenderContext();
       this.regionRenderer.renderPresentation(this.loadedWorldMapRegion);
+      EVENTS.postEvent(new WorldMapRenderEvent(this, gameState_800babc8, this.loadedWorldMapRegion));
     }
 
     if(this.completedWorldMapTravel != null && this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698 == WorldMapState.RENDER_5 && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state && this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
