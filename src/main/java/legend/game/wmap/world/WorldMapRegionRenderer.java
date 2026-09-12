@@ -162,14 +162,30 @@ public final class WorldMapRegionRenderer {
     this.renderer = null;
     this.presentation = null;
     this.presentationFactory = null;
+    Throwable failure = null;
     try {
       if(renderer != null) {
         renderer.delete();
       }
-    } finally {
+    } catch(final RuntimeException | Error problem) {
+      failure = problem;
+    }
+    try {
       if(presentation != null) {
         presentation.delete();
       }
+    } catch(final RuntimeException | Error problem) {
+      if(failure == null) {
+        failure = problem;
+      } else {
+        failure.addSuppressed(problem);
+      }
+    }
+    if(failure instanceof Error error) {
+      throw error;
+    }
+    if(failure != null) {
+      throw new IllegalStateException("World map region " + this.regionId + " failed to release resources", failure);
     }
   }
 }
