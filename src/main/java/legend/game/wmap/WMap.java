@@ -3275,7 +3275,7 @@ public class WMap extends EngineState<WMap> {
 
   private int nextCoolonDestination(final int current, final int direction) {
     for(int offset = 1; offset <= this.coolonDestinationsAvailable.length; offset++) {
-      final int candidate = Math.floorMod(current + offset * direction, this.coolonDestinationsAvailable.length);
+      final int candidate = java.lang.Math.floorMod(current + offset * direction, this.coolonDestinationsAvailable.length);
       if(this.coolonDestinationsAvailable[candidate]) {
         return candidate;
       }
