@@ -6,6 +6,10 @@ import java.util.Objects;
 
 /** A destination on the world map, independent of submap cuts and scenes. */
 public sealed interface WorldMapTravelTarget {
+  /** Physical distance fraction, measured from the directed route's start to its end. */
+  static Route atRouteDistance(final RegistryId route, final float distanceFraction) {
+    return new Route(route, distanceFraction);
+  }
   /** Arrive at the start of the portal's directed route. */
   record Portal(RegistryId id) implements WorldMapTravelTarget {
     public Portal {

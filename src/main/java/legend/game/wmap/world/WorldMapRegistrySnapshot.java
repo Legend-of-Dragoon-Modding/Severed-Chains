@@ -162,6 +162,11 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public List<WorldMapTraversalProfile> traversalProfiles() { return this.traversalProfiles; }
+
+  /** Materialize route selectors against the final configured graph, not the registry snapshot. */
+  public List<WorldMapTraversalProfile> traversalProfiles(final WorldMapDefinition definition) {
+    return this.traversalProfiles.stream().map(profile -> profile.resolve(definition)).toList();
+  }
   public WorldMapAvatar avatar(final RegistryId id) {
     final WorldMapAvatar avatar = this.avatars.get(id);
     if(avatar == null) throw new IllegalArgumentException("Unknown WMAP avatar " + id);

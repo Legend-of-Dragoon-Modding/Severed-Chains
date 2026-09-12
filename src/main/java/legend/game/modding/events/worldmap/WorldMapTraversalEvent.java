@@ -55,4 +55,13 @@ public final class WorldMapTraversalEvent extends InGameEvent<WMap> implements W
       throw new IllegalArgumentException("World map traversal visual offset must be finite");
     }
   }
+
+  /** Geometry point-interval progress, independent of the selected route's direction. */
+  public float geometryProgress() {
+    return this.progress;
+  }
+
+  public float previousGeometryProgress() {
+    return this.previousProgress;
+  }
 }
