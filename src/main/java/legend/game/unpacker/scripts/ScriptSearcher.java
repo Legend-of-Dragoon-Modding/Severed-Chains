@@ -1,5 +1,6 @@
 package legend.game.unpacker.scripts;
 
+import legend.game.unpacker.Unpacker;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -24,7 +25,7 @@ public class ScriptSearcher {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptSearcher.class);
 
   private Path getPatchConfig(final Path referencePath, final IntList branchList, final  Int2IntMap tableLengthList) {
-    final ScriptPatcher patcher = new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups"));
+    final ScriptPatcher patcher = new ScriptPatcher(Path.of("./patches"), Unpacker.ROOT, Unpacker.ROOT.resolve("patches/cache"), Unpacker.ROOT.resolve("patches/backups"));
     final ScriptPatchList patchList = patcher.getPatchList();
 
     final String relativePath = Loader.resolve("").relativize(referencePath).toString();

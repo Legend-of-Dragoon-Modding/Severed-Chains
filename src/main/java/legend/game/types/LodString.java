@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.platform.input.InputCodepoints;
 import legend.game.scripting.Param;
+import legend.game.unpacker.Unpacker;
 
 public class LodString {
   private final int[] chars;
@@ -208,6 +209,14 @@ public class LodString {
   }
 
   public static char fromLodChar(final int lodChar) {
+    if((lodChar & 0xff00) != InputCodepoints.TEXTBOX_INPUT_ACTION) {
+      final String charset = Unpacker.REGION.charset;
+
+      if(charset != null && lodChar < charset.length()) {
+        return charset.charAt(lodChar);
+      }
+    }
+
     if((lodChar & 0xff00) == InputCodepoints.TEXTBOX_INPUT_ACTION) {
       return (char)lodChar;
     }

@@ -1,5 +1,6 @@
 package legend.game.debugger;
 
+import legend.game.unpacker.Unpacker;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -470,7 +471,7 @@ public class DebuggerController {
   }
 
   public void disassembleSubmapScripts(final ActionEvent actionEvent) throws IOException {
-    final ScriptPatcher patcher = new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches/cache"), Path.of("./files/patches/backups"));
+    final ScriptPatcher patcher = new ScriptPatcher(Path.of("./patches"), Unpacker.ROOT, Unpacker.ROOT.resolve("patches/cache"), Unpacker.ROOT.resolve("patches/backups"));
     final ScriptPatchList patchList = patcher.getPatchList();
 
     for(int drgnIndex = 1; drgnIndex <= 4; drgnIndex++) {

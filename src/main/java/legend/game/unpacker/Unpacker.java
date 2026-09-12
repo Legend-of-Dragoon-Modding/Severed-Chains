@@ -4,7 +4,6 @@ import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
-import legend.core.Tuple;
 import legend.core.audio.xa.XaTranscoder;
 import legend.game.Scus94491BpeSegment;
 import legend.game.i18n.I18n;
@@ -19,6 +18,7 @@ import java.nio.ByteOrder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -44,7 +45,6 @@ public final class Unpacker {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
 
-  private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
   private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
   private static final String[] OTHER_REGION_NAMES = {"europe", "france", "germany", "italy", "spain", "japan", "asia"};
   private static final int PVD_SECTOR = 16;
@@ -58,7 +58,9 @@ public final class Unpacker {
   /** Update this any time we make a breaking change */
   private static final int VERSION = 5;
 
-  public static Path ROOT = Path.of(".", "files");
+  public static GameRegion REGION = GameRegion.US;
+
+  public static Path ROOT = GameRegion.US.filesDir();
   public static Path REPLACEMENTS = Path.of(".", "patches", "replacements");
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
@@ -144,17 +146,8 @@ public final class Unpacker {
 
   public static void unpack() throws UnpackerException {
     try {
-      Files.createDirectories(ROOT);
       Files.createDirectories(Path.of("./isos"));
-
-      if(getUnpackVersion() != VERSION) {
-        final long start = System.nanoTime();
-
-        statusListener.accept(I18n.translate("unpacker.deleting_old"));
-        LOGGER.info("Deleting old unpacked files...");
-        deleteUnpack();
-        LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
-      }
+      migrateLegacyUnpack();
 
       statusListener.accept(I18n.translate("unpacker.loading_disks"));
 
@@ -189,6 +182,18 @@ public final class Unpacker {
         }
 
         DebugHelper.sleep(1000);
+      }
+
+      // don't move this above the disc scan, ROOT isn't known until then
+      Files.createDirectories(ROOT);
+
+      if(getUnpackVersion() != VERSION) {
+        final long deleteStart = System.nanoTime();
+
+        statusListener.accept(I18n.translate("unpacker.deleting_old"));
+        LOGGER.info("Deleting old unpacked files...");
+        deleteUnpack();
+        LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - deleteStart) / 1_000_000_000L);
       }
 
       final long start = System.nanoTime();
@@ -348,6 +353,29 @@ public final class Unpacker {
     }
   }
 
+  // Old installs had everything straight in files/. Shove it into files/us, it was always US anyway.
+  private static void migrateLegacyUnpack() throws IOException {
+    final Path legacy = Path.of(".", "files");
+    final Path target = GameRegion.US.filesDir();
+
+    if(!Files.isRegularFile(legacy.resolve("version")) || Files.exists(target.resolve("version"))) {
+      return;
+    }
+
+    LOGGER.info("Migrating legacy unpack from %s to %s...", legacy, target);
+    Files.createDirectories(target);
+
+    try(final DirectoryStream<Path> children = Files.newDirectoryStream(legacy)) {
+      for(final Path child : children) {
+        final String name = child.getFileName().toString();
+
+        if(!".gitignore".equals(name) && GameRegion.byName(name) == null) {
+          Files.move(child, target.resolve(name), StandardCopyOption.REPLACE_EXISTING);
+        }
+      }
+    }
+  }
+
   private static void deleteUnpack() throws IOException {
     final Path gitIgnore = ROOT.resolve(".gitignore");
 
@@ -373,34 +401,59 @@ public final class Unpacker {
     }
   }
 
+  private record Disc(GameRegion region, int index, IsoReader reader, Path path) { }
+
   private static void getIsoReaders(final IsoReader[] readers, final String[] errors) throws IOException {
     Arrays.fill(errors, I18n.translate("unpacker.disk_not_found"));
 
+    final List<Disc> discs = new ArrayList<>();
     final Path isos = Path.of("isos");
+
     if(Files.isDirectory(isos)) {
       try(final DirectoryStream<Path> children = Files.newDirectoryStream(isos)) {
         for(final Path child : children) {
-          final Tuple<IsoReader, Integer> tuple = getIsoReader(child, errors);
+          final Disc disc = getIsoReader(child, errors);
 
-          if(tuple != null) {
-            final int diskNum = tuple.b();
+          if(disc == null) {
+            continue;
+          }
 
-            errors[diskNum] = I18n.translate("unpacker.disk_found");
-
-            if(readers[diskNum] != null) {
-              tuple.a().close();
-              continue;
-            }
-
-            LOGGER.info("Found disk %d: %s", diskNum + 1, child);
-            readers[diskNum] = tuple.a();
+          if(discs.stream().anyMatch(d -> d.region == disc.region && d.index == disc.index)) {
+            disc.reader.close();
+          } else {
+            discs.add(disc);
           }
         }
       }
     }
+
+    // most complete set wins, US on a tie. -Dlod.region=fr to force it
+    final GameRegion forced = GameRegion.byName(System.getProperty("lod.region"));
+    final ToIntFunction<GameRegion> count = r -> (int)discs.stream().filter(d -> d.region == r).count();
+    final GameRegion region = forced != null && count.applyAsInt(forced) > 0 ? forced
+      : Arrays.stream(GameRegion.values()).max(Comparator.comparingInt(count).thenComparing(Comparator.comparingInt(GameRegion::ordinal).reversed())).orElseThrow();
+
+    for(final Disc disc : discs) {
+      if(disc.region != region) {
+        disc.reader.close();
+        continue;
+      }
+
+      errors[disc.index] = I18n.translate("unpacker.disk_found");
+      LOGGER.info("Found %s disk %d: %s", region, disc.index + 1, disc.path);
+      readers[disc.index] = disc.reader;
+    }
+
+    if(REGION != region) {
+      LOGGER.info("Region: %s -> %s", region, region.filesDir());
+    }
+
+    REGION = region;
+    ROOT = region.filesDir();
   }
 
-  private static Tuple<IsoReader, Integer> getIsoReader(final Path path, final String[] errors) throws IOException {
+  @Nullable
+  private static Disc getIsoReader(final Path path, final String[] errors) throws IOException {
     final long fileSize = Files.size(path);
 
     if(fileSize < (PVD_SECTOR + 1) * IsoReader.SECTOR_SIZE) {
@@ -431,9 +484,11 @@ public final class Unpacker {
 
     final String readId = IoHelper.readString(sectorBuffer, 32).trim();
 
-    for(int i = 0; i < DISK_IDS.length; i++) {
-      if(DISK_IDS[i].equals(readId)) {
-        return new Tuple<>(reader, i);
+    for(final GameRegion region : GameRegion.values()) {
+      final int diskNum = region.diskIndex(readId);
+
+      if(diskNum >= 0) {
+        return new Disc(region, diskNum, reader, path);
       }
     }
 
@@ -638,13 +693,13 @@ public final class Unpacker {
   }
 
   private static boolean engineOverlayDiscriminator(final PathNode node, final Set<String> flags) {
-    return "SCUS_944.91".equals(node.pathSegment) && !flags.contains(node.pathSegment);
+    return REGION.executable.equals(node.pathSegment) && !flags.contains(node.pathSegment);
   }
 
   private static void engineOverlayExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add(node.pathSegment);
     transformations.addNode(node);
-    transformations.addNode("lod_engine", node.data.slice(0xa00, 0x36228));
+    transformations.addNode("lod_engine", node.data.slice(0xa00, node.data.size() - 0xa00));
   }
 
   /**
@@ -1353,10 +1408,10 @@ public final class Unpacker {
   }
 
   private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    transformations.addNode("shadow.ctmd", node.data.slice(0x3d0, 0x14c));
-    transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
-    transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));
-    transformations.addNode("font.tim", getTimSize(node.data.slice(0xb6744)));
+    transformations.addNode("shadow.ctmd", node.data.slice(REGION.shadowCtmdOffset, 0x14c));
+    transformations.addNode("shadow.anim", node.data.slice(REGION.shadowAnimOffset, 0x28));
+    transformations.addNode("shadow.tim", getTimSize(node.data.slice(REGION.shadowTimOffset)));
+    transformations.addNode("font.tim", getTimSize(node.data.slice(REGION.fontTimOffset)));
   }
 
   private static boolean xaDiscriminator(final PathNode node, final Set<String> flags) {
