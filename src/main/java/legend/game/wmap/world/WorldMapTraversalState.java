@@ -25,6 +25,7 @@ public final class WorldMapTraversalState {
   private final List<WorldMapTraversalProfile> profiles;
   @Nullable private WorldMapRoute route;
   private float progress;
+  private float endpointContact = Float.NaN;
   private long revision;
   private float speedMultiplier = 1.0f;
   @Nullable private RegistryId avatar;
@@ -87,6 +88,7 @@ public final class WorldMapTraversalState {
     final WorldMapRoute previous = this.route;
     final float previousProgress = this.progress;
     this.route = null;
+    this.endpointContact = Float.NaN;
     this.resetModifiers();
     this.revision++;
     if(previous != null) {
@@ -120,11 +122,24 @@ public final class WorldMapTraversalState {
     if(this.revision != expected || engine.isWorldMapTravelPending()) return;
 
     final boolean forwards = progress > previousProgress;
+    float crossingStart = previousProgress;
+    if(!Float.isNaN(this.endpointContact)) {
+      // Retail clamps a reached endpoint inside its final dot interval. Holding towards that
+      // endpoint must not cross the same markers again on every frame.
+      if(this.endpointContact == 1.0f && forwards || this.endpointContact == 0.0f && !forwards) {
+        return;
+      }
+      crossingStart = this.endpointContact;
+      this.endpointContact = Float.NaN;
+    }
+    if(progress == 0.0f || progress == 1.0f) {
+      this.endpointContact = progress;
+    }
     final List<Crossing> crossings = new ArrayList<>();
     for(final WorldMapTraversalProfile profile : this.profiles) {
       if(!profile.appliesTo(route)) continue;
       for(final WorldMapTraversalProfile.Marker marker : profile.markers()) {
-        if(forwards ? marker.progress() > previousProgress && marker.progress() <= progress : marker.progress() < previousProgress && marker.progress() >= progress) {
+        if(forwards ? marker.progress() > crossingStart && marker.progress() <= progress : marker.progress() < crossingStart && marker.progress() >= progress) {
           crossings.add(new Crossing(profile, marker));
         }
       }
