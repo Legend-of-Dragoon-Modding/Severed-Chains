@@ -85,6 +85,7 @@ import legend.game.wmap.world.WorldMapRuntime;
 import legend.game.wmap.world.WorldMapSave;
 import legend.game.wmap.world.WorldMapTravel;
 import legend.game.wmap.world.WorldMapTravelTarget;
+import legend.game.wmap.world.WorldMapTravelRequestResult;
 import legend.game.wmap.world.WorldMapTravelPosition;
 import legend.game.wmap.world.WorldMapTraversal;
 import legend.game.wmap.world.WorldMapTraversalState;
@@ -402,19 +403,31 @@ public class WMap extends EngineState<WMap> {
 
   /** Access may be explicitly bypassed by a mod; geometry and destination identities must still be valid. */
   public boolean travelToWorldMap(final WorldMapTravelTarget target, final boolean respectAccess) {
+    return this.requestWorldMapTravel(target, respectAccess) == WorldMapTravelRequestResult.ACCEPTED;
+  }
+
+  public WorldMapTravelRequestResult requestWorldMapTravel(final WorldMapTravelTarget target) {
+    return this.requestWorldMapTravel(target, true);
+  }
+
+  /** Invalid graph identities still throw; BUSY may be retried on a later eligible tick. */
+  public WorldMapTravelRequestResult requestWorldMapTravel(final WorldMapTravelTarget target, final boolean respectAccess) {
     Objects.requireNonNull(target, "target");
     if(this.requestingWorldMapTravel || this.worldMap == null || this.wmapState_800bb10c != WmapState.PLAY || this.queuedWorldMapTravel != null || this.arrivingWorldMapTravel != null || this.worldMapState_800c6698 != WorldMapState.RENDER_5 || this.playerState_800c669c.state <= PlayerState.INIT_PLAYER_MODEL_3.state || this.modelAndAnimData_800c66a8.fadeAnimationType_05 != FadeAnimationType.NONE_0 || this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 != FastTravelTransitionMode.NONE_0 || this.modelAndAnimData_800c66a8.coolonWarpState_220 != CoolonWarpState.NONE_0 || this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.LOCAL_0) {
-      return false;
+      return WorldMapTravelRequestResult.BUSY;
     }
     this.requestingWorldMapTravel = true;
     try {
       final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, target, respectAccess));
-      if(event.cancelled || WorldMapTravelPosition.resolve(Objects.requireNonNull(event.target, "World map travel target"), this.worldMap.definition(), this.getWorldMapView(), event.respectAccess) == null) {
-        return false;
+      if(event.cancelled) {
+        return WorldMapTravelRequestResult.CANCELLED;
+      }
+      if(WorldMapTravelPosition.resolve(Objects.requireNonNull(event.target, "World map travel target"), this.worldMap.definition(), this.getWorldMapView(), event.respectAccess) == null) {
+        return WorldMapTravelRequestResult.DENIED;
       }
       this.queuedWorldMapTravel = event.target;
       this.worldMapTravelRespectsAccess = event.respectAccess;
-      return true;
+      return WorldMapTravelRequestResult.ACCEPTED;
     } finally {
       this.requestingWorldMapTravel = false;
     }
