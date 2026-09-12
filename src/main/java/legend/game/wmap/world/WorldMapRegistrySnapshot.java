@@ -38,6 +38,13 @@ public final class WorldMapRegistrySnapshot {
 
   private WorldMapRegistrySnapshot(final Registries registries, @Nullable final WorldMapPreset preset) {
     this.preset = preset;
+    if(preset != null && preset.behaviours() != null) {
+      final HashSet<RegistryId> available = new HashSet<>();
+      for(final RegistryId id : registries.worldMapBehaviours) available.add(id);
+      for(final RegistryId id : preset.behaviours()) {
+        if(!available.contains(id)) throw new IllegalArgumentException("Unknown preset WMAP behaviour " + id);
+      }
+    }
     final Map<RegistryId, WorldMapAvatar> avatars = new HashMap<>();
     for(final Value<WorldMapAvatar> value : resolve(registries.worldMapAvatars, preset == null ? Map.of() : preset.resolveAvatars(registries))) avatars.put(value.id(), value.data());
     this.avatars = Map.copyOf(avatars);
@@ -103,6 +110,7 @@ public final class WorldMapRegistrySnapshot {
     overlay.forEach((id, replacement) -> {
       final T original = result.get(id);
       final int slot = original == null ? -1 : WorldMapSlots.index(original);
+      if(WorldMapSlots.index(replacement) < -1) throw new IllegalArgumentException("Invalid preset WMAP compatibility slot for " + id);
       if(slot >= 0 && WorldMapSlots.index(replacement) >= 0 && WorldMapSlots.index(replacement) != slot) {
         throw new IllegalArgumentException("Preset cannot change WMAP compatibility slot for " + id);
       }
@@ -236,13 +244,6 @@ public final class WorldMapRegistrySnapshot {
     for(final RegistryId id : registries.worldMapBehaviours) {
       if(this.preset == null || this.preset.behaviours() == null || this.preset.behaviours().contains(id)) {
         behaviours.add(registries.worldMapBehaviours.getEntry(id).get());
-      }
-    }
-    if(this.preset != null && this.preset.behaviours() != null) {
-      for(final RegistryId id : this.preset.behaviours()) {
-        if(behaviours.stream().noneMatch(behaviour -> behaviour.getRegistryId().equals(id))) {
-          throw new IllegalArgumentException("Unknown preset WMAP behaviour " + id);
-        }
       }
     }
     behaviours.sort(Comparator.comparingInt(WorldMapBehaviour::priority).thenComparing(behaviour -> behaviour.getRegistryId().toString()));
