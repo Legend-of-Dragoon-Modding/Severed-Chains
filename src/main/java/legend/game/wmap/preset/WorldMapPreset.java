@@ -332,6 +332,15 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
       section.keySet().forEach(key -> mods.add(key.toString().split(":", 2)[0]));
     }
     builder.behaviours.forEach(key -> mods.add(key.toString().split(":", 2)[0]));
+    // Replacements keep the target's identity, so preserve contributing mod dependencies too.
+    for(final Registry<?> registry : List.<Registry<?>>of(registries.worldMapNodes, registries.worldMapGeometry,
+      registries.worldMapPlaces, registries.worldMapRoutes, registries.worldMapPortals, registries.worldMapEncounterPools,
+      registries.worldMapStoryPresets, registries.worldMapCoolonDestinations, registries.worldMapTeleportLinks,
+      registries.worldMapRegions, registries.worldMapAvatars, registries.worldMapTraversalProfiles,
+      registries.worldMapPresentationProfiles, registries.worldMapBehaviours)) {
+      for(final RegistryId contributor : registry) mods.add(contributor.modId());
+    }
+    builder.encounterPools.values().forEach(pool -> pool.encounters().forEach(encounter -> mods.add(encounter.modId())));
     return builder.requiredMods(mods).build();
   }
 
