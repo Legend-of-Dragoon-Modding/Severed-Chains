@@ -95,6 +95,9 @@ public final class V10Serializer {
 
     final ListTag visitedLocationsTag = tag.get("visitedLocations").asList();
     savedGame.worldMapPortalState.read(tag.get("worldMapPortals"));
+    if(tag.has("worldMapPreset")) {
+      savedGame.worldMapPreset = tag.get("worldMapPreset").asString().get();
+    }
     savedGame.visitedLocations.ensureCapacity(visitedLocationsTag.size());
     for(int i = 0; i < savedGame.visitedLocations.count(); i++) {
       savedGame.visitedLocations.setRaw(i, visitedLocationsTag.get(i).asInt().get());
@@ -224,6 +227,9 @@ public final class V10Serializer {
     final ListTag visitedLocationsTag = new ListTag();
     if(gameState.worldMapPortalState.hasIdentities()) {
       tag.set("worldMapPortals", gameState.worldMapPortalState.write(gameState.wmapFlags_15c, gameState.visitedLocations_17c));
+    }
+    if(!gameState.worldMapPreset.isEmpty()) {
+      tag.set("worldMapPreset", new StringTag(gameState.worldMapPreset));
     }
     tag.set("visitedLocations", visitedLocationsTag);
     for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {
