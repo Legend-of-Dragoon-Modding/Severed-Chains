@@ -21,4 +21,9 @@ public interface WorldMapPresentationController {
   default boolean routeVisible(final WorldMapPortal portal, final boolean visible) {
     return visible;
   }
+
+  /** Empty retains the retail name sprite. A custom label is rendered as normal UI text. */
+  default String regionLabel() {
+    return "";
+  }
 }
