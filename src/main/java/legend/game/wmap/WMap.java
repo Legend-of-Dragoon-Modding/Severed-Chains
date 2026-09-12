@@ -4088,6 +4088,9 @@ public class WMap extends EngineState<WMap> {
       final RegistryId encounterId = this.worldMapData.encounter(encounterIndex, encounterIndex == -1 ? 0 : simpleRand() % 100);
       final Encounter encounter = REGISTRIES.encounters.getEntry(encounterId).get();
       final WorldMapEncounterEvent event = EVENTS.postEvent(new WorldMapEncounterEvent(this, gameState_800babc8, encounter, battleStageId, directionalPathSegment));
+      if(event.cancelled || this.isWorldMapTravelPending()) {
+        return;
+      }
       startEncounter(event.encounter, event.battleStageId);
 
       //LAB_800e3a38
