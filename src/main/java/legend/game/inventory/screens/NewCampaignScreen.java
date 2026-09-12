@@ -29,6 +29,9 @@ import legend.game.saves.SaveFailedException;
 import legend.game.types.GameState52c;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
+import legend.game.wmap.preset.WorldMapPreset;
+import legend.game.wmap.preset.WorldMapPresetEntry;
+import legend.game.wmap.preset.WorldMapPresetManager;
 import legend.lodmod.LodEngineStateTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,6 +70,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private final Textbox campaignName;
   private final Dropdown<RegistryDelegate<CampaignType>> campaignType;
   private final Dropdown<ConfigPresetEntry> optionPresets;
+  private WorldMapPresetEntry worldMapPreset = WorldMapPresetEntry.VANILLA;
 
   private boolean unload;
 
@@ -130,6 +134,13 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
         this.onPresetSelected(selectedIndex);
       })));
     });
+
+    final Button worldMap = new Button(new RawText(this.worldMapPreset.name()));
+    this.addRow(new I18nText("lod_core.ui.world_map_presets.title"), worldMap);
+    worldMap.onPressed(() -> this.deferAction(() -> this.getStack().pushScreen(new WorldMapPresetsScreen(null, this.worldMapPreset, selected -> {
+      this.worldMapPreset = selected;
+      worldMap.setText(new RawText(selected.name()));
+    }, () -> this.getStack().popScreen()))));
 
     final Button options = new Button(new I18nText("lod_core.ui.new_campaign.options"));
     this.addRow(RawText.BLANK, options);
@@ -211,6 +222,19 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       GameEngine.bootRegistries();
 
       this.state.campaign = Campaign.create(SAVES, this.campaignName.getText().strip());
+      try {
+        final WorldMapPreset preset = this.worldMapPreset.load();
+        // Default campaigns retain the ordinary lazy registry path.
+        if(preset != null) {
+          WorldMapPresetManager.validate(preset);
+        }
+        this.state.worldMapPreset = WorldMapPresetManager.store(this.state, preset);
+      } catch(final Exception e) {
+        this.unload = false;
+        LOGGER.warn("Failed to select world map preset", e);
+        this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.world_map_presets.error", e.getMessage()), MessageBoxType.ALERT, result -> { })));
+        return;
+      }
 
       Scus94491BpeSegment_800b.campaignType.get().setUpNewCampaign(this.state);
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));

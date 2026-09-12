@@ -11,6 +11,9 @@ import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.submap.SMap;
+import legend.game.wmap.WMap;
+import legend.game.wmap.preset.WorldMapPresetEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.Locale;
@@ -20,6 +23,8 @@ import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.sound.Audio.playMenuSound;
+import static legend.game.EngineStates.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class OptionsCategoryScreen extends VerticalLayoutScreen {
   private final Runnable unload;
@@ -46,6 +51,12 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
 
         this.addRow(new I18nText(CoreMod.MOD_ID + ".config.category." + category.name().toLowerCase(Locale.US) + ".label"), button);
       }
+    }
+
+    if(validLocations.contains(ConfigStorageLocation.CAMPAIGN) && config == GameEngine.CONFIG && gameState_800babc8.campaign != null && (currentEngineState_8004dd04 instanceof WMap || currentEngineState_8004dd04 instanceof SMap)) {
+      final Button worldMap = new Button(new I18nText("lod_core.ui.world_map_presets.manage"));
+      this.addRow(new I18nText("lod_core.ui.world_map_presets.title"), worldMap);
+      worldMap.onPressed(() -> this.deferAction(() -> this.getStack().pushScreen(new WorldMapPresetsScreen(gameState_800babc8, WorldMapPresetEntry.VANILLA, selected -> { }, () -> this.getStack().popScreen()))));
     }
 
     if(!validLocations.contains(ConfigStorageLocation.CAMPAIGN)) {

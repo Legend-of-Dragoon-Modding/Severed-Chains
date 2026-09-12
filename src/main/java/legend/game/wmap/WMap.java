@@ -70,6 +70,9 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.wmap.world.SubmapEndpoint;
 import legend.game.wmap.world.WorldMapAccess;
+import legend.game.wmap.preset.WorldMapPreset;
+import legend.game.wmap.preset.WorldMapPresetAssets;
+import legend.game.wmap.preset.WorldMapPresetManager;
 import legend.game.wmap.world.WorldMapAction;
 import legend.game.wmap.world.WorldMapAvatarContext;
 import legend.game.wmap.world.WorldMapAvatarRenderer;
@@ -107,6 +110,7 @@ import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -330,6 +334,12 @@ public class WMap extends EngineState<WMap> {
   private WorldMapTravelTarget arrivingWorldMapTravel;
   @Nullable
   private WorldMapTravelTarget completedWorldMapTravel;
+  private PresetSwitch pendingWorldMapPreset;
+  @Nullable private WorldMapPreset activeWorldMapPreset;
+  private boolean worldMapPresetReload;
+
+  private record ConfiguredWorldMap(WorldMapRegistrySnapshot data, WorldMapDefinition definition, WorldMapRules rules, @Nullable WorldMapPreset preset) { }
+  private record PresetSwitch(String token, ConfiguredWorldMap map) { }
   private boolean worldMapTravelRespectsAccess;
   private boolean requestingWorldMapTravel;
   private boolean resolvingWorldMap;
@@ -350,19 +360,25 @@ public class WMap extends EngineState<WMap> {
   private int[] pathSegmentLengths_800f5810;
 
   private void configureWorldMap() {
-    this.worldMapData = WorldMapRegistrySnapshot.read(REGISTRIES);
-    final WorldMapDefinition.Builder definitionBuilder = this.worldMapData.definition().toBuilder();
-    final WorldMapRules.Builder rulesBuilder = new WorldMapRules.Builder();
-    this.worldMapData.configureBehaviours(REGISTRIES, definitionBuilder, rulesBuilder);
-    final WorldMapConfigureEvent event = EVENTS.postEvent(new WorldMapConfigureEvent(this, gameState_800babc8, definitionBuilder, rulesBuilder));
-    final WorldMapDefinition definition = event.definition.build();
-    this.worldMapData.validateDefinition(definition);
+    final ConfiguredWorldMap configured;
+    if(this.pendingWorldMapPreset != null) {
+      configured = this.pendingWorldMapPreset.map();
+      gameState_800babc8.worldMapPreset = this.pendingWorldMapPreset.token();
+      this.pendingWorldMapPreset = null;
+      this.worldMapPresetReload = true;
+    } else {
+      final WorldMapPreset preset = WorldMapPresetManager.load(gameState_800babc8);
+      configured = this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
+    }
+    this.worldMapData = configured.data();
+    this.activeWorldMapPreset = configured.preset();
+    final WorldMapDefinition definition = configured.definition();
     this.worldMapTraversal = new WorldMapTraversalState(this.worldMapData.traversalProfiles(definition));
     final int flagWords = (definition.portals().size() + 31) / 32;
     gameState_800babc8.wmapFlags_15c.ensureCapacity(flagWords);
     gameState_800babc8.visitedLocations_17c.ensureCapacity(flagWords);
     gameState_800babc8.worldMapPortalState.bind(definition, gameState_800babc8.wmapFlags_15c, gameState_800babc8.visitedLocations_17c);
-    this.worldMap = new WorldMapRuntime(definition, event.rules.build());
+    this.worldMap = new WorldMapRuntime(definition, configured.rules());
     if(this.savedWorldMapRoute != null) {
       WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute, this.savedWorldMapData);
       this.savedWorldMapRoute = null;
@@ -427,13 +443,85 @@ public class WMap extends EngineState<WMap> {
     }
     this.requestingWorldMapTravel = true;
     try {
-      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, target, respectAccess));
+      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, target, respectAccess, this.worldMap.definition(), this.activeWorldMapPreset == null ? null : this.activeWorldMapPreset.id()));
       if(event.cancelled) {
         return WorldMapTravelRequestResult.CANCELLED;
       }
       if(WorldMapTravelPosition.resolve(Objects.requireNonNull(event.target, "World map travel target"), this.worldMap.definition(), this.getWorldMapView(), event.respectAccess) == null) {
         return WorldMapTravelRequestResult.DENIED;
       }
+      this.queuedWorldMapTravel = event.target;
+      this.worldMapTravelRespectsAccess = event.respectAccess;
+      return WorldMapTravelRequestResult.ACCEPTED;
+    } finally {
+      this.requestingWorldMapTravel = false;
+    }
+  }
+
+  private ConfiguredWorldMap compileWorldMap(final WorldMapRegistrySnapshot data, @Nullable final WorldMapPreset preset) {
+    final WorldMapDefinition.Builder definitionBuilder = data.definition().toBuilder();
+    final WorldMapRules.Builder rulesBuilder = new WorldMapRules.Builder();
+    data.configureBehaviours(REGISTRIES, definitionBuilder, rulesBuilder);
+    final WorldMapConfigureEvent event = EVENTS.postEvent(new WorldMapConfigureEvent(this, gameState_800babc8, definitionBuilder, rulesBuilder, preset == null ? null : preset.id()));
+    final WorldMapDefinition definition = event.definition.build();
+    data.validateDefinition(definition);
+    final WorldMapRules rules = event.rules.build();
+    rules.validate(definition);
+    return new ConfiguredWorldMap(data, definition, rules, preset);
+  }
+
+  /**
+   * Compile a campaign preset and queue a normal map reload at a compatible current position.
+   * Stores the immutable campaign package only after the graph and destination are accepted. Configuration
+   * listeners run once during this preflight; the resulting graph is adopted after old owners unload.
+   * No campaign identity changes on denial/cancellation. Asset failures use normal map-load reporting.
+   */
+  public WorldMapTravelRequestResult requestWorldMapPreset(@Nullable final WorldMapPreset preset) throws IOException {
+    if(this.requestingWorldMapTravel || this.worldMap == null || this.wmapState_800bb10c != WmapState.PLAY || this.isWorldMapTravelPending() || this.worldMapState_800c6698 != WorldMapState.RENDER_5 || this.playerState_800c669c.state <= PlayerState.INIT_PLAYER_MODEL_3.state || this.modelAndAnimData_800c66a8.fadeAnimationType_05 != FadeAnimationType.NONE_0 || this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 != FastTravelTransitionMode.NONE_0 || this.modelAndAnimData_800c66a8.coolonWarpState_220 != CoolonWarpState.NONE_0 || this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.LOCAL_0) {
+      return WorldMapTravelRequestResult.BUSY;
+    }
+    this.requestingWorldMapTravel = true;
+    try {
+      final ConfiguredWorldMap configured = this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
+      final GameState52c position = new GameState52c();
+      position.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
+      position.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
+      position.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
+      position.dotOffset_4dc = this.mapState_800c6798.dotOffset_18;
+      position.facing_4dd = this.mapState_800c6798.facing_1c;
+      final WorldMapRoute current = this.worldMap.definition().route(position.directionalPathIndex_4de);
+      final Tag saved = WorldMapSave.write(position, this.worldMap.definition());
+      WorldMapSave.restoreRoute(position, configured.definition(), current.id(), saved);
+      final WorldMapRoute route = configured.definition().route(position.directionalPathIndex_4de);
+      final var points = configured.definition().geometry().get(route.segmentIndex());
+      double total = 0;
+      double travelled = 0;
+      for(int i = 0; i < points.size() - 1; i++) {
+        final WorldMapPoint a = points.get(i);
+        final WorldMapPoint b = points.get(i + 1);
+        final double dx = (double)b.x() - a.x();
+        final double dy = (double)b.y() - a.y();
+        final double dz = (double)b.z() - a.z();
+        final double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        total += distance;
+        if(i < position.dotIndex_4da) {
+          travelled += distance;
+        } else if(i == position.dotIndex_4da) {
+          travelled += distance * position.dotOffset_4dc / 4.0;
+        }
+      }
+      final float progress = (float)Math.clamp(route.direction() > 0 ? travelled / total : 1.0 - travelled / total, 0.0, 1.0);
+      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, WorldMapTravelTarget.atRouteDistance(route.id(), progress), false, configured.definition(), preset == null ? null : preset.id()));
+      if(event.cancelled) {
+        return WorldMapTravelRequestResult.CANCELLED;
+      }
+      final WorldMapRuntime candidate = new WorldMapRuntime(configured.definition(), configured.rules());
+      candidate.resolve(new WorldMapProgression.Builder(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c).build());
+      if(WorldMapTravelPosition.resolve(Objects.requireNonNull(event.target, "World map preset target"), configured.definition(), candidate.view(), event.respectAccess) == null) {
+        return WorldMapTravelRequestResult.DENIED;
+      }
+      final String token = WorldMapPresetManager.store(gameState_800babc8, preset);
+      this.pendingWorldMapPreset = new PresetSwitch(token, configured);
       this.queuedWorldMapTravel = event.target;
       this.worldMapTravelRespectsAccess = event.respectAccess;
       return WorldMapTravelRequestResult.ACCEPTED;
@@ -4574,7 +4662,18 @@ public class WMap extends EngineState<WMap> {
 
         final var thumbnailPortal = this.getWorldMapPortal();
         final var thumbnailPlace = this.worldMap.definition().place(this.locations_800f0e34[thumbnailPortal.legacyIndex()].placeIndex_02);
-        final WorldMapLocationThumbnailEvent thumbnail = EVENTS.postEvent(new WorldMapLocationThumbnailEvent(this, gameState_800babc8, thumbnailPortal, thumbnailPlace));
+        final WorldMapLocationThumbnailEvent thumbnail = new WorldMapLocationThumbnailEvent(this, gameState_800babc8, thumbnailPortal, thumbnailPlace);
+        if(this.activeWorldMapPreset != null && this.activeWorldMapPreset.thumbnails().containsKey(thumbnailPlace.id())) {
+          final WorldMapPreset preset = this.activeWorldMapPreset;
+          thumbnail.thumbnail = () -> {
+            try {
+              return new Tim(new FileData(WorldMapPresetAssets.read(preset.packageRoot(), preset.thumbnails().get(thumbnailPlace.id()))));
+            } catch(final IOException e) {
+              throw new IllegalStateException("Failed to load preset thumbnail for " + thumbnailPlace.id(), e);
+            }
+          };
+        }
+        EVENTS.postEvent(thumbnail);
         if(thumbnail.thumbnail == null) {
           loadDrgnFileSync(0, 5655 + thumbnailPlace.thumbnail(), data -> this.loadLocationThumbnailImage(new Tim(data)));
         } else {
@@ -5121,8 +5220,9 @@ public class WMap extends EngineState<WMap> {
   private void initFlagsPathsCutsAndPlaces() {
     //LAB_800e7940
     //LAB_800e7944
-    if(this.arrivingWorldMapTravel == null) {
+    if(this.arrivingWorldMapTravel == null || this.worldMapPresetReload) {
       this.worldMapData.applyStory(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c, this.worldMap.definition());
+      this.worldMapPresetReload = false;
     }
     this.refreshWorldMap();
 
