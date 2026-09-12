@@ -37,6 +37,7 @@ import legend.game.modding.events.worldmap.WorldMapEncounterRateEvent;
 import legend.game.modding.events.worldmap.WorldMapEnterEvent;
 import legend.game.modding.events.worldmap.WorldMapJunctionEvent;
 import legend.game.modding.events.worldmap.WorldMapLabelEvent;
+import legend.game.modding.events.worldmap.WorldMapLocationThumbnailEvent;
 import legend.game.modding.events.worldmap.WorldMapProgressionEvent;
 import legend.game.modding.events.worldmap.WorldMapResolvedEvent;
 import legend.game.modding.events.worldmap.WorldMapRouteVisibilityEvent;
@@ -4488,7 +4489,14 @@ public class WMap extends EngineState<WMap> {
       case LOAD_FILES_1:
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
-        loadDrgnFileSync(0, 5655 + this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].fileIndex_04, data -> this.loadLocationThumbnailImage(new Tim(data)));
+        final var thumbnailPortal = this.getWorldMapPortal();
+        final var thumbnailPlace = this.worldMap.definition().place(this.locations_800f0e34[thumbnailPortal.legacyIndex()].placeIndex_02);
+        final WorldMapLocationThumbnailEvent thumbnail = EVENTS.postEvent(new WorldMapLocationThumbnailEvent(this, gameState_800babc8, thumbnailPortal, thumbnailPlace));
+        if(thumbnail.thumbnail == null) {
+          loadDrgnFileSync(0, 5655 + thumbnailPlace.thumbnail(), data -> this.loadLocationThumbnailImage(new Tim(data)));
+        } else {
+          this.loadLocationThumbnailImage(Objects.requireNonNull(thumbnail.thumbnail.get(), "World map thumbnail provider returned null for " + thumbnailPlace.id()));
+        }
         clearTextbox(6);
         initTextbox(textboxes_800be358[6], true, 240, 120, 14, 16);
 
