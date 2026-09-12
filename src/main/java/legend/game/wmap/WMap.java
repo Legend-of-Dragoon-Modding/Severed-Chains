@@ -66,6 +66,7 @@ import legend.game.unpacker.Loader;
 import legend.game.wmap.world.SubmapEndpoint;
 import legend.game.wmap.world.WorldMapAccess;
 import legend.game.wmap.world.WorldMapAction;
+import legend.game.wmap.world.WorldMapAvatarContext;
 import legend.game.wmap.world.WorldMapAvatarRenderer;
 import legend.game.wmap.world.WorldMapCameraSettings;
 import legend.game.wmap.world.WorldMapDefinition;
@@ -3464,6 +3465,20 @@ public class WMap extends EngineState<WMap> {
     //LAB_800e0260
   }
 
+  private boolean renderCustomWorldMapAvatar(final Model124 vanilla) {
+    if(!this.routeAvatar.hasCustomVisual()) return false;
+    final MV transform = new MV();
+    GsGetLw(vanilla.coord2_14, transform);
+    final WorldMapPoint offset = this.worldMapTraversal.visualOffset();
+    transform.transfer.add(offset.x(), offset.y(), offset.z());
+    final WorldMapAvatarContext.Motion motion = switch(this.routeAvatarMovementAnimation) {
+      case 3 -> WorldMapAvatarContext.Motion.WALK;
+      case 4 -> WorldMapAvatarContext.Motion.RUN;
+      default -> WorldMapAvatarContext.Motion.IDLE;
+    };
+    return this.routeAvatar.renderCustomVisual(new WorldMapAvatarContext(this.getWorldMapRenderContext(), transform, motion));
+  }
+
   @Method(0x800e0274L)
   private void renderPlayer() {
     this.prepareWorldMapTraversalFrame();
@@ -3515,7 +3530,7 @@ public class WMap extends EngineState<WMap> {
     if(avatarModel != null) {
       this.routeAvatar.animate(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4], this.routeAvatarMovementAnimation, 4 / vsyncMode_8007a3b8);
       this.renderWmapModel(avatarModel);
-    } else {
+    } else if(!this.renderCustomWorldMapAvatar(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4])) {
       this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
     }
     GTE.setBackgroundColour(this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.x, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.y, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.z);
