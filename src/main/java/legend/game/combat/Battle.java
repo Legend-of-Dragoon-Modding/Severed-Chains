@@ -7726,9 +7726,7 @@ public class Battle extends EngineState<Battle> {
     TextureAnimationAttachment1c attachment = this.findTextureAnimationAttachment(manager, vramPos);
 
     if(attachment == null) {
-      attachment = manager.addAttachment(10, 0, this::tickTextureAnimationAttachment, new TextureAnimationAttachment1c());
-      attachment.rect_0c.set(vramPos);
-      attachment.accumulator_14 = 0;
+      attachment = manager.addAttachment(10, 0, this::tickTextureAnimationAttachment, new TextureAnimationAttachment1c(vramPos));
     }
 
     //LAB_800eb2ec
@@ -7745,22 +7743,23 @@ public class Battle extends EngineState<Battle> {
         final short[] s0 = s2._00[s1];
 
         if((s0[0] & 0x4000) != 0) {
-          final TextureAnimationAttachment1c sub = manager.addAttachment(10, 0, this::tickTextureAnimationAttachment, new TextureAnimationAttachment1c());
+          final Rect4i rect = new Rect4i();
 
           if((s0[1] & 0x3c0) == 0) {
-            sub.rect_0c.x = textureInfo[0].vramPos_00.x & 0x3c0 | s0[1];
-            sub.rect_0c.y = textureInfo[0].vramPos_00.y & 0x100 | s0[2];
+            rect.x = textureInfo[0].vramPos_00.x & 0x3c0 | s0[1];
+            rect.y = textureInfo[0].vramPos_00.y & 0x100 | s0[2];
           } else {
             //LAB_800eb3cc
-            sub.rect_0c.x = s0[1];
-            sub.rect_0c.y = s0[2];
+            rect.x = s0[1];
+            rect.y = s0[2];
           }
 
           //LAB_800eb3dc
           //LAB_800eb3f8
-          sub.rect_0c.w = s0[3] / 4;
-          sub.rect_0c.h = s0[4];
-          sub.accumulator_14 = 0;
+          rect.w = s0[3] / 4;
+          rect.h = s0[4];
+
+          final TextureAnimationAttachment1c sub = manager.addAttachment(10, 0, this::tickTextureAnimationAttachment, new TextureAnimationAttachment1c(rect));
 
           final int v0;
           if(s0[6] >= 0x10) {
@@ -7859,9 +7858,7 @@ public class Battle extends EngineState<Battle> {
     }
 
     //LAB_800eb934
-    final RedEyeDragoonTransformationFlameArmorEffect20 attachment = manager.addAttachment(10, 0, this::tickRedEyeDragoonTransformationFlameArmorEffect, new RedEyeDragoonTransformationFlameArmorEffect20());
-    attachment.rect_0c.set(textureInfo1.vramPos_00);
-    attachment.accumulator_14 = 0;
+    final RedEyeDragoonTransformationFlameArmorEffect20 attachment = manager.addAttachment(10, 0, this::tickRedEyeDragoonTransformationFlameArmorEffect, new RedEyeDragoonTransformationFlameArmorEffect20(textureInfo1.vramPos_00));
     attachment.step_18 = script.params_20[3].get();
     attachment._1c.x = textureInfo2.vramPos_00.x;
     attachment._1c.y = textureInfo2.vramPos_00.y;
