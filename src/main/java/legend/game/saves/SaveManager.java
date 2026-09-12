@@ -422,6 +422,10 @@ public final class SaveManager {
       engineStateData = save.engineStateData;
     }
 
+    if(save.modData != null) {
+      EVENTS.postEvent(new ReadSaveDataEvent(save.modData));
+    }
+
     campaignType = REGISTRIES.campaignTypes.getEntry(save.campaignType);
     campaignType.get().setUpLoadedGame(gameState);
   }

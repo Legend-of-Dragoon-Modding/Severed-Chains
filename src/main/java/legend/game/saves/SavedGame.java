@@ -1,5 +1,6 @@
 package legend.game.saves;
 
+import legend.core.tags.ListTag;
 import legend.core.tags.Tag;
 import legend.game.inventory.screens.Control;
 import legend.game.types.GameState52c;
@@ -15,6 +16,7 @@ public abstract class SavedGame {
 
   public RegistryId engineState;
   public Tag engineStateData;
+  public ListTag modData;
 
   public SavedGame(final Campaign campaign, final String version, final String fileName, final String saveName, final RegistryId campaignType, final ConfigCollection config) {
     this.campaign = campaign;

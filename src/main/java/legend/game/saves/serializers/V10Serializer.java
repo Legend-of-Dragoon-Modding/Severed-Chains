@@ -24,6 +24,7 @@ import legend.game.saves.InventoryEntry;
 import legend.game.saves.SaveVersion;
 import legend.game.saves.SavedGame;
 import legend.game.saves.SeveredSavedGame;
+import legend.game.saves.WriteSaveDataEvent;
 import legend.game.textures.PngWriter;
 import legend.game.textures.TexturePacker;
 import legend.game.types.GameState52c;
@@ -34,6 +35,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.ByteBuffer;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 
 public final class V10Serializer {
@@ -145,6 +147,10 @@ public final class V10Serializer {
     savedGame.locationName = locationName;
     savedGame.engineState = engineStateId;
     savedGame.engineStateData = engineStateData;
+
+    if(tag.has("modData")) {
+      savedGame.modData = tag.get("modData").asList();
+    }
 
     return savedGame;
   }
@@ -281,6 +287,10 @@ public final class V10Serializer {
 
     tag.set("engineStateId", new RegistryIdTag(engineState.type));
     tag.set("engineStateData", engineState.writeSaveData(gameState));
+
+    final ListTag modTags = new ListTag();
+    EVENTS.postEvent(new WriteSaveDataEvent(modTags));
+    tag.set("modData", modTags);
 
     tag.serialize(data, offset);
 
