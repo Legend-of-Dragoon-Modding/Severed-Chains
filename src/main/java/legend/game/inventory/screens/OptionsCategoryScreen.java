@@ -53,7 +53,7 @@ public class OptionsCategoryScreen extends VerticalLayoutScreen {
       }
     }
 
-    if(validLocations.contains(ConfigStorageLocation.CAMPAIGN) && config == GameEngine.CONFIG && gameState_800babc8.campaign != null && (currentEngineState_8004dd04 instanceof WMap || currentEngineState_8004dd04 instanceof SMap)) {
+    if(validLocations.contains(ConfigStorageLocation.CAMPAIGN) && config == GameEngine.CONFIG && gameState_800babc8 != null && gameState_800babc8.campaign != null && (currentEngineState_8004dd04 instanceof WMap || currentEngineState_8004dd04 instanceof SMap)) {
       final Button worldMap = new Button(new I18nText("lod_core.ui.world_map_presets.manage"));
       this.addRow(new I18nText("lod_core.ui.world_map_presets.title"), worldMap);
       worldMap.onPressed(() -> this.deferAction(() -> this.getStack().pushScreen(new WorldMapPresetsScreen(gameState_800babc8, WorldMapPresetEntry.VANILLA, selected -> { }, () -> this.getStack().popScreen()))));
