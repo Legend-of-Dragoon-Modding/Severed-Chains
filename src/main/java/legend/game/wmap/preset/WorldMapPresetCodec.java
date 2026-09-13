@@ -1,6 +1,7 @@
 package legend.game.wmap.preset;
 
 import legend.game.wmap.world.WorldMapAccess;
+import legend.game.wmap.world.WorldMapBattleStage;
 import legend.game.wmap.world.WorldMapCoolonDestination;
 import legend.game.wmap.world.WorldMapEncounterPool;
 import legend.game.wmap.world.WorldMapGeometry;
@@ -9,7 +10,10 @@ import legend.game.wmap.world.WorldMapPlace;
 import legend.game.wmap.world.WorldMapPolicy;
 import legend.game.wmap.world.WorldMapPortal;
 import legend.game.wmap.world.WorldMapRouteData;
+import legend.game.wmap.world.WorldMapService;
+import legend.game.wmap.world.WorldMapSound;
 import legend.game.wmap.world.WorldMapStoryPreset;
+import legend.game.wmap.world.WorldMapSubmapDestination;
 import legend.game.wmap.world.WorldMapTeleportLink;
 import legend.game.wmap.world.WorldMapTravel;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -69,7 +73,12 @@ public final class WorldMapPresetCodec {
     new Section<>("regions", "region", WorldMapPreset.Region.class, WorldMapPreset::regions, builder -> builder.regions),
     new Section<>("avatars", "avatar", WorldMapPreset.Avatar.class, WorldMapPreset::avatars, builder -> builder.avatars),
     new Section<>("traversalProfiles", "traversalProfile", WorldMapPreset.TraversalProfile.class, WorldMapPreset::traversalProfiles, builder -> builder.traversalProfiles),
-    new Section<>("presentationProfiles", "presentationProfile", WorldMapPreset.PresentationProfile.class, WorldMapPreset::presentationProfiles, builder -> builder.presentationProfiles)
+    new Section<>("presentationProfiles", "presentationProfile", WorldMapPreset.PresentationProfile.class, WorldMapPreset::presentationProfiles, builder -> builder.presentationProfiles),
+    new Section<>("thumbnailDefinitions", "thumbnailDefinition", WorldMapPreset.ThumbnailDefinition.class, WorldMapPreset::thumbnailDefinitions, builder -> builder.thumbnailDefinitions),
+    new Section<>("serviceDefinitions", "serviceDefinition", WorldMapService.class, WorldMapPreset::serviceDefinitions, builder -> builder.serviceDefinitions),
+    new Section<>("soundDefinitions", "soundDefinition", WorldMapSound.class, WorldMapPreset::soundDefinitions, builder -> builder.soundDefinitions),
+    new Section<>("battleStageDefinitions", "battleStageDefinition", WorldMapBattleStage.class, WorldMapPreset::battleStageDefinitions, builder -> builder.battleStageDefinitions),
+    new Section<>("submapDestinations", "submapDestination", WorldMapSubmapDestination.class, WorldMapPreset::submapDestinations, builder -> builder.submapDestinations)
   );
 
   private static final Set<String> OPTIONAL = Set.of(
@@ -77,7 +86,12 @@ public final class WorldMapPresetCodec {
     "WorldMapRouteData.encounterPool", "WorldMapRouteData.avatar", "WorldMapStoryPreset.place",
     "WorldMapCameraSettings.overviewPosition", "WorldMapCameraSettings.minimum", "WorldMapCameraSettings.maximum",
     "Region.assets", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",
-    "TraversalProfile.provider", "TraversalProfile.avatar", "TraversalProfile.visualOffset", "Warp.marker"
+    "TraversalProfile.provider", "TraversalProfile.avatar", "TraversalProfile.visualOffset", "Warp.marker",
+    "ThumbnailDefinition.asset", "ThumbnailDefinition.label", "ThumbnailDefinition.provider",
+    "WorldMapService.legacyBit", "WorldMapSound.label", "WorldMapBattleStage.label", "WorldMapSubmapDestination.label",
+    "WorldMapPlace.thumbnailId", "WorldMapPlace.serviceIds", "WorldMapPlace.soundIds",
+    "WorldMapRouteData.battleStageId", "WorldMapPortal.fromId", "WorldMapPortal.toId",
+    "WorldMapPortal.atmosphere", "WorldMapPortal.smoke"
   );
 
   private WorldMapPresetCodec() { }

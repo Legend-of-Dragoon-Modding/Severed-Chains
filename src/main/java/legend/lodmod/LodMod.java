@@ -83,6 +83,7 @@ import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.wmap.registries.RegisterWorldMapAvatarsEvent;
+import legend.game.wmap.registries.RegisterWorldMapBattleStagesEvent;
 import legend.game.wmap.registries.RegisterWorldMapBehavioursEvent;
 import legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent;
 import legend.game.wmap.registries.RegisterWorldMapEncounterPoolsEvent;
@@ -93,8 +94,12 @@ import legend.game.wmap.registries.RegisterWorldMapPortalsEvent;
 import legend.game.wmap.registries.RegisterWorldMapPresentationProfilesEvent;
 import legend.game.wmap.registries.RegisterWorldMapRegionsEvent;
 import legend.game.wmap.registries.RegisterWorldMapRoutesEvent;
+import legend.game.wmap.registries.RegisterWorldMapServicesEvent;
+import legend.game.wmap.registries.RegisterWorldMapSoundsEvent;
 import legend.game.wmap.registries.RegisterWorldMapStoryPresetsEvent;
+import legend.game.wmap.registries.RegisterWorldMapSubmapDestinationsEvent;
 import legend.game.wmap.registries.RegisterWorldMapTeleportLinksEvent;
+import legend.game.wmap.registries.RegisterWorldMapThumbnailsEvent;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -446,6 +451,31 @@ public class LodMod {
   @EventListener
   public static void registerWorldMapAvatars(final RegisterWorldMapAvatarsEvent event) {
     LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapThumbnails(final RegisterWorldMapThumbnailsEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapServices(final RegisterWorldMapServicesEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapSounds(final RegisterWorldMapSoundsEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapBattleStages(final RegisterWorldMapBattleStagesEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapSubmapDestinations(final RegisterWorldMapSubmapDestinationsEvent event) {
+    LodWorldMapAuthoringData.register(event);
   }
 
   @EventListener

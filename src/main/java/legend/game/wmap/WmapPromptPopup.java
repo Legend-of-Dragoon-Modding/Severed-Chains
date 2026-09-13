@@ -7,16 +7,20 @@ import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.renderer.MeshObj;
 import legend.core.renderer.QuadBuilder;
+import legend.game.inventory.screens.FontOptions;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.SItem.UI_WHITE_SHADOWED;
+import static legend.game.Graphics.displayWidth_1f8003e0;
+import static legend.game.Graphics.displayHeight_1f8003e4;
 
 public class WmapPromptPopup {
   public enum ObjFields {
@@ -47,6 +51,7 @@ public class WmapPromptPopup {
   private final List<String> altText = new ArrayList<>();
   private float altTextSpacing = 16.0f;
   private final Vector3f altTextTranslation = new Vector3f();
+  private final FontOptions altTextOptions = new FontOptions();
 
   private MeshObj thumbnail;
   private final Vector3f thumbnailTranslation = new Vector3f();
@@ -296,8 +301,25 @@ public class WmapPromptPopup {
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = (int)(this.altTextTranslation.z / 4);
 
+      // Registry services may exceed the retail five labels or contain longer text.
+      // Fit only when necessary; retail labels keep their original size and spacing.
+      float height = 0.0f;
+      int width = 0;
       for(int i = 0; i < this.altText.size(); i++) {
-        renderText(this.altText.get(i), this.altTextTranslation.x, this.altTextTranslation.y + i * this.altTextSpacing, UI_WHITE_SHADOWED);
+        final String text = this.altText.get(i);
+        final float lineHeight = Math.max(1, text.lines().count()) * 12.0f;
+        height += i == this.altText.size() - 1 ? lineHeight : this.altTextSpacing + lineHeight - 12.0f;
+        width = Math.max(width, DEFAULT_FONT.textWidth(text));
+      }
+      final float availableWidth = Math.max(1.0f, 2.0f * Math.min(this.altTextTranslation.x - 8.0f, displayWidth_1f8003e0 - this.altTextTranslation.x - 8.0f));
+      final float bottom = this.prompt == null ? displayHeight_1f8003e4 - 8.0f : Math.min(displayHeight_1f8003e4 - 8.0f, this.promptTranslation.y - 8.0f);
+      final float availableHeight = Math.max(1.0f, bottom - this.altTextTranslation.y);
+      final float scale = Math.min(1.0f, Math.min(availableWidth / Math.max(1, width), availableHeight / Math.max(1.0f, height)));
+      this.altTextOptions.set(UI_WHITE_SHADOWED).size(scale);
+      float y = this.altTextTranslation.y;
+      for(final String text : this.altText) {
+        renderText(text, this.altTextTranslation.x, y, this.altTextOptions);
+        y += (this.altTextSpacing + Math.max(0, text.lines().count() - 1) * 12.0f) * scale;
       }
 
       textZ_800bdf00 = oldZ;
