@@ -15,7 +15,7 @@ public enum InputButton {
   RIGHT_BUMPER(InputCodepoints.RIGHT_BUMPER),
   LEFT_STICK(InputCodepoints.LEFT_STICK),
   RIGHT_STICK(InputCodepoints.RIGHT_STICK),
-  GUIDE(InputCodepoints.XBOX_BUTTON_GUIDE),
+  GUIDE(InputCodepoints.GUIDE),
   TOUCHPAD(InputCodepoints.PS_BUTTON_TOUCHPAD),
   LEFT_PADDLE1(InputCodepoints.GENERIC_LEFT_PADDLE1),
   RIGHT_PADDLE1(InputCodepoints.GENERIC_RIGHT_PADDLE1),

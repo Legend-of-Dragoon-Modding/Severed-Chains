@@ -29,6 +29,7 @@ public final class InputCodepoints {
   public static final char LEFT_AXIS_Y = 0xe011;
   public static final char RIGHT_AXIS_X = 0xe012;
   public static final char RIGHT_AXIS_Y = 0xe013;
+  public static final char GUIDE = 0xe014;
 
   public static final char XBOX_BUTTON_BACK = 0xe100;
   /** Three lines */
@@ -42,6 +43,7 @@ public final class InputCodepoints {
   public static final char PS_BUTTON_SQUARE = 0xe202;
   public static final char PS_BUTTON_TRIANGLE = 0xe203;
   public static final char PS_BUTTON_TOUCHPAD = 0xe204;
+  public static final char PS_BUTTON_GUIDE = 0xe205;
 
   public static final char GENERIC_LEFT_PADDLE1 = 0xe300;
   public static final char GENERIC_RIGHT_PADDLE1 = 0xe301;
@@ -65,8 +67,14 @@ public final class InputCodepoints {
   public static char getCodepoint(final InputGamepadType type, final char codepoint) {
     switch(type) {
       case XBOX_360 -> {
-        if(codepoint == SELECT) {
-          return XBOX_BUTTON_BACK;
+        switch(codepoint) {
+          case SELECT -> {
+            return XBOX_BUTTON_BACK;
+          }
+
+          case GUIDE -> {
+            return XBOX_BUTTON_GUIDE;
+          }
         }
       }
 
@@ -78,6 +86,10 @@ public final class InputCodepoints {
 
           case SELECT -> {
             return XBOX_BUTTON_VIEW;
+          }
+
+          case GUIDE -> {
+            return XBOX_BUTTON_GUIDE;
           }
         }
       }
@@ -98,6 +110,10 @@ public final class InputCodepoints {
 
           case Y -> {
             return PS_BUTTON_TRIANGLE;
+          }
+
+          case GUIDE -> {
+            return PS_BUTTON_GUIDE;
           }
         }
       }
