@@ -351,7 +351,8 @@ public final class WorldMapDefinition {
     public Builder route(final RegistryId id, final WorldMapRouteData data) {
       final int geometry = get(this.geometryIndices, data.geometry(), "geometry");
       final int encounter = data.encounterPool() == null ? data.legacyEncounterPlaceholder() : get(this.encounterPoolIndices, data.encounterPool(), "encounter pool");
-      return this.route(new WorldMapRoute(id, -1, data.start(), data.end(), geometry, data.direction(), data.encounterRate(), data.battleStage(), encounter, data.modelIndex(), data.avatar()));
+      return this.route(new WorldMapRoute(id, -1, data.start(), data.end(), geometry, data.direction(), data.encounterRate(), data.battleStage(),
+        encounter, data.modelIndex(), data.avatar(), data.battleStageId()));
     }
 
     public Builder route(final WorldMapRoute route) {
@@ -458,7 +459,8 @@ public final class WorldMapDefinition {
     }
 
     private static WorldMapRoute routeAt(final WorldMapRoute route, final int index, final int geometry) {
-      return new WorldMapRoute(route.id(), index, route.start(), route.end(), geometry, route.direction(), route.encounterRate(), route.battleStage(), route.encounterIndex(), route.modelIndex(), route.avatar());
+      return new WorldMapRoute(route.id(), index, route.start(), route.end(), geometry, route.direction(), route.encounterRate(), route.battleStage(),
+        route.encounterIndex(), route.modelIndex(), route.avatar(), route.battleStageId());
     }
   }
 }

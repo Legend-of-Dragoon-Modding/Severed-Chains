@@ -26,6 +26,11 @@ public final class WorldMapRegistrySnapshot {
   public record Value<T>(RegistryId id, T data) { }
   private final Map<RegistryId, WorldMapAvatar> avatars;
   private final Map<RegistryId, WorldMapRegion> regions;
+  private final Map<RegistryId, WorldMapThumbnail> thumbnails;
+  private final Map<RegistryId, WorldMapService> services;
+  private final Map<RegistryId, WorldMapSound> sounds;
+  private final Map<RegistryId, WorldMapBattleStage> battleStages;
+  private final Map<RegistryId, WorldMapSubmapDestination> submapDestinations;
   private final List<WorldMapTraversalProfile> traversalProfiles;
 
   private final WorldMapDefinition definition;
@@ -53,8 +58,19 @@ public final class WorldMapRegistrySnapshot {
       regions.put(value.id(), value.data());
     }
     this.regions = Map.copyOf(regions);
+
+    this.thumbnails = index(resolve(registries.worldMapThumbnails, preset == null ? Map.of() : preset.resolveThumbnails(registries)));
+    this.services = index(resolve(registries.worldMapServices, preset == null ? Map.of() : preset.serviceDefinitions()));
+    this.sounds = index(resolve(registries.worldMapSounds, preset == null ? Map.of() : preset.soundDefinitions()));
+    this.battleStages = index(resolve(registries.worldMapBattleStages, preset == null ? Map.of() : preset.battleStageDefinitions()));
+    this.submapDestinations = index(resolve(registries.worldMapSubmapDestinations, preset == null ? Map.of() : preset.submapDestinations()));
     this.traversalProfiles = resolve(registries.worldMapTraversalProfiles, preset == null ? Map.of() : preset.resolveTraversalProfiles(registries)).stream().sorted(Comparator.<Value<WorldMapTraversalProfile>>comparingInt(value -> value.data().priority()).thenComparing(value -> value.id().toString())).map(WorldMapRegistrySnapshot::attributedProfile).toList();
-    final List<WorldMapPortal> portals = data(WorldMapSlots.allocate(resolve(registries.worldMapPortals, preset == null ? Map.of() : preset.portals())));
+    final List<WorldMapPortal> portals = data(WorldMapSlots.allocate(resolve(registries.worldMapPortals, preset == null ? Map.of() : preset.portals()))).stream()
+      .map(portal -> new WorldMapPortal(portal.id(), portal.legacyIndex(), portal.route(), portal.place(),
+        this.destination(portal.fromId(), portal.from(), "source", portal.id()), this.destination(portal.toId(), portal.to(), "destination", portal.id()),
+        portal.junctionIndex(), portal.continent(), portal.fullBrightness(), portal.effectFlags(), portal.region(), portal.fromId(), portal.toId(),
+        portal.atmosphere(), portal.smoke()))
+      .toList();
     final List<Value<WorldMapGeometry>> registeredGeometry = WorldMapSlots.allocate(resolve(registries.worldMapGeometry, preset == null ? Map.of() : preset.geometry()));
     final List<Value<WorldMapEncounterPool>> registeredPools = WorldMapSlots.allocate(resolve(registries.worldMapEncounterPools, preset == null ? Map.of() : preset.encounterPools()));
     final Map<RegistryId, Integer> geometryIndices = new HashMap<>();
@@ -69,9 +85,12 @@ public final class WorldMapRegistrySnapshot {
       final Integer geometryIndex = geometryIndices.get(route.geometry());
       final Integer poolIndex = route.encounterPool() == null ? Integer.valueOf(route.legacyEncounterPlaceholder()) : poolIndices.get(route.encounterPool());
       if(geometryIndex == null || poolIndex == null) throw new IllegalArgumentException("Unresolved geometry " + route.geometry() + " or encounter pool " + route.encounterPool() + " on WMAP route " + value.id());
-      return new WorldMapRoute(value.id(), route.legacyIndex(), route.start(), route.end(), geometryIndex, route.direction(), route.encounterRate(), route.battleStage(), poolIndex, route.modelIndex(), route.avatar());
+      final int battleStage = route.battleStageId() == null ? route.battleStage() : this.battleStage(route.battleStageId(), value.id());
+      return new WorldMapRoute(value.id(), route.legacyIndex(), route.start(), route.end(), geometryIndex, route.direction(), route.encounterRate(),
+        battleStage, poolIndex, route.modelIndex(), route.avatar(), route.battleStageId());
     }).sorted(Comparator.comparingInt(WorldMapRoute::legacyIndex)).toList();
     final List<WorldMapPlace> places = data(WorldMapSlots.allocate(resolve(registries.worldMapPlaces, preset == null ? Map.of() : preset.places())));
+    for(final WorldMapPlace place : places) this.validatePlaceReferences(place);
     final List<WorldMapGeometry> geometry = data(registeredGeometry).stream().sorted(Comparator.comparingInt(WorldMapGeometry::legacyIndex)).toList();
     if(portals.size() < 256) {
       throw new IllegalArgumentException("WMAP requires at least the 256 legacy portal slots");
@@ -177,7 +196,63 @@ public final class WorldMapRegistrySnapshot {
     return values.stream().map(Value::data).toList();
   }
 
+  private static <T> Map<RegistryId, T> index(final List<Value<T>> values) {
+    final Map<RegistryId, T> result = new LinkedHashMap<>();
+    values.forEach(value -> result.put(value.id(), value.data()));
+    return Map.copyOf(result);
+  }
+
+  private SubmapEndpoint destination(@Nullable final RegistryId id, final SubmapEndpoint fallback, final String kind, final RegistryId portal) {
+    if(id == null) return fallback;
+    final WorldMapSubmapDestination destination = this.submapDestinations.get(id);
+    if(destination == null) throw new IllegalArgumentException("Unknown WMAP " + kind + " destination " + id + " on portal " + portal);
+    return destination.endpoint();
+  }
+
+  private int battleStage(final RegistryId id, final RegistryId route) {
+    final WorldMapBattleStage stage = this.battleStages.get(id);
+    if(stage == null) throw new IllegalArgumentException("Unknown WMAP battle stage " + id + " on route " + route);
+    return stage.nativeIndex();
+  }
+
+  private void validatePlaceReferences(final WorldMapPlace place) {
+    if(place.thumbnailId() != null && !this.thumbnails.containsKey(place.thumbnailId())) {
+      throw new IllegalArgumentException("Unknown WMAP thumbnail " + place.thumbnailId() + " on place " + place.id());
+    }
+    if(place.serviceIds() != null) {
+      for(final RegistryId id : place.serviceIds()) {
+        if(!this.services.containsKey(id)) throw new IllegalArgumentException("Unknown WMAP service " + id + " on place " + place.id());
+      }
+    }
+    if(place.soundIds() != null) {
+      for(final RegistryId id : place.soundIds()) {
+        if(!this.sounds.containsKey(id)) throw new IllegalArgumentException("Unknown WMAP sound " + id + " on place " + place.id());
+      }
+    }
+  }
+
   public WorldMapDefinition definition() { return this.definition; }
+
+  /** Resolves registry-backed values added by behaviours or configure-event listeners after the initial snapshot. */
+  public WorldMapDefinition resolveReferences(final WorldMapDefinition definition) {
+    final WorldMapDefinition.Builder builder = definition.toBuilder();
+    for(final WorldMapPlace place : definition.places()) this.validatePlaceReferences(place);
+    for(final WorldMapPortal portal : definition.portals()) {
+      if(portal.fromId() != null || portal.toId() != null) {
+        builder.replacePortal(new WorldMapPortal(portal.id(), portal.legacyIndex(), portal.route(), portal.place(),
+          this.destination(portal.fromId(), portal.from(), "source", portal.id()), this.destination(portal.toId(), portal.to(), "destination", portal.id()),
+          portal.junctionIndex(), portal.continent(), portal.fullBrightness(), portal.effectFlags(), portal.region(), portal.fromId(), portal.toId(),
+          portal.atmosphere(), portal.smoke()));
+      }
+    }
+    for(final WorldMapRoute route : definition.routes()) {
+      if(route.battleStageId() != null) {
+        builder.replaceRoute(new WorldMapRoute(route.id(), route.legacyIndex(), route.start(), route.end(), route.segmentIndex(), route.direction(),
+          route.encounterRate(), this.battleStage(route.battleStageId(), route.id()), route.encounterIndex(), route.modelIndex(), route.avatar(), route.battleStageId()));
+      }
+    }
+    return builder.build();
+  }
 
   public Map<RegistryId, WorldMapRegion> regions() { return this.regions; }
 
@@ -214,6 +289,45 @@ public final class WorldMapRegistrySnapshot {
     final WorldMapAvatar avatar = this.avatars.get(id);
     if(avatar == null) throw new IllegalArgumentException("Unknown WMAP avatar " + id);
     return avatar;
+  }
+
+  @Nullable
+  public WorldMapThumbnail thumbnail(final WorldMapPlace place) {
+    if(place.thumbnailId() == null) return null;
+    final WorldMapThumbnail thumbnail = this.thumbnails.get(place.thumbnailId());
+    if(thumbnail == null) throw new IllegalArgumentException("Unknown WMAP thumbnail " + place.thumbnailId() + " on place " + place.id());
+    return thumbnail;
+  }
+
+  public List<String> services(final WorldMapPlace place) {
+    if(place.serviceIds() == null) {
+      final List<String> labels = this.presentation.services();
+      final List<String> result = new ArrayList<>();
+      for(int bit = 0; bit < Math.min(5, labels.size()); bit++) {
+        if((place.services() & 1 << bit) != 0) result.add(labels.get(bit));
+      }
+      return List.copyOf(result);
+    }
+    return place.serviceIds().stream().map(id -> {
+      final WorldMapService service = this.services.get(id);
+      if(service == null) throw new IllegalArgumentException("Unknown WMAP service " + id + " on place " + place.id());
+      if(service.legacyBit() != null && service.legacyBit() < this.presentation.services().size()) {
+        final List<String> nativeLabels = WorldMapPresentationProfile.legacy().services();
+        if(service.legacyBit() < nativeLabels.size() && service.label().equals(nativeLabels.get(service.legacyBit()))) {
+          return this.presentation.services().get(service.legacyBit());
+        }
+      }
+      return service.label();
+    }).toList();
+  }
+
+  public List<Integer> sounds(final WorldMapPlace place) {
+    if(place.soundIds() == null) return place.sounds().stream().filter(index -> index > 0).toList();
+    return place.soundIds().stream().map(id -> {
+      final WorldMapSound sound = this.sounds.get(id);
+      if(sound == null) throw new IllegalArgumentException("Unknown WMAP sound " + id + " on place " + place.id());
+      return sound.nativeIndex();
+    }).toList();
   }
   public WorldMapPresentationProfile presentation() { return this.presentation; }
   public List<WorldMapStoryPreset> story() { return this.story; }

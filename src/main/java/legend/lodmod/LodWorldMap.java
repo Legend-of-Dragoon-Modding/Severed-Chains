@@ -99,7 +99,7 @@ public final class LodWorldMap {
 
   private static WorldMapRouteEntry routesEntry(final int index) {
     final WorldMapRoute value = eventDefinition.route(index);
-    return new WorldMapRouteEntry(id -> new WorldMapRouteData(value.legacyIndex(), value.start(), value.end(), new RegistryId(LodMod.MOD_ID, "wmap_geometry_" + value.segmentIndex()), value.direction(), value.encounterRate(), value.battleStage(), value.encounterIndex() < 0 || value.encounterIndex() >= LodWorldMapData.encounterIds_800ef364.length ? null : new RegistryId(LodMod.MOD_ID, "wmap_encounter_pool_" + value.encounterIndex()), value.modelIndex(), value.encounterIndex()));
+    return new WorldMapRouteEntry(id -> new WorldMapRouteData(value.legacyIndex(), value.start(), value.end(), new RegistryId(LodMod.MOD_ID, "wmap_geometry_" + value.segmentIndex()), value.direction(), value.encounterRate(), value.battleStage(), value.encounterIndex() < 0 || value.encounterIndex() >= LodWorldMapData.encounterIds_800ef364.length ? null : new RegistryId(LodMod.MOD_ID, "wmap_encounter_pool_" + value.encounterIndex()), value.modelIndex(), value.encounterIndex(), value.avatar(), LodWorldMapAuthoringData.battleStageId(value.battleStage())));
   }
 
   static void register(final RegisterWorldMapRoutesEvent event) {
@@ -113,7 +113,13 @@ public final class LodWorldMap {
 
   private static WorldMapPlaceEntry placesEntry(final int index) {
     final WorldMapPlace value = eventDefinition.place(index);
-    return new WorldMapPlaceEntry(id -> new WorldMapPlace(id, value.legacyIndex(), value.name(), value.thumbnail(), value.services(), value.sounds()));
+    final List<RegistryId> services = new ArrayList<>();
+    for(int bit = 0; bit < 5; bit++) {
+      if((value.services() & 1 << bit) != 0) services.add(LodWorldMapAuthoringData.serviceId(bit));
+    }
+    final List<RegistryId> sounds = value.sounds().stream().filter(sound -> sound > 0).map(LodWorldMapAuthoringData::soundId).toList();
+    return new WorldMapPlaceEntry(id -> new WorldMapPlace(id, value.legacyIndex(), value.name(), value.thumbnail(), value.services(), value.sounds(),
+      LodWorldMapAuthoringData.thumbnailId(value.thumbnail()), services, sounds));
   }
 
   static void register(final RegisterWorldMapPlacesEvent event) {
@@ -127,7 +133,11 @@ public final class LodWorldMap {
 
   private static WorldMapPortalEntry portalsEntry(final int index) {
     final WorldMapPortal value = eventDefinition.portal(index);
-    return new WorldMapPortalEntry(id -> new WorldMapPortal(id, value.legacyIndex(), value.route(), value.place(), value.from(), value.to(), value.junctionIndex(), value.continent(), value.fullBrightness(), value.effectFlags()));
+    final var presentation = legend.game.wmap.world.WorldMapPresentation.from(value);
+    return new WorldMapPortalEntry(id -> new WorldMapPortal(id, value.legacyIndex(), value.route(), value.place(), value.from(), value.to(),
+      value.junctionIndex(), value.continent(), value.fullBrightness(), value.effectFlags(), value.region(),
+      LodWorldMapAuthoringData.submapDestinationId(value.from()), LodWorldMapAuthoringData.submapDestinationId(value.to()),
+      presentation.atmosphere(), presentation.smoke()));
   }
 
   static void register(final RegisterWorldMapPortalsEvent event) {

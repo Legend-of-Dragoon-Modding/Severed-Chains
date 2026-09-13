@@ -80,6 +80,7 @@ import legend.game.wmap.world.WorldMapCameraSettings;
 import legend.game.wmap.world.WorldMapDefinition;
 import legend.game.wmap.world.WorldMapObjective;
 import legend.game.wmap.world.WorldMapPoint;
+import legend.game.wmap.world.WorldMapPlace;
 import legend.game.wmap.world.WorldMapPortal;
 import legend.game.wmap.world.WorldMapPresentation;
 import legend.game.wmap.world.WorldMapRegion;
@@ -93,6 +94,7 @@ import legend.game.wmap.world.WorldMapRuntime;
 import legend.game.wmap.world.WorldMapSave;
 import legend.game.wmap.world.WorldMapTravel;
 import legend.game.wmap.world.WorldMapTravelTarget;
+import legend.game.wmap.world.WorldMapThumbnail;
 import legend.game.wmap.world.WorldMapTravelRequestResult;
 import legend.game.wmap.world.WorldMapTravelPosition;
 import legend.game.wmap.world.WorldMapTraversal;
@@ -463,7 +465,7 @@ public class WMap extends EngineState<WMap> {
     final WorldMapRules.Builder rulesBuilder = new WorldMapRules.Builder();
     data.configureBehaviours(REGISTRIES, definitionBuilder, rulesBuilder);
     final WorldMapConfigureEvent event = EVENTS.postEvent(new WorldMapConfigureEvent(this, gameState_800babc8, definitionBuilder, rulesBuilder, preset == null ? null : preset.id()));
-    final WorldMapDefinition definition = event.definition.build();
+    final WorldMapDefinition definition = data.resolveReferences(event.definition.build());
     data.validateDefinition(definition);
     final WorldMapRules rules = event.rules.build();
     rules.validate(definition);
@@ -4663,6 +4665,25 @@ public class WMap extends EngineState<WMap> {
         final var thumbnailPortal = this.getWorldMapPortal();
         final var thumbnailPlace = this.worldMap.definition().place(this.locations_800f0e34[thumbnailPortal.legacyIndex()].placeIndex_02);
         final WorldMapLocationThumbnailEvent thumbnail = new WorldMapLocationThumbnailEvent(this, gameState_800babc8, thumbnailPortal, thumbnailPlace);
+        int nativeThumbnailIndex = thumbnailPlace.thumbnail();
+        final WorldMapThumbnail registeredThumbnail = this.worldMapData.thumbnail(thumbnailPlace);
+        if(registeredThumbnail != null) {
+          if(registeredThumbnail.provider() != null) {
+            thumbnail.thumbnail = registeredThumbnail.provider();
+          } else if(registeredThumbnail.asset() != null) {
+            if(this.activeWorldMapPreset == null) throw new IllegalStateException("WMAP thumbnail asset has no active preset package: " + thumbnailPlace.thumbnailId());
+            final WorldMapPreset preset = this.activeWorldMapPreset;
+            thumbnail.thumbnail = () -> {
+              try {
+                return new Tim(new FileData(WorldMapPresetAssets.read(preset.packageRoot(), registeredThumbnail.asset())));
+              } catch(final IOException e) {
+                throw new IllegalStateException("Failed to load registered thumbnail " + thumbnailPlace.thumbnailId(), e);
+              }
+            };
+          } else {
+            nativeThumbnailIndex = registeredThumbnail.nativeIndex();
+          }
+        }
         if(this.activeWorldMapPreset != null && this.activeWorldMapPreset.thumbnails().containsKey(thumbnailPlace.id())) {
           final WorldMapPreset preset = this.activeWorldMapPreset;
           thumbnail.thumbnail = () -> {
@@ -4675,7 +4696,8 @@ public class WMap extends EngineState<WMap> {
         }
         EVENTS.postEvent(thumbnail);
         if(thumbnail.thumbnail == null) {
-          loadDrgnFileSync(0, 5655 + thumbnailPlace.thumbnail(), data -> this.loadLocationThumbnailImage(new Tim(data)));
+          final int resolvedThumbnailIndex = nativeThumbnailIndex;
+          loadDrgnFileSync(0, 5655 + resolvedThumbnailIndex, data -> this.loadLocationThumbnailImage(new Tim(data)));
         } else {
           this.loadLocationThumbnailImage(Objects.requireNonNull(thumbnail.thumbnail.get(), "World map thumbnail provider returned null for " + thumbnailPlace.id()));
         }
@@ -4687,15 +4709,8 @@ public class WMap extends EngineState<WMap> {
         playMenuSound(4);
 
         //LAB_800e55f0
-        for(int i = 0; i < 4; i++) {
-          //LAB_800e560c
-          final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
-
-          if(soundIndex > 0) {
-            playSound(this.soundFile, soundIndex, (short)0, (short)0);
-          }
-
-          //LAB_800e5698
+        for(final int soundIndex : this.worldMapData.sounds(thumbnailPlace)) {
+          playSound(this.soundFile, soundIndex, (short)0, (short)0);
         }
 
         //LAB_800e56b0
@@ -4724,16 +4739,10 @@ public class WMap extends EngineState<WMap> {
             this.wmapLocationPromptPopup.addOptionText("Enter");
           }
 
-          final int servicesFlag = this.places_800f0234[placeIndex].servicesFlag_05;
-          int servicesCount = 0;
-          for(int i = 0; i < 5; i++) {
-            if((servicesFlag & 0x1 << i) != 0) {
-              this.wmapLocationPromptPopup.addAltText(this.services_800f01cc[i]);
-              servicesCount++;
-            }
-          }
+          final List<String> placeServices = this.worldMapData.services(this.worldMap.definition().place(placeIndex));
+          for(final String service : placeServices) this.wmapLocationPromptPopup.addAltText(service);
 
-          if(servicesCount == 0) {
+          if(placeServices.isEmpty()) {
             this.wmapLocationPromptPopup.addAltText("No facilities");
             this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 63.0f, textZ_800bdf00 * 4.0f - 2.0f);
           }
@@ -4864,16 +4873,7 @@ public class WMap extends EngineState<WMap> {
             playMenuSound(3);
 
             //LAB_800e6350
-            for(int i = 0; i < 4; i++) {
-              //LAB_800e636c
-              final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
-
-              if(soundIndex > 0) {
-                stopSound(this.soundFile, soundIndex, 1);
-              }
-
-              //LAB_800e63ec
-            }
+            this.stopLocationSounds();
 
             //LAB_800e6404
           } else {
@@ -4895,15 +4895,7 @@ public class WMap extends EngineState<WMap> {
             playMenuSound(2);
 
             //LAB_800e6468
-            for(int i = 0; i < 4; i++) {
-              //LAB_800e6484
-              final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
-
-              if(soundIndex > 0) {
-                stopSound(this.soundFile, soundIndex, 1);
-              }
-              //LAB_800e6504
-            }
+            this.stopLocationSounds();
           }
 
           //LAB_800e651c
@@ -4913,15 +4905,7 @@ public class WMap extends EngineState<WMap> {
             playMenuSound(3);
 
             //LAB_800e6560
-            for(int i = 0; i < 4; i++) {
-              //LAB_800e657c
-              final int soundIndex = this.places_800f0234[this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
-
-              if(soundIndex > 0) {
-                stopSound(this.soundFile, soundIndex, 1);
-              }
-              //LAB_800e65fc
-            }
+            this.stopLocationSounds();
 
             //LAB_800e6614
             setTextAndTextboxesToUninitialized(6, 1);
@@ -5023,6 +5007,11 @@ public class WMap extends EngineState<WMap> {
   }
 
   @Method(0x800e69e8L)
+  private void stopLocationSounds() {
+    final WorldMapPlace place = this.worldMap.definition().place(this.locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02);
+    for(final int soundIndex : this.worldMapData.sounds(place)) stopSound(this.soundFile, soundIndex, 1);
+  }
+
   private void handleStartButtonLocationLabels() {
     if(this.tickMainMenuOpenTransition_800c6690 != 0) {
       return;
