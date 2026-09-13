@@ -53,13 +53,30 @@ public final class WorldMapPresetManager {
     entries.add(WorldMapPresetEntry.VANILLA);
     try {
       Files.createDirectories(DIRECTORY);
-      try(final var files = Files.walk(DIRECTORY, 2)) {
-        for(final Path file : files.filter(Files::isRegularFile).filter(path -> !path.toString().contains(".cache")).filter(WorldMapPresetManager::isPreset).sorted().toList()) {
+      try(final var files = Files.list(DIRECTORY)) {
+        for(final Path candidate : files.filter(path -> !path.getFileName().toString().startsWith(".")).sorted().toList()) {
           try {
+            final Path file;
+            if(Files.isDirectory(candidate)) {
+              try(final var contents = Files.walk(candidate)) {
+                final List<Path> documents = contents.filter(Files::isRegularFile).filter(path -> path.getFileName().toString().endsWith(".wmap")).sorted().toList();
+                if(documents.isEmpty()) {
+                  continue;
+                }
+                if(documents.size() != 1) {
+                  throw new IOException("Expected one .wmap file in preset folder, found " + documents.size());
+                }
+                file = documents.getFirst();
+              }
+            } else if(Files.isRegularFile(candidate) && candidate.getFileName().toString().endsWith(".wmap")) {
+              file = candidate;
+            } else {
+              continue;
+            }
             final WorldMapPreset preset = readPackage(file);
             entries.add(new WorldMapPresetEntry(preset.id(), preset.name(), () -> preset, file));
           } catch(final RuntimeException | IOException e) {
-            errors.add(file + ": " + e.getMessage());
+            errors.add(candidate + ": " + e.getMessage());
           }
         }
       }
