@@ -8,8 +8,8 @@ Also fixed instant quick speed freeze (#2770)
  call 2, 0x16, 0x1
  gosub inl[:LABEL_216]
  gosub inl[:LABEL_217]
-+mov 0x8, stor[23]
-+wait stor[23]
++call 890, id[lod_core:config], id[lod_core:quick_text], 0, inl[:VAR_QUICK_TEXT]
++gosub inl[:QUICK_TEXT_HANDLER]
  call 2, 0x16, 0x0
  call 97, 0xa
  gosub inl[:LABEL_218]
@@ -29,3 +29,16 @@ Also fixed instant quick speed freeze (#2770)
  call 236, 0x8, 0x4, 0x0, 0x0, 0x0, 0x0
  gosub inl[:LABEL_194]
  call 99, 0x0
+@@ -2524,3 +2528,12 @@
+ data 0x6
+ data 0x7
+ data 0xffffffff
++QUICK_TEXT_HANDLER:
++jmp_cmp !=, 0x2, inl[:VAR_QUICK_TEXT], inl[:SKIP_QUICK_TEXT_HANDLER]
++mov 0x8, stor[23]
++wait stor[23]
++return
++VAR_QUICK_TEXT:
++data 0x0
++SKIP_QUICK_TEXT_HANDLER:
++return

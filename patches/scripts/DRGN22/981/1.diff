@@ -4,8 +4,21 @@
  call 2, 0x20, 0x1
  mov 0x1a, stor[24]
  gosub inl[:LABEL_48]
-+mov 0x8, stor[24]
-+wait stor[24]
++call 890, id[lod_core:config], id[lod_core:quick_text], 0, inl[:VAR_QUICK_TEXT]
++gosub inl[:QUICK_TEXT_HANDLER]
  call 2, 0x21, 0x1
  mov 0x32, stor[24]
  wait stor[24]
+@@ -1337,3 +1339,12 @@
+ PTR_2674_45:
+ data 0x21
+ data 0x1
++QUICK_TEXT_HANDLER:
++jmp_cmp !=, 0x2, inl[:VAR_QUICK_TEXT], inl[:SKIP_QUICK_TEXT_HANDLER]
++mov 0x8, stor[23]
++wait stor[23]
++return
++VAR_QUICK_TEXT:
++data 0x0
++SKIP_QUICK_TEXT_HANDLER:
++return
