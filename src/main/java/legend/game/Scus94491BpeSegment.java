@@ -128,7 +128,7 @@ public final class Scus94491BpeSegment {
   private static final IntRef GlobalFlagIndexRef = new IntRef();
 
   private static final ReadGlobalFlagsEvent READ_GLOBAL_FLAGS1_EVENT = new ReadGlobalFlagsEvent(GlobalFlagIndexRef, ScriptFlagArrayEnum.FLAGS1);
-  private static final ReadGlobalFlagsEvent READ_GLOBAL_FLAGS2_EVENT = new ReadGlobalFlagsEvent(GlobalFlagIndexRef, ScriptFlagArrayEnum.FLAGS1);
+  private static final ReadGlobalFlagsEvent READ_GLOBAL_FLAGS2_EVENT = new ReadGlobalFlagsEvent(GlobalFlagIndexRef, ScriptFlagArrayEnum.FLAGS2);
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
