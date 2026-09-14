@@ -342,24 +342,25 @@ public class SdlPlatformManager extends PlatformManager {
             final InputKey inputKey = getInputFromKeycode(key.key());
 
             if(inputKey == null) {
-              LOGGER.warn("Unknown key %s", SDL_GetKeyName(key.key()));
-              continue;
+              LOGGER.warn("Unknown key %#x %s", key.key(), SDL_GetKeyName(key.key()));
             }
 
             final InputKey inputScan = getInputKeyFromScanCode(key.scancode());
 
-            if(key.down()) {
-              if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
-                LOGGER.info(ACTIONS_MARKER, "Triggering press key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
-              }
+            if(inputKey != null || inputScan != null) {
+              if(key.down()) {
+                if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
+                  LOGGER.info(ACTIONS_MARKER, "Triggering press key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
+                }
 
-              window.events().onKeyPress(inputKey, inputScan, window.mods, key.repeat());
-            } else {
-              if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
-                LOGGER.info(ACTIONS_MARKER, "Triggering release key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
-              }
+                window.events().onKeyPress(inputKey, inputScan, window.mods, key.repeat());
+              } else {
+                if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
+                  LOGGER.info(ACTIONS_MARKER, "Triggering release key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
+                }
 
-              window.events().onKeyRelease(inputKey, inputScan, window.mods);
+                window.events().onKeyRelease(inputKey, inputScan, window.mods);
+              }
             }
 
             final List<InputBinding<KeyInputActivation>> keycodeBindings = InputBindings.getBindings(KeyInputActivation.class);
