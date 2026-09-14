@@ -2,11 +2,13 @@ package legend.game.characters;
 
 import legend.core.lang.I18nText;
 import legend.core.lang.TextComponent;
+import legend.game.additions.Addition;
 import legend.game.additions.AdditionHits80;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.inventory.CanEquip;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentTypes;
+import legend.game.modding.events.characters.ResolveAdditionEvent;
 import legend.game.modding.events.characters.ResolveCharacterElementEvent;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
@@ -24,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 
 public class CharacterData2c {
   public static final int IN_PARTY = 0x1;
@@ -256,6 +259,22 @@ public class CharacterData2c {
 
   public CharacterAdditionInfo getAdditionInfo(final RegistryId id) {
     return this.additions.get(id);
+  }
+
+  /**
+   * Resolves the effective addition definition for this character.
+   *
+   * <p>The registered definition and this character's progression are supplied to a
+   * {@link ResolveAdditionEvent}. The event is posted on every call; callers must not assume the
+   * returned definition is cached or identical across resolutions.</p>
+   *
+   * @param id registry ID of the addition to resolve
+   * @return addition definition selected by the event listeners
+   */
+  public Addition resolveAddition(final RegistryId id) {
+    final Addition baseAddition = REGISTRIES.additions.getEntry(id).get();
+    final CharacterAdditionInfo additionInfo = this.getAdditionInfo(id);
+    return EVENTS.postEvent(new ResolveAdditionEvent(this, additionInfo, id, baseAddition)).addition;
   }
 
   public CharacterAdditionInfo addAddition(final RegistryId id, final CharacterAdditionInfo info) {
