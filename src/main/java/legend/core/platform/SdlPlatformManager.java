@@ -347,20 +347,18 @@ public class SdlPlatformManager extends PlatformManager {
 
             final InputKey inputScan = getInputKeyFromScanCode(key.scancode());
 
-            if(key.down()) {
-              if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
-                LOGGER.info(ACTIONS_MARKER, "Triggering press key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
-              }
+            if(inputKey != null || inputScan != null) {
+              if(key.down()) {
+                if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
+                  LOGGER.info(ACTIONS_MARKER, "Triggering press key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
+                }
 
-              if(inputKey != null || inputScan != null) {
                 window.events().onKeyPress(inputKey, inputScan, window.mods, key.repeat());
-              }
-            } else {
-              if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
-                LOGGER.info(ACTIONS_MARKER, "Triggering release key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
-              }
+              } else {
+                if(LOGGER.isInfoEnabled(ACTIONS_MARKER)) {
+                  LOGGER.info(ACTIONS_MARKER, "Triggering release key %s -> %s", SDL_GetKeyName(key.key()), inputKey);
+                }
 
-              if(inputKey != null || inputScan != null) {
                 window.events().onKeyRelease(inputKey, inputScan, window.mods);
               }
             }
