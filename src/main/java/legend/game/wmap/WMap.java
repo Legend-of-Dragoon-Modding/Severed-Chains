@@ -1434,24 +1434,7 @@ public class WMap extends EngineState<WMap> {
 
     this.calculateDistancesToPlaces();
 
-    //LAB_800d1984
-    for(int i = 0; i < 3; i++) {
-      //LAB_800d19a0
-      final GsF_LIGHT light = cameraAndLights.lights_11c[i];
-      light.r_0c = 0.125f;
-      light.g_0d = 0.125f;
-      light.b_0e = 0.125f;
-      light.direction_00.x = MathHelper.sin(0.2617994f);
-      light.direction_00.y = MathHelper.cos(5.497787f);
-      light.direction_00.z = MathHelper.cosFromSin(0.2617994f, light.direction_00.x);
-      light.direction_00.set(0.24414062f, 0.024414062f, 0.0f);
-      GsSetFlatLight(i, light);
-    }
-
-    //LAB_800d1c88
-    cameraAndLights.ambientLight_14c.set(0.375f, 0.375f, 0.375f);
-    GTE.setBackgroundColour(cameraAndLights.ambientLight_14c.x, cameraAndLights.ambientLight_14c.y, cameraAndLights.ambientLight_14c.z);
-    cameraAndLights.lightsUpdateState_88 = LightsUpdateState.INIT_DIMMING_0;
+    WMapCameraLighting.initialize(cameraAndLights, this.getWorldMapRegion().camera());
   }
 
   @Method(0x800d1d28L)
@@ -1506,97 +1489,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800d219cL)
   private void updateLights() {
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-      return;
-    }
-
-    final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
-
-    //LAB_800d21cc
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_OUT_2 || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3) {
-      //LAB_800d2228
-      switch(cameraAndLights.lightsUpdateState_88) {
-        case INIT_DIMMING_0:
-          //LAB_800d2258
-          //LAB_800d225c
-          for(int i = 0; i < 3; i++) {
-            //LAB_800d2278
-            cameraAndLights.lightsColours_8c[i].x = (int)(cameraAndLights.lights_11c[i].r_0c * 0x100);
-            cameraAndLights.lightsColours_8c[i].y = (int)(cameraAndLights.lights_11c[i].g_0d * 0x100);
-            cameraAndLights.lightsColours_8c[i].z = (int)(cameraAndLights.lights_11c[i].b_0e * 0x100);
-          }
-
-          //LAB_800d235c
-          cameraAndLights.lightsBrightness_84 = 1.0f;
-          cameraAndLights.lightsUpdateState_88 = LightsUpdateState.DIM_1;
-
-        case DIM_1:
-          //LAB_800d237c
-          cameraAndLights.lightsBrightness_84 -= 0.140625f / (3.0f / vsyncMode_8007a3b8);
-
-          if(cameraAndLights.lightsBrightness_84 < 0.25f) {
-            cameraAndLights.lightsBrightness_84 = 0.125f;
-            cameraAndLights.lightsUpdateState_88 = LightsUpdateState.INIT_BRIGHTENING_2;
-          }
-
-          //LAB_800d23e0
-          //LAB_800d23e4
-          for(int i = 0; i < 3; i++) {
-            final GsF_LIGHT light = cameraAndLights.lights_11c[i];
-
-            //LAB_800d2400
-            //LAB_800d2464
-            //LAB_800d24d0
-            //LAB_800d253c
-            light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
-            light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
-            light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
-            GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
-          }
-
-          break;
-      }
-    }
-
-    //LAB_800d2590
-    //LAB_800d2598
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_IN_4) {
-      //LAB_800d25d8
-      switch(cameraAndLights.lightsUpdateState_88) {
-        case INIT_BRIGHTENING_2:
-          //LAB_800d2608
-          cameraAndLights.lightsBrightness_84 = 0.25f;
-          cameraAndLights.lightsUpdateState_88 = LightsUpdateState.BRIGHTEN_3;
-
-        case BRIGHTEN_3:
-          //LAB_800d2628
-          cameraAndLights.lightsBrightness_84 += 0.140625f / (3.0f / vsyncMode_8007a3b8);
-
-          if(cameraAndLights.lightsBrightness_84 > 1.0f) {
-            cameraAndLights.lightsBrightness_84 = 1.0f;
-            cameraAndLights.lightsUpdateState_88 = LightsUpdateState.INIT_DIMMING_0;
-          }
-
-          //LAB_800d268c
-          //LAB_800d2690
-          for(int i = 0; i < 3; i++) {
-            final GsF_LIGHT light = cameraAndLights.lights_11c[i];
-
-            //LAB_800d26ac
-            //LAB_800d2710
-            //LAB_800d277c
-            //LAB_800d27e8
-            light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
-            light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
-            light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
-            GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
-          }
-
-          break;
-      }
-    }
-    //LAB_800d283c
-    //LAB_800d2844
+    WMapCameraLighting.update(this.wmapCameraAndLights19c0_800c66b0, this.modelAndAnimData_800c66a8, this.getWorldMapRegion().camera());
   }
 
   @Method(0x800d2d90L)
@@ -2551,10 +2444,7 @@ public class WMap extends EngineState<WMap> {
   private void applyWorldMapCamera() {
     final WMapCameraAndLights19c0 camera = this.wmapCameraAndLights19c0_800c66b0;
     final WorldMapCameraSettings settings = this.getWorldMapRegion().camera();
-    final Vector3f target = new Vector3f(camera.coord2_20.coord.transfer);
-    if(settings.minimum() != null && camera.zoomStateIsLocal_c4 && this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-      target.set(Math.max(settings.minimum().x(), Math.min(settings.maximum().x(), target.x)), Math.max(settings.minimum().y(), Math.min(settings.maximum().y(), target.y)), Math.max(settings.minimum().z(), Math.min(settings.maximum().z(), target.z)));
-    }
+    final Vector3f target = WMapCameraLighting.target(camera, this.modelAndAnimData_800c66a8.zoomState_1f8, settings);
     final WorldMapCameraEvent event = EVENTS.postEvent(new WorldMapCameraEvent(this, gameState_800babc8, this.getWorldMapRenderContext(), camera.currRview2_00.viewpoint_00, camera.currRview2_00.refpoint_0c, target, camera.projectionPlaneDistance_118));
     if(!finiteWorldMapVector(event.viewpoint) || !finiteWorldMapVector(event.refpoint) || !finiteWorldMapVector(event.target) || !Float.isFinite(event.projectionDistance) || event.projectionDistance <= 0) {
       throw new IllegalArgumentException("WorldMapCameraEvent requires finite coordinates and a positive projection distance");
@@ -3018,34 +2908,7 @@ public class WMap extends EngineState<WMap> {
       case ASCENT_1:
         this.renderFastTravelScreenDistortionEffect();
 
-        modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x += 0.015625f / (3.0f / vsyncMode_8007a3b8); // 1/64
-
-        if(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x > 0.375f) { // 24/64
-          modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x = 0.375f;
-        }
-
-        //LAB_800da9fc
-        modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x);
-        modelAndAnimData.currPlayerPos_94.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
-
-        cameraAndLights.coord2_20.coord.transfer.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
-
-        if(cameraAndLights.coord2_20.coord.transfer.y < -1500) {
-          cameraAndLights.coord2_20.coord.transfer.y = -1500;
-        }
-
-        //LAB_800daab8
-        if(modelAndAnimData.currPlayerPos_94.y < -2500.0f) {
-          modelAndAnimData.currPlayerPos_94.y = -2500.0f;
-        }
-
-        //LAB_800daaf0
-        if(modelAndAnimData.currPlayerPos_94.y <= -2500.0f) {
-          if(cameraAndLights.coord2_20.coord.transfer.y <= -1500) {
-            modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_WORLD_MAP_2;
-          }
-        }
-
+        WMapTravelAnimation.tickCoolonAscent(modelAndAnimData, cameraAndLights);
         //LAB_800dab44
         this.mcqBrightness_800ef1a4 += 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
@@ -3305,26 +3168,7 @@ public class WMap extends EngineState<WMap> {
         break;
 
       case DESCENT_12:
-        modelAndAnimData.currPlayerPos_94.y += 16.0f / (3.0f / vsyncMode_8007a3b8);
-
-        if(modelAndAnimData.playerPos_208.y < modelAndAnimData.currPlayerPos_94.y) {
-          modelAndAnimData.currPlayerPos_94.y = modelAndAnimData.playerPos_208.y;
-        }
-
-        //LAB_800dbe70
-        if(modelAndAnimData.playerPos_208.y <= modelAndAnimData.currPlayerPos_94.y) {
-          modelAndAnimData.coolonWarpState_220 = CoolonWarpState.RESTORE_DART_NEG_1;
-        }
-
-        //LAB_800dbeb4
-        modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x -= 0.00390625f / (3.0f / vsyncMode_8007a3b8); // 1/256
-
-        if(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x < 0.25f) { // 64/256
-          modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x = 0.25f;
-        }
-
-        //LAB_800dbf28
-        modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x);
+        WMapTravelAnimation.tickCoolonDescent(modelAndAnimData);
 
         this.mcqBrightness_800ef1a4 -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
@@ -3788,18 +3632,7 @@ public class WMap extends EngineState<WMap> {
           //LAB_800e08b8
           this.renderFastTravelScreenDistortionEffect();
 
-          this.arcLerp(this.modelAndAnimData_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, this.modelAndAnimData_800c66a8.teleportAnimationTick_24c / (96.0f / vsyncMode_8007a3b8));
-
-          this.modelAndAnimData_800c66a8.teleportAnimationTick_24c++;
-          if(this.modelAndAnimData_800c66a8.teleportAnimationTick_24c > 96.0f / vsyncMode_8007a3b8) {
-            this.modelAndAnimData_800c66a8.teleportAnimationState_248 = TeleportAnimationState.INIT_FADE_2;
-          }
-
-          //LAB_800e0980
-          scale = (this.modelAndAnimData_800c66a8.teleportAnimationTick_24c * 0.015625f) / (3.0f / vsyncMode_8007a3b8) + MathHelper.sin(this.modelAndAnimData_800c66a8.teleportAnimationTick_24c * (MathHelper.PI / 4.0f / (3.0f / vsyncMode_8007a3b8))) / 16.0f;
-          this.modelAndAnimData_800c66a8.models_0c[3].coord2_14.transforms.scale.set(scale, scale, scale);
-          this.modelAndAnimData_800c66a8.models_0c[this.modelAndAnimData_800c66a8.modelIndex_1e4].coord2_14.transforms.rotate.y = this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y;
-          this.modelAndAnimData_800c66a8.playerRotation_a4.y = this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y;
+          WMapTravelAnimation.tickTeleport(this.modelAndAnimData_800c66a8, this.wmapCameraAndLights19c0_800c66b0, originTranslation, targetTranslation);
           break;
 
         case INIT_FADE_2:
@@ -3856,20 +3689,6 @@ public class WMap extends EngineState<WMap> {
   }
 
   /** lerp, but it arcs in the y direction. Used for teleportation movement. */
-  @Method(0x800e0e4cL)
-  private void arcLerp(final Vector3f currPlayerPos, final Vector3f originPos, final Vector3f targetPos, final float ratio) {
-    if(ratio == 0.0f) {
-      currPlayerPos.set(originPos);
-    } else if(ratio == 1.0f) {
-      currPlayerPos.set(targetPos);
-    } else {
-      //LAB_800e0ed8
-      currPlayerPos.x = originPos.x + (targetPos.x - originPos.x) * ratio;
-      currPlayerPos.y = originPos.y + (targetPos.y - originPos.y) * ratio + MathHelper.sin(MathHelper.PI * ratio) * -200;
-      currPlayerPos.z = originPos.z + (targetPos.z - originPos.z) * ratio;
-    }
-    //LAB_800e108c
-  }
 
   @Method(0x800e10a0L)
   private void updateEncounterAndMovementAnimation() {
@@ -4250,10 +4069,10 @@ public class WMap extends EngineState<WMap> {
     if(this.isWorldMapTravelPending()) {
       return;
     }
-    this.encounterAccumulator_800c6ae8 = (int)Math.min(Integer.MAX_VALUE, (long)this.encounterAccumulator_800c6ae8 + rate.increment);
+    final WMapEncounterController.Accumulation accumulation = WMapEncounterController.accumulate(this.encounterAccumulator_800c6ae8, rate.increment, rate.threshold);
+    this.encounterAccumulator_800c6ae8 = accumulation.accumulator();
 
-    if(this.encounterAccumulator_800c6ae8 >= rate.threshold) {
-      this.encounterAccumulator_800c6ae8 = 0;
+    if(accumulation.encounterTriggered()) {
 
       final int battleStageId;
       if(directionalPathSegment.battleStage_04 == -1) {
@@ -4722,60 +4541,9 @@ public class WMap extends EngineState<WMap> {
           initTextbox(textboxes_800be358[7], false, 240, 71, 13, 7);
           this.mapTransitionState_800c68a4 = MapTransitionState.MAIN_LOOP_3;
 
-          // Build Objs
-          this.wmapLocationPromptPopup = new WmapPromptPopup(Objects.requireNonNull(this.places_800f0234[placeIndex].name_00), textZ_800bdf00 * 4.0f)
-            .addOptionText("Don't enter");
-
-          if(this.mapState_800c6798.submapCutTo_c8 == 999) { // Going to a different region
-            final String dest1 = this.regions_800f01ec[this.mapState_800c6798.submapSceneTo_ca >>> 4 & 0xffff];
-            final String dest2 = this.regions_800f01ec[this.mapState_800c6798.submapSceneTo_ca & 0xf];
-
-            this.wmapLocationPromptPopup
-              .addOptionText(dest1)
-              .addOptionText(dest2);
-            this.wmapLocationPromptPopup.setOptionSpacing(18.0f);
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00 * 4.0f - 2.0f);
-          } else {
-            this.wmapLocationPromptPopup.addOptionText("Enter");
-          }
-
-          final List<String> placeServices = this.worldMapData.services(this.worldMap.definition().place(placeIndex));
-          for(final String service : placeServices) this.wmapLocationPromptPopup.addAltText(service);
-
-          if(placeServices.isEmpty()) {
-            this.wmapLocationPromptPopup.addAltText("No facilities");
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 63.0f, textZ_800bdf00 * 4.0f - 2.0f);
-          }
-
-          this.wmapLocationPromptPopup.setHighlight(
-            WmapPromptPopup.HighlightMode.SHADOW,
-            new WmapMenuTextHighlight40(
-              0.0f,
-              new Vector3f(0.5f),
-              new Rect4i(176, 120, 128, 40),
-              8,
-              8,
-              4,
-              true,
-              Translucency.B_MINUS_F,
-              55.0f
-            )
-          );
-
-          this.wmapLocationPromptPopup.setHighlight(
-            WmapPromptPopup.HighlightMode.SELECTOR,
-            new WmapMenuTextHighlight40(
-              0.5f,
-              new Vector3f(1.0f, 0.0f, 0.0f),
-              new Rect4i(176, 150, 128, 24),
-              1,
-              2,
-              2,
-              true,
-              Translucency.B_PLUS_F,
-              51.0f
-            )
-          );
+          this.wmapLocationPromptPopup = WMapLocationPresentation.createPrompt(this.places_800f0234[placeIndex].name_00, textZ_800bdf00,
+            this.mapState_800c6798.submapCutTo_c8, this.mapState_800c6798.submapSceneTo_ca, this.regions_800f01ec,
+            this.mapState_800c6798.submapCutTo_c8 == 999 ? List.of() : this.worldMapData.services(this.worldMap.definition().place(placeIndex)));
         }
 
         //LAB_800e5700
@@ -6236,26 +6004,8 @@ public class WMap extends EngineState<WMap> {
     this.currentWmapEffect_800f6598 = WorldMapPresentation.from(this.worldMap.definition().portal(this.mapState_800c6798.locationIndex_10)).atmosphere().ordinal();
     this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
 
-    this.smokeInstances_800c86f8 = new WmapSmokeInstance60[48];
+    this.smokeInstances_800c86f8 = WMapAtmosphere.allocateSmoke();
 
-    Arrays.setAll(this.smokeInstances_800c86f8, i -> new WmapSmokeInstance60());
-
-    //LAB_800eb9b8
-    for(int i = 0; i < 48; i++) {
-      final WmapSmokeInstance60 smoke = this.smokeInstances_800c86f8[i];
-
-      //LAB_800eb9d4
-      GsInitCoordinate2(null, smoke.coord2_00);
-
-      //LAB_800eba0c
-      //LAB_800ebaa0
-      smoke.translationOffset_54.x =  rand() % 8 - 4;
-      smoke.translationOffset_54.y = -rand() % 3 - 2;
-      smoke.translationOffset_54.z =  rand() % 8 - 4;
-
-      //LAB_800ebadc
-      smoke.scaleAndColourFade_50 = rand() % 0x80;
-    }
     //LAB_800ebb18
   }
 
@@ -6271,301 +6021,22 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800ebb44L)
   private void allocateClouds() {
-    final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    modelAndAnimData.atmosphericEffectSprites = WMapAtmosphericEffectInstance60.buildCloudSprites();
-
-    modelAndAnimData.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[24];
-
-    //LAB_800ebbb4
-    final Vector3f translation = new Vector3f();
-    for(int i = 0; i < 12; i++) {
-      final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
-      modelAndAnimData.atmosphericEffectInstances_24[i] = cloud;
-
-      //LAB_800ebbd0
-      GsInitCoordinate2(null, cloud.coord2_00);
-
-      if((i & 0x1) == 0) {
-        translation.set(
-          700 - rand() % 1400,
-          -70 - rand() %   40,
-          700 - rand() % 1400
-        );
-
-        cloud.coord2_00.coord.transfer.set(translation);
-      } else {
-        //LAB_800ebd18
-        cloud.coord2_00.coord.transfer.set(translation).sub(
-          rand() % 200 - 100,
-          rand() %  80 -  40,
-          rand() %  50 -  25
-        );
-      }
-
-      //LAB_800ebe24
-      cloud.snowTick_50 = 0;
-      cloud.translation_58.set((288 - rand() % 64) / 2.0f, (80 - rand() % 32) / 2.0f, 0.0f);
-      cloud.brightness_5c = 0.0f;
-    }
-
-    //LAB_800ebf2c
-    //LAB_800ebf30
-    for(int i = 0; i < 12; i++) {
-      final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
-      modelAndAnimData.atmosphericEffectInstances_24[i + 12] = cloud;
-      cloud.set(modelAndAnimData.atmosphericEffectInstances_24[i]);
-      cloud.coord2_00.coord.transfer.y = 0.0f;
-    }
+    WMapAtmosphere.allocateClouds(this.modelAndAnimData_800c66a8);
   }
 
   @Method(0x800ebfc0L)
   private void renderClouds() {
-    final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    final WMapAtmosphericEffectInstance60 cloud0 = modelAndAnimData.atmosphericEffectInstances_24[0];
-    cloud0.coord2_00.flg = 0;
-
-    //LAB_800ec028
-    for(int i = 0; i < 24; i++) {
-      final WMapAtmosphericEffectInstance60 cloud = modelAndAnimData.atmosphericEffectInstances_24[i];
-
-      //LAB_800ec044
-      cloud.translation_58.z += 1.0f / (3.0f / vsyncMode_8007a3b8);
-      if((int)cloud.translation_58.z >> i % 3 + 4 != 0) {
-        cloud.coord2_00.coord.transfer.x += 1.0f / (3.0f / vsyncMode_8007a3b8);
-        cloud.translation_58.z = 0.0f;
-      }
-
-      //LAB_800ec288
-      if(cloud.coord2_00.coord.transfer.x > 700) {
-        cloud.coord2_00.coord.transfer.x = -700;
-      }
-
-      //LAB_800ec2b0
-      if(!this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal_c4) {
-        cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-        if(cloud.brightness_5c < 0.0f) {
-          cloud.brightness_5c = 0.0f;
-        }
-
-        //LAB_800ec30c
-      } else {
-        //LAB_800ec314
-        if(cloud.brightness_5c < 0.375f) {
-          cloud.brightness_5c += 0.0625f / (3.0f / vsyncMode_8007a3b8);
-        }
-
-        //LAB_800ec34c
-        if(modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.FADE_OUT_2) {
-          cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-          if(cloud.brightness_5c < 0.0f) {
-            cloud.brightness_5c = 0.0f;
-          }
-        }
-      }
-
-      //LAB_800ec3a8
-      if(!flEq(cloud.brightness_5c, 0.0f)) {
-        //LAB_800ec3c8
-        GsGetLs(cloud.coord2_00, cloud.transforms);
-        cloud.transforms.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(cloud.transforms);
-        GTE.perspectiveTransform(-cloud.translation_58.x, -cloud.translation_58.y, 0.0f);
-        final float sx0 = GTE.getScreenX(2);
-        final float sy0 = GTE.getScreenY(2);
-        float z = GTE.getScreenZ(3) / 4.0f;
-
-        if(z >= 5 && z < orderingTableSize_1f8003c8 - 3) {
-          //LAB_800ec534
-          GTE.perspectiveTransform(cloud.translation_58.x, -cloud.translation_58.y, 0.0f);
-          final float sx1 = GTE.getScreenX(2);
-          final float sy1 = GTE.getScreenY(2);
-          z = GTE.getScreenZ(3) / 4.0f;
-
-          if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
-            //LAB_800ec5ec
-            GTE.perspectiveTransform(-cloud.translation_58.x, cloud.translation_58.y, 0.0f);
-            final float sx2 = GTE.getScreenX(2);
-            final float sy2 = GTE.getScreenY(2);
-            z = GTE.getScreenZ(3) / 4.0f;
-
-            if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sy2 - sy0 <= 0x200) {
-              //LAB_800ec670
-              //LAB_800ec6a4
-              if(sy2 > 0) {
-                cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-                if(cloud.brightness_5c < 0.0f) {
-                  cloud.brightness_5c = 0.0f;
-                }
-                //LAB_800ec6fc
-              } else {
-                //LAB_800ec704
-                if(cloud.brightness_5c < 0.375f) {
-                  cloud.brightness_5c += 0.0625f / (3.0f / vsyncMode_8007a3b8);
-                }
-
-                //LAB_800ec73c
-                if(modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.FADE_OUT_2) {
-                  cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-                  if(cloud.brightness_5c < 0.0f) {
-                    cloud.brightness_5c = 0.0f;
-                  }
-                }
-              }
-
-              //LAB_800ec798
-              if(!flEq(cloud.brightness_5c, 0.0f)) {
-                //LAB_800ec7b8
-                GTE.perspectiveTransform(cloud.translation_58.x, cloud.translation_58.y, 0.0f);
-                final float sx3 = GTE.getScreenX(2);
-                final float sy3 = GTE.getScreenY(2);
-                z = GTE.getScreenZ(3) / 4.0f;
-
-                if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
-                  //LAB_800ec83c
-                  //LAB_800ec870
-                  //LAB_800ec8a4
-                  cloud.queueZ = i < 12 ? 556.0f : (orderingTableSize_1f8003c8 - 4.0f) * 4.0f;
-                  cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
-                  cloud.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, cloud.queueZ);
-                  RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[i % 3], cloud.transforms, QueuedModelStandard.class)
-                    .monochrome(i < 12 ? cloud.brightness_5c : cloud.brightness_5c / 3.0f);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    //LAB_800eca1c
+    WMapAtmosphere.renderClouds(this.modelAndAnimData_800c66a8, this.wmapCameraAndLights19c0_800c66b0);
   }
 
   @Method(0x800eca3cL)
   private void allocateSnow() {
-    final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    modelAndAnimData.atmosphericEffectSprites = WMapAtmosphericEffectInstance60.buildSnowSprites();
-
-    modelAndAnimData.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[64];
-
-    //LAB_800eca94
-    for(int i = 0; i < 64; i++) {
-      final WMapAtmosphericEffectInstance60 snowflake = new WMapAtmosphericEffectInstance60();
-      modelAndAnimData.atmosphericEffectInstances_24[i] = snowflake;
-
-      //LAB_800ecab0
-      GsInitCoordinate2(null, snowflake.coord2_00);
-      snowflake.coord2_00.coord.transfer.x = 500 - rand() % 1000;
-      snowflake.coord2_00.coord.transfer.y =     - rand() %  200;
-      snowflake.coord2_00.coord.transfer.z = 500 - rand() % 1000;
-      snowflake.snowTick_50 = rand() % 12;
-      snowflake.translation_58.set(rand() % 2 - 1, rand() % 2 + 1, rand() % 2 - 1);
-      snowflake.brightness_5c = 0.0f;
-    }
-    //LAB_800eccfc
+    WMapAtmosphere.allocateSnow(this.modelAndAnimData_800c66a8);
   }
 
   @Method(0x800ecd10L)
   private void renderSnow() {
-    //LAB_800ecdb4
-    final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    for(int i = 0; i < 64; i++) {
-      final WMapAtmosphericEffectInstance60 snowflake = modelAndAnimData.atmosphericEffectInstances_24[i];
-
-      //LAB_800ecdd0
-      if(!this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal_c4) {
-        snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-        if(snowflake.brightness_5c < 0.0f) {
-          snowflake.brightness_5c = 0.0f;
-        }
-
-        //LAB_800ed0c8
-      } else {
-        //LAB_800ed0d0
-        if(snowflake.brightness_5c < 0.375f) {
-          snowflake.brightness_5c += 0.0625f / (3.0f / vsyncMode_8007a3b8);
-        }
-
-        //LAB_800ed108
-        if(modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.FADE_OUT_2) {
-          snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-          if(snowflake.brightness_5c < 0.0f) {
-            snowflake.brightness_5c = 0.0f;
-          }
-        }
-      }
-
-      //LAB_800ed164
-      if(!flEq(snowflake.brightness_5c, 0.0f)) {
-        //LAB_800ed184
-        snowflake.coord2_00.coord.transfer.x += snowflake.translation_58.x / (3.0f / vsyncMode_8007a3b8);
-        snowflake.coord2_00.coord.transfer.y += snowflake.translation_58.y / (3.0f / vsyncMode_8007a3b8);
-        snowflake.coord2_00.coord.transfer.z += snowflake.translation_58.z / (3.0f / vsyncMode_8007a3b8);
-
-        if(snowflake.coord2_00.coord.transfer.y > 0.0f) {
-          snowflake.coord2_00.coord.transfer.x =  500 - rand() % 1000;
-          snowflake.coord2_00.coord.transfer.y = -200;
-          snowflake.coord2_00.coord.transfer.z =  500 - rand() % 1000;
-        }
-
-        //LAB_800ed2bc
-        snowflake.coord2_00.flg = 0;
-        GsGetLs(snowflake.coord2_00, snowflake.transforms);
-        snowflake.transforms.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(snowflake.transforms);
-        GTE.perspectiveTransform(-2, -2, 0);
-
-        final float sx0 = GTE.getScreenX(2);
-        final float sy0 = GTE.getScreenY(2);
-        float z = GTE.getScreenZ(3) / 4.0f;
-
-        if(z >= 5 && z < orderingTableSize_1f8003c8 - 3) {
-          //LAB_800ed37c
-          GTE.perspectiveTransform(2, -2, 0);
-
-          final float sx1 = GTE.getScreenX(2);
-          final float sy1 = GTE.getScreenY(2);
-          z = GTE.getScreenZ(3) / 4.0f;
-
-          if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
-            //LAB_800ed400
-            //LAB_800ed434
-            GTE.perspectiveTransform(-2, 2, 0);
-
-            final float sx2 = GTE.getScreenX(2);
-            final float sy2 = GTE.getScreenY(2);
-            z = GTE.getScreenZ(3) / 4.0f;
-
-            if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sy2 - sy0 <= 0x200) {
-              //LAB_800ed4b8
-              //LAB_800ed4ec
-              GTE.perspectiveTransform(2, 2, 0);
-
-              final float sx3 = GTE.getScreenX(2);
-              final float sy3 = GTE.getScreenY(2);
-              z = GTE.getScreenZ(3) / 4.0f;
-
-              if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
-                //LAB_800ed570
-                //LAB_800ed5a4
-                //LAB_800ed5d8
-                snowflake.snowTick_50 = (snowflake.snowTick_50 + 1.0f / (3.0f / vsyncMode_8007a3b8)) % 12;
-                final int index = (int)(snowflake.snowTick_50 / 2.0f);
-                snowflake.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
-                snowflake.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 556.0f);
-                RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[index], snowflake.transforms, QueuedModelStandard.class)
-                  .monochrome(snowflake.brightness_5c);
-              }
-            }
-          }
-        }
-      }
-    }
-    //LAB_800ed93c
+    WMapAtmosphere.renderSnow(this.modelAndAnimData_800c66a8, this.wmapCameraAndLights19c0_800c66b0);
   }
 
   @Method(0x800ed95cL)
@@ -6729,84 +6200,7 @@ public class WMap extends EngineState<WMap> {
           }
 
           //LAB_800ee5f0
-          smoke.coord2_00.flg = 0;
-          GsGetLs(smoke.coord2_00, smoke.transforms);
-          smoke.transforms.identity(); // NOTE: does not clear translation
-          GTE.setTransforms(smoke.transforms);
-
-          GTE.perspectiveTransform(-size, -size, 0);
-          final float sx0 = GTE.getScreenX(2);
-          final float sy0 = GTE.getScreenY(2);
-          float z = GTE.getScreenZ(3) / 4.0f;
-
-          //LAB_800ee6cc
-          if(z >= 5 || z < orderingTableSize_1f8003c8 - 3) {
-            //LAB_800ee6d4
-            GTE.perspectiveTransform(size, -size, 0);
-            final float sx1 = GTE.getScreenX(2);
-            final float sy1 = GTE.getScreenY(2);
-            z = GTE.getScreenZ(3) / 4.0f;
-
-            final float transformedSize = sx1 - sx0;
-
-            //LAB_800ee750
-            if(z >= 5 || z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
-              //LAB_800ee758
-              //LAB_800ee78c
-              GTE.perspectiveTransform(-size, size, 0);
-              final float sx2 = GTE.getScreenX(2);
-              final float sy2 = GTE.getScreenY(2);
-              z = GTE.getScreenZ(3) / 4.0f;
-
-              //LAB_800ee808
-              if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sy2 - sy0 <= 0x200) {
-                //LAB_800ee810
-                //LAB_800ee844
-                GTE.perspectiveTransform(size, size, 0);
-                final float sx3 = GTE.getScreenX(2);
-                final float sy3 = GTE.getScreenY(2);
-                z = GTE.getScreenZ(3) / 4.0f;
-
-                //LAB_800ee8c0
-                if(z >= 6 && z < orderingTableSize_1f8003c8 - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
-                  //LAB_800ee8c8
-                  //LAB_800ee8fc
-                  //LAB_800ee930
-                  final Translucency translucency = mode == 8 ? Translucency.B_MINUS_F : Translucency.B_PLUS_F;
-
-                  //LAB_800ee9b0
-                  //LAB_800eea34
-                  final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
-
-                  if(smoke.objs[index] == null) {
-                    smoke.objs[index] = new QuadBuilder("Smoke sprite " + index + " (index " + smokeIndex + ')')
-                      .bpp(Bpp.BITS_4)
-                      .vramPos(640, 256)
-                      .pos(0.0f, 0.0f, 0.0f)
-                      .size(1.0f, 1.0f)
-                      .clut(640, 505)
-                      .uv(96, index == 0 ? 48 : 80)
-                      .uvSize(32, 32)
-                      .translucency(translucency)
-                      .build();
-                  }
-
-                  smoke.transforms.scaling(transformedSize);
-                  smoke.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f);
-                  RENDERER.queueOrthoModel(smoke.objs[index], smoke.transforms, QueuedModelStandard.class)
-                    .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f);
-
-                  smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
-
-                  if(smoke.scaleAndColourFade_50 >= 0x80) {
-                    smoke.scaleAndColourFade_50 = 0;
-                  }
-                  //LAB_800eeccc
-                  smokeIndex++;
-                }
-              }
-            }
-          }
+            if(WMapAtmosphere.renderSmoke(smoke, size, mode, smokeIndex)) smokeIndex++;
         }
       }
     }
@@ -6823,16 +6217,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800eede4L)
   private void deallocateSmoke() {
-    for(final WmapSmokeInstance60 smoke : this.smokeInstances_800c86f8) {
-      if(smoke.objs[0] != null) {
-        smoke.objs[0].delete();
-      }
-
-      if(smoke.objs[1] != null) {
-        smoke.objs[1].delete();
-      }
-    }
-
+    WMapAtmosphere.deleteSmoke(this.smokeInstances_800c86f8);
     this.smokeInstances_800c86f8 = null;
   }
 
