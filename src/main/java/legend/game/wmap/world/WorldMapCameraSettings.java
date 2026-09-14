@@ -4,7 +4,11 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 /** Region camera defaults; bounds clamp the local camera target, never the player's route position. */
-public record WorldMapCameraSettings(WorldMapPoint viewpoint, WorldMapPoint refpoint, float projectionDistance, @Nullable WorldMapPoint overviewPosition, boolean overviewEnabled, @Nullable WorldMapPoint minimum, @Nullable WorldMapPoint maximum) {
+public record WorldMapCameraSettings(WorldMapPoint viewpoint, WorldMapPoint refpoint, float projectionDistance, @Nullable WorldMapPoint overviewPosition, boolean overviewEnabled, @Nullable WorldMapPoint minimum, @Nullable WorldMapPoint maximum, @Nullable WorldMapLightingSettings lighting) {
+  public WorldMapCameraSettings(final WorldMapPoint viewpoint, final WorldMapPoint refpoint, final float projectionDistance, @Nullable final WorldMapPoint overviewPosition, final boolean overviewEnabled, @Nullable final WorldMapPoint minimum, @Nullable final WorldMapPoint maximum) {
+    this(viewpoint, refpoint, projectionDistance, overviewPosition, overviewEnabled, minimum, maximum, null);
+  }
+
   public WorldMapCameraSettings {
     Objects.requireNonNull(viewpoint, "viewpoint");
     Objects.requireNonNull(refpoint, "refpoint");

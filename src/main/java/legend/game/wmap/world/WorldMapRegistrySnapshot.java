@@ -443,8 +443,8 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public RegistryId encounter(final int pool, final int roll) {
-    final List<RegistryId> choices = this.encounters.get(Math.max(0, pool)).encounters();
-    return choices.get(pool == -1 || roll < 35 ? 0 : roll < 70 ? 1 : roll < 90 ? 2 : 3);
+    final WorldMapEncounterPool choices = this.encounters.get(Math.max(0, pool));
+    return pool == -1 ? choices.encounters().getFirst() : choices.select(roll);
   }
 
   private void validate(final Registries registries) {
