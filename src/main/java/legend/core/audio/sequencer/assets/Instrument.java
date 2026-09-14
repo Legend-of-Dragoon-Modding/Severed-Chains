@@ -28,7 +28,7 @@ public final class Instrument {
     this.breathControlIndex = data.readUByte(0x05);
     this.startingNote = data.readUByte(0x06);
 
-    final int layerUpperBound = this.type == Type.SFX ? data.readByte(0x07) : upperBoundByte & 0x7f;
+    final int layerUpperBound = this.type == Type.SFX ? data.readByte(0x07) - 32 : upperBoundByte & 0x7f;
     this.layers = new InstrumentLayer[layerUpperBound + 1];
     for(int layer = 0; layer < this.layers.length; layer++) {
       this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
