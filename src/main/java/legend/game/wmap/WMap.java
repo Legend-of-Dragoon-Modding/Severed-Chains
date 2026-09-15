@@ -87,6 +87,7 @@ import legend.game.wmap.world.WorldMapRegion;
 import legend.game.wmap.world.WorldMapRegionRenderer;
 import legend.game.wmap.world.WorldMapRenderContext;
 import legend.game.wmap.world.WorldMapProgression;
+import legend.game.wmap.world.WorldMapProgressionResolver;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
 import legend.game.wmap.world.WorldMapRoute;
 import legend.game.wmap.world.WorldMapRules;
@@ -311,6 +312,7 @@ public class WMap extends EngineState<WMap> {
   public final MapState100 mapState_800c6798 = new MapState100();
 
   private WorldMapRuntime worldMap;
+  private final WorldMapProgressionResolver worldMapProgression = new WorldMapProgressionResolver();
   private WorldMapRegistrySnapshot worldMapData;
   private WorldMapTraversalState worldMapTraversal;
   private boolean worldMapTraversalTick;
@@ -511,7 +513,7 @@ public class WMap extends EngineState<WMap> {
         return WorldMapTravelRequestResult.CANCELLED;
       }
       final WorldMapRuntime candidate = new WorldMapRuntime(configured.definition(), configured.rules());
-      candidate.resolve(new WorldMapProgression.Builder(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c).build());
+      candidate.resolve(this.resolveWorldMapProgression(configured, true));
       if(WorldMapTravelPosition.resolve(Objects.requireNonNull(event.target, "World map preset target"), configured.definition(), candidate.view(), event.respectAccess) == null) {
         return WorldMapTravelRequestResult.DENIED;
       }
@@ -612,21 +614,31 @@ public class WMap extends EngineState<WMap> {
     return this.worldMap.access(portal, action, this.worldMapRegionId);
   }
 
+  /** The source increments its revision whenever its persisted or transient facts change. */
+  public void watchWorldMapProgression(final RegistryId source, final java.util.function.LongSupplier revision) {
+    this.worldMapProgression.watch(source, revision);
+    this.invalidateWorldMap();
+  }
+
+  private WorldMapProgression resolveWorldMapProgression(final ConfiguredWorldMap configured, final boolean candidate) {
+    if(this.resolvingWorldMap) throw new IllegalStateException("World map progression must not re-enter resolution");
+    this.resolvingWorldMap = true;
+    try {
+      return this.worldMapProgression.resolve(this, gameState_800babc8, configured.data(), configured.definition(), configured.preset() == null ? null : configured.preset().id(), candidate);
+    } finally {
+      this.resolvingWorldMap = false;
+    }
+  }
+
   private void refreshWorldMap() {
     // Observers see the published view; any invalidation they request remains pending for the next caller.
     if(this.notifyingWorldMap) return;
     if(this.resolvingWorldMap) {
       throw new IllegalStateException("WorldMapProgressionEvent must not re-enter world-map queries");
     }
-    if(this.worldMap != null && this.worldMap.needsRefresh(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c)) {
-      this.resolvingWorldMap = true;
-      try {
-        final WorldMapProgressionEvent event = EVENTS.postEvent(new WorldMapProgressionEvent(this, gameState_800babc8, new WorldMapProgression.Builder(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c).objective(this.worldMapData.objective(gameState_800babc8.scriptFlags2_bc, this.worldMap.definition()))));
-        this.worldMap.resolve(event.progression.build());
-        this.worldMapPresentationDirty = true;
-      } finally {
-        this.resolvingWorldMap = false;
-      }
+    if(this.worldMap != null && (this.worldMapProgression.changed() || this.worldMap.needsRefresh(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c))) {
+      this.worldMap.resolve(this.resolveWorldMapProgression(new ConfiguredWorldMap(this.worldMapData, this.worldMap.definition(), this.worldMap.rules(), this.activeWorldMapPreset), false));
+      this.worldMapPresentationDirty = true;
       this.notifyingWorldMap = true;
       try {
         EVENTS.postEvent(new WorldMapResolvedEvent(this, gameState_800babc8, this.worldMap.view()));
