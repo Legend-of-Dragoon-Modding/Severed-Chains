@@ -200,9 +200,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.game.sound.Audio.addSoundFile;
-import static legend.game.sound.Audio.getLoadedAudioFiles;
 import static legend.game.sound.Audio.loadSshdAndSoundbank;
-import static legend.game.sound.Audio.loadWmapMusic;
 import static legend.game.sound.Audio.loadingAudioFiles_800bcf78;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.sound.Audio.playSound;
@@ -370,6 +368,24 @@ public class WMap extends EngineState<WMap> {
   private int routeAvatarMovementAnimation = 2;
   private boolean notifyingWorldMap;
   private boolean worldMapPresentationDirty;
+  private legend.game.wmap.world.WorldMapResourceBundle worldMapResources = legend.game.wmap.world.RetailWorldMapResourceBundle.INSTANCE;
+  private final legend.game.wmap.world.WorldMapResourceLoader resourceLoader = new legend.game.wmap.world.WorldMapResourceLoader();
+  private boolean backgroundLoaded;
+  private Tag initialWorldMapPosition;
+  private long musicRequestedAt;
+
+  private void loadWorldMapMusic() {
+    this.musicRequestedAt = System.nanoTime();
+    this.worldMapResources.loadMusic(gameState_800babc8.chapterIndex_98);
+  }
+
+  private boolean worldMapMusicReady() {
+    if(this.worldMapResources.musicReady()) return true;
+    if(this.musicRequestedAt != 0 && System.nanoTime() - this.musicRequestedAt > java.util.concurrent.TimeUnit.SECONDS.toNanos(60)) {
+      throw new IllegalStateException("World map music timed out for " + this.worldMapRegionId);
+    }
+    return false;
+  }
   private WorldMapObjective renderedWorldMapObjective;
   private Location14[] locations_800f0e34;
   private Place0c[] places_800f0234;
@@ -404,7 +420,7 @@ public class WMap extends EngineState<WMap> {
         // Unresolved history is retained until explicit restoration or discard.
       } catch(final IllegalArgumentException unavailable) {
         LOGGER.warn("Saved world map position is unavailable; retaining it and selecting a playable arrival", unavailable);
-        if(this.savedWorldMapData != null && !gameState_800babc8.retainedSaveTags.has("worldMapUnresolvedPosition")) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.savedWorldMapData.clone());
+        if(this.savedWorldMapData != null) legend.game.wmap.world.WorldMapRecovery.retain(gameState_800babc8, this.savedWorldMapData, "saved route is unavailable");
         gameState_800babc8.worldMapFallback = true;
       }
       this.savedWorldMapRoute = null;
@@ -438,7 +454,7 @@ public class WMap extends EngineState<WMap> {
         // Unresolved history is retained until explicit restoration or discard.
       } catch(final IllegalArgumentException unavailable) {
         LOGGER.warn("Saved travel target is unavailable; retaining it and selecting a playable arrival", unavailable);
-        if(!gameState_800babc8.retainedSaveTags.has("worldMapUnresolvedPosition")) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.restoredWorldMapTarget);
+        legend.game.wmap.world.WorldMapRecovery.retain(gameState_800babc8, this.restoredWorldMapTarget, "saved target is unavailable");
         gameState_800babc8.worldMapFallback = true;
       }
       this.restoredWorldMapTarget = null;
@@ -484,21 +500,18 @@ public class WMap extends EngineState<WMap> {
 
   /** Explicitly discard unresolved history; ordinary saves never choose it as the active position. */
   public void discardWorldMapRecovery() {
-    gameState_800babc8.retainedSaveTags.remove("worldMapUnresolvedPosition");
+    legend.game.wmap.world.WorldMapRecovery.discard(gameState_800babc8);
   }
 
   /** Restore retained position only on explicit request, using the normal access/activation contract. */
   public WorldMapTravelRequestResult requestWorldMapRecovery() throws IOException {
-    if(!gameState_800babc8.retainedSaveTags.has("worldMapUnresolvedPosition")) return WorldMapTravelRequestResult.DENIED;
-    final boolean previousFallback = gameState_800babc8.worldMapFallback;
-    final WorldMapPreset preset;
+    final Tag position = legend.game.wmap.world.WorldMapRecovery.position(gameState_800babc8);
+    if(position == null) return WorldMapTravelRequestResult.DENIED;
     try {
-      preset = WorldMapPresetManager.load(gameState_800babc8);
-      if(gameState_800babc8.worldMapFallback) return WorldMapTravelRequestResult.DENIED;
-    } finally {
-      gameState_800babc8.worldMapFallback = previousFallback;
+      return this.requestWorldMapPreset(legend.game.wmap.world.WorldMapRecovery.preset(gameState_800babc8), position);
+    } catch(final legend.game.wmap.world.WorldMapDependencyException unavailable) {
+      return WorldMapTravelRequestResult.DENIED;
     }
-    return this.requestWorldMapPreset(preset, gameState_800babc8.retainedSaveTags.get("worldMapUnresolvedPosition"));
   }
 
   public WorldMapDefinition getWorldMapDefinition() {
@@ -595,6 +608,8 @@ public class WMap extends EngineState<WMap> {
       this.pendingWorldMapPreset = new PresetSwitch(token, configured);
       final boolean wasNativeFallback = this.usingNativeFallback;
       final boolean wasSavedFallback = this.savedNativeFallback;
+      final Tag previousRecovery = gameState_800babc8.retainedSaveTags.has("worldMapRecovery") ? gameState_800babc8.retainedSaveTags.get("worldMapRecovery").clone() : null;
+      final Tag previousPosition = legend.game.wmap.world.WorldMapRecovery.position(gameState_800babc8);
       event.onActivate(() -> {
         this.usingNativeFallback = false;
         this.savedNativeFallback = false;
@@ -602,7 +617,11 @@ public class WMap extends EngineState<WMap> {
       }, () -> {
         this.usingNativeFallback = wasNativeFallback;
         this.savedNativeFallback = wasSavedFallback;
-        if(recoveryPosition != null) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", recoveryPosition);
+        if(recoveryPosition != null) {
+          this.discardWorldMapRecovery();
+          if(previousRecovery != null) gameState_800babc8.retainedSaveTags.set("worldMapRecovery", previousRecovery.clone());
+          if(previousPosition != null) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", previousPosition.clone());
+        }
       });
       this.worldMapTransition.queue(event.target, event.respectAccess);
       return WorldMapTravelRequestResult.ACCEPTED;
@@ -682,6 +701,12 @@ public class WMap extends EngineState<WMap> {
     return WorldMapTravelTarget.atRouteDistance(route.id(), route.direction() > 0 ? progress : 1.0f - progress);
   }
 
+  private MapTag currentWorldMapReturnData() {
+    final MapTag tag = EngineDestination.worldMap(this.currentWorldMapTarget()).data().asMap();
+    if(this.usingNativeFallback) tag.set("nativeFallback", new legend.core.tags.BoolTag(true));
+    return tag;
+  }
+
   private void captureWorldMapRecovery() {
     this.recoveryCampaign = new legend.game.wmap.world.WorldMapCampaignSnapshot(gameState_800babc8);
     this.recoveryWorldMap = new ConfiguredWorldMap(this.worldMapData, this.worldMap.definition(), this.worldMap.rules(), this.activeWorldMapPreset);
@@ -696,14 +721,28 @@ public class WMap extends EngineState<WMap> {
   private boolean recoverWorldMap(final Throwable failure) {
     if(this.pendingActivation != null) this.pendingActivation.rollback(failure);
     this.pendingActivation = null;
-    if(this.recoveryWorldMap == null || this.recoveringWorldMap) return false;
+    if(this.recoveryWorldMap == null) return failure instanceof RuntimeException && this.recoverInitialWorldMap(failure);
+    if(this.recoveringWorldMap) return false;
     LOGGER.warn("World map travel failed; restoring previous world", failure);
     this.recoveringWorldMap = true;
-    this.deallocate();
-    if(this.recoveryCampaign != null) this.recoveryCampaign.restore();
-    gameState_800babc8.wmapFlags_15c.set(this.recoveryWorldMapState.wmapFlags_15c);
-    gameState_800babc8.visitedLocations_17c.set(this.recoveryWorldMapState.visitedLocations_17c);
-    gameState_800babc8.worldMapPortalState.set(this.recoveryWorldMapState.worldMapPortalState);
+    boolean cleaned = true;
+    try {
+      this.deallocate();
+    } catch(final RuntimeException | Error cleanupFailure) {
+      failure.addSuppressed(cleanupFailure);
+      cleaned = false;
+    } finally {
+      try {
+        if(this.recoveryCampaign != null) this.recoveryCampaign.restore();
+        gameState_800babc8.wmapFlags_15c.set(this.recoveryWorldMapState.wmapFlags_15c);
+        gameState_800babc8.visitedLocations_17c.set(this.recoveryWorldMapState.visitedLocations_17c);
+        gameState_800babc8.worldMapPortalState.set(this.recoveryWorldMapState.worldMapPortalState);
+      } catch(final RuntimeException | Error restoreFailure) {
+        failure.addSuppressed(restoreFailure);
+        cleaned = false;
+      }
+    }
+    if(!cleaned || failure instanceof Error) return false;
     this.pendingWorldMapPreset = new PresetSwitch(gameState_800babc8.worldMapPreset, this.recoveryWorldMap);
     this.activatingWorldMapPreset = null;
     this.worldMapTransition.queue(this.recoveryWorldMapTarget, false);
@@ -712,6 +751,37 @@ public class WMap extends EngineState<WMap> {
     this.reinitializingWmap_80052c6c = true;
     this.wmapState_800bb10c = WmapState.INIT;
     return true;
+  }
+
+  private boolean recoverInitialWorldMap(final Throwable failure) {
+    if(this.initialWorldMapPosition == null || this.usingNativeFallback || this.recoveringWorldMap) return false;
+    boolean missing = false;
+    for(Throwable cause = failure; cause != null; cause = cause.getCause()) {
+      if(cause instanceof IOException || cause instanceof legend.game.wmap.world.WorldMapDependencyException) {
+        missing = true;
+        break;
+      }
+      if(cause.getCause() == cause) break;
+    }
+    if(!missing) return false;
+    this.recoveringWorldMap = true;
+    legend.game.wmap.world.WorldMapRecovery.retain(gameState_800babc8, this.initialWorldMapPosition, "saved region resource is unavailable");
+    try {
+      this.deallocate();
+      final WorldMapPreset nativeMap = WorldMapPreset.vanilla();
+      this.pendingWorldMapPreset = new PresetSwitch(gameState_800babc8.worldMapPreset, this.compileWorldMap(WorldMapPresetManager.validate(nativeMap), nativeMap));
+      this.activatingWorldMapPreset = null;
+      this.usingNativeFallback = true;
+      this.savedNativeFallback = true;
+      gameState_800babc8.worldMapFallback = true;
+      this.reinitializingWmap_80052c6c = true;
+      this.wmapState_800bb10c = WmapState.INIT;
+      LOGGER.warn("Saved world map resources are unavailable; loading the native fallback", failure);
+      return true;
+    } catch(final RuntimeException | Error cleanupFailure) {
+      failure.addSuppressed(cleanupFailure);
+      return false;
+    }
   }
 
   /** Call when mod-owned progression changes. Legacy flag changes are detected automatically. */
@@ -981,6 +1051,10 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
+    this.initialWorldMapPosition = tag == null ? null : tag.clone();
+    if(gameState.retainedSaveTags.has("worldMapUnresolvedPosition")) {
+      legend.game.wmap.world.WorldMapRecovery.retain(gameState, gameState.retainedSaveTags.get("worldMapUnresolvedPosition"), "legacy unresolved position");
+    }
     final Tag source = tag;
     this.savedNativeFallback = tag != null && tag.asMap().has("nativeFallback") && tag.asMap().get("nativeFallback").asBool().get();
     if(source != null && source.asMap().has("worldMapTarget")) {
@@ -1075,7 +1149,10 @@ public class WMap extends EngineState<WMap> {
   @Method(0x8001eea8L)
   private void loadWorldMapLocationMenuSoundEffects(final int index) {
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x8000);
-    loadDrgnDir(0, 5740 + index).thenAccept(this::worldMapLocationMenuSoundEffectsLoaded);
+    this.resourceLoader.load(this.worldMapRegionId + " location sounds", this.worldMapResources.locationSoundFiles(index), files -> {
+      if(!files.isEmpty()) this.worldMapLocationMenuSoundEffectsLoaded(files);
+      loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
+    });
   }
 
   @Method(0x8001eefcL)
@@ -1130,18 +1207,19 @@ public class WMap extends EngineState<WMap> {
     try {
       this.tickWorldMapFrame();
     } catch(final RuntimeException | Error failure) {
+      if(this.recoverWorldMap(failure)) return;
       try {
         this.deleteWorldMapRegion();
       } catch(final RuntimeException | Error cleanupFailure) {
         failure.addSuppressed(cleanupFailure);
       }
-      if(failure instanceof RuntimeException && this.recoverWorldMap(failure)) return;
       this.worldMapTransition.fail();
       throw failure;
     }
   }
 
   private void tickWorldMapFrame() {
+    this.resourceLoader.tick();
     super.tick();
 
     this.beginWorldMapTravel();
@@ -1181,6 +1259,11 @@ public class WMap extends EngineState<WMap> {
       this.recoveryWorldMapState = null;
       this.recoveryWorldMapTarget = null;
       this.recoveringWorldMap = false;
+    }
+    if(this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698 == WorldMapState.RENDER_5
+      && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state
+      && this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
+      this.initialWorldMapPosition = null;
     }
   }
 
@@ -1224,7 +1307,7 @@ public class WMap extends EngineState<WMap> {
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       //LAB_800cc804
       resizeDisplay(320, 240);
-      loadWmapMusic(gameState_800babc8.chapterIndex_98);
+      this.loadWorldMapMusic();
       this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS;
 
       this.unloadWmapPlayerModels();
@@ -1300,13 +1383,13 @@ public class WMap extends EngineState<WMap> {
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8 = 1;
     unloadSoundFile(9);
-    loadWmapMusic(gameState_800babc8.chapterIndex_98);
-    this.wmapState_800bb10c = WmapState.WAIT_FOR_MUSIC_TO_LOAD;
+    // Region selection below chooses the audio owner before any music is requested.
+    this.wmapState_800bb10c = WmapState.INIT2;
   }
 
   @Method(0x800ccc30L)
   private void waitForWmapMusicToLoad() {
-    if((getLoadedAudioFiles() & 0x80) == 0) {
+    if(this.worldMapMusicReady()) {
       this.wmapState_800bb10c = WmapState.INIT2;
     }
 
@@ -1331,9 +1414,9 @@ public class WMap extends EngineState<WMap> {
   }
 
   private void loadBackgroundObj() {
-    if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
+    if(this.backgroundLoaded && this.worldMapMusicReady()) {
       this.mcqBrightness_800ef1a4 = 0.0f;
-      this.mcqObj = new McqBuilder("World Map Background MCQ", this.mcqHeader_800c6768)
+      if(this.mcqHeader_800c6768 != null) this.mcqObj = new McqBuilder("World Map Background MCQ", this.mcqHeader_800c6768)
         .translucency(Translucency.B_PLUS_F)
         .vramOffset(320, 0)
         .build();
@@ -1367,7 +1450,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800ccd70L)
   private void restoreMapOnExitMainMenu() {
-    if((getLoadedAudioFiles() & 0x80) == 0) {
+    if(this.worldMapMusicReady()) {
       this.restoreMapOnExitMenu_();
     }
     //LAB_800ccd94
@@ -1389,14 +1472,18 @@ public class WMap extends EngineState<WMap> {
     if(this.pendingEngineDestination != null) {
       final Tag payload = this.pendingEngineDestination.data();
       if(this.pendingEngineDestination.engineState().equals(LodEngineStateTypes.SUBMAP.getId())) {
-        payload.asMap().set("worldMapReturn", EngineDestination.worldMap(this.currentWorldMapTarget()).data());
+        payload.asMap().set("worldMapReturn", this.currentWorldMapReturnData());
       }
       this.engineStateData = payload;
       this.pendingEngineDestination = null;
     }
-    if(this.engineStateToTransitionTo == LodEngineStateTypes.SUBMAP.get() && this.engineStateData == null && this.worldMapData.standalone()) {
-      final Tag payload = EngineDestination.submap(new SubmapEndpoint(submapCut_80052c30, submapScene_80052c34)).data();
-      payload.asMap().set("worldMapReturn", EngineDestination.worldMap(this.currentWorldMapTarget()).data());
+    if(this.engineStateToTransitionTo == LodEngineStateTypes.SUBMAP.get() && this.engineStateData == null) {
+      final WorldMapPortal portal = this.getWorldMapPortal();
+      final boolean redirected = portal.to().cut() != submapCut_80052c30 || portal.to().scene() != submapScene_80052c34;
+      final Tag payload = portal.toId() == null || redirected
+        ? EngineDestination.submap(new SubmapEndpoint(submapCut_80052c30, submapScene_80052c34)).data()
+        : this.worldMapData.portalEngineDestination(portal).data();
+      payload.asMap().set("worldMapReturn", this.currentWorldMapReturnData());
       this.engineStateData = payload;
     }
     EngineStates.engineStateData = this.engineStateData;
@@ -1482,19 +1569,20 @@ public class WMap extends EngineState<WMap> {
 
     this.initTransitionAnimation(FadeAnimationType.FADE_IN_1);
     this.initFlagsPathsCutsAndPlaces();
+    this.loadWorldMapMusic();
     this.loadWmapTextures();
     this.initCameraAndLight();
     this.loadMapModelAssets();
     this.loadPlayerAvatarTextureAndModelFiles();
     this.allocateSmoke();
-    if(this.getWorldMapRegion().hasLegacyTemplate()) this.loadMapMcq();
+    this.loadMapMcq();
     this.coolonQueenFuryOverlay = new CoolonQueenFuryOverlay();
     this.initCoolonMovePrompt();
     this.initMapMarkers();
     this.modelAndAnimData_800c66a8.zoomOverlay = new ZoomOverlay();
 
-    if(!this.getWorldMapRegion().hasLegacyTemplate()) {
-      // Region presentation owns its sounds; common UI sounds remain available.
+    if(!this.getWorldMapRegion().hasLegacyTemplate() || !this.worldMapResources.locationSounds()) {
+      if(this.worldMapResources.locationSounds()) this.loadWorldMapLocationMenuSoundEffects(0);
     } else if(this.mapState_800c6798.continent_00.continentNum < Continent.ILLISA_BAY_3.continentNum) { // South Serdio, North Serdio, Tiberoa
       this.loadWorldMapLocationMenuSoundEffects(1);
     } else {
@@ -1592,6 +1680,8 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800cd278L)
   private void deallocate() {
+    this.resourceLoader.clear();
+    loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8000);
     if(this.worldMapTraversal != null) {
       final boolean travelling = this.worldMapTransition.arriving() || this.wmapState_800bb10c == WmapState.TRANSITION_TO_WORLD_MAP || this.wmapState_800bb10c == WmapState.TRANSITION_TO_ENGINE_STATE;
       this.worldMapTraversal.leave(this, gameState_800babc8, travelling ? WorldMapTraversalEvent.Cause.TRAVEL : WorldMapTraversalEvent.Cause.UNLOAD);
@@ -1606,10 +1696,10 @@ public class WMap extends EngineState<WMap> {
       this.mcqObj = null;
     }
 
-    this.coolonQueenFuryOverlay.deallocate();
+    if(this.coolonQueenFuryOverlay != null) this.coolonQueenFuryOverlay.deallocate();
     this.coolonQueenFuryOverlay = null;
 
-    this.mapState_800c6798.pathDots.delete();
+    if(this.mapState_800c6798.pathDots != null) this.mapState_800c6798.pathDots.delete();
 
     if(this.coolonPromptPopup != null) {
       this.coolonPromptPopup.deallocate();
@@ -1620,7 +1710,7 @@ public class WMap extends EngineState<WMap> {
     this.unloadWmapPlayerModels();
     this.modelAndAnimData_800c66a8.deleteMapMarkers();
     this.deallocateAtmosphericEffect();
-    this.modelAndAnimData_800c66a8.zoomOverlay.delete();
+    if(this.modelAndAnimData_800c66a8.zoomOverlay != null) this.modelAndAnimData_800c66a8.zoomOverlay.delete();
     this.deallocateSmoke();
     textZ_800bdf00 = 13;
 
@@ -2338,7 +2428,7 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800d5a30L)
   private void loadPlayerAvatarModelFiles(final List<FileData> files, final int whichFile) {
     if(files.get(0).size() != 0) {
-      this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[whichFile].extendedTmd_00 = new CContainer("DRGN0/" + (5714 + whichFile), files.get(0));
+      this.modelAndAnimData_800c66a8.playerModelTmdFileData_b4[whichFile].extendedTmd_00 = new CContainer("World map transport " + whichFile, files.get(0));
     }
 
     //LAB_800d5a48
@@ -2476,7 +2566,7 @@ public class WMap extends EngineState<WMap> {
   @Method(0x800d6880L)
   private void loadWmapTextures() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_efff);
-    loadDrgnDir(0, 5695).thenAccept(files -> this.timsLoaded(files, 0x1_1000));
+    this.resourceLoader.load(this.worldMapRegionId + " UI textures", this.worldMapResources.uiTextures(), files -> this.timsLoaded(files, 0x1_1000));
     this.modelAndAnimData_800c66a8.mapTextureBrightness_20 = 0.0f;
   }
 
@@ -2655,6 +2745,14 @@ public class WMap extends EngineState<WMap> {
 
   private void selectWorldMapRegion(final int portalIndex) {
     this.worldMapRegionId = this.worldMapData.regionId(this.worldMap.definition().portal(portalIndex));
+    this.worldMapResources = this.getWorldMapRegion().resources();
+    final var presentation = this.worldMapResources.layout() == null ? this.worldMapData.presentation() : this.worldMapResources.layout();
+    this.mapPositions_800ef1a8 = presentation.mapPositions().stream().map(point -> new Vector3i((int)point.x(), (int)point.y(), (int)point.z())).toArray(Vector3i[]::new);
+    this.regions_800f01ec = presentation.regions().toArray(String[]::new);
+    this.services_800f01cc = presentation.services().toArray(String[]::new);
+    this.playerAvatarVramSlots_800ef694 = presentation.playerAvatarVramSlots().stream().mapToInt(Integer::intValue).toArray();
+    this.waterClutYs_800ef348 = presentation.waterClutYs().stream().mapToInt(Integer::intValue).toArray();
+    this.tmdUvAdjustmentMetrics_800eee48 = presentation.textureAdjustments().toArray(UvAdjustmentMetrics14[]::new);
     this.mapState_800c6798.continent_00 = this.getWorldMapRegion().hasLegacyTemplate() ? this.getWorldMapRegion().legacyTemplate() : Continent.NONE_8;
     continentIndex_800bf0b0 = this.getWorldMapRegion().hasLegacyTemplate() ? this.mapState_800c6798.continent_00.continentNum : 0;
   }
@@ -3628,7 +3726,7 @@ public class WMap extends EngineState<WMap> {
   private void deallocateWorldMap() {
     this.deleteWorldMapRegion();
     for(int i = 0; this.modelAndAnimData_800c66a8.tmdRendering_08 != null && i < this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
-      this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08.delete();
+      if(this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 != null) this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08.delete();
     }
     this.modelAndAnimData_800c66a8.tmdRendering_08 = null;
   }
@@ -3645,7 +3743,7 @@ public class WMap extends EngineState<WMap> {
     this.leaderWorldMapTexture = null;
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x2a8);
 
-    loadDrgnDir(0, 5713).thenAccept(files -> {
+    this.resourceLoader.load(this.worldMapRegionId + " transport textures", this.worldMapResources.transportTextures(), files -> {
       for(int i = 1; i < 4; i++) {
         final FileData file = files.get(i);
 
@@ -3670,7 +3768,7 @@ public class WMap extends EngineState<WMap> {
 
     for(int i = 1; i < 4; i++) {
       final int finalI = i;
-      loadDrgnDir(0, 5714 + i).thenAccept(files -> this.loadPlayerAvatarModelFiles(files, finalI));
+      this.resourceLoader.load(this.worldMapRegionId + " transport model " + i, this.worldMapResources.transportModel(i), files -> this.loadPlayerAvatarModelFiles(files, finalI));
     }
 
     this.loadPlayerModelAndAnimsForFirstChar();
@@ -3683,7 +3781,7 @@ public class WMap extends EngineState<WMap> {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & ~0x10);
 
     final CharacterData2c character = gameState_800babc8.getCharacterBySlot(0);
-    character.template.loadWorldMapModel(character, this::loadPlayerCharModelFiles);
+    this.resourceLoader.load(this.worldMapRegionId + " leader model", this.worldMapResources.leaderModel(character), this::loadPlayerCharModelFiles);
   }
 
   @Method(0x800dfbd8L)
@@ -3841,11 +3939,11 @@ public class WMap extends EngineState<WMap> {
     //LAB_800e05d8
     for(int i = 0; i < 4; i++) {
       //LAB_800e05f4
-      this.modelAndAnimData_800c66a8.models_0c[i].deleteModelParts();
+      if(this.modelAndAnimData_800c66a8.models_0c[i] != null) this.modelAndAnimData_800c66a8.models_0c[i].deleteModelParts();
       this.modelAndAnimData_800c66a8.models_0c[i] = null;
     }
 
-    this.modelAndAnimData_800c66a8.shadowObj.delete();
+    if(this.modelAndAnimData_800c66a8.shadowObj != null) this.modelAndAnimData_800c66a8.shadowObj.delete();
     this.modelAndAnimData_800c66a8.shadowObj = null;
   }
 
@@ -4352,7 +4450,7 @@ public class WMap extends EngineState<WMap> {
       if(event.cancelled || this.isWorldMapTravelPending()) {
         return;
       }
-      startEncounter(new BattleRequest(event.encounter, event.resolveBattleStage(), BattleReturnContext.capture(this, gameState_800babc8)));
+      startEncounter(new BattleRequest(event.encounter, event.resolveBattleStage(), new BattleReturnContext(LodEngineStateTypes.WORLD_MAP.getId(), this.currentWorldMapReturnData())));
 
       //LAB_800e3a38
       this.engineStateToTransitionTo = LodEngineStateTypes.BATTLE.get();
@@ -4643,8 +4741,13 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800e4e1cL)
   private void loadMapMcq() {
+    this.backgroundLoaded = false;
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffe);
-    loadDrgnFile(0, 5696).thenAccept(this::loadMapMcqToVram);
+    this.mcqHeader_800c6768 = null;
+    this.resourceLoader.load(this.worldMapRegionId + " background", this.worldMapResources.background(), data -> {
+      if(data != null) this.loadMapMcqToVram(data);
+      this.backgroundLoaded = true;
+    });
     this.mcqColour_800c6794 = 0.0f;
   }
 
@@ -6528,7 +6631,7 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800eede4L)
   private void deallocateSmoke() {
-    WMapAtmosphere.deleteSmoke(this.smokeInstances_800c86f8);
+    if(this.smokeInstances_800c86f8 != null) WMapAtmosphere.deleteSmoke(this.smokeInstances_800c86f8);
     this.smokeInstances_800c86f8 = null;
   }
 

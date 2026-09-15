@@ -151,7 +151,91 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
   }
 
   public record Region(@Nullable Continent legacyTemplate, RegistryId provider, RegistryId presentationProvider,
-                       WorldMapCameraSettings camera, @Nullable RegionAssets assets) { }
+                       WorldMapCameraSettings camera, @Nullable RegionAssets assets,
+                       @Nullable SceneTransform scene, @Nullable Resources resources) {
+    public Region(final Continent legacyTemplate, final RegistryId provider, final RegistryId presentationProvider,
+                  final WorldMapCameraSettings camera, final RegionAssets assets) {
+      this(legacyTemplate, provider, presentationProvider, camera, assets, null, null);
+    }
+  }
+
+  /** Explicit affine basis; unlike Euler angles this round-trips every provider scene transform. */
+  public record SceneTransform(WorldMapPoint translation, WorldMapPoint xAxis, WorldMapPoint yAxis, WorldMapPoint zAxis) {
+    public SceneTransform {
+      for(final WorldMapPoint point : List.of(translation, xAxis, yAxis, zAxis)) {
+        if(!Float.isFinite(point.x()) || !Float.isFinite(point.y()) || !Float.isFinite(point.z())) throw new IllegalArgumentException("Scene transform must be finite");
+      }
+    }
+
+    public WorldMapScene resolve() {
+      final legend.core.gte.MV matrix = new legend.core.gte.MV();
+      matrix.m00(this.xAxis.x()).m01(this.xAxis.y()).m02(this.xAxis.z());
+      matrix.m10(this.yAxis.x()).m11(this.yAxis.y()).m12(this.yAxis.z());
+      matrix.m20(this.zAxis.x()).m21(this.zAxis.y()).m22(this.zAxis.z());
+      matrix.transfer.set(this.translation.x(), this.translation.y(), this.translation.z());
+      return new WorldMapScene(matrix);
+    }
+
+    public static SceneTransform from(final WorldMapScene scene) {
+      final legend.core.gte.MV matrix = scene.transform();
+      return new SceneTransform(new WorldMapPoint(matrix.transfer.x, matrix.transfer.y, matrix.transfer.z),
+        new WorldMapPoint(matrix.m00(), matrix.m01(), matrix.m02()), new WorldMapPoint(matrix.m10(), matrix.m11(), matrix.m12()),
+        new WorldMapPoint(matrix.m20(), matrix.m21(), matrix.m22()));
+    }
+  }
+
+  public enum MusicPolicy { RETAIL_CHAPTER, KEEP, SILENT, FIXED_CHAPTER }
+
+  public record ModelFiles(String model, @Nullable String texture, List<String> animations) {
+    public ModelFiles {
+      Objects.requireNonNull(model, "model");
+      animations = List.copyOf(animations);
+      if(animations.isEmpty()) throw new IllegalArgumentException("World map model requires an animation");
+    }
+  }
+
+  public record SoundFiles(String header, String indices, String sequence, String bank) { }
+
+  /** Omitted resources inherit the registered region bundle, then retail defaults. */
+  public record Resources(@Nullable List<String> uiTextures, @Nullable List<String> transportTextures,
+                          @Nullable List<ModelFiles> transports, @Nullable ModelFiles leader,
+                          @Nullable String background, boolean omitBackground, @Nullable MusicPolicy music,
+                          int musicChapter, boolean omitLocationSounds, @Nullable SoundFiles locationSoundFiles, @Nullable PresentationProfile layout) {
+    public Resources {
+      if(uiTextures != null) {
+        uiTextures = List.copyOf(uiTextures);
+        if(uiTextures.isEmpty()) throw new IllegalArgumentException("World map UI requires an atlas texture");
+      }
+      if(transportTextures != null) {
+        transportTextures = List.copyOf(transportTextures);
+        if(transportTextures.size() != 3) throw new IllegalArgumentException("Transport textures require ship, Coolon, and teleport entries");
+      }
+      if(transports != null) {
+        transports = List.copyOf(transports);
+        if(transports.size() != 3) throw new IllegalArgumentException("Transport models require ship, Coolon, and teleport entries");
+      }
+      if(leader != null && (leader.texture == null || leader.animations.size() < 3)) throw new IllegalArgumentException("Leader requires a texture and idle/walk/run animations");
+      if(background != null && omitBackground) throw new IllegalArgumentException("Cannot both supply and omit the background");
+      if(musicChapter < 0) throw new IllegalArgumentException("Music chapter must be nonnegative");
+    }
+
+    public Set<String> assetPaths() {
+      final Set<String> paths = new HashSet<>();
+      if(this.uiTextures != null) paths.addAll(this.uiTextures);
+      if(this.transportTextures != null) paths.addAll(this.transportTextures);
+      final List<ModelFiles> models = new ArrayList<>();
+      if(this.transports != null) models.addAll(this.transports);
+      if(this.leader != null) models.add(this.leader);
+      for(final ModelFiles model : models) {
+        paths.add(model.model);
+        if(model.texture != null) paths.add(model.texture);
+        paths.addAll(model.animations);
+      }
+      if(this.background != null) paths.add(this.background);
+      if(this.locationSoundFiles != null) paths.addAll(List.of(this.locationSoundFiles.header, this.locationSoundFiles.indices, this.locationSoundFiles.sequence, this.locationSoundFiles.bank));
+      return Set.copyOf(paths);
+    }
+  }
 
   public record Removal(String kind, RegistryId id) {
     public Removal {
@@ -285,6 +369,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
       if(value.asset != null) paths.add(value.asset);
     });
     this.regions.values().forEach(region -> {
+      if(region.resources != null) paths.addAll(region.resources.assetPaths());
       if(region.assets != null) {
         paths.add(region.assets.model);
         paths.addAll(region.assets.textures);
@@ -303,10 +388,16 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
 
   public Map<RegistryId, WorldMapRegion> resolveRegions(final Registries registries) {
     final Map<RegistryId, WorldMapRegion> providers = values(registries.worldMapRegions);
-    return transform(this.regions, (id, region) -> new WorldMapRegion(region.legacyTemplate,
-      region.assets == null ? require(providers, region.provider, "region model provider", id).model() :
-        gameState -> WorldMapPresetAssets.region(this.packageRoot, id, region.assets),
-      region.camera, require(providers, region.presentationProvider, "region presentation provider", id).presentation(), WorldMapScene.identity()));
+    return transform(this.regions, (id, region) -> {
+      final legend.game.wmap.world.WorldMapResourceBundle fallback = providers.containsKey(region.provider) ? providers.get(region.provider).resources()
+        : region.legacyTemplate == null ? legend.game.wmap.world.RetailWorldMapResourceBundle.INDEPENDENT : legend.game.wmap.world.RetailWorldMapResourceBundle.INSTANCE;
+      return new WorldMapRegion(region.legacyTemplate,
+        region.assets == null ? require(providers, region.provider, "region model provider", id).model() :
+          gameState -> WorldMapPresetAssets.region(this.packageRoot, id, region.assets),
+        region.camera, require(providers, region.presentationProvider, "region presentation provider", id).presentation(),
+        region.scene == null ? (providers.containsKey(region.provider) ? providers.get(region.provider).scene() : WorldMapScene.identity()) : region.scene.resolve(),
+        region.resources == null ? fallback : new PresetWorldMapResourceBundle(this.packageRoot, region.resources, fallback));
+    });
   }
 
   public Map<RegistryId, WorldMapAvatar> resolveAvatars(final Registries registries) {
@@ -401,7 +492,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     builder.storyPresets.putAll(values(registries.worldMapStoryPresets));
     builder.coolonDestinations.putAll(values(registries.worldMapCoolonDestinations));
     builder.teleportLinks.putAll(values(registries.worldMapTeleportLinks));
-    values(registries.worldMapRegions).forEach((key, value) -> builder.regions.put(key, new Region(value.legacyTemplate(), key, key, value.camera(), null)));
+    values(registries.worldMapRegions).forEach((key, value) -> builder.regions.put(key, new Region(value.legacyTemplate(), key, key, value.camera(), null, SceneTransform.from(value.scene()), null)));
     values(registries.worldMapAvatars).forEach((key, value) -> builder.avatars.put(key, new Avatar(key, null)));
     values(registries.worldMapTraversalProfiles).forEach((key, value) -> builder.traversalProfiles.put(key,
       new TraversalProfile(value.priority(), key, value.routes(), value.markers(), value.includeReverseRoutes(), 1.0f, null, null, List.of())));

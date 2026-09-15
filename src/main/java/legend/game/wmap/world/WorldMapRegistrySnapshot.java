@@ -225,6 +225,13 @@ public final class WorldMapRegistrySnapshot {
     return destination.endpoint();
   }
 
+  public legend.game.EngineDestination portalEngineDestination(final WorldMapPortal portal) {
+    if(portal.toId() == null) return legend.game.EngineDestination.submap(portal.to());
+    final WorldMapSubmapDestination destination = this.submapDestinations.get(portal.toId());
+    if(destination == null) throw new IllegalArgumentException("Unknown WMAP destination " + portal.toId() + " on portal " + portal.id());
+    return destination.engineDestination();
+  }
+
   private int battleStage(final RegistryId id, final RegistryId route) {
     final WorldMapBattleStage stage = this.battleStages.get(id);
     if(stage == null) throw new IllegalArgumentException("Unknown WMAP battle stage " + id + " on route " + route);
