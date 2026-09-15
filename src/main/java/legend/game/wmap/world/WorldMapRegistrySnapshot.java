@@ -34,6 +34,7 @@ public final class WorldMapRegistrySnapshot {
   private final List<WorldMapTraversalProfile> traversalProfiles;
 
   private final WorldMapDefinition definition;
+  private final List<WorldMapGeometry> motionGeometry;
   private final List<WorldMapStoryPreset> story;
   private final List<Value<WorldMapCoolonDestination>> coolon;
   private final List<WorldMapTeleportLink> teleports;
@@ -92,6 +93,7 @@ public final class WorldMapRegistrySnapshot {
     final List<WorldMapPlace> places = data(WorldMapSlots.allocate(resolve(registries.worldMapPlaces, preset == null ? Map.of() : preset.places())));
     for(final WorldMapPlace place : places) this.validatePlaceReferences(place);
     final List<WorldMapGeometry> geometry = data(registeredGeometry).stream().sorted(Comparator.comparingInt(WorldMapGeometry::legacyIndex)).toList();
+    this.motionGeometry = geometry;
     if(portals.size() < 256) {
       throw new IllegalArgumentException("WMAP requires at least the 256 legacy portal slots");
     }
@@ -229,6 +231,10 @@ public final class WorldMapRegistrySnapshot {
         if(!this.sounds.containsKey(id)) throw new IllegalArgumentException("Unknown WMAP sound " + id + " on place " + place.id());
       }
     }
+  }
+
+  public WorldMapGeometry movement(final WorldMapRoute route) {
+    return this.motionGeometry.get(route.segmentIndex());
   }
 
   public WorldMapDefinition definition() { return this.definition; }

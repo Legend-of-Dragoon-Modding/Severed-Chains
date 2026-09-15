@@ -96,6 +96,8 @@ import legend.game.wmap.world.WorldMapSave;
 import legend.game.wmap.world.WorldMapTravel;
 import legend.game.wmap.world.WorldMapTravelTarget;
 import legend.game.wmap.world.WorldMapTransition;
+import legend.game.wmap.world.WorldMapGeometry;
+import legend.game.wmap.world.WorldMapRouteMetric;
 import legend.game.wmap.world.WorldMapThumbnail;
 import legend.game.wmap.world.WorldMapTravelRequestResult;
 import legend.game.wmap.world.WorldMapTravelPosition;
@@ -315,6 +317,7 @@ public class WMap extends EngineState<WMap> {
   private final WorldMapProgressionResolver worldMapProgression = new WorldMapProgressionResolver();
   private WorldMapRegistrySnapshot worldMapData;
   private WorldMapTraversalState worldMapTraversal;
+  private java.util.List<WorldMapRouteMetric> worldMapMetrics;
   private boolean worldMapTraversalTick;
   private WorldMapTraversalEvent.Cause worldMapTraversalArrival = WorldMapTraversalEvent.Cause.ARRIVAL;
   private CoolonWarpDestination20[] coolonWarpDest_800ef228;
@@ -377,6 +380,7 @@ public class WMap extends EngineState<WMap> {
     this.activeWorldMapPreset = configured.preset();
     final WorldMapDefinition definition = configured.definition();
     this.worldMapTraversal = new WorldMapTraversalState(this.worldMapData.traversalProfiles(definition));
+    this.worldMapMetrics = definition.geometry().stream().map(WorldMapRouteMetric::new).toList();
     final int flagWords = (definition.portals().size() + 31) / 32;
     gameState_800babc8.wmapFlags_15c.ensureCapacity(flagWords);
     gameState_800babc8.visitedLocations_17c.ensureCapacity(flagWords);
@@ -5293,6 +5297,9 @@ public class WMap extends EngineState<WMap> {
   }
 
   private float worldMapTraversalProgress() {
+    if(this.worldMapData.movement(this.getWorldMapRoute()).motion() == WorldMapGeometry.Motion.DISTANCE) {
+      return this.worldMapMetrics.get(this.mapState_800c6798.pathIndex_14).progress(this.mapState_800c6798.dotIndex_16, this.mapState_800c6798.dotOffset_18);
+    }
     final int intervals = this.pathSegmentLengths_800f5810[this.mapState_800c6798.pathIndex_14] - 1;
     return Math.max(0.0f, Math.min(1.0f, (this.mapState_800c6798.dotIndex_16 + this.mapState_800c6798.dotOffset_18 / 4.0f) / intervals));
   }
@@ -5419,6 +5426,17 @@ public class WMap extends EngineState<WMap> {
     }
 
     final float speed = this.worldMapTraversalTick ? this.worldMapTraversal.speedMultiplier() : 1.0f;
+    final WorldMapGeometry geometry = this.worldMapData.movement(this.getWorldMapRoute());
+    if(geometry.motion() == WorldMapGeometry.Motion.DISTANCE) {
+      final double movement = (this.mapState_800c6798.dotOffset_18 - previousOffset) * speed * geometry.unitsPerStep();
+      final WorldMapRouteMetric.Cursor cursor = this.worldMapMetrics.get(this.mapState_800c6798.pathIndex_14).move(this.mapState_800c6798.dotIndex_16, previousOffset, movement);
+      this.mapState_800c6798.dotIndex_16 = cursor.index();
+      this.mapState_800c6798.dotOffset_18 = cursor.offset();
+      this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = cursor.endpoint() < 0 ? PathSegmentEntering.PREVIOUS_1 : cursor.endpoint() > 0 ? PathSegmentEntering.NEXT_2 : PathSegmentEntering.CURRENT_0;
+      this.initEnterQueenFuryTransition();
+      return;
+    }
+
     if(speed != 1.0f) {
       // Modified motion can cross several dots, but stops at the first route endpoint. The unchanged
       // vanilla branch below preserves its existing rounding and endpoint representation by default.
