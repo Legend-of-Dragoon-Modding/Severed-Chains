@@ -12,7 +12,6 @@ import legend.core.tags.StringTag;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.characters.CharacterData2c;
-import legend.game.characters.CharacterTemplate;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.ItemStack;
