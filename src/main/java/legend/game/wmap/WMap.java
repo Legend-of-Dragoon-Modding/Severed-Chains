@@ -22,6 +22,8 @@ import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
+import legend.game.EngineDestination;
+import legend.core.tags.MapTag;
 import legend.game.EngineStateType;
 import legend.game.EngineStates;
 import legend.game.characters.CharacterData2c;
@@ -845,8 +847,31 @@ public class WMap extends EngineState<WMap> {
     return WorldMapSave.write(gameState, this.worldMap == null ? null : this.worldMap.definition());
   }
 
+  private EngineDestination pendingEngineDestination;
+
+  @Override
+  public boolean requestTravel(final EngineDestination destination) {
+    if(destination.engineState().equals(LodEngineStateTypes.WORLD_MAP.getId())) {
+      return this.travelToWorldMap(EngineDestination.worldMapTarget(destination.data()));
+    }
+    if(this.isWorldMapTravelPending() || this.pendingEngineDestination != null || !this.worldMapTravelReady()) return false;
+    this.engineStateToTransitionTo = REGISTRIES.engineStateTypes.getEntry(destination.engineState()).get();
+    this.pendingEngineDestination = destination;
+    this.mapState_800c6798.disableInput_d0 = true;
+    this.initTransitionAnimation(FadeAnimationType.FADE_OUT_2);
+    return true;
+  }
+
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
+    if(tag != null && tag.asMap().has("worldMapTarget")) {
+      this.worldMapTransition.queue(EngineDestination.worldMapTarget(tag), true);
+      this.worldMapTransition.begin();
+      this.worldMapTransition.loading();
+      this.savedWorldMapRoute = null;
+      this.savedWorldMapData = null;
+      return;
+    }
     this.savedWorldMapRoute = WorldMapSave.read(gameState, tag);
     this.savedWorldMapData = tag;
   }
@@ -882,7 +907,7 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public boolean canSave() {
-    return !this.isWorldMapTravelPending();
+    return !this.isWorldMapTravelPending() && this.pendingEngineDestination == null;
   }
 
   @Override
@@ -1237,6 +1262,14 @@ public class WMap extends EngineState<WMap> {
 
     this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+    if(this.pendingEngineDestination != null) {
+      final Tag payload = this.pendingEngineDestination.data();
+      if(this.pendingEngineDestination.engineState().equals(LodEngineStateTypes.SUBMAP.getId())) {
+        payload.asMap().set("worldMapReturn", WorldMapSave.write(gameState_800babc8, this.worldMap.definition()));
+      }
+      this.engineStateData = payload;
+      this.pendingEngineDestination = null;
+    }
     EngineStates.engineStateData = this.engineStateData;
     this.engineStateData = null;
     vsyncMode_8007a3b8 = 2;
@@ -4421,7 +4454,9 @@ public class WMap extends EngineState<WMap> {
         if(modelAndAnimData.mapTextureBrightness_20 == 0.0f) {
           modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE_0;
 
-          if(this.worldMapTransition.arriving()) {
+          if(this.pendingEngineDestination != null) {
+            this.wmapState_800bb10c = WmapState.TRANSITION_TO_ENGINE_STATE;
+          } else if(this.worldMapTransition.arriving()) {
             this.wmapState_800bb10c = WmapState.TRANSITION_TO_WORLD_MAP;
           } else if(submapCut_80052c30 != 999) {
             this.engineStateToTransitionTo = LodEngineStateTypes.SUBMAP.get();
