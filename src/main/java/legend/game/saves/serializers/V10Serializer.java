@@ -61,19 +61,16 @@ public final class V10Serializer {
     final ConfigCollection config = new ConfigCollection();
     final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
     savedGame.retainedSaveTags = new MapTag();
+    if(tag.has("worldMapRecovery")) {
+      final MapTag recovery = tag.get("worldMapRecovery").asMap();
+      if(recovery.has("package")) recovery.set("package", legend.game.wmap.preset.WorldMapPresetManager.retainPackage(recovery.get("package").asMap()));
+    }
     for(final String key : tag.keys()) {
       if(!KNOWN_FIELDS.contains(key)) savedGame.retainedSaveTags.set(key, tag.get(key).clone());
     }
     for(final String key : java.util.List.of("equipment", "items", "goods", "characters")) savedGame.registrySaveData.set(key, tag.get(key).clone());
     if(tag.has("worldMapPackage")) {
-      final MapTag worldPackage = tag.get("worldMapPackage").asMap();
-      if(worldPackage.has("assets")) {
-        for(final Tag asset : worldPackage.get("assets").asList()) {
-          final MapTag entry = asset.asMap();
-          if(entry.get("data") instanceof final RawTag raw) entry.set("data", new legend.core.tags.ImmutableRawTag(raw.get()));
-        }
-      }
-      savedGame.worldMapPackage = worldPackage;
+      savedGame.worldMapPackage = legend.game.wmap.preset.WorldMapPresetManager.retainPackage(tag.get("worldMapPackage").asMap());
     }
 
     final ListTag scriptDataTag = tag.get("scriptData").asList();
