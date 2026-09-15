@@ -14,12 +14,20 @@ import java.util.function.Supplier;
  * their scene anchor directly and require no native TMD.
  * Model coordinates must align with authored graph points; no terrain height fitting is implied.
  */
-public record WorldMapRegion(@Nullable Continent legacyTemplate, WorldMapModelProvider model, WorldMapCameraSettings camera, Supplier<WorldMapPresentationController> presentation, WorldMapScene scene) {
+public record WorldMapRegion(@Nullable Continent legacyTemplate, WorldMapModelProvider model, WorldMapCameraSettings camera, Supplier<WorldMapPresentationController> presentation, WorldMapScene scene, WorldMapResourceBundle resources) {
   public WorldMapRegion {
     Objects.requireNonNull(model, "model");
     Objects.requireNonNull(camera, "camera");
     Objects.requireNonNull(presentation, "presentation");
     Objects.requireNonNull(scene, "scene");
+    Objects.requireNonNull(resources, "resources");
+  }
+
+  /** Preserves retail map assets, transforms, animations, and presentation behavior. */
+  public WorldMapRegion(final Continent legacyTemplate, final WorldMapModelProvider model,
+                        final WorldMapCameraSettings camera, final Supplier<WorldMapPresentationController> presentation,
+                        final WorldMapScene scene) {
+    this(legacyTemplate, model, camera, presentation, scene, legacyTemplate == null ? RetailWorldMapResourceBundle.INDEPENDENT : RetailWorldMapResourceBundle.INSTANCE);
   }
 
   /** Preserves retail map assets, transforms, animations, and presentation behavior. */
@@ -29,8 +37,14 @@ public record WorldMapRegion(@Nullable Continent legacyTemplate, WorldMapModelPr
   }
 
   /** Creates a region whose provider owns all map rendering and scene anchoring. */
-  public static WorldMapRegion independent(final WorldMapModelProvider model, final WorldMapCameraSettings camera, final Supplier<WorldMapPresentationController> presentation, final WorldMapScene scene) {
+  public static WorldMapRegion independent(final WorldMapModelProvider model, final WorldMapCameraSettings camera,
+                                           final Supplier<WorldMapPresentationController> presentation, final WorldMapScene scene) {
     return new WorldMapRegion(null, model, camera, presentation, scene);
+  }
+
+  /** Creates a region with an independently owned presentation resource bundle. */
+  public static WorldMapRegion independent(final WorldMapModelProvider model, final WorldMapCameraSettings camera, final Supplier<WorldMapPresentationController> presentation, final WorldMapScene scene, WorldMapResourceBundle resources) {
+    return new WorldMapRegion(null, model, camera, presentation, scene, resources);
   }
 
   public boolean hasLegacyTemplate() {

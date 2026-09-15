@@ -357,8 +357,10 @@ public final class WorldMapPresetManager {
       state.worldMapPackage = tag.clone();
       return tag;
     } catch(final IOException failure) {
-      LOGGER.warn("World map package cannot be embedded; retaining available save data", failure);
-      return state.worldMapPackage == null ? null : state.worldMapPackage.clone();
+      // A matching cached package returned above. Never attach a different world's bytes
+      // to this token: readers would reject the resulting identity mismatch.
+      LOGGER.warn("World map package cannot be embedded; retaining its identity for missing-content recovery", failure);
+      return null;
     }
   }
 

@@ -87,7 +87,7 @@ public final class WorldMapPresetCodec {
     "WorldMapRouteData.encounterPool", "WorldMapRouteData.avatar", "WorldMapStoryPreset.place", "WorldMapStoryPreset.composition",
     "WorldMapCameraSettings.overviewPosition", "WorldMapCameraSettings.minimum", "WorldMapCameraSettings.maximum", "WorldMapCameraSettings.lighting",
     "WorldMapEncounterPool.percentages",
-    "Region.legacyTemplate", "Region.assets", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",
+    "Region.legacyTemplate", "Region.assets", "Region.scene", "Region.resources", "Resources.uiTextures", "Resources.transportTextures", "Resources.transports", "Resources.leader", "Resources.background", "Resources.omitBackground", "Resources.music", "Resources.musicChapter", "Resources.omitLocationSounds", "Resources.locationSoundFiles", "Resources.layout", "ModelFiles.texture", "WorldMapSubmapDestination.provider", "WorldMapSubmapDestination.data", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",
     "TraversalProfile.provider", "TraversalProfile.avatar", "TraversalProfile.visualOffset", "Warp.marker",
     "ThumbnailDefinition.asset", "ThumbnailDefinition.label", "ThumbnailDefinition.provider",
     "WorldMapService.legacyBit", "WorldMapSound.label", "WorldMapBattleStage.label", "WorldMapBattleStage.combatStageId", "WorldMapSubmapDestination.label",
@@ -257,6 +257,8 @@ public final class WorldMapPresetCodec {
         final Element value = child(element, name, !optional);
         if(value == null) {
           args[i] = null;
+        } else if(component.getType() == legend.core.tags.Tag.class) {
+          args[i] = WorldMapDestinationTagCodec.read(value);
         } else if(component.getGenericType() instanceof ParameterizedType parameterized) {
           shape(value, Set.of(), Set.of("item"));
           final Class<?> itemType = (Class<?>)parameterized.getActualTypeArguments()[0];
@@ -503,7 +505,11 @@ public final class WorldMapPresetCodec {
             }
           }
         } else {
-          writeRecord(child, value);
+          if(value instanceof legend.core.tags.Tag tag) {
+            WorldMapDestinationTagCodec.write(child, tag);
+          } else {
+            writeRecord(child, value);
+          }
         }
       }
     }

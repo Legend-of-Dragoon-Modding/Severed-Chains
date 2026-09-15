@@ -15,6 +15,15 @@ public record WorldMapPresentationProfile(List<WorldMapPoint> mapPositions, List
     waterClutYs = List.copyOf(waterClutYs);
     playerAvatarVramSlots = List.copyOf(playerAvatarVramSlots);
     textureAdjustments = List.copyOf(textureAdjustments);
+    if(mapPositions.size() < 8 || regions.size() < 3 || services.size() < 5 || waterClutYs.size() < 14 || playerAvatarVramSlots.size() < 4 || textureAdjustments.size() < 22) {
+      throw new IllegalArgumentException("World map presentation must supply the runtime's bounded UI and avatar slots");
+    }
+    for(final int slot : playerAvatarVramSlots) {
+      if(slot < 0 || slot >= textureAdjustments.size()) throw new IllegalArgumentException("Unknown world map avatar texture slot " + slot);
+    }
+    for(final WorldMapPoint point : mapPositions) {
+      if(!Float.isFinite(point.x()) || !Float.isFinite(point.y()) || !Float.isFinite(point.z())) throw new IllegalArgumentException("World map presentation positions must be finite");
+    }
   }
 
   public static WorldMapPresentationProfile legacy() {
