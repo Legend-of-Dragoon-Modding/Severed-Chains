@@ -26,6 +26,7 @@ import legend.game.wmap.world.WorldMapPortal;
 import legend.game.wmap.world.WorldMapPresentationProfile;
 import legend.game.wmap.world.WorldMapPresentation;
 import legend.game.wmap.world.WorldMapRegion;
+import legend.game.wmap.world.WorldMapScene;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
 import legend.game.wmap.world.WorldMapRoute;
 import legend.game.wmap.world.WorldMapRouteData;
@@ -75,7 +76,25 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
                              Map<RegistryId, TraversalProfile> traversalProfiles,
                              Map<RegistryId, PresentationProfile> presentationProfiles,
                              Rules rules, @Nullable Set<RegistryId> behaviours,
-                             Set<Removal> removals, Map<RegistryId, String> thumbnails) {
+  Set<Removal> removals, Map<RegistryId, String> thumbnails, boolean standalone,
+  @Nullable RegistryId startingPortal, @Nullable RegistryId recoveryPortal) {
+  /** Source-compatible constructor for presets written before standalone metadata existed. */
+  public WorldMapPreset(final RegistryId id, final String name, final String description, final Set<String> requiredMods, final Path packageRoot,
+                         final Map<RegistryId, ThumbnailDefinition> thumbnailDefinitions, final Map<RegistryId, WorldMapService> serviceDefinitions,
+                         final Map<RegistryId, WorldMapSound> soundDefinitions, final Map<RegistryId, WorldMapBattleStage> battleStageDefinitions,
+                         final Map<RegistryId, WorldMapSubmapDestination> submapDestinations, final Map<RegistryId, WorldMapNode> nodes,
+                         final Map<RegistryId, WorldMapGeometry> geometry, final Map<RegistryId, WorldMapPlace> places,
+                         final Map<RegistryId, WorldMapRouteData> routes, final Map<RegistryId, WorldMapPortal> portals,
+                         final Map<RegistryId, WorldMapEncounterPool> encounterPools, final Map<RegistryId, WorldMapStoryPreset> storyPresets,
+                         final Map<RegistryId, WorldMapCoolonDestination> coolonDestinations, final Map<RegistryId, WorldMapTeleportLink> teleportLinks,
+                         final Map<RegistryId, Region> regions, final Map<RegistryId, Avatar> avatars,
+                         final Map<RegistryId, TraversalProfile> traversalProfiles, final Map<RegistryId, PresentationProfile> presentationProfiles,
+                         final Rules rules, @Nullable final Set<RegistryId> behaviours, final Set<Removal> removals, final Map<RegistryId, String> thumbnails) {
+    this(id, name, description, requiredMods, packageRoot, thumbnailDefinitions, serviceDefinitions, soundDefinitions, battleStageDefinitions,
+      submapDestinations, nodes, geometry, places, routes, portals, encounterPools, storyPresets, coolonDestinations, teleportLinks, regions,
+      avatars, traversalProfiles, presentationProfiles, rules, behaviours, removals, thumbnails, false, null, null);
+  }
+
   public WorldMapPreset(final RegistryId id, final String name, final String description, final Set<String> requiredMods,
                         final Path packageRoot, final Map<RegistryId, WorldMapNode> nodes,
                         final Map<RegistryId, WorldMapGeometry> geometry, final Map<RegistryId, WorldMapPlace> places,
@@ -87,10 +106,10 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
                         final Map<RegistryId, Avatar> avatars, final Map<RegistryId, TraversalProfile> traversalProfiles,
                         final Map<RegistryId, PresentationProfile> presentationProfiles, final Rules rules,
                         @Nullable final Set<RegistryId> behaviours, final Set<Removal> removals,
-                        final Map<RegistryId, String> thumbnails) {
+                             final Map<RegistryId, String> thumbnails) {
     this(id, name, description, requiredMods, packageRoot, Map.of(), Map.of(), Map.of(), Map.of(), Map.of(), nodes, geometry,
       places, routes, portals, encounterPools, storyPresets, coolonDestinations, teleportLinks, regions, avatars,
-      traversalProfiles, presentationProfiles, rules, behaviours, removals, thumbnails);
+      traversalProfiles, presentationProfiles, rules, behaviours, removals, thumbnails, false, null, null);
   }
 
   public WorldMapPreset {
@@ -124,13 +143,14 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     nodes.forEach((key, value) -> requireIdentity(key, value.id()));
     places.forEach((key, value) -> requireIdentity(key, value.id()));
     portals.forEach((key, value) -> requireIdentity(key, value.id()));
+    if(!standalone && (startingPortal != null || recoveryPortal != null)) throw new IllegalArgumentException("World-map start and recovery portals require standalone mode");
   }
 
   private static void requireIdentity(final RegistryId key, final RegistryId value) {
     if(!key.equals(value)) throw new IllegalArgumentException("Preset entry " + key + " changes identity to " + value);
   }
 
-  public record Region(Continent legacyTemplate, RegistryId provider, RegistryId presentationProvider,
+  public record Region(@Nullable Continent legacyTemplate, RegistryId provider, RegistryId presentationProvider,
                        WorldMapCameraSettings camera, @Nullable RegionAssets assets) { }
 
   public record Removal(String kind, RegistryId id) {
@@ -142,6 +162,13 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
 
   public WorldMapDefinition removeFrom(final WorldMapDefinition definition) {
     if(this.removals.isEmpty()) return definition;
+    if(!this.standalone) {
+      for(final Removal removal : this.removals) {
+        if(removal.kind.equals("portals") && definition.portal(removal.id).legacyIndex() < 256) {
+          throw new IllegalArgumentException("Cannot remove vanilla WMAP script portal slot " + removal.id);
+        }
+      }
+    }
     final WorldMapDefinition.Builder builder = definition.toBuilder();
     for(final String kind : List.of("portals", "routes", "places", "nodes", "geometry")) {
       for(final Removal removal : this.removals.stream().filter(value -> value.kind.equals(kind)).sorted(java.util.Comparator.comparing(value -> value.id.toString())).toList()) {
@@ -279,7 +306,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     return transform(this.regions, (id, region) -> new WorldMapRegion(region.legacyTemplate,
       region.assets == null ? require(providers, region.provider, "region model provider", id).model() :
         gameState -> WorldMapPresetAssets.region(this.packageRoot, id, region.assets),
-      region.camera, require(providers, region.presentationProvider, "region presentation provider", id).presentation()));
+      region.camera, require(providers, region.presentationProvider, "region presentation provider", id).presentation(), WorldMapScene.identity()));
   }
 
   public Map<RegistryId, WorldMapAvatar> resolveAvatars(final Registries registries) {
@@ -531,6 +558,9 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     @Nullable public Set<RegistryId> behaviours;
     public final Set<Removal> removals = new HashSet<>();
     public final Map<RegistryId, String> thumbnails = new LinkedHashMap<>();
+    public boolean standalone;
+    @Nullable public RegistryId startingPortal;
+    @Nullable public RegistryId recoveryPortal;
 
     public Builder(final RegistryId id, final String name) { this.id = id; this.name = name; }
     public Builder description(final String value) { this.description = value; return this; }
@@ -539,11 +569,26 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     public Builder rules(final Rules value) { this.rules = value; return this; }
     public Builder behaviours(@Nullable final Set<RegistryId> value) { this.behaviours = value; return this; }
 
+    public Builder standalone(final boolean value) {
+      this.standalone = value;
+      return this;
+    }
+
+    public Builder startingPortal(@Nullable final RegistryId value) {
+      this.startingPortal = value;
+      return this;
+    }
+
+    public Builder recoveryPortal(@Nullable final RegistryId value) {
+      this.recoveryPortal = value;
+      return this;
+    }
+
     public WorldMapPreset build() {
       return new WorldMapPreset(this.id, this.name, this.description, this.requiredMods, this.packageRoot,
         this.thumbnailDefinitions, this.serviceDefinitions, this.soundDefinitions, this.battleStageDefinitions, this.submapDestinations, this.nodes,
         this.geometry, this.places, this.routes, this.portals, this.encounterPools, this.storyPresets, this.coolonDestinations,
-        this.teleportLinks, this.regions, this.avatars, this.traversalProfiles, this.presentationProfiles, this.rules, this.behaviours, this.removals, this.thumbnails);
+      this.teleportLinks, this.regions, this.avatars, this.traversalProfiles, this.presentationProfiles, this.rules, this.behaviours, this.removals, this.thumbnails, this.standalone, this.startingPortal, this.recoveryPortal);
     }
   }
 }

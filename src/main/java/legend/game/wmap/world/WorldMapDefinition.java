@@ -110,6 +110,10 @@ public final class WorldMapDefinition {
     return this.geometry.get(get(this.geometryIndices, id, "geometry"));
   }
 
+  public Map<RegistryId, Integer> geometryIndices() {
+    return this.geometryIndices;
+  }
+
   public WorldMapNode node(final RegistryId id) {
     return get(this.nodesById, id, "node");
   }
@@ -365,9 +369,6 @@ public final class WorldMapDefinition {
 
     public Builder removePortal(final RegistryId id) {
       final int index = idIndex(this.portals, id, WorldMapPortal::id, "portal");
-      if(index < 256) {
-        throw new IllegalArgumentException("Cannot remove vanilla WMAP script portal slot " + index);
-      }
       this.portals.remove(index);
       this.portalRouteIndices.remove(index);
       this.portalPlaceIndices.remove(index);

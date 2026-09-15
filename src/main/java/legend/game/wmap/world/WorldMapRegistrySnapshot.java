@@ -35,15 +35,18 @@ public final class WorldMapRegistrySnapshot {
 
   private final WorldMapDefinition definition;
   private final List<WorldMapGeometry> motionGeometry;
+  private final Map<RegistryId, WorldMapGeometry> movementById;
   private final List<WorldMapStoryPreset> story;
   private final List<Value<WorldMapCoolonDestination>> coolon;
   private final List<WorldMapTeleportLink> teleports;
   private final List<WorldMapEncounterPool> encounters;
   private final WorldMapPresentationProfile presentation;
   @Nullable private final WorldMapPreset preset;
+  private final boolean standalone;
 
   private WorldMapRegistrySnapshot(final Registries registries, @Nullable final WorldMapPreset preset) {
     this.preset = preset;
+    this.standalone = preset != null && preset.standalone();
     if(preset != null && preset.behaviours() != null) {
       final HashSet<RegistryId> available = new HashSet<>();
       for(final RegistryId id : registries.worldMapBehaviours) available.add(id);
@@ -52,33 +55,33 @@ public final class WorldMapRegistrySnapshot {
       }
     }
     final Map<RegistryId, WorldMapAvatar> avatars = new HashMap<>();
-    for(final Value<WorldMapAvatar> value : resolve(registries.worldMapAvatars, preset == null ? Map.of() : preset.resolveAvatars(registries))) avatars.put(value.id(), value.data());
+    for(final Value<WorldMapAvatar> value : resolveData(registries.worldMapAvatars, preset == null ? Map.of() : preset.resolveAvatars(registries), this.standalone)) avatars.put(value.id(), value.data());
     this.avatars = Map.copyOf(avatars);
     final Map<RegistryId, WorldMapRegion> regions = new HashMap<>();
-    for(final Value<WorldMapRegion> value : resolve(registries.worldMapRegions, preset == null ? Map.of() : preset.resolveRegions(registries))) {
+    for(final Value<WorldMapRegion> value : resolveData(registries.worldMapRegions, preset == null ? Map.of() : preset.resolveRegions(registries), this.standalone)) {
       regions.put(value.id(), value.data());
     }
     this.regions = Map.copyOf(regions);
 
-    this.thumbnails = index(resolve(registries.worldMapThumbnails, preset == null ? Map.of() : preset.resolveThumbnails(registries)));
-    this.services = index(resolve(registries.worldMapServices, preset == null ? Map.of() : preset.serviceDefinitions()));
-    this.sounds = index(resolve(registries.worldMapSounds, preset == null ? Map.of() : preset.soundDefinitions()));
-    this.battleStages = index(resolve(registries.worldMapBattleStages, preset == null ? Map.of() : preset.battleStageDefinitions()));
-    this.submapDestinations = index(resolve(registries.worldMapSubmapDestinations, preset == null ? Map.of() : preset.submapDestinations()));
-    this.traversalProfiles = resolve(registries.worldMapTraversalProfiles, preset == null ? Map.of() : preset.resolveTraversalProfiles(registries)).stream().sorted(Comparator.<Value<WorldMapTraversalProfile>>comparingInt(value -> value.data().priority()).thenComparing(value -> value.id().toString())).map(WorldMapRegistrySnapshot::attributedProfile).toList();
-    final List<WorldMapPortal> portals = data(WorldMapSlots.allocate(resolve(registries.worldMapPortals, preset == null ? Map.of() : preset.portals()))).stream()
+    this.thumbnails = index(resolveData(registries.worldMapThumbnails, preset == null ? Map.of() : preset.resolveThumbnails(registries), this.standalone));
+    this.services = index(resolveData(registries.worldMapServices, preset == null ? Map.of() : preset.serviceDefinitions(), this.standalone));
+    this.sounds = index(resolveData(registries.worldMapSounds, preset == null ? Map.of() : preset.soundDefinitions(), this.standalone));
+    this.battleStages = index(resolveData(registries.worldMapBattleStages, preset == null ? Map.of() : preset.battleStageDefinitions(), this.standalone));
+    this.submapDestinations = index(resolveData(registries.worldMapSubmapDestinations, preset == null ? Map.of() : preset.submapDestinations(), this.standalone));
+    this.traversalProfiles = resolveData(registries.worldMapTraversalProfiles, preset == null ? Map.of() : preset.resolveTraversalProfiles(registries), this.standalone).stream().sorted(Comparator.<Value<WorldMapTraversalProfile>>comparingInt(value -> value.data().priority()).thenComparing(value -> value.id().toString())).map(WorldMapRegistrySnapshot::attributedProfile).toList();
+    final List<WorldMapPortal> portals = data(WorldMapSlots.allocate(resolveData(registries.worldMapPortals, preset == null ? Map.of() : preset.portals(), this.standalone))).stream()
       .map(portal -> new WorldMapPortal(portal.id(), portal.legacyIndex(), portal.route(), portal.place(),
         this.destination(portal.fromId(), portal.from(), "source", portal.id()), this.destination(portal.toId(), portal.to(), "destination", portal.id()),
         portal.junctionIndex(), portal.continent(), portal.fullBrightness(), portal.effectFlags(), portal.region(), portal.fromId(), portal.toId(),
         portal.atmosphere(), portal.smoke()))
       .toList();
-    final List<Value<WorldMapGeometry>> registeredGeometry = WorldMapSlots.allocate(resolve(registries.worldMapGeometry, preset == null ? Map.of() : preset.geometry()));
-    final List<Value<WorldMapEncounterPool>> registeredPools = WorldMapSlots.allocate(resolve(registries.worldMapEncounterPools, preset == null ? Map.of() : preset.encounterPools()));
+    final List<Value<WorldMapGeometry>> registeredGeometry = WorldMapSlots.allocate(resolveData(registries.worldMapGeometry, preset == null ? Map.of() : preset.geometry(), this.standalone));
+    final List<Value<WorldMapEncounterPool>> registeredPools = WorldMapSlots.allocate(resolveData(registries.worldMapEncounterPools, preset == null ? Map.of() : preset.encounterPools(), this.standalone));
     final Map<RegistryId, Integer> geometryIndices = new HashMap<>();
     for(final Value<WorldMapGeometry> value : registeredGeometry) geometryIndices.put(value.id(), value.data().legacyIndex());
     final Map<RegistryId, Integer> poolIndices = new HashMap<>();
     for(final Value<WorldMapEncounterPool> value : registeredPools) poolIndices.put(value.id(), value.data().legacyIndex());
-    final List<WorldMapRoute> routes = WorldMapSlots.allocate(resolve(registries.worldMapRoutes, preset == null ? Map.of() : preset.routes())).stream().map(value -> {
+    final List<WorldMapRoute> routes = WorldMapSlots.allocate(resolveData(registries.worldMapRoutes, preset == null ? Map.of() : preset.routes(), this.standalone)).stream().map(value -> {
       final WorldMapRouteData route = value.data();
       if(route.encounterPool() == null && route.encounterRate() != 0 && route.legacyEncounterPlaceholder() != -1) {
         throw new IllegalArgumentException("Active WMAP route requires an encounter pool ID: " + value.id());
@@ -90,11 +93,11 @@ public final class WorldMapRegistrySnapshot {
       return new WorldMapRoute(value.id(), route.legacyIndex(), route.start(), route.end(), geometryIndex, route.direction(), route.encounterRate(),
         battleStage, poolIndex, route.modelIndex(), route.avatar(), route.battleStageId());
     }).sorted(Comparator.comparingInt(WorldMapRoute::legacyIndex)).toList();
-    final List<WorldMapPlace> places = data(WorldMapSlots.allocate(resolve(registries.worldMapPlaces, preset == null ? Map.of() : preset.places())));
+    final List<WorldMapPlace> places = data(WorldMapSlots.allocate(resolveData(registries.worldMapPlaces, preset == null ? Map.of() : preset.places(), this.standalone)));
     for(final WorldMapPlace place : places) this.validatePlaceReferences(place);
     final List<WorldMapGeometry> geometry = data(registeredGeometry).stream().sorted(Comparator.comparingInt(WorldMapGeometry::legacyIndex)).toList();
-    this.motionGeometry = geometry;
-    if(portals.size() < 256) {
+    final Map<RegistryId, WorldMapGeometry> movementGeometry = index(registeredGeometry);
+    if(!this.standalone && portals.size() < 256) {
       throw new IllegalArgumentException("WMAP requires at least the 256 legacy portal slots");
     }
     for(int i = 0; i < geometry.size(); i++) {
@@ -102,17 +105,23 @@ public final class WorldMapRegistrySnapshot {
         throw new IllegalArgumentException("WMAP geometry indices must be unique and dense at " + i);
       }
     }
-    final WorldMapDefinition resolvedDefinition = new WorldMapDefinition(portals, routes, places, data(resolve(registries.worldMapNodes, preset == null ? Map.of() : preset.nodes())), geometry.stream().map(WorldMapGeometry::points).toList(), geometryIndices, poolIndices);
+    final WorldMapDefinition resolvedDefinition = new WorldMapDefinition(portals, routes, places, data(resolveData(registries.worldMapNodes, preset == null ? Map.of() : preset.nodes(), this.standalone)), geometry.stream().map(WorldMapGeometry::points).toList(), geometryIndices, poolIndices);
     this.definition = preset == null ? resolvedDefinition : preset.removeFrom(resolvedDefinition);
-    this.story = data(resolve(registries.worldMapStoryPresets, preset == null ? Map.of() : preset.storyPresets())).stream().sorted(Comparator.comparingInt(WorldMapStoryPreset::order)).toList();
-    this.coolon = resolve(registries.worldMapCoolonDestinations, preset == null ? Map.of() : preset.coolonDestinations()).stream().sorted(Comparator.comparingInt(value -> value.data().order())).toList();
-    this.teleports = data(resolve(registries.worldMapTeleportLinks, preset == null ? Map.of() : preset.teleportLinks())).stream().sorted(Comparator.comparingInt(WorldMapTeleportLink::order)).toList();
+    this.motionGeometry = this.definition.geometryIndices().entrySet().stream().sorted(Map.Entry.comparingByValue()).map(entry -> movementGeometry.get(entry.getKey())).toList();
+    this.movementById = Map.copyOf(movementGeometry);
+    if(!this.standalone) WorldMapLegacyAdapter.validateRetail(this.definition);
+    this.story = data(resolveData(registries.worldMapStoryPresets, preset == null ? Map.of() : preset.storyPresets(), this.standalone)).stream().sorted(Comparator.comparingInt(WorldMapStoryPreset::order)).toList();
+    this.coolon = resolveData(registries.worldMapCoolonDestinations, preset == null ? Map.of() : preset.coolonDestinations(), this.standalone).stream().sorted(Comparator.comparingInt(value -> value.data().order())).toList();
+    this.teleports = data(resolveData(registries.worldMapTeleportLinks, preset == null ? Map.of() : preset.teleportLinks(), this.standalone)).stream().sorted(Comparator.comparingInt(WorldMapTeleportLink::order)).toList();
     this.encounters = data(registeredPools).stream().sorted(Comparator.comparingInt(WorldMapEncounterPool::legacyIndex)).toList();
-    final List<WorldMapPresentationProfile> profiles = data(resolve(registries.worldMapPresentationProfiles, preset == null ? Map.of() : preset.resolvePresentationProfiles()));
-    if(profiles.size() != 1) {
+    final List<WorldMapPresentationProfile> profiles = data(resolveData(registries.worldMapPresentationProfiles, preset == null ? Map.of() : preset.resolvePresentationProfiles(), this.standalone));
+    if(this.standalone && profiles.isEmpty()) {
+      this.presentation = WorldMapPresentationProfile.legacy();
+    } else if(profiles.size() != 1) {
       throw new IllegalArgumentException("WMAP requires one presentation profile; use replaces to override lod:wmap_presentation");
+    } else {
+      this.presentation = profiles.getFirst();
     }
-    this.presentation = profiles.getFirst();
     this.validate(registries);
   }
 
@@ -122,6 +131,11 @@ public final class WorldMapRegistrySnapshot {
 
   public static WorldMapRegistrySnapshot read(final Registries registries, @Nullable final WorldMapPreset preset) {
     return new WorldMapRegistrySnapshot(registries, preset);
+  }
+
+  private static <T> List<Value<T>> resolveData(final Registry<? extends WorldMapDataEntry<T>> registry, final Map<RegistryId, T> overlay, final boolean standalone) {
+    if(!standalone) return resolve(registry, overlay);
+    return overlay.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.comparing(RegistryId::toString))).map(entry -> new Value<>(entry.getKey(), entry.getValue())).toList();
   }
 
   /** Preset overlays preserve frozen registrations and every preassigned compatibility slot. */
@@ -237,7 +251,20 @@ public final class WorldMapRegistrySnapshot {
     return this.motionGeometry.get(route.segmentIndex());
   }
 
+  public WorldMapGeometry movement(final WorldMapRoute route, final WorldMapDefinition definition) {
+    for(final var entry : definition.geometryIndices().entrySet()) {
+      if(entry.getValue() == route.segmentIndex()) {
+        final WorldMapGeometry geometry = this.movementById.get(entry.getKey());
+        if(geometry != null) return geometry;
+      }
+    }
+    return new WorldMapGeometry(definition.geometry().get(route.segmentIndex()));
+  }
+
+
   public WorldMapDefinition definition() { return this.definition; }
+
+  public boolean standalone() { return this.standalone; }
 
   /** Resolves registry-backed values added by behaviours or configure-event listeners after the initial snapshot. */
   public WorldMapDefinition resolveReferences(final WorldMapDefinition definition) {
@@ -364,7 +391,7 @@ public final class WorldMapRegistrySnapshot {
     }
     final List<WorldMapBehaviour> behaviours = new ArrayList<>();
     for(final RegistryId id : registries.worldMapBehaviours) {
-      if(this.preset == null || this.preset.behaviours() == null || this.preset.behaviours().contains(id)) {
+      if(this.preset == null || !this.standalone && this.preset.behaviours() == null || this.preset.behaviours() != null && this.preset.behaviours().contains(id)) {
         behaviours.add(registries.worldMapBehaviours.getEntry(id).get());
       }
     }
@@ -456,7 +483,8 @@ public final class WorldMapRegistrySnapshot {
     return this.teleports.stream().map(link -> new TeleportationLocation0c(definition.portal(link.source()).legacyIndex(), new Vector3i((int)link.translation().x(), (int)link.translation().y(), (int)link.translation().z()))).toArray(TeleportationLocation0c[]::new);
   }
 
-  public RegistryId encounter(final int pool, final int roll) {
+  @Nullable public RegistryId encounter(final int pool, final int roll) {
+    if(this.encounters.isEmpty()) return null;
     final WorldMapEncounterPool choices = this.encounters.get(Math.max(0, pool));
     return pool == -1 ? choices.encounters().getFirst() : choices.select(roll);
   }
@@ -473,7 +501,7 @@ public final class WorldMapRegistrySnapshot {
       for(final RegistryId id : preset.enabledPortals()) this.definition.portal(id);
       if(preset.place() != null && this.definition.places().stream().noneMatch(place -> place.id().equals(preset.place()))) throw new IllegalArgumentException("Unknown WMAP objective place " + preset.place());
     }
-    if(this.coolon.isEmpty() || this.encounters.isEmpty()) throw new IllegalArgumentException("WMAP requires Coolon destinations and encounter pools");
+    if(!this.standalone && (this.coolon.isEmpty() || this.encounters.isEmpty())) throw new IllegalArgumentException("WMAP requires Coolon destinations and encounter pools");
     final HashSet<Integer> coolonOrders = new HashSet<>();
     for(final Value<WorldMapCoolonDestination> value : this.coolon) {
       if(!coolonOrders.add(value.data().order())) throw new IllegalArgumentException("Duplicate Coolon destination order " + value.data().order());
@@ -521,7 +549,7 @@ public final class WorldMapRegistrySnapshot {
     final Map<RegistryId, RegistryId> routeRegions = new HashMap<>();
     for(final WorldMapPortal portal : definition.portals()) {
       if(portal.region() != null || portal.route() != null) {
-        if(this.regionForPortal(portal).legacyTemplate() != portal.continent()) {
+        if(this.regionForPortal(portal).legacyTemplate() != null && this.regionForPortal(portal).legacyTemplate() != portal.continent()) {
           throw new IllegalArgumentException("WMAP portal " + portal.id() + " must use its region's legacy continent template");
         }
       }
@@ -540,7 +568,7 @@ public final class WorldMapRegistrySnapshot {
         }
       }
     }
-    if(definition.portals().size() < 256) {
+    if(!this.standalone && definition.portals().size() < 256) {
       throw new IllegalArgumentException("WMAP requires at least 256 portal slots for save compatibility");
     }
     for(final WorldMapStoryPreset preset : this.story) {
