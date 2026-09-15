@@ -49,6 +49,9 @@ public abstract class EngineState<T extends EngineState<T>> {
   public abstract Tag writeSaveData(final GameState52c gameState);
   public abstract void readSaveData(final GameState52c gameState, @Nullable final Tag tag);
 
+  /** Queue a typed destination through this state's normal fade/unload lifecycle. */
+  public boolean requestTravel(final EngineDestination destination) { return false; }
+
   public void init() {
     sssqResetStuff();
     submapId_800bd808 = -1;

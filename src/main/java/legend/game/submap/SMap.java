@@ -30,6 +30,8 @@ import legend.core.tags.ListTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
+import legend.game.EngineDestination;
+import legend.game.EngineStates;
 import legend.game.EngineStateType;
 import legend.game.Menus;
 import legend.game.SItem;
@@ -456,6 +458,30 @@ public class SMap extends EngineState<SMap> {
     sssqResetStuff();
   }
 
+  private EngineDestination pendingDestination;
+  private Tag worldMapReturn;
+
+  @Override
+  public boolean requestTravel(final EngineDestination destination) {
+    if(this.transitioning_800f7e4c || this.pendingDestination != null || (getLoadedAudioFiles() & 0x82) != 0
+      || this.smapTicks_800c6ae0 < 3 * (3 - vsyncMode_8007a3b8)
+      || this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12 && this.smapLoadingStage_800cb430 != SubmapState.WAIT_FOR_FADE_IN) return false;
+    final EngineStateType<?> type = REGISTRIES.engineStateTypes.getEntry(destination.engineState()).get();
+    if(type == LodEngineStateTypes.SUBMAP.get()) {
+      final MapTag data = destination.data().asMap();
+      final int cut = data.get("cut").asInt().get();
+      if(cut < 2 || cut >= 0x800) throw new IllegalArgumentException("A submap destination requires a submap cut, not a legacy engine sentinel");
+      this.mapTransition(cut, data.get("scene").asInt().get());
+      if(data.has("worldMapReturn")) this.worldMapReturn = data.get("worldMapReturn").clone();
+      return true;
+    }
+    this.pendingDestination = destination;
+    this.engineStateToTransitionTo = type;
+    this.transitioning_800f7e4c = true;
+    this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
+    return true;
+  }
+
   @Override
   public Tag writeSaveData(final GameState52c gameState) {
     gameState.submapScene_a4 = collidedPrimitiveIndex_80052c38;
@@ -465,6 +491,7 @@ public class SMap extends EngineState<SMap> {
     tag.set("scene", new IntTag(gameState.submapScene_a4));
     tag.set("cut", new IntTag(gameState.submapCut_a8));
     tag.set("indicatorsDisabled", new BoolTag(gameState.indicatorsDisabled_4e3));
+    if(this.worldMapReturn != null) tag.set("worldMapReturn", this.worldMapReturn.clone());
 
     final ListTag primaryPartyBackupTag = new ListTag();
     tag.set("primaryPartyBackup", primaryPartyBackupTag);
@@ -479,7 +506,8 @@ public class SMap extends EngineState<SMap> {
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
     this.unstuckMovementBudget = UNSTUCK_SAVE_LOADED_BUDGET;
 
-    final MapTag map = tag.asMap();
+    final MapTag map = tag == null ? new MapTag() : tag.asMap();
+    this.worldMapReturn = map.has("worldMapReturn") ? map.get("worldMapReturn").clone() : null;
 
     // no data - legacy saves
     if(!map.has("scene")) {
@@ -491,7 +519,7 @@ public class SMap extends EngineState<SMap> {
 
     gameState.submapScene_a4 = map.get("scene").asInt().get();
     gameState.submapCut_a8 = map.get("cut").asInt().get();
-    gameState.indicatorsDisabled_4e3 = map.get("indicatorsDisabled").asBool().get();
+    if(map.has("indicatorsDisabled")) gameState.indicatorsDisabled_4e3 = map.get("indicatorsDisabled").asBool().get();
 
     submapScene_80052c34 = gameState.submapScene_a4;
     submapCut_80052c30 = gameState.submapCut_a8;
@@ -3948,6 +3976,7 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newCut >= 0 && newCut < 2) {
+      if(this.worldMapReturn != null) this.pendingDestination = new EngineDestination(LodEngineStateTypes.WORLD_MAP.getId(), this.worldMapReturn);
       this.engineStateToTransitionTo = LodEngineStateTypes.WORLD_MAP.get();
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
       return;
@@ -4252,6 +4281,10 @@ public class SMap extends EngineState<SMap> {
 
         //LAB_800e62cc
         engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+        if(this.pendingDestination != null) {
+          EngineStates.engineStateData = this.pendingDestination.data();
+          this.pendingDestination = null;
+        }
         this.engineStateToTransitionTo = null;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
