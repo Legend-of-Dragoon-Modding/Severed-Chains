@@ -264,6 +264,11 @@ public final class WorldMapRegistrySnapshot {
 
   public WorldMapDefinition definition() { return this.definition; }
 
+  public legend.game.combat.environment.BattleStageDefinition combatStage(final WorldMapRoute route) {
+    final WorldMapBattleStage selected = route.battleStageId() == null ? null : this.battleStages.get(route.battleStageId());
+    return selected == null ? legend.lodmod.LodBattleStages.nativeStage(route.battleStage() == -1 ? 1 : route.battleStage()) : selected.resolve();
+  }
+
   public boolean standalone() { return this.standalone; }
 
   /** Resolves registry-backed values added by behaviours or configure-event listeners after the initial snapshot. */

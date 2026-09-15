@@ -139,7 +139,6 @@ import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Text.renderText;
 import static legend.game.combat.Battle.deffManager_800c693c;
-import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
@@ -4123,59 +4122,23 @@ public final class SEffe {
 
   @Method(0x80115cacL)
   public static int loadDeffStageEffects(final int mode) {
-    final int _00;
-    final int _02;
-    final int _04;
-
-    final int stage = ((Battle)currentEngineState_8004dd04).currentStage_800c66a4;
-
-    if(stage < 71 || stage > 78) { // Not in Dragoon "special transformation" stage
-      //LAB_80115d14
-      //LAB_80115d2c
-      for(int i = 0; ; i++) {
-        if(melbuStageIndices_800fb064[i] == -1) { // This is the normal branch, no special-case handling
-          //LAB_80115cd8
-          final DeffManager7cc.Struct08 v0 = deffManager_800c693c._00;
-          _00 = v0._00;
-          _02 = v0._02;
-          _04 = v0._04;
-          break;
-        }
-
-        if(melbuStageIndices_800fb064[i] == stage) { // Melbu stages
-          //LAB_80115d58
-          final DeffManager7cc.Struct04 v0 = deffManager_800c693c._08[i];
-          _00 = v0._00;
-          _02 = v0._02;
-          _04 = 0;
-          break;
-        }
-      }
-
-      //LAB_80115d84
+    final Battle battle = (Battle)currentEngineState_8004dd04;
+    final legend.game.combat.types.StageDeffThing08 flags = battle.getStageEffectsDefinition().activeEffects(battle);
+    if(flags != null) {
       if(mode == 0) {
-        //LAB_80115dc0
         if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(6, 16);
         }
-
-        //LAB_80115de8
-        stage_800bda0c.flags_5e4 &= ~(_00 | _02 | _04);
-        //LAB_80115da8
+        stage_800bda0c.flags_5e4 &= ~(flags._00 | flags._02 | flags._04);
       } else if(mode == 1) {
-        //LAB_80115e18
-        stage_800bda0c.flags_5e4 |= _00;
+        stage_800bda0c.flags_5e4 |= flags._00;
       } else if(mode == 2) {
-        //LAB_80115e34
-        stage_800bda0c.flags_5e4 |= _02;
-
+        stage_800bda0c.flags_5e4 |= flags._02;
         if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(16, 6);
         }
       } else if(mode == 3) {
-        //LAB_80115e70
-        //LAB_80115e8c
-        stage_800bda0c.flags_5e4 |= _04;
+        stage_800bda0c.flags_5e4 |= flags._04;
       }
     }
 

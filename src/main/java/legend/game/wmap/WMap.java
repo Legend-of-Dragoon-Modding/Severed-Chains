@@ -23,6 +23,8 @@ import legend.core.renderer.VertexOrder;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.EngineDestination;
+import legend.game.combat.BattleRequest;
+import legend.game.combat.BattleReturnContext;
 import legend.core.tags.MapTag;
 import legend.game.EngineStateType;
 import legend.game.EngineStates;
@@ -872,6 +874,13 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public Tag writeSaveData(final GameState52c gameState) {
+    if(this.worldMap != null && this.wmapState_800bb10c == WmapState.PLAY) {
+      gameState.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
+      gameState.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
+      gameState.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
+      gameState.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+      gameState.facing_4dd = this.mapState_800c6798.facing_1c;
+    }
     return WorldMapSave.write(gameState, this.worldMap == null ? null : this.worldMap.definition());
   }
 
@@ -4246,11 +4255,13 @@ public class WMap extends EngineState<WMap> {
       final RegistryId encounterId = this.worldMapData.encounter(encounterIndex, encounterIndex == -1 ? 0 : simpleRand() % 100);
       if(encounterId == null) return;
       final Encounter encounter = REGISTRIES.encounters.getEntry(encounterId).get();
-      final WorldMapEncounterEvent event = EVENTS.postEvent(new WorldMapEncounterEvent(this, gameState_800babc8, encounter, battleStageId, directionalPathSegment));
+      final WorldMapEncounterEvent event = new WorldMapEncounterEvent(this, gameState_800babc8, encounter, battleStageId, directionalPathSegment);
+      event.setBattleStage(this.worldMapData.combatStage(this.getWorldMapRoute()));
+      EVENTS.postEvent(event);
       if(event.cancelled || this.isWorldMapTravelPending()) {
         return;
       }
-      startEncounter(event.encounter, event.battleStageId);
+      startEncounter(new BattleRequest(event.encounter, event.resolveBattleStage(), BattleReturnContext.capture(this, gameState_800babc8)));
 
       //LAB_800e3a38
       this.engineStateToTransitionTo = LodEngineStateTypes.BATTLE.get();

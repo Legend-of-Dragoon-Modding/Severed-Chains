@@ -1,5 +1,7 @@
 package legend.lodmod;
 
+import legend.game.combat.environment.RegisterBattleStagesEvent;
+
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
@@ -526,6 +528,11 @@ public class LodMod {
   @EventListener
   public static void registerEncounters(final EncounterRegistryEvent event) {
     LodEncounters.register(event);
+  }
+
+  @EventListener
+  public static void registerBattleStages(final RegisterBattleStagesEvent event) {
+    LodBattleStages.register(event);
   }
 
   @EventListener
