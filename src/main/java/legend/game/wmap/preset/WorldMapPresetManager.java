@@ -362,6 +362,19 @@ public final class WorldMapPresetManager {
     }
   }
 
+  /** Preserve large package bytes once while allowing independently mutable tag structure. */
+  public static MapTag retainPackage(final MapTag source) {
+    if(source.has("assets")) {
+      for(final var value : source.get("assets").asList()) {
+        final MapTag asset = value.asMap();
+        if(asset.get("data") instanceof final legend.core.tags.RawTag raw && !(raw instanceof legend.core.tags.ImmutableRawTag)) {
+          asset.set("data", new legend.core.tags.ImmutableRawTag(raw.get()));
+        }
+      }
+    }
+    return source.clone();
+  }
+
   private static void restorePackage(final GameState52c state) throws IOException {
     final MapTag tag = state.worldMapPackage;
     if(!tag.get("token").asString().get().equals(state.worldMapPreset)) throw new IOException("Embedded world map identity mismatch");
