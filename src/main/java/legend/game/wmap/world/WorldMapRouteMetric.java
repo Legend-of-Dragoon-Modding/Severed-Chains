@@ -32,7 +32,7 @@ public final class WorldMapRouteMetric {
   public Cursor move(final int index, final float offset, final double movement) {
     final double distance = this.distance(index, offset) + movement;
     if(distance <= 0.0) return new Cursor(0, 0.0f, movement < 0 ? -1 : 0);
-    if(distance >= this.length()) return new Cursor(this.distances.length - 2, 4.0f, movement > 0 ? 1 : 0);
+    if(distance >= this.length()) return new Cursor(this.distances.length - 2, Math.nextDown(4.0f), movement > 0 ? 1 : 0);
     for(int i = 0; i < this.distances.length - 1; i++) {
       if(distance < this.distances[i + 1]) {
         return new Cursor(i, (float)((distance - this.distances[i]) / (this.distances[i + 1] - this.distances[i]) * 4.0), 0);

@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Stable save identities for portals beyond the vanilla script bit range. */
+/** Stable portal identities with a live numeric flag adapter for retail scripts. */
 public final class WorldMapPortalState {
   private final Map<RegistryId, State> states = new LinkedHashMap<>();
   private final Map<RegistryId, Integer> slots = new LinkedHashMap<>();
@@ -40,30 +40,19 @@ public final class WorldMapPortalState {
     enabled.ensureCapacity(words);
     visited.ensureCapacity(words);
 
-    // Standalone worlds have no retail flag-slot meaning; new identities start enabled.
-    if(standalone) {
-      for(final WorldMapPortal portal : definition.portals()) this.states.putIfAbsent(portal.id(), new State(true, false));
-    } else if(!this.identified) {
-      for(final WorldMapPortal portal : definition.portals()) {
-        if(portal.legacyIndex() >= 256) this.states.put(portal.id(), new State(enabled.get(portal.legacyIndex()), visited.get(portal.legacyIndex())));
-      }
+    // Keep native identities too: visiting a standalone world must not overwrite retail progress.
+    // Existing numeric script writes are captured above and remain authoritative while bound.
+    for(final WorldMapPortal portal : definition.portals()) {
+      this.states.putIfAbsent(portal.id(), new State(standalone || enabled.get(portal.legacyIndex()), !standalone && visited.get(portal.legacyIndex())));
     }
     this.slots.clear();
-    for(int word = standalone ? 0 : 8; word < enabled.count(); word++) {
-      enabled.setRaw(word, 0);
-    }
-    for(int word = standalone ? 0 : 8; word < visited.count(); word++) {
-      visited.setRaw(word, 0);
-    }
+    for(int word = 0; word < enabled.count(); word++) enabled.setRaw(word, 0);
+    for(int word = 0; word < visited.count(); word++) visited.setRaw(word, 0);
     for(final WorldMapPortal portal : definition.portals()) {
-      if(standalone || portal.legacyIndex() >= 256) {
-        this.slots.put(portal.id(), portal.legacyIndex());
-        final State state = this.states.get(portal.id());
-        if(state != null) {
-          enabled.set(portal.legacyIndex(), state.enabled());
-          visited.set(portal.legacyIndex(), state.visited());
-        }
-      }
+      this.slots.put(portal.id(), portal.legacyIndex());
+      final State state = this.states.get(portal.id());
+      enabled.set(portal.legacyIndex(), state.enabled());
+      visited.set(portal.legacyIndex(), state.visited());
     }
     this.identified = true;
   }
