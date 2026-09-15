@@ -1,19 +1,25 @@
 package legend.game.wmap.world;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /** Ordered legacy availability is the default; attributed rules can replace or compose access decisions. */
 public final class WorldMapRules {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(WorldMapRules.class);
   private final Map<RegistryId, List<Registration<WorldMapRule>>> portals;
   private final Map<WorldMapTravel.Capability, List<Registration<Predicate<WorldMapProgression>>>> capabilities;
   private final List<Registration<WorldMapPolicy>> policies;
@@ -65,11 +71,11 @@ public final class WorldMapRules {
   }
 
   public WorldMapTravel.Departure departure(final SubmapEndpoint origin, final WorldMapProgression progression) {
-    return this.departures.isEmpty() ? WorldMapTravel.Departure.NONE : this.departures.getLast().rule.apply(origin, progression);
+    return resolveDecision(this.departures, rule -> rule.apply(origin, progression), WorldMapTravel.Departure.NONE, "departure from " + origin);
   }
 
   public WorldMapTravel.Arrival arrival(final SubmapEndpoint origin, final WorldMapProgression progression, final WorldMapDefinition definition) {
-    return this.arrivals.isEmpty() ? WorldMapTravel.Arrival.NORMAL : Objects.requireNonNull(this.arrivals.getLast().rule.evaluate(origin, progression, definition), "WMAP arrival rule returned null");
+    return resolveDecision(this.arrivals, rule -> rule.evaluate(origin, progression, definition), WorldMapTravel.Arrival.NORMAL, "arrival from " + origin);
   }
 
   /** Immutable diagnostic attribution in the order each target is evaluated. */
@@ -131,9 +137,41 @@ public final class WorldMapRules {
     return rules.stream().map(Registration::attribution).toList();
   }
 
-  private record Registration<T>(T rule, WorldMapRuleComposition composition, RegistryId source, int priority, long order) {
+  private static <T, D> D resolveDecision(final List<Registration<T>> rules, final Function<T, D> evaluate, final D fallback, final String context) {
+    int end = rules.size();
+    while(end > 0) {
+      final int priority = rules.get(end - 1).priority;
+      int start = end - 1;
+      while(start > 0 && rules.get(start - 1).priority == priority) start--;
+      boolean legacy = false;
+      for(int i = start; i < end; i++) legacy |= rules.get(i).legacy;
+      D selected = null;
+      D compatibilityWinner = null;
+      RegistryId selectedSource = null;
+      for(int i = end - 1; i >= start; i--) {
+        final Registration<T> registration = rules.get(i);
+        if(registration.legacy && compatibilityWinner != null) continue;
+        final D candidate = evaluate.apply(registration.rule);
+        if(candidate == null) continue;
+        if(compatibilityWinner == null) compatibilityWinner = candidate;
+        // Legacy decisions retain ordering, but cannot suppress conflicts between scoped decisions.
+        if(registration.legacy) continue;
+        if(selected != null && !selected.equals(candidate)) {
+          throw new IllegalStateException("Conflicting world-map " + context + " decisions at priority " + priority + " from " + selectedSource + " (" + selected + ") and " + registration.source + " (" + candidate + ")");
+        }
+        selected = candidate;
+        selectedSource = registration.source;
+      }
+      if(legacy && compatibilityWinner != null) return compatibilityWinner;
+      if(selected != null) return selected;
+      end = start;
+    }
+    return fallback;
+  }
+
+  private record Registration<T>(T rule, WorldMapRuleComposition composition, RegistryId source, int priority, long order, boolean legacy) {
     private WorldMapRuleAttribution attribution() {
-      return new WorldMapRuleAttribution(this.source, this.priority, this.composition);
+      return new WorldMapRuleAttribution(this.source, this.priority, this.composition, this.legacy);
     }
   }
 
@@ -146,6 +184,7 @@ public final class WorldMapRules {
     private RegistryId source;
     private int priority;
     private long order;
+    private final Set<String> legacyDiagnostics = new HashSet<>();
 
     /** Attributes registrations made until this scope closes. Scopes may be nested. */
     public SourceScope source(final RegistryId source, final int priority) {
@@ -192,12 +231,13 @@ public final class WorldMapRules {
     }
 
     public Builder policy(final WorldMapPolicy policy) {
-      this.register(this.policies, Objects.requireNonNull(policy, "policy"));
+      this.register(this.policies, Objects.requireNonNull(policy, "policy"), "policy", false);
       return this;
     }
 
     public Builder departure(final BiFunction<SubmapEndpoint, WorldMapProgression, WorldMapTravel.Departure> rule) {
-      this.register(this.departures, Objects.requireNonNull(rule, "rule"));
+      Objects.requireNonNull(rule, "rule");
+      this.register(this.departures, (origin, progression) -> Objects.requireNonNull(rule.apply(origin, progression), "WMAP departure rule returned null"), "departure", true);
       return this;
     }
 
@@ -207,7 +247,24 @@ public final class WorldMapRules {
     }
 
     public Builder arrival(final WorldMapArrivalRule rule) {
-      this.register(this.arrivals, Objects.requireNonNull(rule, "rule"));
+      Objects.requireNonNull(rule, "rule");
+      this.register(this.arrivals, (origin, progression, definition) -> Objects.requireNonNull(rule.evaluate(origin, progression, definition), "WMAP arrival rule returned null"), "arrival", true);
+      return this;
+    }
+
+    /** Highest applicable priority wins; null abstains, allowing lower priority decisions. */
+    public Builder departureDecision(final RegistryId source, final int priority, final BiFunction<SubmapEndpoint, WorldMapProgression, WorldMapTravel.Departure> rule) {
+      try(final SourceScope ignored = this.source(source, priority)) {
+        this.register(this.departures, Objects.requireNonNull(rule, "rule"), "departure", true);
+      }
+      return this;
+    }
+
+    /** Equal-priority applicable decisions must agree; null explicitly abstains. */
+    public Builder arrivalDecision(final RegistryId source, final int priority, final WorldMapArrivalRule rule) {
+      try(final SourceScope ignored = this.source(source, priority)) {
+        this.register(this.arrivals, Objects.requireNonNull(rule, "rule"), "arrival", true);
+      }
       return this;
     }
 
@@ -217,19 +274,30 @@ public final class WorldMapRules {
 
     private <K, T> void register(final Map<K, List<Registration<T>>> registrations, final K key, final WorldMapRuleComposition composition, final T rule) {
       final List<Registration<T>> rules = registrations.computeIfAbsent(key, ignored -> new ArrayList<>());
-      this.checkConflict(rules, composition);
-      rules.add(new Registration<>(rule, composition, this.source, this.source == null ? Integer.MAX_VALUE : this.priority, this.order++));
+      this.checkConflict(rules, composition, key.toString(), false);
+      rules.add(this.registration(rule, composition));
     }
 
-    private <T> void register(final List<Registration<T>> registrations, final T rule) {
-      this.checkConflict(registrations, WorldMapRuleComposition.REPLACE);
-      registrations.add(new Registration<>(rule, WorldMapRuleComposition.REPLACE, this.source, this.source == null ? Integer.MAX_VALUE : this.priority, this.order++));
+    private <T> void register(final List<Registration<T>> registrations, final T rule, final String context, final boolean decision) {
+      this.checkConflict(registrations, WorldMapRuleComposition.REPLACE, context, decision);
+      registrations.add(this.registration(rule, WorldMapRuleComposition.REPLACE));
     }
 
-    private void checkConflict(final List<? extends Registration<?>> registrations, final WorldMapRuleComposition composition) {
-      if(this.source == null || composition != WorldMapRuleComposition.REPLACE) return;
+    private <T> Registration<T> registration(final T rule, final WorldMapRuleComposition composition) {
+      return new Registration<>(rule, composition, this.source == null ? WorldMapRuleAttribution.LEGACY_SOURCE : this.source, this.source == null ? Integer.MAX_VALUE : this.priority, this.order++, this.source == null);
+    }
+
+    private void checkConflict(final List<? extends Registration<?>> registrations, final WorldMapRuleComposition composition, final String context, final boolean decision) {
+      if(composition != WorldMapRuleComposition.REPLACE) return;
       for(final Registration<?> registration : registrations) {
-        if(registration.composition == WorldMapRuleComposition.REPLACE && registration.source != null && registration.priority == this.priority && !registration.source.equals(this.source)) {
+        if(registration.composition != WorldMapRuleComposition.REPLACE) continue;
+        if(this.source == null || registration.legacy) {
+          if(this.legacyDiagnostics.add(context)) {
+            LOGGER.warn("World-map %s overrides include compatibility source %s; legacy last-call ordering remains active alongside source %s. Migrate registrations to attributed rules", context, WorldMapRuleAttribution.LEGACY_SOURCE, this.source == null ? registration.source : this.source);
+          }
+          continue;
+        }
+        if(!decision && registration.priority == this.priority && !registration.source.equals(this.source)) {
           throw new IllegalArgumentException("Conflicting world-map rule replacements at priority " + this.priority + " from " + registration.source + " and " + this.source);
         }
       }
