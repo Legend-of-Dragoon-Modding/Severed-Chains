@@ -17,12 +17,36 @@ public final class WorldMapPortalState {
   private final Map<RegistryId, State> states = new LinkedHashMap<>();
   private final Map<RegistryId, Integer> slots = new LinkedHashMap<>();
   private boolean identified;
+  private final Map<RegistryId, Boolean> overrides = new LinkedHashMap<>();
+  private long revision;
+
+  /** Persistent authored override, applied after story defaults and before access rules. */
+  public void setEnabled(final RegistryId portal, final boolean enabled) {
+    final Boolean previous = this.overrides.put(java.util.Objects.requireNonNull(portal, "portal"), enabled);
+    if(previous == null || previous != enabled) this.revision++;
+  }
+
+  public void clearEnabledOverride(final RegistryId portal) {
+    if(this.overrides.remove(portal) != null) this.revision++;
+  }
+
+  public long revision() { return this.revision; }
+
+  public void applyOverrides(final WorldMapDefinition definition, final Flags enabled) {
+    for(final WorldMapPortal portal : definition.portals()) {
+      final Boolean override = this.overrides.get(portal.id());
+      if(override != null) enabled.set(portal.legacyIndex(), override);
+    }
+  }
 
   public boolean hasIdentities() {
     return this.identified;
   }
 
   public void set(final WorldMapPortalState other) {
+    this.overrides.clear();
+    this.overrides.putAll(other.overrides);
+    this.revision++;
     this.states.clear();
     this.states.putAll(other.states);
     this.slots.clear();
@@ -69,12 +93,24 @@ public final class WorldMapPortalState {
       entry.set("portal", new RegistryIdTag(id));
       entry.set("enabled", new BoolTag(state.enabled()));
       entry.set("visited", new BoolTag(state.visited()));
+      if(this.overrides.containsKey(id)) entry.set("override", new BoolTag(this.overrides.get(id)));
+      tag.add(entry);
+    });
+    this.overrides.forEach((id, enabledOverride) -> {
+      if(this.states.containsKey(id)) return;
+      final MapTag entry = new MapTag();
+      entry.set("portal", new RegistryIdTag(id));
+      entry.set("enabled", new BoolTag(enabledOverride));
+      entry.set("visited", new BoolTag(false));
+      entry.set("override", new BoolTag(enabledOverride));
       tag.add(entry);
     });
     return tag;
   }
 
   public void read(@Nullable final Tag tag) {
+    this.overrides.clear();
+    this.revision++;
     this.states.clear();
     this.slots.clear();
     this.identified = tag != null;
@@ -82,6 +118,7 @@ public final class WorldMapPortalState {
       for(final Tag value : tag.asList()) {
         final MapTag entry = value.asMap();
         final RegistryId id = entry.get("portal").asRegistryId().get();
+        if(entry.has("override")) this.overrides.put(id, entry.get("override").asBool().get());
         final State state = new State(entry.get("enabled").asBool().get(), entry.get("visited").asBool().get());
         if(this.states.putIfAbsent(id, state) != null) {
           throw new IllegalArgumentException("Duplicate saved world map portal " + id);

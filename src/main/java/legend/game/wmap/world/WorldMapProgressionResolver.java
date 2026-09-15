@@ -19,6 +19,7 @@ public final class WorldMapProgressionResolver {
   private final Map<RegistryId, LongSupplier> sources = new LinkedHashMap<>();
   private Map<RegistryId, Long> resolvedRevisions = Map.of();
   private long campaignRevision = -1;
+  private long portalRevision = -1;
 
   public void watch(final RegistryId source, final LongSupplier revision) {
     this.sources.put(Objects.requireNonNull(source, "source"), Objects.requireNonNull(revision, "revision"));
@@ -27,7 +28,7 @@ public final class WorldMapProgressionResolver {
 
   public boolean changed() { return !this.revisions().equals(this.resolvedRevisions); }
   public boolean changed(final GameState52c state) {
-    return this.changed() || this.campaignRevision != state.campaignProgression.revision();
+    return this.changed() || this.campaignRevision != state.campaignProgression.revision() || this.portalRevision != state.worldMapPortalState.revision();
   }
 
   private Map<RegistryId, Long> revisions() {
@@ -47,7 +48,8 @@ public final class WorldMapProgressionResolver {
       final WorldMapPortalState identities = new WorldMapPortalState();
       identities.set(state.worldMapPortalState);
       identities.bind(definition, enabled, visited, data.standalone());
-      data.applyStory(state.scriptFlags2_bc, enabled, definition);
+    data.applyStory(state.scriptFlags2_bc, enabled, definition);
+    identities.applyOverrides(definition, enabled);
     }
     final WorldMapProgression.Builder builder = new WorldMapProgression.Builder(state.scriptFlags2_bc, enabled).objective(data.objective(state.scriptFlags2_bc, definition));
     state.campaignProgression.facts().forEach(builder::fact);
@@ -55,6 +57,7 @@ public final class WorldMapProgressionResolver {
     if(!candidate) {
       this.resolvedRevisions = revisions;
       this.campaignRevision = campaignRevision;
+      this.portalRevision = state.worldMapPortalState.revision();
     }
     return result;
   }

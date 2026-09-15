@@ -84,7 +84,7 @@ public final class WorldMapPresetCodec {
   private static final Set<String> OPTIONAL = Set.of(
     "WorldMapGeometry.motion", "WorldMapGeometry.unitsPerStep",
     "WorldMapPlace.name", "WorldMapPortal.route", "WorldMapPortal.place", "WorldMapPortal.region",
-    "WorldMapRouteData.encounterPool", "WorldMapRouteData.avatar", "WorldMapStoryPreset.place",
+    "WorldMapRouteData.encounterPool", "WorldMapRouteData.avatar", "WorldMapStoryPreset.place", "WorldMapStoryPreset.composition",
     "WorldMapCameraSettings.overviewPosition", "WorldMapCameraSettings.minimum", "WorldMapCameraSettings.maximum", "WorldMapCameraSettings.lighting",
     "WorldMapEncounterPool.percentages",
     "Region.legacyTemplate", "Region.assets", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",

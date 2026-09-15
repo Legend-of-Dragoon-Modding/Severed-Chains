@@ -432,7 +432,7 @@ public final class WorldMapRegistrySnapshot {
     WorldMapStoryPreset selected = null;
     for(final WorldMapStoryPreset preset : this.story) {
       if(preset.storyFlag() < 0 || preset.storyFlag() >= 1024) throw new IllegalArgumentException("WMAP story flag out of range: " + preset.storyFlag());
-      if(flags.get(preset.storyFlag())) {
+      if(preset.composition() == WorldMapStoryPreset.Composition.REPLACE && flags.get(preset.storyFlag())) {
         selected = preset;
       }
     }
@@ -448,6 +448,13 @@ public final class WorldMapRegistrySnapshot {
       }
       for(final RegistryId id : selected.enabledPortals()) {
         locations.set(definition.portal(id).legacyIndex(), true);
+      }
+    }
+    // Retail replacement establishes defaults; authored contributions layer on top.
+    for(final WorldMapStoryPreset contribution : this.story) {
+      if(contribution.composition() == WorldMapStoryPreset.Composition.REPLACE || !story.get(contribution.storyFlag())) continue;
+      for(final RegistryId id : contribution.enabledPortals()) {
+        locations.set(definition.portal(id).legacyIndex(), contribution.composition() == WorldMapStoryPreset.Composition.ENABLE);
       }
     }
   }
