@@ -1,5 +1,7 @@
 package legend.lodmod;
 
+import legend.game.submap.RegisterSubmapProvidersEvent;
+
 import legend.game.combat.environment.RegisterBattleStagesEvent;
 
 import legend.core.gpu.Rect4i;
@@ -362,6 +364,11 @@ public class LodMod {
   @EventListener
   public static void registerEngineStates(final RegisterEngineStateTypesEvent event) {
     LodEngineStateTypes.register(event);
+  }
+
+  @EventListener
+  public static void registerSubmapProviders(final RegisterSubmapProvidersEvent event) {
+    LodSubmapProviders.register(event);
   }
 
   @EventListener

@@ -1,5 +1,9 @@
 package legend.game.submap;
 
+import legend.core.tags.RegistryIdTag;
+import legend.game.wmap.world.SubmapEndpoint;
+import legend.game.combat.BattleReturnContext;
+
 import de.jcm.discordgamesdk.activity.Activity;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -460,6 +464,32 @@ public class SMap extends EngineState<SMap> {
 
   private EngineDestination pendingDestination;
   private Tag worldMapReturn;
+  private RegistryId submapProvider = RetailSubmapProvider.ID;
+  private Tag submapData = new MapTag();
+  private SubmapEndpoint submapFallback = new SubmapEndpoint(2, 0);
+  private Tag unresolvedSubmapDestination;
+
+  /** Custom encounters should attach this context to their BattleRequest. */
+  @Nullable
+  public BattleReturnContext battleReturnContext() {
+    if(this.submapProvider.equals(RetailSubmapProvider.ID) && this.worldMapReturn == null && this.unresolvedSubmapDestination == null) return null;
+    return new BattleReturnContext(LodEngineStateTypes.SUBMAP.getId(), this.writeSaveData(gameState_800babc8));
+  }
+
+  private void readSubmapDestination(final MapTag data) {
+    if(data.has("cut") && data.has("scene")) {
+      this.submapFallback = new SubmapEndpoint(data.get("cut").asInt().get(), data.get("scene").asInt().get());
+    }
+    this.submapProvider = data.has("submapProvider") ? data.get("submapProvider").asRegistryId().get() : RetailSubmapProvider.ID;
+    this.submapData = data.has("submapData") ? data.get("submapData").clone() : new MapTag();
+    this.unresolvedSubmapDestination = data.has("unresolvedSubmapDestination") ? data.get("unresolvedSubmapDestination").clone() : null;
+    if(!REGISTRIES.submapProviders.hasEntry(this.submapProvider)) {
+      // Preserve unavailable content without automatically teleporting back on a later load.
+      this.unresolvedSubmapDestination = data.clone();
+      this.submapProvider = RetailSubmapProvider.ID;
+      this.submapData = new MapTag();
+    }
+  }
 
   @Override
   public boolean requestTravel(final EngineDestination destination) {
@@ -472,6 +502,7 @@ public class SMap extends EngineState<SMap> {
       final int cut = data.get("cut").asInt().get();
       if(cut < 2 || cut >= 0x800) throw new IllegalArgumentException("A submap destination requires a submap cut, not a legacy engine sentinel");
       this.mapTransition(cut, data.get("scene").asInt().get());
+      this.readSubmapDestination(data);
       if(data.has("worldMapReturn")) this.worldMapReturn = data.get("worldMapReturn").clone();
       return true;
     }
@@ -490,8 +521,15 @@ public class SMap extends EngineState<SMap> {
     final MapTag tag = new MapTag();
     tag.set("scene", new IntTag(gameState.submapScene_a4));
     tag.set("cut", new IntTag(gameState.submapCut_a8));
+    if(!this.submapProvider.equals(RetailSubmapProvider.ID)) {
+      tag.set("cut", new IntTag(this.submapFallback.cut()));
+      tag.set("scene", new IntTag(this.submapFallback.scene()));
+    }
     tag.set("indicatorsDisabled", new BoolTag(gameState.indicatorsDisabled_4e3));
     if(this.worldMapReturn != null) tag.set("worldMapReturn", this.worldMapReturn.clone());
+    tag.set("submapProvider", new RegistryIdTag(this.submapProvider));
+    tag.set("submapData", this.submap == null ? this.submapData.clone() : this.submap.writeDestinationData());
+    if(this.unresolvedSubmapDestination != null) tag.set("unresolvedSubmapDestination", this.unresolvedSubmapDestination.clone());
 
     final ListTag primaryPartyBackupTag = new ListTag();
     tag.set("primaryPartyBackup", primaryPartyBackupTag);
@@ -507,6 +545,7 @@ public class SMap extends EngineState<SMap> {
     this.unstuckMovementBudget = UNSTUCK_SAVE_LOADED_BUDGET;
 
     final MapTag map = tag == null ? new MapTag() : tag.asMap();
+    this.readSubmapDestination(map);
     this.worldMapReturn = map.has("worldMapReturn") ? map.get("worldMapReturn").clone() : null;
 
     // no data - legacy saves
@@ -3983,6 +4022,8 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newCut > -1) {
+      this.submapProvider = RetailSubmapProvider.ID;
+      this.submapData = new MapTag();
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
@@ -4093,7 +4134,8 @@ public class SMap extends EngineState<SMap> {
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
-        this.submap = new RetailSubmap(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
+        this.submap = REGISTRIES.submapProviders.getEntry(this.submapProvider).get().create(new SubmapLoadingContext(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08), this.submapData.clone());
+        this.submap.readDestinationData(this.submapData);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
         this.submap.loadEnv().thenAccept(v -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
@@ -4134,6 +4176,7 @@ public class SMap extends EngineState<SMap> {
         loadingNewGameState_800bdc34 = false;
         this.submap.loadMapTransitionData(this.mapTransitionData_800cab24);
         this.submap.finishLoading();
+        this.submap.applyDestinationSpawn();
         this.autoSaveIfEnabled();
         startFadeEffect(2, 10);
         SCRIPTS.resume();
@@ -4422,7 +4465,7 @@ public class SMap extends EngineState<SMap> {
 
     //LAB_800e686c
     if(script.params_20[0].get() == 3) {
-      ((RetailSubmap)this.submap).setEnvForegroundPosition(1024, 1024, script.params_20[1].get()); // Hide foreground object
+      this.submap.setEnvForegroundPosition(1024, 1024, script.params_20[1].get()); // Hide foreground object
     }
 
     //LAB_800e688c
@@ -4500,7 +4543,7 @@ public class SMap extends EngineState<SMap> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "overlayIndex", description = "The overlay index")
   @Method(0x800e6a64L)
   private FlowControl scriptSetEnvForegroundPosition(final RunningScript<?> script) {
-    ((RetailSubmap)this.submap).setEnvForegroundPosition(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    this.submap.setEnvForegroundPosition(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -4511,7 +4554,7 @@ public class SMap extends EngineState<SMap> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "The overlay's Z position")
   @Method(0x800e6aa0L)
   private FlowControl scriptSetEnvironmentOverlayDepthModeAndZ(final RunningScript<?> script) {
-    script.params_20[3].set(((RetailSubmap)this.submap).setEnvironmentOverlayDepthModeAndZ(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
+    script.params_20[3].set(this.submap.setEnvironmentOverlayDepthModeAndZ(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -4576,7 +4619,7 @@ public class SMap extends EngineState<SMap> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "Y", description = "The camera Y offset")
   @Method(0x800e6cacL)
   private FlowControl FUN_800e6cac(final RunningScript<?> script) {
-    ((RetailSubmap)this.submap).FUN_800e80e4(script.params_20[0].get(), script.params_20[1].get());
+    this.submap.FUN_800e80e4(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 

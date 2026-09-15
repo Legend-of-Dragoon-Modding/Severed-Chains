@@ -1,4 +1,8 @@
 package legend.core;
+
+import legend.game.submap.SubmapProvider;
+import legend.game.submap.SubmapProviderRegistry;
+import legend.game.submap.RegisterSubmapProvidersEvent;
 import legend.game.combat.environment.BattleStageDefinition;
 import legend.game.combat.environment.BattleStageRegistry;
 import legend.game.combat.environment.RegisterBattleStagesEvent;
@@ -132,6 +136,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
+  public final Registry<SubmapProvider> submapProviders = this.addRegistry(new SubmapProviderRegistry(), RegisterSubmapProvidersEvent::new);
   public final Registry<CampaignType> campaignTypes = this.addRegistry(new CampaignTypeRegistry(), RegisterCampaignTypesEvent::new);
   public final Registry<EngineStateType<?>> engineStateTypes = this.addRegistry(new EngineStateTypeRegistry(), RegisterEngineStateTypesEvent::new);
   public final Registry<InputAction> inputActions = this.addRegistry(new InputActionRegistry(), InputActionRegistryEvent::new);

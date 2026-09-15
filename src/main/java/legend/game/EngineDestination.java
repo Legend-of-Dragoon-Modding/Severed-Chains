@@ -29,6 +29,19 @@ public record EngineDestination(RegistryId engineState, Tag data) {
     return new EngineDestination(LodEngineStateTypes.SUBMAP.getId(), data);
   }
 
+  /** Custom destinations retain a retail fallback for absent providers. */
+  public static EngineDestination submap(final RegistryId provider, final Tag payload, final SubmapEndpoint fallback) {
+    if(fallback.cut() < 2 || fallback.cut() >= 0x800) throw new IllegalArgumentException("Submap fallback must name a retail cut, not an engine sentinel");
+    final MapTag data = submap(fallback).data().asMap();
+    data.set("submapProvider", new RegistryIdTag(provider));
+    data.set("submapData", payload.clone());
+    return new EngineDestination(LodEngineStateTypes.SUBMAP.getId(), data);
+  }
+
+  public static EngineDestination submap(final RegistryId provider, final Tag payload) {
+    return submap(provider, payload, new SubmapEndpoint(2, 0));
+  }
+
   public static EngineDestination worldMap(final WorldMapTravelTarget target) {
     final MapTag data = new MapTag();
     final MapTag destination = new MapTag();

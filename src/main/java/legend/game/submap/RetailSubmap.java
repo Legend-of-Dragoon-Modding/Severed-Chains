@@ -519,7 +519,7 @@ public class RetailSubmap extends Submap {
     final int battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
     final SubmapEncounterEvent event = EVENTS.postEvent(new SubmapEncounterEvent(this.smap, gameState_800babc8, this, encounter, battleStageId, this.cut, sceneId, scene));
-    legend.game.combat.SBtld.startEncounter(new legend.game.combat.BattleRequest(event.encounter, event.resolveBattleStage(), null));
+    legend.game.combat.SBtld.startEncounter(new legend.game.combat.BattleRequest(event.encounter, event.resolveBattleStage(), this.smap.battleReturnContext()));
 
     if(Config.combatStage()) {
       legend.game.combat.SBtld.setLegacyBattleStage(Config.getCombatStage());
@@ -1108,6 +1108,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Method(0x800e76b0L)
+  @Override
   public void setEnvForegroundPosition(final int x, final int y, final int index) {
     final EnvironmentForegroundTextureMetrics foreground = this.envForegroundMetrics_800cb590[index];
 
@@ -1150,6 +1151,7 @@ public class RetailSubmap extends Submap {
    * </ul>
    */
   @Method(0x800e7728L)
+  @Override
   public int setEnvironmentOverlayDepthModeAndZ(final int mode, final int foregroundTextureIndex, int z) {
     final int textureIndex = this.envBackgroundTextureCount_800cb57c + foregroundTextureIndex;
 
@@ -1430,6 +1432,7 @@ public class RetailSubmap extends Submap {
   }
 
   @Method(0x800e80e4L)
+  @Override
   public void FUN_800e80e4(final int x, final int y) {
     this._800cbd30 = x;
     this._800cbd34 = y;
