@@ -287,10 +287,25 @@ publishing {
   }
 }
 
+// Mod discovery requires classes and their bundled resources in the same archive.
+tasks.register('testRuntimeJar', Jar) {
+  from sourceSets.main.output
+  archiveClassifier = 'test-runtime'
+  destinationDirectory = layout.buildDirectory.dir('test-runtime')
+}
+
 test {
+  dependsOn tasks.named('testRuntimeJar')
+  classpath = files(sourceSets.test.output, tasks.named('testRuntimeJar'), configurations.testRuntimeClasspath)
   useJUnitPlatform()
   // Don't automatically run tests in build process
-  exclude '**/*'
+  if(!project.hasProperty('runTests')) {
+    exclude '**/*'
+  }
+  maxHeapSize = '2g'
+  jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+    '--add-exports', 'java.base/jdk.internal.misc=ALL-UNNAMED',
+    '--enable-native-access=ALL-UNNAMED'
 }
 
 sourceSets {
