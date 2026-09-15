@@ -51,7 +51,7 @@ public final class WorldMapRegistrySnapshot {
       final HashSet<RegistryId> available = new HashSet<>();
       for(final RegistryId id : registries.worldMapBehaviours) available.add(id);
       for(final RegistryId id : preset.behaviours()) {
-        if(!available.contains(id)) throw new IllegalArgumentException("Unknown preset WMAP behaviour " + id);
+        if(!available.contains(id)) throw new WorldMapDependencyException("Unknown preset WMAP behaviour " + id);
       }
     }
     final Map<RegistryId, WorldMapAvatar> avatars = new HashMap<>();

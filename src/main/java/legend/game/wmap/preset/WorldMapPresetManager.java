@@ -281,7 +281,7 @@ public final class WorldMapPresetManager {
     MODS.getLoadedMods().forEach(mod -> loaded.add(mod.modId));
     for(final String id : preset.requiredMods()) {
       if(!loaded.contains(id)) {
-        throw new IllegalArgumentException("World map preset " + preset.id() + " requires enabled mod " + id);
+        throw new legend.game.wmap.world.WorldMapDependencyException("World map preset " + preset.id() + " requires enabled mod " + id);
       }
     }
   }
@@ -294,7 +294,7 @@ public final class WorldMapPresetManager {
         try {
           asset(preset.packageRoot(), path);
         } catch(final IOException e) {
-          throw new IllegalArgumentException("Preset " + preset.id() + " asset " + path, e);
+          throw new legend.game.wmap.world.WorldMapDependencyException("Preset " + preset.id() + " asset " + path, e);
         }
       }
     }
@@ -321,7 +321,7 @@ public final class WorldMapPresetManager {
       final WorldMapPreset preset = WorldMapPresetCodec.read(root.resolve("preset.wmap"));
       requireMods(preset);
       return preset;
-    } catch(final IOException | IllegalArgumentException failure) {
+    } catch(final IOException | legend.game.wmap.world.WorldMapDependencyException failure) {
       LOGGER.warn("Saved world map is unavailable; retaining its tags and using native world map", failure);
       state.worldMapFallback = true;
       return WorldMapPreset.vanilla();

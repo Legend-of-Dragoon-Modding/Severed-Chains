@@ -341,6 +341,8 @@ public class WMap extends EngineState<WMap> {
   private RegistryId savedWorldMapRoute;
   @Nullable
   private Tag savedWorldMapData;
+  private boolean savedNativeFallback;
+  private boolean usingNativeFallback;
   private final WorldMapTransition worldMapTransition = new WorldMapTransition();
   private PresetSwitch pendingWorldMapPreset;
   @Nullable private WorldMapPreset activeWorldMapPreset;
@@ -397,10 +399,10 @@ public class WMap extends EngineState<WMap> {
       try {
         if(gameState_800babc8.worldMapFallback) throw new IllegalArgumentException("Saved map content is unavailable");
         WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute, this.savedWorldMapData);
-        gameState_800babc8.retainedSaveTags.getTags().remove("worldMapUnresolvedPosition");
+        // Unresolved history is retained until explicit restoration or discard.
       } catch(final IllegalArgumentException unavailable) {
         LOGGER.warn("Saved world map position is unavailable; retaining it and selecting a playable arrival", unavailable);
-        if(this.savedWorldMapData != null) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.savedWorldMapData.clone());
+        if(this.savedWorldMapData != null && !gameState_800babc8.retainedSaveTags.has("worldMapUnresolvedPosition")) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.savedWorldMapData.clone());
         gameState_800babc8.worldMapFallback = true;
       }
       this.savedWorldMapRoute = null;
@@ -431,33 +433,70 @@ public class WMap extends EngineState<WMap> {
     if(this.restoredWorldMapTarget != null) {
       try {
         if(gameState_800babc8.worldMapFallback || WorldMapTravelPosition.resolve(this.worldMapTransition.target(), definition, this.worldMap.view(), true) == null) throw new IllegalArgumentException("Saved travel target is unavailable");
-        gameState_800babc8.retainedSaveTags.getTags().remove("worldMapUnresolvedPosition");
+        // Unresolved history is retained until explicit restoration or discard.
       } catch(final IllegalArgumentException unavailable) {
         LOGGER.warn("Saved travel target is unavailable; retaining it and selecting a playable arrival", unavailable);
-        gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.restoredWorldMapTarget);
+        if(!gameState_800babc8.retainedSaveTags.has("worldMapUnresolvedPosition")) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.restoredWorldMapTarget);
         gameState_800babc8.worldMapFallback = true;
       }
       this.restoredWorldMapTarget = null;
     }
     if(gameState_800babc8.worldMapFallback) {
-      final var arrival = definition.portals().stream().filter(portal -> portal.route() != null && this.worldMap.arrivalAllowed(portal.legacyIndex())).findFirst()
-        .orElseGet(() -> definition.portals().stream().filter(portal -> portal.route() != null).findFirst().orElseThrow());
-      this.worldMapTransition.queue(new WorldMapTravelTarget.Portal(arrival.id()), false);
+      final var arrival = this.safeWorldMapArrival();
+      this.worldMapTransition.queue(new WorldMapTravelTarget.Portal(arrival.id()), true);
       this.worldMapTransition.begin();
       this.worldMapTransition.loading();
     }
   }
 
   private ConfiguredWorldMap loadConfiguredWorldMap() {
-    final WorldMapPreset preset = WorldMapPresetManager.load(gameState_800babc8);
-    try {
-      return this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
-    } catch(final RuntimeException unavailable) {
-      LOGGER.warn("Saved world map dependencies cannot be resolved; using native world map", unavailable);
-      gameState_800babc8.worldMapFallback = true;
+    if(this.savedNativeFallback) {
+      this.usingNativeFallback = true;
+      gameState_800babc8.worldMapFallback = false;
       final WorldMapPreset nativeMap = WorldMapPreset.vanilla();
       return this.compileWorldMap(WorldMapPresetManager.validate(nativeMap), nativeMap);
     }
+    final WorldMapPreset preset = WorldMapPresetManager.load(gameState_800babc8);
+    this.usingNativeFallback = gameState_800babc8.worldMapFallback;
+    try {
+      return this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
+    } catch(final legend.game.wmap.world.WorldMapDependencyException unavailable) {
+      LOGGER.warn("Saved world map dependencies cannot be resolved; using native world map", unavailable);
+      gameState_800babc8.worldMapFallback = true;
+      this.usingNativeFallback = true;
+      final WorldMapPreset nativeMap = WorldMapPreset.vanilla();
+      return this.compileWorldMap(WorldMapPresetManager.validate(nativeMap), nativeMap);
+    }
+  }
+
+  private legend.game.wmap.world.WorldMapPortal safeWorldMapArrival() {
+    final var definition = this.worldMap.definition();
+    final var preferred = WorldMapLegacyAdapter.recoveryPortal(definition, this.activeWorldMapPreset);
+    if(preferred.route() != null && this.worldMap.arrivalAllowed(preferred.legacyIndex())
+      && this.worldMap.view().access(preferred.legacyIndex(), WorldMapAction.TRAVERSE).allowed()) return preferred;
+    return definition.portals().stream()
+      .filter(portal -> portal.route() != null && this.worldMap.arrivalAllowed(portal.legacyIndex())
+        && this.worldMap.view().access(portal.legacyIndex(), WorldMapAction.TRAVERSE).allowed())
+      .findFirst().orElseThrow(() -> new IllegalStateException("World map " + this.activeWorldMapPreset + " has no access-allowed recovery portal"));
+  }
+
+  /** Explicitly discard unresolved history; ordinary saves never choose it as the active position. */
+  public void discardWorldMapRecovery() {
+    gameState_800babc8.retainedSaveTags.remove("worldMapUnresolvedPosition");
+  }
+
+  /** Restore retained position only on explicit request, using the normal access/activation contract. */
+  public WorldMapTravelRequestResult requestWorldMapRecovery() throws IOException {
+    if(!gameState_800babc8.retainedSaveTags.has("worldMapUnresolvedPosition")) return WorldMapTravelRequestResult.DENIED;
+    final boolean previousFallback = gameState_800babc8.worldMapFallback;
+    final WorldMapPreset preset;
+    try {
+      preset = WorldMapPresetManager.load(gameState_800babc8);
+      if(gameState_800babc8.worldMapFallback) return WorldMapTravelRequestResult.DENIED;
+    } finally {
+      gameState_800babc8.worldMapFallback = previousFallback;
+    }
+    return this.requestWorldMapPreset(preset, gameState_800babc8.retainedSaveTags.get("worldMapUnresolvedPosition"));
   }
 
   public WorldMapDefinition getWorldMapDefinition() {
@@ -530,10 +569,15 @@ public class WMap extends EngineState<WMap> {
    * No campaign identity changes on denial/cancellation. Asset failures use normal map-load reporting.
    */
   public WorldMapTravelRequestResult requestWorldMapPreset(@Nullable final WorldMapPreset preset) throws IOException {
+    return this.requestWorldMapPreset(preset, null);
+  }
+
+  private WorldMapTravelRequestResult requestWorldMapPreset(@Nullable final WorldMapPreset preset, @Nullable final Tag recoveryPosition) throws IOException {
     if(!this.worldMapTransition.prepare(this.worldMapTravelReady())) return WorldMapTravelRequestResult.BUSY;
     try(final var preparation = new legend.game.wmap.world.WorldMapCampaignSnapshot(gameState_800babc8)) {
       final ConfiguredWorldMap configured = this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
-      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, this.presetArrival(configured), true, configured.definition(), preset == null ? null : preset.id()));
+      final WorldMapTravelTarget arrival = recoveryPosition == null ? this.presetArrival(configured) : this.recoveryTarget(configured, recoveryPosition);
+      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, arrival, true, configured.definition(), preset == null ? null : preset.id()));
       if(event.cancelled) {
         return WorldMapTravelRequestResult.CANCELLED;
       }
@@ -547,6 +591,17 @@ public class WMap extends EngineState<WMap> {
       this.captureWorldMapRecovery();
       this.pendingActivation = event.activation;
       this.pendingWorldMapPreset = new PresetSwitch(token, configured);
+      final boolean wasNativeFallback = this.usingNativeFallback;
+      final boolean wasSavedFallback = this.savedNativeFallback;
+      event.onActivate(() -> {
+        this.usingNativeFallback = false;
+        this.savedNativeFallback = false;
+        if(recoveryPosition != null) this.discardWorldMapRecovery();
+      }, () -> {
+        this.usingNativeFallback = wasNativeFallback;
+        this.savedNativeFallback = wasSavedFallback;
+        if(recoveryPosition != null) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", recoveryPosition);
+      });
       this.worldMapTransition.queue(event.target, event.respectAccess);
       return WorldMapTravelRequestResult.ACCEPTED;
     } finally {
@@ -566,6 +621,17 @@ public class WMap extends EngineState<WMap> {
     } catch(final IllegalArgumentException incompatibleTopology) {
       return new WorldMapTravelTarget.Portal(WorldMapLegacyAdapter.startingPortal(configured.definition(), configured.preset()).id());
     }
+    final WorldMapRoute route = configured.definition().route(position.directionalPathIndex_4de);
+    final float progress = new WorldMapRouteMetric(configured.definition().geometry().get(route.segmentIndex())).progress(position.dotIndex_4da, position.dotOffset_4dc);
+    return WorldMapTravelTarget.atRouteDistance(route.id(), route.direction() > 0 ? progress : 1.0f - progress);
+  }
+
+  private WorldMapTravelTarget recoveryTarget(final ConfiguredWorldMap configured, final Tag tag) {
+    if(tag.asMap().has("worldMapTarget")) return EngineDestination.worldMapTarget(tag);
+    final GameState52c position = new GameState52c();
+    final RegistryId routeId = WorldMapSave.read(position, tag);
+    if(routeId == null) throw new IllegalArgumentException("Unresolved legacy position has no stable route identity");
+    WorldMapSave.restoreRoute(position, configured.definition(), routeId, tag);
     final WorldMapRoute route = configured.definition().route(position.directionalPathIndex_4de);
     final float progress = new WorldMapRouteMetric(configured.definition().geometry().get(route.segmentIndex())).progress(position.dotIndex_4da, position.dotOffset_4dc);
     return WorldMapTravelTarget.atRouteDistance(route.id(), route.direction() > 0 ? progress : 1.0f - progress);
@@ -884,7 +950,9 @@ public class WMap extends EngineState<WMap> {
       gameState.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
       gameState.facing_4dd = this.mapState_800c6798.facing_1c;
     }
-    return WorldMapSave.write(gameState, this.worldMap == null ? null : this.worldMap.definition());
+    final var tag = WorldMapSave.write(gameState, this.worldMap == null ? null : this.worldMap.definition()).asMap();
+    if(this.usingNativeFallback) tag.set("nativeFallback", new legend.core.tags.BoolTag(true));
+    return tag;
   }
 
   private EngineDestination pendingEngineDestination;
@@ -905,7 +973,8 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
-    final Tag source = gameState.retainedSaveTags.has("worldMapUnresolvedPosition") ? gameState.retainedSaveTags.get("worldMapUnresolvedPosition") : tag;
+    final Tag source = tag;
+    this.savedNativeFallback = tag != null && tag.asMap().has("nativeFallback") && tag.asMap().get("nativeFallback").asBool().get();
     if(source != null && source.asMap().has("worldMapTarget")) {
       this.restoredWorldMapTarget = source.clone();
       this.worldMapTransition.queue(EngineDestination.worldMapTarget(source), true);
