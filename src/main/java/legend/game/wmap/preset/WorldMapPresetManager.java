@@ -2,6 +2,11 @@ package legend.game.wmap.preset;
 
 import legend.game.modding.events.worldmap.WorldMapPresetsEvent;
 import legend.game.types.GameState52c;
+import legend.core.tags.MapTag;
+import legend.core.tags.ListTag;
+import legend.core.tags.IntTag;
+import legend.core.tags.StringTag;
+import java.util.Base64;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -304,25 +309,95 @@ public final class WorldMapPresetManager {
     return freeze(preset, state.campaign.path.resolve("worldmaps"));
   }
 
+  /** The save remains loadable when optional mod content or a campaign sidecar is unavailable. */
   @Nullable
   public static WorldMapPreset load(final GameState52c state) {
-    if(state.worldMapPreset.isEmpty()) {
-      return null;
-    }
-    if(!state.worldMapPreset.matches("[0-9a-f]{64}")) {
-      throw new IllegalArgumentException("Invalid saved world map package identity");
-    }
-    final Path path = state.campaign.path.resolve("worldmaps").resolve(state.worldMapPreset).resolve("preset.wmap");
+    state.worldMapFallback = false;
+    if(state.worldMapPreset.isEmpty()) return null;
     try {
-      final WorldMapPreset preset = WorldMapPresetCodec.read(path);
+      if(!state.worldMapPreset.matches("[0-9a-f]{64}")) throw new IOException("Invalid saved world map package identity");
+      final Path root = state.campaign.path.resolve("worldmaps").resolve(state.worldMapPreset);
+      if(!Files.exists(root.resolve("preset.wmap")) && state.worldMapPackage != null) restorePackage(state);
+      final WorldMapPreset preset = WorldMapPresetCodec.read(root.resolve("preset.wmap"));
       requireMods(preset);
       return preset;
-    } catch(final IOException e) {
-      throw new IllegalStateException("Saved world map package is missing or unreadable: " + path, e);
+    } catch(final IOException | IllegalArgumentException failure) {
+      LOGGER.warn("Saved world map is unavailable; retaining its tags and using native world map", failure);
+      state.worldMapFallback = true;
+      return WorldMapPreset.vanilla();
     }
   }
 
-  /** Export the currently registered map, including mod overlays, as an editable blueprint. */
+  /** Embedded, versioned tags make a .dsav portable without its original campaign folder. */
+  @Nullable
+  public static MapTag savePackage(final GameState52c state) throws IOException {
+    if(state.worldMapPreset.isEmpty()) return null;
+    if(state.worldMapPackage != null && state.worldMapPackage.has("token") && state.worldMapPackage.get("token").asString().get().equals(state.worldMapPreset)) return state.worldMapPackage.clone();
+    final Path root = state.campaign.path.resolve("worldmaps").resolve(state.worldMapPreset);
+    try {
+      final WorldMapPreset preset = WorldMapPresetCodec.read(root.resolve("preset.wmap"));
+      final MapTag tag = new MapTag();
+      tag.set("schemaVersion", new IntTag(1));
+      tag.set("token", new StringTag(state.worldMapPreset));
+      tag.set("manifest", new StringTag(Files.readString(root.resolve("preset.wmap"))));
+      final ListTag assets = new ListTag();
+      tag.set("assets", assets);
+      long total = Files.size(root.resolve("preset.wmap"));
+      for(final String name : preset.assetPaths().stream().sorted().toList()) {
+        final Path path = asset(root, name);
+        final long size = Files.size(path);
+        total += size;
+        requirePackageSize(total);
+        if(size > MAX_FILE_BYTES || assets.size() >= MAX_FILES) throw new IOException("World map package exceeds save limits");
+        final MapTag entry = new MapTag();
+        entry.set("path", new StringTag(name));
+        entry.set("data", new StringTag(Base64.getEncoder().encodeToString(Files.readAllBytes(path))));
+        assets.add(entry);
+      }
+      state.worldMapPackage = tag.clone();
+      return tag;
+    } catch(final IOException failure) {
+      LOGGER.warn("World map package cannot be embedded; retaining available save data", failure);
+      return state.worldMapPackage == null ? null : state.worldMapPackage.clone();
+    }
+  }
+
+  private static void restorePackage(final GameState52c state) throws IOException {
+    final MapTag tag = state.worldMapPackage;
+    if(!tag.get("token").asString().get().equals(state.worldMapPreset)) throw new IOException("Embedded world map identity mismatch");
+    final Path staging = staging();
+    try {
+      final byte[] manifest = tag.get("manifest").asString().get().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+      requirePackageSize(manifest.length);
+      Files.write(staging.resolve("preset.wmap"), manifest);
+      long total = manifest.length;
+      final ListTag assets = tag.get("assets").asList();
+      if(assets.size() > MAX_FILES) throw new IOException("Too many embedded world map files");
+      for(final var value : assets) {
+        final MapTag entry = value.asMap();
+        final String name = entry.get("path").asString().get();
+        requireRelative(name);
+        if(name.equals("preset.wmap")) throw new IOException("Embedded asset replaces manifest");
+        final String encoded = entry.get("data").asString().get();
+        if(encoded.length() > (MAX_FILE_BYTES + 2L) / 3 * 4) throw new IOException("Embedded world map file is too large");
+        final byte[] bytes = Base64.getDecoder().decode(encoded);
+        total += bytes.length;
+        requirePackageSize(total);
+        final Path target = staging.resolve(name).normalize();
+        if(!target.startsWith(staging.toAbsolutePath().normalize()) && !target.startsWith(staging.normalize())) throw new IOException("Invalid embedded asset path");
+        Files.createDirectories(target.getParent());
+        Files.write(target, bytes);
+      }
+      if(!digest(staging).equals(state.worldMapPreset)) throw new IOException("Embedded world map content does not match its identity");
+      final Path directory = state.campaign.path.resolve("worldmaps");
+      Files.createDirectories(directory);
+      // Preserve the exact manifest bytes and therefore its original content identity.
+      Files.move(staging, directory.resolve(state.worldMapPreset));
+    } finally {
+      deleteStaging(staging);
+    }
+  }
+
   public static Path exportRegistered() throws IOException {
     Files.createDirectories(DIRECTORY);
     final Path path = DIRECTORY.resolve("registered-world-map.wmap");

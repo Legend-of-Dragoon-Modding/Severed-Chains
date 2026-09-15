@@ -55,6 +55,8 @@ public class SeveredSavedGame extends SavedGame {
   public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
   public final Map<RegistryId, Boolean> campaignProgressionFacts = new LinkedHashMap<>();
   public String worldMapPreset = "";
+  public legend.core.tags.MapTag worldMapPackage;
+  public legend.core.tags.MapTag retainedSaveTags = new legend.core.tags.MapTag();
   public final List<RegistryId> goodsIds = new ArrayList<>();
   public final int[] _1a4 = new int[8];
   public final int[] chestFlags = new int[8];
@@ -101,6 +103,8 @@ public class SeveredSavedGame extends SavedGame {
     gameState.worldMapPortalState.set(this.worldMapPortalState);
     gameState.campaignProgression.setFacts(this.campaignProgressionFacts);
     gameState.worldMapPreset = this.worldMapPreset;
+    gameState.worldMapPackage = this.worldMapPackage == null ? null : this.worldMapPackage.clone();
+    gameState.retainedSaveTags = this.retainedSaveTags.clone();
     this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
     System.arraycopy(this._1a4, 0, gameState._1a4, 0, this._1a4.length);
     System.arraycopy(this.chestFlags, 0, gameState.chestFlags_1c4, 0, this.chestFlags.length);
