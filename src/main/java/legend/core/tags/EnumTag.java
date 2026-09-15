@@ -21,6 +21,17 @@ public class EnumTag implements Tag {
     this.val = val.name();
   }
 
+  public String name() {
+    return this.val;
+  }
+
+  public static EnumTag named(final String name) {
+    if(!name.matches("[A-Za-z_$][A-Za-z0-9_$]*")) throw new IllegalArgumentException("Invalid enum name");
+    final EnumTag tag = new EnumTag();
+    tag.val = name;
+    return tag;
+  }
+
   @Override
   public int getType() {
     return TAG_TYPE_ENUM;
