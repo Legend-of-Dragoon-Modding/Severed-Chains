@@ -367,7 +367,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
 
   private static <T> T require(final Map<RegistryId, T> providers, final RegistryId provider, final String kind, final RegistryId owner) {
     final T value = providers.get(provider);
-    if(value == null) throw new IllegalArgumentException("Unknown " + kind + ' ' + provider + " for preset entry " + owner);
+    if(value == null) throw new legend.game.wmap.world.WorldMapDependencyException("Unknown " + kind + ' ' + provider + " for preset entry " + owner);
     return value;
   }
 
