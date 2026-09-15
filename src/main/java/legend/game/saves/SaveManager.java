@@ -352,13 +352,7 @@ public final class SaveManager {
 
   public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
     try {
-      final FileData data = new ExpandableFileData(0x1) {
-        @Override
-        protected void checkBounds(final int offset, final int size) {
-          if(offset < 0 || size < 0 || (long)offset + size > 512L * 1024 * 1024) throw new IllegalArgumentException("Save exceeds 512 MiB");
-          super.checkBounds(offset, size);
-        }
-      };
+      final FileData data = new ExpandableFileData(0x1, 512 * 1024 * 1024);
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerVersion.code);
       this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState);
@@ -367,8 +361,18 @@ public final class SaveManager {
       final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
       Files.createDirectories(gameState.campaign.path);
-      try(final var stream = Files.newOutputStream(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
-        stream.write(bytes, 0, offset.get());
+      final Path temporary = Files.createTempFile(gameState.campaign.path, ".save-", ".tmp");
+      try {
+        try(final var stream = Files.newOutputStream(temporary, StandardOpenOption.WRITE)) {
+          stream.write(bytes, 0, offset.get());
+        }
+        try {
+          Files.move(temporary, file, java.nio.file.StandardCopyOption.ATOMIC_MOVE, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } catch(final java.nio.file.AtomicMoveNotSupportedException unsupported) {
+          Files.move(temporary, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
+      } finally {
+        Files.deleteIfExists(temporary);
       }
       return file;
     } catch(final IOException | IllegalArgumentException e) {

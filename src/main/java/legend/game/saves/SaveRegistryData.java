@@ -48,6 +48,8 @@ public final class SaveRegistryData {
     for(final String key : original.keys()) {
       final Tag old = original.get(key);
       if(!current.has(key)) {
+        // Known optional fields are intentionally omitted when cleared by current gameplay.
+        if(key.equals("extraData") && current.has("itemId") || key.equals("selectedAdditionId") && current.has("templateId")) continue;
         current.set(key, old.clone());
       } else if(current.get(key) instanceof final MapTag map && old instanceof final MapTag oldMap) {
         merge(map, oldMap);
