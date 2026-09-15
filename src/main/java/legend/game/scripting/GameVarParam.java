@@ -272,7 +272,10 @@ public class GameVarParam extends Param {
       case 44 -> ((Battle)currentEngineState_8004dd04).cameraScriptMainTableJumpIndex_800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
-      case 47 -> legend.game.combat.SBtld.setLegacyBattleStage(val);
+      case 47 -> {
+        legend.game.combat.SBtld.setLegacyBattleStage(val);
+        if(currentEngineState_8004dd04 instanceof final Battle battle) battle.setLegacyRequestedStage(val);
+      }
       case 48 -> battleState_8006e398.aliveBents_e78.set(0, SCRIPTS.getState(val, BattleEntity27c.class));
 //      case 49 -> battleState_8006e398.aliveBentCount_800c669c = val;
       case 50 -> battleState_8006e398.alivePlayerBents_eac.set(0, SCRIPTS.getState(val, PlayerBattleEntity.class));

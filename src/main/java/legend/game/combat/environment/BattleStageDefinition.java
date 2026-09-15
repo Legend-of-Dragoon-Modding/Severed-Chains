@@ -12,8 +12,17 @@ import static legend.game.combat.Battle.deffManager_800c693c;
 
 /** A registered battle environment, independent of the retail stage tables and asset directories. */
 public abstract class BattleStageDefinition extends RegistryEntry {
-  /** Called after queued texture animations finish; complete only when every stage resource is ready. */
-  public abstract CompletableFuture<?> load(final Battle battle);
+  /**
+   * Start nonblocking preparation without accessing mutable engine/GPU state.
+   * Battle adopts the owned result on the render thread, or closes it if superseded.
+   * Providers must release partial resources when preparation fails.
+   */
+  public abstract CompletableFuture<? extends PreparedBattleStage> prepare();
+
+  /** Includes preparation and queued adoption; providers may override for larger packages. */
+  public long loadingTimeoutMillis() {
+    return 60_000L;
+  }
 
   /** Retail transformations can intentionally retain the previous model/background until replacement. */
   public boolean clearPreviousStageBeforeLoad() {

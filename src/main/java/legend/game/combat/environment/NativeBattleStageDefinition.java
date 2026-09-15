@@ -38,13 +38,15 @@ public class NativeBattleStageDefinition extends BattleStageDefinition {
   }
 
   @Override
-  public CompletableFuture<?> load(final Battle battle) {
-    final CompletableFuture<?> background = loadDrgnDir(0, 2497 + this.index).thenAccept(files -> {
-      if(files.get(1).hasVirtualSize()) battle.loadStageMcq(new McqHeader(files.get(1)));
-      if(files.get(2).size() != 0) battle.loadStageTim(files.get(2));
-    });
-    final CompletableFuture<?> model = loadDrgnDir(0, (2497 + this.index) + "/0").thenAccept(files -> battle.loadStageTmdAndAnim("DRGN0/" + (2497 + this.index) + "/0", files));
-    return CompletableFuture.allOf(background, model);
+  public CompletableFuture<PreparedBattleStage> prepare() {
+    return loadDrgnDir(0, 2497 + this.index).thenCombine(
+      loadDrgnDir(0, (2497 + this.index) + "/0"),
+      (background, model) -> battle -> {
+        if(background.get(1).hasVirtualSize()) battle.loadStageMcq(new McqHeader(background.get(1)));
+        if(background.get(2).size() != 0) battle.loadStageTim(background.get(2));
+        battle.loadStageTmdAndAnim("DRGN0/" + (2497 + this.index) + "/0", model);
+      }
+    );
   }
 
   @Override

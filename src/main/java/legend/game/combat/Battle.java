@@ -413,6 +413,8 @@ public class Battle extends EngineState<Battle> {
   private BattleStageDefinition stageDefinition;
   private BattleStageDefinition stageEffectsDefinition;
   private java.util.concurrent.CompletableFuture<Void> stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
+  private volatile long stageLoadGeneration;
+  private long stageLoadDeadline;
 
   public boolean battleInitialCameraMovementFinished_800c66a8;
   private int currentCompressedAssetIndex_800c66ac;
@@ -712,6 +714,8 @@ public class Battle extends EngineState<Battle> {
   @Override
   @Method(0x800186a0L)
   public void tick() {
+    // Poll even when the global file loader is busy or a script changes stage mid-battle.
+    this.isStageReady();
     super.tick();
 
     if(battleLoaded_800bc94c) {
@@ -2460,6 +2464,9 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c82b8L)
   public void deallocateCombat() {
+    this.stageLoadGeneration++;
+    this.stageLoading.cancel(false);
+    this.stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
     if(fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.updateGameStateAndDeallocateMenu();
       this.setStageHasNoModel();
@@ -2688,40 +2695,61 @@ public class Battle extends EngineState<Battle> {
 
   public void loadStage(final BattleStageDefinition stage) {
     LOGGER.info("Loading battle stage %s", stage.getRegistryId());
+    this.stageLoading.cancel(false);
+    final long generation = ++this.stageLoadGeneration;
     this.stageDefinition = stage;
     this.stageEffectsDefinition = stage;
-    if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
-      battlePreloadedEntities_1f8003f4.skyboxObj.delete();
-      battlePreloadedEntities_1f8003f4.skyboxObj = null;
-    }
-
-    // Finish queued texture animations before the provider uploads the next environment.
-    if(stage_800bda0c != null) {
-      for(int i = 0; i < 10; i++) {
-        stage_800bda0c._618[i] = 0;
-      }
-    }
+    this.currentStage_800c66a4 = stage.legacyIndex();
+    final long timeout = Math.max(1L, Math.min(stage.loadingTimeoutMillis(), 3_600_000L));
+    this.stageLoadDeadline = System.nanoTime() + java.util.concurrent.TimeUnit.MILLISECONDS.toNanos(timeout);
     final java.util.concurrent.CompletableFuture<Void> loading = new java.util.concurrent.CompletableFuture<>();
     this.stageLoading = loading;
-    RENDERER.addTask(() -> {
-      if(stage.clearPreviousStageBeforeLoad()) {
-        this.setStageHasNoModel();
-        this.deleteBattleStageModel();
-        this.setDontRenderStageBackground();
-      }
-      try {
-        stage.load(this).whenComplete((ignored, error) -> {
-          if(error == null) {
-            loading.complete(null);
-          } else {
-            loading.completeExceptionally(error);
+
+    try {
+      // Do not cancel the producer future: a late owned result still needs disposal.
+      stage.prepare().whenComplete((prepared, error) -> {
+        if(error != null) {
+          loading.completeExceptionally(error);
+          return;
+        }
+        if(prepared == null) {
+          loading.completeExceptionally(new IllegalStateException("Stage provider returned no prepared resources"));
+          return;
+        }
+        if(generation != this.stageLoadGeneration || loading.isDone()) {
+          prepared.close();
+          return;
+        }
+        RENDERER.addTask(() -> {
+          try(prepared) {
+            if(generation != this.stageLoadGeneration || loading.isDone()) return;
+            if(System.nanoTime() - this.stageLoadDeadline >= 0) {
+              throw new IllegalStateException("Timed out adopting battle stage " + stage.getRegistryId());
+            }
+            if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
+              battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+              battlePreloadedEntities_1f8003f4.skyboxObj = null;
+            }
+            // Finish queued texture animations before adopting the next environment.
+            if(stage_800bda0c != null) {
+              for(int i = 0; i < 10; i++) stage_800bda0c._618[i] = 0;
+            }
+            if(stage.clearPreviousStageBeforeLoad()) {
+              this.setStageHasNoModel();
+              this.deleteBattleStageModel();
+              this.setDontRenderStageBackground();
+            }
+            prepared.adopt(this);
+          } catch(final Throwable failure) {
+            loading.completeExceptionally(failure);
+            return;
           }
+          loading.complete(null);
         });
-      } catch(final RuntimeException error) {
-        loading.completeExceptionally(error);
-      }
-    });
-    this.currentStage_800c66a4 = stage.legacyIndex();
+      });
+    } catch(final RuntimeException error) {
+      loading.completeExceptionally(error);
+    }
   }
 
   public BattleStageDefinition getStageDefinition() {
@@ -2729,8 +2757,16 @@ public class Battle extends EngineState<Battle> {
   }
 
   private boolean isStageReady() {
-    if(!this.stageLoading.isDone()) return false;
-    this.stageLoading.join();
+    if(!this.stageLoading.isDone()) {
+      if(System.nanoTime() - this.stageLoadDeadline < 0) return false;
+      this.stageLoadGeneration++;
+      this.stageLoading.completeExceptionally(new IllegalStateException("Timed out loading battle stage " + this.stageDefinition.getRegistryId()));
+    }
+    try {
+      this.stageLoading.join();
+    } catch(final java.util.concurrent.CompletionException failure) {
+      throw new IllegalStateException("Cannot activate battle stage " + this.stageDefinition.getRegistryId(), failure.getCause());
+    }
     return true;
   }
 
@@ -2742,6 +2778,12 @@ public class Battle extends EngineState<Battle> {
   private BattleStageDefinition requestedStage() {
     if(this.battleRequest.stage().legacyIndex() != battleStage_800bb0f4) return LodBattleStages.nativeStage(battleStage_800bb0f4);
     return this.battleRequest.stage();
+  }
+
+  /** Explicit legacy writes retain native intent even when its integer alias is unchanged. */
+  public void setLegacyRequestedStage(final int stage) {
+    if(this.battleRequest == null) return;
+    this.battleRequest = new BattleRequest(this.battleRequest.encounter(), LodBattleStages.nativeStage(stage), this.battleRequest.returnContext());
   }
 
   /** Retail variable 97 changes effect/ambiance interpretation without reloading the model. */
