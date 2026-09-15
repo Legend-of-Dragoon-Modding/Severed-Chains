@@ -353,7 +353,9 @@ public final class WorldMapRegistrySnapshot {
   }
 
   public void configureBehaviours(final Registries registries, final WorldMapDefinition.Builder definition, final WorldMapRules.Builder rules) {
-    rules.arrival((origin, progression, world) -> this.arrival(origin, world));
+    try(final WorldMapRules.SourceScope ignored = rules.source(new RegistryId("lod_core", "world_map_registry"), Integer.MIN_VALUE)) {
+      rules.arrival((origin, progression, world) -> this.arrival(origin, world));
+    }
     final List<WorldMapBehaviour> behaviours = new ArrayList<>();
     for(final RegistryId id : registries.worldMapBehaviours) {
       if(this.preset == null || this.preset.behaviours() == null || this.preset.behaviours().contains(id)) {
@@ -362,9 +364,15 @@ public final class WorldMapRegistrySnapshot {
     }
     behaviours.sort(Comparator.comparingInt(WorldMapBehaviour::priority).thenComparing(behaviour -> behaviour.getRegistryId().toString()));
     for(final WorldMapBehaviour behaviour : behaviours) {
-      behaviour.configure(definition, rules);
+      try(final WorldMapRules.SourceScope ignored = rules.source(behaviour.getRegistryId(), behaviour.priority())) {
+        behaviour.configure(definition, rules);
+      }
     }
-    if(this.preset != null) this.preset.rules().configure(rules);
+    if(this.preset != null) {
+      try(final WorldMapRules.SourceScope ignored = rules.source(this.preset.id(), Integer.MAX_VALUE)) {
+        this.preset.rules().configure(rules);
+      }
+    }
   }
 
   public WorldMapTravel.Arrival arrival(final SubmapEndpoint origin) {
