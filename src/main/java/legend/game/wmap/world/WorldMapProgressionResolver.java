@@ -18,6 +18,7 @@ import static legend.core.GameEngine.EVENTS;
 public final class WorldMapProgressionResolver {
   private final Map<RegistryId, LongSupplier> sources = new LinkedHashMap<>();
   private Map<RegistryId, Long> resolvedRevisions = Map.of();
+  private long campaignRevision = -1;
 
   public void watch(final RegistryId source, final LongSupplier revision) {
     this.sources.put(Objects.requireNonNull(source, "source"), Objects.requireNonNull(revision, "revision"));
@@ -25,6 +26,9 @@ public final class WorldMapProgressionResolver {
   }
 
   public boolean changed() { return !this.revisions().equals(this.resolvedRevisions); }
+  public boolean changed(final GameState52c state) {
+    return this.changed() || this.campaignRevision != state.campaignProgression.revision();
+  }
 
   private Map<RegistryId, Long> revisions() {
     final Map<RegistryId, Long> values = new LinkedHashMap<>();
@@ -34,6 +38,7 @@ public final class WorldMapProgressionResolver {
 
   public WorldMapProgression resolve(final WMap engine, final GameState52c state, final WorldMapRegistrySnapshot data, final WorldMapDefinition definition, @Nullable final RegistryId preset, final boolean candidate) {
     final Map<RegistryId, Long> revisions = this.revisions();
+    final long campaignRevision = state.campaignProgression.revision();
     final Flags enabled = new Flags(state.wmapFlags_15c.count());
     enabled.set(state.wmapFlags_15c);
     if(candidate) {
@@ -45,8 +50,12 @@ public final class WorldMapProgressionResolver {
       data.applyStory(state.scriptFlags2_bc, enabled, definition);
     }
     final WorldMapProgression.Builder builder = new WorldMapProgression.Builder(state.scriptFlags2_bc, enabled).objective(data.objective(state.scriptFlags2_bc, definition));
+    state.campaignProgression.facts().forEach(builder::fact);
     final WorldMapProgression result = EVENTS.postEvent(new WorldMapProgressionEvent(engine, state, builder, definition, preset, candidate)).progression.build();
-    if(!candidate) this.resolvedRevisions = revisions;
+    if(!candidate) {
+      this.resolvedRevisions = revisions;
+      this.campaignRevision = campaignRevision;
+    }
     return result;
   }
 }

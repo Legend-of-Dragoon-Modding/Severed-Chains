@@ -297,7 +297,11 @@ public final class Scus94491BpeSegment {
       throw new RuntimeException("Are there more flags?");
     }
 
-    flags.set(index % 8, shift, set);
+    if(index >= 8) {
+      gameState_800babc8.campaignProgression.setLocationEnabled(packedIndex - 8 * 32, set);
+    } else {
+      flags.set(index % 8, shift, set);
+    }
 
     //LAB_800173f4
     return FlowControl.CONTINUE;
@@ -333,7 +337,7 @@ public final class Scus94491BpeSegment {
     final int packedIndex = script.params_20[0].get();
     final boolean set = EVENTS.postEvent(new ScriptFlags2ChangedEvent(packedIndex, script.params_20[1].get() != 0)).set;
 
-    gameState_800babc8.scriptFlags2_bc.set(packedIndex, set);
+    gameState_800babc8.campaignProgression.setStoryFlag(packedIndex, set);
 
     //LAB_800174d0
     return FlowControl.CONTINUE;

@@ -6,6 +6,7 @@ import legend.game.characters.CharacterData2c;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
+import legend.game.progression.CampaignProgression;
 import legend.game.saves.Campaign;
 import legend.game.wmap.world.WorldMapPortalState;
 import org.apache.logging.log4j.LogManager;
@@ -53,6 +54,7 @@ public class GameState52c {
   public final Flags wmapFlags_15c = new Flags(8);
   public final Flags visitedLocations_17c = new Flags(8);
   public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
+  public final CampaignProgression campaignProgression = new CampaignProgression(this.scriptFlags2_bc, this.wmapFlags_15c);
   /** Immutable campaign package digest; empty retains registered defaults for pre-preset saves. */
   public String worldMapPreset = "";
   public final GoodsInventory goods_19c = new GoodsInventory();
