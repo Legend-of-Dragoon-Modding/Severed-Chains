@@ -165,7 +165,7 @@ public final class V10Serializer {
       final MapTag characterTag = charactersTag.get(charIndex).asMap();
       final RegistryId templateId = characterTag.get("templateId").asRegistryId().get();
       final var template = REGISTRIES.characterTemplates.getEntry(templateId);
-      savedGame.characters.add(template.isValid() ? template.get().deserialize(characterTag) : new legend.game.saves.UnavailableSavedCharacter());
+      savedGame.characters.add(template.isValid() ? template.get().deserialize(characterTag) : new legend.game.saves.UnavailableSavedCharacter(characterTag));
       savedGame.charPortraits.add(new Rect4i(characterTag.get("portraitX").asInt().get(), characterTag.get("portraitY").asInt().get(), characterTag.get("portraitW").asInt().get(), characterTag.get("portraitH").asInt().get()));
     }
 
@@ -188,8 +188,9 @@ public final class V10Serializer {
   public static void toV10(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) {
     final TexturePacker packer = new TexturePacker("Save " + name);
 
+    final java.util.Set<RegistryId> portraitIds = new java.util.HashSet<>();
     for(final CharacterData2c character : gameState.charData_32c) {
-      packer.add(character.template.getRegistryId(), character.template.loadPortrait());
+      if(portraitIds.add(character.template.getRegistryId())) packer.add(character.template.getRegistryId(), character.template.loadPortrait());
     }
 
     final byte[] atlas = packer.packToBytes(512, 512);
@@ -225,7 +226,7 @@ public final class V10Serializer {
     final ListTag activePartyTag = new ListTag();
     tag.set("activeParty", activePartyTag);
     for(final int charIndex : gameState.charIds_88) {
-      activePartyTag.add(new IntTag(charIndex));
+      if(charIndex >= 0 && charIndex < gameState.charData_32c.size() && !gameState.unavailableCharacters.containsKey(gameState.charData_32c.get(charIndex))) activePartyTag.add(new IntTag(charIndex));
     }
 
     tag.set("gold", new IntTag(gameState.gold_94));
@@ -324,12 +325,14 @@ public final class V10Serializer {
     final ListTag charactersTag = new ListTag();
     tag.set("characters", charactersTag);
     for(int i = 0; i < gameState.charData_32c.size(); i++) {
-      final MapTag characterTag = new MapTag();
-      charactersTag.add(characterTag);
-
       final CharacterData2c character = gameState.charData_32c.get(i);
-      characterTag.set("templateId", new RegistryIdTag(character.template));
-      character.template.serialize(character, characterTag);
+      final MapTag unavailable = gameState.unavailableCharacters.get(character);
+      final MapTag characterTag = unavailable == null ? new MapTag() : unavailable.clone();
+      charactersTag.add(characterTag);
+      if(unavailable == null) {
+        characterTag.set("templateId", new RegistryIdTag(character.template));
+        character.template.serialize(character, characterTag);
+      }
 
       final Rect4i rect = packer.getRect(character.template.getRegistryId());
       characterTag.set("portraitX", new IntTag(rect.x));
