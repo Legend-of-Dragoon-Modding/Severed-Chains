@@ -43,12 +43,13 @@ Tests are ordered by method name and share a single engine instance (`@TestInsta
 - `test1_freshStateIsValid` new game state has correct gold, party size and chapter
 - `test2_battleStartsAndMonsterHasHp` encounter 0 (Berserk Mouse) loads and monster has full HP
 - `test3_guardDoesNotChangeMonsterHp` selecting Guard does not damage the monster
+- `test4_worldMapReturnTravelAndSave` - native battle cleanup and WMap load, travel denial/busy responses, route position, and in-memory save restoration
 
 ## Architecture
 
 ```
 src/test/java/legend/game/
-  EngineBootTest.java - JUnit 5 test class (3 tests)
+  EngineBootTest.java - JUnit 6 test class (4 tests)
   ExampleTest.java    - sandbox for manual testing and experimentation
   Bootstrapper.java   - boots engine on a background thread
   Harness.java        - state injection, battle control, game state setup
@@ -84,3 +85,9 @@ Both files are created in the repo root.
 - Timeout on engine loading: first run may be slow while shaders compile. Increase timeout in `Bootstrapper.java`
 - Timed out waiting for player turn: battle may not have loaded fully. Check `e2e-test.log` for the last loading stage
 - SDL window does not appear: ensure a display is available. On headless CI use `xvfb-run` on Linux
+
+## Runtime harness requirements
+
+Gradle uses a dedicated main runtime JAR so the mod loader can discover classes and resources together. Engine statics initialize on the engine thread; `Harness.onEngineThread` dispatches registry creation and state mutations to the renderer thread. SDL input explicitly focuses and targets the renderer window. Teardown requests window closure and joins the engine thread.
+
+Each run uses a unique fresh campaign name. Keep explicit `--tests` selections: `ExampleTest` is a manual sandbox that loads an existing save. Full WMap validation results and limitations are in [world-map-validation.md](../../docs/world-map-validation.md).

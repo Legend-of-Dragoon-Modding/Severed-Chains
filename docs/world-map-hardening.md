@@ -9,7 +9,7 @@ This work follows `ae5f45bf7` on `wmap-new-system`. It implements the second ass
 - Tagged saves retain unknown top-level fields and unresolved registry records; this cannot teach an older executable the meaning of a future binary tag type
 - An old binary custom-character payload without a length cannot be skipped safely when its decoder is missing; those saves still need their provider or a migration decoder
 - Numeric world-map/submap transitions, native assets, retail interval movement, and script stage aliases remain available through adapters
-- No builds, tests, lint, runtime checks, or automated validation were run for this work; source review is not evidence that the changes compile or run correctly
+- Initial implementation was source-reviewed only; subsequent authorized build, runtime, and lint results are in [world-map-validation.md](world-map-validation.md)
 - No remote operations were performed
 
 ## Internal changes
@@ -160,7 +160,7 @@ Replacing the resources does not replace every native UI/rendering algorithm. Au
 
 Follow-up commits preserve character indices, fix menu-load provider retention, complete authored destinations, protect asynchronous destruction, deduplicate packages, and correct integration defects found during source review.
 
-The DragoonMods editor changes are in `C:/webprojects/lodtools/web`: `51f37ab` adds the schema controls, `ef1e759` releases retail graph constraints for standalone worlds, and `b44cdc4` preserves required region-provider fields. Existing unrelated asset-viewer/package changes were left untouched. No website build or browser validation was run.
+The DragoonMods editor changes are in `C:/webprojects/lodtools/web`: `51f37ab` adds the schema controls, `ef1e759` releases retail graph constraints for standalone worlds, and `b44cdc4` preserves required region-provider fields. Existing unrelated asset-viewer/package changes were left untouched. Subsequent website build, test, lint, and browser results are recorded in [world-map-validation.md](world-map-validation.md).
 
 ### Editor files
 
