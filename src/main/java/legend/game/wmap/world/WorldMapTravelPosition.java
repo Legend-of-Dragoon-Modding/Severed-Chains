@@ -3,7 +3,12 @@ package legend.game.wmap.world;
 import javax.annotation.Nullable;
 
 /** Resolved adapter position. Resolution does not change progression or visited state. */
-public record WorldMapTravelPosition(WorldMapPortal portal, WorldMapRoute route, int dot, float offset, int facing) {
+public record WorldMapTravelPosition(WorldMapPortal portal, WorldMapRoute route, int dot, float offset, int facing, double distance) {
+  /** Compatibility constructor for callers that only have a legacy cursor. */
+  public WorldMapTravelPosition(final WorldMapPortal portal, final WorldMapRoute route, final int dot, final float offset, final int facing) {
+    this(portal, route, dot, offset, facing, Double.NaN);
+  }
+
   @Nullable
   public static WorldMapTravelPosition resolve(final WorldMapTravelTarget target, final WorldMapDefinition definition, final WorldMapView view, final boolean respectAccess) {
     if(target instanceof WorldMapTravelTarget.Portal portalTarget) {
@@ -45,28 +50,10 @@ public record WorldMapTravelPosition(WorldMapPortal portal, WorldMapRoute route,
   }
 
   private static WorldMapTravelPosition position(final WorldMapPortal portal, final WorldMapRoute route, final float progress, final WorldMapDefinition definition) {
-    final var points = definition.geometry().get(route.segmentIndex());
-    double length = 0.0;
-    for(int i = 1; i < points.size(); i++) {
-      length += distance(points.get(i - 1), points.get(i));
-    }
-    double remaining = length * (route.direction() > 0 ? progress : 1.0f - progress);
-    for(int i = 0; i < points.size() - 1; i++) {
-      final double interval = distance(points.get(i), points.get(i + 1));
-      if(remaining < interval || i == points.size() - 2) {
-        final float offset = interval == 0.0 ? 0.0f : (float)(remaining / interval * 4.0);
-        // The movement adapter stores the final endpoint in its preceding interval.
-        return new WorldMapTravelPosition(portal, route, i, Math.clamp(offset, 0.0f, Math.nextDown(4.0f)), route.direction());
-      }
-      remaining -= interval;
-    }
-    throw new IllegalArgumentException("World map travel route has no geometry: " + route.id());
-  }
-
-  private static double distance(final WorldMapPoint a, final WorldMapPoint b) {
-    final double x = (double)a.x() - b.x();
-    final double y = (double)a.y() - b.y();
-    final double z = (double)a.z() - b.z();
-    return Math.sqrt(x * x + y * y + z * z);
+    final WorldMapRouteMetric metric = new WorldMapRouteMetric(definition.geometry().get(route.segmentIndex()));
+    final double distance = metric.clamp(metric.length() * (route.direction() > 0 ? progress : 1.0 - progress));
+    final WorldMapRouteMetric.Cursor cursor = metric.cursor(distance);
+    // The compatibility cursor remains serializable; distance preserves the exact endpoint.
+    return new WorldMapTravelPosition(portal, route, cursor.index(), Math.min(cursor.offset(), Math.nextDown(4.0f)), route.direction(), distance);
   }
 }
