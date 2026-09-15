@@ -119,7 +119,7 @@ public final class SaveManager {
   public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final GameState52c state) {
     final String location;
     if(currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get())) {
-      location = worldMapNames_8011c1ec[continentIndex_800bf0b0];
+      location = currentEngineState_8004dd04.getLocation(state);
     } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
       location = chapterNames_80114248[state.chapterIndex_98];
     } else {
