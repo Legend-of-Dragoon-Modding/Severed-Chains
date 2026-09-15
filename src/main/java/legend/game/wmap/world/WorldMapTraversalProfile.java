@@ -54,7 +54,7 @@ public record WorldMapTraversalProfile(int priority, Set<RegistryId> routes, Lis
    * A marker fires once per actual crossing in either direction; arriving/warping past it does not fire.
    */
   public record Marker(RegistryId id, float progress) {
-    /** Point-interval progress from the geometry's first point to its last; not distance. */
+    /** Geometry-metric progress from the geometry's first point to its last; not distance. */
     public static Marker atGeometryProgress(final RegistryId id, final float geometryProgress) {
       return new Marker(id, geometryProgress);
     }
