@@ -62,6 +62,8 @@ public class GameState52c {
   public boolean worldMapFallback;
   public legend.core.tags.MapTag retainedSaveTags = new legend.core.tags.MapTag();
   public legend.core.tags.MapTag registrySaveData = new legend.core.tags.MapTag();
+  /** Missing templates occupy their original script slots; serialize their opaque source data. */
+  public final java.util.Map<CharacterData2c, legend.core.tags.MapTag> unavailableCharacters = new java.util.IdentityHashMap<>();
   public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];

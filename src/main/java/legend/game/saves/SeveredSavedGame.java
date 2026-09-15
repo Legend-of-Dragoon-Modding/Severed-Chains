@@ -146,27 +146,31 @@ public class SeveredSavedGame extends SavedGame {
       gameState.items_2e9.give(stack, true);
     }
 
-    final int[] characterIndices = new int[this.characters.size()];
-    java.util.Arrays.fill(characterIndices, -1);
+    int firstAvailableCharacter = -1;
     for(int charId = 0; charId < this.characters.size(); charId++) {
       final SavedCharacter savedCharacter = this.characters.get(charId);
-      if(savedCharacter instanceof UnavailableSavedCharacter) continue;
-      characterIndices[charId] = gameState.charData_32c.size();
-      final CharacterData2c charData = savedCharacter.make(gameState);
-      gameState.charData_32c.add(charData);
+      if(savedCharacter instanceof final UnavailableSavedCharacter unavailable) {
+        // Preserve script ABI indices; unavailable content is inert and never an active-party fallback.
+        final CharacterData2c placeholder = legend.lodmod.LodCharacterTemplates.DART.get().make(gameState);
+        placeholder.partyFlags_04 = 0;
+        gameState.charData_32c.add(placeholder);
+        gameState.unavailableCharacters.put(placeholder, unavailable.data());
+      } else {
+        gameState.charData_32c.add(savedCharacter.make(gameState));
+        if(firstAvailableCharacter == -1) firstAvailableCharacter = charId;
+      }
     }
-
     for(final int index : this.activeParty) {
-      if(index >= 0 && index < characterIndices.length && characterIndices[index] >= 0) gameState.charIds_88.add(characterIndices[index]);
+      if(index >= 0 && index < gameState.charData_32c.size() && !gameState.unavailableCharacters.containsKey(gameState.charData_32c.get(index))) gameState.charIds_88.add(index);
     }
-    if(gameState.charData_32c.isEmpty()) {
-      final var fallback = legend.lodmod.LodCharacterTemplates.DART.get().make(gameState);
-      fallback.partyFlags_04 |= CharacterData2c.IN_PARTY;
+    if(firstAvailableCharacter == -1) {
+      final CharacterData2c fallback = legend.lodmod.LodCharacterTemplates.DART.get().make(gameState);
+      firstAvailableCharacter = gameState.charData_32c.size();
       gameState.charData_32c.add(fallback);
     }
     if(gameState.charIds_88.isEmpty()) {
-      gameState.charIds_88.add(0);
-      gameState.charData_32c.getFirst().partyFlags_04 |= CharacterData2c.IN_PARTY;
+      gameState.charIds_88.add(firstAvailableCharacter);
+      gameState.charData_32c.get(firstAvailableCharacter).partyFlags_04 |= CharacterData2c.IN_PARTY;
     }
 
     gameState.pathIndex_4d8 = this.pathIndex;
