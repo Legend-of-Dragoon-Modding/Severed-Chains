@@ -352,6 +352,8 @@ public class WMap extends EngineState<WMap> {
   private ConfiguredWorldMap recoveryWorldMap;
   private WorldMapTravelTarget recoveryWorldMapTarget;
   private GameState52c recoveryWorldMapState;
+  private legend.game.wmap.world.WorldMapCampaignSnapshot recoveryCampaign;
+  private legend.game.wmap.world.WorldMapActivation pendingActivation;
   private boolean recoveringWorldMap;
   private boolean resolvingWorldMap;
   private final WorldMapAvatarRenderer routeAvatar = new WorldMapAvatarRenderer();
@@ -489,7 +491,7 @@ public class WMap extends EngineState<WMap> {
   public WorldMapTravelRequestResult requestWorldMapTravel(final WorldMapTravelTarget target, final boolean respectAccess) {
     Objects.requireNonNull(target, "target");
     if(!this.worldMapTransition.prepare(this.worldMapTravelReady())) return WorldMapTravelRequestResult.BUSY;
-    try {
+    try(final var preparation = new legend.game.wmap.world.WorldMapCampaignSnapshot(gameState_800babc8)) {
       final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, target, respectAccess, this.worldMap.definition(), this.activeWorldMapPreset == null ? null : this.activeWorldMapPreset.id()));
       if(event.cancelled) {
         return WorldMapTravelRequestResult.CANCELLED;
@@ -497,7 +499,9 @@ public class WMap extends EngineState<WMap> {
       if(WorldMapTravelPosition.resolve(Objects.requireNonNull(event.target, "World map travel target"), this.worldMap.definition(), this.getWorldMapView(), event.respectAccess) == null) {
         return WorldMapTravelRequestResult.DENIED;
       }
+      preparation.close();
       this.captureWorldMapRecovery();
+      this.pendingActivation = event.activation;
       this.worldMapTransition.queue(event.target, event.respectAccess);
       return WorldMapTravelRequestResult.ACCEPTED;
     } finally {
@@ -506,6 +510,7 @@ public class WMap extends EngineState<WMap> {
   }
 
   private ConfiguredWorldMap compileWorldMap(final WorldMapRegistrySnapshot data, @Nullable final WorldMapPreset preset) {
+    try(final var preparation = new legend.game.wmap.world.WorldMapCampaignSnapshot(gameState_800babc8)) {
     final WorldMapDefinition.Builder definitionBuilder = data.definition().toBuilder();
     final WorldMapRules.Builder rulesBuilder = new WorldMapRules.Builder();
     data.configureBehaviours(REGISTRIES, definitionBuilder, rulesBuilder);
@@ -515,6 +520,7 @@ public class WMap extends EngineState<WMap> {
     final WorldMapRules rules = event.rules.build();
     rules.validate(definition);
     return new ConfiguredWorldMap(data, definition, rules, preset);
+    }
   }
 
   /**
@@ -525,7 +531,7 @@ public class WMap extends EngineState<WMap> {
    */
   public WorldMapTravelRequestResult requestWorldMapPreset(@Nullable final WorldMapPreset preset) throws IOException {
     if(!this.worldMapTransition.prepare(this.worldMapTravelReady())) return WorldMapTravelRequestResult.BUSY;
-    try {
+    try(final var preparation = new legend.game.wmap.world.WorldMapCampaignSnapshot(gameState_800babc8)) {
       final ConfiguredWorldMap configured = this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
       final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, this.presetArrival(configured), true, configured.definition(), preset == null ? null : preset.id()));
       if(event.cancelled) {
@@ -537,7 +543,9 @@ public class WMap extends EngineState<WMap> {
         return WorldMapTravelRequestResult.DENIED;
       }
       final String token = WorldMapPresetManager.store(gameState_800babc8, preset);
+      preparation.close();
       this.captureWorldMapRecovery();
+      this.pendingActivation = event.activation;
       this.pendingWorldMapPreset = new PresetSwitch(token, configured);
       this.worldMapTransition.queue(event.target, event.respectAccess);
       return WorldMapTravelRequestResult.ACCEPTED;
@@ -601,6 +609,7 @@ public class WMap extends EngineState<WMap> {
   }
 
   private void captureWorldMapRecovery() {
+    this.recoveryCampaign = new legend.game.wmap.world.WorldMapCampaignSnapshot(gameState_800babc8);
     this.recoveryWorldMap = new ConfiguredWorldMap(this.worldMapData, this.worldMap.definition(), this.worldMap.rules(), this.activeWorldMapPreset);
     final GameState52c state = new GameState52c();
     state.wmapFlags_15c.set(gameState_800babc8.wmapFlags_15c);
@@ -611,10 +620,13 @@ public class WMap extends EngineState<WMap> {
   }
 
   private boolean recoverWorldMap(final Throwable failure) {
+    if(this.pendingActivation != null) this.pendingActivation.rollback(failure);
+    this.pendingActivation = null;
     if(this.recoveryWorldMap == null || this.recoveringWorldMap) return false;
     LOGGER.warn("World map travel failed; restoring previous world", failure);
     this.recoveringWorldMap = true;
     this.deallocate();
+    if(this.recoveryCampaign != null) this.recoveryCampaign.restore();
     gameState_800babc8.wmapFlags_15c.set(this.recoveryWorldMapState.wmapFlags_15c);
     gameState_800babc8.visitedLocations_17c.set(this.recoveryWorldMapState.visitedLocations_17c);
     gameState_800babc8.worldMapPortalState.set(this.recoveryWorldMapState.worldMapPortalState);
@@ -1078,16 +1090,20 @@ public class WMap extends EngineState<WMap> {
     }
 
     if(this.worldMapTransition.activating() && this.wmapState_800bb10c == WmapState.PLAY && this.worldMapState_800c6698 == WorldMapState.RENDER_5 && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state && this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
-      final WorldMapTravelTarget target = this.worldMapTransition.complete();
+      final WorldMapTravelTarget target = this.worldMapTransition.target();
+      if(this.pendingActivation != null) this.pendingActivation.apply();
       if(this.activatingWorldMapPreset != null) {
         gameState_800babc8.worldMapPreset = this.activatingWorldMapPreset.token();
         this.activatingWorldMapPreset = null;
       }
+      EVENTS.postEvent(new WorldMapWarpedEvent(this, gameState_800babc8, target));
+      this.worldMapTransition.complete();
+      this.pendingActivation = null;
+      this.recoveryCampaign = null;
       this.recoveryWorldMap = null;
       this.recoveryWorldMapState = null;
       this.recoveryWorldMapTarget = null;
       this.recoveringWorldMap = false;
-      EVENTS.postEvent(new WorldMapWarpedEvent(this, gameState_800babc8, target));
     }
   }
 
