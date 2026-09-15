@@ -3,6 +3,7 @@ package legend.game.saves.serializers;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
 import legend.core.tags.IntTag;
+import legend.core.tags.BoolTag;
 import legend.core.tags.ListTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.RawTag;
@@ -97,6 +98,12 @@ public final class V10Serializer {
     savedGame.worldMapPortalState.read(tag.get("worldMapPortals"));
     if(tag.has("worldMapPreset")) {
       savedGame.worldMapPreset = tag.get("worldMapPreset").asString().get();
+    }
+    if(tag.has("campaignProgression")) {
+      for(final Tag value : tag.get("campaignProgression").asList()) {
+        final MapTag entry = value.asMap();
+        savedGame.campaignProgressionFacts.put(entry.get("id").asRegistryId().get(), entry.get("value").asBool().get());
+      }
     }
     savedGame.visitedLocations.ensureCapacity(visitedLocationsTag.size());
     for(int i = 0; i < savedGame.visitedLocations.count(); i++) {
@@ -230,6 +237,16 @@ public final class V10Serializer {
     }
     if(!gameState.worldMapPreset.isEmpty()) {
       tag.set("worldMapPreset", new StringTag(gameState.worldMapPreset));
+    }
+    if(!gameState.campaignProgression.facts().isEmpty()) {
+      final ListTag campaignProgressionTag = new ListTag();
+      tag.set("campaignProgression", campaignProgressionTag);
+      for(final var entry : gameState.campaignProgression.facts().entrySet()) {
+        final MapTag factTag = new MapTag();
+        factTag.set("id", new RegistryIdTag(entry.getKey()));
+        factTag.set("value", new BoolTag(entry.getValue()));
+        campaignProgressionTag.add(factTag);
+      }
     }
     tag.set("visitedLocations", visitedLocationsTag);
     for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {

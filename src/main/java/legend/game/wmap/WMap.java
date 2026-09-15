@@ -640,7 +640,7 @@ public class WMap extends EngineState<WMap> {
     if(this.resolvingWorldMap) {
       throw new IllegalStateException("WorldMapProgressionEvent must not re-enter world-map queries");
     }
-    if(this.worldMap != null && (this.worldMapProgression.changed() || this.worldMap.needsRefresh(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c))) {
+    if(this.worldMap != null && (this.worldMapProgression.changed(gameState_800babc8) || this.worldMap.needsRefresh(gameState_800babc8.scriptFlags2_bc, gameState_800babc8.wmapFlags_15c))) {
       this.worldMap.resolve(this.resolveWorldMapProgression(new ConfiguredWorldMap(this.worldMapData, this.worldMap.definition(), this.worldMap.rules(), this.activeWorldMapPreset), false));
       this.worldMapPresentationDirty = true;
       this.notifyingWorldMap = true;

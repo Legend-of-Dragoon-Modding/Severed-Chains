@@ -20,7 +20,9 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 
@@ -51,6 +53,7 @@ public class SeveredSavedGame extends SavedGame {
   public final Flags wmapFlags = new Flags(8);
   public final Flags visitedLocations = new Flags(8);
   public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
+  public final Map<RegistryId, Boolean> campaignProgressionFacts = new LinkedHashMap<>();
   public String worldMapPreset = "";
   public final List<RegistryId> goodsIds = new ArrayList<>();
   public final int[] _1a4 = new int[8];
@@ -96,6 +99,7 @@ public class SeveredSavedGame extends SavedGame {
     gameState.wmapFlags_15c.set(this.wmapFlags);
     gameState.visitedLocations_17c.set(this.visitedLocations);
     gameState.worldMapPortalState.set(this.worldMapPortalState);
+    gameState.campaignProgression.setFacts(this.campaignProgressionFacts);
     gameState.worldMapPreset = this.worldMapPreset;
     this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
     System.arraycopy(this._1a4, 0, gameState._1a4, 0, this._1a4.length);
