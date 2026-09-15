@@ -16,6 +16,12 @@ public class WorldMapWarpEvent extends InGameEvent<WMap> implements WorldMapEven
   public WorldMapTravelTarget target;
   public boolean respectAccess;
   public boolean cancelled;
+  public final legend.game.wmap.world.WorldMapActivation activation = new legend.game.wmap.world.WorldMapActivation();
+
+  /** Apply only after a playable arrival; rollback must also handle partial application. */
+  public void onActivate(final Runnable apply, final Runnable rollback) {
+    this.activation.add(apply, rollback);
+  }
   /** Destination graph; preset switching can target a different graph from the active engine. */
   public final WorldMapDefinition definition;
   @Nullable public final RegistryId presetId;

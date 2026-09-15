@@ -38,6 +38,7 @@ public final class WorldMapProgressionResolver {
   }
 
   public WorldMapProgression resolve(final WMap engine, final GameState52c state, final WorldMapRegistrySnapshot data, final WorldMapDefinition definition, @Nullable final RegistryId preset, final boolean candidate) {
+    try(final WorldMapCampaignSnapshot preparation = new WorldMapCampaignSnapshot(state)) {
     final Map<RegistryId, Long> revisions = this.revisions();
     final long campaignRevision = state.campaignProgression.revision();
     final Flags enabled = new Flags(state.wmapFlags_15c.count());
@@ -49,8 +50,8 @@ public final class WorldMapProgressionResolver {
       identities.set(state.worldMapPortalState);
       identities.bind(definition, enabled, visited, data.standalone());
     data.applyStory(state.scriptFlags2_bc, enabled, definition);
-    identities.applyOverrides(definition, enabled);
     }
+    state.worldMapPortalState.applyOverrides(definition, enabled);
     final WorldMapProgression.Builder builder = new WorldMapProgression.Builder(state.scriptFlags2_bc, enabled).objective(data.objective(state.scriptFlags2_bc, definition));
     state.campaignProgression.facts().forEach(builder::fact);
     final WorldMapProgression result = EVENTS.postEvent(new WorldMapProgressionEvent(engine, state, builder, definition, preset, candidate)).progression.build();
@@ -60,5 +61,6 @@ public final class WorldMapProgressionResolver {
       this.portalRevision = state.worldMapPortalState.revision();
     }
     return result;
+    }
   }
 }
