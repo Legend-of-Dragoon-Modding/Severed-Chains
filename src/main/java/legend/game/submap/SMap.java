@@ -4022,8 +4022,10 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newCut > -1) {
-      this.submapProvider = RetailSubmapProvider.ID;
-      this.submapData = new MapTag();
+      if(!this.loadingSave) {
+        this.submapProvider = RetailSubmapProvider.ID;
+        this.submapData = new MapTag();
+      }
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
