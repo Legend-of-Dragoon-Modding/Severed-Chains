@@ -58,6 +58,8 @@ public final class V10Serializer {
 
     final ConfigCollection config = new ConfigCollection();
     final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
+    savedGame.retainedSaveTags = tag.clone();
+    if(tag.has("worldMapPackage")) savedGame.worldMapPackage = tag.get("worldMapPackage").asMap().clone();
 
     final ListTag scriptDataTag = tag.get("scriptData").asList();
     for(int i = 0; i < savedGame.scriptData.length; i++) {
@@ -180,7 +182,14 @@ public final class V10Serializer {
     buffer.put(0, atlas);
     final byte[] compressed = PngWriter.compress(buffer, 512, 512);
 
-    final MapTag tag = new MapTag();
+    final MapTag tag = gameState.retainedSaveTags.clone();
+    for(final String optional : java.util.List.of("worldMapPackage", "worldMapPreset", "worldMapPortals", "campaignProgression")) tag.getTags().remove(optional);
+    try {
+      final MapTag worldMapPackage = legend.game.wmap.preset.WorldMapPresetManager.savePackage(gameState);
+      if(worldMapPackage != null) tag.set("worldMapPackage", worldMapPackage);
+    } catch(final java.io.IOException failure) {
+      throw new IllegalStateException("Cannot preserve world map package in save", failure);
+    }
 
     tag.set("saveName", new StringTag(name));
     tag.set("campaignTypeId", new RegistryIdTag(campaignType.getRegistryId()));

@@ -57,6 +57,10 @@ public class GameState52c {
   public final CampaignProgression campaignProgression = new CampaignProgression(this.scriptFlags2_bc, this.wmapFlags_15c);
   /** Immutable campaign package digest; empty retains registered defaults for pre-preset saves. */
   public String worldMapPreset = "";
+  /** Portable package tags are retained even while a missing dependency forces native fallback. */
+  public legend.core.tags.MapTag worldMapPackage;
+  public boolean worldMapFallback;
+  public legend.core.tags.MapTag retainedSaveTags = new legend.core.tags.MapTag();
   public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];

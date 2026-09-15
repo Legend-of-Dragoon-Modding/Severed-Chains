@@ -375,8 +375,7 @@ public class WMap extends EngineState<WMap> {
       this.pendingWorldMapPreset = null;
       this.worldMapPresetReload = true;
     } else {
-      final WorldMapPreset preset = WorldMapPresetManager.load(gameState_800babc8);
-      configured = this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
+      configured = this.loadConfiguredWorldMap();
     }
     this.worldMapData = configured.data();
     this.activeWorldMapPreset = configured.preset();
@@ -389,7 +388,15 @@ public class WMap extends EngineState<WMap> {
     gameState_800babc8.worldMapPortalState.bind(definition, gameState_800babc8.wmapFlags_15c, gameState_800babc8.visitedLocations_17c);
     this.worldMap = new WorldMapRuntime(definition, configured.rules());
     if(this.savedWorldMapRoute != null) {
-      WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute, this.savedWorldMapData);
+      try {
+        if(gameState_800babc8.worldMapFallback) throw new IllegalArgumentException("Saved map content is unavailable");
+        WorldMapSave.restoreRoute(gameState_800babc8, definition, this.savedWorldMapRoute, this.savedWorldMapData);
+        gameState_800babc8.retainedSaveTags.getTags().remove("worldMapUnresolvedPosition");
+      } catch(final IllegalArgumentException unavailable) {
+        LOGGER.warn("Saved world map position is unavailable; retaining it and selecting a playable arrival", unavailable);
+        if(this.savedWorldMapData != null) gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.savedWorldMapData.clone());
+        gameState_800babc8.worldMapFallback = true;
+      }
       this.savedWorldMapRoute = null;
       this.savedWorldMapData = null;
     }
@@ -415,6 +422,25 @@ public class WMap extends EngineState<WMap> {
     this.placeIndices_800c84c8 = new int[definition.portals().size() + 1];
     Arrays.setAll(this.placePositionVectors_800c74b8, i -> new Vector3f());
     this.refreshWorldMap();
+    if(gameState_800babc8.worldMapFallback) {
+      final var arrival = definition.portals().stream().filter(portal -> portal.route() != null && this.worldMap.arrivalAllowed(portal.legacyIndex())).findFirst()
+        .orElseGet(() -> definition.portals().stream().filter(portal -> portal.route() != null).findFirst().orElseThrow());
+      this.worldMapTransition.queue(new WorldMapTravelTarget.Portal(arrival.id()), false);
+      this.worldMapTransition.begin();
+      this.worldMapTransition.loading();
+    }
+  }
+
+  private ConfiguredWorldMap loadConfiguredWorldMap() {
+    final WorldMapPreset preset = WorldMapPresetManager.load(gameState_800babc8);
+    try {
+      return this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
+    } catch(final RuntimeException unavailable) {
+      LOGGER.warn("Saved world map dependencies cannot be resolved; using native world map", unavailable);
+      gameState_800babc8.worldMapFallback = true;
+      final WorldMapPreset nativeMap = WorldMapPreset.vanilla();
+      return this.compileWorldMap(WorldMapPresetManager.validate(nativeMap), nativeMap);
+    }
   }
 
   public WorldMapDefinition getWorldMapDefinition() {
@@ -872,8 +898,9 @@ public class WMap extends EngineState<WMap> {
       this.savedWorldMapData = null;
       return;
     }
-    this.savedWorldMapRoute = WorldMapSave.read(gameState, tag);
-    this.savedWorldMapData = tag;
+    final Tag source = gameState.retainedSaveTags.has("worldMapUnresolvedPosition") ? gameState.retainedSaveTags.get("worldMapUnresolvedPosition") : tag;
+    this.savedWorldMapRoute = WorldMapSave.read(gameState, source);
+    this.savedWorldMapData = source;
   }
 
   @Override
