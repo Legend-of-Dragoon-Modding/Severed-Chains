@@ -87,10 +87,10 @@ public final class WorldMapPresetCodec {
     "WorldMapRouteData.encounterPool", "WorldMapRouteData.avatar", "WorldMapStoryPreset.place",
     "WorldMapCameraSettings.overviewPosition", "WorldMapCameraSettings.minimum", "WorldMapCameraSettings.maximum", "WorldMapCameraSettings.lighting",
     "WorldMapEncounterPool.percentages",
-    "Region.assets", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",
+    "Region.legacyTemplate", "Region.assets", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",
     "TraversalProfile.provider", "TraversalProfile.avatar", "TraversalProfile.visualOffset", "Warp.marker",
     "ThumbnailDefinition.asset", "ThumbnailDefinition.label", "ThumbnailDefinition.provider",
-    "WorldMapService.legacyBit", "WorldMapSound.label", "WorldMapBattleStage.label", "WorldMapSubmapDestination.label",
+    "WorldMapService.legacyBit", "WorldMapSound.label", "WorldMapBattleStage.label", "WorldMapBattleStage.combatStageId", "WorldMapSubmapDestination.label",
     "WorldMapPlace.thumbnailId", "WorldMapPlace.serviceIds", "WorldMapPlace.soundIds",
     "WorldMapRouteData.battleStageId", "WorldMapPortal.fromId", "WorldMapPortal.toId",
     "WorldMapPortal.atmosphere", "WorldMapPortal.smoke"
@@ -126,10 +126,13 @@ public final class WorldMapPresetCodec {
       if(!root.getTagName().equals("worldMapPreset")) throw error(root, "Expected worldMapPreset root");
       final Set<String> sections = new HashSet<>(Set.of("requiredMods", "rules", "behaviours", "removals", "thumbnails"));
       SECTIONS.forEach(section -> sections.add(section.plural));
-      shape(root, Set.of("version", "id", "name", "description"), sections);
+    shape(root, Set.of("version", "id", "name", "description", "standalone", "startingPortal", "recoveryPortal"), sections);
       if(!attribute(root, "version").equals(Integer.toString(VERSION))) throw error(root, "Unsupported schema version " + root.getAttribute("version"));
       final WorldMapPreset.Builder result = new WorldMapPreset.Builder(id(root, "id"), attribute(root, "name"))
-        .description(root.getAttribute("description")).packageRoot(packageRoot);
+      .description(root.getAttribute("description")).packageRoot(packageRoot)
+      .standalone(root.hasAttribute("standalone") && bool(root, "standalone"));
+    if(root.hasAttribute("startingPortal")) result.startingPortal(id(root, "startingPortal"));
+    if(root.hasAttribute("recoveryPortal")) result.recoveryPortal(id(root, "recoveryPortal"));
       final Element mods = child(root, "requiredMods", false);
       if(mods != null) {
         shape(mods, Set.of(), Set.of("mod"));
@@ -395,7 +398,10 @@ public final class WorldMapPresetCodec {
       root.setAttribute("version", Integer.toString(VERSION));
       root.setAttribute("id", preset.id().toString());
       root.setAttribute("name", preset.name());
-      root.setAttribute("description", preset.description());
+    root.setAttribute("description", preset.description());
+    if(preset.standalone()) root.setAttribute("standalone", "true");
+    if(preset.startingPortal() != null) root.setAttribute("startingPortal", preset.startingPortal().toString());
+    if(preset.recoveryPortal() != null) root.setAttribute("recoveryPortal", preset.recoveryPortal().toString());
       final Element mods = append(root, "requiredMods");
       preset.requiredMods().stream().sorted().forEach(id -> append(mods, "mod").setAttribute("id", id));
       for(final Section<?> section : SECTIONS) writeSection(root, preset, section);

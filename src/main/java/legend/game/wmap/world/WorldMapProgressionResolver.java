@@ -46,7 +46,7 @@ public final class WorldMapProgressionResolver {
       visited.set(state.visitedLocations_17c);
       final WorldMapPortalState identities = new WorldMapPortalState();
       identities.set(state.worldMapPortalState);
-      identities.bind(definition, enabled, visited);
+      identities.bind(definition, enabled, visited, data.standalone());
       data.applyStory(state.scriptFlags2_bc, enabled, definition);
     }
     final WorldMapProgression.Builder builder = new WorldMapProgression.Builder(state.scriptFlags2_bc, enabled).objective(data.objective(state.scriptFlags2_bc, definition));

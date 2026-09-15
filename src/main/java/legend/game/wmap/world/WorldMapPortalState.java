@@ -31,29 +31,32 @@ public final class WorldMapPortalState {
   }
 
   public void bind(final WorldMapDefinition definition, final Flags enabled, final Flags visited) {
+    this.bind(definition, enabled, visited, !WorldMapLegacyAdapter.isNativeLayout(definition));
+  }
+
+  public void bind(final WorldMapDefinition definition, final Flags enabled, final Flags visited, final boolean standalone) {
     this.capture(enabled, visited);
     final int words = (definition.portals().size() + 31) / 32;
     enabled.ensureCapacity(words);
     visited.ensureCapacity(words);
 
-    // Older saves only have numeric flags. Import their current layout once.
-    if(!this.identified) {
+    // Standalone worlds have no retail flag-slot meaning; new identities start enabled.
+    if(standalone) {
+      for(final WorldMapPortal portal : definition.portals()) this.states.putIfAbsent(portal.id(), new State(true, false));
+    } else if(!this.identified) {
       for(final WorldMapPortal portal : definition.portals()) {
-        if(portal.legacyIndex() >= 256) {
-          this.states.put(portal.id(), new State(enabled.get(portal.legacyIndex()), visited.get(portal.legacyIndex())));
-        }
+        if(portal.legacyIndex() >= 256) this.states.put(portal.id(), new State(enabled.get(portal.legacyIndex()), visited.get(portal.legacyIndex())));
       }
     }
-
     this.slots.clear();
-    for(int word = 8; word < enabled.count(); word++) {
+    for(int word = standalone ? 0 : 8; word < enabled.count(); word++) {
       enabled.setRaw(word, 0);
     }
-    for(int word = 8; word < visited.count(); word++) {
+    for(int word = standalone ? 0 : 8; word < visited.count(); word++) {
       visited.setRaw(word, 0);
     }
     for(final WorldMapPortal portal : definition.portals()) {
-      if(portal.legacyIndex() >= 256) {
+      if(standalone || portal.legacyIndex() >= 256) {
         this.slots.put(portal.id(), portal.legacyIndex());
         final State state = this.states.get(portal.id());
         if(state != null) {
