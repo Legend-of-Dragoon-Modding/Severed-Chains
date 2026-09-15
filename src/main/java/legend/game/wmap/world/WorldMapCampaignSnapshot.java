@@ -22,6 +22,7 @@ public final class WorldMapCampaignSnapshot implements AutoCloseable {
   private final long enabledRevision;
   private final long visitedRevision;
   private final long portalRevision;
+  private boolean closed;
 
   public WorldMapCampaignSnapshot(final GameState52c state) {
     this.state = state;
@@ -54,6 +55,8 @@ public final class WorldMapCampaignSnapshot implements AutoCloseable {
   /** Preparation must only describe a destination, never publish campaign mutations. */
   @Override
   public void close() {
+    if(this.closed) return;
+    this.closed = true;
     if(this.storyRevision == this.state.scriptFlags2_bc.revision()
       && this.scriptRevision == this.state.scriptFlags1_13c.revision()
       && this.enabledRevision == this.state.wmapFlags_15c.revision()
