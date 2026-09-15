@@ -635,7 +635,7 @@ public class WMap extends EngineState<WMap> {
     position.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
     position.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
     position.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-    position.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+    position.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, java.lang.Math.nextDown(4.0f));
     position.facing_4dd = this.mapState_800c6798.facing_1c;
     try {
       WorldMapSave.restoreRoute(position, configured.definition(), this.getWorldMapRoute().id(), WorldMapSave.write(position, this.worldMap.definition()));
@@ -1025,7 +1025,7 @@ public class WMap extends EngineState<WMap> {
       gameState.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
       gameState.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
       gameState.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-      gameState.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+      gameState.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, java.lang.Math.nextDown(4.0f));
       gameState.facing_4dd = this.mapState_800c6798.facing_1c;
     }
     final var tag = WorldMapSave.write(gameState, this.worldMap == null ? null : this.worldMap.definition()).asMap();
@@ -1436,7 +1436,7 @@ public class WMap extends EngineState<WMap> {
     gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
     gameState_800babc8.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
     gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-    gameState_800babc8.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+    gameState_800babc8.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, java.lang.Math.nextDown(4.0f));
     gameState_800babc8.facing_4dd = this.mapState_800c6798.facing_1c;
 
     //LAB_800ccd30
@@ -1461,7 +1461,7 @@ public class WMap extends EngineState<WMap> {
     gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
     gameState_800babc8.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
     gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-    gameState_800babc8.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+    gameState_800babc8.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, java.lang.Math.nextDown(4.0f));
     gameState_800babc8.facing_4dd = this.mapState_800c6798.facing_1c;
 
     this.handleAndRenderMapAndPlayer();
@@ -5523,7 +5523,7 @@ public class WMap extends EngineState<WMap> {
       gameState_800babc8.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
       gameState_800babc8.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
       gameState_800babc8.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-      gameState_800babc8.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+      gameState_800babc8.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, java.lang.Math.nextDown(4.0f));
       gameState_800babc8.facing_4dd = this.mapState_800c6798.facing_1c;
     }
     this.prepareWorldMapDestination(locationIndex, WorldMapTravel.Kind.LOCATION);
