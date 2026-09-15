@@ -1,5 +1,7 @@
 # World map and SC contract changes
 
+The subsequent [world-map hardening pass](world-map-hardening.md) supersedes the preparation, stage-loading, recovery, resource, and save-preservation contracts described here. Use its migration notes for current APIs.
+
 Implementation on `wmap-new-system`, based on `1a65d2c31`.
 
 ## Commit map
