@@ -30,6 +30,22 @@ public final class Harness {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Harness.class);
   private Harness() { }
 
+  /** Run state mutations where the renderer owns its OpenGL context. */
+  public static <T> T onEngineThread(final java.util.concurrent.Callable<T> action) {
+    final java.util.concurrent.FutureTask<T> task = new java.util.concurrent.FutureTask<>(action);
+    GameEngine.RENDERER.addTask(task);
+    try {
+      return task.get(30, java.util.concurrent.TimeUnit.SECONDS);
+    } catch(final InterruptedException failure) {
+      task.cancel(false);
+      Thread.currentThread().interrupt();
+      throw new AssertionError("Engine action interrupted", failure);
+    } catch(final Exception failure) {
+      task.cancel(false);
+      throw new AssertionError("Engine action failed", failure);
+    }
+  }
+
   public static void injectGameState(final SavedGame save, final boolean fullBoot) {
     SAVES.loadGameState(save, fullBoot);
   }
@@ -41,8 +57,11 @@ public final class Harness {
 
   public static void startBattle(final int encounterId, final int stageId) {
     LOGGER.info("[E2E] startBattle: encounterId=%d, stageId=%d", encounterId, stageId);
-    startLegacyEncounter(encounterId, stageId);
-    Harness.transitionToEngineState(LodEngineStateTypes.BATTLE.get());
+    onEngineThread(() -> {
+      startLegacyEncounter(encounterId, stageId);
+      Harness.transitionToEngineState(LodEngineStateTypes.BATTLE.get());
+      return null;
+    });
     Wait.waitForEngineState(Battle.class);
 
     // Wait for battleState and monster data to be initialized
@@ -83,6 +102,7 @@ public final class Harness {
         DebugHelper.sleep(10);
       }
     }
+    Wait.waitFor(() -> battle.hud.battleMenu_800c6c34.state_00 == 2, 30_000, "selected battle icon ready for confirmation");
     LOGGER.info("[E2E] selectBattleMenuIcon: selected icon %d", iconIndex);
   }
 
@@ -90,7 +110,7 @@ public final class Harness {
     GameEngine.bootRegistries();
     Scus94491BpeSegment_800b.campaignType = LodMod.RETAIL_CAMPAIGN_TYPE;
     final GameState52c state = new GameState52c();
-    state.campaign = Campaign.create(SAVES, "E2E-Test");
+    state.campaign = Campaign.create(SAVES, "E2E-Test-" + java.util.UUID.randomUUID());
     campaignType.get().setUpNewCampaign(state);
     final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(state));
     final GameLoadedEvent gameLoadedEvent = EVENTS.postEvent(new GameLoadedEvent(newGameEvent.gameState));
