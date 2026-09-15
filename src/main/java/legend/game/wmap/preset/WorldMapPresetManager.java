@@ -337,7 +337,7 @@ public final class WorldMapPresetManager {
     try {
       final WorldMapPreset preset = WorldMapPresetCodec.read(root.resolve("preset.wmap"));
       final MapTag tag = new MapTag();
-      tag.set("schemaVersion", new IntTag(1));
+      tag.set("schemaVersion", new IntTag(2));
       tag.set("token", new StringTag(state.worldMapPreset));
       tag.set("manifest", new StringTag(Files.readString(root.resolve("preset.wmap"))));
       final ListTag assets = new ListTag();
@@ -351,7 +351,7 @@ public final class WorldMapPresetManager {
         if(size > MAX_FILE_BYTES || assets.size() >= MAX_FILES) throw new IOException("World map package exceeds save limits");
         final MapTag entry = new MapTag();
         entry.set("path", new StringTag(name));
-        entry.set("data", new StringTag(Base64.getEncoder().encodeToString(Files.readAllBytes(path))));
+        entry.set("data", new legend.core.tags.ImmutableRawTag(Files.readAllBytes(path)));
         assets.add(entry);
       }
       state.worldMapPackage = tag.clone();
@@ -378,9 +378,15 @@ public final class WorldMapPresetManager {
         final String name = entry.get("path").asString().get();
         requireRelative(name);
         if(name.equals("preset.wmap")) throw new IOException("Embedded asset replaces manifest");
-        final String encoded = entry.get("data").asString().get();
-        if(encoded.length() > (MAX_FILE_BYTES + 2L) / 3 * 4) throw new IOException("Embedded world map file is too large");
-        final byte[] bytes = Base64.getDecoder().decode(encoded);
+        final byte[] bytes;
+        if(entry.get("data") instanceof final legend.core.tags.RawTag raw) {
+          bytes = raw.get();
+        } else {
+          final String encoded = entry.get("data").asString().get();
+          if(encoded.length() > (MAX_FILE_BYTES + 2L) / 3 * 4) throw new IOException("Embedded world map file is too large");
+          bytes = Base64.getDecoder().decode(encoded);
+        }
+        if(bytes.length > MAX_FILE_BYTES) throw new IOException("Embedded world map file is too large");
         total += bytes.length;
         requirePackageSize(total);
         final Path target = staging.resolve(name).normalize();

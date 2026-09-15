@@ -40,6 +40,8 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 
 public final class V10Serializer {
+  private static final java.util.Set<String> KNOWN_FIELDS = java.util.Set.of(
+    "saveName", "campaignTypeId", "locationName", "atlas", "scriptData", "activeParty", "gold", "chapterIndex", "stardust", "timestamp", "_b0", "battleCount", "turnCount", "scriptFlags2", "scriptFlags1", "wmapFlags", "visitedLocations", "worldMapPortals", "worldMapPreset", "worldMapPackage", "campaignProgression", "_1a4", "chestFlags", "equipment", "items", "goods", "characters", "engineStateId", "engineStateData");
   private V10Serializer() { }
 
   public static SavedGame fromV10(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
@@ -58,8 +60,21 @@ public final class V10Serializer {
 
     final ConfigCollection config = new ConfigCollection();
     final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
-    savedGame.retainedSaveTags = tag.clone();
-    if(tag.has("worldMapPackage")) savedGame.worldMapPackage = tag.get("worldMapPackage").asMap().clone();
+    savedGame.retainedSaveTags = new MapTag();
+    for(final String key : tag.keys()) {
+      if(!KNOWN_FIELDS.contains(key)) savedGame.retainedSaveTags.set(key, tag.get(key).clone());
+    }
+    for(final String key : java.util.List.of("equipment", "items", "goods", "characters")) savedGame.registrySaveData.set(key, tag.get(key).clone());
+    if(tag.has("worldMapPackage")) {
+      final MapTag worldPackage = tag.get("worldMapPackage").asMap();
+      if(worldPackage.has("assets")) {
+        for(final Tag asset : worldPackage.get("assets").asList()) {
+          final MapTag entry = asset.asMap();
+          if(entry.get("data") instanceof final RawTag raw) entry.set("data", new legend.core.tags.ImmutableRawTag(raw.get()));
+        }
+      }
+      savedGame.worldMapPackage = worldPackage;
+    }
 
     final ListTag scriptDataTag = tag.get("scriptData").asList();
     for(int i = 0; i < savedGame.scriptData.length; i++) {
@@ -149,8 +164,8 @@ public final class V10Serializer {
     for(int charIndex = 0; charIndex < charactersTag.size(); charIndex++) {
       final MapTag characterTag = charactersTag.get(charIndex).asMap();
       final RegistryId templateId = characterTag.get("templateId").asRegistryId().get();
-      final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(templateId).get();
-      savedGame.characters.add(template.deserialize(characterTag));
+      final var template = REGISTRIES.characterTemplates.getEntry(templateId);
+      savedGame.characters.add(template.isValid() ? template.get().deserialize(characterTag) : new legend.game.saves.UnavailableSavedCharacter());
       savedGame.charPortraits.add(new Rect4i(characterTag.get("portraitX").asInt().get(), characterTag.get("portraitY").asInt().get(), characterTag.get("portraitW").asInt().get(), characterTag.get("portraitH").asInt().get()));
     }
 
@@ -183,7 +198,7 @@ public final class V10Serializer {
     final byte[] compressed = PngWriter.compress(buffer, 512, 512);
 
     final MapTag tag = gameState.retainedSaveTags.clone();
-    for(final String optional : java.util.List.of("worldMapPackage", "worldMapPreset", "worldMapPortals", "campaignProgression")) tag.getTags().remove(optional);
+    for(final String optional : java.util.List.of("worldMapPackage", "worldMapPreset", "worldMapPortals", "campaignProgression")) tag.remove(optional);
     try {
       final MapTag worldMapPackage = legend.game.wmap.preset.WorldMapPresetManager.savePackage(gameState);
       if(worldMapPackage != null) tag.set("worldMapPackage", worldMapPackage);
@@ -330,6 +345,7 @@ public final class V10Serializer {
     EVENTS.postEvent(new WriteSaveDataEvent(modTags));
     tag.set("modData", modTags);
 
+    legend.game.saves.SaveRegistryData.merge(tag, gameState.registrySaveData);
     tag.serialize(data, offset);
 
     ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data, offset);
