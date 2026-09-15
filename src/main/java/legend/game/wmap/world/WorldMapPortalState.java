@@ -40,10 +40,11 @@ public final class WorldMapPortalState {
   }
 
   public boolean hasIdentities() {
-    return this.identified;
+    return this.identified || !this.overrides.isEmpty();
   }
 
   public void set(final WorldMapPortalState other) {
+    if(other == this) return;
     this.overrides.clear();
     this.overrides.putAll(other.overrides);
     this.revision++;
@@ -59,6 +60,7 @@ public final class WorldMapPortalState {
   }
 
   public void bind(final WorldMapDefinition definition, final Flags enabled, final Flags visited, final boolean standalone) {
+    this.revision++;
     this.capture(enabled, visited);
     final int words = (definition.portals().size() + 31) / 32;
     enabled.ensureCapacity(words);
