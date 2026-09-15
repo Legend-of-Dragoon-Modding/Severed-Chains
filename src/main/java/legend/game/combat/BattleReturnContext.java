@@ -15,6 +15,11 @@ public record BattleReturnContext(RegistryId engineState, @Nullable Tag data) {
     data = data == null ? null : data.clone();
   }
 
+  @Override
+  public Tag data() {
+    return this.data == null ? null : this.data.clone();
+  }
+
   public static BattleReturnContext capture(final EngineState<?> state, final GameState52c gameState) {
     return new BattleReturnContext(state.type.getRegistryId(), state.writeSaveData(gameState));
   }
