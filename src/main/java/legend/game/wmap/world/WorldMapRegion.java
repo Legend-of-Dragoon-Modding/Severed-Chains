@@ -9,11 +9,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * A separately loaded world map, identified by its registry ID rather than its legacy template.
- * Every region still requires a playable native Continent for retail audio/cinematic conventions.
- * Portals bound to this region must carry the same compatibility continent. If the model provider
- * supplies only a custom renderer, the native template TMD is loaded but not drawn: it anchors
- * existing camera/indicator transforms. Native assets therefore remain a runtime prerequisite.
+ * A separately loaded world map identified by registry ID instead of a legacy template.
+ * Legacy regions retain their playable native {@link Continent}; independent regions provide
+ * their scene anchor directly and require no native TMD.
  * Model coordinates must align with authored graph points; no terrain height fitting is implied.
  */
 public record WorldMapRegion(@Nullable Continent legacyTemplate, WorldMapModelProvider model, WorldMapCameraSettings camera, Supplier<WorldMapPresentationController> presentation, WorldMapScene scene) {

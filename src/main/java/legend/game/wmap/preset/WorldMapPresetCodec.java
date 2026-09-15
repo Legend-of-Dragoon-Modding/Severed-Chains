@@ -252,7 +252,7 @@ public final class WorldMapPresetCodec {
       final String name = component.getName();
       final boolean optional = OPTIONAL.contains(type.getSimpleName() + '.' + name);
       if(scalar(component.getType())) {
-        args[i] = optional && !element.hasAttribute(name) ? null : scalarValue(element, name, component.getType());
+        args[i] = optional && !element.hasAttribute(name) ? absentValue(component.getType()) : scalarValue(element, name, component.getType());
       } else {
         final Element value = child(element, name, !optional);
         if(value == null) {
@@ -287,6 +287,13 @@ public final class WorldMapPresetCodec {
     } catch(final InvocationTargetException failure) {
       throw error(element, failure.getCause().getMessage());
     }
+  }
+
+  private static Object absentValue(final Class<?> type) {
+    if(type == int.class) return 0;
+    if(type == float.class) return 0.0f;
+    if(type == boolean.class) return false;
+    return null;
   }
 
   private static boolean scalar(final Class<?> type) {

@@ -550,6 +550,7 @@ public final class WorldMapRegistrySnapshot {
   }
 
   private void validateDefinition(final WorldMapDefinition definition, final boolean configured) {
+    if(!this.standalone) WorldMapLegacyAdapter.validateRetail(definition);
     if(this.preset != null) this.preset.validateReferences(definition, this.avatars.keySet());
     final Map<RegistryId, RegistryId> routeRegions = new HashMap<>();
     for(final WorldMapPortal portal : definition.portals()) {

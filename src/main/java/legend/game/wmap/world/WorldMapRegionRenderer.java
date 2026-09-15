@@ -35,9 +35,12 @@ public final class WorldMapRegionRenderer {
     this.regionId = Objects.requireNonNull(regionId, "regionId");
     this.presentationFactory = region.presentation();
     try {
-      this.pending = Objects.requireNonNull(region.model().load(state), "World map model loader returned null future")
-        .thenApply(assets -> Objects.requireNonNull(assets, "World map model loader returned null assets"))
-        .orTimeout(60, TimeUnit.SECONDS);
+      this.pending = Objects.requireNonNull(region.model().load(state), "World map model loader returned null future").thenCompose(assets -> {
+        Objects.requireNonNull(assets, "World map model loader returned null assets");
+        if(assets.model() != null || !region.hasLegacyTemplate() || legacyAnchor == null) return CompletableFuture.completedFuture(assets);
+        return Objects.requireNonNull(legacyAnchor.get(), "World map anchor loader returned null future")
+          .thenApply(anchor -> new WorldMapModelAssets(Objects.requireNonNull(anchor, "World map anchor loader returned null TMD"), assets.textures(), assets.renderer(), assets.retailAnimations()));
+      }).orTimeout(60, TimeUnit.SECONDS);
     } catch(final RuntimeException failure) {
       throw this.failed("request assets", failure);
     }
@@ -85,7 +88,7 @@ public final class WorldMapRegionRenderer {
   }
 
   public boolean retailAnimations() {
-    return this.assets != null && this.assets.retailAnimations();
+    return this.hasTmdModel() && this.assets.retailAnimations();
   }
 
   public boolean useVanillaAtmosphere() {

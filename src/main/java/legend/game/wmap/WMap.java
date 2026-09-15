@@ -426,6 +426,17 @@ public class WMap extends EngineState<WMap> {
     this.placeIndices_800c84c8 = new int[definition.portals().size() + 1];
     Arrays.setAll(this.placePositionVectors_800c74b8, i -> new Vector3f());
     this.refreshWorldMap();
+    if(this.restoredWorldMapTarget != null) {
+      try {
+        if(gameState_800babc8.worldMapFallback || WorldMapTravelPosition.resolve(this.worldMapTransition.target(), definition, this.worldMap.view(), true) == null) throw new IllegalArgumentException("Saved travel target is unavailable");
+        gameState_800babc8.retainedSaveTags.getTags().remove("worldMapUnresolvedPosition");
+      } catch(final IllegalArgumentException unavailable) {
+        LOGGER.warn("Saved travel target is unavailable; retaining it and selecting a playable arrival", unavailable);
+        gameState_800babc8.retainedSaveTags.set("worldMapUnresolvedPosition", this.restoredWorldMapTarget);
+        gameState_800babc8.worldMapFallback = true;
+      }
+      this.restoredWorldMapTarget = null;
+    }
     if(gameState_800babc8.worldMapFallback) {
       final var arrival = definition.portals().stream().filter(portal -> portal.route() != null && this.worldMap.arrivalAllowed(portal.legacyIndex())).findFirst()
         .orElseGet(() -> definition.portals().stream().filter(portal -> portal.route() != null).findFirst().orElseThrow());
@@ -516,35 +527,7 @@ public class WMap extends EngineState<WMap> {
     if(!this.worldMapTransition.prepare(this.worldMapTravelReady())) return WorldMapTravelRequestResult.BUSY;
     try {
       final ConfiguredWorldMap configured = this.compileWorldMap(WorldMapPresetManager.validate(preset), preset);
-      final GameState52c position = new GameState52c();
-      position.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
-      position.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
-      position.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
-      position.dotOffset_4dc = this.mapState_800c6798.dotOffset_18;
-      position.facing_4dd = this.mapState_800c6798.facing_1c;
-      final WorldMapRoute current = this.worldMap.definition().route(position.directionalPathIndex_4de);
-      final Tag saved = WorldMapSave.write(position, this.worldMap.definition());
-      WorldMapSave.restoreRoute(position, configured.definition(), current.id(), saved);
-      final WorldMapRoute route = configured.definition().route(position.directionalPathIndex_4de);
-      final var points = configured.definition().geometry().get(route.segmentIndex());
-      double total = 0;
-      double travelled = 0;
-      for(int i = 0; i < points.size() - 1; i++) {
-        final WorldMapPoint a = points.get(i);
-        final WorldMapPoint b = points.get(i + 1);
-        final double dx = (double)b.x() - a.x();
-        final double dy = (double)b.y() - a.y();
-        final double dz = (double)b.z() - a.z();
-        final double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        total += distance;
-        if(i < position.dotIndex_4da) {
-          travelled += distance;
-        } else if(i == position.dotIndex_4da) {
-          travelled += distance * position.dotOffset_4dc / 4.0;
-        }
-      }
-      final float progress = (float)Math.clamp(route.direction() > 0 ? travelled / total : 1.0 - travelled / total, 0.0, 1.0);
-      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, WorldMapTravelTarget.atRouteDistance(route.id(), progress), false, configured.definition(), preset == null ? null : preset.id()));
+      final WorldMapWarpEvent event = EVENTS.postEvent(new WorldMapWarpEvent(this, gameState_800babc8, this.presetArrival(configured), true, configured.definition(), preset == null ? null : preset.id()));
       if(event.cancelled) {
         return WorldMapTravelRequestResult.CANCELLED;
       }
@@ -554,13 +537,30 @@ public class WMap extends EngineState<WMap> {
         return WorldMapTravelRequestResult.DENIED;
       }
       final String token = WorldMapPresetManager.store(gameState_800babc8, preset);
-      this.pendingWorldMapPreset = new PresetSwitch(token, configured);
       this.captureWorldMapRecovery();
+      this.pendingWorldMapPreset = new PresetSwitch(token, configured);
       this.worldMapTransition.queue(event.target, event.respectAccess);
       return WorldMapTravelRequestResult.ACCEPTED;
     } finally {
       this.worldMapTransition.finishPreparation();
     }
+  }
+
+  private WorldMapTravelTarget presetArrival(final ConfiguredWorldMap configured) {
+    final GameState52c position = new GameState52c();
+    position.directionalPathIndex_4de = this.mapState_800c6798.directionalPathIndex_12;
+    position.pathIndex_4d8 = this.mapState_800c6798.pathIndex_14;
+    position.dotIndex_4da = this.mapState_800c6798.dotIndex_16;
+    position.dotOffset_4dc = Math.min(this.mapState_800c6798.dotOffset_18, Math.nextDown(4.0f));
+    position.facing_4dd = this.mapState_800c6798.facing_1c;
+    try {
+      WorldMapSave.restoreRoute(position, configured.definition(), this.getWorldMapRoute().id(), WorldMapSave.write(position, this.worldMap.definition()));
+    } catch(final IllegalArgumentException incompatibleTopology) {
+      return new WorldMapTravelTarget.Portal(WorldMapLegacyAdapter.startingPortal(configured.definition(), configured.preset()).id());
+    }
+    final WorldMapRoute route = configured.definition().route(position.directionalPathIndex_4de);
+    final float progress = new WorldMapRouteMetric(configured.definition().geometry().get(route.segmentIndex())).progress(position.dotIndex_4da, position.dotOffset_4dc);
+    return WorldMapTravelTarget.atRouteDistance(route.id(), route.direction() > 0 ? progress : 1.0f - progress);
   }
 
   public boolean travelToWorldMapPortal(final RegistryId portal) {
@@ -594,6 +594,12 @@ public class WMap extends EngineState<WMap> {
       && this.isWorldMapTraversalLocal();
   }
 
+  public WorldMapTravelTarget currentWorldMapTarget() {
+    final WorldMapRoute route = this.getWorldMapRoute();
+    final float progress = this.worldMapMetrics.get(route.segmentIndex()).progress(this.mapState_800c6798.dotIndex_16, this.mapState_800c6798.dotOffset_18);
+    return WorldMapTravelTarget.atRouteDistance(route.id(), route.direction() > 0 ? progress : 1.0f - progress);
+  }
+
   private void captureWorldMapRecovery() {
     this.recoveryWorldMap = new ConfiguredWorldMap(this.worldMapData, this.worldMap.definition(), this.worldMap.rules(), this.activeWorldMapPreset);
     final GameState52c state = new GameState52c();
@@ -601,22 +607,7 @@ public class WMap extends EngineState<WMap> {
     state.visitedLocations_17c.set(gameState_800babc8.visitedLocations_17c);
     state.worldMapPortalState.set(gameState_800babc8.worldMapPortalState);
     this.recoveryWorldMapState = state;
-    final var points = this.worldMap.definition().geometry().get(this.getWorldMapRoute().segmentIndex());
-    double total = 0;
-    double travelled = 0;
-    for(int i = 0; i < points.size() - 1; i++) {
-      final WorldMapPoint a = points.get(i);
-      final WorldMapPoint b = points.get(i + 1);
-      final double dx = (double)b.x() - a.x();
-      final double dy = (double)b.y() - a.y();
-      final double dz = (double)b.z() - a.z();
-      final double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      total += length;
-      if(i < this.mapState_800c6798.dotIndex_16) travelled += length;
-      else if(i == this.mapState_800c6798.dotIndex_16) travelled += length * this.mapState_800c6798.dotOffset_18 / 4.0;
-    }
-    final float distance = (float)Math.clamp(this.getWorldMapRoute().direction() > 0 ? travelled / total : 1.0 - travelled / total, 0.0, 1.0);
-    this.recoveryWorldMapTarget = WorldMapTravelTarget.atRouteDistance(this.getWorldMapRoute().id(), distance);
+    this.recoveryWorldMapTarget = this.currentWorldMapTarget();
   }
 
   private boolean recoverWorldMap(final Throwable failure) {
@@ -885,6 +876,7 @@ public class WMap extends EngineState<WMap> {
   }
 
   private EngineDestination pendingEngineDestination;
+  private Tag restoredWorldMapTarget;
 
   @Override
   public boolean requestTravel(final EngineDestination destination) {
@@ -901,15 +893,16 @@ public class WMap extends EngineState<WMap> {
 
   @Override
   public void readSaveData(final GameState52c gameState, @Nullable final Tag tag) {
-    if(tag != null && tag.asMap().has("worldMapTarget")) {
-      this.worldMapTransition.queue(EngineDestination.worldMapTarget(tag), true);
+    final Tag source = gameState.retainedSaveTags.has("worldMapUnresolvedPosition") ? gameState.retainedSaveTags.get("worldMapUnresolvedPosition") : tag;
+    if(source != null && source.asMap().has("worldMapTarget")) {
+      this.restoredWorldMapTarget = source.clone();
+      this.worldMapTransition.queue(EngineDestination.worldMapTarget(source), true);
       this.worldMapTransition.begin();
       this.worldMapTransition.loading();
       this.savedWorldMapRoute = null;
       this.savedWorldMapData = null;
       return;
     }
-    final Tag source = gameState.retainedSaveTags.has("worldMapUnresolvedPosition") ? gameState.retainedSaveTags.get("worldMapUnresolvedPosition") : tag;
     this.savedWorldMapRoute = WorldMapSave.read(gameState, source);
     this.savedWorldMapData = source;
   }
@@ -1303,10 +1296,15 @@ public class WMap extends EngineState<WMap> {
     if(this.pendingEngineDestination != null) {
       final Tag payload = this.pendingEngineDestination.data();
       if(this.pendingEngineDestination.engineState().equals(LodEngineStateTypes.SUBMAP.getId())) {
-        payload.asMap().set("worldMapReturn", WorldMapSave.write(gameState_800babc8, this.worldMap.definition()));
+        payload.asMap().set("worldMapReturn", EngineDestination.worldMap(this.currentWorldMapTarget()).data());
       }
       this.engineStateData = payload;
       this.pendingEngineDestination = null;
+    }
+    if(this.engineStateToTransitionTo == LodEngineStateTypes.SUBMAP.get() && this.engineStateData == null && this.worldMapData.standalone()) {
+      final Tag payload = EngineDestination.submap(new SubmapEndpoint(submapCut_80052c30, submapScene_80052c34)).data();
+      payload.asMap().set("worldMapReturn", EngineDestination.worldMap(this.currentWorldMapTarget()).data());
+      this.engineStateData = payload;
     }
     EngineStates.engineStateData = this.engineStateData;
     this.engineStateData = null;

@@ -2600,13 +2600,12 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c8774L)
   public void loadStageTmdAndAnim(final String modelName, final List<FileData> files) {
-    this.setStageHasNoModel();
-    this.deleteBattleStageModel();
     LOGGER.info("Battle stage %s loaded", modelName);
-    this.setStageHasNoModel();
-    this.deleteBattleStageModel();
     if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
       this.loadStageModel(modelName, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
+    } else {
+      this.setStageHasNoModel();
+      this.deleteBattleStageModel();
     }
   }
 
