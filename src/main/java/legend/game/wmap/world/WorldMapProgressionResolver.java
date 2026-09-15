@@ -49,8 +49,8 @@ public final class WorldMapProgressionResolver {
       final WorldMapPortalState identities = new WorldMapPortalState();
       identities.set(state.worldMapPortalState);
       identities.bind(definition, enabled, visited, data.standalone());
-    data.applyStory(state.scriptFlags2_bc, enabled, definition);
     }
+    data.applyStory(state.scriptFlags2_bc, enabled, definition);
     state.worldMapPortalState.applyOverrides(definition, enabled);
     final WorldMapProgression.Builder builder = new WorldMapProgression.Builder(state.scriptFlags2_bc, enabled).objective(data.objective(state.scriptFlags2_bc, definition));
     state.campaignProgression.facts().forEach(builder::fact);

@@ -52,6 +52,11 @@ public final class WorldMapRuntime {
     return this.invalidated || this.view == null || !this.view.progression().matches(story, locations);
   }
 
+  /** Revision-aware consumers compare source revisions, not derived availability against raw flags. */
+  public boolean needsRefresh() {
+    return this.invalidated || this.view == null;
+  }
+
   public void invalidate() {
     this.invalidated = true;
   }
