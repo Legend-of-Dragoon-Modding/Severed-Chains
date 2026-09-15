@@ -23,6 +23,8 @@ public final class WorldMapRuntime {
     this.traversal = new WorldMapTraversal(definition);
   }
 
+  public WorldMapRules rules() { return this.rules; }
+
   public WorldMapDefinition definition() {
     return this.definition;
   }
