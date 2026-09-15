@@ -200,6 +200,10 @@ public final class V10Serializer {
     try {
       final MapTag worldMapPackage = legend.game.wmap.preset.WorldMapPresetManager.savePackage(gameState);
       if(worldMapPackage != null) tag.set("worldMapPackage", worldMapPackage);
+      if(worldMapPackage != null && tag.has("worldMapRecovery")) {
+        final MapTag recovery = tag.get("worldMapRecovery").asMap();
+        if(recovery.get("preset").asString().get().equals(gameState.worldMapPreset)) recovery.remove("package");
+      }
     } catch(final java.io.IOException failure) {
       throw new IllegalStateException("Cannot preserve world map package in save", failure);
     }

@@ -106,6 +106,7 @@ public class SeveredSavedGame extends SavedGame {
     gameState.worldMapPreset = this.worldMapPreset;
     gameState.worldMapPackage = this.worldMapPackage == null ? null : this.worldMapPackage.clone();
     gameState.retainedSaveTags = this.retainedSaveTags.clone();
+    legend.game.wmap.world.WorldMapRecovery.attachPackage(gameState);
     if(!this.registrySaveData.has("equipment")) {
       final var entries = new legend.core.tags.ListTag();
       for(final var id : this.equipmentIds) entries.add(SaveRegistryData.inventoryEntry("equipmentId", id));
