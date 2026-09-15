@@ -22,7 +22,12 @@ public final class WorldMapRegionRenderer {
 
   /** Compatibility overload; custom regions should pass their actual registry identity. */
   public void load(final WorldMapRegion region, final GameState52c state, final Supplier<CompletableFuture<TmdWithId>> legacyAnchor) {
+    if(region.legacyTemplate() == null) throw new IllegalArgumentException("Independent world map regions require a registry ID");
     this.load(WorldMapRegion.legacyId(region.legacyTemplate()), region, state, legacyAnchor);
+  }
+
+  public void load(final RegistryId regionId, final WorldMapRegion region, final GameState52c state) {
+    this.load(regionId, region, state, null);
   }
 
   public void load(final RegistryId regionId, final WorldMapRegion region, final GameState52c state, final Supplier<CompletableFuture<TmdWithId>> legacyAnchor) {
@@ -30,15 +35,9 @@ public final class WorldMapRegionRenderer {
     this.regionId = Objects.requireNonNull(regionId, "regionId");
     this.presentationFactory = region.presentation();
     try {
-      // thenCompose creates an owned future: timing it out does not alter a provider's shared one.
-      this.pending = Objects.requireNonNull(region.model().load(state), "World map model loader returned null future").thenCompose(assets -> {
-        Objects.requireNonNull(assets, "World map model loader returned null assets");
-        if(assets.model() != null) {
-          return CompletableFuture.completedFuture(assets);
-        }
-        return Objects.requireNonNull(legacyAnchor.get(), "World map anchor loader returned null future")
-          .thenApply(anchor -> new WorldMapModelAssets(Objects.requireNonNull(anchor, "World map anchor loader returned null TMD"), assets.textures(), assets.renderer(), assets.retailAnimations()));
-      }).orTimeout(60, TimeUnit.SECONDS);
+      this.pending = Objects.requireNonNull(region.model().load(state), "World map model loader returned null future")
+        .thenApply(assets -> Objects.requireNonNull(assets, "World map model loader returned null assets"))
+        .orTimeout(60, TimeUnit.SECONDS);
     } catch(final RuntimeException failure) {
       throw this.failed("request assets", failure);
     }
@@ -56,7 +55,7 @@ public final class WorldMapRegionRenderer {
       for(final var texture : loaded.textures()) {
         texture.uploadToGpu();
       }
-      initializeMap.accept(loaded.model());
+      if(loaded.model() != null) initializeMap.accept(loaded.model());
       if(loaded.renderer() != null) {
         this.renderer = Objects.requireNonNull(loaded.renderer().get(), "World map renderer factory returned null");
         this.renderer.init(context.get());
@@ -79,6 +78,10 @@ public final class WorldMapRegionRenderer {
 
   public boolean customModel() {
     return this.renderer != null;
+  }
+
+  public boolean hasTmdModel() {
+    return this.assets != null && this.assets.model() != null;
   }
 
   public boolean retailAnimations() {
