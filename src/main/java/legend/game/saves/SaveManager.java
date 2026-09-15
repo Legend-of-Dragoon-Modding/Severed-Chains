@@ -352,19 +352,26 @@ public final class SaveManager {
 
   public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
     try {
-      final FileData data = new ExpandableFileData(0x1);
+      final FileData data = new ExpandableFileData(0x1) {
+        @Override
+        protected void checkBounds(final int offset, final int size) {
+          if(offset < 0 || size < 0 || (long)offset + size > 512L * 1024 * 1024) throw new IllegalArgumentException("Save exceeds 512 MiB");
+          super.checkBounds(offset, size);
+        }
+      };
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerVersion.code);
       this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState);
-      final byte[] bytes = new byte[offset.get()];
-      data.read(0, bytes, 0, offset.get());
+      final byte[] bytes = data.getBytes();
 
       final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
       Files.createDirectories(gameState.campaign.path);
-      Files.write(file, bytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      try(final var stream = Files.newOutputStream(file, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+        stream.write(bytes, 0, offset.get());
+      }
       return file;
-    } catch(final IOException e) {
+    } catch(final IOException | IllegalArgumentException e) {
       throw new SaveFailedException("Failed to save game", e);
     }
   }
