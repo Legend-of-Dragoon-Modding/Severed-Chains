@@ -636,6 +636,7 @@ public class Battle extends EngineState<Battle> {
 
   @Override
   public void destroy() {
+    this.cancelStageLoad();
     super.destroy();
     sssqResetStuff();
   }
@@ -2464,9 +2465,7 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c82b8L)
   public void deallocateCombat() {
-    this.stageLoadGeneration++;
-    this.stageLoading.cancel(false);
-    this.stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
+    this.cancelStageLoad();
     if(fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.updateGameStateAndDeallocateMenu();
       this.setStageHasNoModel();
@@ -2750,6 +2749,12 @@ public class Battle extends EngineState<Battle> {
     } catch(final RuntimeException error) {
       loading.completeExceptionally(error);
     }
+  }
+
+  private void cancelStageLoad() {
+    this.stageLoadGeneration++;
+    this.stageLoading.cancel(false);
+    this.stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
   }
 
   public BattleStageDefinition getStageDefinition() {
