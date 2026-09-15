@@ -95,7 +95,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.sound.Audio.loadMusicPackage;
 import static legend.game.sound.Audio.loadSshdAndSoundbank;
@@ -520,10 +519,10 @@ public class RetailSubmap extends Submap {
     final int battleStageId = useBattleStage ? battleStage_800bb0f4 : encounterData_800f64c4[this.cut].stage_03;
 
     final SubmapEncounterEvent event = EVENTS.postEvent(new SubmapEncounterEvent(this.smap, gameState_800babc8, this, encounter, battleStageId, this.cut, sceneId, scene));
-    startEncounter(event.encounter, event.battleStageId);
+    legend.game.combat.SBtld.startEncounter(new legend.game.combat.BattleRequest(event.encounter, event.resolveBattleStage(), null));
 
     if(Config.combatStage()) {
-      battleStage_800bb0f4 = Config.getCombatStage();
+      legend.game.combat.SBtld.setLegacyBattleStage(Config.getCombatStage());
     }
   }
 

@@ -1,4 +1,7 @@
 package legend.core;
+import legend.game.combat.environment.BattleStageDefinition;
+import legend.game.combat.environment.BattleStageRegistry;
+import legend.game.combat.environment.RegisterBattleStagesEvent;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputActionRegistry;
 import legend.core.platform.input.InputActionRegistryEvent;
@@ -146,6 +149,7 @@ public class Registries extends org.legendofdragoon.modloader.registries.Registr
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
   public final Registry<DeffPackage> deff = this.addRegistry(new DeffRegistry(), RegisterDeffsEvent::new);
   public final Registry<Encounter> encounters = this.addRegistry(new EncounterRegistry(), EncounterRegistryEvent::new);
+  public final Registry<BattleStageDefinition> battleStages = this.addRegistry(new BattleStageRegistry(), RegisterBattleStagesEvent::new);
   public final Registry<Addition> additions = this.addRegistry(new AdditionRegistry(), AdditionRegistryEvent::new);
   public final Registry<BattleAction> battleActions = this.addRegistry(new BattleActionRegistry(), RegisterBattleActionsEvent::new);
   public final Registry<PostBattleAction<?, ?>> postBattleActions = this.addRegistry(new PostBattleActionRegistry(), RegisterPostBattleActionsEvent::new);
