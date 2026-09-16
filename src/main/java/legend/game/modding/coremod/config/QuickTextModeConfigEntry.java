@@ -20,6 +20,6 @@ public class QuickTextModeConfigEntry extends EnumConfigEntry<QuickTextMode> imp
 
   @Override
   public void read(final int index, final Param out) {
-    out.set(CONFIG.getConfig(this).ordinal());
+    out.set(CONFIG.getConfig(this).scriptValue);
   }
 }
