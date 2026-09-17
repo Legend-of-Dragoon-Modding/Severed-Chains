@@ -149,6 +149,20 @@ class EngineBootTest {
     LOGGER.info("[E2E] PASS: worldMapReturnTravelAndSave");
   }
 
+  @Test
+  @Timeout(180)
+  void test5_submapTypedReturnAndLifetime() {
+    SubmapRuntimeChecks.runAfterWorldMap();
+    LOGGER.info("[E2E] PASS: submapTypedReturnAndLifetime");
+  }
+
+  @Test
+  @Timeout(180)
+  void test6_worldMapPresetSwitchAndExactPosition() {
+    WorldMapRuntimeChecks.runPresetSwitch();
+    LOGGER.info("[E2E] PASS: worldMapPresetSwitchAndExactPosition");
+  }
+
   @AfterAll
   void shutdownEngine() {
     if(engine != null) {

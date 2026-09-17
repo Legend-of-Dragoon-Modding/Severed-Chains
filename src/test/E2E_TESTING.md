@@ -45,11 +45,16 @@ Tests are ordered by method name and share a single engine instance (`@TestInsta
 - `test3_guardDoesNotChangeMonsterHp` selecting Guard does not damage the monster
 - `test4_worldMapReturnTravelAndSave` - native battle cleanup and WMap load, travel denial/busy responses, route position, and in-memory save restoration
 
+- `test5_submapTypedReturnAndLifetime` - native Forest entry, owned loading completion, typed return, and scope disposal
+- `test6_worldMapPresetSwitchAndExactPosition` - named-only presentation, busy admission, exact distance metadata, and retail preset restoration
+
+Independent test classes run in separate JVMs (`forkEvery = 1`) to isolate engine statics and native contexts. The six ordered engine scenarios share their single engine instance
+
 ## Architecture
 
 ```
 src/test/java/legend/game/
-  EngineBootTest.java - JUnit 6 test class (4 tests)
+  EngineBootTest.java - JUnit 6 test class (6 tests)
   ExampleTest.java    - sandbox for manual testing and experimentation
   Bootstrapper.java   - boots engine on a background thread
   Harness.java        - state injection, battle control, game state setup
