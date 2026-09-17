@@ -14,8 +14,7 @@ public final class WorldMapTraversalPosition {
   /** Import only on route/geometry changes or an actual write to the compatibility cursor. */
   public void synchronize(final RegistryId route, final WorldMapRouteMetric metric, final int dot, final float offset) {
     if(!Objects.equals(this.route, route) || this.metric != metric || this.exported == null || this.exported.index() != dot || Float.compare(this.exported.offset(), offset) != 0) {
-      this.set(route, metric, metric.distance(dot, offset));
-      this.exported = new WorldMapRouteMetric.Cursor(dot, offset, 0);
+      this.importLegacyCursor(route, metric, dot, offset);
     }
   }
 
@@ -24,6 +23,16 @@ public final class WorldMapTraversalPosition {
     this.metric = Objects.requireNonNull(metric, "metric");
     this.distance = metric.clamp(distance);
     this.exported = metric.cursor(this.distance);
+  }
+
+  /** Explicit adapter boundary for numeric scripts and old saves. */
+  public void importLegacyCursor(final RegistryId route, final WorldMapRouteMetric metric, final int dot, final float offset) {
+    this.set(route, metric, metric.distance(dot, offset));
+    this.exported = new WorldMapRouteMetric.Cursor(dot, offset, 0);
+  }
+
+  public double preciseProgress() {
+    return this.distance / this.metric.length();
   }
 
   public RegistryId route() {
