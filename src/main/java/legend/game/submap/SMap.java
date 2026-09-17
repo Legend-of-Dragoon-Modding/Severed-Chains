@@ -446,6 +446,14 @@ public class SMap extends EngineState<SMap> {
 
   public SMap() {
     super(LodEngineStateTypes.SUBMAP.get());
+    this.lifetime().own(() -> {
+      if(this.submapSounds.indices_08 != null) {
+        for(int i = 0; i < this.submapSounds.indices_08.length; i++) legend.game.sound.Audio.stopSound(this.submapSounds, i, 3);
+      }
+      if(this.submapSounds.used_00 && this.submapSounds.playableSound_10 != null) legend.game.sound.Audio.sssqUnloadPlayableSound(this.submapSounds.playableSound_10);
+      this.submapSounds.used_00 = false;
+      legend.game.sound.Audio.removeSoundFile(this.submapSounds);
+    });
   }
 
   @Override
@@ -463,6 +471,16 @@ public class SMap extends EngineState<SMap> {
   }
 
   private EngineDestination pendingDestination;
+  private legend.game.EngineStateLifetime submapLifetime;
+
+  public legend.game.EngineStateLifetime submapLifetime() {
+    return java.util.Objects.requireNonNull(this.submapLifetime, "Submap loading has not started");
+  }
+
+  private void beginSubmapLifetime(final String phase) {
+    if(this.submapLifetime != null) this.submapLifetime.close();
+    this.submapLifetime = this.lifetime().child(this.submapProvider + " " + phase);
+  }
   private Tag worldMapReturn;
   private RegistryId submapProvider = RetailSubmapProvider.ID;
   private Tag submapData = new MapTag();
@@ -3259,7 +3277,7 @@ public class SMap extends EngineState<SMap> {
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
         this.unloadSubmapParticles_800c6870 = false;
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_SOBJ_ASSETS_AND_SCRIPTS_6;
-        this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_7);
+        this.submapLifetime.await("object assets", this.submap.loadAssetsAsync(), ignored -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_7);
       }
 
       // Load submap objects
@@ -3466,7 +3484,7 @@ public class SMap extends EngineState<SMap> {
     scriptDeallocateAllTextboxes(null);
 
     this.unloadSubmapParticles_800c6870 = true;
-    this.submap.unload();
+    this.submapLifetime.close();
     this.submap = null;
 
     this.submapEffectsState_800f9eac = -1;
@@ -4093,6 +4111,18 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e5914L)
   public void tick() {
     super.tick();
+    if(this.submapLifetime != null) {
+      try {
+        this.submapLifetime.poll();
+      } catch(final RuntimeException | Error failure) {
+        try {
+          this.submapLifetime.close();
+        } catch(final RuntimeException | Error cleanup) {
+          failure.addSuppressed(cleanup);
+        }
+        throw failure;
+      }
+    }
 
     //LAB_800e5a30
     //LAB_800e5a34
@@ -4113,8 +4143,13 @@ public class SMap extends EngineState<SMap> {
       }
 
       case LOAD_NEWROOT_1 -> {
-        loadFile("\\SUBMAP\\NEWROOT.RDT").thenAccept(data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
-        loadDir("\\SUBMAP\\savepoint").thenAccept(files -> {
+        this.beginSubmapLifetime("bootstrap");
+        if(!REGISTRIES.submapProviders.getEntry(this.submapProvider).get().retailBootstrap()) {
+          this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
+          break;
+        }
+        this.submapLifetime.await("NEWROOT", loadFile("\\SUBMAP\\NEWROOT.RDT"), data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
+        this.submapLifetime.await("savepoint assets", loadDir("\\SUBMAP\\savepoint"), files -> {
           this.savepointAnm1 = new AnmFile(files.get(0));
           this.savepointAnm2 = new AnmFile(files.get(1));
           this.savepointTmd = new CContainer("Savepoint", files.get(2));
@@ -4126,21 +4161,28 @@ public class SMap extends EngineState<SMap> {
       }
 
       case WAIT_FOR_NEWROOT_2 -> {
-        if(Loader.getLoadingFileCount() == 0) {
+        if(this.submapLifetime.pendingCount() == 0) {
           this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
         }
       }
 
       case LOAD_ENVIRONMENT_3 -> {
+        final SubmapProvider provider = REGISTRIES.submapProviders.getEntry(this.submapProvider).get();
+        if(provider.retailBootstrap() && this.newrootPtr_800cab04 == null) {
+          this.smapLoadingStage_800cb430 = SubmapState.LOAD_NEWROOT_1;
+          break;
+        }
+        this.beginSubmapLifetime("environment");
         this.mapTransitionTicks_800cab28 = 0;
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
-        this.submap = REGISTRIES.submapProviders.getEntry(this.submapProvider).get().create(new SubmapLoadingContext(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08), this.submapData.clone());
+        this.submap = provider.create(new SubmapLoadingContext(this, submapCut_80052c30, provider.retailBootstrap() ? this.newrootPtr_800cab04 : null, this.screenOffset_800cb568, this.collisionGeometry_800cbe08, this.submapLifetime), this.submapData.clone());
+        this.submapLifetime.own(this.submap::unload);
         this.submap.readDestinationData(this.submapData);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
-        this.submap.loadEnv().thenAccept(v -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
+        this.submapLifetime.await("environment", this.submap.loadEnv(), ignored -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
       }
 
       case CHANGE_SUBMAP_4 -> {
@@ -4325,11 +4367,9 @@ public class SMap extends EngineState<SMap> {
         }
 
         //LAB_800e62cc
-        engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
-        if(this.pendingDestination != null) {
-          EngineStates.engineStateData = this.pendingDestination.data();
-          this.pendingDestination = null;
-        }
+        if(this.pendingDestination != null) this.queueTransition(new legend.game.EngineTransition(this.pendingDestination));
+        else engineStateOnceLoaded_8004dd24 = this.engineStateToTransitionTo;
+        this.pendingDestination = null;
         this.engineStateToTransitionTo = null;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this.transitioning_800f7e4c = false;
@@ -5295,6 +5335,7 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800f2788L)
   private void initSavePoint() {
+    if(this.savepointTmd == null || this.savepointAnimation == null) throw new IllegalStateException("Submap provider " + this.submapProvider + " disabled retail savepoint bootstrap");
     initModel(this.savePointModel_800d5eb0, this.savepointTmd, this.savepointAnimation);
     TmdObjLoader.fromModel("Savepoint", this.savePointModel_800d5eb0);
     this.savePoint_800d5598[0].rotation_28 = 0.0f;

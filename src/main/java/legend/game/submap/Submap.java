@@ -51,6 +51,17 @@ public abstract class Submap {
   public abstract CompletableFuture<Void> loadEnv();
   public abstract void loadAssets(final Runnable onLoaded);
 
+  /** Providers can override to propagate asynchronous failure instead of only successful completion. */
+  public CompletableFuture<Void> loadAssetsAsync() {
+    final CompletableFuture<Void> completion = new CompletableFuture<>();
+    try {
+      this.loadAssets(() -> completion.complete(null));
+    } catch(final RuntimeException | Error failure) {
+      completion.completeExceptionally(failure);
+    }
+    return completion;
+  }
+
   public abstract void loadMusicAndSounds();
   public abstract void startMusic();
 
