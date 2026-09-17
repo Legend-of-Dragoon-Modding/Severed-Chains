@@ -972,12 +972,12 @@ public class WMap extends EngineState<WMap> {
 
   public WMap() {
     super(LodEngineStateTypes.WORLD_MAP.get());
-    this.lifetime().own(this.worldMapTransition);
   }
 
   @Override
   public void init() {
     super.init();
+    this.lifetime().own(this.worldMapTransition);
     lastSavableEngineState = this.type;
   }
 
