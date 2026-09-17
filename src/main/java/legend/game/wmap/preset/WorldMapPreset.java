@@ -330,19 +330,45 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
 
   public record PresentationProfile(List<WorldMapPoint> mapPositions, List<String> regions, List<String> services,
                                     List<Integer> waterClutYs, List<Integer> playerAvatarVramSlots,
-                                    List<TextureAdjustment> textureAdjustments) {
+                                    List<TextureAdjustment> textureAdjustments,
+                                    @Nullable List<legend.game.wmap.world.WorldMapPresentationElement> namedElements,
+                                    @Nullable List<NamedPresentationTexture> namedTextures,
+                                    @Nullable legend.game.wmap.world.WorldMapPresentationCapabilities capabilities) {
+    public PresentationProfile(final List<WorldMapPoint> mapPositions, final List<String> regions, final List<String> services,
+                               final List<Integer> waterClutYs, final List<Integer> playerAvatarVramSlots, final List<TextureAdjustment> textureAdjustments) {
+      this(mapPositions, regions, services, waterClutYs, playerAvatarVramSlots, textureAdjustments, null, null, null);
+    }
+
     public PresentationProfile {
-      mapPositions = List.copyOf(mapPositions);
-      regions = List.copyOf(regions);
-      services = List.copyOf(services);
-      waterClutYs = List.copyOf(waterClutYs);
-      playerAvatarVramSlots = List.copyOf(playerAvatarVramSlots);
-      textureAdjustments = List.copyOf(textureAdjustments);
+      if(capabilities == null && (mapPositions == null || regions == null || services == null || waterClutYs == null || playerAvatarVramSlots == null || textureAdjustments == null)) throw new IllegalArgumentException("Presentation profiles without capabilities require all legacy tables");
+      mapPositions = copyNullable(mapPositions);
+      regions = copyNullable(regions);
+      services = copyNullable(services);
+      waterClutYs = copyNullable(waterClutYs);
+      playerAvatarVramSlots = copyNullable(playerAvatarVramSlots);
+      textureAdjustments = copyNullable(textureAdjustments);
+      namedElements = copyNullable(namedElements);
+      namedTextures = copyNullable(namedTextures);
+    }
+
+    private static <T> List<T> copyNullable(@Nullable final List<T> values) {
+      return values == null ? null : List.copyOf(values);
+    }
+
+    private static <T> List<T> orEmpty(@Nullable final List<T> values) {
+      return values == null ? List.of() : values;
     }
 
     WorldMapPresentationProfile resolve() {
-      return new WorldMapPresentationProfile(this.mapPositions, this.regions, this.services, this.waterClutYs,
-        this.playerAvatarVramSlots, this.textureAdjustments.stream().map(TextureAdjustment::resolve).toList());
+      return new WorldMapPresentationProfile(orEmpty(this.mapPositions), orEmpty(this.regions), orEmpty(this.services), orEmpty(this.waterClutYs),
+        orEmpty(this.playerAvatarVramSlots), orEmpty(this.textureAdjustments).stream().map(TextureAdjustment::resolve).toList(),
+        orEmpty(this.namedElements), orEmpty(this.namedTextures).stream().map(NamedPresentationTexture::resolve).toList(), this.capabilities);
+    }
+  }
+
+  public record NamedPresentationTexture(RegistryId id, TextureAdjustment adjustment) {
+    legend.game.wmap.world.WorldMapPresentationTexture resolve() {
+      return new legend.game.wmap.world.WorldMapPresentationTexture(this.id, this.adjustment.resolve());
     }
   }
 
@@ -498,7 +524,9 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
       new TraversalProfile(value.priority(), key, value.routes(), value.markers(), value.includeReverseRoutes(), 1.0f, null, null, List.of())));
     values(registries.worldMapPresentationProfiles).forEach((key, value) -> builder.presentationProfiles.put(key,
       new PresentationProfile(value.mapPositions(), value.regions(), value.services(), value.waterClutYs(), value.playerAvatarVramSlots(),
-        value.textureAdjustments().stream().map(TextureAdjustment::from).toList())));
+        value.textureAdjustments().stream().map(TextureAdjustment::from).toList(),
+        value.namedElements().isEmpty() ? null : value.namedElements(),
+        value.namedTextures().isEmpty() ? null : value.namedTextures().stream().map(texture -> new NamedPresentationTexture(texture.id(), TextureAdjustment.from(texture.adjustment()))).toList(), value.capabilities())));
     builder.behaviours = new HashSet<>();
     for(final RegistryId behaviour : registries.worldMapBehaviours) builder.behaviours.add(behaviour);
     final WorldMapPreset preset = builder.build();

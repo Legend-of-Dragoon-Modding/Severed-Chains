@@ -41,6 +41,7 @@ public final class WorldMapRegistrySnapshot {
   private final List<WorldMapTeleportLink> teleports;
   private final List<WorldMapEncounterPool> encounters;
   private final WorldMapPresentationProfile presentation;
+  private final WorldMapPresentationProfile legacyPresentation;
   @Nullable private final WorldMapPreset preset;
   private final boolean standalone;
 
@@ -122,6 +123,7 @@ public final class WorldMapRegistrySnapshot {
     } else {
       this.presentation = profiles.getFirst();
     }
+    this.legacyPresentation = this.presentation.legacyLayout();
     this.validate(registries);
   }
 
@@ -346,7 +348,7 @@ public final class WorldMapRegistrySnapshot {
 
   public List<String> services(final WorldMapPlace place) {
     if(place.serviceIds() == null) {
-      final List<String> labels = this.presentation.services();
+      final List<String> labels = this.legacyPresentation.services();
       final List<String> result = new ArrayList<>();
       for(int bit = 0; bit < Math.min(5, labels.size()); bit++) {
         if((place.services() & 1 << bit) != 0) result.add(labels.get(bit));
@@ -356,10 +358,10 @@ public final class WorldMapRegistrySnapshot {
     return place.serviceIds().stream().map(id -> {
       final WorldMapService service = this.services.get(id);
       if(service == null) throw new IllegalArgumentException("Unknown WMAP service " + id + " on place " + place.id());
-      if(service.legacyBit() != null && service.legacyBit() < this.presentation.services().size()) {
+      if(service.legacyBit() != null && service.legacyBit() < this.legacyPresentation.services().size()) {
         final List<String> nativeLabels = WorldMapPresentationProfile.legacy().services();
         if(service.legacyBit() < nativeLabels.size() && service.label().equals(nativeLabels.get(service.legacyBit()))) {
-          return this.presentation.services().get(service.legacyBit());
+          return this.legacyPresentation.services().get(service.legacyBit());
         }
       }
       return service.label();
@@ -539,14 +541,14 @@ public final class WorldMapRegistrySnapshot {
     for(final WorldMapTeleportLink link : this.teleports) {
       if(!teleportSources.contains(link.destination())) throw new IllegalArgumentException("Missing teleport placement for destination " + link.destination());
     }
-    if(this.presentation.mapPositions().size() < 8 || this.presentation.regions().size() < 3 || this.presentation.services().size() < 5 || this.presentation.waterClutYs().size() < 14 || this.presentation.playerAvatarVramSlots().size() < 4 || this.presentation.textureAdjustments().size() < 22) {
+    if(this.legacyPresentation.mapPositions().size() < 8 || this.legacyPresentation.regions().size() < 3 || this.legacyPresentation.services().size() < 5 || this.legacyPresentation.waterClutYs().size() < 14 || this.legacyPresentation.playerAvatarVramSlots().size() < 4 || this.legacyPresentation.textureAdjustments().size() < 22) {
       throw new IllegalArgumentException("WMAP presentation profile omits required renderer slots");
     }
-    for(final WorldMapPoint point : this.presentation.mapPositions()) {
+    for(final WorldMapPoint point : this.legacyPresentation.mapPositions()) {
       finite(point, "map camera");
     }
-    for(final int slot : this.presentation.playerAvatarVramSlots()) {
-      if(slot < 0 || slot >= this.presentation.textureAdjustments().size()) {
+    for(final int slot : this.legacyPresentation.playerAvatarVramSlots()) {
+      if(slot < 0 || slot >= this.legacyPresentation.textureAdjustments().size()) {
         throw new IllegalArgumentException("Unknown WMAP avatar texture adjustment slot " + slot);
       }
     }
