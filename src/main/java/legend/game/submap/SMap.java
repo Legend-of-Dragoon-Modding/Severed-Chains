@@ -446,6 +446,10 @@ public class SMap extends EngineState<SMap> {
 
   public SMap() {
     super(LodEngineStateTypes.SUBMAP.get());
+  }
+
+  @Override
+  public void init() {
     this.lifetime().own(() -> {
       if(this.submapSounds.indices_08 != null) {
         for(int i = 0; i < this.submapSounds.indices_08.length; i++) legend.game.sound.Audio.stopSound(this.submapSounds, i, 3);
@@ -454,10 +458,6 @@ public class SMap extends EngineState<SMap> {
       this.submapSounds.used_00 = false;
       legend.game.sound.Audio.removeSoundFile(this.submapSounds);
     });
-  }
-
-  @Override
-  public void init() {
     lastSavableEngineState = this.type;
     sssqResetStuff();
     this.autoSaveAfterBattlePending = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get())
