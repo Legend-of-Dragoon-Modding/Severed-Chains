@@ -118,3 +118,6 @@ The full-site lint failures occur in unrelated game-data, graph/grid display, Ir
 - Preset replacement and missing-package recovery were not exercised in the live engine
 - This evidence does not establish compatibility with arbitrary future executable versions or unframed legacy custom-character payloads
 - All commits remain local; nothing was pushed
+## Follow-up validation
+
+See [ownership, presentation, and save migrations](world-map-lifetimes-and-migrations.md) for the subsequent implementation pass. Results above describe the earlier baseline
