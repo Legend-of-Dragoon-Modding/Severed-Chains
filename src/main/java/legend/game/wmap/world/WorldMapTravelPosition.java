@@ -31,7 +31,7 @@ public record WorldMapTravelPosition(WorldMapPortal portal, WorldMapRoute route,
       }
       final WorldMapRoute route = definition.route(portal.route());
       if(target instanceof WorldMapTravelTarget.Route routeTarget && route.id().equals(routeTarget.id())) {
-        return position(portal, route, routeTarget.progress(), definition);
+        return position(portal, route, routeTarget.preciseProgress(), definition);
       }
       if(target instanceof WorldMapTravelTarget.Node nodeTarget) {
         if(route.start().equals(nodeTarget.id())) {
@@ -49,7 +49,7 @@ public record WorldMapTravelPosition(WorldMapPortal portal, WorldMapRoute route,
     return !respectAccess || view.access(portal.legacyIndex(), WorldMapAction.TRAVERSE).allowed();
   }
 
-  private static WorldMapTravelPosition position(final WorldMapPortal portal, final WorldMapRoute route, final float progress, final WorldMapDefinition definition) {
+  private static WorldMapTravelPosition position(final WorldMapPortal portal, final WorldMapRoute route, final double progress, final WorldMapDefinition definition) {
     final WorldMapRouteMetric metric = new WorldMapRouteMetric(definition.geometry().get(route.segmentIndex()));
     final double distance = metric.clamp(metric.length() * (route.direction() > 0 ? progress : 1.0 - progress));
     final WorldMapRouteMetric.Cursor cursor = metric.cursor(distance);

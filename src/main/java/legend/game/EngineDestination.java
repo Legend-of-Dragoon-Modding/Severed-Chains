@@ -58,6 +58,7 @@ public record EngineDestination(RegistryId engineState, Tag data) {
         destination.set("kind", new StringTag("route"));
         destination.set("id", new RegistryIdTag(route.id()));
         destination.set("distance", new FloatTag(route.progress()));
+        destination.set("preciseDistance", new StringTag(Double.toHexString(route.preciseProgress())));
       }
     }
     data.set("worldMapTarget", destination);
@@ -70,8 +71,19 @@ public record EngineDestination(RegistryId engineState, Tag data) {
     return switch(target.get("kind").asString().get()) {
       case "portal" -> new WorldMapTravelTarget.Portal(id);
       case "node" -> new WorldMapTravelTarget.Node(id);
-      case "route" -> WorldMapTravelTarget.atRouteDistance(id, target.get("distance").asFloat().get());
+      case "route" -> routeTarget(id, target);
       default -> throw new IllegalArgumentException("Unknown world map travel target kind");
     };
+  }
+
+  private static WorldMapTravelTarget.Route routeTarget(final RegistryId id, final MapTag target) {
+    final float legacy = target.get("distance").asFloat().get();
+    if(target.has("preciseDistance")) {
+      final double precise = Double.parseDouble(target.get("preciseDistance").asString().get());
+      if(!Double.isFinite(precise) || precise < 0.0 || precise > 1.0) throw new IllegalArgumentException("Invalid precise world map target distance");
+      if(Float.compare(legacy, (float)precise) == 0) return WorldMapTravelTarget.atRouteDistance(id, precise);
+    }
+    // Legacy mods can still edit the float field; their explicit write supersedes metadata.
+    return WorldMapTravelTarget.atRouteDistance(id, legacy);
   }
 }
