@@ -295,6 +295,8 @@ tasks.register('testRuntimeJar', Jar) {
 }
 
 test {
+  // Engine statics and native contexts must not leak between independent test classes.
+  forkEvery = 1
   dependsOn tasks.named('testRuntimeJar')
   classpath = files(sourceSets.test.output, tasks.named('testRuntimeJar'), configurations.testRuntimeClasspath)
   useJUnitPlatform()

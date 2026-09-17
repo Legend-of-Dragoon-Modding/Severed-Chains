@@ -61,7 +61,7 @@ public final class WorldMapRuntimeChecks {
         gameState_800babc8.worldMapPortalState.setEnabled(START, true);
 
         final RegistryId route = map.getWorldMapDefinition().portal(START).route();
-        final WorldMapTravelTarget.Route destination = WorldMapTravelTarget.atRouteDistance(route, 0.37f);
+        final WorldMapTravelTarget.Route destination = WorldMapTravelTarget.atRouteDistance(route, 0.370000000123);
         assertTrue(map.requestTravel(EngineDestination.worldMap(destination)));
         assertFalse(map.canSave(), "Pending travel must block saving");
         assertEquals(WorldMapTravelRequestResult.BUSY, map.requestWorldMapTravel(destination));
@@ -83,6 +83,14 @@ public final class WorldMapRuntimeChecks {
         final RegistryId savedRoute = WorldMapSave.read(restored, saved);
         assertEquals(target.id(), savedRoute);
         WorldMapSave.restoreRoute(restored, map.getWorldMapDefinition(), savedRoute, saved);
+        final var route = map.getWorldMapDefinition().route(savedRoute);
+        final var geometry = map.getWorldMapDefinition().geometry().get(route.segmentIndex());
+        if(saved.asMap().has("routeDistance")) {
+          assertEquals(target.preciseProgress(), actual.preciseProgress(), 0.000000000001);
+          final double distance = legend.game.wmap.world.WorldMapPositionSave.read(saved, route, geometry, restored.dotIndex_4da, restored.dotOffset_4dc);
+          assertTrue(Double.isFinite(distance));
+          assertEquals(route.direction() > 0 ? target.preciseProgress() : 1.0 - target.preciseProgress(), distance / new legend.game.wmap.world.WorldMapRouteMetric(geometry).length(), 0.000000000001);
+        }
         assertEquals(written.directionalPathIndex_4de, restored.directionalPathIndex_4de);
         assertEquals(written.pathIndex_4d8, restored.pathIndex_4d8);
         assertEquals(written.dotIndex_4da, restored.dotIndex_4da);
@@ -97,6 +105,52 @@ public final class WorldMapRuntimeChecks {
         return null;
       });
     }
+  }
+
+  public static void runPresetSwitch() {
+    Harness.onEngineThread(() -> {
+      final WMap map = assertInstanceOf(WMap.class, currentEngineState_8004dd04);
+      gameState_800babc8.worldMapPortalState.setEnabled(START, true);
+      final var route = map.getWorldMapDefinition().route(map.getWorldMapDefinition().portal(START).route());
+      final var preset = new legend.game.wmap.preset.WorldMapPreset.Builder(new RegistryId("test", "owned_travel"), "E2E authored presentation");
+      preset.geometry.put(new RegistryId("lod", "wmap_geometry_" + route.segmentIndex()), new legend.game.wmap.world.WorldMapGeometry(route.segmentIndex(), map.getWorldMapDefinition().geometry().get(route.segmentIndex()), legend.game.wmap.world.WorldMapGeometry.Motion.DISTANCE, 1.0f));
+      preset.presentationProfiles.put(new RegistryId("lod", "wmap_presentation"), new legend.game.wmap.preset.WorldMapPreset.PresentationProfile(null, null, null, null, null, null,
+        java.util.List.of(new legend.game.wmap.world.WorldMapPresentationElement(new RegistryId("test", "caption"), new legend.game.wmap.world.WorldMapPoint(1, 2, 3), "Test caption", null)), java.util.List.of(),
+        new legend.game.wmap.world.WorldMapPresentationCapabilities(false, false, true)));
+      assertEquals(WorldMapTravelRequestResult.ACCEPTED, map.requestWorldMapPreset(preset.build()));
+      assertEquals(WorldMapTravelRequestResult.BUSY, map.requestWorldMapPreset(null));
+      return null;
+    });
+    waitForPlayableWorldMap();
+    Harness.onEngineThread(() -> {
+      final WMap map = (WMap)currentEngineState_8004dd04;
+      assertFalse(map.getWorldMapPresentation().supportsRetailLabels());
+      assertEquals("Test caption", map.getWorldMapPresentation().element(new RegistryId("test", "caption")).label());
+      final var target = WorldMapTravelTarget.atRouteDistance(map.getWorldMapDefinition().portal(START).route(), 0.370000000123);
+      assertEquals(WorldMapTravelRequestResult.ACCEPTED, map.requestWorldMapTravel(target));
+      return null;
+    });
+    waitForPlayableWorldMap();
+    Harness.onEngineThread(() -> {
+      final WMap map = (WMap)currentEngineState_8004dd04;
+      final var target = assertInstanceOf(WorldMapTravelTarget.Route.class, map.currentWorldMapTarget());
+      assertEquals(0.370000000123, target.preciseProgress(), 1.0e-12);
+      final GameState52c scratch = new GameState52c();
+      final Tag saved = map.writeSaveData(scratch);
+      assertTrue(saved.asMap().has("routeDistance"));
+      final var route = map.getWorldMapDefinition().route(target.id());
+      final double retained = legend.game.wmap.world.WorldMapPositionSave.read(saved, route, map.getWorldMapDefinition().geometry().get(route.segmentIndex()), scratch.dotIndex_4da, scratch.dotOffset_4dc);
+      assertTrue(Double.isFinite(retained));
+      assertEquals(WorldMapTravelRequestResult.ACCEPTED, map.requestWorldMapPreset(null));
+      return null;
+    });
+    waitForPlayableWorldMap();
+    Harness.onEngineThread(() -> {
+      assertEquals("", gameState_800babc8.worldMapPreset);
+      assertTrue(((WMap)currentEngineState_8004dd04).getWorldMapPresentation().supportsRetailLabels());
+      gameState_800babc8.worldMapPortalState.clearEnabledOverride(START);
+      return null;
+    });
   }
 
   private static void waitForPlayableWorldMap() {

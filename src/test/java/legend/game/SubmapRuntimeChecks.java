@@ -27,14 +27,24 @@ public final class SubmapRuntimeChecks {
     final Journey journey = Harness.onEngineThread(() -> {
       final WMap map = assertInstanceOf(WMap.class, currentEngineState_8004dd04);
       assertTrue(map.canSave());
+      final var portalState = new legend.game.wmap.world.WorldMapPortalState();
+      portalState.set(legend.game.Scus94491BpeSegment_800b.gameState_800babc8.worldMapPortalState);
+      legend.game.Scus94491BpeSegment_800b.gameState_800babc8.worldMapPortalState.setEnabled(new org.legendofdragoon.modloader.registries.RegistryId("lod", "wmap_location_5"), true);
       final EngineDestination returnTo = EngineDestination.worldMap(map.currentWorldMapTarget());
       assertTrue(map.requestTravel(new EngineTransition(EngineDestination.submap(FOREST_ENTRY), returnTo)));
-      return new Journey(map, returnTo);
+      return new Journey(map, returnTo, portalState);
     });
 
-    Wait.waitFor(() -> Harness.onEngineThread(() -> currentEngineState_8004dd04 instanceof final SMap submap
-      && submap.smapLoadingStage_800cb430 == SubmapState.RENDER_SUBMAP_12 && submapFullyLoaded_800bd7b4
-      && submap.submapLifetime().pendingCount() == 0), 60_000, "native Forest submap assets and scripts ready");
+    try {
+      Wait.waitFor(() -> Harness.onEngineThread(() -> currentEngineState_8004dd04 instanceof final SMap submap
+        && submap.smapLoadingStage_800cb430 == SubmapState.RENDER_SUBMAP_12
+        && submap.submapLifetime().pendingCount() == 0), 60_000, "native Forest submap assets and scripts ready");
+    } catch(final AssertionError failure) {
+      final String state = Harness.onEngineThread(() -> currentEngineState_8004dd04 instanceof final SMap submap
+        ? "stage=" + submap.smapLoadingStage_800cb430 + ", fullyLoaded=" + submapFullyLoaded_800bd7b4 + ", pending=" + submap.submapLifetime().pendingCount()
+        : currentEngineState_8004dd04.toString());
+      throw new AssertionError("Native submap did not become ready: " + state, failure);
+    }
 
     final SMap loaded = Harness.onEngineThread(() -> {
       final SMap submap = assertInstanceOf(SMap.class, currentEngineState_8004dd04);
@@ -64,9 +74,11 @@ public final class SubmapRuntimeChecks {
       final WorldMapTravelTarget.Route actual = assertInstanceOf(WorldMapTravelTarget.Route.class, map.currentWorldMapTarget());
       assertEquals(expected.id(), actual.id());
       assertEquals(expected.progress(), actual.progress(), 0.0001f);
+      legend.game.Scus94491BpeSegment_800b.gameState_800babc8.worldMapPortalState.set(journey.portalState);
+      map.invalidateWorldMap();
       return null;
     });
   }
 
-  private record Journey(WMap source, EngineDestination returnTo) { }
+  private record Journey(WMap source, EngineDestination returnTo, legend.game.wmap.world.WorldMapPortalState portalState) { }
 }
