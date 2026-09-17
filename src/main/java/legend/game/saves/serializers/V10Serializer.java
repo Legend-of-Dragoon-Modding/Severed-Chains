@@ -45,8 +45,15 @@ public final class V10Serializer {
 
   public static SavedGame fromV10(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
-    final MapTag tag = new MapTag();
-    tag.deserialize(data, offset);
+    final MapTag decoded = new MapTag();
+    decoded.deserialize(data, offset);
+    if(decoded.has("worldMapPackage")) decoded.set("worldMapPackage", legend.game.wmap.preset.WorldMapPresetManager.retainPackage(decoded.get("worldMapPackage").asMap()));
+    if(decoded.has("worldMapRecovery") && decoded.get("worldMapRecovery").asMap().has("package")) {
+      final MapTag recovery = decoded.get("worldMapRecovery").asMap();
+      recovery.set("package", legend.game.wmap.preset.WorldMapPresetManager.retainPackage(recovery.get("package").asMap()));
+    }
+    final legend.game.saves.SaveSchemaCatalog schemas = legend.game.saves.SaveSchemaCatalog.current();
+    final MapTag tag = schemas.read(decoded);
 
     final String name = tag.get("saveName").asString().get();
     final RegistryId campaignTypeId = tag.get("campaignTypeId").asRegistryId().get();
@@ -182,6 +189,7 @@ public final class V10Serializer {
   }
 
   public static void toV10(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) {
+    final legend.game.saves.SaveSchemaCatalog schemas = legend.game.saves.SaveSchemaCatalog.current();
     final TexturePacker packer = new TexturePacker("Save " + name);
 
     final java.util.Set<RegistryId> portraitIds = new java.util.HashSet<>();
@@ -345,12 +353,18 @@ public final class V10Serializer {
     tag.set("engineStateData", engineState.writeSaveData(gameState));
 
     final ListTag modTags = new ListTag();
-    EVENTS.postEvent(new WriteSaveDataEvent(modTags));
-    tag.set("modData", modTags);
+    final WriteSaveDataEvent writeEvent = EVENTS.postEvent(new WriteSaveDataEvent(modTags, schemas));
+    final ListTag retainedModData = gameState.retainedSaveTags.has("modData") ? gameState.retainedSaveTags.get("modData").asList() : new ListTag();
+    tag.set("modData", schemas.mergePayloads(modTags, retainedModData, writeEvent.removedIds()));
 
-    legend.game.saves.SaveRegistryData.merge(tag, gameState.registrySaveData);
+    schemas.canonicalizeKnownFields(tag);
+    final MapTag retainedRegistryData = gameState.registrySaveData.clone();
+    schemas.canonicalizeKnownFields(retainedRegistryData);
+    legend.game.saves.SaveRegistryData.merge(tag, retainedRegistryData, schemas);
     tag.serialize(data, offset);
 
     ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data, offset);
+    // Persist deletion intent in this live campaign too; a later omitted write must not resurrect it.
+    gameState.retainedSaveTags.set("modData", tag.get("modData").clone());
   }
 }
