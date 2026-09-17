@@ -243,3 +243,6 @@ The table includes every changed file relative to `ae5f45bf7`; the reason identi
 | src/main/java/legend/game/wmap/world/WorldMapTraversalPosition.java | refactor WMap retain route distance as authored traversal state |
 | src/main/java/legend/lodmod/LodMod.java | add Submap provider destinations with retail fallback and saved spawn data |
 | src/main/java/legend/lodmod/LodSubmapProviders.java | add Submap provider destinations with retail fallback and saved spawn data |
+## Follow-up implementation
+
+See [ownership, presentation, and save migrations](world-map-lifetimes-and-migrations.md) for the subsequent I1/I4/I5 and E1/E2/E4 implementation and validation
