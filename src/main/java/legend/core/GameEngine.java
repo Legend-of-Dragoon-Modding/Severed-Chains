@@ -330,6 +330,7 @@ public final class GameEngine {
 
     // We need to boot the goods registry for save cards on the title screen
     REGISTRY_ACCESS.initialize(REGISTRIES.goods);
+    REGISTRY_ACCESS.initialize(REGISTRIES.saveSchemas);
 
     MOD_ACCESS.loadingComplete();
 

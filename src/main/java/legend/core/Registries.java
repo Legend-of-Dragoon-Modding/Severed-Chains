@@ -136,6 +136,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Registries extends org.legendofdragoon.modloader.registries.Registries {
+  public final Registry<legend.game.saves.SaveSchema> saveSchemas = this.addRegistry(new legend.game.saves.SaveSchemaRegistry(), legend.game.saves.RegisterSaveSchemasEvent::new);
   public final Registry<SubmapProvider> submapProviders = this.addRegistry(new SubmapProviderRegistry(), RegisterSubmapProvidersEvent::new);
   public final Registry<CampaignType> campaignTypes = this.addRegistry(new CampaignTypeRegistry(), RegisterCampaignTypesEvent::new);
   public final Registry<EngineStateType<?>> engineStateTypes = this.addRegistry(new EngineStateTypeRegistry(), RegisterEngineStateTypesEvent::new);
