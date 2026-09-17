@@ -153,6 +153,7 @@ public final class Scus94491BpeSegment {
     renderUi();
 
     if(currentEngineState_8004dd04 != null) {
+      currentEngineState_8004dd04.lifetime().poll();
       currentEngineState_8004dd04.tick();
     }
 
