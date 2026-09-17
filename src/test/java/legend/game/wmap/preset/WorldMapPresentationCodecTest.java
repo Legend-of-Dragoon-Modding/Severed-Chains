@@ -47,7 +47,7 @@ class WorldMapPresentationCodecTest {
     final WorldMapPreset parsed = read("<capabilities retailLabels=\"false\" retailWater=\"false\" retailAvatars=\"true\"/><namedElements><item id=\"test:label\"><position x=\"0\" y=\"0\" z=\"0\"/></item></namedElements>");
     final WorldMapPreset.Builder builder = new WorldMapPreset.Builder(new RegistryId("test", "standalone"), "Standalone fixture").standalone(true);
     builder.presentationProfiles.putAll(parsed.presentationProfiles());
-    final Registries registries = new Registries(new EventManager(access -> { }, (modId, failure) -> { throw new AssertionError(failure); }));
+    final Registries registries = new Registries(new EventManager(access -> { }, (modId, failure) -> { throw new AssertionError(failure); }), access -> { }) { };
     final WorldMapRegistrySnapshot snapshot = WorldMapRegistrySnapshot.read(registries, builder.build());
     assertEquals(0, snapshot.presentation().mapPositions().size());
     assertEquals(new RegistryId("test", "label"), snapshot.presentation().namedElements().getFirst().id());
