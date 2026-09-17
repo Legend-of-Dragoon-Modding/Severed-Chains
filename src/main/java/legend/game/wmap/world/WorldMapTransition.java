@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 /** Owns a travel request from admission through the first playable destination frame. */
-public final class WorldMapTransition {
+public class WorldMapTransition {
   public enum Phase { IDLE, PREPARING, QUEUED, FADING, LOADING, ACTIVATING, FAILED }
 
   private Phase phase = Phase.IDLE;
