@@ -33,6 +33,33 @@ public abstract class EngineState<T extends EngineState<T>> {
 
   private float analogueAngle;
   private float analogueMagnitude;
+  private final EngineStateLifetime lifetime = new EngineStateLifetime(this.getClass().getSimpleName());
+  private EngineDestination returnDestination;
+  private EngineTransition requestedTransition;
+
+  public final EngineStateLifetime lifetime() {
+    return this.lifetime;
+  }
+
+  public final void acceptTransition(final EngineTransition transition) {
+    this.returnDestination = transition.returnTo();
+  }
+
+  @Nullable
+  public final EngineDestination returnDestination() {
+    return this.returnDestination;
+  }
+
+  /** Call once this state's fade/unload sequence is complete. */
+  protected final void queueTransition(final EngineTransition transition) {
+    final EngineTransition resolved = transition.withRequestedReturn(this.requestedTransition);
+    this.requestedTransition = null;
+    EngineStates.queueTransition(this, resolved);
+  }
+
+  public final boolean requestReturn() {
+    return this.returnDestination != null && this.requestTravel(this.returnDestination);
+  }
 
   protected EngineState(final EngineStateType<T> type) {
     this.type = type;
@@ -55,6 +82,13 @@ public abstract class EngineState<T extends EngineState<T>> {
   public void init() {
     sssqResetStuff();
     submapId_800bd808 = -1;
+  }
+
+  public final boolean requestTravel(final EngineTransition transition) {
+    if(!this.requestTravel(transition.destination())) return false;
+    if(this.is(transition.destination().engineState())) this.returnDestination = transition.returnTo();
+    else this.requestedTransition = transition;
+    return true;
   }
 
   public void destroy() {

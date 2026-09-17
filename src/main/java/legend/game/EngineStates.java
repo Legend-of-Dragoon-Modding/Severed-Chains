@@ -36,6 +36,20 @@ public final class EngineStates {
   /** When the overlay finishes loading, switch to this */
   public static EngineStateType<?> engineStateOnceLoaded_8004dd24;
   public static Tag engineStateData;
+  private static EngineTransition queuedTransition;
+  private static EngineState<?> transitionOwner;
+  private static Tag queuedTransitionData;
+
+  /** Called by a live state after its own fade/unload has completed. */
+  public static void queueTransition(final EngineState<?> owner, final EngineTransition transition) {
+    if(owner != currentEngineState_8004dd04 || owner.lifetime().isClosed()) throw new IllegalStateException("A retired engine state cannot queue travel");
+    final EngineStateType<?> destination = legend.core.GameEngine.REGISTRIES.engineStateTypes.getEntry(transition.destination().engineState()).get();
+    queuedTransition = transition;
+    transitionOwner = owner;
+    engineStateOnceLoaded_8004dd24 = destination;
+    queuedTransitionData = transition.destination().data();
+    engineStateData = queuedTransitionData;
+  }
   /** The previous state before the file finished loading */
   public static EngineStateType<?> previousEngineState_8004dd28;
   /** The last savable state we were in, used for generating crash recovery saves */
@@ -51,12 +65,20 @@ public final class EngineStates {
     //LAB_800129c0
     //LAB_800129c4
     if(engineStateOnceLoaded_8004dd24 != null) {
+      final EngineStateType<?> destination = engineStateOnceLoaded_8004dd24;
+      final Tag data = engineStateData;
+      final EngineTransition transition = queuedTransition != null && transitionOwner == currentEngineState_8004dd04
+        && destination.getRegistryId().equals(queuedTransition.destination().engineState()) && data == queuedTransitionData ? queuedTransition : null;
+      // A legacy global assignment supersedes an older typed request. Consume before callbacks can queue another.
+      queuedTransition = null;
+      transitionOwner = null;
+      queuedTransitionData = null;
+      engineStateOnceLoaded_8004dd24 = null;
+      engineStateData = null;
       menuStack.reset();
       previousEngineState_8004dd28 = currentEngineState_8004dd04 != null ? currentEngineState_8004dd04.type : null;
       vsyncMode_8007a3b8 = 2;
-      loadGameStateOverlay(engineStateOnceLoaded_8004dd24, engineStateData);
-      engineStateOnceLoaded_8004dd24 = null;
-      engineStateData = null;
+      loadGameStateOverlay(destination, data, transition);
 
       EVENTS.postEvent(new EngineStateChangeEvent(previousEngineState_8004dd28, currentEngineState_8004dd04));
       currentEngineState_8004dd04.updateDiscordRichPresence(gameState_800babc8, DISCORD.activity);
@@ -66,27 +88,62 @@ public final class EngineStates {
 
   @Method(0x80012a84L)
   public static void loadGameStateOverlay(final EngineStateType<?> engineState, @Nullable final Tag saveData) {
+    if(queuedTransition != null) {
+      if(engineStateData == queuedTransitionData) {
+        engineStateOnceLoaded_8004dd24 = null;
+        engineStateData = null;
+      }
+      queuedTransition = null;
+      transitionOwner = null;
+      queuedTransitionData = null;
+    }
+    loadGameStateOverlay(engineState, saveData, null);
+  }
+
+  private static void loadGameStateOverlay(final EngineStateType<?> engineState, @Nullable final Tag saveData, @Nullable final EngineTransition transition) {
     LOGGER.info("Transitioning to engine state %s", engineState);
 
     SCRIPTS.setFramesPerTick(1);
 
-    if(currentEngineState_8004dd04 != null && currentEngineState_8004dd04.is(engineState)) {
+    if(transition == null && currentEngineState_8004dd04 != null && currentEngineState_8004dd04.is(engineState)) {
       return;
+    }
+
+    //LAB_80012ad8
+    if(currentEngineState_8004dd04 != null) {
+      try {
+        currentEngineState_8004dd04.lifetime().close();
+      } catch(final RuntimeException | Error failure) {
+        try {
+          currentEngineState_8004dd04.destroy();
+        } catch(final RuntimeException | Error cleanup) {
+          failure.addSuppressed(cleanup);
+        }
+        throw failure;
+      }
+      currentEngineState_8004dd04.destroy();
     }
 
     Obj.clearObjList(false);
     Texture.clearTextureList(false);
 
-    //LAB_80012ad8
-    if(currentEngineState_8004dd04 != null) {
-      currentEngineState_8004dd04.destroy();
-    }
-
     currentEngineState_8004dd04 = engineState.constructor_00.get();
-    currentEngineState_8004dd04.init();
-
-    if(saveData != null) {
-      currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
+    try {
+      if(transition != null) currentEngineState_8004dd04.acceptTransition(transition);
+      currentEngineState_8004dd04.init();
+      if(saveData != null) currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
+    } catch(final RuntimeException | Error failure) {
+      try {
+        currentEngineState_8004dd04.lifetime().close();
+      } catch(final RuntimeException | Error cleanup) {
+        failure.addSuppressed(cleanup);
+      }
+      try {
+        currentEngineState_8004dd04.destroy();
+      } catch(final RuntimeException | Error cleanup) {
+        failure.addSuppressed(cleanup);
+      }
+      throw failure;
     }
 
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
