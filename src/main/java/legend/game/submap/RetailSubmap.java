@@ -203,105 +203,40 @@ public class RetailSubmap extends Submap {
 
     drgnBinIndex_800bc058 = drgnIndex.get();
 
-    return
-      loadDrgnDir(2, fileIndex.get())
-      .thenAccept(files -> this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files));
+    final CompletableFuture<Void> ready = new CompletableFuture<>();
+    this.smap.submapLifetime().await("native background", loadDrgnDir(2, fileIndex.get()), files -> {
+      this.loadBackground("DRGN2" + drgnIndex.get() + '/' + fileIndex.get(), files);
+      ready.complete(null);
+    });
+    return ready;
   }
 
   @Override
   public void loadAssets(final Runnable onLoaded) {
     LOGGER.info("Loading submap cut %d assets", this.cut);
-
-    this.theEnd_800d4bd0 = null;
-
-    if(this.cut == 673) { // End cutscene
-      this.theEnd_800d4bd0 = new TheEndEffectDatab0();
-    }
-
-    //LAB_800edeb4
+    this.theEnd_800d4bd0 = this.cut == 673 ? new TheEndEffectDatab0() : null;
     final IntRef drgnIndex = new IntRef();
     final IntRef fileIndex = new IntRef();
-
     this.newRoot.getDrgnFile(this.cut, drgnIndex, fileIndex);
-
-    if(drgnIndex.get() == 1 || drgnIndex.get() == 2 || drgnIndex.get() == 3 || drgnIndex.get() == 4) {
-      final int cutFileIndex = smapFileIndices_800f982c[this.cut];
-
-      // Load sobj assets
-      final List<FileData> assets = new ArrayList<>();
-      final List<FileData> scripts = new ArrayList<>();
-      final List<FileData> textures = new ArrayList<>();
-
-      final CompletableFuture<Void> assetsFuture = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1).thenAccept(assets::addAll);
-      final CompletableFuture<Void> scriptsFuture = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2).thenAccept(scripts::addAll);
-      final CompletableFuture<Void> texturesFuture = Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures").thenAccept(textures::addAll);
-
-      final CompletableFuture<Void> future = CompletableFuture
-        .allOf(assetsFuture, scriptsFuture, texturesFuture)
-        .thenAccept(v -> this.prepareSobjs(assets, scripts, textures))
-        .exceptionally(t -> {
-          LOGGER.error("", t);
-          return null;
-        })
-      ;
-
-      if(cutFileIndex == 0) {
-        future
-          .thenRun(onLoaded)
-          .exceptionally(t -> {
-            LOGGER.error("", t);
-            return null;
-          })
-        ;
-
-        return;
+    if(drgnIndex.get() < 1 || drgnIndex.get() > 4) throw new IllegalStateException("No native submap assets for cut " + this.cut);
+    final int cutFileIndex = smapFileIndices_800f982c[this.cut];
+    final CompletableFuture<List<FileData>> assets = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1);
+    final CompletableFuture<List<FileData>> scripts = loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2);
+    final CompletableFuture<List<FileData>> textures = Loader.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures");
+    final CompletableFuture<List<FileData>> overlay = cutFileIndex == 0 ? CompletableFuture.completedFuture(List.of()) : loadDrgnDir(0, cutFileIndex);
+    final CompletableFuture<List<FileData>> overlayTexture = cutFileIndex == 0 ? CompletableFuture.completedFuture(List.of()) : loadDrgnDir(0, cutFileIndex + 1);
+    final CompletableFuture<FileData> ending = this.cut == 673 && cutFileIndex != 0 ? loadDrgnFile(0, 7610) : CompletableFuture.completedFuture(null);
+    this.smap.submapLifetime().await("native objects and overlay", CompletableFuture.allOf(assets, scripts, textures, overlay, overlayTexture, ending), ignored -> {
+      this.prepareSobjs(assets.join(), scripts.join(), textures.join());
+      if(cutFileIndex != 0) {
+        this.submapCutModel = new CContainer("DRGN0/" + cutFileIndex, overlay.join().get(0));
+        this.submapCutAnim = new TmdAnimationFile(overlay.join().get(1));
+        if(ending.join() != null) this.theEnd_800d4bd0.setTim(new Tim(ending.join()));
+        this.prepareMap(new Tim(overlayTexture.join().get(0)), overlayTexture.join().get(1).readMv(0, new MV()));
       }
-
-      // Load 3D overlay
-
-      // Using arrays here to have a constant pointer for the callbacks
-      final Tim[] submapCutTexture = new Tim[1];
-      final MV[] submapCutMatrix = new MV[1];
-
-      final CompletableFuture<?>[] overlayFutures;
-      if(this.cut == 673) { // End cutscene, loads "The End" TIM
-        overlayFutures = new CompletableFuture[3];
-
-        overlayFutures[2] = loadDrgnFile(0, 7610).thenAccept(file -> {
-          LOGGER.info("Submap cut %d the end texture loaded", this.cut);
-          this.theEnd_800d4bd0.setTim(new Tim(file));
-        });
-      } else {
-        overlayFutures = new CompletableFuture[2];
-      }
-
-      // File example: 7508
-      LOGGER.info("Loading submap cut %d overlay model file %d", this.cut, cutFileIndex);
-      overlayFutures[0] = loadDrgnDir(0, cutFileIndex).thenAccept(files -> {
-        LOGGER.info("Submap cut %d overlay model loaded", this.cut);
-        this.submapCutModel = new CContainer("DRGN0/" + cutFileIndex, files.get(0));
-        this.submapCutAnim = new TmdAnimationFile(files.get(1));
-      });
-
-      LOGGER.info("Loading submap cut %d overlay texture and matrix file %d", this.cut, cutFileIndex + 1);
-      overlayFutures[1] = loadDrgnDir(0, cutFileIndex + 1).thenAccept(files -> {
-        LOGGER.info("Submap cut %d overlay texture and matrix loaded", this.cut);
-        submapCutTexture[0] = new Tim(files.get(0));
-        submapCutMatrix[0] = files.get(1).readMv(0, new MV());
-      });
-
-      CompletableFuture
-        .allOf(overlayFutures)
-        .thenAccept(v -> this.prepareMap(submapCutTexture[0], submapCutMatrix[0]))
-        .runAfterBoth(future, onLoaded)
-        .exceptionally(t -> {
-          LOGGER.error("", t);
-          return null;
-        })
-      ;
-    }
+      onLoaded.run();
+    });
   }
-
   @Override
   public void loadMusicAndSounds() {
     final int oldSubmapId = submapId_800bd808;
@@ -322,7 +257,8 @@ public class RetailSubmap extends Submap {
   @Method(0x8001eadcL)
   private void loadSubmapSounds(final int submapIndex) {
     loadingAudioFiles_800bcf78.updateAndGet(val -> val | 0x2);
-    loadDrgnDir(0, 5750 + submapIndex).thenAccept(this::submapSoundsLoaded);
+    this.smap.submapLifetime().own(() -> loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x2));
+    this.smap.submapLifetime().await("native sound bank", loadDrgnDir(0, 5750 + submapIndex), this::submapSoundsLoaded);
   }
 
   @Method(0x8001eb38L)
