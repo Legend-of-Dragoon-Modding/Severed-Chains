@@ -19,6 +19,8 @@ import legend.core.memory.types.FloatRef;
 import legend.core.renderer.McqBuilder;
 import legend.core.platform.input.InputAction;
 import legend.core.tags.Tag;
+import legend.core.tags.IntTag;
+import legend.core.tags.MapTag;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment;
 import legend.game.additions.Addition;
@@ -2583,6 +2585,20 @@ public class Battle extends EngineState<Battle> {
       if(returnContext != null && !returnContext.engineState().equals(postBattleEngineState_800bc91c.getRegistryId()) && legend.game.EngineStates.engineStateData == this.battleReturnData) {
         // An action may choose game-over, an FMV, or another destination with its own payload.
         legend.game.EngineStates.engineStateData = null;
+      }
+
+      if(postBattleEngineState_800bc91c == LodEngineStateTypes.SUBMAP.get() && legend.game.EngineStates.engineStateData == this.battleReturnData && this.battleReturnData instanceof final MapTag data) {
+        // Resolve after the encounter and post-battle action have selected the native continuation.
+        final boolean redirected = encounter.postCombatSubmapCut != 0xffff || encounter.postCombatSubmapScene != 0xff
+          || !data.has("cut") || data.get("cut").asInt().get() != submapCut_80052c30
+          || !data.has("scene") || data.get("scene").asInt().get() != submapScene_80052c34;
+        if(redirected) {
+          data.set("cut", new IntTag(submapCut_80052c30));
+          data.set("scene", new IntTag(submapScene_80052c34));
+          data.remove("submapProvider");
+          data.remove("submapData");
+          data.remove("unresolvedSubmapDestination");
+        }
       }
     }
 
