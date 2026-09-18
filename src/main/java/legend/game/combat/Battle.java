@@ -410,6 +410,7 @@ public class Battle extends EngineState<Battle> {
   private int combatantCount_800c66a0;
   public int currentStage_800c66a4;
   private BattleRequest battleRequest;
+  private Tag battleReturnData;
   private BattleStageDefinition stageDefinition;
   private BattleStageDefinition stageEffectsDefinition;
   private java.util.concurrent.CompletableFuture<Void> stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
@@ -2519,7 +2520,8 @@ public class Battle extends EngineState<Battle> {
       final BattleReturnContext returnContext = this.battleRequest.returnContext();
       if(returnContext != null && REGISTRIES.engineStateTypes.hasEntry(returnContext.engineState())) {
         postBattleEngineState_800bc91c = REGISTRIES.engineStateTypes.getEntry(returnContext.engineState()).get();
-        legend.game.EngineStates.engineStateData = returnContext.data();
+      this.battleReturnData = returnContext.data();
+      legend.game.EngineStates.engineStateData = this.battleReturnData;
       }
 
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
@@ -2578,7 +2580,7 @@ public class Battle extends EngineState<Battle> {
       vsyncMode_8007a3b8 = 2;
       engineStateOnceLoaded_8004dd24 = postBattleEngineState_800bc91c;
       final BattleReturnContext returnContext = this.battleRequest.returnContext();
-      if(returnContext != null && !returnContext.engineState().equals(postBattleEngineState_800bc91c.getRegistryId()) && legend.game.EngineStates.engineStateData == returnContext.data()) {
+      if(returnContext != null && !returnContext.engineState().equals(postBattleEngineState_800bc91c.getRegistryId()) && legend.game.EngineStates.engineStateData == this.battleReturnData) {
         // An action may choose game-over, an FMV, or another destination with its own payload.
         legend.game.EngineStates.engineStateData = null;
       }
