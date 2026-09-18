@@ -105,6 +105,7 @@ public final class WorldMapSave {
   }
 
   private static RestoredPosition restorePosition(final GameState52c gameState, final WorldMapDefinition definition, final RegistryId routeId, final Metadata metadata) {
+    validateSavedPosition(gameState.dotIndex_4da, gameState.dotOffset_4dc, routeId);
     final RestoredPosition unchanged = unchangedPosition(gameState, definition, routeId, metadata);
     if(unchanged != null) return unchanged;
 
@@ -165,7 +166,7 @@ public final class WorldMapSave {
     if(retained.direction() != metadata.direction()) return null;
 
     final List<WorldMapPoint> geometry = definition.geometry().get(retained.segmentIndex());
-    validateLegacyPosition(gameState.dotIndex_4da, gameState.dotOffset_4dc, geometry.size(), routeId);
+    if(gameState.dotIndex_4da >= geometry.size() - 1) return null;
     if(!geometry.get(gameState.dotIndex_4da).equals(metadata.dotStart()) || !geometry.get(gameState.dotIndex_4da + 1).equals(metadata.dotEnd())) return null;
     if(!position(geometry, gameState.dotIndex_4da, gameState.dotOffset_4dc).equals(metadata.position())) {
       throw new IllegalArgumentException("Saved world map position does not match saved dot metadata");
@@ -228,7 +229,12 @@ public final class WorldMapSave {
 
   private static void validateLegacyPosition(final int dotIndex, final float dotOffset, final int points, final RegistryId routeId) {
     if(points < 2) throw new IllegalArgumentException("Saved world map route " + routeId + " has fewer than two points");
-    if(dotIndex < 0 || dotIndex >= points - 1) throw new IllegalArgumentException("Saved world map dot index " + dotIndex + " outside route " + routeId);
+    validateSavedPosition(dotIndex, dotOffset, routeId);
+    if(dotIndex >= points - 1) throw new IllegalArgumentException("Saved world map dot index " + dotIndex + " outside route " + routeId);
+  }
+
+  private static void validateSavedPosition(final int dotIndex, final float dotOffset, final RegistryId routeId) {
+    if(dotIndex < 0) throw new IllegalArgumentException("Saved world map dot index " + dotIndex + " outside route " + routeId);
     if(!Float.isFinite(dotOffset) || dotOffset < 0.0f || dotOffset >= OFFSET_SCALE) {
       throw new IllegalArgumentException("Saved world map dot offset " + dotOffset + " outside [0, 4) for route " + routeId);
     }
