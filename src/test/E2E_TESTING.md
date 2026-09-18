@@ -95,4 +95,4 @@ Both files are created in the repo root.
 
 Gradle uses a dedicated main runtime JAR so the mod loader can discover classes and resources together. Engine statics initialize on the engine thread; `Harness.onEngineThread` dispatches registry creation and state mutations to the renderer thread. SDL input explicitly focuses and targets the renderer window. Teardown requests window closure and joins the engine thread.
 
-Each run uses a unique fresh campaign name. Keep explicit `--tests` selections: `ExampleTest` is a manual sandbox that loads an existing save. Full WMap validation results and limitations are in [world-map-validation.md](../../docs/world-map-validation.md).
+Each run uses a unique fresh campaign name. Keep explicit `--tests` selections: `ExampleTest` is a manual sandbox that loads an existing save.
