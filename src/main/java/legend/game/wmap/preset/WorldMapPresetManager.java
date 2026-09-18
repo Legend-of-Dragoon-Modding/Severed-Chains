@@ -64,7 +64,7 @@ public final class WorldMapPresetManager {
             final Path file;
             if(Files.isDirectory(candidate)) {
               try(final var contents = Files.walk(candidate)) {
-                final List<Path> documents = contents.filter(Files::isRegularFile).filter(path -> path.getFileName().toString().endsWith(".wmap")).sorted().toList();
+                final List<Path> documents = contents.filter(Files::isRegularFile).filter(WorldMapPresetManager::isPreset).sorted().toList();
                 if(documents.isEmpty()) {
                   continue;
                 }
@@ -73,7 +73,7 @@ public final class WorldMapPresetManager {
                 }
                 file = documents.getFirst();
               }
-            } else if(Files.isRegularFile(candidate) && candidate.getFileName().toString().endsWith(".wmap")) {
+            } else if(Files.isRegularFile(candidate) && isPreset(candidate)) {
               file = candidate;
             } else {
               continue;
