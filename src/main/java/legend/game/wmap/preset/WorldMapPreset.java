@@ -1,21 +1,21 @@
 package legend.game.wmap.preset;
 
 import legend.core.Registries;
+import legend.core.gte.MV;
 import legend.game.modding.events.worldmap.WorldMapTraversalEvent;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.wmap.Continent;
 import legend.game.wmap.TeleportationLocation0c;
-import legend.lodmod.LodEncounters;
-import legend.lodmod.LodWorldMapData;
-import legend.lodmod.LodWorldMapAuthoringData;
 import legend.game.wmap.registries.WorldMapDataEntry;
 import legend.game.wmap.world.LegacyWorldMap;
+import legend.game.wmap.world.RetailWorldMapResourceBundle;
 import legend.game.wmap.world.WorldMapAccess;
 import legend.game.wmap.world.WorldMapAvatar;
 import legend.game.wmap.world.WorldMapBattleStage;
 import legend.game.wmap.world.WorldMapCameraSettings;
 import legend.game.wmap.world.WorldMapCoolonDestination;
 import legend.game.wmap.world.WorldMapDefinition;
+import legend.game.wmap.world.WorldMapDependencyException;
 import legend.game.wmap.world.WorldMapEncounterPool;
 import legend.game.wmap.world.WorldMapGeometry;
 import legend.game.wmap.world.WorldMapNode;
@@ -23,23 +23,30 @@ import legend.game.wmap.world.WorldMapPlace;
 import legend.game.wmap.world.WorldMapPoint;
 import legend.game.wmap.world.WorldMapPolicy;
 import legend.game.wmap.world.WorldMapPortal;
-import legend.game.wmap.world.WorldMapPresentationProfile;
 import legend.game.wmap.world.WorldMapPresentation;
+import legend.game.wmap.world.WorldMapPresentationCapabilities;
+import legend.game.wmap.world.WorldMapPresentationElement;
+import legend.game.wmap.world.WorldMapPresentationProfile;
+import legend.game.wmap.world.WorldMapPresentationTexture;
 import legend.game.wmap.world.WorldMapRegion;
-import legend.game.wmap.world.WorldMapScene;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
+import legend.game.wmap.world.WorldMapResourceBundle;
 import legend.game.wmap.world.WorldMapRoute;
 import legend.game.wmap.world.WorldMapRouteData;
+import legend.game.wmap.world.WorldMapRules;
+import legend.game.wmap.world.WorldMapScene;
 import legend.game.wmap.world.WorldMapService;
 import legend.game.wmap.world.WorldMapSound;
-import legend.game.wmap.world.WorldMapSubmapDestination;
-import legend.game.wmap.world.WorldMapThumbnail;
-import legend.game.wmap.world.WorldMapRules;
 import legend.game.wmap.world.WorldMapStoryPreset;
+import legend.game.wmap.world.WorldMapSubmapDestination;
 import legend.game.wmap.world.WorldMapTeleportLink;
+import legend.game.wmap.world.WorldMapThumbnail;
 import legend.game.wmap.world.WorldMapTravel;
 import legend.game.wmap.world.WorldMapTravelTarget;
 import legend.game.wmap.world.WorldMapTraversalProfile;
+import legend.lodmod.LodEncounters;
+import legend.lodmod.LodWorldMapAuthoringData;
+import legend.lodmod.LodWorldMapData;
 import org.legendofdragoon.modloader.registries.Registry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -47,12 +54,14 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 /** Immutable, callback-free WMAP document. Overlays are local to one initialized map. */
 public record WorldMapPreset(RegistryId id, String name, String description, Set<String> requiredMods,
@@ -168,7 +177,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     }
 
     public WorldMapScene resolve() {
-      final legend.core.gte.MV matrix = new legend.core.gte.MV();
+      final MV matrix = new MV();
       matrix.m00(this.xAxis.x()).m01(this.xAxis.y()).m02(this.xAxis.z());
       matrix.m10(this.yAxis.x()).m11(this.yAxis.y()).m12(this.yAxis.z());
       matrix.m20(this.zAxis.x()).m21(this.zAxis.y()).m22(this.zAxis.z());
@@ -177,7 +186,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     }
 
     public static SceneTransform from(final WorldMapScene scene) {
-      final legend.core.gte.MV matrix = scene.transform();
+      final MV matrix = scene.transform();
       return new SceneTransform(new WorldMapPoint(matrix.transfer.x, matrix.transfer.y, matrix.transfer.z),
         new WorldMapPoint(matrix.m00(), matrix.m01(), matrix.m02()), new WorldMapPoint(matrix.m10(), matrix.m11(), matrix.m12()),
         new WorldMapPoint(matrix.m20(), matrix.m21(), matrix.m22()));
@@ -255,7 +264,7 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     }
     final WorldMapDefinition.Builder builder = definition.toBuilder();
     for(final String kind : List.of("portals", "routes", "places", "nodes", "geometry")) {
-      for(final Removal removal : this.removals.stream().filter(value -> value.kind.equals(kind)).sorted(java.util.Comparator.comparing(value -> value.id.toString())).toList()) {
+      for(final Removal removal : this.removals.stream().filter(value -> value.kind.equals(kind)).sorted(Comparator.comparing(value -> value.id.toString())).toList()) {
         switch(kind) {
           case "portals" -> builder.removePortal(removal.id);
           case "routes" -> builder.removeRoute(removal.id);
@@ -270,7 +279,9 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
   }
 
   public record RegionAssets(String model, boolean retailAnimations, List<String> textures) {
-    public RegionAssets { textures = List.copyOf(textures); }
+    public RegionAssets {
+      textures = List.copyOf(textures);
+    }
   }
 
   /** Serializable thumbnail definition. A provider preserves a programmatic registry dependency. */
@@ -290,7 +301,9 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
   public record AvatarAssets(String model, @Nullable String texture, WorldMapPoint scale, float shadowScale,
                              int idleAnimation, int walkAnimation, int runAnimation, int textureSlot,
                              List<String> animations) {
-    public AvatarAssets { animations = List.copyOf(animations); }
+    public AvatarAssets {
+      animations = List.copyOf(animations);
+    }
   }
 
   public record Warp(WorldMapTraversalEvent.Phase phase, @Nullable RegistryId marker, RegistryId target,
@@ -331,9 +344,9 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
   public record PresentationProfile(List<WorldMapPoint> mapPositions, List<String> regions, List<String> services,
                                     List<Integer> waterClutYs, List<Integer> playerAvatarVramSlots,
                                     List<TextureAdjustment> textureAdjustments,
-                                    @Nullable List<legend.game.wmap.world.WorldMapPresentationElement> namedElements,
+                                      @Nullable List<WorldMapPresentationElement> namedElements,
                                     @Nullable List<NamedPresentationTexture> namedTextures,
-                                    @Nullable legend.game.wmap.world.WorldMapPresentationCapabilities capabilities) {
+                                      @Nullable WorldMapPresentationCapabilities capabilities) {
     public PresentationProfile(final List<WorldMapPoint> mapPositions, final List<String> regions, final List<String> services,
                                final List<Integer> waterClutYs, final List<Integer> playerAvatarVramSlots, final List<TextureAdjustment> textureAdjustments) {
       this(mapPositions, regions, services, waterClutYs, playerAvatarVramSlots, textureAdjustments, null, null, null);
@@ -367,8 +380,8 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
   }
 
   public record NamedPresentationTexture(RegistryId id, TextureAdjustment adjustment) {
-    legend.game.wmap.world.WorldMapPresentationTexture resolve() {
-      return new legend.game.wmap.world.WorldMapPresentationTexture(this.id, this.adjustment.resolve());
+    WorldMapPresentationTexture resolve() {
+      return new WorldMapPresentationTexture(this.id, this.adjustment.resolve());
     }
   }
 
@@ -415,8 +428,8 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
   public Map<RegistryId, WorldMapRegion> resolveRegions(final Registries registries) {
     final Map<RegistryId, WorldMapRegion> providers = values(registries.worldMapRegions);
     return transform(this.regions, (id, region) -> {
-      final legend.game.wmap.world.WorldMapResourceBundle fallback = providers.containsKey(region.provider) ? providers.get(region.provider).resources()
-        : region.legacyTemplate == null ? legend.game.wmap.world.RetailWorldMapResourceBundle.INDEPENDENT : legend.game.wmap.world.RetailWorldMapResourceBundle.INSTANCE;
+      final WorldMapResourceBundle fallback = providers.containsKey(region.provider) ? providers.get(region.provider).resources()
+        : region.legacyTemplate == null ? RetailWorldMapResourceBundle.INDEPENDENT : RetailWorldMapResourceBundle.INSTANCE;
       return new WorldMapRegion(region.legacyTemplate,
         region.assets == null ? require(providers, region.provider, "region model provider", id).model() :
           gameState -> WorldMapPresetAssets.region(this.packageRoot, id, region.assets),
@@ -484,11 +497,11 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
 
   private static <T> T require(final Map<RegistryId, T> providers, final RegistryId provider, final String kind, final RegistryId owner) {
     final T value = providers.get(provider);
-    if(value == null) throw new legend.game.wmap.world.WorldMapDependencyException("Unknown " + kind + ' ' + provider + " for preset entry " + owner);
+    if(value == null) throw new WorldMapDependencyException("Unknown " + kind + ' ' + provider + " for preset entry " + owner);
     return value;
   }
 
-  private static <T, R> Map<RegistryId, R> transform(final Map<RegistryId, T> source, final java.util.function.BiFunction<RegistryId, T, R> mapper) {
+  private static <T, R> Map<RegistryId, R> transform(final Map<RegistryId, T> source, final BiFunction<RegistryId, T, R> mapper) {
     final Map<RegistryId, R> result = new LinkedHashMap<>();
     source.forEach((id, value) -> result.put(id, mapper.apply(id, value)));
     return Map.copyOf(result);
@@ -646,7 +659,9 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     return builder.behaviours(Set.of(lod("wmap_behaviour"))).build();
   }
 
-  private static RegistryId lod(final String entry) { return new RegistryId("lod", entry); }
+  private static RegistryId lod(final String entry) {
+    return new RegistryId("lod", entry);
+  }
 
   /** Mutable authoring convenience; build defensively copies every collection. */
   public static final class Builder {
@@ -681,12 +696,35 @@ public record WorldMapPreset(RegistryId id, String name, String description, Set
     @Nullable public RegistryId startingPortal;
     @Nullable public RegistryId recoveryPortal;
 
-    public Builder(final RegistryId id, final String name) { this.id = id; this.name = name; }
-    public Builder description(final String value) { this.description = value; return this; }
-    public Builder requiredMods(final Set<String> value) { this.requiredMods = Set.copyOf(value); return this; }
-    public Builder packageRoot(final Path value) { this.packageRoot = value; return this; }
-    public Builder rules(final Rules value) { this.rules = value; return this; }
-    public Builder behaviours(@Nullable final Set<RegistryId> value) { this.behaviours = value; return this; }
+    public Builder(final RegistryId id, final String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public Builder description(final String value) {
+      this.description = value;
+      return this;
+    }
+
+    public Builder requiredMods(final Set<String> value) {
+      this.requiredMods = Set.copyOf(value);
+      return this;
+    }
+
+    public Builder packageRoot(final Path value) {
+      this.packageRoot = value;
+      return this;
+    }
+
+    public Builder rules(final Rules value) {
+      this.rules = value;
+      return this;
+    }
+
+    public Builder behaviours(@Nullable final Set<RegistryId> value) {
+      this.behaviours = value;
+      return this;
+    }
 
     public Builder standalone(final boolean value) {
       this.standalone = value;
