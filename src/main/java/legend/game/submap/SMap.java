@@ -495,6 +495,11 @@ public class SMap extends EngineState<SMap> {
     return new BattleReturnContext(LodEngineStateTypes.SUBMAP.getId(), this.writeSaveData(gameState_800babc8));
   }
 
+  /** Explicitly return to the captured entry position instead of resolving a native script exit. */
+  public boolean requestWorldMapReturn() {
+    return this.worldMapReturn != null && this.requestTravel(new EngineDestination(LodEngineStateTypes.WORLD_MAP.getId(), this.worldMapReturn));
+  }
+
   private void readSubmapDestination(final MapTag data) {
     if(data.has("cut") && data.has("scene")) {
       this.submapFallback = new SubmapEndpoint(data.get("cut").asInt().get(), data.get("scene").asInt().get());
@@ -4049,7 +4054,6 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newCut >= 0 && newCut < 2) {
-      if(this.worldMapReturn != null) this.pendingDestination = new EngineDestination(LodEngineStateTypes.WORLD_MAP.getId(), this.worldMapReturn);
       this.engineStateToTransitionTo = LodEngineStateTypes.WORLD_MAP.get();
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_ENGINE_STATE_18;
       return;
