@@ -317,7 +317,10 @@ public final class WorldMapPresetManager {
     try {
       if(!state.worldMapPreset.matches("[0-9a-f]{64}")) throw new IOException("Invalid saved world map package identity");
       final Path root = state.campaign.path.resolve("worldmaps").resolve(state.worldMapPreset);
-      if(!Files.exists(root.resolve("preset.wmap")) && state.worldMapPackage != null) restorePackage(state);
+      if(!hasCompletePackage(root, state.worldMapPreset)) {
+        if(state.worldMapPackage == null) throw new IOException("Saved world map package is incomplete");
+        restorePackage(state, root);
+      }
       final WorldMapPreset preset = WorldMapPresetCodec.read(root.resolve("preset.wmap"));
       requireMods(preset);
       return preset;
@@ -377,10 +380,12 @@ public final class WorldMapPresetManager {
     return source.clone();
   }
 
-  private static void restorePackage(final GameState52c state) throws IOException {
+  private static void restorePackage(final GameState52c state, final Path target) throws IOException {
     final MapTag tag = state.worldMapPackage;
     if(!tag.get("token").asString().get().equals(state.worldMapPreset)) throw new IOException("Embedded world map identity mismatch");
-    final Path staging = staging();
+    final Path directory = target.getParent();
+    Files.createDirectories(directory);
+    final Path staging = Files.createTempDirectory(directory, ".restore-");
     try {
       final byte[] manifest = tag.get("manifest").asString().get().getBytes(java.nio.charset.StandardCharsets.UTF_8);
       requirePackageSize(manifest.length);
@@ -404,18 +409,70 @@ public final class WorldMapPresetManager {
         if(bytes.length > MAX_FILE_BYTES) throw new IOException("Embedded world map file is too large");
         total += bytes.length;
         requirePackageSize(total);
-        final Path target = staging.resolve(name).normalize();
-        if(!target.startsWith(staging.toAbsolutePath().normalize()) && !target.startsWith(staging.normalize())) throw new IOException("Invalid embedded asset path");
-        Files.createDirectories(target.getParent());
-        Files.write(target, bytes);
+        final Path assetTarget = staging.resolve(name).normalize();
+        if(!assetTarget.startsWith(staging.toAbsolutePath().normalize()) && !assetTarget.startsWith(staging.normalize())) throw new IOException("Invalid embedded asset path");
+        Files.createDirectories(assetTarget.getParent());
+        Files.write(assetTarget, bytes);
       }
-      if(!digest(staging).equals(state.worldMapPreset)) throw new IOException("Embedded world map content does not match its identity");
-      final Path directory = state.campaign.path.resolve("worldmaps");
-      Files.createDirectories(directory);
-      // Preserve the exact manifest bytes and therefore its original content identity.
-      Files.move(staging, directory.resolve(state.worldMapPreset));
+      validatePackage(staging, state.worldMapPreset);
+      replacePackage(staging, target);
     } finally {
       deleteStaging(staging);
+    }
+  }
+
+  private static boolean hasCompletePackage(final Path root, final String token) {
+    try {
+      validatePackage(root, token);
+      return true;
+    } catch(final IOException | RuntimeException ignored) {
+      return false;
+    }
+  }
+
+  private static void validatePackage(final Path root, final String token) throws IOException {
+    final Path manifest = root.resolve("preset.wmap");
+    if(!Files.isRegularFile(manifest)) throw new IOException("World map package is missing preset.wmap");
+    final WorldMapPreset preset = WorldMapPresetCodec.read(manifest);
+    for(final String path : preset.assetPaths()) {
+      asset(root, path);
+    }
+    if(!digest(root).equals(token)) throw new IOException("World map package content does not match its identity");
+  }
+
+  private static void replacePackage(final Path staging, final Path target) throws IOException {
+    Path backup = null;
+    if(Files.exists(target)) {
+      backup = Files.createTempDirectory(target.getParent(), ".restore-backup-");
+      Files.delete(backup);
+      moveDirectory(target, backup);
+    }
+    try {
+      moveDirectory(staging, target);
+    } catch(final IOException failure) {
+      if(backup != null) {
+        try {
+          moveDirectory(backup, target);
+        } catch(final IOException rollbackFailure) {
+          failure.addSuppressed(rollbackFailure);
+        }
+      }
+      throw failure;
+    }
+    if(backup != null) {
+      try {
+        deleteStaging(backup);
+      } catch(final IOException cleanupFailure) {
+        LOGGER.warn("Failed to remove incomplete world map package backup " + backup, cleanupFailure);
+      }
+    }
+  }
+
+  private static void moveDirectory(final Path source, final Path target) throws IOException {
+    try {
+      Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);
+    } catch(final AtomicMoveNotSupportedException e) {
+      Files.move(source, target);
     }
   }
 
