@@ -1,6 +1,5 @@
 package legend.game.wmap.preset;
 
-import legend.core.tags.EnumTag;
 import legend.core.tags.FloatTag;
 import legend.core.tags.IntTag;
 import legend.core.tags.ListTag;
@@ -23,7 +22,7 @@ class WorldMapDestinationTagCodecTest {
     data.set("spawn", new StringTag("north<&\"gate"));
     final ListTag values = new ListTag();
     values.add(new IntTag(17));
-    values.add(EnumTag.named("CUSTOM_SPAWN"));
+    values.add(new StringTag("CUSTOM_SPAWN"));
     values.add(new RawTag(new byte[]{0, -1, 42}));
     data.set("values", values);
     final Element xml = element();
@@ -31,7 +30,7 @@ class WorldMapDestinationTagCodecTest {
     final MapTag decoded = WorldMapDestinationTagCodec.read(xml).asMap();
     assertEquals("north<&\"gate", decoded.get("spawn").asString().get());
     assertEquals(17, decoded.get("values").asList().get(0).asInt().get());
-    assertEquals("CUSTOM_SPAWN", decoded.get("values").asList().get(1).asEnum().name());
+    assertEquals("CUSTOM_SPAWN", decoded.get("values").asList().get(1).asString().get());
     assertArrayEquals(new byte[]{0, -1, 42}, decoded.get("values").asList().get(2).asRaw().get());
   }
 

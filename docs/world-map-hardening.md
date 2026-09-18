@@ -141,6 +141,8 @@ WMap compares source revisions and explicit invalidation rather than comparing d
 
 Regions own a `WorldMapResourceBundle` for common UI textures, transport textures/models, leader models, background, music, and optional layout. Retail defaults remain available. Presets can supply packaged resource paths and scene transforms; provider destinations can carry bounded typed XML tag data.
 
+Runtime symbolic names in destination data use `StringTag` and XML `type="string"`. Legacy XML `type="enum"` names remain readable, with their original identifier validation, and are exported as strings. `EnumTag` retains its original Java-enum API and binary type 31; no new tag discriminator is needed. Destination providers consuming the former symbolic enum extension should use `asString().get()` instead of `asEnum().name()`.
+
 Replacing the resources does not replace every native UI/rendering algorithm. Authored assets must satisfy the declared model/texture layout contract. Custom renderers and presentation controllers remain the extension points for different visual behavior.
 
 ## Commit and file inventory
