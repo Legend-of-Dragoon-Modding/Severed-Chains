@@ -1,14 +1,21 @@
 package legend.game.wmap.preset;
 
+import legend.core.tags.Tag;
+import legend.game.wmap.world.SubmapEndpoint;
 import legend.game.wmap.world.WorldMapAccess;
 import legend.game.wmap.world.WorldMapBattleStage;
+import legend.game.wmap.world.WorldMapCameraSettings;
 import legend.game.wmap.world.WorldMapCoolonDestination;
 import legend.game.wmap.world.WorldMapEncounterPool;
 import legend.game.wmap.world.WorldMapGeometry;
+import legend.game.wmap.world.WorldMapLightingSettings;
 import legend.game.wmap.world.WorldMapNode;
 import legend.game.wmap.world.WorldMapPlace;
+import legend.game.wmap.world.WorldMapPoint;
 import legend.game.wmap.world.WorldMapPolicy;
 import legend.game.wmap.world.WorldMapPortal;
+import legend.game.wmap.world.WorldMapPresentationCapabilities;
+import legend.game.wmap.world.WorldMapPresentationElement;
 import legend.game.wmap.world.WorldMapRouteData;
 import legend.game.wmap.world.WorldMapService;
 import legend.game.wmap.world.WorldMapSound;
@@ -16,6 +23,7 @@ import legend.game.wmap.world.WorldMapStoryPreset;
 import legend.game.wmap.world.WorldMapSubmapDestination;
 import legend.game.wmap.world.WorldMapTeleportLink;
 import legend.game.wmap.world.WorldMapTravel;
+import legend.game.wmap.world.WorldMapTraversalProfile;
 import org.legendofdragoon.modloader.registries.RegistryId;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,6 +44,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.RecordComponent;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
@@ -43,6 +52,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -101,22 +111,22 @@ public final class WorldMapPresetCodec {
     schema(WorldMapPreset.AvatarAssets.class, required("model", "scale", "shadowScale", "idleAnimation", "walkAnimation", "runAnimation", "textureSlot", "animations"), optional("texture")),
     schema(WorldMapPreset.TraversalProfile.class, required("priority", "routes", "markers", "includeReverseRoutes", "speedMultiplier", "warps"), optional("provider", "avatar", "visualOffset")),
     schema(WorldMapPreset.Warp.class, required("phase", "target", "respectAccess"), optional("marker")),
-    schema(legend.game.wmap.world.WorldMapTraversalProfile.Marker.class, required("id", "progress")),
+    schema(WorldMapTraversalProfile.Marker.class, required("id", "progress")),
     schema(WorldMapPreset.PresentationProfile.class, required(), optional("mapPositions", "regions", "services", "waterClutYs", "playerAvatarVramSlots", "textureAdjustments", "namedElements", "namedTextures", "capabilities")),
     schema(WorldMapPreset.TextureAdjustment.class, required("index", "clutX", "clutY", "tpageX", "tpageY", "mode")),
-    schema(legend.game.wmap.world.WorldMapPresentationElement.class, required("id", "position"), optional("label", "texture")),
+    schema(WorldMapPresentationElement.class, required("id", "position"), optional("label", "texture")),
     schema(WorldMapPreset.NamedPresentationTexture.class, required("id", "adjustment")),
-    schema(legend.game.wmap.world.WorldMapPresentationCapabilities.class, required("retailLabels", "retailWater", "retailAvatars")),
+    schema(WorldMapPresentationCapabilities.class, required("retailLabels", "retailWater", "retailAvatars")),
     schema(WorldMapPreset.ThumbnailDefinition.class, required("nativeIndex"), optional("asset", "label", "provider")),
     schema(WorldMapService.class, required("label"), optional("legacyBit")),
     schema(WorldMapSound.class, required("nativeIndex"), optional("label")),
     schema(WorldMapBattleStage.class, required("nativeIndex"), optional("label", "combatStageId")),
     schema(WorldMapSubmapDestination.class, required("cut", "scene"), optional("label", "provider", "data")),
-    schema(legend.game.wmap.world.SubmapEndpoint.class, required("cut", "scene")),
-    schema(legend.game.wmap.world.WorldMapPoint.class, required("x", "y", "z")),
-    schema(legend.game.wmap.world.WorldMapCameraSettings.class, required("viewpoint", "refpoint", "projectionDistance", "overviewEnabled"), optional("overviewPosition", "minimum", "maximum", "lighting")),
-    schema(legend.game.wmap.world.WorldMapLightingSettings.class, required("ambient", "lights", "overviewBrightness", "transitionStep", "transitionBrightness")),
-    schema(legend.game.wmap.world.WorldMapLightingSettings.Light.class, required("direction", "colour"))
+    schema(SubmapEndpoint.class, required("cut", "scene")),
+    schema(WorldMapPoint.class, required("x", "y", "z")),
+    schema(WorldMapCameraSettings.class, required("viewpoint", "refpoint", "projectionDistance", "overviewEnabled"), optional("overviewPosition", "minimum", "maximum", "lighting")),
+    schema(WorldMapLightingSettings.class, required("ambient", "lights", "overviewBrightness", "transitionStep", "transitionBrightness")),
+    schema(WorldMapLightingSettings.Light.class, required("direction", "colour"))
   );
 
   private record Field(String xmlName, boolean optional) { }
@@ -163,7 +173,9 @@ public final class WorldMapPresetCodec {
     return schema;
   }
 
-  private WorldMapPresetCodec() { }
+  private WorldMapPresetCodec() {
+
+  }
 
   public static WorldMapPreset read(final Path file) throws IOException {
     try(final InputStream input = Files.newInputStream(file)) {
@@ -178,7 +190,7 @@ public final class WorldMapPresetCodec {
     if(bytes.length > MAX_DOCUMENT_BYTES) throw new IOException("World map preset exceeds " + MAX_DOCUMENT_BYTES + " bytes");
     try {
       // Reject non-UTF-8 input instead of silently replacing malformed sequences.
-      StandardCharsets.UTF_8.newDecoder().decode(java.nio.ByteBuffer.wrap(bytes));
+      StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(bytes));
       final var builder = factory().newDocumentBuilder();
       builder.setErrorHandler(new ErrorHandler() {
         @Override public void warning(final SAXParseException error) throws SAXParseException { throw error; }
@@ -327,7 +339,7 @@ public final class WorldMapPresetCodec {
         final Element value = child(element, name, !optional);
         if(value == null) {
           args[i] = null;
-        } else if(component.getType() == legend.core.tags.Tag.class) {
+      } else if(component.getType() == Tag.class) {
           args[i] = WorldMapDestinationTagCodec.read(value);
         } else if(component.getGenericType() instanceof ParameterizedType parameterized) {
           shape(value, Set.of(), Set.of("item"));
@@ -486,7 +498,7 @@ public final class WorldMapPresetCodec {
       for(final Section<?> section : SECTIONS) writeSection(root, preset, section);
       if(!preset.removals().isEmpty()) {
         final Element removals = append(root, "removals");
-        for(final WorldMapPreset.Removal removal : preset.removals().stream().sorted(java.util.Comparator.comparing(WorldMapPreset.Removal::kind).thenComparing(value -> value.id().toString())).toList()) {
+      for(final WorldMapPreset.Removal removal : preset.removals().stream().sorted(Comparator.comparing(WorldMapPreset.Removal::kind).thenComparing(value -> value.id().toString())).toList()) {
           final Element entry = append(removals, "remove");
           entry.setAttribute("kind", removal.kind());
           entry.setAttribute("id", removal.id().toString());
@@ -551,7 +563,7 @@ public final class WorldMapPresetCodec {
   }
 
   private static List<RegistryId> sorted(final Set<RegistryId> ids) {
-    return ids.stream().sorted(java.util.Comparator.comparing(RegistryId::toString)).toList();
+    return ids.stream().sorted(Comparator.comparing(RegistryId::toString)).toList();
   }
 
   private static void writeRecord(final Element element, final Object record) throws Exception {
@@ -567,7 +579,7 @@ public final class WorldMapPresetCodec {
         if(value instanceof Iterable<?> iterable) {
           final List<Object> items = new ArrayList<>();
           iterable.forEach(items::add);
-          if(value instanceof Set<?>) items.sort(java.util.Comparator.comparing(Object::toString));
+        if(value instanceof Set<?>) items.sort(Comparator.comparing(Object::toString));
           for(final Object item : items) {
             final Element itemElement = append(child, "item");
             if(scalar(item.getClass())) {
@@ -577,7 +589,7 @@ public final class WorldMapPresetCodec {
             }
           }
         } else {
-          if(value instanceof legend.core.tags.Tag tag) {
+        if(value instanceof Tag tag) {
             WorldMapDestinationTagCodec.write(child, tag);
           } else {
             writeRecord(child, value);

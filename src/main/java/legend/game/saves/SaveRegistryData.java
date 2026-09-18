@@ -5,22 +5,28 @@ import legend.core.tags.MapTag;
 import legend.core.tags.RegistryIdTag;
 import legend.core.tags.Tag;
 import legend.game.types.EquipmentSlot;
+import org.legendofdragoon.modloader.registries.RegistryId;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+
 import static legend.core.GameEngine.REGISTRIES;
 
 /** Preserves unknown fields and unavailable registry records, never deleted available records. */
 public final class SaveRegistryData {
-  private SaveRegistryData() { }
+  private SaveRegistryData() {
+  }
 
-  public static MapTag inventoryEntry(final String key, final org.legendofdragoon.modloader.registries.RegistryId id) {
+  public static MapTag inventoryEntry(final String key, final RegistryId id) {
     final MapTag entry = new MapTag();
     entry.set(key, new RegistryIdTag(id));
     return entry;
   }
 
   public static boolean available(final MapTag entry) {
-    return available(entry, new SaveSchemaCatalog(java.util.List.of()));
+    return available(entry, new SaveSchemaCatalog(List.of()));
   }
 
   public static boolean available(final MapTag entry, final SaveSchemaCatalog schemas) {
@@ -43,7 +49,7 @@ public final class SaveRegistryData {
   }
 
   private static String identity(final MapTag entry, final SaveSchemaCatalog schemas) {
-    for(final String key : java.util.List.of("equipmentId", "itemId", "goodId", "templateId", "statTypeId", "additionId", "spellId", "modId")) {
+    for(final String key : List.of("equipmentId", "itemId", "goodId", "templateId", "statTypeId", "additionId", "spellId", "modId")) {
       if(entry.has(key)) {
         final var id = entry.get(key).asRegistryId().get();
         return key + ':' + (key.equals("modId") ? id : schemas.canonical(domain(key), id));
@@ -67,7 +73,7 @@ public final class SaveRegistryData {
   }
 
   public static void merge(final MapTag current, final MapTag original) {
-    merge(current, original, new SaveSchemaCatalog(java.util.List.of()));
+    merge(current, original, new SaveSchemaCatalog(List.of()));
   }
 
   public static void merge(final MapTag current, final MapTag original, final SaveSchemaCatalog schemas) {
@@ -75,16 +81,16 @@ public final class SaveRegistryData {
   }
 
   /** The resolver can also be supplied by offline migration tools without booting game registries. */
-  public static void merge(final MapTag current, final MapTag original, final SaveSchemaCatalog schemas, final java.util.function.Predicate<MapTag> available) {
+  public static void merge(final MapTag current, final MapTag original, final SaveSchemaCatalog schemas, final Predicate<MapTag> available) {
     merge(current, original, schemas, available, false);
   }
 
-  private static void merge(final MapTag current, final MapTag original, final SaveSchemaCatalog schemas, final java.util.function.Predicate<MapTag> available, final boolean character) {
+  private static void merge(final MapTag current, final MapTag original, final SaveSchemaCatalog schemas, final Predicate<MapTag> available, final boolean character) {
     for(final String key : original.keys()) {
       final Tag old = original.get(key);
       if(!current.has(key)) {
         boolean preserve = true;
-        for(final String identity : java.util.List.of("itemId", "equipmentId", "goodId", "templateId", "statTypeId", "additionId", "spellId", "modId")) {
+        for(final String identity : List.of("itemId", "equipmentId", "goodId", "templateId", "statTypeId", "additionId", "spellId", "modId")) {
           if(!current.has(identity)) continue;
           final var id = current.get(identity.equals("modId") && current.has("typeId") ? "typeId" : identity).asRegistryId().get();
           preserve = schemas.preserveAbsent(domain(identity), id, key);
@@ -121,7 +127,7 @@ public final class SaveRegistryData {
   }
 
   /** Character equipment is unique by slot; inventory equipment remains an ID-keyed multiset. */
-  private static void mergeCharacterEquipment(final ListTag current, final ListTag original, final SaveSchemaCatalog schemas, final java.util.function.Predicate<MapTag> available) {
+  private static void mergeCharacterEquipment(final ListTag current, final ListTag original, final SaveSchemaCatalog schemas, final Predicate<MapTag> available) {
     final Set<Integer> matched = new HashSet<>();
     final Set<String> occupiedSlots = new HashSet<>();
     for(final Tag value : current) {

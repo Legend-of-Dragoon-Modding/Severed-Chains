@@ -1,12 +1,14 @@
 package legend.game.wmap.preset;
 
+import legend.core.tags.ImmutableRawTag;
+import legend.core.tags.IntTag;
+import legend.core.tags.ListTag;
+import legend.core.tags.MapTag;
+import legend.core.tags.RawTag;
+import legend.core.tags.StringTag;
 import legend.game.modding.events.worldmap.WorldMapPresetsEvent;
 import legend.game.types.GameState52c;
-import legend.core.tags.MapTag;
-import legend.core.tags.ListTag;
-import legend.core.tags.IntTag;
-import legend.core.tags.StringTag;
-import java.util.Base64;
+import legend.game.wmap.world.WorldMapDependencyException;
 import legend.game.wmap.world.WorldMapRegistrySnapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +18,8 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,10 +27,12 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipInputStream;
@@ -43,7 +49,9 @@ public final class WorldMapPresetManager {
   private static final int MAX_FILE_BYTES = 64 * 1024 * 1024;
   private static final int MAX_FILES = 4096;
 
-  private WorldMapPresetManager() { }
+  private WorldMapPresetManager() {
+
+  }
 
   public record Catalog(List<WorldMapPresetEntry> entries, List<String> errors) {
     public Catalog {
@@ -132,7 +140,7 @@ public final class WorldMapPresetManager {
     final var index = mod.getResource("worldmaps/index.txt");
     if(index != null) {
       try(final var stream = index.openStream()) {
-        final String manifest = new String(readBounded(stream, 65536), java.nio.charset.StandardCharsets.UTF_8);
+      final String manifest = new String(readBounded(stream, 65536), StandardCharsets.UTF_8);
         return manifest.lines().map(String::strip).filter(value -> !value.isEmpty() && !value.startsWith("#")).distinct().sorted().toList();
       }
     }
@@ -242,10 +250,10 @@ public final class WorldMapPresetManager {
         for(var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
           final String name = entry.getName();
           requireRelative(name);
-          if(!entry.isDirectory() && name.toLowerCase(java.util.Locale.ROOT).endsWith(".wmap") && !name.equals("preset.wmap")) {
+        if(!entry.isDirectory() && name.toLowerCase(Locale.ROOT).endsWith(".wmap") && !name.equals("preset.wmap")) {
             throw new IOException("World map package must contain only root preset.wmap as its document");
           }
-          if(!names.add(name.toLowerCase(java.util.Locale.ROOT)) || names.size() > MAX_FILES) {
+        if(!names.add(name.toLowerCase(Locale.ROOT)) || names.size() > MAX_FILES) {
             throw new IOException("Duplicate ZIP entry or too many files: " + name);
           }
           final Path target = staging.resolve(name).normalize();
@@ -281,7 +289,7 @@ public final class WorldMapPresetManager {
     MODS.getLoadedMods().forEach(mod -> loaded.add(mod.modId));
     for(final String id : preset.requiredMods()) {
       if(!loaded.contains(id)) {
-        throw new legend.game.wmap.world.WorldMapDependencyException("World map preset " + preset.id() + " requires enabled mod " + id);
+      throw new WorldMapDependencyException("World map preset " + preset.id() + " requires enabled mod " + id);
       }
     }
   }
@@ -294,7 +302,7 @@ public final class WorldMapPresetManager {
         try {
           asset(preset.packageRoot(), path);
         } catch(final IOException e) {
-          throw new legend.game.wmap.world.WorldMapDependencyException("Preset " + preset.id() + " asset " + path, e);
+        throw new WorldMapDependencyException("Preset " + preset.id() + " asset " + path, e);
         }
       }
     }
@@ -324,7 +332,7 @@ public final class WorldMapPresetManager {
       final WorldMapPreset preset = WorldMapPresetCodec.read(root.resolve("preset.wmap"));
       requireMods(preset);
       return preset;
-    } catch(final IOException | legend.game.wmap.world.WorldMapDependencyException failure) {
+    } catch(final IOException | WorldMapDependencyException failure) {
       LOGGER.warn("Saved world map is unavailable; retaining its tags and using native world map", failure);
       state.worldMapFallback = true;
       return WorldMapPreset.vanilla();
@@ -354,7 +362,7 @@ public final class WorldMapPresetManager {
         if(size > MAX_FILE_BYTES || assets.size() >= MAX_FILES) throw new IOException("World map package exceeds save limits");
         final MapTag entry = new MapTag();
         entry.set("path", new StringTag(name));
-        entry.set("data", new legend.core.tags.ImmutableRawTag(Files.readAllBytes(path)));
+      entry.set("data", new ImmutableRawTag(Files.readAllBytes(path)));
         assets.add(entry);
       }
       state.worldMapPackage = tag.clone();
@@ -372,8 +380,8 @@ public final class WorldMapPresetManager {
     if(source.has("assets")) {
       for(final var value : source.get("assets").asList()) {
         final MapTag asset = value.asMap();
-        if(asset.get("data") instanceof final legend.core.tags.RawTag raw && !(raw instanceof legend.core.tags.ImmutableRawTag)) {
-          asset.set("data", new legend.core.tags.ImmutableRawTag(raw.get()));
+      if(asset.get("data") instanceof final RawTag raw && !(raw instanceof ImmutableRawTag)) {
+        asset.set("data", new ImmutableRawTag(raw.get()));
         }
       }
     }
@@ -387,7 +395,7 @@ public final class WorldMapPresetManager {
     Files.createDirectories(directory);
     final Path staging = Files.createTempDirectory(directory, ".restore-");
     try {
-      final byte[] manifest = tag.get("manifest").asString().get().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    final byte[] manifest = tag.get("manifest").asString().get().getBytes(StandardCharsets.UTF_8);
       requirePackageSize(manifest.length);
       Files.write(staging.resolve("preset.wmap"), manifest);
       long total = manifest.length;
@@ -399,7 +407,7 @@ public final class WorldMapPresetManager {
         requireRelative(name);
         if(name.equals("preset.wmap")) throw new IOException("Embedded asset replaces manifest");
         final byte[] bytes;
-        if(entry.get("data") instanceof final legend.core.tags.RawTag raw) {
+      if(entry.get("data") instanceof final RawTag raw) {
           bytes = raw.get();
         } else {
           final String encoded = entry.get("data").asString().get();
@@ -532,10 +540,10 @@ public final class WorldMapPresetManager {
       final MessageDigest digest = MessageDigest.getInstance("SHA-256");
       try(final var files = Files.walk(directory)) {
         for(final Path file : files.filter(Files::isRegularFile).sorted().toList()) {
-          final byte[] name = directory.relativize(file).toString().replace('\\', '/').getBytes(java.nio.charset.StandardCharsets.UTF_8);
-          digest.update(java.nio.ByteBuffer.allocate(4).putInt(name.length).array());
+      final byte[] name = directory.relativize(file).toString().replace('\\', '/').getBytes(StandardCharsets.UTF_8);
+      digest.update(ByteBuffer.allocate(4).putInt(name.length).array());
           digest.update(name);
-          digest.update(java.nio.ByteBuffer.allocate(8).putLong(Files.size(file)).array());
+      digest.update(ByteBuffer.allocate(8).putLong(Files.size(file)).array());
           try(final InputStream stream = Files.newInputStream(file)) {
             final byte[] buffer = new byte[8192];
             for(int length = stream.read(buffer); length != -1; length = stream.read(buffer)) {
