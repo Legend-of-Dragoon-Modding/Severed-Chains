@@ -1,7 +1,6 @@
 package legend.game.wmap.preset;
 
 import legend.core.tags.BoolTag;
-import legend.core.tags.EnumTag;
 import legend.core.tags.FloatTag;
 import legend.core.tags.IntTag;
 import legend.core.tags.ListTag;
@@ -82,7 +81,11 @@ public final class WorldMapDestinationTagCodec {
         final int separator = value.indexOf(':');
         yield new RegistryIdTag(new RegistryId(value.substring(0, separator), value.substring(separator + 1)));
       }
-      case "enum" -> EnumTag.named(value);
+      // Older presets used "enum" for symbolic names without storing a Java enum class.
+      case "enum" -> {
+        if(!value.matches("[A-Za-z_$][A-Za-z0-9_$]*")) throw new IllegalArgumentException("Invalid symbolic name");
+        yield new StringTag(value);
+      }
       case "raw" -> new RawTag(Base64.getDecoder().decode(value));
       default -> throw new IllegalArgumentException("Unknown destination tag type " + type);
     };
@@ -123,7 +126,6 @@ public final class WorldMapDestinationTagCodec {
       }
       case BoolTag flag -> { type = "bool"; value = Boolean.toString(flag.get()); }
       case RegistryIdTag id -> { type = "registry"; value = id.get().toString(); }
-      case EnumTag name -> { type = "enum"; value = name.name(); }
       case RawTag raw -> {
         final byte[] bytes = raw.get();
         if(bytes.length > 786432) throw new IllegalArgumentException("Destination bytes exceed data budget");
