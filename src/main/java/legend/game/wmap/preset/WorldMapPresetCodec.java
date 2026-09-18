@@ -81,22 +81,87 @@ public final class WorldMapPresetCodec {
     new Section<>("submapDestinations", "submapDestination", WorldMapSubmapDestination.class, WorldMapPreset::submapDestinations, builder -> builder.submapDestinations)
   );
 
-  private static final Set<String> OPTIONAL = Set.of(
-    "PresentationProfile.mapPositions", "PresentationProfile.regions", "PresentationProfile.services", "PresentationProfile.waterClutYs", "PresentationProfile.playerAvatarVramSlots", "PresentationProfile.textureAdjustments",
-    "PresentationProfile.namedElements", "PresentationProfile.namedTextures", "PresentationProfile.capabilities", "WorldMapPresentationElement.label", "WorldMapPresentationElement.texture",
-    "WorldMapGeometry.motion", "WorldMapGeometry.unitsPerStep",
-    "WorldMapPlace.name", "WorldMapPortal.route", "WorldMapPortal.place", "WorldMapPortal.region",
-    "WorldMapRouteData.encounterPool", "WorldMapRouteData.avatar", "WorldMapStoryPreset.place", "WorldMapStoryPreset.composition",
-    "WorldMapCameraSettings.overviewPosition", "WorldMapCameraSettings.minimum", "WorldMapCameraSettings.maximum", "WorldMapCameraSettings.lighting",
-    "WorldMapEncounterPool.percentages",
-    "Region.legacyTemplate", "Region.assets", "Region.scene", "Region.resources", "Resources.uiTextures", "Resources.transportTextures", "Resources.transports", "Resources.leader", "Resources.background", "Resources.omitBackground", "Resources.music", "Resources.musicChapter", "Resources.omitLocationSounds", "Resources.locationSoundFiles", "Resources.layout", "ModelFiles.texture", "WorldMapSubmapDestination.provider", "WorldMapSubmapDestination.data", "Avatar.provider", "Avatar.assets", "AvatarAssets.texture",
-    "TraversalProfile.provider", "TraversalProfile.avatar", "TraversalProfile.visualOffset", "Warp.marker",
-    "ThumbnailDefinition.asset", "ThumbnailDefinition.label", "ThumbnailDefinition.provider",
-    "WorldMapService.legacyBit", "WorldMapSound.label", "WorldMapBattleStage.label", "WorldMapBattleStage.combatStageId", "WorldMapSubmapDestination.label",
-    "WorldMapPlace.thumbnailId", "WorldMapPlace.serviceIds", "WorldMapPlace.soundIds",
-    "WorldMapRouteData.battleStageId", "WorldMapPortal.fromId", "WorldMapPortal.toId",
-    "WorldMapPortal.atmosphere", "WorldMapPortal.smoke"
+  private static final Map<Class<?>, RecordSchema> SCHEMA = Map.ofEntries(
+    schema(WorldMapNode.class, required("id", "position")),
+    schema(WorldMapGeometry.class, required("legacyIndex", "points"), optional("motion", "unitsPerStep")),
+    schema(WorldMapPlace.class, required("id", "legacyIndex", "thumbnail", "services", "sounds"), optional("name", "thumbnailId", "serviceIds", "soundIds")),
+    schema(WorldMapRouteData.class, required("legacyIndex", "start", "end", "geometry", "direction", "encounterRate", "battleStage", "modelIndex", "legacyEncounterPlaceholder"), optional("encounterPool", "avatar", "battleStageId")),
+    schema(WorldMapPortal.class, required("id", "legacyIndex", "from", "to", "junctionIndex", "continent", "fullBrightness", "effectFlags"), optional("route", "place", "region", "fromId", "toId", "atmosphere", "smoke")),
+    schema(WorldMapEncounterPool.class, required("legacyIndex", "encounters"), optional("percentages")),
+    schema(WorldMapStoryPreset.class, required("order", "storyFlag", "enabledPortals", "x", "y"), optional("place", "composition")),
+    schema(WorldMapCoolonDestination.class, required("order", "portal", "defaultDestination", "position", "x", "y", "label", "worldMapArrival", "opensMenuOnArrival")),
+    schema(WorldMapTeleportLink.class, required("order", "source", "destination", "translation", "autoStartOnArrival")),
+    schema(WorldMapPreset.Region.class, required("provider", "presentationProvider", "camera"), optional("legacyTemplate", "assets", "scene", "resources")),
+    schema(WorldMapPreset.SceneTransform.class, required("translation", "xAxis", "yAxis", "zAxis")),
+    schema(WorldMapPreset.RegionAssets.class, required("model", "retailAnimations", "textures")),
+    schema(WorldMapPreset.Resources.class, required(), optional("uiTextures", "transportTextures", "transports", "leader", "background", "omitBackground", "music", "musicChapter", "omitLocationSounds", "locationSoundFiles", "layout")),
+    schema(WorldMapPreset.ModelFiles.class, required("model", "animations"), optional("texture")),
+    schema(WorldMapPreset.SoundFiles.class, required("header", "indices", "sequence", "bank")),
+    schema(WorldMapPreset.Avatar.class, required(), optional("provider", "assets")),
+    schema(WorldMapPreset.AvatarAssets.class, required("model", "scale", "shadowScale", "idleAnimation", "walkAnimation", "runAnimation", "textureSlot", "animations"), optional("texture")),
+    schema(WorldMapPreset.TraversalProfile.class, required("priority", "routes", "markers", "includeReverseRoutes", "speedMultiplier", "warps"), optional("provider", "avatar", "visualOffset")),
+    schema(WorldMapPreset.Warp.class, required("phase", "target", "respectAccess"), optional("marker")),
+    schema(legend.game.wmap.world.WorldMapTraversalProfile.Marker.class, required("id", "progress")),
+    schema(WorldMapPreset.PresentationProfile.class, required(), optional("mapPositions", "regions", "services", "waterClutYs", "playerAvatarVramSlots", "textureAdjustments", "namedElements", "namedTextures", "capabilities")),
+    schema(WorldMapPreset.TextureAdjustment.class, required("index", "clutX", "clutY", "tpageX", "tpageY", "mode")),
+    schema(legend.game.wmap.world.WorldMapPresentationElement.class, required("id", "position"), optional("label", "texture")),
+    schema(WorldMapPreset.NamedPresentationTexture.class, required("id", "adjustment")),
+    schema(legend.game.wmap.world.WorldMapPresentationCapabilities.class, required("retailLabels", "retailWater", "retailAvatars")),
+    schema(WorldMapPreset.ThumbnailDefinition.class, required("nativeIndex"), optional("asset", "label", "provider")),
+    schema(WorldMapService.class, required("label"), optional("legacyBit")),
+    schema(WorldMapSound.class, required("nativeIndex"), optional("label")),
+    schema(WorldMapBattleStage.class, required("nativeIndex"), optional("label", "combatStageId")),
+    schema(WorldMapSubmapDestination.class, required("cut", "scene"), optional("label", "provider", "data")),
+    schema(legend.game.wmap.world.SubmapEndpoint.class, required("cut", "scene")),
+    schema(legend.game.wmap.world.WorldMapPoint.class, required("x", "y", "z")),
+    schema(legend.game.wmap.world.WorldMapCameraSettings.class, required("viewpoint", "refpoint", "projectionDistance", "overviewEnabled"), optional("overviewPosition", "minimum", "maximum", "lighting")),
+    schema(legend.game.wmap.world.WorldMapLightingSettings.class, required("ambient", "lights", "overviewBrightness", "transitionStep", "transitionBrightness")),
+    schema(legend.game.wmap.world.WorldMapLightingSettings.Light.class, required("direction", "colour"))
   );
+
+  private record Field(String xmlName, boolean optional) { }
+
+  private record RecordSchema(Map<String, Field> fields) {
+    private RecordSchema {
+      fields = Map.copyOf(fields);
+    }
+
+    private Field field(final String javaName) {
+      final Field field = this.fields.get(javaName);
+      if(field == null) throw new IllegalStateException("World-map preset v1 schema has no mapping for Java member " + javaName);
+      return field;
+    }
+  }
+
+  private static Map.Entry<Class<?>, RecordSchema> schema(final Class<?> type, final String[] required, final String... optional) {
+    final Map<String, Field> fields = new LinkedHashMap<>();
+    addFields(fields, required, false);
+    addFields(fields, optional, true);
+    return Map.entry(type, new RecordSchema(fields));
+  }
+
+  private static String[] required(final String... names) {
+    return names;
+  }
+
+  private static String[] optional(final String... names) {
+    return names;
+  }
+
+  private static void addFields(final Map<String, Field> fields, final String[] names, final boolean optional) {
+    for(final String name : names) {
+      if(fields.putIfAbsent(name, new Field(name, optional)) != null) throw new IllegalStateException("Duplicate world-map preset v1 schema member " + name);
+    }
+  }
+
+  private static RecordSchema schema(final Class<?> type) {
+    final RecordSchema schema = SCHEMA.get(type);
+    if(schema == null) throw new IllegalArgumentException("Unsupported world-map preset v1 schema type " + type.getName());
+    final RecordComponent[] components = type.getRecordComponents();
+    if(components == null || components.length != schema.fields.size()) throw new IllegalStateException("World-map preset v1 schema does not match Java record " + type.getName());
+    for(final RecordComponent component : components) schema.field(component.getName());
+    return schema;
+  }
 
   private WorldMapPresetCodec() { }
 
@@ -241,18 +306,21 @@ public final class WorldMapPresetCodec {
   private static <T> T readRecord(final Element element, final Class<T> type, final boolean entry) throws Exception {
     final RecordComponent[] components = type.getRecordComponents();
     if(components == null) throw error(element, "Unsupported schema type " + type.getSimpleName());
+    final RecordSchema schema = schema(type);
     final Set<String> attributes = new HashSet<>();
     final Set<String> childNames = new HashSet<>();
     if(entry) attributes.add("id");
     for(final RecordComponent component : components) {
-      (scalar(component.getType()) ? attributes : childNames).add(component.getName());
+      final Field field = schema.field(component.getName());
+      (scalar(component.getType()) ? attributes : childNames).add(field.xmlName());
     }
     shape(element, attributes, childNames);
     final Object[] args = new Object[components.length];
     for(int i = 0; i < components.length; i++) {
       final RecordComponent component = components[i];
-      final String name = component.getName();
-      final boolean optional = OPTIONAL.contains(type.getSimpleName() + '.' + name);
+      final Field field = schema.field(component.getName());
+      final String name = field.xmlName();
+      final boolean optional = field.optional();
       if(scalar(component.getType())) {
         args[i] = optional && !element.hasAttribute(name) ? absentValue(component.getType()) : scalarValue(element, name, component.getType());
       } else {
@@ -487,13 +555,15 @@ public final class WorldMapPresetCodec {
   }
 
   private static void writeRecord(final Element element, final Object record) throws Exception {
+    final RecordSchema schema = schema(record.getClass());
     for(final RecordComponent component : record.getClass().getRecordComponents()) {
+      final Field field = schema.field(component.getName());
       final Object value = component.getAccessor().invoke(record);
       if(value == null) continue;
       if(scalar(component.getType())) {
-        element.setAttribute(component.getName(), value.toString());
+        element.setAttribute(field.xmlName(), value.toString());
       } else {
-        final Element child = append(element, component.getName());
+        final Element child = append(element, field.xmlName());
         if(value instanceof Iterable<?> iterable) {
           final List<Object> items = new ArrayList<>();
           iterable.forEach(items::add);
