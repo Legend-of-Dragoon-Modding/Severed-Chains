@@ -1,24 +1,21 @@
 --- original
 +++ modified
-@@ -518,8 +518,11 @@
- call 2, 0x4, 0x1
- call 2, 0x10, 0x1
- gosub inl[:LABEL_90]
+@@ -1276,6 +1276,8 @@
+ call 2, 0xc8, 0x1
+ mov 0x1e, stor[24]
+ wait stor[24]
 +call 890, id[lod_core:config], id[lod_core:quick_text], 0, inl[:VAR_QUICK_TEXT]
 +gosub inl[:QUICK_TEXT_HANDLER]
- call 97, 0x3
- gosub inl[:LABEL_91]
-+gosub inl[:QUICK_TEXT_HANDLER]
- call 2, 0x4, 0x0
- call 236, 0x8, 0x35, 0x0, 0x0, 0x0, 0x0
- call 8, 0x0, 0x1
-@@ -884,3 +887,12 @@
- PTR_2070_14:
- data 0x1b
- data 0x3
+ call 2, 0xc8, 0x0
+ call 678, var[64][5], 0x0
+ call 678, var[64][10], 0x0
+@@ -1832,3 +1834,12 @@
+ PTR_3310_58:
+ data 0x18
+ data 0x1
 +QUICK_TEXT_HANDLER:
 +jmp_cmp !=, 0x2, inl[:VAR_QUICK_TEXT], inl[:SKIP_QUICK_TEXT_HANDLER]
-+mov 0x3c, stor[23]
++mov 0x14, stor[23]
 +wait stor[23]
 +return
 +VAR_QUICK_TEXT:
