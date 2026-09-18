@@ -413,6 +413,8 @@ public class Battle extends EngineState<Battle> {
   public int currentStage_800c66a4;
   private BattleRequest battleRequest;
   private Tag battleReturnData;
+  private int preBattleSubmapCut;
+  private int preBattleSubmapScene;
   private BattleStageDefinition stageDefinition;
   private BattleStageDefinition stageEffectsDefinition;
   private java.util.concurrent.CompletableFuture<Void> stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
@@ -633,6 +635,8 @@ public class Battle extends EngineState<Battle> {
   @Override
   public void init() {
     super.init();
+    this.preBattleSubmapCut = submapCut_80052c30;
+    this.preBattleSubmapScene = submapScene_80052c34;
     this.battleRequest = SBtld.consumeBattleRequest();
     clearCombatVars();
   }
@@ -2590,8 +2594,7 @@ public class Battle extends EngineState<Battle> {
       if(postBattleEngineState_800bc91c == LodEngineStateTypes.SUBMAP.get() && legend.game.EngineStates.engineStateData == this.battleReturnData && this.battleReturnData instanceof final MapTag data) {
         // Resolve after the encounter and post-battle action have selected the native continuation.
         final boolean redirected = encounter.postCombatSubmapCut != 0xffff || encounter.postCombatSubmapScene != 0xff
-          || !data.has("cut") || data.get("cut").asInt().get() != submapCut_80052c30
-          || !data.has("scene") || data.get("scene").asInt().get() != submapScene_80052c34;
+          || this.preBattleSubmapCut != submapCut_80052c30 || this.preBattleSubmapScene != submapScene_80052c34;
         if(redirected) {
           data.set("cut", new IntTag(submapCut_80052c30));
           data.set("scene", new IntTag(submapScene_80052c34));
