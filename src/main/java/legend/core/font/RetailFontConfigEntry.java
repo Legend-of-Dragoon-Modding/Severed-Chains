@@ -3,6 +3,7 @@ package legend.core.font;
 import legend.core.GameEngine;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.saves.ConfigCategory;
+import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.StringConfigEntry;
 
@@ -11,7 +12,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.FONTS;
 
 public class RetailFontConfigEntry extends StringConfigEntry {
@@ -22,12 +22,9 @@ public class RetailFontConfigEntry extends StringConfigEntry {
       final Path fontsDir = Path.of("gfx", "fonts");
 
       final Dropdown<Font> dropdown = new Dropdown<>((i, font) -> font.name);
-      dropdown.onSelection(index -> {
-        gameState.setConfig(this, fontsDir.relativize(dropdown.getSelectedOption().path).toString());
-        GameEngine.DEFAULT_FONT = dropdown.getSelectedOption();
-      });
+      dropdown.onSelection(index -> gameState.setConfig(this, fontsDir.relativize(dropdown.getSelectedOption().path).toString()));
 
-      final Path currentPath = Path.of(CONFIG.getConfig(this));
+      final Path currentPath = Path.of(current);
 
       try(final DirectoryStream<Path> dir = Files.newDirectoryStream(fontsDir)) {
         for(final Path path : dir) {
@@ -46,5 +43,11 @@ public class RetailFontConfigEntry extends StringConfigEntry {
 
       return dropdown;
     });
+  }
+
+  @Override
+  public void onChange(final ConfigCollection configCollection, final String oldValue, final String newValue) {
+    super.onChange(configCollection, oldValue, newValue);
+    GameEngine.DEFAULT_FONT = FONTS.get(Path.of("gfx", "fonts").resolve(newValue));
   }
 }

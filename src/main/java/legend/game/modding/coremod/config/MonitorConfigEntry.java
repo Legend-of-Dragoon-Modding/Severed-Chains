@@ -8,7 +8,6 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 
@@ -32,7 +31,7 @@ public class MonitorConfigEntry extends ConfigEntry<Integer> {
         dropdown.addOption(new RawText(displays[i]));
       }
 
-      final int selected = CONFIG.getConfig(this);
+      final int selected = current;
       if(selected >= 0 && selected < displays.length) {
         dropdown.setSelectedIndex(selected);
       } else {

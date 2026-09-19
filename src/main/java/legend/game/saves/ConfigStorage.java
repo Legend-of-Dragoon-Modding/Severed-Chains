@@ -1,12 +1,16 @@
 package legend.game.saves;
 
+import legend.core.lang.I18nText;
 import legend.core.memory.types.IntRef;
+import legend.core.tags.IntTag;
 import legend.core.tags.ListTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.RawTag;
 import legend.core.tags.RegistryIdTag;
+import legend.core.tags.StringTag;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
+import legend.game.ui.GameOverlay;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -148,33 +153,51 @@ public final class ConfigStorage {
     configs.clearConfig(storageLocation);
 
     final ListTag locationTag = tag.get(storageLocation.name()).asList();
+    int skipped = 0;
 
     for(int configIndex = 0; configIndex < locationTag.size(); configIndex++) {
-      final MapTag configTag = locationTag.get(configIndex).asMap();
-      final RegistryId configId = configTag.get("configId").asRegistryId().get();
+      RegistryId configId = null;
+      try {
+        final MapTag configTag = locationTag.get(configIndex).asMap();
+        configId = configTag.get("configId").asRegistryId().get();
+        final RegistryDelegate<ConfigEntry<?>> delegate = REGISTRIES.config.getEntry(configId);
 
-      final RegistryDelegate<ConfigEntry<?>> delegate = REGISTRIES.config.getEntry(configId);
-
-      if(delegate.isValid()) {
-        //noinspection rawtypes
-        final ConfigEntry configEntry = delegate.get();
-        final byte[] configValueRaw = configTag.get("data").asRaw().get();
-
-        if(configEntry != null) {
-          if(configEntry.storageLocation == storageLocation) {
-            //noinspection unchecked
-            configs.setConfigQuietly(configEntry, configEntry.deserializer.apply(configValueRaw));
-          }
-        } else {
-          LOGGER.warn("Unknown config ID %s", configId);
+        if(!delegate.isValid()) {
+          throw new IllegalArgumentException("Unknown config ID " + configId);
         }
-      } else {
-        LOGGER.warn("Unknown mod ID %s", configId);
+
+        final ConfigEntry<?> configEntry = delegate.get();
+        if(configEntry.storageLocation != storageLocation) {
+          throw new IllegalArgumentException("Incorrect storage location for " + configId);
+        }
+
+        loadConfigValue(configs, configEntry, configTag, tag.has("formatVersion"));
+      } catch(final RuntimeException e) {
+        skipped++;
+        LOGGER.warn("Skipping preset setting %s at %s[%d]", configId, storageLocation, configIndex, e);
       }
+    }
+
+    if(skipped != 0) {
+      GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.skipped_settings", skipped));
     }
 
     EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
     RENDERER.setFrameSkipOption(CONFIG.getConfig(CoreMod.FRAME_SKIP_CONFIG.get()));
+  }
+
+  private static <T> void loadConfigValue(final ConfigCollection configs, final ConfigEntry<T> configEntry, final MapTag configTag, final boolean requireSchema) {
+    if(requireSchema || configTag.has("valueType") || configTag.has("schemaVersion")) {
+      final String valueType = configTag.get("valueType").asString().get();
+      final int schemaVersion = configTag.get("schemaVersion").asInt().get();
+      if(!configEntry.getPresetValueType().equals(valueType) || schemaVersion <= 0 || schemaVersion != configEntry.getPresetSchemaVersion()) {
+        throw new IllegalArgumentException("Incompatible preset type/schema " + valueType + '/' + schemaVersion + " for " + configEntry.getRegistryId());
+      }
+    }
+
+    final byte[] data = configTag.get("data").asRaw().get();
+    final T value = Objects.requireNonNull(configEntry.deserializer.apply(data), "Config deserializer returned null");
+    configs.setConfigQuietly(configEntry, value);
   }
 
   public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final MapTag tag) {
@@ -194,6 +217,7 @@ public final class ConfigStorage {
           locationTag.add(configTag);
 
           configTag.set("configId", new RegistryIdTag(configId));
+          saveConfigSchema(configEntry, configTag);
           //noinspection unchecked
           configTag.set("data", new RawTag((byte[])configEntry.serializer.apply(value)));
         } else {
@@ -201,5 +225,16 @@ public final class ConfigStorage {
         }
       }
     }
+  }
+
+  private static void saveConfigSchema(final ConfigEntry<?> configEntry, final MapTag configTag) {
+    final String valueType = configEntry.getPresetValueType();
+    final int schemaVersion = configEntry.getPresetSchemaVersion();
+    if(valueType == null || valueType.isBlank() || schemaVersion <= 0) {
+      throw new IllegalArgumentException("Invalid preset schema for " + configEntry.getRegistryId());
+    }
+
+    configTag.set("valueType", new StringTag(valueType));
+    configTag.set("schemaVersion", new IntTag(schemaVersion));
   }
 }

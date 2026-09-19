@@ -4,6 +4,7 @@ import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.memory.types.IntRef;
+import legend.core.tags.IntTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.StringTag;
 import legend.game.combat.BattleTransitionMode;
@@ -18,12 +19,14 @@ import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -52,6 +55,7 @@ public final class ConfigPresetManager {
   private ConfigPresetManager() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(ConfigPresetManager.class);
+  private static final int FORMAT_VERSION = 1;
 
   private static final Path configPath = Path.of("config");
   public static final PathMatcher CONFIG_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.dpre");
@@ -77,12 +81,16 @@ public final class ConfigPresetManager {
     }
   }
 
-  public static void deletePreset(final ConfigPresetEntry presetEntry) {
+  public static boolean deletePreset(final ConfigPresetEntry presetEntry) {
+    if(!presetEntry.editable || presetEntry.path == null) return false;
+
     try {
       Files.deleteIfExists(presetEntry.path);
-    } catch(final IOException e) {
+      return true;
+    } catch(final IOException | SecurityException e) {
       GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.delete_failed"));
       LOGGER.warn("Failed to delete preset", e);
+      return false;
     }
   }
 
@@ -116,6 +124,7 @@ public final class ConfigPresetManager {
       final IntRef offset = new IntRef();
       final MapTag tag = new MapTag();
       tag.deserialize(data, offset);
+      validatePresetFormat(tag);
 
       final String name = tag.get("name").asString().get();
 
@@ -125,39 +134,60 @@ public final class ConfigPresetManager {
       }
 
       return new ConfigPreset(new RawText(name), config);
-    } catch(final IOException e) {
+    } catch(final IOException | RuntimeException e) {
       GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_load_preset"));
-      LOGGER.warn("Failed to load options preset", e);
+      LOGGER.warn("Failed to load options preset %s", path, e);
       return null;
     }
   }
 
-  public static Path savePreset(final String name, final ConfigCollection config) {
-    final MapTag tag = new MapTag();
-
-    tag.set("name", new StringTag(name));
-
-    for(final ConfigStorageLocation location : ConfigStorageLocation.values()) {
-      ConfigStorage.saveConfig(config, location, tag);
-    }
-
-    final FileData data = new ExpandableFileData(256);
-    final IntRef offset = new IntRef();
-    tag.serialize(data, offset);
-
-    final byte[] out = new byte[offset.get()];
-    data.read(0, out, 0, offset.get());
-
-    final Path path = configPath.resolve(IoHelper.slugName(name) + ".dpre");
-
+  public static @Nullable Path savePreset(final String name, final ConfigCollection config) {
     try {
-      Files.write(path, out, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-    } catch(final IOException e) {
-      GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_save_preset"));
-      LOGGER.warn("Failed to save options preset", e);
-    }
+      final MapTag tag = new MapTag();
+      tag.set("name", new StringTag(name));
+      tag.set("formatVersion", new IntTag(FORMAT_VERSION));
 
-    return path;
+      for(final ConfigStorageLocation location : ConfigStorageLocation.values()) {
+        ConfigStorage.saveConfig(config, location, tag);
+      }
+
+      final FileData data = new ExpandableFileData(256);
+      final IntRef offset = new IntRef();
+      tag.serialize(data, offset);
+
+      final byte[] out = new byte[offset.get()];
+      data.read(0, out, 0, offset.get());
+
+      final Path path = configPath.resolve(IoHelper.slugName(name) + ".dpre");
+      writePreset(path, out);
+      return path;
+    } catch(final IOException | RuntimeException e) {
+      GameOverlay.addNotification(5, new I18nText("lod_core.ui.options_presets.failed_to_save_preset"));
+      LOGGER.warn("Failed to save options preset %s", name, e);
+      return null;
+    }
+  }
+
+  private static void validatePresetFormat(final MapTag tag) {
+    // Existing presets have no version tag and remain readable as legacy data.
+    if(tag.has("formatVersion") && tag.get("formatVersion").asInt().get() != FORMAT_VERSION) {
+      throw new IllegalArgumentException("Unsupported preset format version");
+    }
+  }
+
+  private static void writePreset(final Path path, final byte[] data) throws IOException {
+    Files.createDirectories(path.toAbsolutePath().getParent());
+    final Path temporaryFile = Files.createTempFile(path.toAbsolutePath().getParent(), "preset-", ".tmp");
+    try {
+      Files.write(temporaryFile, data);
+      try {
+        Files.move(temporaryFile, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+      } catch(final AtomicMoveNotSupportedException e) {
+        Files.move(temporaryFile, path, StandardCopyOption.REPLACE_EXISTING);
+      }
+    } finally {
+      Files.deleteIfExists(temporaryFile);
+    }
   }
 
   public static List<ConfigPresetEntry> loadDefaultPresets() {

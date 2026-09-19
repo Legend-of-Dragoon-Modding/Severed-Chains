@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Map<RegistryDeleg
 
     out.writeShort(offset, actionMap.size());
 
-    for(final var e : actionMap.entrySet()) {
+    for(final var e : actionMap.entrySet().stream().sorted(Comparator.comparing(entry -> entry.getKey().getId().toString())).toList()) {
       out.writeRegistryId(offset, e.getKey().getId());
       out.writeByte(offset, e.getValue().size());
 

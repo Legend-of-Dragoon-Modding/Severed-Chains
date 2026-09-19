@@ -6,6 +6,7 @@ import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.platform.input.InputAction;
+import legend.core.platform.input.InputBindings;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.i18n.I18n;
@@ -21,6 +22,7 @@ import legend.game.saves.Campaign;
 import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
+import legend.game.saves.ConfigPreset;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
 import legend.game.saves.ConfigStorage;
@@ -67,6 +69,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private final Textbox campaignName;
   private final Dropdown<RegistryDelegate<CampaignType>> campaignType;
   private final Dropdown<ConfigPresetEntry> optionPresets;
+  private String appliedPreset;
 
   private boolean unload;
 
@@ -74,6 +77,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     loadingNewGameState_800bdc34 = false;
 
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+    InputBindings.initBindings();
+    InputBindings.loadBindings(CONFIG);
     this.enabledMods.addAll(MODS.getAllModIds());
 
     deallocateRenderables(0xff);
@@ -101,16 +106,22 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignType.onSelection(index -> Scus94491BpeSegment_800b.campaignType = this.campaignType.getSelectedOption());
     Scus94491BpeSegment_800b.campaignType = campaignTypes.getFirst();
 
-    this.optionPresets = new Dropdown<>((i, e) -> e.getName());
+    this.optionPresets = new Dropdown<>((i, e) ->
+      IoHelper.slugName(e.getName().get()).equals(this.appliedPreset)
+        ? CONFIG.getPresetDisplayName() : e.getName()
+    );
     this.addRow(new I18nText("lod_core.ui.new_campaign.options_presets"), this.optionPresets);
     ConfigPresetManager.loadDefaultPresets().forEach(this.optionPresets::addOption);
     ConfigPresetManager.loadPresetList().forEach(this.optionPresets::addOption);
     this.optionPresets.onSelection(this::onPresetSelected);
+    this.appliedPreset = IoHelper.slugName(this.optionPresets.getSelectedOption().getName().get());
 
     for(int i = 0; i < this.optionPresets.size(); i++) {
       if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(Config.getLastConfigPreset())) {
         this.optionPresets.setSelectedIndex(i);
-        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+        if(this.applyPreset(this.optionPresets.getSelectedOption())) {
+          this.appliedPreset = Config.getLastConfigPreset();
+        }
         break;
       }
     }
@@ -123,6 +134,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
         bootMods(this.enabledMods);
+        CONFIG.refreshPreset();
 
         this.optionPresets.clearOptions();
         presets.forEach(this.optionPresets::addOption);
@@ -135,6 +147,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, options);
     options.onPressed(() ->
       this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+        CONFIG.refreshPreset();
         startFadeEffect(2, 10);
         this.getStack().popScreen();
 
@@ -149,6 +162,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       this.deferAction(() ->
         this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
           bootMods(this.enabledMods);
+          CONFIG.refreshPreset();
 
           startFadeEffect(2, 10);
           this.getStack().popScreen();
@@ -173,18 +187,42 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   }
 
   private void onPresetSelected(final int index) {
-    this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", this.optionPresets.getSelectedOption().getName()), MessageBoxType.CONFIRMATION, result -> {
-      if(result == MessageBoxResult.YES) {
-        this.updateConfig(this.optionPresets.getSelectedOption().getPreset().config);
+    final ConfigPresetEntry preset = this.optionPresets.getOption(index);
+    this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", preset.getName()), MessageBoxType.CONFIRMATION, result -> {
+      if(result == MessageBoxResult.YES && this.applyPreset(preset)) {
+        this.appliedPreset = IoHelper.slugName(preset.getName().get());
+        Config.setLastConfigPreset(this.appliedPreset);
+      } else {
+        this.restorePresetSelection();
       }
     })));
+  }
 
-    Config.setLastConfigPreset(IoHelper.slugName(this.optionPresets.getSelectedOption().getName().get()));
+  private boolean applyPreset(final ConfigPresetEntry entry) {
+    final ConfigPreset preset = entry.getPreset();
+    if(preset == null) {
+      this.restorePresetSelection();
+      this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.options_presets.invalid_preset"), MessageBoxType.ALERT, result -> { })));
+      return false;
+    }
+
+    this.updateConfig(preset.config);
+    CONFIG.setPreset(preset.name);
+    return true;
+  }
+
+  private void restorePresetSelection() {
+    this.optionPresets.setSelectedIndex(-1);
+
+    for(int i = 0; i < this.optionPresets.size(); i++) {
+      if(IoHelper.slugName(this.optionPresets.getOption(i).getName().get()).equals(this.appliedPreset)) {
+        this.optionPresets.setSelectedIndex(i);
+        return;
+      }
+    }
   }
 
   private void updateConfig(final ConfigCollection newConfig) {
-    CONFIG.clearConfig();
-
     final Map<RegistryId, Object> oldValues = new HashMap<>();
 
     for(final RegistryId id : REGISTRIES.config) {
@@ -195,7 +233,10 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       }
     }
 
+    CONFIG.clearConfig();
     CONFIG.copyConfigFrom(newConfig);
+    InputBindings.initBindings();
+    InputBindings.loadBindings(CONFIG);
 
     for(final var entry : oldValues.entrySet()) {
       final RegistryId id = entry.getKey();

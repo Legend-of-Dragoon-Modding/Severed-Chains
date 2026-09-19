@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
@@ -38,6 +37,7 @@ import static legend.game.modding.coremod.CoreMod.SHOW_ADVANCED_OPTIONS_CONFIG;
 public class OptionsScreen extends VerticalLayoutScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(OptionsScreen.class);
   private final Runnable unload;
+  private final ConfigCollection config;
 
   private final List<ConfigEntry<?>> configs = new ArrayList<>();
   private final Map<Control, Label> helpLabels = new HashMap<>();
@@ -47,6 +47,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
     deallocateRenderables(0xff);
 
     this.unload = unload;
+    this.config = config;
     this.init();
 
     final Map<ConfigEntry<?>, TextComponent> translations = new HashMap<>();
@@ -113,7 +114,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
         }
       });
 
-    this.addToggleHotkey(new I18nText("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, CONFIG.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
+    this.addToggleHotkey(new I18nText("lod_core.ui.options.advanced"), INPUT_ACTION_MENU_ADVANCED, this.config.getConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get()), this::advanced);
     this.addHotkey(new I18nText("lod_core.ui.options.help"), INPUT_ACTION_MENU_HELP, this::help);
     this.addHotkey(new I18nText("lod_core.ui.options.back"), INPUT_ACTION_MENU_BACK, this::back);
   }
@@ -156,7 +157,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
   }
 
   private void advanced(final boolean advanced) {
-    CONFIG.setConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get(), advanced);
+    this.config.setConfig(SHOW_ADVANCED_OPTIONS_CONFIG.get(), advanced);
 
     for(int i = 0; i < this.configs.size(); i++) {
       this.setRowVisible(i, !this.configs.get(i).isAdvanced() || advanced);
