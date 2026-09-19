@@ -1,5 +1,8 @@
 package legend.game.submap;
 
+import legend.core.tags.Tag;
+import legend.core.tags.MapTag;
+
 import legend.core.renderer.QueuedModel;
 import legend.core.gte.MV;
 import legend.game.combat.encounters.Encounter;
@@ -13,6 +16,28 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class Submap {
+  private Tag destinationData = new MapTag();
+
+  /** Called before loadEnv; unknown payload fields survive subsequent saves. */
+  public void readDestinationData(final Tag data) {
+    this.destinationData = data.clone();
+  }
+
+  public Tag writeDestinationData() {
+    return this.destinationData.clone();
+  }
+
+  /** Called after assets, objects, and transition data are ready. */
+  public void applyDestinationSpawn() { }
+
+  /** Optional retail foreground capability; absent overlays ignore these commands. */
+  public void setEnvForegroundPosition(final int x, final int y, final int index) { }
+
+  public int setEnvironmentOverlayDepthModeAndZ(final int mode, final int index, final int z) {
+    return 0;
+  }
+
+  public void FUN_800e80e4(final int a0, final int a1) { }
   public final SMap smap;
 
   public ScriptFile script;
@@ -25,6 +50,17 @@ public abstract class Submap {
 
   public abstract CompletableFuture<Void> loadEnv();
   public abstract void loadAssets(final Runnable onLoaded);
+
+  /** Providers can override to propagate asynchronous failure instead of only successful completion. */
+  public CompletableFuture<Void> loadAssetsAsync() {
+    final CompletableFuture<Void> completion = new CompletableFuture<>();
+    try {
+      this.loadAssets(() -> completion.complete(null));
+    } catch(final RuntimeException | Error failure) {
+      completion.completeExceptionally(failure);
+    }
+    return completion;
+  }
 
   public abstract void loadMusicAndSounds();
   public abstract void startMusic();

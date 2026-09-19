@@ -119,7 +119,7 @@ public final class SaveManager {
   public String generateSaveName(final List<CompletableFuture<SavedGame>> existingSaves, final GameState52c state) {
     final String location;
     if(currentEngineState_8004dd04.is(LodEngineStateTypes.WORLD_MAP.get())) {
-      location = worldMapNames_8011c1ec[continentIndex_800bf0b0];
+      location = currentEngineState_8004dd04.getLocation(state);
     } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
       location = chapterNames_80114248[state.chapterIndex_98];
     } else {
@@ -352,19 +352,30 @@ public final class SaveManager {
 
   public Path overwriteSave(final String fileName, final String saveName, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) throws SaveFailedException {
     try {
-      final FileData data = new ExpandableFileData(0x1);
+      final FileData data = new ExpandableFileData(0x1, 512 * 1024 * 1024);
       final IntRef offset = new IntRef();
       data.writeInt(offset, this.serializerVersion.code);
       this.serializer.serialize(saveName, data, offset, campaignType, engineState, gameState);
-      final byte[] bytes = new byte[offset.get()];
-      data.read(0, bytes, 0, offset.get());
+      final byte[] bytes = data.getBytes();
 
       final Path file = gameState.campaign.path.resolve(fileName + ".dsav");
 
       Files.createDirectories(gameState.campaign.path);
-      Files.write(file, bytes, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      final Path temporary = Files.createTempFile(gameState.campaign.path, ".save-", ".tmp");
+      try {
+        try(final var stream = Files.newOutputStream(temporary, StandardOpenOption.WRITE)) {
+          stream.write(bytes, 0, offset.get());
+        }
+        try {
+          Files.move(temporary, file, java.nio.file.StandardCopyOption.ATOMIC_MOVE, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } catch(final java.nio.file.AtomicMoveNotSupportedException unsupported) {
+          Files.move(temporary, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
+      } finally {
+        Files.deleteIfExists(temporary);
+      }
       return file;
-    } catch(final IOException e) {
+    } catch(final IOException | IllegalArgumentException e) {
       throw new SaveFailedException("Failed to save game", e);
     }
   }

@@ -21,6 +21,14 @@ public class MapTag implements Tag {
     return this.tags.containsKey(key);
   }
 
+  public void remove(final String key) {
+    this.tags.remove(key);
+  }
+
+  public java.util.Set<String> keys() {
+    return java.util.Collections.unmodifiableSet(this.tags.keySet());
+  }
+
   @Override
   public int getType() {
     return TAG_TYPE_MAP;

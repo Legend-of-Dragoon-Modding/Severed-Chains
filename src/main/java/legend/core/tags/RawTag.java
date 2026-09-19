@@ -35,6 +35,7 @@ public class RawTag implements Tag {
   @Override
   public void deserialize(final FileData data, final IntRef offset) {
     final int size = data.readVarInt(offset);
+    if(size < 0 || size > data.size() - offset.get()) throw new IllegalArgumentException("Raw save tag exceeds remaining input");
     this.val = new byte[size];
     data.read(offset, this.val, 0, size);
   }

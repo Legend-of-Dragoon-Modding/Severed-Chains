@@ -48,6 +48,7 @@ public abstract class StatType<StatClass extends Stat> extends RegistryEntry {
       final MapTag modTag = tag.asMap();
       final RegistryId modId = modTag.get("modId").asRegistryId().get();
       final RegistryId modTypeId = modTag.get("typeId").asRegistryId().get();
+      if(!REGISTRIES.statModTypes.hasEntry(modTypeId)) continue;
       final StatModType modType = REGISTRIES.statModTypes.getEntry(modTypeId).get();
       stat.mods.put(modId, modType.deserialize(modTag));
     }
