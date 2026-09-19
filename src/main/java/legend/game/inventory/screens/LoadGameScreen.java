@@ -7,6 +7,7 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.BlankSaveCard;
 import legend.game.inventory.screens.controls.Glyph;
+import legend.game.modding.events.gamestate.LoadGamestateFileEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
 import legend.game.types.MessageBoxResult;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
@@ -125,6 +127,7 @@ public class LoadGameScreen extends MenuScreen {
   private void onMessageboxResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
       this.saveSelected.accept(save);
+      EVENTS.postEvent(new LoadGamestateFileEvent(save));
     }
   }
 
