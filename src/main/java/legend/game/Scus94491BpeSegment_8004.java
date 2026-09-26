@@ -9,7 +9,9 @@ import legend.game.sound.Audio;
 import legend.game.types.BattleReportOverlayList10;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -55,111 +57,113 @@ public final class Scus94491BpeSegment_8004 {
 
   public static int simpleRandSeed_8004dd44 = 3;
 
-  public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
-  public static Function<RunningScript, FlowControl>[] engineStateFunctions_8004e29c = new Function[1024];
+  private static final List<Function<RunningScript, FlowControl>> scriptSubFunctions_8004e29c;
+  private static List<Function<RunningScript, FlowControl>> engineStateFunctions_8004e29c;
   static {
-    Arrays.setAll(scriptSubFunctions_8004e29c, i -> Scus94491BpeSegment::scriptRewindAndPause2);
+    final Function<RunningScript, FlowControl>[] functions = new Function[1024];
+    functions[0] = Scus94491BpeSegment::scriptSetIndicatorsDisabled;
+    functions[1] = Scus94491BpeSegment::scriptReadIndicatorsDisabled;
+    functions[2] = Scus94491BpeSegment::scriptSetGlobalFlag1;
+    functions[3] = Scus94491BpeSegment::scriptReadGlobalFlag1;
+    functions[4] = Scus94491BpeSegment::scriptSetGlobalFlag2;
+    functions[5] = Scus94491BpeSegment::scriptReadGlobalFlag2;
+    functions[6] = FullScreenEffects::scriptStartFadeEffect;
+    functions[7] = DrgnFiles::scriptWaitForFilesToLoad;
+    functions[8] = Rumble::scriptStartRumbleMode;
+    functions[9] = Scus94491BpeSegment::scriptSetFlag;
+    functions[10] = Scus94491BpeSegment::scriptReadFlag;
+    functions[11] = Rumble::scriptStartRumble;
 
-    scriptSubFunctions_8004e29c[0] = Scus94491BpeSegment::scriptSetIndicatorsDisabled;
-    scriptSubFunctions_8004e29c[1] = Scus94491BpeSegment::scriptReadIndicatorsDisabled;
-    scriptSubFunctions_8004e29c[2] = Scus94491BpeSegment::scriptSetGlobalFlag1;
-    scriptSubFunctions_8004e29c[3] = Scus94491BpeSegment::scriptReadGlobalFlag1;
-    scriptSubFunctions_8004e29c[4] = Scus94491BpeSegment::scriptSetGlobalFlag2;
-    scriptSubFunctions_8004e29c[5] = Scus94491BpeSegment::scriptReadGlobalFlag2;
-    scriptSubFunctions_8004e29c[6] = FullScreenEffects::scriptStartFadeEffect;
-    scriptSubFunctions_8004e29c[7] = DrgnFiles::scriptWaitForFilesToLoad;
-    scriptSubFunctions_8004e29c[8] = Rumble::scriptStartRumbleMode;
-    scriptSubFunctions_8004e29c[9] = Scus94491BpeSegment::scriptSetFlag;
-    scriptSubFunctions_8004e29c[10] = Scus94491BpeSegment::scriptReadFlag;
-    scriptSubFunctions_8004e29c[11] = Rumble::scriptStartRumble;
+    functions[16] = Rumble::scriptSetRumbleDampener;
+    functions[17] = Rumble::scriptResetRumbleDampener;
 
-    scriptSubFunctions_8004e29c[16] = Rumble::scriptSetRumbleDampener;
-    scriptSubFunctions_8004e29c[17] = Rumble::scriptResetRumbleDampener;
+    functions[192] = Text::scriptGetFreeTextboxIndex;
+    functions[193] = Text::scriptInitTextbox;
+    functions[194] = Text::scriptSetTextboxContents;
+    functions[195] = Text::scriptIsTextboxInitialized;
+    functions[196] = Text::scriptGetTextboxState;
+    functions[197] = Text::scriptGetTextboxTextState;
 
-    scriptSubFunctions_8004e29c[192] = Text::scriptGetFreeTextboxIndex;
-    scriptSubFunctions_8004e29c[193] = Text::scriptInitTextbox;
-    scriptSubFunctions_8004e29c[194] = Text::scriptSetTextboxContents;
-    scriptSubFunctions_8004e29c[195] = Text::scriptIsTextboxInitialized;
-    scriptSubFunctions_8004e29c[196] = Text::scriptGetTextboxState;
-    scriptSubFunctions_8004e29c[197] = Text::scriptGetTextboxTextState;
+    functions[199] = Text::scriptSetTextboxVariable;
+    functions[200] = Text::scriptAddTextbox;
+    functions[201] = Text::scriptDeallocateTextbox;
+    functions[202] = Text::scriptDeallocateAllTextboxes;
+    functions[203] = Text::FUN_80029ecc;
+    functions[204] = Text::FUN_80028ff8;
+    functions[205] = Text::scriptGetTextboxSelectionIndex;
+    functions[206] = Text::scriptGetTextboxElement;
+    functions[207] = Text::scriptAddSelectionTextbox;
 
-    scriptSubFunctions_8004e29c[199] = Text::scriptSetTextboxVariable;
-    scriptSubFunctions_8004e29c[200] = Text::scriptAddTextbox;
-    scriptSubFunctions_8004e29c[201] = Text::scriptDeallocateTextbox;
-    scriptSubFunctions_8004e29c[202] = Text::scriptDeallocateAllTextboxes;
-    scriptSubFunctions_8004e29c[203] = Text::FUN_80029ecc;
-    scriptSubFunctions_8004e29c[204] = Text::FUN_80028ff8;
-    scriptSubFunctions_8004e29c[205] = Text::scriptGetTextboxSelectionIndex;
-    scriptSubFunctions_8004e29c[206] = Text::scriptGetTextboxElement;
-    scriptSubFunctions_8004e29c[207] = Text::scriptAddSelectionTextbox;
+    functions[224] = Audio::scriptLoadMenuSounds;
+    functions[225] = Audio::FUN_8001e918;
 
-    scriptSubFunctions_8004e29c[224] = Audio::scriptLoadMenuSounds;
-    scriptSubFunctions_8004e29c[225] = Audio::FUN_8001e918;
+    functions[227] = Audio::FUN_8001eb30;
 
-    scriptSubFunctions_8004e29c[227] = Audio::FUN_8001eb30;
+    functions[230] = Audio::scriptLoadMusicPackage;
+    functions[231] = Audio::FUN_8001fe28;
+    functions[232] = Audio::scriptUnloadSoundFile;
+    functions[233] = Audio::scriptUnuseCharSoundFile;
+    functions[234] = Audio::scriptStopEncounterSoundEffects;
+    functions[235] = Audio::scriptFreeEncounterSoundEffects;
+    functions[236] = Audio::scriptPlaySound;
+    functions[237] = Audio::scriptStopSound;
 
-    scriptSubFunctions_8004e29c[230] = Audio::scriptLoadMusicPackage;
-    scriptSubFunctions_8004e29c[231] = Audio::FUN_8001fe28;
-    scriptSubFunctions_8004e29c[232] = Audio::scriptUnloadSoundFile;
-    scriptSubFunctions_8004e29c[233] = Audio::scriptUnuseCharSoundFile;
-    scriptSubFunctions_8004e29c[234] = Audio::scriptStopEncounterSoundEffects;
-    scriptSubFunctions_8004e29c[235] = Audio::scriptFreeEncounterSoundEffects;
-    scriptSubFunctions_8004e29c[236] = Audio::scriptPlaySound;
-    scriptSubFunctions_8004e29c[237] = Audio::scriptStopSound;
+    functions[240] = Audio::scriptStopSoundsAndSequences;
+    functions[241] = Audio::scriptStartCurrentMusicSequence;
+    functions[242] = Audio::scriptToggleMusicSequencePause;
+    functions[243] = Audio::scriptToggleMusicSequencePause2;
+    functions[244] = Audio::scriptStopCurrentMusicSequence;
 
-    scriptSubFunctions_8004e29c[240] = Audio::scriptStopSoundsAndSequences;
-    scriptSubFunctions_8004e29c[241] = Audio::scriptStartCurrentMusicSequence;
-    scriptSubFunctions_8004e29c[242] = Audio::scriptToggleMusicSequencePause;
-    scriptSubFunctions_8004e29c[243] = Audio::scriptToggleMusicSequencePause2;
-    scriptSubFunctions_8004e29c[244] = Audio::scriptStopCurrentMusicSequence;
+    functions[248] = Audio::FUN_8001b094;
+    functions[249] = Audio::FUN_8001b134;
+    functions[250] = Audio::FUN_8001b13c;
+    functions[251] = Audio::FUN_8001b144;
+    functions[252] = Audio::scriptSetMainVolume;
+    functions[253] = Audio::scriptSetSequenceVolume;
+    functions[254] = Audio::scriptSetAllSoundSequenceVolumes;
+    functions[255] = Audio::scriptSssqFadeIn;
 
-    scriptSubFunctions_8004e29c[248] = Audio::FUN_8001b094;
-    scriptSubFunctions_8004e29c[249] = Audio::FUN_8001b134;
-    scriptSubFunctions_8004e29c[250] = Audio::FUN_8001b13c;
-    scriptSubFunctions_8004e29c[251] = Audio::FUN_8001b144;
-    scriptSubFunctions_8004e29c[252] = Audio::scriptSetMainVolume;
-    scriptSubFunctions_8004e29c[253] = Audio::scriptSetSequenceVolume;
-    scriptSubFunctions_8004e29c[254] = Audio::scriptSetAllSoundSequenceVolumes;
-    scriptSubFunctions_8004e29c[255] = Audio::scriptSssqFadeIn;
+    functions[704] = Audio::scriptStartSequenceAndChangeVolumeOverTime;
+    functions[705] = Audio::scriptSssqFadeOut;
+    functions[706] = Audio::scriptChangeSequenceVolumeOverTime;
+    functions[707] = Audio::scriptGetSequenceFlags;
+    functions[708] = Audio::scriptGetSssqTempoScale;
+    functions[709] = Audio::scriptSetSssqTempoScale;
+    functions[710] = Audio::scriptGetLoadedSoundFiles;
+    functions[711] = Audio::scriptGetSequenceVolume;
 
-    scriptSubFunctions_8004e29c[704] = Audio::scriptStartSequenceAndChangeVolumeOverTime;
-    scriptSubFunctions_8004e29c[705] = Audio::scriptSssqFadeOut;
-    scriptSubFunctions_8004e29c[706] = Audio::scriptChangeSequenceVolumeOverTime;
-    scriptSubFunctions_8004e29c[707] = Audio::scriptGetSequenceFlags;
-    scriptSubFunctions_8004e29c[708] = Audio::scriptGetSssqTempoScale;
-    scriptSubFunctions_8004e29c[709] = Audio::scriptSetSssqTempoScale;
-    scriptSubFunctions_8004e29c[710] = Audio::scriptGetLoadedSoundFiles;
-    scriptSubFunctions_8004e29c[711] = Audio::scriptGetSequenceVolume;
+    functions[714] = Audio::scriptStopAndUnloadSequences;
 
-    scriptSubFunctions_8004e29c[714] = Audio::scriptStopAndUnloadSequences;
+    functions[864] = Scus94491BpeSegment::scriptGiveChestContents;
+    functions[865] = Scus94491BpeSegment::scriptTakeItem;
+    functions[866] = Scus94491BpeSegment::scriptGiveGold;
 
-    scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment::scriptGiveChestContents;
-    scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment::scriptTakeItem;
-    scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment::scriptGiveGold;
+    functions[890] = Scus94491BpeSegment::scriptReadRegistryEntryVar;
+    functions[891] = SItem::scriptInputActionPressed;
+    functions[892] = SItem::scriptInputActionHeld;
 
-    scriptSubFunctions_8004e29c[890] = Scus94491BpeSegment::scriptReadRegistryEntryVar;
-    scriptSubFunctions_8004e29c[891] = SItem::scriptInputActionPressed;
-    scriptSubFunctions_8004e29c[892] = SItem::scriptInputActionHeld;
+    functions[900] = SItem::scriptGetMaxItemCount;
+    functions[901] = SItem::scriptGetMaxEquipmentCount;
+    functions[902] = SItem::scriptIsItemSlotUsed;
+    functions[903] = SItem::scriptIsEquipmentSlotUsed;
+    functions[904] = SItem::scriptGetItemSlot;
+    functions[905] = SItem::scriptGetEquipmentSlot;
+    functions[906] = SItem::scriptSetItemSlot;
+    functions[907] = SItem::scriptSetEquipmentSlot;
+    functions[908] = SItem::scriptGiveItem;
+    functions[909] = SItem::scriptGiveEquipment;
+    functions[910] = SItem::scriptTakeItem;
+    functions[911] = SItem::scriptTakeEquipment;
+    functions[912] = SItem::scriptGenerateAttackItem;
+    functions[913] = SItem::scriptGenerateRecoveryItem;
+    functions[914] = SItem::scriptHasGood;
+    functions[915] = SItem::scriptGiveGood;
+    functions[916] = SItem::scriptTakeGood;
 
-    scriptSubFunctions_8004e29c[900] = SItem::scriptGetMaxItemCount;
-    scriptSubFunctions_8004e29c[901] = SItem::scriptGetMaxEquipmentCount;
-    scriptSubFunctions_8004e29c[902] = SItem::scriptIsItemSlotUsed;
-    scriptSubFunctions_8004e29c[903] = SItem::scriptIsEquipmentSlotUsed;
-    scriptSubFunctions_8004e29c[904] = SItem::scriptGetItemSlot;
-    scriptSubFunctions_8004e29c[905] = SItem::scriptGetEquipmentSlot;
-    scriptSubFunctions_8004e29c[906] = SItem::scriptSetItemSlot;
-    scriptSubFunctions_8004e29c[907] = SItem::scriptSetEquipmentSlot;
-    scriptSubFunctions_8004e29c[908] = SItem::scriptGiveItem;
-    scriptSubFunctions_8004e29c[909] = SItem::scriptGiveEquipment;
-    scriptSubFunctions_8004e29c[910] = SItem::scriptTakeItem;
-    scriptSubFunctions_8004e29c[911] = SItem::scriptTakeEquipment;
-    scriptSubFunctions_8004e29c[912] = SItem::scriptGenerateAttackItem;
-    scriptSubFunctions_8004e29c[913] = SItem::scriptGenerateRecoveryItem;
-    scriptSubFunctions_8004e29c[914] = SItem::scriptHasGood;
-    scriptSubFunctions_8004e29c[915] = SItem::scriptGiveGood;
-    scriptSubFunctions_8004e29c[916] = SItem::scriptTakeGood;
+    functions[960] = RenderEngine::scriptGetRenderAspectMultiplier;
 
-    scriptSubFunctions_8004e29c[960] = RenderEngine::scriptGetRenderAspectMultiplier;
+    //noinspection Java9CollectionFactory List.of rejects nulls
+    scriptSubFunctions_8004e29c = Collections.unmodifiableList(Arrays.asList(functions));
   }
   // 8004f29c end of jump table
 
@@ -181,4 +185,27 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new byte[] {0x4, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0});
   public static final List<BattleReportOverlayList10> battleReportOverlayLists_8004f658 = new LinkedList<>();
+
+  @Nullable
+  public static Function<RunningScript, FlowControl> getScriptFunction(final int index) {
+    Function<RunningScript, FlowControl> function = scriptSubFunctions_8004e29c.get(index);
+
+    if(function == null && engineStateFunctions_8004e29c != null) {
+      function = engineStateFunctions_8004e29c.get(index);
+    }
+
+    return function;
+  }
+
+  public static void loadEngineStateFunctions(final EngineState<?> engineState) {
+    final Function<RunningScript, FlowControl>[] functions = engineState.getScriptFunctions();
+
+    if(functions == null) {
+      engineStateFunctions_8004e29c = null;
+      return;
+    }
+
+    //noinspection Java9CollectionFactory List.of rejects nulls
+    engineStateFunctions_8004e29c = Collections.unmodifiableList(Arrays.asList(functions));
+  }
 }

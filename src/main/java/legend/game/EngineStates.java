@@ -19,7 +19,7 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Graphics.renderMode;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
+import static legend.game.Scus94491BpeSegment_8004.loadEngineStateFunctions;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -89,7 +89,7 @@ public final class EngineStates {
       currentEngineState_8004dd04.readSaveData(gameState_800babc8, saveData);
     }
 
-    engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
+    loadEngineStateFunctions(currentEngineState_8004dd04);
     renderMode = currentEngineState_8004dd04.getRenderMode();
     RENDERER.setRenderMode(currentEngineState_8004dd04.getRenderMode());
     RENDERER.updateProjections();
