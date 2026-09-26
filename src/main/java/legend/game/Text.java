@@ -32,6 +32,7 @@ import legend.core.renderer.Translucency;
 import legend.lodmod.LodConfig;
 import legend.lodmod.LodEngineStateTypes;
 import org.joml.Math;
+import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import javax.annotation.Nullable;
@@ -1790,6 +1791,12 @@ public final class Text {
   /** The purple bar used in inn dialogs, etc. */
   @Method(0x80029140L)
   public static void renderTextboxSelection(final Textbox4c textbox, final int selectionLine) {
+    renderTextboxSelection(textbox, selectionLine, CONFIG.getConfig(LodConfig.UI_SELECTION_COLOUR.get()));
+  }
+
+  /** The purple bar used in inn dialogs, etc. */
+  @Method(0x80029140L)
+  public static void renderTextboxSelection(final Textbox4c textbox, final int selectionLine, final Vector3f colour) {
     final int width = (textbox.chars_18 - 1) * 9;
     final float x = textbox.x_14;
     final float y = textbox.y_16 + selectionLine * 12 - (textbox.lines_1a - 1) * 6;
@@ -1797,7 +1804,7 @@ public final class Text {
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
     textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c * 4.0f);
     RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms, QueuedModelStandard.class)
-      .colour(CONFIG.getConfig(LodConfig.UI_SELECTION_COLOUR.get()))
+      .colour(colour)
     ;
   }
 

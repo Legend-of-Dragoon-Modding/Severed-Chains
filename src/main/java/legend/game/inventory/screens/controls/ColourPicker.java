@@ -8,11 +8,13 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
+import legend.game.saves.ConfigCollection;
 import org.joml.Vector3i;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DEFAULT_FONT;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
@@ -32,6 +34,8 @@ public class ColourPicker extends Control {
   private static final int COLOUR_SPINNER_ARROW_PADDING = 12;
   private static final float UI_ACTION_CONTROL_SCALE = 0.9f;
 
+  private final ConfigCollection configCollection;
+
   private Font font = DEFAULT_FONT;
   private final NumberSpinner<Integer>[] colours = new NumberSpinner[3];
   private final boolean enableUiActions;
@@ -46,10 +50,19 @@ public class ColourPicker extends Control {
   private boolean triggerEvents = true;
 
   public ColourPicker() {
-    this(false);
+    this(CONFIG, false);
+  }
+
+  public ColourPicker(final ConfigCollection configCollection) {
+    this(configCollection, false);
   }
 
   public ColourPicker(final boolean enableUiActions) {
+    this(CONFIG, enableUiActions);
+  }
+
+  public ColourPicker(final ConfigCollection configCollection, final boolean enableUiActions) {
+    this.configCollection = configCollection;
     this.enableUiActions = enableUiActions;
 
     if(enableUiActions) {
@@ -348,9 +361,11 @@ public class ColourPicker extends Control {
 
   private void openPreview() {
     this.deferAction(() -> {
-      if(this.getScreen().findControl(SubmapTextboxColourPreview.class, preview -> true).isPresent()) return;
+      if(this.getScreen().findControl(SubmapTextboxColourPreview.class, preview -> true).isPresent()) {
+        return;
+      }
 
-      final SubmapTextboxColourPreview preview = new SubmapTextboxColourPreview();
+      final SubmapTextboxColourPreview preview = new SubmapTextboxColourPreview(this.configCollection);
       preview.setZ(1);
       preview.setSize(this.getScreen().getWidth(), this.getScreen().getHeight());
       this.getScreen().addControl(preview);

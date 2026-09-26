@@ -19,10 +19,10 @@ public class ColourConfigEntry extends ConfigEntry<Vector3f> {
       bytes -> deserialize(bytes, defaultValue)
     );
 
-    this.setEditControl((current, gameState) -> {
-      final ColourPicker picker = new ColourPicker(enableUiActions);
+    this.setEditControl((current, configCollection) -> {
+      final ColourPicker picker = new ColourPicker(configCollection, enableUiActions);
       picker.setColour(new Vector3i((int)(current.x * 255.0f), (int)(current.y * 255.0f), (int)(current.z * 255.0f)));
-      picker.onChange((r, g, b) -> gameState.setConfig(this, new Vector3f(r / 255.0f, g / 255.0f, b / 255.0f)));
+      picker.onChange((r, g, b) -> configCollection.setConfig(this, new Vector3f(r / 255.0f, g / 255.0f, b / 255.0f)));
       return picker;
     });
   }

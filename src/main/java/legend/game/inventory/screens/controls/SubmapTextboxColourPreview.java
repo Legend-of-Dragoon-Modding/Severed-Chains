@@ -7,12 +7,13 @@ import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
+import legend.game.saves.ConfigCollection;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxState;
+import legend.lodmod.LodConfig;
 
 import java.util.Set;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.game.Text.initTextbox;
 import static legend.game.Text.renderText;
@@ -32,13 +33,16 @@ public class SubmapTextboxColourPreview extends Control {
   private static final int FIRST_SELECTION_LINE = 1;
   private static final int LAST_SELECTION_LINE = 2;
 
+  private final ConfigCollection configCollection;
+
   private final Textbox4c textbox = new Textbox4c();
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE).noShadow();
 
   private int selectionLine = FIRST_SELECTION_LINE;
   private boolean closing;
 
-  public SubmapTextboxColourPreview() {
+  public SubmapTextboxColourPreview(final ConfigCollection configCollection) {
+    this.configCollection = configCollection;
     this.textbox.clear();
     initTextbox(this.textbox, false, 0.0f, 0.0f, TEXTBOX_CHARS, TEXTBOX_LINES);
     this.textbox.state_00 = TextboxState._6;
@@ -62,10 +66,10 @@ public class SubmapTextboxColourPreview extends Control {
 
     this.textbox.x_14 = centreX;
     this.textbox.y_16 = centreY;
-    this.textbox.colour.set(CONFIG.getConfig(UI_BACKGROUND_COLOUR.get()));
+    this.textbox.colour.set(this.configCollection.getConfig(UI_BACKGROUND_COLOUR.get()));
 
     renderTextboxBackground(this.textbox);
-    renderTextboxSelection(this.textbox, this.selectionLine);
+    renderTextboxSelection(this.textbox, this.selectionLine, this.configCollection.getConfig(LodConfig.UI_SELECTION_COLOUR.get()));
 
     final int oldTextZ = textZ_800bdf00;
     textZ_800bdf00 = (int)this.textbox.z_0c - 1;
