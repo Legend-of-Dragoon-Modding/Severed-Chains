@@ -20,13 +20,13 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
-import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
+import static legend.game.Scus94491BpeSegment_8004.getScriptFunction;
 import static legend.game.scripting.ScriptManager.scriptFunctionDescriptions;
 import static legend.game.scripting.ScriptManager.scriptLog;
 
@@ -1211,18 +1211,20 @@ public class ScriptState<T extends ScriptedObject> {
   }
 
   /**
-   * Executes the sub-function at {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} denoted by the parent param
+   * Executes the sub-function (see {@link Scus94491BpeSegment_8004#getScriptFunction}) denoted by the op param
    *
    * @return The value that the sub-function returns
    */
   @Method(0x80016cfcL)
   public FlowControl scriptExecuteSubFunc() {
     try {
-      if(engineStateFunctions_8004e29c[this.context.opParam_18] != null) {
-        return engineStateFunctions_8004e29c[this.context.opParam_18].apply(this.context);
+      final Function<RunningScript, FlowControl> function = getScriptFunction(this.context.opParam_18);
+
+      if(function == null) {
+        return FlowControl.PAUSE_AND_REWIND;
       }
 
-      return scriptSubFunctions_8004e29c[this.context.opParam_18].apply(this.context);
+      return function.apply(this.context);
     } catch(final UnsupportedOperationException e) {
       throw new RuntimeException("Script subfunc %d error".formatted(this.context.opParam_18), e);
     }

@@ -29,7 +29,6 @@ import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_UP;
 
 public abstract class EngineState<T extends EngineState<T>> {
   public final EngineStateType<T> type;
-  private final Function<RunningScript, FlowControl>[] functions = new Function[1024];
 
   private float analogueAngle;
   private float analogueMagnitude;
@@ -104,7 +103,7 @@ public abstract class EngineState<T extends EngineState<T>> {
   }
 
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
-    return this.functions;
+    return null;
   }
 
   public void modelLoaded(final Model124 model, final CContainer cContainer) {
