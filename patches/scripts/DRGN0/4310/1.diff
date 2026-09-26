@@ -18,3 +18,16 @@
  call 169, stor[30], STATUS, stor[10]
  jmp_cmp !&, 0x8, stor[10], inl[:LABEL_8]
  shr 0x1, stor[8]
+@@ -2352,9 +2349,10 @@
+ LABEL_86:
+ memcpy 0x18, stor[8], inl[:LABEL_84]
+ call 169, stor[30], DLEVEL, stor[8]
++call 890, id[lod_core:config], id[lod:max_dragoon_level], 0, stor[40]
+ jmp_cmp >=, 0x0, stor[8], inl[:LABEL_87]
+-jmp_cmp <, 0x5, stor[8], inl[:LABEL_87]
+-mov inl[:LABEL_85[stor[8]]], stor[8]
++jmp_cmp <, stor[40], stor[8], inl[:LABEL_87]
++call 169, stor[30], ARCHER_SP, stor[8]
+ jmp inl[:LABEL_88]
+ LABEL_87:
+ mov 0x0, stor[8]
