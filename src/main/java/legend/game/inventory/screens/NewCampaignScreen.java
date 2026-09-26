@@ -145,7 +145,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     final Button mods = new Button(new I18nText("lod_core.ui.new_campaign.mods"));
     this.addRow(RawText.BLANK, mods);
-    mods.onPressed(() ->
+    mods.onPressed(() -> {
+      bootMods(MODS.getAllModIds());
       this.deferAction(() ->
         this.getStack().pushScreen(new ModsScreen(this.enabledMods, () -> {
           bootMods(this.enabledMods);
@@ -153,8 +154,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
           startFadeEffect(2, 10);
           this.getStack().popScreen();
         }))
-      )
-    );
+      );
+    });
 
     final Button startGame = new Button(new I18nText("lod_core.ui.new_campaign.start_game"));
     this.addRow(RawText.BLANK, startGame);
