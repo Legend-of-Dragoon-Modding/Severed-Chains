@@ -20,31 +20,21 @@ import static legend.game.Text.textZ_800bdf00;
 public class KeybindScreen extends InputBoxScreen {
   private static final long TIMEOUT = 4_000_000_000L;
 
-  // Stupid hack for not being able to reference this before super completes
-  private static KeybindScreen inst;
-
   private final FontOptions fontOptions = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN);
 
   private final Function<List<InputActivation>, String> actionToString;
-  private final BiConsumer<MessageBoxResult, List<InputActivation>> onResult;
 
   private final List<InputActivation> activations;
 
   private long timeout;
 
   public KeybindScreen(final InputAction inputAction, final Function<List<InputActivation>, String> actionToString, final BiConsumer<MessageBoxResult, List<InputActivation>> onResult) {
-    super(new I18nText(inputAction), actionToString.apply(InputBindings.getActivationsForAction(inputAction)), (result, text) -> inst.onClose(result), 33);
+    final List<InputActivation> activations = InputBindings.getActivationsForAction(inputAction);
+    this.activations = activations;
 
-    if(inst != null) {
-      throw new IllegalStateException("Keybind screen already open");
-    }
-
-    inst = this;
+    super(new I18nText(inputAction), actionToString.apply(InputBindings.getActivationsForAction(inputAction)), (result, text) -> onResult.accept(result, activations), 33);
 
     this.actionToString = actionToString;
-    this.onResult = onResult;
-
-    this.activations = InputBindings.getActivationsForAction(inputAction);
 
     // Ignore text input in textbox
     this.text.onCharPress(codepoint -> InputPropagation.HANDLED);
@@ -97,11 +87,6 @@ public class KeybindScreen extends InputBoxScreen {
     });
   }
 
-  private void onClose(final MessageBoxResult result) {
-    inst = null;
-    this.onResult.accept(result, this.activations);
-  }
-
   private void updateText() {
     this.text.setText(this.actionToString.apply(this.activations));
   }
@@ -126,7 +111,10 @@ public class KeybindScreen extends InputBoxScreen {
       } else {
         this.text.unfocus();
         this.timeout = 0;
-        this.menuNavigateDown();
+
+        if(!this.textboxWasClicked()) {
+          this.menuNavigateDown();
+        }
       }
     }
   }

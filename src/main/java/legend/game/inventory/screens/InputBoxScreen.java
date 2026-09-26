@@ -12,12 +12,12 @@ import legend.game.types.MessageBoxResult;
 
 import java.util.function.BiConsumer;
 
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.SItem.menuStack;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class InputBoxScreen extends MenuScreen {
   private final BiConsumer<MessageBoxResult, String> onResult;
@@ -27,6 +27,8 @@ public class InputBoxScreen extends MenuScreen {
   protected final Button accept;
   protected final Button cancel;
   private int selectedIndex;
+
+  private boolean textboxWasClicked;
 
   public InputBoxScreen(final TextComponent message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
     this(message, defaultText, onResult, 32);
@@ -75,11 +77,30 @@ public class InputBoxScreen extends MenuScreen {
     this.highlight.setZ(z - 1);
     this.highlight.setVisibility(false);
 
-    this.text.onHoverIn(this.highlight::show);
-    this.text.onHoverOut(this.highlight::hide);
-
     this.selectedIndex = 1;
     this.getSelectedControl().hoverIn();
+
+    this.text.onHoverIn(() -> {
+      this.mouseOver(0);
+      this.highlight.show();
+    });
+    this.text.onHoverOut(this.highlight::hide);
+    this.text.onMouseClick((x, y, button, mods) -> {
+      this.textboxWasClicked = true;
+      return InputPropagation.PROPAGATE;
+    });
+
+    this.accept.onHoverIn(() -> this.mouseOver(1));
+    this.cancel.onHoverIn(() -> this.mouseOver(2));
+  }
+
+  protected boolean textboxWasClicked() {
+    return this.textboxWasClicked;
+  }
+
+  private void mouseOver(final int index) {
+    playMenuSound(1);
+    this.selectedIndex = index;
   }
 
   private Control getSelectedControl() {
@@ -97,8 +118,6 @@ public class InputBoxScreen extends MenuScreen {
   }
 
   protected void menuNavigateUp() {
-    playMenuSound(1);
-
     this.getSelectedControl().hoverOut();
 
     this.selectedIndex--;
@@ -108,12 +127,12 @@ public class InputBoxScreen extends MenuScreen {
 
     if(this.selectedIndex != 0) {
       this.getSelectedControl().hoverIn();
+    } else {
+      playMenuSound(1);
     }
   }
 
   protected void menuNavigateDown() {
-    playMenuSound(1);
-
     this.getSelectedControl().hoverOut();
 
     this.selectedIndex++;
@@ -123,10 +142,14 @@ public class InputBoxScreen extends MenuScreen {
 
     if(this.selectedIndex != 0) {
       this.getSelectedControl().hoverIn();
+    } else {
+      playMenuSound(1);
     }
   }
 
   private void menuSelect() {
+    this.textboxWasClicked = false;
+
     if(this.selectedIndex == 0) {
       this.deferAction(this.text::focus);
     } else {
