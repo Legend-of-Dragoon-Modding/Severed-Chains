@@ -437,7 +437,9 @@ public class RetailSubmap extends Submap {
     285, // Queen Fury - crows nest (GH#2750)
     327, // First map after starting chapter 3 - screen is black on load (GH#2204)
     381, // Entering wingly forest as Meru - Guaraha disappears and trying to exit softlocks
-    580 // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
+    580, // Psyche Bomb trials entry - saving on the other side of the bridge before the bridge is there causes the bridge to appear and flags don't get set right
+    637, // Hero Competition waiting room
+    638  // Hero Competition arena
   );
 
   @Override
