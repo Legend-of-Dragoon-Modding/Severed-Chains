@@ -73,6 +73,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   public NewCampaignScreen() {
     loadingNewGameState_800bdc34 = false;
 
+    CONFIG.clearConfig(ConfigStorageLocation.SAVE);
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     InputBindings.initBindings();
     InputBindings.loadBindings(CONFIG);

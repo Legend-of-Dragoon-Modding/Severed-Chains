@@ -112,7 +112,6 @@ public class ConfigCollection {
       }
     }
 
-    this.configValues.putAll(other.configValues);
     this.presetState = null;
   }
 
