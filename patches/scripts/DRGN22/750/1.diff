@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -2011,7 +2011,7 @@
+ data 0x24
+ data 0x3
+ PTR_3ac8_44:
+-data str[ he Mayor is right.<line>Exactly, right.]
++data str[ The Mayor is right.<line>Exactly, right.]
+ PTR_3be0_44:
+ data 0x12
+ data 0x2
