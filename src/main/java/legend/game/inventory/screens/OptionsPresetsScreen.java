@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.core.Config;
+import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.lang.TextComponent;
@@ -59,6 +61,13 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
     ConfigPresetManager.loadPresetList().forEach(this.presetList::addOption);
     this.presetList.onSelection(this::onPresetSelected);
 
+    for(int i = 0; i < this.presetList.size(); i++) {
+      if(IoHelper.slugName(this.presetList.getOption(i).getName().get()).equals(Config.getLastConfigPreset())) {
+        this.presetList.setSelectedIndex(i);
+        break;
+      }
+    }
+
     this.edit = new Button(new I18nText("lod_core.ui.options_presets.edit"));
     this.addRow(RawText.BLANK, this.edit);
     this.edit.onPressed(this::onEditPressed);
@@ -83,6 +92,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
   }
 
   private void onPresetSelected(final int index) {
+    Config.setLastConfigPreset(IoHelper.slugName(this.presetList.getSelectedOption().getName().get()));
     this.edit.setDisabled(!this.presetList.getSelectedOption().editable);
     this.delete.setDisabled(!this.presetList.getSelectedOption().editable);
   }
