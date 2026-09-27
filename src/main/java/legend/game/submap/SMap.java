@@ -25,6 +25,7 @@ import legend.core.renderer.Texture;
 import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
 import legend.core.tags.BoolTag;
+import legend.core.tags.FloatTag;
 import legend.core.tags.IntTag;
 import legend.core.tags.ListTag;
 import legend.core.tags.MapTag;
@@ -472,6 +473,13 @@ public class SMap extends EngineState<SMap> {
       primaryPartyBackupTag.add(new IntTag(this.primaryPartyBackup.getInt(i)));
     }
 
+    // We need wmap stuff for when we're sailing the Queen Fury, go inside, and save
+    tag.set("pathIndex", new IntTag(gameState.pathIndex_4d8));
+    tag.set("dotIndex", new IntTag(gameState.dotIndex_4da));
+    tag.set("dotOffset", new FloatTag(gameState.dotOffset_4dc));
+    tag.set("facing", new IntTag(gameState.facing_4dd));
+    tag.set("directionalPathIndex", new IntTag(gameState.directionalPathIndex_4de));
+
     return tag;
   }
 
@@ -504,6 +512,14 @@ public class SMap extends EngineState<SMap> {
       for(int i = 0; i < primaryPartyBackupTag.size(); i++) {
         this.primaryPartyBackup.add(primaryPartyBackupTag.get(i).asInt().get());
       }
+    }
+
+    if(map.has("pathIndex")) {
+      gameState.pathIndex_4d8 = map.get("pathIndex").asInt().get();
+      gameState.dotIndex_4da = map.get("dotIndex").asInt().get();
+      gameState.dotOffset_4dc = map.get("dotOffset").asFloat().get();
+      gameState.facing_4dd = map.get("facing").asInt().get();
+      gameState.directionalPathIndex_4de = map.get("directionalPathIndex").asInt().get();
     }
   }
 
