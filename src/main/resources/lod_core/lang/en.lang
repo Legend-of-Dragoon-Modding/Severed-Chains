@@ -18,6 +18,8 @@ lod_core.font.invalid.name=<INVALID>
 
 # Config presets
 lod_core.config_presets.severed_chains=Severed Chains
+lod_core.config_presets.modified=%s (Modified)
+lod_core.config_presets.custom=Custom configuration
 lod_core.config_presets.vanilla=Vanilla
 lod_core.config_presets.speedrunner=Speedrunner
 
@@ -112,6 +114,7 @@ lod_core.ui.options_presets.failed_to_load_presets=Failed to load options preset
 lod_core.ui.options_presets.save_changes=Would you like to\nsave your changes?
 lod_core.ui.options_presets.invalid_preset=This preset is\ninvalid
 lod_core.ui.options_presets.back=Back
+lod_core.ui.options_presets.skipped_settings=Skipped %d invalid or unavailable preset settings; see log for details
 
 lod_core.ui.options.advanced=Advanced
 lod_core.ui.options.help=Help
