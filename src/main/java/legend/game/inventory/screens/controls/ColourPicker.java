@@ -49,6 +49,8 @@ public class ColourPicker extends Control {
   private final MV transforms = new MV();
   private boolean triggerEvents = true;
 
+  private boolean active;
+
   public ColourPicker() {
     this(CONFIG, false);
   }
@@ -270,9 +272,9 @@ public class ColourPicker extends Control {
   }
 
   private InputPropagation uiInputActionPressed(final InputAction action, final boolean repeat) {
-    if(action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
+    if(this.active && action == INPUT_ACTION_MENU_BACK.get() && !repeat) {
       playMenuSound(3);
-      this.unfocus();
+      this.loseSubFocus();
       return InputPropagation.HANDLED;
     }
 
@@ -299,6 +301,8 @@ public class ColourPicker extends Control {
     }
 
     if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
+      this.active = true;
+
       if(!this.controlSelectionActive) {
         playMenuSound(2);
         this.controlSelectionActive = true;
@@ -365,7 +369,13 @@ public class ColourPicker extends Control {
         return;
       }
 
-      final SubmapTextboxColourPreview preview = new SubmapTextboxColourPreview(this.configCollection);
+      final SubmapTextboxColourPreview preview = new SubmapTextboxColourPreview(() -> {
+        this.focus();
+        this.controlSelectionActive = true;
+        this.active = true;
+        this.previewHighlight.show();
+      }, this.configCollection);
+
       preview.setZ(1);
       preview.setSize(this.getScreen().getWidth(), this.getScreen().getHeight());
       this.getScreen().addControl(preview);
@@ -376,7 +386,10 @@ public class ColourPicker extends Control {
   @Override
   protected void lostFocus() {
     super.lostFocus();
+    this.loseSubFocus();
+  }
 
+  private void loseSubFocus() {
     if(this.enableUiActions) {
       this.hideControlSelection();
       this.controlSelectionActive = false;
@@ -385,6 +398,8 @@ public class ColourPicker extends Control {
     for(int i = 0; i < this.colours.length; i++) {
       this.colours[i].unfocus();
     }
+
+    this.active = false;
   }
 
   public void onChange(final Change change) {

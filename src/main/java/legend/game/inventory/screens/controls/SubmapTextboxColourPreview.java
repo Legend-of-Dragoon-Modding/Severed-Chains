@@ -33,6 +33,7 @@ public class SubmapTextboxColourPreview extends Control {
   private static final int FIRST_SELECTION_LINE = 1;
   private static final int LAST_SELECTION_LINE = 2;
 
+  private final Runnable onClose;
   private final ConfigCollection configCollection;
 
   private final Textbox4c textbox = new Textbox4c();
@@ -41,7 +42,8 @@ public class SubmapTextboxColourPreview extends Control {
   private int selectionLine = FIRST_SELECTION_LINE;
   private boolean closing;
 
-  public SubmapTextboxColourPreview(final ConfigCollection configCollection) {
+  public SubmapTextboxColourPreview(final Runnable onClose, final ConfigCollection configCollection) {
+    this.onClose = onClose;
     this.configCollection = configCollection;
     this.textbox.clear();
     initTextbox(this.textbox, false, 0.0f, 0.0f, TEXTBOX_CHARS, TEXTBOX_LINES);
@@ -129,6 +131,7 @@ public class SubmapTextboxColourPreview extends Control {
     this.deferAction(() -> {
       this.getScreen().setFocus(null);
       this.getScreen().removeControl(this);
+      this.onClose.run();
     });
   }
 }
