@@ -21,7 +21,6 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigCollection;
-import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigPreset;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
@@ -41,10 +40,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
@@ -224,27 +221,9 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   }
 
   private void updateConfig(final ConfigCollection newConfig) {
-    final Map<RegistryId, Object> oldValues = new HashMap<>();
-
-    for(final RegistryId id : REGISTRIES.config) {
-      final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
-
-      if(config.storageLocation == ConfigStorageLocation.GLOBAL) {
-        oldValues.put(id, CONFIG.getConfig(config));
-      }
-    }
-
-    CONFIG.clearConfig();
-    CONFIG.copyConfigFrom(newConfig);
+    CONFIG.copyConfigFrom(newConfig, EnumSet.of(ConfigStorageLocation.CAMPAIGN, ConfigStorageLocation.SAVE));
     InputBindings.initBindings();
     InputBindings.loadBindings(CONFIG);
-
-    for(final var entry : oldValues.entrySet()) {
-      final RegistryId id = entry.getKey();
-      final ConfigEntry config = REGISTRIES.config.getEntry(id).get();
-      config.onChange(CONFIG, oldValues.get(id), CONFIG.getConfig(config));
-    }
-    ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
   }
 
   @Override

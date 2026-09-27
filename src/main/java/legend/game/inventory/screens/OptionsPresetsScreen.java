@@ -129,7 +129,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
 
       // Copy the reference config into the new one
       if(oldConfig != null) {
-        newConfig.copyConfigFrom(oldConfig);
+        newConfig.copyConfigFrom(oldConfig, EnumSet.of(ConfigStorageLocation.CAMPAIGN, ConfigStorageLocation.SAVE));
       }
 
       newConfig.setPreset(new RawText(name));

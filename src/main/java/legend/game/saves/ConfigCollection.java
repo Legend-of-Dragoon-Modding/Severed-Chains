@@ -102,6 +102,20 @@ public class ConfigCollection {
     this.presetState = null;
   }
 
+  public void copyConfigFrom(final ConfigCollection other, final Set<ConfigStorageLocation> locations) {
+    for(final var entry : other.configValues.entrySet()) {
+      final RegistryId id = entry.getKey();
+      final ConfigEntry<?> config = REGISTRIES.config.getEntry(id).get();
+
+      if(locations.contains(config.storageLocation)) {
+        this.configValues.put(id, entry.getValue());
+      }
+    }
+
+    this.configValues.putAll(other.configValues);
+    this.presetState = null;
+  }
+
   public void lockConfig(final ConfigEntry<?> config) {
     final Class<?> caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
     MODS.setActiveModByClassloader(caller.getClassLoader());
