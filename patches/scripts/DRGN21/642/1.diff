@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -1371,7 +1371,7 @@
+ data 0x1d
+ data 0x4
+ PTR_1f24_5:
+-data str[<speed=0>Move with the direction key and<line>press the ` button to select.]
++data str[<speed=0>Move with the direction key and<line>press the <action=lod:smap_interact> button to select.]
+ PTR_1f40_5:
+ data 0x1f
+ data 0x2

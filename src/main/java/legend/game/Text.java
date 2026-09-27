@@ -1644,7 +1644,7 @@ public final class Text {
 
       //LAB_8002835c
       for(int charIndex = 0; charIndex < str.length(); charIndex++) {
-        final char c = str.charAt(charIndex);
+        final char c = InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), str.charAt(charIndex));
 
         if(chr.char_06 != 0) {
           int scrollY = 0;

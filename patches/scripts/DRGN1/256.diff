@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -3937,7 +3937,7 @@
+ data 0x1a
+ data 0x3
+ PTR_67d8_13:
+-data str[Press the ` button<line>when the Spirit Meter<line>light reaches the top.<multibox><line>When successful,<multibox><line>the light continues to<line>revolve & the power is<line>charged accordingly.]
++data str[Press the <action=lod:bttl_attack> button<line>when the Spirit Meter<line>light reaches the top.<multibox><line>When successful,<multibox><line>the light continues to<line>revolve & the power is<line>charged accordingly.]
+ data 0x16
+ data 0x7
+ PTR_67d8_7:
