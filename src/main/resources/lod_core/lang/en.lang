@@ -108,6 +108,8 @@ lod_core.ui.options_presets.delete_failed=Failed to delete options preset
 lod_core.ui.options_presets.add=Create New Preset
 lod_core.ui.options_presets.add_name=Preset Name:
 lod_core.ui.options_presets.add_exists=That name is already\nin use
+lod_core.ui.options_presets.edit_global=Edit
+lod_core.ui_options_presets.global_options=Global Options
 lod_core.ui.options_presets.failed_to_save_preset=Failed to save options preset
 lod_core.ui.options_presets.failed_to_load_preset=Failed to load options preset
 lod_core.ui.options_presets.failed_to_load_presets=Failed to load options presets
@@ -129,7 +131,7 @@ lod_core.ui.options.colour_preview_first=First choice
 lod_core.ui.options.colour_preview_second=Second choice
 
 lod_core.ui.options_category.back=Back
-lod_core.ui.options_category.some_options_not_available=Note: many options will only appear while in-game
+lod_core.ui.options_category.some_options_not_available=Note: many options will only appear\nin presets or while in-game
 
 lod_core.ui.about.click_on_any_link_to_open=Click on any link to open it
 lod_core.ui.about.view_link=View Link

@@ -11,6 +11,7 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigPreset;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
+import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -45,6 +47,12 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
 
     this.addControl(new Background());
 
+    final Button global = new Button(new I18nText("lod_core.ui.options_presets.edit_global"));
+    this.addRow(new I18nText("lod_core.ui_options_presets.global_options"), global);
+    global.onPressed(this::onGlobalPressed);
+
+    this.addRow(RawText.BLANK, null);
+
     this.presetList = new Dropdown<>((i, e) -> e.getName());
     this.addRow(new I18nText("lod_core.ui.options_presets.list"), this.presetList);
     ConfigPresetManager.loadDefaultPresets().forEach(this.presetList::addOption);
@@ -66,6 +74,14 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
     this.onPresetSelected(this.presetList.getSelectedIndex());
   }
 
+  private void onGlobalPressed() {
+    this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.of(ConfigStorageLocation.GLOBAL), () -> {
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+      startFadeEffect(2, 10);
+      this.getStack().popScreen();
+    })));
+  }
+
   private void onPresetSelected(final int index) {
     this.edit.setDisabled(!this.presetList.getSelectedOption().editable);
     this.delete.setDisabled(!this.presetList.getSelectedOption().editable);
@@ -82,7 +98,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
     final ConfigCollection newConfig = new ConfigCollection(false);
     newConfig.copyConfigFrom(preset.config);
     newConfig.setPreset(preset.name);
-    this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.allOf(ConfigStorageLocation.class), () -> this.onOptionsClosed(preset.name.get(), newConfig, preset.config))));
+    this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.of(ConfigStorageLocation.CAMPAIGN, ConfigStorageLocation.SAVE), () -> this.onOptionsClosed(preset.name.get(), newConfig, preset.config))));
   }
 
   private void onDeletePressed() {
@@ -119,7 +135,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
       newConfig.setPreset(new RawText(name));
 
       // Open the regular config editor
-      this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.allOf(ConfigStorageLocation.class), () -> this.onOptionsClosed(name, newConfig, null))));
+      this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.of(ConfigStorageLocation.CAMPAIGN, ConfigStorageLocation.SAVE), () -> this.onOptionsClosed(name, newConfig, null))));
     }
   }
 

@@ -45,7 +45,6 @@ import static legend.game.modding.coremod.CoreMod.QUICK_TEXT_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.game.modding.coremod.CoreMod.SAVE_ANYWHERE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG;
-import static legend.game.modding.coremod.CoreMod.SHOW_FPS;
 import static legend.game.modding.coremod.CoreMod.TRANSFORMATION_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.UNLOCK_PARTY_CONFIG;
 import static legend.lodmod.LodConfig.EXTENDED_DRAGOON_ACTIONS;
@@ -233,7 +232,6 @@ public final class ConfigPresetManager {
     config.setConfig(AUTO_TEXT_CONFIG.get(), true);
     config.setConfig(AUTO_TEXT_DELAY_CONFIG.get(), 0.0f);
     config.setConfig(QUICK_TEXT_CONFIG.get(), QuickTextMode.INSTANT);
-    config.setConfig(SHOW_FPS.get(), true);
 
     return new ConfigPreset(new I18nText("lod_core.config_presets.speedrunner"), config);
   }
