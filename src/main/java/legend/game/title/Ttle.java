@@ -70,10 +70,12 @@ import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
+import static legend.core.GameEngine.bootMods;
 import static legend.core.GameEngine.getUpdate;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
@@ -563,6 +565,8 @@ public class Ttle extends EngineState<Ttle> {
             menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.title.ps1_memcard_convert_failed"), MessageBoxType.ALERT, result2 -> {
               whichMenu_800bdc38 = WhichMenu.UNLOAD;
             }));
+          } finally {
+            bootMods(MODS.getAllModIds());
           }
         }));
       } else {
