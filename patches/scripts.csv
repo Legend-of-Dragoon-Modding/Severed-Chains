@@ -350,4 +350,4 @@ diff,SECT/DRGN24.BIN/972/3,scripts/DRGN24/972/3.diff,"Moon, Confronting Melbu cu
 diff,SECT/DRGN24.BIN/972/4,scripts/DRGN24/972/4.diff,"Moon, Confronting Melbu cutscene, Albert, don't hide body parts, GH#2180"
 diff,SECT/DRGN24.BIN/972/7,scripts/DRGN24/972/7.diff,"Moon, Confronting Melbu cutscene, Kongol, don't hide body parts, GH#2180"
 diff,SECT/DRGN22.BIN/750/1,scripts/DRGN22/750/1.diff,"Fix Butler Typo GH#2702"
-diff,SECT/DRGN24.BIN/147/1,scripts/DRGN24/147/1.diff,"Fix Butler Typo GH#2702"
+diff,SECT/DRGN24.BIN/147/1,scripts/DRGN22/750/1.diff,"Fix Butler Typo GH#2702"
