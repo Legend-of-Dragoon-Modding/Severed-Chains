@@ -9,27 +9,56 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
+import java.util.List;
+
 import static legend.core.GameEngine.AUDIO_THREAD;
 
 public class AudioDeviceConfig extends ConfigEntry<String> {
+  private List<String> oldDevices;
+
   public AudioDeviceConfig() {
     super("", ConfigStorageLocation.GLOBAL, ConfigCategory.AUDIO, AudioDeviceConfig::serialize, bytes -> deserialize(bytes, ""));
 
-    this.setEditControl((current, gameState) -> {
-      final Dropdown<String> dropdown = new Dropdown<>((i, s) -> new RawText(s.replace("OpenAL Soft on ", "")));
-      dropdown.onSelection(index -> gameState.setConfig(this, index == 0 ? "" : dropdown.getSelectedOption()));
-      dropdown.addOption("<default>");
+    this.setEditControl((current, config) -> {
+      this.oldDevices = AudioThread.getDevices();
 
-      for(final String device : AudioThread.getDevices()) {
-        dropdown.addOption(device);
+      final Dropdown<String> dropdown = new Dropdown<>((i, s) -> new RawText(s.replace("OpenAL Soft on ", ""))) {
+        private long lastUpdate = System.nanoTime();
 
-        if(device.equals(current)) {
-          dropdown.setSelectedIndex(dropdown.size() - 1);
+        @Override
+        protected void render(final int x, final int y) {
+          if(System.nanoTime() - this.lastUpdate >= 1_000_000_000L) {
+            this.lastUpdate = System.nanoTime();
+            final List<String> newDevices = AudioThread.getDevices();
+
+            if(!AudioDeviceConfig.this.oldDevices.equals(newDevices)) {
+              AudioDeviceConfig.this.updateDropdownOptions(this, newDevices, config);
+              AudioDeviceConfig.this.oldDevices = newDevices;
+            }
+          }
+
+          super.render(x, y);
         }
-      }
+      };
+
+      dropdown.onSelection(index -> config.setConfig(this, index == 0 ? "" : dropdown.getSelectedOption()));
+      this.updateDropdownOptions(dropdown, this.oldDevices, config);
 
       return dropdown;
     });
+  }
+
+  private void updateDropdownOptions(final Dropdown<String> dropdown, final List<String> devices, final ConfigCollection config) {
+    dropdown.clearOptions();
+    dropdown.addOption("<default>");
+
+    for(final String device : devices) {
+      dropdown.addOption(device);
+
+      if(device.equals(config.getConfig(this))) {
+        dropdown.setSelectedIndex(dropdown.size() - 1);
+      }
+    }
   }
 
   @Override

@@ -69,6 +69,10 @@ public class Dropdown<T> extends Control {
     this.selectedIndex = -1;
   }
 
+  public int getOptionCount() {
+    return this.options.size();
+  }
+
   public T getOption(final int index) {
     return this.options.get(index);
   }
@@ -91,7 +95,7 @@ public class Dropdown<T> extends Control {
     this.setSelectedIndex(this.selectedIndex);
   }
 
-  public void setOptions(final int index, final T option) {
+  public void setOption(final int index, final T option) {
     this.options.set(index, option);
   }
 
