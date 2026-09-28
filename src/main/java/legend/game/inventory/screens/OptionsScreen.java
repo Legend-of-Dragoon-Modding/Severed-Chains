@@ -44,6 +44,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
   private final Map<Control, ConfigEntry<?>> helpEntries = new HashMap<>();
 
   public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
+    GameEngine.initializeRemainingRegistries();
     deallocateRenderables(0xff);
 
     this.unload = unload;
