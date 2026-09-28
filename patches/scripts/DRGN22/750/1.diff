@@ -1,19 +1,14 @@
 --- original
 +++ modified
-@@ -379,6 +379,7 @@
- mov 0x4, stor[30]
- LABEL_54:
- mov var[64][stor[24]], stor[24]
-+incr stor[29]
- call 198, stor[25], stor[24], 0x121, stor[29], stor[30], inl[:LABEL_127[:LABEL_127[stor[31]]]]
- call 2, 0xfe, 0x0
- fork_reenter stor[24], stor[27], 0x0
-@@ -2011,7 +2012,7 @@
+@@ -2011,9 +2011,9 @@
  data 0x24
  data 0x3
  PTR_3ac8_44:
 -data str[ he Mayor is right.<line>Exactly, right.]
 +data str[The Mayor is right.<line>Exactly, right.]
  PTR_3be0_44:
- data 0x12
+-data 0x12
++data 0x13
  data 0x2
+ PTR_3ac8_45:
+ data str[<sauto=0>Exactly, the Mayor is right.]
