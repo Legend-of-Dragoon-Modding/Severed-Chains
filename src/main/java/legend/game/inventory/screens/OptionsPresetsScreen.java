@@ -11,7 +11,6 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigPreset;
 import legend.game.saves.ConfigPresetEntry;
 import legend.game.saves.ConfigPresetManager;
-import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
@@ -80,7 +79,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
       return;
     }
 
-    final ConfigCollection newConfig = new ConfigCollection();
+    final ConfigCollection newConfig = new ConfigCollection(false);
     newConfig.copyConfigFrom(preset.config);
     this.deferAction(() -> this.getStack().pushScreen(new OptionsCategoryScreen(newConfig, EnumSet.allOf(ConfigStorageLocation.class), () -> this.onOptionsClosed(preset.name.get(), newConfig, preset.config))));
   }
@@ -110,7 +109,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
         return;
       }
 
-      final ConfigCollection newConfig = new ConfigCollection();
+      final ConfigCollection newConfig = new ConfigCollection(false);
 
       // Copy the reference config into the new one
       if(oldConfig != null) {
@@ -131,7 +130,6 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
   private void onSaveChangesResult(final MessageBoxResult result, final String name, final ConfigCollection config, @Nullable final ConfigCollection originalConfig) {
     if(result == MessageBoxResult.YES) {
       final Path path = ConfigPresetManager.savePreset(name, config);
-      ConfigStorage.saveConfig(config, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
       if(originalConfig == null) {
         // We aren't editing an existing preset, add a new one to the list
