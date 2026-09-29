@@ -119,6 +119,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.addRow(RawText.BLANK, editPresets);
     editPresets.onPressed(() -> {
       bootMods(MODS.getAllModIds());
+      GameEngine.initializeRemainingRegistries();
       this.deferAction(() -> this.getStack().pushScreen(new OptionsPresetsScreen((selectedIndex, presets) -> {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
@@ -133,15 +134,16 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     final Button options = new Button(new I18nText("lod_core.ui.new_campaign.options"));
     this.addRow(RawText.BLANK, options);
-    options.onPressed(() ->
+    options.onPressed(() -> {
+      GameEngine.initializeRemainingRegistries();
       this.getStack().pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
         startFadeEffect(2, 10);
         this.getStack().popScreen();
 
         // Update global config but don't save campaign config until an actual save file is made so we don't end up with orphan campaigns
         ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-      }))
-    );
+      }));
+    });
 
     final Button mods = new Button(new I18nText("lod_core.ui.new_campaign.mods"));
     this.addRow(RawText.BLANK, mods);

@@ -3,6 +3,7 @@ package legend.game.title;
 import de.jcm.discordgamesdk.activity.Activity;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import legend.core.Async;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.SelfUpdater;
 import legend.core.Updater;
@@ -514,7 +515,10 @@ public class Ttle extends EngineState<Ttle> {
   }
 
   private void fadeOutForOptions() {
-    this.fadeOutToMenu(() -> new OptionsPresetsScreen((selectedIndex, presets) -> whichMenu_800bdc38 = WhichMenu.UNLOAD), screen -> false);
+    this.fadeOutToMenu(() -> {
+      GameEngine.initializeRemainingRegistries();
+      return new OptionsPresetsScreen((selectedIndex, presets) -> whichMenu_800bdc38 = WhichMenu.UNLOAD);
+    }, screen -> false);
   }
 
   private void fadeOutForLinks() {
