@@ -188,7 +188,9 @@ public final class ConfigPresetManager {
     config.setConfig(DISPLAY_ELEMENT_ICON_CONFIG.get(), false);
     config.setConfig(ICON_SET.get(), IconSet.RETAIL);
     config.setConfig(ITEM_GROUP_SORT_MODE.get(), ItemGroupSortMode.RETAIL);
-    config.setConfig(SHOW_TURN_ORDER.get(), false);
+    if(SHOW_TURN_ORDER.isValid()) {
+      config.setConfig(SHOW_TURN_ORDER.get(), false);
+    }
     config.setConfig(QUICK_TEXT_CONFIG.get(), QuickTextMode.HOLD);
     config.setConfig(RUN_BY_DEFAULT.get(), false);
     config.setConfig(ENCOUNTER_RATE_CONFIG.get(), EncounterRateMode.RETAIL);
