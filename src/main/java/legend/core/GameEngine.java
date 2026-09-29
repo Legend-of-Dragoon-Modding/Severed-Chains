@@ -330,6 +330,7 @@ public final class GameEngine {
 
     // We need to boot the goods registry for save cards on the title screen
     REGISTRY_ACCESS.initialize(REGISTRIES.goods);
+    REGISTRY_ACCESS.initialize(REGISTRIES.saveSchemas);
 
     MOD_ACCESS.loadingComplete();
 
@@ -361,8 +362,13 @@ public final class GameEngine {
     loadLangOverrides(locale);
   }
 
-  public static void bootRegistries() {
+  /** Initialize registered data for authoring/menu consumers without recreating renderer resources. */
+  public static void initializeRemainingRegistries() {
     REGISTRY_ACCESS.initializeRemaining();
+  }
+
+  public static void bootRegistries() {
+    initializeRemainingRegistries();
     ItemIcon.loadIconMap();
 
     LOGGER.info("Creating texture atlas...");

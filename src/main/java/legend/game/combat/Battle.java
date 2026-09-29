@@ -18,6 +18,8 @@ import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
 import legend.core.renderer.McqBuilder;
 import legend.core.platform.input.InputAction;
+import legend.core.tags.IntTag;
+import legend.core.tags.MapTag;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment;
@@ -74,6 +76,9 @@ import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
+import legend.game.combat.environment.BattleStageDefinition;
+import legend.game.combat.environment.NativeBattleStageDefinition;
+import legend.lodmod.LodBattleStages;
 import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BattleStruct14;
 import legend.game.combat.environment.BttlLightStruct84;
@@ -93,7 +98,6 @@ import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
-import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleActionTickFlowControl;
 import legend.game.combat.ui.BattleHud;
@@ -191,6 +195,7 @@ import static legend.game.DrgnFiles.loadFile;
 import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.postBattleEngineState_800bc91c;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GetTPage;
@@ -236,7 +241,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
-import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
@@ -255,7 +259,6 @@ import static legend.game.Text.scriptDeallocateAllTextboxes;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
-import static legend.game.combat.SBtld._8011517c;
 import static legend.game.combat.SBtld.clearCombatVars;
 import static legend.game.combat.SBtld.loadAdditions;
 import static legend.game.combat.SEffe.addGenericAttachment;
@@ -276,7 +279,6 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_LOOT;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_NO_SCRIPT;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_RELOAD_BATTLE_ACTIONS;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
-import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
@@ -409,6 +411,15 @@ public class Battle extends EngineState<Battle> {
   /** The number of {@link #combatants_8005e398}s */
   private int combatantCount_800c66a0;
   public int currentStage_800c66a4;
+  private BattleRequest battleRequest;
+  private Tag battleReturnData;
+  private int preBattleSubmapCut;
+  private int preBattleSubmapScene;
+  private BattleStageDefinition stageDefinition;
+  private BattleStageDefinition stageEffectsDefinition;
+  private java.util.concurrent.CompletableFuture<Void> stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
+  private volatile long stageLoadGeneration;
+  private long stageLoadDeadline;
 
   public boolean battleInitialCameraMovementFinished_800c66a8;
   private int currentCompressedAssetIndex_800c66ac;
@@ -624,11 +635,15 @@ public class Battle extends EngineState<Battle> {
   @Override
   public void init() {
     super.init();
+    this.preBattleSubmapCut = submapCut_80052c30;
+    this.preBattleSubmapScene = submapScene_80052c34;
+    this.battleRequest = SBtld.consumeBattleRequest();
     clearCombatVars();
   }
 
   @Override
   public void destroy() {
+    this.cancelStageLoad();
     super.destroy();
     sssqResetStuff();
   }
@@ -707,6 +722,8 @@ public class Battle extends EngineState<Battle> {
   @Override
   @Method(0x800186a0L)
   public void tick() {
+    // Poll even when the global file loader is busy or a script changes stage mid-battle.
+    this.isStageReady();
     super.tick();
 
     if(battleLoaded_800bc94c) {
@@ -1952,7 +1969,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   private void waitForFilesToLoad() {
-    if(Loader.getLoadingFileCount() == 0) {
+    if(Loader.getLoadingFileCount() == 0 && this.isStageReady()) {
       this.loadingStage++;
     }
   }
@@ -2026,7 +2043,7 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c7648L)
   public void loadStageAndControllerScripts() {
-    this.loadStage(battleStage_800bb0f4);
+    this.loadStage(this.requestedStage());
     this.loadStageDataAndControllerScripts();
     this.loadingStage++;
   }
@@ -2341,7 +2358,7 @@ public class Battle extends EngineState<Battle> {
       return;
     }
 
-    if(Loader.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
+    if(Loader.getLoadingFileCount() == 0 && this.isStageReady() && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
       this.currentTurnBent_800c66c8.clearFlag(FLAG_RELOAD_BATTLE_ACTIONS);
@@ -2455,6 +2472,7 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c82b8L)
   public void deallocateCombat() {
+    this.cancelStageLoad();
     if(fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       this.updateGameStateAndDeallocateMenu();
       this.setStageHasNoModel();
@@ -2505,6 +2523,12 @@ public class Battle extends EngineState<Battle> {
 
       //LAB_800c8558
       postBattleEngineState_800bc91c = previousEngineState_8004dd28;
+      final BattleReturnContext returnContext = this.battleRequest.returnContext();
+      if(returnContext != null && REGISTRIES.engineStateTypes.hasEntry(returnContext.engineState())) {
+        postBattleEngineState_800bc91c = REGISTRIES.engineStateTypes.getEntry(returnContext.engineState()).get();
+      this.battleReturnData = returnContext.data();
+      legend.game.EngineStates.engineStateData = this.battleReturnData;
+      }
 
       final int postCombatSubmapScene = encounter.postCombatSubmapScene;
       if(postCombatSubmapScene != 0xff) {
@@ -2561,6 +2585,24 @@ public class Battle extends EngineState<Battle> {
       stopMusicSequence();
       vsyncMode_8007a3b8 = 2;
       engineStateOnceLoaded_8004dd24 = postBattleEngineState_800bc91c;
+      final BattleReturnContext returnContext = this.battleRequest.returnContext();
+      if(returnContext != null && !returnContext.engineState().equals(postBattleEngineState_800bc91c.getRegistryId()) && legend.game.EngineStates.engineStateData == this.battleReturnData) {
+        // An action may choose game-over, an FMV, or another destination with its own payload.
+        legend.game.EngineStates.engineStateData = null;
+      }
+
+      if(postBattleEngineState_800bc91c == LodEngineStateTypes.SUBMAP.get() && legend.game.EngineStates.engineStateData == this.battleReturnData && this.battleReturnData instanceof final MapTag data) {
+        // Resolve after the encounter and post-battle action have selected the native continuation.
+        final boolean redirected = encounter.postCombatSubmapCut != 0xffff || encounter.postCombatSubmapScene != 0xff
+          || this.preBattleSubmapCut != submapCut_80052c30 || this.preBattleSubmapScene != submapScene_80052c34;
+        if(redirected) {
+          data.set("cut", new IntTag(submapCut_80052c30));
+          data.set("scene", new IntTag(submapScene_80052c34));
+          data.remove("submapProvider");
+          data.remove("submapData");
+          data.remove("unresolvedSubmapDestination");
+        }
+      }
     }
 
     //LAB_80018a4c
@@ -2586,22 +2628,25 @@ public class Battle extends EngineState<Battle> {
   @Method(0x800c8774L)
   public void loadStageTmdAndAnim(final String modelName, final List<FileData> files) {
     LOGGER.info("Battle stage %s loaded", modelName);
+    if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
+      this.loadStageModel(modelName, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
+    } else {
+      this.setStageHasNoModel();
+      this.deleteBattleStageModel();
+    }
+  }
 
+  /** Custom providers need not manufacture a retail three-file model directory. */
+  public void loadStageModel(final String modelName, final CContainer model, final TmdAnimationFile animation) {
     this.setStageHasNoModel();
     this.deleteBattleStageModel();
-
-    if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
-      final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
-      stage.name = modelName;
-      this.loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
-      stage.coord2_558.coord.transfer.set(0, 0, 0);
-      stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
-
-      this.shouldRenderStage_800c6754 = true;
-      this.stageHasModel_800c66b8 = true;
-    }
-
-    //LAB_800c8818
+    final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
+    stage.name = modelName;
+    this.loadStageTmd(stage, model, animation);
+    stage.coord2_558.coord.transfer.set(0, 0, 0);
+    stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
+    this.shouldRenderStage_800c6754 = true;
+    this.stageHasModel_800c66b8 = true;
   }
 
   @Method(0x800c882cL)
@@ -2664,37 +2709,113 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800c8b20L)
   public void loadStage(final int stage) {
-    LOGGER.info("Loading battle stage %d", stage);
-
-    if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
-      battlePreloadedEntities_1f8003f4.skyboxObj.delete();
-      battlePreloadedEntities_1f8003f4.skyboxObj = null;
-    }
-
-    // GH#1931
-    // Disable texture animations so we don't corrupt the texture of the loading stage due to the old stage model still being loaded...
-    if(stage_800bda0c != null) {
-      for(int i = 0; i < 10; i++) {
-        stage_800bda0c._618[i] = 0;
-      }
-    }
-
-    // ... and defer loading to the next frame so that any texture animations currently in the pipeline finish
-    RENDERER.addTask(() -> {
-      loadDrgnDir(0, 2497 + stage).thenAccept(files -> {
-        if(files.get(1).hasVirtualSize()) {
-          this.loadStageMcq(new McqHeader(files.get(1)));
-        }
-
-        if(files.get(2).size() != 0) {
-          this.loadStageTim(files.get(2));
-        }
-      });
-
-      loadDrgnDir(0, (2497 + stage) + "/0").thenAccept(files -> this.loadStageTmdAndAnim("DRGN0/" + (2497 + stage) + "/0", files));
-    });
-
+    this.loadStage(LodBattleStages.nativeStage(stage));
     this.currentStage_800c66a4 = stage;
+  }
+
+  public void loadStage(final BattleStageDefinition stage) {
+    LOGGER.info("Loading battle stage %s", stage.getRegistryId());
+    this.stageLoading.cancel(false);
+    final long generation = ++this.stageLoadGeneration;
+    this.stageDefinition = stage;
+    this.stageEffectsDefinition = stage;
+    this.currentStage_800c66a4 = stage.legacyIndex();
+    final long timeout = Math.max(1L, Math.min(stage.loadingTimeoutMillis(), 3_600_000L));
+    this.stageLoadDeadline = System.nanoTime() + java.util.concurrent.TimeUnit.MILLISECONDS.toNanos(timeout);
+    final java.util.concurrent.CompletableFuture<Void> loading = new java.util.concurrent.CompletableFuture<>();
+    this.stageLoading = loading;
+
+    try {
+      // Do not cancel the producer future: a late owned result still needs disposal.
+      stage.prepare().whenComplete((prepared, error) -> {
+        if(error != null) {
+          loading.completeExceptionally(error);
+          return;
+        }
+        if(prepared == null) {
+          loading.completeExceptionally(new IllegalStateException("Stage provider returned no prepared resources"));
+          return;
+        }
+        if(generation != this.stageLoadGeneration || loading.isDone()) {
+          prepared.close();
+          return;
+        }
+        RENDERER.addTask(() -> {
+          try(prepared) {
+            if(generation != this.stageLoadGeneration || loading.isDone()) return;
+            if(System.nanoTime() - this.stageLoadDeadline >= 0) {
+              throw new IllegalStateException("Timed out adopting battle stage " + stage.getRegistryId());
+            }
+            if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
+              battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+              battlePreloadedEntities_1f8003f4.skyboxObj = null;
+            }
+            // Finish queued texture animations before adopting the next environment.
+            if(stage_800bda0c != null) {
+              for(int i = 0; i < 10; i++) stage_800bda0c._618[i] = 0;
+            }
+            if(stage.clearPreviousStageBeforeLoad()) {
+              this.setStageHasNoModel();
+              this.deleteBattleStageModel();
+              this.setDontRenderStageBackground();
+            }
+            prepared.adopt(this);
+          } catch(final Throwable failure) {
+            loading.completeExceptionally(failure);
+            return;
+          }
+          loading.complete(null);
+        });
+      });
+    } catch(final RuntimeException error) {
+      loading.completeExceptionally(error);
+    }
+  }
+
+  private void cancelStageLoad() {
+    this.stageLoadGeneration++;
+    this.stageLoading.cancel(false);
+    this.stageLoading = java.util.concurrent.CompletableFuture.completedFuture(null);
+  }
+
+  public BattleStageDefinition getStageDefinition() {
+    return this.stageDefinition;
+  }
+
+  private boolean isStageReady() {
+    if(!this.stageLoading.isDone()) {
+      if(System.nanoTime() - this.stageLoadDeadline < 0) return false;
+      this.stageLoadGeneration++;
+      this.stageLoading.completeExceptionally(new IllegalStateException("Timed out loading battle stage " + this.stageDefinition.getRegistryId()));
+    }
+    try {
+      this.stageLoading.join();
+    } catch(final java.util.concurrent.CompletionException failure) {
+      throw new IllegalStateException("Cannot activate battle stage " + this.stageDefinition.getRegistryId(), failure.getCause());
+    }
+    return true;
+  }
+
+  public BattleStageDefinition getStageEffectsDefinition() {
+    if(!(this.stageEffectsDefinition instanceof NativeBattleStageDefinition) && this.currentStage_800c66a4 != this.stageEffectsDefinition.legacyIndex()) return LodBattleStages.nativeStage(this.currentStage_800c66a4);
+    return this.stageEffectsDefinition;
+  }
+
+  private BattleStageDefinition requestedStage() {
+    if(this.battleRequest.stage().legacyIndex() != battleStage_800bb0f4) return LodBattleStages.nativeStage(battleStage_800bb0f4);
+    return this.battleRequest.stage();
+  }
+
+  /** Explicit legacy writes retain native intent even when its integer alias is unchanged. */
+  public void setLegacyRequestedStage(final int stage) {
+    if(this.battleRequest == null) return;
+    this.battleRequest = new BattleRequest(this.battleRequest.encounter(), LodBattleStages.nativeStage(stage), this.battleRequest.returnContext());
+  }
+
+  /** Retail variable 97 changes effect/ambiance interpretation without reloading the model. */
+  public void setLegacyCurrentStage(final int stage) {
+    this.currentStage_800c66a4 = stage;
+    this.stageEffectsDefinition = LodBattleStages.nativeStage(stage);
   }
 
   @Method(0x800c8c84L)
@@ -6353,7 +6474,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptDescription("Applies the current battle stage's ambiance (including Dragoon Space)")
   @Method(0x800e596cL)
   public FlowControl scriptApplyStageAmbiance(final RunningScript<?> script) {
-    final int dragoonStage = this.currentStage_800c66a4 - 71;
+    final int dragoonStage = this.getStageEffectsDefinition().dragoonSpaceIndex(this.currentStage_800c66a4);
 
     if(dragoonStage >= 0 && dragoonStage < 8) {
       this.applyStageAmbiance(deffManager_800c693c.dragoonSpaceAmbiance_98[dragoonStage]);
@@ -9331,28 +9452,13 @@ public class Battle extends EngineState<Battle> {
   @Method(0x801098f4L)
   public void loadStageAmbiance() {
     final DeffManager7cc deffManager = deffManager_800c693c;
-    final int stage = java.lang.Math.max(0, battleStage_800bb0f4);
-
-    //LAB_8010993c
-    //LAB_80109954
-    deffManager.stageAmbiance_4c.set(stageAmbiance_801134fc[stage]);
+    final BattleStageDefinition stage = this.requestedStage();
+    deffManager.stageAmbiance_4c.set(stage.ambiance());
     this.applyStageAmbiance(deffManager.stageAmbiance_4c);
-
-    //LAB_8010999c
     for(int i = 0; i < deffManager.dragoonSpaceAmbiance_98.length; i++) {
-      deffManager.dragoonSpaceAmbiance_98[i].set(stageAmbiance_801134fc[71 + i]);
+      deffManager.dragoonSpaceAmbiance_98[i].set(stage.dragoonAmbiance(i));
     }
-
-    final StageDeffThing08 thing = _8011517c[battleStage_800bb0f4];
-    deffManager._00._00 = thing._00;
-    deffManager._00._02 = thing._02;
-    deffManager._00._04 = thing._04;
-
-    //LAB_80109a30
-    for(int i = 0; melbuStageIndices_800fb064[i] != -1; i++) {
-      deffManager._08[i]._00 = thing._00;
-      deffManager._08[i]._02 = thing._02;
-    }
+    stage.initializeEffects(this);
   }
 
   @Override

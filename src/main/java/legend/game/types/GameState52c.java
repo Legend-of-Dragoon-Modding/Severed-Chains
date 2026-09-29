@@ -6,7 +6,9 @@ import legend.game.characters.CharacterData2c;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.GoodsInventory;
 import legend.game.inventory.Inventory;
+import legend.game.progression.CampaignProgression;
 import legend.game.saves.Campaign;
+import legend.game.wmap.world.WorldMapPortalState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,6 +53,17 @@ public class GameState52c {
   public final Flags scriptFlags1_13c = new Flags(8);
   public final Flags wmapFlags_15c = new Flags(8);
   public final Flags visitedLocations_17c = new Flags(8);
+  public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
+  public final CampaignProgression campaignProgression = new CampaignProgression(this.scriptFlags2_bc, this.wmapFlags_15c);
+  /** Immutable campaign package digest; empty retains registered defaults for pre-preset saves. */
+  public String worldMapPreset = "";
+  /** Portable package tags are retained even while a missing dependency forces native fallback. */
+  public legend.core.tags.MapTag worldMapPackage;
+  public boolean worldMapFallback;
+  public legend.core.tags.MapTag retainedSaveTags = new legend.core.tags.MapTag();
+  public legend.core.tags.MapTag registrySaveData = new legend.core.tags.MapTag();
+  /** Missing templates occupy their original script slots; serialize their opaque source data. */
+  public final java.util.Map<CharacterData2c, legend.core.tags.MapTag> unavailableCharacters = new java.util.IdentityHashMap<>();
   public final GoodsInventory goods_19c = new GoodsInventory();
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];

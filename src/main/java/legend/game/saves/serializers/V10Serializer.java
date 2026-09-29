@@ -3,6 +3,7 @@ package legend.game.saves.serializers;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.types.IntRef;
 import legend.core.tags.IntTag;
+import legend.core.tags.BoolTag;
 import legend.core.tags.ListTag;
 import legend.core.tags.MapTag;
 import legend.core.tags.RawTag;
@@ -11,7 +12,6 @@ import legend.core.tags.StringTag;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.characters.CharacterData2c;
-import legend.game.characters.CharacterTemplate;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Good;
 import legend.game.inventory.ItemStack;
@@ -39,12 +39,21 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 
 public final class V10Serializer {
+  private static final java.util.Set<String> KNOWN_FIELDS = java.util.Set.of(
+    "saveName", "campaignTypeId", "locationName", "atlas", "scriptData", "activeParty", "gold", "chapterIndex", "stardust", "timestamp", "_b0", "battleCount", "turnCount", "scriptFlags2", "scriptFlags1", "wmapFlags", "visitedLocations", "worldMapPortals", "worldMapPreset", "worldMapPackage", "campaignProgression", "_1a4", "chestFlags", "equipment", "items", "goods", "characters", "engineStateId", "engineStateData");
   private V10Serializer() { }
 
   public static SavedGame fromV10(final SaveVersion version, final Campaign campaign, final String filename, final FileData data) {
     final IntRef offset = new IntRef();
-    final MapTag tag = new MapTag();
-    tag.deserialize(data, offset);
+    final MapTag decoded = new MapTag();
+    decoded.deserialize(data, offset);
+    if(decoded.has("worldMapPackage")) decoded.set("worldMapPackage", legend.game.wmap.preset.WorldMapPresetManager.retainPackage(decoded.get("worldMapPackage").asMap()));
+    if(decoded.has("worldMapRecovery") && decoded.get("worldMapRecovery").asMap().has("package")) {
+      final MapTag recovery = decoded.get("worldMapRecovery").asMap();
+      recovery.set("package", legend.game.wmap.preset.WorldMapPresetManager.retainPackage(recovery.get("package").asMap()));
+    }
+    final legend.game.saves.SaveSchemaCatalog schemas = legend.game.saves.SaveSchemaCatalog.current();
+    final MapTag tag = schemas.read(decoded);
 
     final String name = tag.get("saveName").asString().get();
     final RegistryId campaignTypeId = tag.get("campaignTypeId").asRegistryId().get();
@@ -57,6 +66,18 @@ public final class V10Serializer {
 
     final ConfigCollection config = new ConfigCollection();
     final SeveredSavedGame savedGame = new SeveredSavedGame(campaign, version.name, filename, name, campaignTypeId, config, atlasData, atlasWidth, atlasHeight);
+    savedGame.retainedSaveTags = new MapTag();
+    if(tag.has("worldMapRecovery")) {
+      final MapTag recovery = tag.get("worldMapRecovery").asMap();
+      if(recovery.has("package")) recovery.set("package", legend.game.wmap.preset.WorldMapPresetManager.retainPackage(recovery.get("package").asMap()));
+    }
+    for(final String key : tag.keys()) {
+      if(!KNOWN_FIELDS.contains(key)) savedGame.retainedSaveTags.set(key, tag.get(key).clone());
+    }
+    for(final String key : java.util.List.of("equipment", "items", "goods", "characters")) savedGame.registrySaveData.set(key, tag.get(key).clone());
+    if(tag.has("worldMapPackage")) {
+      savedGame.worldMapPackage = legend.game.wmap.preset.WorldMapPresetManager.retainPackage(tag.get("worldMapPackage").asMap());
+    }
 
     final ListTag scriptDataTag = tag.get("scriptData").asList();
     for(int i = 0; i < savedGame.scriptData.length; i++) {
@@ -88,11 +109,23 @@ public final class V10Serializer {
     }
 
     final ListTag wmapFlagsTag = tag.get("wmapFlags").asList();
+    savedGame.wmapFlags.ensureCapacity(wmapFlagsTag.size());
     for(int i = 0; i < savedGame.wmapFlags.count(); i++) {
       savedGame.wmapFlags.setRaw(i, wmapFlagsTag.get(i).asInt().get());
     }
 
     final ListTag visitedLocationsTag = tag.get("visitedLocations").asList();
+    savedGame.worldMapPortalState.read(tag.get("worldMapPortals"));
+    if(tag.has("worldMapPreset")) {
+      savedGame.worldMapPreset = tag.get("worldMapPreset").asString().get();
+    }
+    if(tag.has("campaignProgression")) {
+      for(final Tag value : tag.get("campaignProgression").asList()) {
+        final MapTag entry = value.asMap();
+        savedGame.campaignProgressionFacts.put(entry.get("id").asRegistryId().get(), entry.get("value").asBool().get());
+      }
+    }
+    savedGame.visitedLocations.ensureCapacity(visitedLocationsTag.size());
     for(int i = 0; i < savedGame.visitedLocations.count(); i++) {
       savedGame.visitedLocations.setRaw(i, visitedLocationsTag.get(i).asInt().get());
     }
@@ -134,8 +167,8 @@ public final class V10Serializer {
     for(int charIndex = 0; charIndex < charactersTag.size(); charIndex++) {
       final MapTag characterTag = charactersTag.get(charIndex).asMap();
       final RegistryId templateId = characterTag.get("templateId").asRegistryId().get();
-      final CharacterTemplate template = REGISTRIES.characterTemplates.getEntry(templateId).get();
-      savedGame.characters.add(template.deserialize(characterTag));
+      final var template = REGISTRIES.characterTemplates.getEntry(templateId);
+      savedGame.characters.add(template.isValid() ? template.get().deserialize(characterTag) : new legend.game.saves.UnavailableSavedCharacter(characterTag));
       savedGame.charPortraits.add(new Rect4i(characterTag.get("portraitX").asInt().get(), characterTag.get("portraitY").asInt().get(), characterTag.get("portraitW").asInt().get(), characterTag.get("portraitH").asInt().get()));
     }
 
@@ -156,10 +189,12 @@ public final class V10Serializer {
   }
 
   public static void toV10(final String name, final FileData data, final IntRef offset, final CampaignType campaignType, final EngineState<?> engineState, final GameState52c gameState) {
+    final legend.game.saves.SaveSchemaCatalog schemas = legend.game.saves.SaveSchemaCatalog.current();
     final TexturePacker packer = new TexturePacker("Save " + name);
 
+    final java.util.Set<RegistryId> portraitIds = new java.util.HashSet<>();
     for(final CharacterData2c character : gameState.charData_32c) {
-      packer.add(character.template.getRegistryId(), character.template.loadPortrait());
+      if(portraitIds.add(character.template.getRegistryId())) packer.add(character.template.getRegistryId(), character.template.loadPortrait());
     }
 
     final byte[] atlas = packer.packToBytes(512, 512);
@@ -167,7 +202,18 @@ public final class V10Serializer {
     buffer.put(0, atlas);
     final byte[] compressed = PngWriter.compress(buffer, 512, 512);
 
-    final MapTag tag = new MapTag();
+    final MapTag tag = gameState.retainedSaveTags.clone();
+    for(final String optional : java.util.List.of("worldMapPackage", "worldMapPreset", "worldMapPortals", "campaignProgression")) tag.remove(optional);
+    try {
+      final MapTag worldMapPackage = legend.game.wmap.preset.WorldMapPresetManager.savePackage(gameState);
+      if(worldMapPackage != null) tag.set("worldMapPackage", worldMapPackage);
+      if(worldMapPackage != null && tag.has("worldMapRecovery")) {
+        final MapTag recovery = tag.get("worldMapRecovery").asMap();
+        if(recovery.get("preset").asString().get().equals(gameState.worldMapPreset)) recovery.remove("package");
+      }
+    } catch(final java.io.IOException failure) {
+      throw new IllegalStateException("Cannot preserve world map package in save", failure);
+    }
 
     tag.set("saveName", new StringTag(name));
     tag.set("campaignTypeId", new RegistryIdTag(campaignType.getRegistryId()));
@@ -188,7 +234,7 @@ public final class V10Serializer {
     final ListTag activePartyTag = new ListTag();
     tag.set("activeParty", activePartyTag);
     for(final int charIndex : gameState.charIds_88) {
-      activePartyTag.add(new IntTag(charIndex));
+      if(charIndex >= 0 && charIndex < gameState.charData_32c.size() && !gameState.unavailableCharacters.containsKey(gameState.charData_32c.get(charIndex))) activePartyTag.add(new IntTag(charIndex));
     }
 
     tag.set("gold", new IntTag(gameState.gold_94));
@@ -219,6 +265,22 @@ public final class V10Serializer {
     }
 
     final ListTag visitedLocationsTag = new ListTag();
+    if(gameState.worldMapPortalState.hasIdentities()) {
+      tag.set("worldMapPortals", gameState.worldMapPortalState.write(gameState.wmapFlags_15c, gameState.visitedLocations_17c));
+    }
+    if(!gameState.worldMapPreset.isEmpty()) {
+      tag.set("worldMapPreset", new StringTag(gameState.worldMapPreset));
+    }
+    if(!gameState.campaignProgression.facts().isEmpty()) {
+      final ListTag campaignProgressionTag = new ListTag();
+      tag.set("campaignProgression", campaignProgressionTag);
+      for(final var entry : gameState.campaignProgression.facts().entrySet()) {
+        final MapTag factTag = new MapTag();
+        factTag.set("id", new RegistryIdTag(entry.getKey()));
+        factTag.set("value", new BoolTag(entry.getValue()));
+        campaignProgressionTag.add(factTag);
+      }
+    }
     tag.set("visitedLocations", visitedLocationsTag);
     for(int i = 0; i < gameState.visitedLocations_17c.count(); i++) {
       visitedLocationsTag.add(new IntTag(gameState.visitedLocations_17c.getRaw(i)));
@@ -271,12 +333,14 @@ public final class V10Serializer {
     final ListTag charactersTag = new ListTag();
     tag.set("characters", charactersTag);
     for(int i = 0; i < gameState.charData_32c.size(); i++) {
-      final MapTag characterTag = new MapTag();
-      charactersTag.add(characterTag);
-
       final CharacterData2c character = gameState.charData_32c.get(i);
-      characterTag.set("templateId", new RegistryIdTag(character.template));
-      character.template.serialize(character, characterTag);
+      final MapTag unavailable = gameState.unavailableCharacters.get(character);
+      final MapTag characterTag = unavailable == null ? new MapTag() : unavailable.clone();
+      charactersTag.add(characterTag);
+      if(unavailable == null) {
+        characterTag.set("templateId", new RegistryIdTag(character.template));
+        character.template.serialize(character, characterTag);
+      }
 
       final Rect4i rect = packer.getRect(character.template.getRegistryId());
       characterTag.set("portraitX", new IntTag(rect.x));
@@ -289,11 +353,18 @@ public final class V10Serializer {
     tag.set("engineStateData", engineState.writeSaveData(gameState));
 
     final ListTag modTags = new ListTag();
-    EVENTS.postEvent(new WriteSaveDataEvent(modTags));
-    tag.set("modData", modTags);
+    final WriteSaveDataEvent writeEvent = EVENTS.postEvent(new WriteSaveDataEvent(modTags, schemas));
+    final ListTag retainedModData = gameState.retainedSaveTags.has("modData") ? gameState.retainedSaveTags.get("modData").asList() : new ListTag();
+    tag.set("modData", schemas.mergePayloads(modTags, retainedModData, writeEvent.removedIds()));
 
+    schemas.canonicalizeKnownFields(tag);
+    final MapTag retainedRegistryData = gameState.registrySaveData.clone();
+    schemas.canonicalizeKnownFields(retainedRegistryData);
+    legend.game.saves.SaveRegistryData.merge(tag, retainedRegistryData, schemas);
     tag.serialize(data, offset);
 
     ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data, offset);
+    // Persist deletion intent in this live campaign too; a later omitted write must not resurrect it.
+    gameState.retainedSaveTags.set("modData", tag.get("modData").clone());
   }
 }

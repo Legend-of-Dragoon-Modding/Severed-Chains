@@ -82,6 +82,7 @@ public class StatCollection implements Iterable<RegistryId> {
     for(final Tag tag : tags) {
       final MapTag statTag = tag.asMap();
       final RegistryId statTypeId = statTag.get("statTypeId").asRegistryId().get();
+      if(!REGISTRIES.statTypes.hasEntry(statTypeId)) continue;
       final StatType statType = REGISTRIES.statTypes.getEntry(statTypeId).get();
       final Stat stat = statType.make(stats);
       statType.deserialize(stat, statTag);
