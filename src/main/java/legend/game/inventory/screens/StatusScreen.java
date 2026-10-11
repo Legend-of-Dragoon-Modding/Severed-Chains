@@ -168,6 +168,14 @@ public class StatusScreen extends MenuScreen {
           this.downArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
         }
       }
+    } else {
+      if(this.upArrow != null) {
+        this.upArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
+      }
+
+      if(this.downArrow != null) {
+        this.downArrow.flags_00 |= Renderable58.FLAG_INVISIBLE;
+      }
     }
   }
 
