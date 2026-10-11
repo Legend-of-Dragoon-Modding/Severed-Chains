@@ -1,5 +1,6 @@
 package legend.core.renderer;
 
+import legend.core.Version;
 import legend.core.lang.RawText;
 import legend.game.ui.GameOverlay;
 import org.apache.logging.log4j.LogManager;
@@ -140,7 +141,10 @@ public abstract class Texture {
       if(!tex.deleted && (!tex.persistent || clearPersistent)) {
         if(shouldLog) {
           LOGGER.warn("Leaked: %s", tex.name);
-          GameOverlay.addNotification(5, new RawText("Leaked texture: " + tex.name));
+
+          if(!Version.isRelease()) {
+            GameOverlay.addNotification(5, new RawText("Leaked texture: " + tex.name));
+          }
         }
 
         tex.delete();

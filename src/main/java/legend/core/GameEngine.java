@@ -30,6 +30,7 @@ import legend.game.fmv.VideoPlayer;
 import legend.game.i18n.I18n;
 import legend.game.inventory.ItemIcon;
 import legend.game.inventory.screens.FontOptions;
+import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreEngineStateTypes;
 import legend.game.modding.coremod.CoreMod;
@@ -158,6 +159,7 @@ public final class GameEngine {
 
   private static boolean cinematicFinished;
   private static Texture eyeTexture;
+  private static Texture noSlopTexture;
   private static Obj texturedObj;
 
   private static final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE).noShadow().size(0.75f);
@@ -392,6 +394,11 @@ public final class GameEngine {
       eyeTexture = null;
     }
 
+    if(noSlopTexture != null) {
+      noSlopTexture.delete();
+      noSlopTexture = null;
+    }
+
     if(texturedObj != null) {
       texturedObj.delete();
       texturedObj = null;
@@ -446,6 +453,7 @@ public final class GameEngine {
     UI_TEXTURE.persistent = true;
 
     eyeTexture = Texture.png("Loading eye", Path.of("gfx", "textures", "loading.png"));
+    noSlopTexture = Texture.png("No slop", Path.of("gfx", "textures", "noslop.png"));
 
     texturedObj = new QuadBuilder("Textured Obj")
       .bpp(Bpp.BITS_24)
@@ -525,6 +533,8 @@ public final class GameEngine {
     final int oldTextZ = textZ_800bdf00;
     textZ_800bdf00 = 5;
 
+    final MV transforms = new MV();
+
     if(unpackerLoading) {
       // Offset sine wave delta to quickly shift between colours and then wait for a moment before repeating
       eyeColour += Math.max(0.0f, MathHelper.sin(deltaMs / 300.0f % MathHelper.TWO_PI) * 0.75f + 0.25f) / 500.0f;
@@ -532,7 +542,6 @@ public final class GameEngine {
       final Vector3f colour = new Vector3f();
       MathHelper.hsvToRgb(eyeColour, 1.0f, 1.0f, colour);
 
-      final MV transforms = new MV();
       transforms.scaling(16.0f, 16.0f, 1.0f);
       transforms.transfer.set(4.0f, 220.0f, 29.0f);
       RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
@@ -546,10 +555,26 @@ public final class GameEngine {
       renderText(I18n.translate("unpacker.loading"), 24.0f, 223.0f, UI_WHITE, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
+    transforms.scaling(16.0f, 16.0f, 1.0f);
+    transforms.transfer.set(301.0f, 221.0f, 29.0f);
+
+    RENDERER.queueOrthoModel(texturedObj, transforms, QueuedModelStandard.class)
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .texture(noSlopTexture)
+      .useTextureAlpha()
+      .alpha(eyeFade)
+    ;
+
+    final String fuckAi = I18n.translate("unpacker.made_by_humans");
+    final float width = DEFAULT_FONT.textWidth(fuckAi) * FONT.getSize();
+    renderText(fuckAi, 298.0f - width / 2.0f, 224.0f, FONT, (model, shadow) -> model.alpha(eyeFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
+
     if(!statusText.isBlank() && loadingFade != 0.0f) {
       renderMenuCentredText(DEFAULT_FONT, statusText, 160, 30, 300, fontOptions, (model, shadow) -> model.alpha(loadingFade).translucency(Translucency.HALF_B_PLUS_HALF_F));
     }
 
     textZ_800bdf00 = oldTextZ;
   }
+
+  private static final FontOptions FONT = new FontOptions().colour(TextColour.WHITE).size(0.5f).horizontalAlign(HorizontalAlign.CENTRE);
 }

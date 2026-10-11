@@ -1,5 +1,6 @@
 package legend.core.renderer;
 
+import legend.core.Version;
 import legend.core.lang.RawText;
 import legend.game.ui.GameOverlay;
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +53,10 @@ public abstract class Obj {
       if(!obj.deleted && (!obj.persistent || clearPersistent)) {
         if(shouldLog) {
           LOGGER.warn("Leaked: %s", obj.name);
-          GameOverlay.addNotification(5, new RawText("Leaked obj: " + obj.name));
+
+          if(!Version.isRelease()) {
+            GameOverlay.addNotification(5, new RawText("Leaked obj: " + obj.name));
+          }
         }
 
         obj.delete();

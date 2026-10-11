@@ -18,9 +18,9 @@ public class NewRootStruct {
    *   <li>0 (0x0): ?</li>
    *   <li>1 (0x2): ?</li>
    *   <li>2 (0x4): ?</li>
-   *   <li>3 (0x8): ?</li>
+   *   <li>3 (0x8): Blocked</li>
    *   <li>4 (0x10): Has map transition (see bits 16-21, 22-32)</li>
-   *   <li>5 (0x20): Might disable a kind of collision</li>
+   *   <li>5 (0x20): Shop/inn</li>
    *   <li>6 (0x40): ?</li>
    *   <li>7 (0x80): ?</li>
    *   <li>8-15: Used as index into arr_800cb460 (divided by 4)</li>

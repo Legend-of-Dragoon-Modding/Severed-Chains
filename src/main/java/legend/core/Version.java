@@ -20,4 +20,9 @@ public final class Version {
     final String os = System.getProperty("os.name").toLowerCase(Locale.US);
     return os.contains("mac os x") || os.contains("darwin") || os.contains("osx");
   }
+
+  public static boolean isRelease() {
+    //noinspection ConstantValue,MismatchedStringCase
+    return "release".equals(CHANNEL);
+  }
 }

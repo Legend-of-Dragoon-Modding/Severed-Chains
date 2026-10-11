@@ -1339,7 +1339,7 @@ public class RenderEngine {
   }
 
   private void onKeyPress(final Window window, final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
-    if(!this.allowMovement) {
+    if(!Version.isRelease() && !this.allowMovement) {
       if(key == InputKey.TAB) {
         if(mods.contains(InputMod.SHIFT)) {
           legacyMode = Math.floorMod(legacyMode - 1, 3);
