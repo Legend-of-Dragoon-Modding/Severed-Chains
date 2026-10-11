@@ -107,6 +107,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_CONVERT_MEMCARD;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_TITLE_UPDATE;
+import static legend.game.modding.coremod.CoreMod.LEGACY_WIDESCREEN_MODE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.sound.Audio.FUN_8001aa90;
 import static legend.game.sound.Audio.loadMusicPackage;
@@ -1407,10 +1408,26 @@ public class Ttle extends EngineState<Ttle> {
     //LAB_800cba90
     final int colour = rsin(this.logoFlashColour) * 160 >> 12;
 
-    this.flashTransforms
-      .scaling(320.0f * (((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / RENDERER.getNativeAspectRatio()), 240.0f, 1.0f)
-      .translate(0.0f, 0.0f, 30.0f)
-    ;
+    if(CONFIG.getConfig(LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.FORCED_4_3) {
+      final float expectedWidth = RENDERER.getNativeWidth();
+      final float actualWidth = RENDERER.getNativeHeight() * RENDERER.getRenderAspectRatio();
+      final float offset = (actualWidth - expectedWidth) / 2.0f;
+
+      this.flashTransforms
+        .translation(-offset, 0.0f, 30.0f)
+        .scale(actualWidth, 240.0f, 1.0f)
+      ;
+    } else if(CONFIG.getConfig(LEGACY_WIDESCREEN_MODE_CONFIG.get()) == SubmapWidescreenMode.STRETCHED) {
+      this.flashTransforms
+        .scaling(368.0f, 240.0f, 1.0f)
+        .translate(0.0f, 0.0f, 30.0f)
+      ;
+    } else {
+      this.flashTransforms
+        .scaling(320.0f * (((float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight()) / RENDERER.getNativeAspectRatio()), 240.0f, 1.0f)
+        .translate(0.0f, 0.0f, 30.0f)
+      ;
+    }
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms, QueuedModelStandard.class)
       .texture(RENDERER.getLastFrame())
