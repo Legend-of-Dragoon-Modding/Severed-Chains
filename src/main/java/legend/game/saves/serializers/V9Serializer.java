@@ -111,6 +111,8 @@ public final class V9Serializer {
       savedGame.charPortraits.add(new Rect4i(data.readShort(offset), data.readShort(offset), data.readShort(offset), data.readShort(offset)));
     }
 
+    savedGame.activeParty.removeIf(i -> i >= savedGame.characters.size());
+
     /*savedGame.characterInitialized = */data.readInt(offset);
 
     final RegistryId engineStateId = data.readRegistryId(offset);

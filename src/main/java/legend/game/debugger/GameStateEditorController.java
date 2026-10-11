@@ -512,6 +512,7 @@ public class GameStateEditorController {
   public void removeCharacter() {
     final int index = this.getCharacter.getSelectionModel().getSelectedIndex();
     gameState_800babc8.charData_32c.remove(index);
+    gameState_800babc8.charIds_88.removeIf(i -> i == index);
     this.getCharacter.getItems().remove(index);
   }
 

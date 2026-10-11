@@ -154,6 +154,8 @@ public final class V8Serializer {
       }
     }
 
+    savedGame.activeParty.removeIf(i -> i >= savedGame.characters.size());
+
     /*savedGame.characterInitialized = */data.readInt(offset);
 
     final RegistryId engineStateId = data.readRegistryId(offset);

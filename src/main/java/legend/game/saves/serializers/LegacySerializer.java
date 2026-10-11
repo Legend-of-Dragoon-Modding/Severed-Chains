@@ -253,6 +253,8 @@ public final class LegacySerializer {
       }
     }
 
+    savedGame.charIndices.removeIf(i -> i >= savedGame.characters.length);
+
     if(version.ordinal() < SaveVersion.V3.ordinal()) {
       final RetailSavedGame.SavedCharacter charData = savedGame.characters[savedGame.charIndices.getInt(0)];
       maxHp = Legacy.RETAIL_HP[savedGame.charIndices.getInt(0)][charData.level - 1];

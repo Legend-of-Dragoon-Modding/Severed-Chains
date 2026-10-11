@@ -183,6 +183,8 @@ public final class RetailSerializer {
       }
     }
 
+    savedGame.charIndices.removeIf(i -> i >= savedGame.characters.length);
+
     savedGame.pathIndex = data.readUShort(0x4d8);
     savedGame.dotIndex = data.readUShort(0x4da);
     savedGame.dotOffset = data.readUByte(0x4dc);

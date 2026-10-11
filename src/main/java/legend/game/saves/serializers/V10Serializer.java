@@ -139,6 +139,8 @@ public final class V10Serializer {
       savedGame.charPortraits.add(new Rect4i(characterTag.get("portraitX").asInt().get(), characterTag.get("portraitY").asInt().get(), characterTag.get("portraitW").asInt().get(), characterTag.get("portraitH").asInt().get()));
     }
 
+    savedGame.activeParty.removeIf(i -> i >= savedGame.characters.size());
+
     final RegistryId engineStateId = tag.get("engineStateId").asRegistryId().get();
     final Tag engineStateData = tag.get("engineStateData");
 
