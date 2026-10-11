@@ -132,6 +132,18 @@ public class VerticalLayoutScreen extends MenuScreen {
     return Math.min(this.maxVisibleEntries(), this.rows.size() - this.scroll);
   }
 
+  /// Finds the actual index of the control at this list index
+  private int findActualControlAtIndex(final int index) {
+    int listIndex = 0;
+    for(int visibleIndex = 0; listIndex < this.rows.size() && visibleIndex < index; listIndex++) {
+      if(this.visible.getBoolean(listIndex)) {
+        visibleIndex++;
+      }
+    }
+
+    return listIndex;
+  }
+
   private void updateEntries() {
     for(int rowIndex = 0, visibleIndex = 0; rowIndex < this.rows.size(); rowIndex++) {
       final Control control = this.rows.get(rowIndex);
@@ -181,9 +193,11 @@ public class VerticalLayoutScreen extends MenuScreen {
     }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
-      if(MathHelper.inBox((int)x, (int)y, this.highlight.getX(), 30 + i * 13, this.highlight.getWidth(), 13) && this.highlightedRow != this.scroll + i) {
+      final int actualIndex = this.findActualControlAtIndex(this.scroll + i);
+
+      if(actualIndex < this.rows.size() && MathHelper.inBox((int)x, (int)y, this.highlight.getX(), 30 + i * 13, this.highlight.getWidth(), 13) && this.highlightedRow != actualIndex) {
         playMenuSound(1);
-        this.highlightRow(this.scroll + i);
+        this.highlightRow(actualIndex);
         return InputPropagation.HANDLED;
       }
     }
