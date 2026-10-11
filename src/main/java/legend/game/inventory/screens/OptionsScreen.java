@@ -7,7 +7,6 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
-import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.saves.ConfigCategory;
@@ -26,13 +25,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_ADVANCED;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HELP;
 import static legend.game.modding.coremod.CoreMod.SHOW_ADVANCED_OPTIONS_CONFIG;
+import static legend.game.sound.Audio.playMenuSound;
 
 public class OptionsScreen extends VerticalLayoutScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger(OptionsScreen.class);
@@ -109,7 +108,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
             final Label lock = label.addControl(new Label(new I18nText("lod_core.ui.options.locked")));
             lock.setScale(0.4f);
             lock.setPos(extrasX + 2, 1);
-            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(new I18nText("lod_core.ui.options.locked_by", locked.stream().map(id -> I18n.translate(id + ".name")).collect(Collectors.joining(", "))), (int)this.mouseX, (int)this.mouseY)));
+            lock.onHoverIn(() -> this.getStack().pushScreen(new TooltipScreen(new I18nText("lod_core.ui.options.locked_by", locked.stream().sorted().collect(Collectors.joining(", "))), (int)this.mouseX, (int)this.mouseY)));
           }
         }
       });
