@@ -2,9 +2,8 @@ package legend.game.saves;
 
 import legend.core.lang.I18nText;
 import legend.core.lang.TextComponent;
+import legend.game.i18n.I18n;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
-import legend.lodmod.LodMod;
-import org.legendofdragoon.modloader.ModContainer;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -117,9 +116,9 @@ public class ConfigCollection {
 
   public void lockConfig(final ConfigEntry<?> config) {
     final Class<?> caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-    MODS.setActiveModByClassloader(caller.getClassLoader());
-    final ModContainer mod = ModContainer.getActiveMod();
-    this.locked.computeIfAbsent(config.getRegistryId(), k -> new HashSet<>()).add(mod != null ? mod.modId : LodMod.MOD_ID);
+    final Set<String> modIds = MODS.getModsByClass(caller);
+    final Set<String> locked = this.locked.computeIfAbsent(config.getRegistryId(), k -> new HashSet<>());
+    modIds.stream().map(id -> I18n.translate(id + ".name")).sorted().forEach(locked::add);
   }
 
   public Set<String> getLocked(final ConfigEntry<?> config) {
