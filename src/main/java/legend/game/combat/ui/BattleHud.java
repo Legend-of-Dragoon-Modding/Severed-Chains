@@ -666,7 +666,7 @@ public class BattleHud {
               .vertices(this.statObjIndices.get(charSlot).getInt(i), 4);
 
             if(i == 2) {
-              if(!player.character.hasDragoon()) {
+              if(!player.character.canUseSpells()) {
                 statsModel.scissor((int)this.uiTransforms.transfer.x, (int)this.uiTransforms.transfer.y, 320, 12);
               } else if(!canTransform) {
                 statsModel.scissor((int)this.uiTransforms.transfer.x, (int)this.uiTransforms.transfer.y, 320, 24);
