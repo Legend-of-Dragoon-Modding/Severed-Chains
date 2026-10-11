@@ -139,7 +139,7 @@ public class StatusScreen extends MenuScreen {
 
     final CharacterData2c character = gameState_800babc8.charData_32c.get(charIndex);
 
-    if(character.hasDragoon()) {
+    if(character.canUseSpells()) {
       final List<RegistryId> unlockedSpells = character.getUnlockedSpells();
       final int allSpellCount = character.getAllSpells().size();
 

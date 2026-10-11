@@ -399,9 +399,12 @@ public class BattleHud {
           this.renderNumber(charSlot, 0, playerHp.getCurrent(), colour);
           this.renderNumber(charSlot, 1, playerHp.getMax(), 1);
 
-          if(player.character.hasDragoon()) {
+          if(player.character.canUseSpells()) {
             this.renderNumber(charSlot, 2, playerMp.getCurrent(), 1);
             this.renderNumber(charSlot, 3, playerMp.getMax(), 1);
+          }
+
+          if(player.character.hasDragoon()) {
             this.renderNumber(charSlot, 4, playerSp.getCurrent() / 100, 1);
           }
 
@@ -648,7 +651,7 @@ public class BattleHud {
           //LAB_800f05f4
           for(int i = 0; i < 3; i++) {
             // Don't render MP slash if no DS
-            if(i == 1 && !player.character.hasDragoon()) {
+            if(i == 1 && !player.character.canUseSpells()) {
               continue;
             }
 

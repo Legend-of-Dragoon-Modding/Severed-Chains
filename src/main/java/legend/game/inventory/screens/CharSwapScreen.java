@@ -199,7 +199,6 @@ public class CharSwapScreen extends MenuScreen {
     icon.render(this.transforms);
 
     final VitalsStat hp = character.stats.getStat(HP_STAT.get());
-    final VitalsStat mp = character.stats.getStat(MP_STAT.get());
 
     final Renderable58 border = allocateUiElement(0x50, 0x50, x, y);
     border.z_3c = 33;
@@ -214,9 +213,17 @@ public class CharSwapScreen extends MenuScreen {
     }
 
     this.renderNumber(x + 25, y + 57, character.level_12, 4);
-    this.renderNumber(x + 25, y + 68, character.dlevel_13, 4);
+
+    if(character.hasDragoon()) {
+      this.renderNumber(x + 25, y + 68, character.dlevel_13, 4);
+    }
+
     renderFourDigitHp(x + 25, y + 79, hp.getCurrent(), hp.getMax(), Renderable58.FLAG_DELETE_AFTER_RENDER);
-    this.renderNumber(x + 25, y + 90, mp.getCurrent(), 4);
+
+    if(character.canUseSpells()) {
+      final VitalsStat mp = character.stats.getStat(MP_STAT.get());
+      this.renderNumber(x + 25, y + 90, mp.getCurrent(), 4);
+    }
   }
 
   private int getSecondaryCharX(final int slot) {

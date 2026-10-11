@@ -61,6 +61,11 @@ public abstract class CharacterTemplate extends RegistryEntry {
   }
 
   public abstract boolean hasDragoon(final CharacterData2c character);
+
+  public boolean canUseSpells(final CharacterData2c character) {
+    return this.hasDragoon(character);
+  }
+
   public abstract AdditionHits80 getDragoonAddition(final CharacterData2c character);
 
   public abstract CanEquip canEquip(final CharacterData2c character, final EquipmentSlot slot, final Equipment equipment);

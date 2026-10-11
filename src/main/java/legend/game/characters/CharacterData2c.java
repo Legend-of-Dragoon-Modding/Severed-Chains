@@ -217,6 +217,10 @@ public class CharacterData2c {
     return this.template.hasDragoon(this);
   }
 
+  public boolean canUseSpells() {
+    return this.template.canUseSpells(this);
+  }
+
   public AdditionHits80 getDragoonAddition() {
     return this.template.getDragoonAddition(this);
   }

@@ -8351,7 +8351,7 @@ public class Battle extends EngineState<Battle> {
       //LAB_800eec10
       bent.character.stats.getStat(HP_STAT.get()).setCurrent(java.lang.Math.max(1, bent.stats.getStat(HP_STAT.get()).getCurrent()));
 
-      if(bent.character.hasDragoon()) {
+      if(bent.character.canUseSpells()) {
         bent.character.stats.getStat(MP_STAT.get()).setCurrent(bent.stats.getStat(MP_STAT.get()).getCurrent());
       }
 

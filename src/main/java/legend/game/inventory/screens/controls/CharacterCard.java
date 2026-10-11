@@ -123,6 +123,9 @@ public class CharacterCard extends Control {
       if(this.character.hasDragoon()) {
         renderRightAlignedNumber(x + 123, y + 17, this.character.dlevel_13);
         renderRightAlignedNumber(x + this.getWidth(), y + 17, sp.getCurrent());
+      }
+
+      if(this.character.canUseSpells()) {
         renderFraction(x + this.getWidth(), y + 39, mp.getCurrent(), newMp, 0, getStatComparisonClut(oldMp, newMp));
       }
 
