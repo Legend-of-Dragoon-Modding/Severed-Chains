@@ -8,10 +8,12 @@ import org.lwjgl.sdl.SDL_KeyboardEvent;
 
 import java.util.Set;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.platform.input.InputAxis.LEFT_X;
 import static legend.core.platform.input.InputAxis.LEFT_Y;
 import static legend.core.platform.input.InputAxis.RIGHT_X;
 import static legend.core.platform.input.InputAxis.RIGHT_Y;
+import static legend.game.modding.coremod.CoreMod.SWAP_CONFIRM_CANCEL_CONFIG;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_AXIS_LEFTX;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_AXIS_LEFTY;
 import static org.lwjgl.sdl.SDLGamepad.SDL_GAMEPAD_AXIS_LEFT_TRIGGER;
@@ -346,8 +348,8 @@ public final class SdlInput {
       case DPAD_DOWN -> SDL_GAMEPAD_BUTTON_DPAD_DOWN;
       case DPAD_LEFT -> SDL_GAMEPAD_BUTTON_DPAD_LEFT;
       case DPAD_RIGHT -> SDL_GAMEPAD_BUTTON_DPAD_RIGHT;
-      case A -> SDL_GAMEPAD_BUTTON_SOUTH;
-      case B -> SDL_GAMEPAD_BUTTON_EAST;
+      case A -> CONFIG.getConfig(SWAP_CONFIRM_CANCEL_CONFIG.get()) ? SDL_GAMEPAD_BUTTON_EAST : SDL_GAMEPAD_BUTTON_SOUTH;
+      case B -> CONFIG.getConfig(SWAP_CONFIRM_CANCEL_CONFIG.get()) ? SDL_GAMEPAD_BUTTON_SOUTH : SDL_GAMEPAD_BUTTON_EAST;
       case X -> SDL_GAMEPAD_BUTTON_WEST;
       case Y -> SDL_GAMEPAD_BUTTON_NORTH;
       case START -> SDL_GAMEPAD_BUTTON_START;

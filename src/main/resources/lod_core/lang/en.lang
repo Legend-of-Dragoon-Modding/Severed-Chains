@@ -226,6 +226,8 @@ lod_core.items.nothing.battle_description=Nothing
 # Global config
 lod_core.config.controller_keybinds.label=Controls
 lod_core.config.controller_keybinds.configure=Configure...
+lod_core.config.swap_confirm_cancel.label=Swap Confirm/Cancel
+lod_core.config.swap_confirm_cancel.help=The Japanese version of the game has the Cross/Circle buttons swapped
 lod_core.config.menu_inner_deadzone.label=Menu Deadzone (Inner)
 lod_core.config.menu_outer_deadzone.label=Menu Deadzone (Outer)
 lod_core.config.movement_inner_deadzone.label=Movement Deadzone (Inner)

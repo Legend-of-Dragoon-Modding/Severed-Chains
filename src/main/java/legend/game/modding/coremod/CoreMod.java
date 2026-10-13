@@ -65,6 +65,7 @@ import legend.game.modding.coremod.config.SaveAnywhereConfig;
 import legend.game.modding.coremod.config.SecondaryCharacterXpMultiplierConfigEntry;
 import legend.game.modding.coremod.config.SfxVolumeConfigEntry;
 import legend.game.modding.coremod.config.ShowAdvancedOptionsConfigEntry;
+import legend.game.modding.coremod.config.SwapConfirmCancelConfigEntry;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.config.UnlockPartyConfig;
 import legend.game.modding.coremod.shops.EquipmentShopExtension;
@@ -158,6 +159,7 @@ public class CoreMod {
 
   // Per-campaign config
   public static final RegistryDelegate<ControllerKeybindsConfigEntry> CONTROLLER_KEYBINDS_CONFIG = CONFIG_REGISTRAR.register("controller_keybinds", ControllerKeybindsConfigEntry::new);
+  public static final RegistryDelegate<SwapConfirmCancelConfigEntry> SWAP_CONFIRM_CANCEL_CONFIG = CONFIG_REGISTRAR.register("swap_confirm_cancel", SwapConfirmCancelConfigEntry::new);
   public static final RegistryDelegate<CampaignNameConfigEntry> CAMPAIGN_NAME = CONFIG_REGISTRAR.register("campaign_name", CampaignNameConfigEntry::new);
   public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
   public static final RegistryDelegate<EnabledModsConfigEntry> KNOWN_MODS_CONFIG = CONFIG_REGISTRAR.register("known_mods", EnabledModsConfigEntry::new);
