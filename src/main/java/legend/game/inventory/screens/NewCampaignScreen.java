@@ -86,7 +86,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.campaignName = new Textbox();
     this.campaignName.setText(SAVES.generateCampaignName());
-    this.campaignName.setMaxLength(15);
+    this.campaignName.setMaxLength(23);
     this.campaignName.setZ(35);
     this.addRow(new I18nText("lod_core.ui.new_campaign.campaign_name"), this.campaignName);
 

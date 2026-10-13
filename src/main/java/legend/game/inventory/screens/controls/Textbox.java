@@ -189,9 +189,13 @@ public class Textbox extends Control {
     }
 
     if(key == InputKey.V && mods.contains(InputMod.CTRL)) {
-      final String pasted = PLATFORM.getPasteText();
+      String pasted = PLATFORM.getPasteText();
 
       if(!pasted.isEmpty()) {
+        if(this.text.length() + pasted.length() > this.getMaxLength()) {
+          pasted = pasted.substring(0, this.getMaxLength() - this.text.length());
+        }
+
         final int caretIndex = this.caretIndex;
         this.updateText(this.text.substring(0, this.caretIndex) + pasted + this.text.substring(this.caretIndex));
         this.setCaretIndex(caretIndex + pasted.length());
