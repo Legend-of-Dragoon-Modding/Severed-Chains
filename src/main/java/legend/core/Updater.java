@@ -69,7 +69,7 @@ public class Updater {
   private void onCheckComplete(final HttpResponse<String> response, final Consumer<Release> onComplete) {
     final Release release = this.parseReleases(new JSONArray(response.body()))
       .stream()
-      .filter(r -> r.tag.startsWith(Version.CHANNEL) && r.timestamp.isAfter(Version.TIMESTAMP))
+      .filter(r -> (r.tag.startsWith(Version.CHANNEL) || r.tag.startsWith("release")) && r.timestamp.isAfter(Version.TIMESTAMP))
       .sorted()
       .findFirst()
       .orElse(null);
