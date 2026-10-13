@@ -71,42 +71,41 @@ public final class IoHelper {
     }
   }
 
-  /** ASCII bytes of a string prefixed with lengthSize-byte length header */
+  /** UTF-8 bytes of a string prefixed with lengthSize-byte length header */
   public static byte[] stringToBytes(final String string, final int lengthSize) {
-    final byte[] bytes = string.getBytes(StandardCharsets.US_ASCII);
+    final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
     final byte[] data = new byte[lengthSize + bytes.length];
     MathHelper.set(data, 0, lengthSize, bytes.length);
     System.arraycopy(bytes, 0, data, lengthSize, bytes.length);
     return data;
   }
 
-  /** String from ASCII bytes prefixed with lengthSize-byte length header */
+  /** String from UTF-8 bytes prefixed with lengthSize-byte length header */
   public static String stringFromBytes(final byte[] bytes, final int lengthSize) {
     final int length = (int)MathHelper.get(bytes, 0, lengthSize);
-    return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+    return new String(bytes, lengthSize, length, StandardCharsets.UTF_8);
   }
 
-  /** String from ASCII bytes prefixed with lengthSize-byte length header, default value if error occurs */
+  /** String from UTF-8 bytes prefixed with lengthSize-byte length header, default value if error occurs */
   public static String stringFromBytes(final byte[] bytes, final int lengthSize, final String defaultValue) {
     try {
-      final int length = (int)MathHelper.get(bytes, 0, lengthSize);
-      return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+      return stringFromBytes(bytes, lengthSize);
     } catch(final Throwable ignored) { }
 
     return defaultValue;
   }
 
-  /** ASCII bytes of an enum name() prefixed with 1-byte length header */
+  /** UTF-8 bytes of an enum name() prefixed with 1-byte length header */
   public static byte[] enumToBytes(final Enum<?> inst) {
     return stringToBytes(inst.name(), 1);
   }
 
-  /** Enum from ASCII bytes name() prefixed with 1-byte length header */
+  /** Enum from UTF-8 bytes name() prefixed with 1-byte length header */
   public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes) {
     return Enum.valueOf(cls, stringFromBytes(bytes, 1));
   }
 
-  /** Enum from ASCII bytes name() prefixed with 1-byte length header, default value if error occurs */
+  /** Enum from UTF-8 bytes name() prefixed with 1-byte length header, default value if error occurs */
   public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes, final T defaultValue) {
     try {
       return enumFromBytes(cls, bytes);

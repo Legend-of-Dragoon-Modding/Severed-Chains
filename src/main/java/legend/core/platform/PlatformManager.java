@@ -134,4 +134,6 @@ public abstract class PlatformManager {
   public abstract float getAxis(final InputAction action);
 
   public abstract void openUrl(final String url);
+
+  public abstract String getPasteText();
 }

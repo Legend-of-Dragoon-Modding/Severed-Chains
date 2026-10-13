@@ -134,4 +134,9 @@ public class NoopPlatformManager extends PlatformManager {
   public void openUrl(final String url) {
 
   }
+
+  @Override
+  public String getPasteText() {
+    return "";
+  }
 }
