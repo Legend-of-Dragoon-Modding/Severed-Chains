@@ -54,6 +54,16 @@ public abstract class CharacterTemplate extends RegistryEntry {
   public abstract int getXpToNextLevel(final CharacterData2c character);
   public abstract int getDxpToNextLevel(final CharacterData2c character);
 
+  /// Get the extra XP to add to level 59 to generate infinite XP requirements past level 60
+  protected int getExtendedXp(final CharacterData2c character) {
+    int xp = 0;
+    for(int i = 0; i < character.level_12 - 59; i++) {
+      xp += 23000 + i * 1000;
+    }
+
+    return xp;
+  }
+
   public abstract Element getElement(final CharacterData2c character);
 
   public Element getElement(final CharacterData2c character, final PlayerBattleEntity bent) {

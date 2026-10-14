@@ -78,7 +78,7 @@ public class MeruTemplate extends RetailCharacterTemplate {
       return XP[character.level_12 - 1];
     }
 
-    return XP[XP.length - 1] + 23000 + (character.level_12 - 1 - XP.length) * 1000;
+    return XP[XP.length - 1] + this.getExtendedXp(character);
   }
 
   @Override
