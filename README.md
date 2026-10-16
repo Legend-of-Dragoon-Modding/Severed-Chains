@@ -27,7 +27,7 @@ Controllers and gamepads are fully supported, including rumble. Keyboard control
 
 When a new version is available, an "Update Available" button appears on the title screen. Clicking it downloads and applies the update automatically.
 
-The automatic updater preserves your saves, mods, ISOs, extracted files, and config. After the update completes, restart the game.
+The automatic updater preserves your saves, mods, ISOs, and config. After the update completes, restart the game.
 
 ### GPU Selection
 
