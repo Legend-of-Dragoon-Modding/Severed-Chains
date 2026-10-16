@@ -1,65 +1,34 @@
-Like what you see? Send me a tip! You can also subscribe to our [YouTube channel](https://www.youtube.com/@legend-of-dragoon). We do devstreams most Wednesdays at 8:00PM Atlantic Time.
+Like what you see? Send me a tip! You can also subscribe to our [YouTube channel](https://www.youtube.com/@legend-of-dragoon).
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W4HFVW9)
 
 # Severed Chains
 
-A project to reverse engineer Legend of Dragoon into a high-level language with a modding API. This is not an emulator, but assembly code disassembled and rewritten in Java.
+Legend of Dragoon reverse engineered into high-level code with a modding API. This is not an emulator, but assembly code disassembled and rewritten in Java. AI was not used to create this project.
 
 ### Current Progress
 
-- Game engine is fully functional with a few minor glitches that don't negatively affect gameplay
-- Modding API is actively in development
-- Game is fully playable with no known crashes
+- The game is fully playable with no known crashes
+- Many bugs in the original game have been fixed
+- Many new features and options not in the original game
+- A Modding API with many features and more features in development
 
 ### Interested in playing?
 
-Visit our player guide here! https://legendofdragoon.org/projects/severed-chains/
-
-### Interested in the code?
-
-Visit our discord and drop into the [#modding channel](https://discord.com/channels/307164262063669248/318595603636551701)!
-
-A strong knowledge of Java and MIPS assembly is recommended. If you are interested in contributing (or just curious), the following steps should get you up and running:
-1. Install a git client and ensure the installation includes command line integration
-2. Clone this repository to your local computer using git
-3. Copy your ISOs or BINs of the LoD disks into the `isos` directory.
-4. Open your local copy of this repository in your IDE (IntelliJ recommended)
-5. Gradle should automatically attempt to configure the project and download all dependencies. If it doesn't, expand the gradle tab and click refresh. This process should succeed; resolve any errors if it does not. (lack of command line git can cause issues here)
-6. Run the project
-
-Note: Java 21 is required. It is **strongly** recommended to run with assertions enabled.
+Visit our project page for downloads and a setup guide! https://legendofdragoon.org/projects/severed-chains/
 
 ### Controls ###
 
-Controllers and gamepads are fully supported. Keyboard controls may be changed in the in-game options menu.
-
-Default keyboard controls:
-- D-pad - arrow keys
-- Shape buttons - WASD
-- Start - enter
-- Select - space
-- L1 - Q
-- L2 - 1
-- L3 - Z
-- R1 - E
-- R2 - 3
-- R3 - C
-- F11 - pause
-- F12 - open debug tools (developer features - can easily cause crashes)
-- DEL - kill sounds (rarely, a sound may get stuck playing)
-- Tab - VRAM viewer
-
-To set up a controller, simply connect it before or after starting the game,
-and select it from the controller dropdown in the in-game options menu.
+Controllers and gamepads are fully supported, including rumble. Keyboard controls are also supported, and mouse controls are available in menus. You can see the default controls in the options menu. Controllers and gamepads should be automatically detected.
 
 **NOTE**: There are known issues with using DS4windows, and possibly other controller emulators. Severed Chains supports 1800+ controllers out of the box so it's very likely you can just plug in your controller, set it up, and play. If you find a controller that isn't in our controller database, please contact us and we'll work with you to get it added. If you do use DS4windows, make sure your controller isn't hidden and close DS4windows.
 
 ### Updating
 
-When a new version is available, an "Update Available" button appears on the title screen. Clicking it downloads and applies the update automatically if a platform-specific release is available, otherwise it opens the release page in your browser for manual download.
+When a new version is available, an "Update Available" button appears on the title screen. Clicking it downloads and applies the update automatically.
 
-The automatic updater preserves your saves, mods, ISOs, extracted files, and config. After the update completes, restart the game. A log of each update is written to `update_log.txt` in the game directory.
+The automatic updater preserves your saves, mods, ISOs, extracted files, and config. After the update completes, restart the game.
+
 ### GPU Selection
 
 Severed Chains supports GPU preference settings for systems with multiple graphics cards (laptops with integrated and discrete GPUs).
@@ -81,6 +50,20 @@ To configure GPU preference in UNIX systems, edit `launch.conf` in your game fol
 - `GPU_PREFERENCE=1` - Discrete GPU (NVIDIA/AMD dedicated graphics)
 - `GPU_PREFERENCE=2` - Integrated GPU (Intel/AMD integrated graphics)
 
+### Interested in the code?
+
+Visit our discord and drop into the [#modding channel](https://discord.com/channels/307164262063669248/318595603636551701)!
+
+If you are interested in contributing (or just curious), the following steps should get you up and running:
+1. Install a git client and ensure the installation includes command line integration
+2. Clone this repository to your local computer using git
+3. Copy your ISOs or BINs of the LoD disks into the `isos` directory.
+4. Open your local copy of this repository in your IDE (IntelliJ recommended)
+5. Gradle should automatically attempt to configure the project and download all dependencies. If it doesn't, expand the gradle tab and click refresh. This process should succeed; resolve any errors if it does not. (lack of command line git can cause issues here)
+6. Run the project
+
+Note: Java 25 is required.
+
 ### Copyright Information
 
-Even though it is not an emulator, Legend of Dragoon Java can not be played without the user providing the LoD disk images. Assets are extracted from the ROMs at runtime. This codebase does not include any official Legend of Dragoon code or assets.
+Even though it is not an emulator, Severed Chains can not be played without the user providing the LoD disk images. Assets are extracted from the ROMs at runtime. This codebase does not include any official Legend of Dragoon code or assets.
