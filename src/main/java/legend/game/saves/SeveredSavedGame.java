@@ -12,6 +12,7 @@ import legend.game.inventory.screens.controls.SeveredSaveCard;
 import legend.game.characters.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.GameState52c;
+import legend.game.wmap.world.WorldMapPortalState;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +20,9 @@ import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.REGISTRIES;
 
@@ -49,6 +52,12 @@ public class SeveredSavedGame extends SavedGame {
   public final Flags scriptFlags1 = new Flags(8);
   public final Flags wmapFlags = new Flags(8);
   public final Flags visitedLocations = new Flags(8);
+  public final WorldMapPortalState worldMapPortalState = new WorldMapPortalState();
+  public final Map<RegistryId, Boolean> campaignProgressionFacts = new LinkedHashMap<>();
+  public String worldMapPreset = "";
+  public legend.core.tags.MapTag worldMapPackage;
+  public legend.core.tags.MapTag retainedSaveTags = new legend.core.tags.MapTag();
+  public legend.core.tags.MapTag registrySaveData = new legend.core.tags.MapTag();
   public final List<RegistryId> goodsIds = new ArrayList<>();
   public final int[] _1a4 = new int[8];
   public final int[] chestFlags = new int[8];
@@ -80,7 +89,7 @@ public class SeveredSavedGame extends SavedGame {
     gameState.campaign = this.campaign;
 
     System.arraycopy(this.scriptData, 0, gameState.scriptData_08, 0, this.scriptData.length);
-    gameState.charIds_88.addAll(this.activeParty);
+
     gameState.gold_94 = this.gold;
     gameState.chapterIndex_98 = this.chapterIndex;
     gameState.stardust_9c = this.stardust;
@@ -92,10 +101,38 @@ public class SeveredSavedGame extends SavedGame {
     gameState.scriptFlags1_13c.set(this.scriptFlags1);
     gameState.wmapFlags_15c.set(this.wmapFlags);
     gameState.visitedLocations_17c.set(this.visitedLocations);
-    this.goodsIds.stream().map(REGISTRIES.goods::getEntry).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
+    gameState.worldMapPortalState.set(this.worldMapPortalState);
+    gameState.campaignProgression.setFacts(this.campaignProgressionFacts);
+    gameState.worldMapPreset = this.worldMapPreset;
+    gameState.worldMapPackage = this.worldMapPackage == null ? null : this.worldMapPackage.clone();
+    gameState.retainedSaveTags = this.retainedSaveTags.clone();
+    legend.game.wmap.world.WorldMapRecovery.attachPackage(gameState);
+    if(!this.registrySaveData.has("equipment")) {
+      final var entries = new legend.core.tags.ListTag();
+      for(final var id : this.equipmentIds) entries.add(SaveRegistryData.inventoryEntry("equipmentId", id));
+      this.registrySaveData.set("equipment", entries);
+    }
+    if(!this.registrySaveData.has("goods")) {
+      final var entries = new legend.core.tags.ListTag();
+      for(final var id : this.goodsIds) entries.add(SaveRegistryData.inventoryEntry("goodId", id));
+      this.registrySaveData.set("goods", entries);
+    }
+    if(!this.registrySaveData.has("items")) {
+      final var entries = new legend.core.tags.ListTag();
+      for(final InventoryEntry item : this.itemIds) {
+        final var entry = SaveRegistryData.inventoryEntry("itemId", item.id);
+        entry.set("size", new legend.core.tags.IntTag(item.size));
+        entry.set("durability", new legend.core.tags.IntTag(item.durability));
+        if(item.extraData != null) entry.set("extraData", item.extraData.clone());
+        entries.add(entry);
+      }
+      this.registrySaveData.set("items", entries);
+    }
+    gameState.registrySaveData = this.registrySaveData;
+    this.goodsIds.stream().map(REGISTRIES.goods::getEntry).filter(RegistryDelegate::isValid).forEach(entry -> gameState.goods_19c.give(entry, GoodsSource.INITIALIZATION));
     System.arraycopy(this._1a4, 0, gameState._1a4, 0, this._1a4.length);
     System.arraycopy(this.chestFlags, 0, gameState.chestFlags_1c4, 0, this.chestFlags.length);
-    this.equipmentIds.stream().map(REGISTRIES.equipment::getEntry).map(RegistryDelegate::get).forEach(gameState.equipment_1e8::add);
+    this.equipmentIds.stream().map(REGISTRIES.equipment::getEntry).filter(RegistryDelegate::isValid).map(RegistryDelegate::get).forEach(gameState.equipment_1e8::add);
 
     for(final InventoryEntry entry : this.itemIds) {
       final RegistryDelegate<Item> delegate = GameEngine.REGISTRIES.items.getEntry(entry.id);
@@ -110,10 +147,31 @@ public class SeveredSavedGame extends SavedGame {
       gameState.items_2e9.give(stack, true);
     }
 
+    int firstAvailableCharacter = -1;
     for(int charId = 0; charId < this.characters.size(); charId++) {
       final SavedCharacter savedCharacter = this.characters.get(charId);
-      final CharacterData2c charData = savedCharacter.make(gameState);
-      gameState.charData_32c.add(charData);
+      if(savedCharacter instanceof final UnavailableSavedCharacter unavailable) {
+        // Preserve script ABI indices; unavailable content is inert and never an active-party fallback.
+        final CharacterData2c placeholder = legend.lodmod.LodCharacterTemplates.DART.get().make(gameState);
+        placeholder.partyFlags_04 = 0;
+        gameState.charData_32c.add(placeholder);
+        gameState.unavailableCharacters.put(placeholder, unavailable.data());
+      } else {
+        gameState.charData_32c.add(savedCharacter.make(gameState));
+        if(firstAvailableCharacter == -1) firstAvailableCharacter = charId;
+      }
+    }
+    for(final int index : this.activeParty) {
+      if(index >= 0 && index < gameState.charData_32c.size() && !gameState.unavailableCharacters.containsKey(gameState.charData_32c.get(index))) gameState.charIds_88.add(index);
+    }
+    if(firstAvailableCharacter == -1) {
+      final CharacterData2c fallback = legend.lodmod.LodCharacterTemplates.DART.get().make(gameState);
+      firstAvailableCharacter = gameState.charData_32c.size();
+      gameState.charData_32c.add(fallback);
+    }
+    if(gameState.charIds_88.isEmpty()) {
+      gameState.charIds_88.add(firstAvailableCharacter);
+      gameState.charData_32c.get(firstAvailableCharacter).partyFlags_04 |= CharacterData2c.IN_PARTY;
     }
 
     gameState.pathIndex_4d8 = this.pathIndex;

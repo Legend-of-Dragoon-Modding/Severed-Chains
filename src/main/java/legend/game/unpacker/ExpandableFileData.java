@@ -2,15 +2,23 @@ package legend.game.unpacker;
 
 public class ExpandableFileData extends FileData {
   private final ExpandableFileData parent;
+  private final int maximumSize;
 
   public ExpandableFileData(final int startSize) {
+    this(startSize, Integer.MAX_VALUE);
+  }
+
+  public ExpandableFileData(final int startSize, final int maximumSize) {
     super(new byte[startSize]);
+    if(startSize < 1 || maximumSize < startSize) throw new IllegalArgumentException("Invalid expandable file capacity");
     this.parent = null;
+    this.maximumSize = maximumSize;
   }
 
   protected ExpandableFileData(final ExpandableFileData parent, final int offset, final int size) {
     super(parent.data, parent.offset + offset, size);
     this.parent = parent;
+    this.maximumSize = parent.maximumSize;
   }
 
   @Override
@@ -44,11 +52,13 @@ public class ExpandableFileData extends FileData {
       throw new IndexOutOfBoundsException("Negative size " + size);
     }
 
-    final int requiredSize = this.offset + offset + size;
+    final long required = (long)this.offset + offset + size;
+    if(required > this.maximumSize) throw new IllegalArgumentException("File exceeds maximum capacity " + this.maximumSize);
+    final int requiredSize = (int)required;
     if(requiredSize > this.size()) {
-      int newSize = this.size() * 2;
+      int newSize = (int)Math.min((long)this.size() * 2, this.maximumSize);
       while(newSize < requiredSize) {
-        newSize *= 2;
+        newSize = (int)Math.min((long)newSize * 2, this.maximumSize);
       }
 
       final byte[] newData = new byte[newSize];

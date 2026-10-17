@@ -8,6 +8,8 @@ import legend.game.wmap.WMap;
 
 public class WorldMapEncounterEvent extends EncounterEvent<WMap> implements WorldMapEvent {
   public final DirectionalPathSegmentData08 directionalPathSegment;
+  /** Cancels battle entry. The rolled encounter has already consumed and reset the accumulator. */
+  public boolean cancelled;
 
   public WorldMapEncounterEvent(final WMap engineState, final GameState52c gameState, final Encounter encounter, final int battleStageId, final DirectionalPathSegmentData08 directionalPathSegment) {
     super(engineState, gameState, encounter, battleStageId);

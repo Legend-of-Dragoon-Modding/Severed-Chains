@@ -76,6 +76,7 @@ public class SeveredSavedCharacterV2 implements SavedCharacter {
 
     for(final var entry : this.additionInfo.entrySet()) {
       final RegistryId additionId = entry.getKey();
+      if(!REGISTRIES.additions.hasEntry(additionId)) continue;
       final CharacterAdditionInfo charAdditionInfo = character.getAdditionInfo(additionId);
 
       if(charAdditionInfo != null) {
@@ -89,13 +90,14 @@ public class SeveredSavedCharacterV2 implements SavedCharacter {
     if(this.selectedAddition != null) {
       if(REGISTRIES.additions.hasEntry(this.selectedAddition)) {
         character.selectedAddition_19 = this.selectedAddition;
-      } else {
+      } else if(!character.getUnlockedAdditions().isEmpty()) {
         character.selectedAddition_19 = character.getUnlockedAdditions().getFirst();
       }
     }
 
     for(final var entry : this.spellInfo.entrySet()) {
       final RegistryId spellId = entry.getKey();
+      if(!REGISTRIES.spells.hasEntry(spellId)) continue;
       final CharacterSpellInfo charSpellInfo = character.getSpellInfo(spellId);
 
       if(charSpellInfo != null) {

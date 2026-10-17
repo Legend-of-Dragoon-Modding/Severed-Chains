@@ -9,6 +9,7 @@ import legend.core.renderer.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.combat.encounters.Encounter;
+import legend.lodmod.LodBattleStages;
 import legend.game.combat.types.StageDeffThing08;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.types.BattleReportOverlay0e;
@@ -57,15 +58,39 @@ public final class SBtld {
 
   private static int _800bd740;
 
+  private static BattleRequest pendingBattleRequest;
+
   public static void startLegacyEncounter(final int encounterId, final int stageId) {
     startEncounter(REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get(), stageId);
     encounterId_800bb0f8 = encounterId;
   }
 
   public static void startEncounter(final Encounter encounter, final int stageId) {
-    encounterId_800bb0f8 = -1;
+    startEncounter(new BattleRequest(encounter, LodBattleStages.nativeStage(stageId), null));
     battleStage_800bb0f4 = stageId;
-    Scus94491BpeSegment_800b.encounter = encounter;
+  }
+
+  public static void startEncounter(final BattleRequest request) {
+    encounterId_800bb0f8 = -1;
+    battleStage_800bb0f4 = request.stage().legacyIndex();
+    Scus94491BpeSegment_800b.encounter = request.encounter();
+    pendingBattleRequest = request;
+  }
+
+  /** Explicit legacy writes select a native stage while preserving a typed return context. */
+  public static void setLegacyBattleStage(final int stageId) {
+    battleStage_800bb0f4 = stageId;
+    if(pendingBattleRequest != null) {
+      pendingBattleRequest = new BattleRequest(pendingBattleRequest.encounter(), LodBattleStages.nativeStage(stageId), pendingBattleRequest.returnContext());
+    }
+  }
+
+  public static BattleRequest consumeBattleRequest() {
+    final BattleRequest pending = pendingBattleRequest;
+    pendingBattleRequest = null;
+    // Direct writes by older mods remain supported as well as the explicit setters.
+    if(pending != null && pending.encounter() == Scus94491BpeSegment_800b.encounter && pending.stage().legacyIndex() == battleStage_800bb0f4) return pending;
+    return new BattleRequest(Scus94491BpeSegment_800b.encounter, LodBattleStages.nativeStage(battleStage_800bb0f4), pending != null ? pending.returnContext() : null);
   }
 
   @Method(0x80018e84L)
