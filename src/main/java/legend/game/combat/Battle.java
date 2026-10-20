@@ -8393,84 +8393,88 @@ public class Battle extends EngineState<Battle> {
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
       final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
-      final DragoonSpells09 spells = new DragoonSpells09(player.character);
-      this.dragoonSpells_800c6960.add(spells);
-
-      for(final RegistryId spellId : player.character.getUnlockedSpells()) {
-        spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
-      }
-
-      //LAB_800ef400
-      player.stats.set(player.character.stats);
-
-      final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
-      final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
-      final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
-      final UnaryStat magicDefense = player.stats.getStat(MAGIC_DEFENSE_STAT.get());
-      final UnaryStat attackHit = player.stats.getStat(ATTACK_HIT_STAT.get());
-      final UnaryStat magicHit = player.stats.getStat(MAGIC_HIT_STAT.get());
-      final UnaryStat attackAvoid = player.stats.getStat(ATTACK_AVOID_STAT.get());
-      final UnaryStat magicAvoid = player.stats.getStat(MAGIC_AVOID_STAT.get());
-      final UnaryStat guardHeal = player.stats.getStat(GUARD_HEAL_STAT.get());
-
-      player.level_04 = player.character.level_12;
-      player.dlevel_06 = player.character.dlevel_13;
-      player.status_0e = player.character.getStatusAndFlags();
-      player.selectedAddition_58 = player.character.selectedAddition_19;
-      player.addition = player.character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(player.character.selectedAddition_19).get() : null;
-
-      player.equipment_11e.clear();
-
-      for(final EquipmentSlot slot : EquipmentSlot.values()) {
-        final Equipment equipment = player.character.getEquipment(slot);
-
-        if(equipment != null) {
-          player.equipment_11e.put(slot, equipment);
-
-          player.specialEffectFlag_14 |= equipment.flags_00;
-          player.equipmentAttackElements_1c.addAll(equipment.attackElement_04);
-          player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
-          player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
-          player.equipmentStatusResist_24 |= equipment.statusResist_08;
-          player.equipmentAttack1_28 += equipment.attack_10;
-          attack.setRaw(attack.getRaw() + equipment.attack_10);
-          magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
-          defense.setRaw(defense.getRaw() + equipment.defence_12);
-          magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);
-          attackHit.setRaw(attackHit.getRaw() + equipment.attackHit_14);
-          magicHit.setRaw(magicHit.getRaw() + equipment.magicHit_15);
-          attackAvoid.setRaw(attackAvoid.getRaw() + equipment.attackAvoid_16);
-          magicAvoid.setRaw(magicAvoid.getRaw() + equipment.magicAvoid_17);
-          guardHeal.setRaw(guardHeal.getRaw() + equipment.getGuardHealBonus());
-          player.onHitStatusChance_44 += equipment.onHitStatusChance_18;
-          player.equipmentOnHitStatus_4a |= equipment.onHitStatus_1b;
-          player.physicalImmunity_110 |= equipment.physicalImmunity;
-          player.magicalImmunity_112 |= equipment.magicalImmunity;
-          player.physicalResistance_114 |= equipment.physicalResistance;
-          player.magicalResistance_116 |= equipment.magicalResistance;
-          player.spMultiplier_128 += equipment.spMultiplier;
-          player.spPerPhysicalHit_12a += equipment.spPerPhysicalHit;
-          player.mpPerPhysicalHit_12c += equipment.mpPerPhysicalHit;
-          player.spPerMagicalHit_12e += equipment.spPerMagicalHit;
-          player.mpPerMagicalHit_130 += equipment.mpPerMagicalHit;
-          player.escapeBonus_132 += equipment.escapeBonus;
-          player.hpRegen_134 += equipment.hpRegen;
-          player.mpRegen_136 += equipment.mpRegen;
-          player.spRegen_138 += equipment.spRegen;
-          player.revive_13a += equipment.revive;
-          player.hpMulti_13c += equipment.hpMultiplier;
-          player.mpMulti_13e += equipment.mpMultiplier;
-          player._142 |= equipment.onHitStatus_1b;
-        }
-      }
-
-      player.originalSpPerPhysicalHit += player.spPerPhysicalHit_12a;
-      player.originalMpPerPhysicalHit += player.mpPerPhysicalHit_12c;
-      player.originalSpPerMagicalHit += player.spPerMagicalHit_12e;
-      player.originalMpPerMagicalHit += player.mpPerMagicalHit_130;
+      this.initPlayerBattleEntityStats(player);
     }
 
     //LAB_800ef798
+  }
+
+  public void initPlayerBattleEntityStats(final PlayerBattleEntity player) {
+    final DragoonSpells09 spells = new DragoonSpells09(player.character);
+    this.dragoonSpells_800c6960.add(spells);
+
+    for(final RegistryId spellId : player.character.getUnlockedSpells()) {
+      spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
+    }
+
+    //LAB_800ef400
+    player.stats.set(player.character.stats);
+
+    final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
+    final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
+    final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
+    final UnaryStat magicDefense = player.stats.getStat(MAGIC_DEFENSE_STAT.get());
+    final UnaryStat attackHit = player.stats.getStat(ATTACK_HIT_STAT.get());
+    final UnaryStat magicHit = player.stats.getStat(MAGIC_HIT_STAT.get());
+    final UnaryStat attackAvoid = player.stats.getStat(ATTACK_AVOID_STAT.get());
+    final UnaryStat magicAvoid = player.stats.getStat(MAGIC_AVOID_STAT.get());
+    final UnaryStat guardHeal = player.stats.getStat(GUARD_HEAL_STAT.get());
+
+    player.level_04 = player.character.level_12;
+    player.dlevel_06 = player.character.dlevel_13;
+    player.status_0e = player.character.getStatusAndFlags();
+    player.selectedAddition_58 = player.character.selectedAddition_19;
+    player.addition = player.character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(player.character.selectedAddition_19).get() : null;
+
+    player.equipment_11e.clear();
+
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final Equipment equipment = player.character.getEquipment(slot);
+
+      if(equipment != null) {
+        player.equipment_11e.put(slot, equipment);
+
+        player.specialEffectFlag_14 |= equipment.flags_00;
+        player.equipmentAttackElements_1c.addAll(equipment.attackElement_04);
+        player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
+        player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
+        player.equipmentStatusResist_24 |= equipment.statusResist_08;
+        player.equipmentAttack1_28 += equipment.attack_10;
+        attack.setRaw(attack.getRaw() + equipment.attack_10);
+        magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
+        defense.setRaw(defense.getRaw() + equipment.defence_12);
+        magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);
+        attackHit.setRaw(attackHit.getRaw() + equipment.attackHit_14);
+        magicHit.setRaw(magicHit.getRaw() + equipment.magicHit_15);
+        attackAvoid.setRaw(attackAvoid.getRaw() + equipment.attackAvoid_16);
+        magicAvoid.setRaw(magicAvoid.getRaw() + equipment.magicAvoid_17);
+        guardHeal.setRaw(guardHeal.getRaw() + equipment.getGuardHealBonus());
+        player.onHitStatusChance_44 += equipment.onHitStatusChance_18;
+        player.equipmentOnHitStatus_4a |= equipment.onHitStatus_1b;
+        player.physicalImmunity_110 |= equipment.physicalImmunity;
+        player.magicalImmunity_112 |= equipment.magicalImmunity;
+        player.physicalResistance_114 |= equipment.physicalResistance;
+        player.magicalResistance_116 |= equipment.magicalResistance;
+        player.spMultiplier_128 += equipment.spMultiplier;
+        player.spPerPhysicalHit_12a += equipment.spPerPhysicalHit;
+        player.mpPerPhysicalHit_12c += equipment.mpPerPhysicalHit;
+        player.spPerMagicalHit_12e += equipment.spPerMagicalHit;
+        player.mpPerMagicalHit_130 += equipment.mpPerMagicalHit;
+        player.escapeBonus_132 += equipment.escapeBonus;
+        player.hpRegen_134 += equipment.hpRegen;
+        player.mpRegen_136 += equipment.mpRegen;
+        player.spRegen_138 += equipment.spRegen;
+        player.revive_13a += equipment.revive;
+        player.hpMulti_13c += equipment.hpMultiplier;
+        player.mpMulti_13e += equipment.mpMultiplier;
+        player._142 |= equipment.onHitStatus_1b;
+      }
+    }
+
+    player.originalSpPerPhysicalHit += player.spPerPhysicalHit_12a;
+    player.originalMpPerPhysicalHit += player.mpPerPhysicalHit_12c;
+    player.originalSpPerMagicalHit += player.spPerMagicalHit_12e;
+    player.originalMpPerMagicalHit += player.mpPerMagicalHit_130;
   }
 
   @Method(0x800f1aa8L)

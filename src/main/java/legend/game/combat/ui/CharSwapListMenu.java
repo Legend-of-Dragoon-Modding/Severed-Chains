@@ -139,7 +139,7 @@ public class CharSwapListMenu extends ListMenu {
     bent.innerStruct_00.allBentSlot_274 = this.oldBentSlot;
     bent.innerStruct_00.typeBentSlot_276 = this.oldPlayerSlot;
 
-    this.hud.battle.initPlayerBattleEntityStats();
+    this.hud.battle.initPlayerBattleEntityStats(bent.innerStruct_00);
 
     this.hud.battle.loadCombatantTmdAndAnims(this.hud.battle.getCombatant(addedCombatantSlot));
     bent.innerStruct_00.combatant_144.flags_19e |= 0x2a;
