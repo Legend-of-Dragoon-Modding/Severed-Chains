@@ -45,6 +45,7 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.combat.ui.BattleAction;
+import legend.game.combat.ui.CharSwapListMenu;
 import legend.game.combat.ui.GatherBattleActionsEvent;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.game.inventory.EquipmentRegistryEvent;
@@ -147,6 +148,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_COUNTER = INPUT_ACTION_REGISTRAR.register("bttl_counter", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ROTATE_CAMERA = INPUT_ACTION_REGISTRAR.register("bttl_rotate_camera", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_CHARACTERS = INPUT_ACTION_REGISTRAR.register("bttl_characters", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ADDITIONS = INPUT_ACTION_REGISTRAR.register("bttl_additions", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_TRANSFORM = INPUT_ACTION_REGISTRAR.register("bttl_transform", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPECIAL = INPUT_ACTION_REGISTRAR.register("bttl_special", InputAction::editable);
@@ -402,6 +404,8 @@ public class LodMod {
       .add(INPUT_ACTION_BTTL_COUNTER.get(), new ButtonInputActivation(InputButton.B))
       .add(INPUT_ACTION_BTTL_ROTATE_CAMERA.get(), new ScancodeInputActivation(InputKey.Q))
       .add(INPUT_ACTION_BTTL_ROTATE_CAMERA.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+      .add(INPUT_ACTION_BTTL_CHARACTERS.get(), new ScancodeInputActivation(InputKey.C))
+      .add(INPUT_ACTION_BTTL_CHARACTERS.get(), new ButtonInputActivation(InputButton.SELECT))
       .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ScancodeInputActivation(InputKey.E))
       .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ScancodeInputActivation(InputKey.ESCAPE))
@@ -705,6 +709,11 @@ public class LodMod {
 
       if(!player.character.getUnlockedAdditions().isEmpty()) {
         event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
+        sort += 100;
+      }
+
+      if(!CharSwapListMenu.getUsableCharacterList().isEmpty()) {
+        event.actions.put(LodBattleActions.CHARACTERS.get(), sort);
         sort += 100;
       }
     }

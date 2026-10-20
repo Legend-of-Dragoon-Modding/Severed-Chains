@@ -2132,40 +2132,46 @@ public class Battle extends EngineState<Battle> {
 
       final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
-      final String name = character.getName().get();
-
-      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charId, scriptSlot, this.playerBattleScript_800c66fc);
-      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
-      state.setTicker(bent::bentLoadingTicker);
-      state.setDestructor(bent::bentDestructor);
-      bent.element = character.getElement(bent);
-      bent.combatant_144 = this.getCombatant(combatantIndex);
-      bent.combatantIndex_26c = combatantIndex;
-      bent.combatant_144.playerBent = bent;
-
-      bent.model_148.coord2_14.coord.transfer.x = charCount > 2 && charSlot == 0 ? 0x900 : 0xa00;
-      // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
-      bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount % 2 - 1) * 0x400;
-      bent.model_148.coord2_14.coord.transfer.y = 0.0f;
-
-      bent.model_148.coord2_14.transforms.rotate.zero();
-      battleState_8006e398.addPlayer(state);
-
-      Loader
-        .loadDirectory(character.getBattleSoundsPath(bent))
-        .thenAccept(files -> {
-          this.charSoundEffectsLoaded(files, bent);
-
-          if(remaining.decrementAndGet() == 0) {
-            loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
-          }
-        })
-      ;
+      final ScriptState<PlayerBattleEntity> bent = this.allocatePlayerBattleEntity(character, charSlot, charId, scriptSlot, combatantIndex, remaining);
+      battleState_8006e398.addPlayer(bent);
     }
 
     this.initPlayerBattleEntityStats();
 
     this.loadingStage++;
+  }
+
+  public ScriptState<PlayerBattleEntity> allocatePlayerBattleEntity(final CharacterData2c character, final int charSlot, final int charId, final int scriptSlot, final int combatantIndex, final AtomicInteger remaining) {
+    final String name = character.getName().get();
+
+    final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charId, scriptSlot, this.playerBattleScript_800c66fc);
+    final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
+    state.setTicker(bent::bentLoadingTicker);
+    state.setDestructor(bent::bentDestructor);
+    bent.element = character.getElement(bent);
+    bent.combatant_144 = this.getCombatant(combatantIndex);
+    bent.combatantIndex_26c = combatantIndex;
+    bent.combatant_144.playerBent = bent;
+
+    bent.model_148.coord2_14.coord.transfer.x = gameState_800babc8.charIds_88.size() > 2 && charSlot == 0 ? 0x900 : 0xa00;
+    // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
+    bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (gameState_800babc8.charIds_88.size() % 2 - 1) * 0x400;
+    bent.model_148.coord2_14.coord.transfer.y = 0.0f;
+
+    bent.model_148.coord2_14.transforms.rotate.zero();
+
+    Loader
+      .loadDirectory(character.getBattleSoundsPath(bent))
+      .thenAccept(files -> {
+        this.charSoundEffectsLoaded(files, bent);
+
+        if(remaining.decrementAndGet() == 0) {
+          loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
+        }
+      })
+    ;
+
+    return state;
   }
 
   @Method(0x8001cae0L)
@@ -8356,8 +8362,13 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800eecb8
-      bent.character.status_10 = bent.status_0e & 0xc8;
+      bent.character.status_10 = bent.status_0e;
       bent.character.stats.getStat(SP_STAT.get()).setCurrent(bent.stats.getStat(SP_STAT.get()).getCurrent());
+    }
+
+    // Clear out statuses that don't persist after battle
+    for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+      character.status_10 &= 0xc8;
     }
 
     //LAB_800eed78

@@ -686,7 +686,13 @@ lod.battle_actions.transform.name.0=Detransform Now
 lod.battle_actions.transform.name.1=Detransform After Turn
 lod.battle_actions.special.name=Special
 lod.battle_actions.d_attack.name=Attack
+lod.battle_actions.characters.name=Change Character
 lod.battle_actions.additions.name=Change Addition
+
+lod.battle_actions.characters.level=Level %d
+lod.battle_actions.characters.hp=HP: %d/%d
+lod.battle_actions.characters.mp=MP: %d/%d
+lod.battle_actions.characters.sp=SP: %d/%d
 
 # Statuses
 lod.status.poison.name=Poison
@@ -721,6 +727,7 @@ lod.input_actions.smap_save.name=Sub map: create new save
 lod.input_actions.bttl_attack.name=Battle: attack
 lod.input_actions.bttl_counter.name=Battle: counter
 lod.input_actions.bttl_rotate_camera.name=Battle: change camera
+lod.input_actions.bttl_characters.name=Battle: change characters
 lod.input_actions.bttl_additions.name=Battle: change additions
 lod.input_actions.bttl_transform.name=Battle: transform
 lod.input_actions.bttl_special.name=Battle: special

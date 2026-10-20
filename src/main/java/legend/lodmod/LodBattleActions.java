@@ -3,6 +3,7 @@ package legend.lodmod;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.lodmod.battleactions.ChangeAdditionBattleAction;
+import legend.lodmod.battleactions.ChangeCharacterBattleAction;
 import legend.lodmod.battleactions.ItemBattleAction;
 import legend.lodmod.battleactions.RetailBattleAction;
 import legend.lodmod.battleactions.SpecialBattleAction;
@@ -26,6 +27,7 @@ public final class LodBattleActions {
   public static final RegistryDelegate<BattleAction> TRANSFORM = REGISTRAR.register("transform", TransformAction::new);
   public static final RegistryDelegate<BattleAction> SPECIAL = REGISTRAR.register("special", SpecialBattleAction::new);
   public static final RegistryDelegate<BattleAction> D_ATTACK = REGISTRAR.register("d_attack", () -> new RetailBattleAction(9));
+  public static final RegistryDelegate<BattleAction> CHARACTERS = REGISTRAR.register("characters", ChangeCharacterBattleAction::new);
   public static final RegistryDelegate<BattleAction> ADDITIONS = REGISTRAR.register("additions", ChangeAdditionBattleAction::new);
 
   static void register(final RegisterBattleActionsEvent event) {
