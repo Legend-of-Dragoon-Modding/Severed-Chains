@@ -1,6 +1,7 @@
 package legend.game.inventory;
 
 import legend.game.modding.events.inventory.GiveGoodsEvent;
+import legend.game.modding.events.inventory.NotifyGoodsUpdatedEvent;
 import legend.game.modding.events.inventory.TakeGoodsEvent;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -90,6 +91,8 @@ public class GoodsInventory implements Iterable<Good> {
       } else if(!set && has) {
         this.take(good);
       }
+
+      this.sendNotify(good, set);
     }
   }
 
@@ -113,6 +116,15 @@ public class GoodsInventory implements Iterable<Good> {
     }
 
     return out;
+  }
+
+  public void sendNotify(final RegistryDelegate<Good> good, final boolean set) {
+    if(!good.isValid()) {
+      LOGGER.warn("Invalid good %s", good.getId());
+      return;
+    }
+
+    EVENTS.postEvent(new NotifyGoodsUpdatedEvent(good.get(), set, GoodsSource.GAMEPLAY));
   }
 
   public void set(final GoodsInventory other) {
