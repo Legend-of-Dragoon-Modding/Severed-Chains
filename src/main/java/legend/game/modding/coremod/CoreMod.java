@@ -23,6 +23,8 @@ import legend.game.inventory.Item;
 import legend.game.inventory.ItemGroupSortModeConfigEntry;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.screens.GatherShopExtensionsEvent;
+import legend.game.modding.coremod.config.AdditionAllowMisinputConfigEntry;
+import legend.game.modding.coremod.config.AdditionFeedbackConfigEntry;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlaySizeConfigEntry;
@@ -187,6 +189,8 @@ public class CoreMod {
   public static final RegistryDelegate<ElementIconConfig> DISPLAY_ELEMENT_ICON_CONFIG = CONFIG_REGISTRAR.register("element_icon_config", ElementIconConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> EQUIP_EFFECTS_IN_DRAGOON = CONFIG_REGISTRAR.register("equip_effects_in_dragoon", EquipEffectsInDragoonConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> SHOW_FPS = CONFIG_REGISTRAR.register("show_fps", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL, ConfigCategory.USER_INTERFACE));
+  public static final RegistryDelegate<AdditionAllowMisinputConfigEntry> ADDITION_ALLOW_MISINPUT_CONFIG = CONFIG_REGISTRAR.register("addition_allow_misinput", AdditionAllowMisinputConfigEntry::new);
+  public static final RegistryDelegate<AdditionFeedbackConfigEntry> ADDITION_FEEDBACK_CONFIG = CONFIG_REGISTRAR.register("addition_feedback", AdditionFeedbackConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
@@ -239,6 +243,7 @@ public class CoreMod {
   public static final Formula<Integer, Integer> PHYSICAL_DAMAGE_FORMULA = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
     .then(PhysicalDamageFormula::applyElementalInteractions)
     .then(PhysicalDamageFormula::applyPower)
+    .then(PhysicalDamageFormula::applyAdditionResultsModifier)
     .then(PhysicalDamageFormula::applyDragoonSpace)
     .then(PhysicalDamageFormula.minimum(0))
     .then(PhysicalDamageFormula::applyDamageMultipliers)
