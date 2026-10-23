@@ -166,7 +166,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -606,6 +608,8 @@ public class Battle extends EngineState<Battle> {
   public final SoundFile deffSounds = addSoundFile("DEFF SFX");
   public final SoundFile cutsceneSounds = addSoundFile("Cutscene SFX");
   public final SoundFile attackSounds = addSoundFile("Attack SFX");
+
+  public final Map<CharacterData2c, PlayerBattleEntity> charSwapBentCache = new HashMap<>();
 
   public Battle() {
     super(LodEngineStateTypes.BATTLE.get());
@@ -2145,7 +2149,26 @@ public class Battle extends EngineState<Battle> {
     final String name = character.getName().get();
 
     final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charId, scriptSlot, this.playerBattleScript_800c66fc);
-    final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
+    final ScriptState<PlayerBattleEntity> state = this.initPlayerBattleEntity(bent, character, charSlot, scriptSlot, combatantIndex);
+
+    Loader
+      .loadDirectory(character.getBattleSoundsPath(bent))
+      .thenAccept(files -> {
+        this.charSoundEffectsLoaded(files, bent);
+
+        if(remaining.decrementAndGet() == 0) {
+          loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
+        }
+      })
+    ;
+
+    return state;
+  }
+
+  public ScriptState<PlayerBattleEntity> initPlayerBattleEntity(final PlayerBattleEntity bent, final CharacterData2c character, final int charSlot, final int scriptSlot, final int combatantIndex) {
+    final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, bent.getName(), bent);
+
+    bent.setScriptIndex(scriptSlot);
     state.setTicker(bent::bentLoadingTicker);
     state.setDestructor(bent::bentDestructor);
     bent.element = character.getElement(bent);
@@ -2159,17 +2182,6 @@ public class Battle extends EngineState<Battle> {
     bent.model_148.coord2_14.coord.transfer.y = 0.0f;
 
     bent.model_148.coord2_14.transforms.rotate.zero();
-
-    Loader
-      .loadDirectory(character.getBattleSoundsPath(bent))
-      .thenAccept(files -> {
-        this.charSoundEffectsLoaded(files, bent);
-
-        if(remaining.decrementAndGet() == 0) {
-          loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
-        }
-      })
-    ;
 
     return state;
   }

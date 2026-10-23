@@ -12,7 +12,7 @@ public class ChangeCharacterBattleAction extends SeveredBattleAction {
 
   @Override
   public BattleActionUseFlowControl use(final Battle battle, final PlayerBattleEntity player) {
-    if(CharSwapListMenu.getUsableCharacterList().isEmpty()) {
+    if(!CharSwapListMenu.canUseCharSwap(player)) {
       return BattleActionUseFlowControl.FAIL;
     }
 

@@ -711,8 +711,10 @@ public class LodMod {
         event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
         sort += 100;
       }
+    }
 
-      if(!CharSwapListMenu.getUsableCharacterList().isEmpty()) {
+    if(!player.isDragoon()) {
+      if(CharSwapListMenu.canUseCharSwap(player)) {
         event.actions.put(LodBattleActions.CHARACTERS.get(), sort);
         sort += 100;
       }

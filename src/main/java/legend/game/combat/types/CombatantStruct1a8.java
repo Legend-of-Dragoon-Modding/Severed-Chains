@@ -32,7 +32,9 @@ public class CombatantStruct1a8 {
   /**
    * <ul>
    *   <li>0x1 - used?</li>
+   *   <li>0x2 - seems to be a combination of 0x4 and 0x8</li>
    *   <li>0x4 - player (not NPC)</li>
+   *   <li>0x8 - combatant model/animations are requested/loaded</li>
    *   <li>0x20 - loading model/anims</li>
    * </ul>
    */

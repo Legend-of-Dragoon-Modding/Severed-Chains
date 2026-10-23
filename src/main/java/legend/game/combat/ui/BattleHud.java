@@ -328,6 +328,16 @@ public class BattleHud {
       .translucency(Translucency.HALF_B_PLUS_HALF_F);
   }
 
+  public void clearNumbers(final int charSlot) {
+    final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
+
+    for(int numberIndex = 0; numberIndex < displayStats.digits_04.length; numberIndex++) {
+      for(int i = 0; i < displayStats.digits_04[numberIndex].length; i++) {
+        displayStats.digits_04[numberIndex][i].digitValue_00 = -1;
+      }
+    }
+  }
+
   @Method(0x800ef7c4L)
   public void clear() {
     this.hudFade = 0;

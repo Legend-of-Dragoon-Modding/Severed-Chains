@@ -1,6 +1,5 @@
 package legend.game.combat.bent;
 
-import legend.core.Latch;
 import legend.core.memory.Method;
 import legend.game.additions.Addition;
 import legend.game.characters.CharacterData2c;
@@ -46,7 +45,7 @@ import static legend.lodmod.LodMod.PLAYER_TYPE;
 import static legend.lodmod.LodMod.SP_STAT;
 
 public class PlayerBattleEntity extends BattleEntity27c {
-  private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
+  private int scriptIndex;
 
   public final CharacterData2c character;
 
@@ -105,7 +104,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public PlayerBattleEntity(final Battle battle, final String name, final int charId, final int scriptIndex, final ScriptFile script) {
     super(PLAYER_TYPE.get(), battle, name, charId);
 
-    this.scriptState = new Latch<>(() -> SCRIPTS.getState(scriptIndex, PlayerBattleEntity.class));
+    this.scriptIndex = scriptIndex;
     this.script = script;
     this.character = gameState_800babc8.charData_32c.get(charId);
   }
@@ -135,7 +134,12 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public ScriptState<PlayerBattleEntity> getState() {
-    return this.scriptState.get();
+    //noinspection unchecked
+    return (ScriptState<PlayerBattleEntity>)SCRIPTS.getState(this.scriptIndex, this.getClass());
+  }
+
+  public void setScriptIndex(final int index) {
+    this.scriptIndex = index;
   }
 
   @Override
@@ -144,7 +148,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public boolean isDragoon() {
-    return this.scriptState.get().hasFlag(FLAG_DRAGOON);
+    return this.getState().hasFlag(FLAG_DRAGOON);
   }
 
   public boolean canBecomeDragoon() {
