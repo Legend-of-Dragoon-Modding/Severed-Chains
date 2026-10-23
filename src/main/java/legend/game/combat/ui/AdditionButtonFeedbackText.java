@@ -17,7 +17,7 @@ public class AdditionButtonFeedbackText {
   final static float TEXT_POSITION_X = 236f;
   final static float TEXT_POSITION_Y = 138f;
 
-  private class FeedbackTextFrameData {
+  private static class FeedbackTextFrameData {
     public float x;
     public float y;
     public Translucency translucency;
@@ -28,7 +28,7 @@ public class AdditionButtonFeedbackText {
     }
   }
 
-  private class FeedbackTextElement {
+  private static class FeedbackTextElement {
     public int frameIndex;
     public FeedbackTextFrameData[] frames;
     public AdditionButtonFeedback feedback;
