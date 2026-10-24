@@ -3,6 +3,7 @@ package legend.game.combat.ui;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.characters.CharacterData2c;
+import legend.game.characters.StatCollection;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -248,9 +249,13 @@ public class CharSwapListMenu extends ListMenu {
       final int listIndex = this.listScroll_1e + this.listIndex_24;
 
       final CharacterData2c character = gameState_800babc8.charData_32c.get(this.characters.getInt(listIndex));
-      final VitalsStat hp = character.stats.getStat(HP_STAT.get());
-      final VitalsStat mp = character.stats.getStat(MP_STAT.get());
-      final VitalsStat sp = character.stats.getStat(SP_STAT.get());
+      final PlayerBattleEntity player = this.hud.battle.charSwapBentCache.get(character);
+
+      final StatCollection stats = player != null ? player.stats : character.stats;
+
+      final VitalsStat hp = stats.getStat(HP_STAT.get());
+      final VitalsStat mp = stats.getStat(MP_STAT.get());
+      final VitalsStat sp = stats.getStat(SP_STAT.get());
 
       if(this.description == null) {
         this.description = new UiBox(44, 156, 232, 14);
