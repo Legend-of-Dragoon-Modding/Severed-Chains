@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
@@ -40,6 +41,11 @@ public class CharSwapListMenu extends ListMenu {
   private int oldBentSlot;
   private int oldPlayerSlot;
 
+  private CombatantStruct1a8 loadingCombatant;
+
+  private final ListPosition lastPosition;
+  private final Runnable onClose;
+
   public CharSwapListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
     lastPosition.lastListIndex_26 = 0;
     lastPosition.lastListScroll_28 = 0;
@@ -47,6 +53,9 @@ public class CharSwapListMenu extends ListMenu {
     super(hud, activePlayer, 186, lastPosition, onClose);
 
     this.characters.addAll(getUsableCharacterList());
+
+    this.lastPosition = lastPosition;
+    this.onClose = onClose;
   }
 
   public static boolean canUseCharSwap(final PlayerBattleEntity player) {
@@ -108,6 +117,8 @@ public class CharSwapListMenu extends ListMenu {
 
   @Override
   protected void onUse(final int index) {
+    this.hud.battle.combatDisabled_800c66b9 = true;
+
     this.hud.setBattleHudVisibility(false);
     final int removedState = this.removePlayer();
     this.addPlayer(removedState, this.characters.getInt(index));
@@ -161,20 +172,57 @@ public class CharSwapListMenu extends ListMenu {
     bent.allBentSlot_274 = this.oldBentSlot;
     bent.typeBentSlot_276 = this.oldPlayerSlot;
 
-    this.hud.battle.loadCombatantTmdAndAnims(this.hud.battle.getCombatant(addedCombatantSlot));
-    bent.combatant_144.flags_19e |= 0x2a;
+    this.loadingCombatant = this.hud.battle.getCombatant(addedCombatantSlot);
+    this.hud.battle.loadCombatantTmdAndAnims(this.loadingCombatant);
 
     Loader
       .loadFile(character.getBattleTexturePath(bent))
       .thenAccept(files -> this.hud.battle.loadCharacterTim(files, charSlot))
     ;
 
-    Loader
-      .loadDirectory(character.getBattleModelPath(battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00))
-      .thenAccept(files -> this.hud.battle.loadCharTmdAndAnims(files, charSlot))
-    ;
-
     this.hud.battle.loadAttackAnimations(this.hud.battle.getCombatant(addedCombatantSlot));
+  }
+
+  @Override
+  public void tick() {
+    // This whole switch is just to delay battle until assets finish loading
+    switch(this.menuState_00) {
+      case 6 -> {
+        super.tick();
+        this.selectionState_a0 = 0;
+        return;
+      }
+
+      case 9 -> {
+        if(this.selectionState_a0 == -1) { // cancelled
+          super.tick();
+          return;
+        }
+
+        this.lastPosition.lastListIndex_26 = this.listIndex_24;
+        this.lastPosition.lastListScroll_28 = this.listScroll_1e;
+        this.onClose();
+        this.delete();
+        this.menuState_00 = 10;
+        return;
+      }
+
+      case 10 -> {
+        if((this.loadingCombatant.flags_19e & 0x20) == 0 && Loader.getLoadingFileCount() == 0) {
+          this.menuState_00 = 11;
+        }
+
+        return;
+      }
+
+      case 11 -> {
+        this.hud.battle.combatDisabled_800c66b9 = false;
+        this.onClose.run();
+        return;
+      }
+    }
+
+    super.tick();
   }
 
   @Override

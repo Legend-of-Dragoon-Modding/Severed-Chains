@@ -6016,9 +6016,6 @@ mov 0x20, var[128 + stor[8]][5] ; source, dest
 ; clear my shield/sig/charm/pan/charging turns
 mov 0x0, var[128 + stor[8]][7] ; source, dest
 
-; clear my menu block flag
-mov 0x0, var[128 + stor[8]][6] ; source, dest
-
 ; clear my status conditions _10
 mov 0xffffffff, var[128 + stor[8]][4] ; source, dest
 

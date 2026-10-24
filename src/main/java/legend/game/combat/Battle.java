@@ -3,8 +3,6 @@ package legend.game.combat;
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelBattleTmd;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.Random;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
@@ -16,8 +14,11 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
-import legend.core.renderer.McqBuilder;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.McqBuilder;
+import legend.core.renderer.QueuedModelBattleTmd;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment;
@@ -143,7 +144,6 @@ import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
-import legend.core.renderer.Translucency;
 import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
@@ -417,7 +417,7 @@ public class Battle extends EngineState<Battle> {
 
   private boolean stageHasModel_800c66b8;
   /** Character scripts deallocated? */
-  private boolean combatDisabled_800c66b9;
+  public boolean combatDisabled_800c66b9;
 
   public ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
 
@@ -2129,6 +2129,7 @@ public class Battle extends EngineState<Battle> {
     int scriptSlot = 6;
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
       final int combatantIndex = this.addCombatant(gameState_800babc8.charIds_88.getInt(charSlot), charSlot);
+      battleState_8006e398.statusConditions_00[combatantIndex].menuBlockFlag_18 = 0;
 
       while(SCRIPTS.getState(scriptSlot) != null) {
         scriptSlot++;
