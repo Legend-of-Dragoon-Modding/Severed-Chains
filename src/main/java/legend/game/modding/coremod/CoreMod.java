@@ -35,6 +35,7 @@ import legend.game.modding.coremod.config.AutoTextDelayConfigEntry;
 import legend.game.modding.coremod.config.AutoSaveAfterBattleConfig;
 import legend.game.modding.coremod.config.BattleTransitionModeConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
+import legend.game.modding.coremod.config.AdditionCounterAmountConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DeadzoneConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
@@ -191,6 +192,7 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> SHOW_FPS = CONFIG_REGISTRAR.register("show_fps", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL, ConfigCategory.USER_INTERFACE));
   public static final RegistryDelegate<AdditionAllowMisinputConfigEntry> ADDITION_ALLOW_MISINPUT_CONFIG = CONFIG_REGISTRAR.register("addition_allow_misinput", AdditionAllowMisinputConfigEntry::new);
   public static final RegistryDelegate<AdditionFeedbackConfigEntry> ADDITION_FEEDBACK_CONFIG = CONFIG_REGISTRAR.register("addition_feedback", AdditionFeedbackConfigEntry::new);
+  public static final RegistryDelegate<AdditionCounterAmountConfigEntry> ADDITION_COUNTER_AMOUNT_CONFIG = CONFIG_REGISTRAR.register("addition_counter_amount", AdditionCounterAmountConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 

@@ -403,6 +403,10 @@ lod_core.config.addition_feedback.label=Addition Feedback
 lod_core.config.addition_feedback.help=Enable addition feedback to tell you whether you pressed early, late or on time
 lod_core.config.addition_feedback.NONE=Off
 lod_core.config.addition_feedback.FEEDBACK=On
+lod_core.config.addition_counter_amount.label=Addition Counter Amount
+lod_core.config.addition_counter_amount.help=Setting for the amount of counters that happen during additions\n[None] No counter\n[Normal] Normal amount of counters (retail)
+lod_core.config.addition_counter_amount.NONE=None
+lod_core.config.addition_counter_amount.NORMAL=Normal
 
 lod_core.input_actions.menu_up.name=Menu: up
 lod_core.input_actions.menu_down.name=Menu: down
