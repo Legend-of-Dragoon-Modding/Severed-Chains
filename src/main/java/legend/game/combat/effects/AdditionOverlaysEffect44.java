@@ -11,6 +11,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionSound;
+import legend.game.combat.AdditionCounterAmount;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.inventory.screens.FontOptions;
@@ -556,9 +557,12 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
           if(hitNum < this.count_30) {
             final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
 
-            if(state.getStor(8) != 0) {
-              hitOverlay.isCounter_1c = true;
-              state.setStor(8, 0);
+            final AdditionCounterAmount counterAmount = CONFIG.getConfig(CoreMod.ADDITION_COUNTER_AMOUNT_CONFIG.get());
+            if(counterAmount != AdditionCounterAmount.NONE) {
+              if(state.getStor(8) != 0) {
+                hitOverlay.isCounter_1c = true;
+                state.setStor(8, 0);
+              }
             }
 
             //LAB_801075e8
