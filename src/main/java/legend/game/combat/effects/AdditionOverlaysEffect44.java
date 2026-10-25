@@ -558,8 +558,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
             final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
 
             final AdditionCounterAmount counterAmount = CONFIG.getConfig(CoreMod.ADDITION_COUNTER_AMOUNT_CONFIG.get());
-            if(counterAmount != AdditionCounterAmount.NONE)
-            {
+            if(counterAmount != AdditionCounterAmount.NONE) {
               if(state.getStor(8) != 0) {
                 hitOverlay.isCounter_1c = true;
                 state.setStor(8, 0);
