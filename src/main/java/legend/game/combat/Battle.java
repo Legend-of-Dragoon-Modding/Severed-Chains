@@ -8622,6 +8622,10 @@ public class Battle extends EngineState<Battle> {
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
+
+    final boolean isDragoon = attacker instanceof final PlayerBattleEntity player && player.isDragoon();
+    this.trySetPreferredCameraAngle(false, !isDragoon);
+
     return FlowControl.CONTINUE;
   }
 
@@ -8658,6 +8662,9 @@ public class Battle extends EngineState<Battle> {
     //LAB_800f27ec
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
+
+    this.trySetPreferredCameraAngle(false, false);
+
     return FlowControl.CONTINUE;
   }
 
@@ -8694,6 +8701,8 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.ITEM_MAGIC));
     this.applyItemSpecialEffects(attacker, defender);
+    this.trySetPreferredCameraAngle(false, false);
+
     return FlowControl.CONTINUE;
   }
 
@@ -9297,12 +9306,12 @@ public class Battle extends EngineState<Battle> {
     battleFlags_800bc960 |= 0x2;
   }
 
-  private void trySetPreferredCameraAngle(final boolean battleStart, final boolean keepCurrentAngleIfNoPreference) {
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = this.getPreferredCameraAngle(battleStart, keepCurrentAngleIfNoPreference);
+  private void trySetPreferredCameraAngle(final boolean isBattleStart, final boolean keepCurrentAngleIfNoPreference) {
+    this.hud.currentCameraPositionIndicesIndex_800c66b0 = this.getPreferredCameraAngle(isBattleStart, keepCurrentAngleIfNoPreference);
     this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
   }
 
-  private int getPreferredCameraAngle(final boolean battleStart, final boolean keepCurrentAngleIfNoPreference) {
+  private int getPreferredCameraAngle(final boolean isBattleStart, final boolean keepCurrentAngleIfNoPreference) {
     final PreferredBattleCameraAngle config = CONFIG.getConfig(CoreMod.PREFERRED_BATTLE_CAMERA_ANGLE.get());
     if(config != PreferredBattleCameraAngle.NORMAL) {
       int filteredArrayIndex = 0;
@@ -9316,7 +9325,7 @@ public class Battle extends EngineState<Battle> {
 
       for(int i = 0; i < encounter.cameraPosIndices.length; i++) {
         if(this.cameraArrayContainsIndex(encounter.cameraPosIndices[i], cameraAngles)) {
-          if(!battleStart && this.hud.currentCameraPositionIndicesIndex_800c66b0 == i) {
+          if(!isBattleStart && this.hud.currentCameraPositionIndicesIndex_800c66b0 == i) {
             return i;
           }
           filteredIndices[filteredArrayIndex] = i;
