@@ -446,9 +446,6 @@ public class Battle extends EngineState<Battle> {
   public int mcqOffsetX_800c6774;
   public int mcqOffsetY_800c6778;
 
-  /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
-  public int currentCameraIndex_800c6780;
-
   public int _800c67c8;
   public int _800c67cc;
   public int _800c67d0;
@@ -8624,7 +8621,7 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
 
     final boolean isDragoon = attacker instanceof final PlayerBattleEntity player && player.isDragoon();
-    this.trySetPreferredCameraAngle(false, !isDragoon);
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, !isDragoon);
 
     return FlowControl.CONTINUE;
   }
@@ -8663,7 +8660,7 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
 
-    this.trySetPreferredCameraAngle(false, false);
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, false);
 
     return FlowControl.CONTINUE;
   }
@@ -8701,7 +8698,7 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.ITEM_MAGIC));
     this.applyItemSpecialEffects(attacker, defender);
-    this.trySetPreferredCameraAngle(false, false);
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, false);
 
     return FlowControl.CONTINUE;
   }
@@ -9302,53 +9299,11 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    this.trySetPreferredCameraAngle(true, false);
+    camera_800c67f0.trySetPreferredCameraAngle(this.hud, true, false);
     battleFlags_800bc960 |= 0x2;
   }
 
-  private void trySetPreferredCameraAngle(final boolean isBattleStart, final boolean keepCurrentAngleIfNoPreference) {
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = this.getPreferredCameraAngle(isBattleStart, keepCurrentAngleIfNoPreference);
-    this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
-  }
 
-  private int getPreferredCameraAngle(final boolean isBattleStart, final boolean keepCurrentAngleIfNoPreference) {
-    final PreferredBattleCameraAngle config = CONFIG.getConfig(CoreMod.PREFERRED_BATTLE_CAMERA_ANGLE.get());
-    if(config != PreferredBattleCameraAngle.NORMAL) {
-      int filteredArrayIndex = 0;
-      final int[] filteredIndices = new int[encounter.cameraPosIndices.length];
-      final int[] cameraAngles = switch(config) {
-        case PreferredBattleCameraAngle.PLAYER -> BattleCamera.playerCameraAngles;
-        case PreferredBattleCameraAngle.SIDE -> BattleCamera.sideCameraAngles;
-        case PreferredBattleCameraAngle.ENEMY -> BattleCamera.enemyCameraAngles;
-        default -> throw new IllegalArgumentException("Couldn't match the config " + config + " to a camera angles preset array");
-      };
-
-      for(int i = 0; i < encounter.cameraPosIndices.length; i++) {
-        if(this.cameraArrayContainsIndex(encounter.cameraPosIndices[i], cameraAngles)) {
-          if(!isBattleStart && this.hud.currentCameraPositionIndicesIndex_800c66b0 == i) {
-            return i;
-          }
-          filteredIndices[filteredArrayIndex] = i;
-          filteredArrayIndex++;
-        }
-        if(filteredArrayIndex > 0) {
-          return filteredIndices[new Random().nextInt(filteredArrayIndex)];
-        }
-      }
-    } else if(keepCurrentAngleIfNoPreference) {
-      return this.hud.currentCameraPositionIndicesIndex_800c66b0;
-    }
-    return simpleRand() & 3; //Falls back to the default behavior
-  }
-
-  private boolean cameraArrayContainsIndex(final int index, final int[] array) {
-    for(int i = 0; i < array.length; i++) {
-      if(array[i] == index) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   @Method(0x80109808L)
   public void loadEnemyDropsAndScript(final int enemyAndCombatantId) {
