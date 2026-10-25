@@ -177,6 +177,7 @@ public class BattleHud {
   public ListMenu listMenu_800c6b60;
   private final Int2ObjectMap<ListPosition> lastListPositions = new Int2ObjectOpenHashMap<>();
 
+  public int currentCameraIndex_800c6780;
   public int currentCameraPositionIndicesIndex_800c66b0;
 
   private final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];

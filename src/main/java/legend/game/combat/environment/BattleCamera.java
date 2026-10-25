@@ -1,11 +1,15 @@
 package legend.game.combat.environment;
 
 import legend.core.MathHelper;
+import legend.core.Random;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.FloatRef;
+import legend.game.combat.PreferredBattleCameraAngle;
 import legend.game.combat.types.BattleObject;
+import legend.game.combat.ui.BattleHud;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.GsRVIEW2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +21,12 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GTE;
 import static legend.game.Graphics.GsSetRefView2L;
 import static legend.game.Graphics.setProjectionPlaneDistance;
+import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment_800b.encounter;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.ZERO;
 
@@ -146,6 +153,10 @@ public class BattleCamera {
   private final Vector3f temp2_800faba8 = new Vector3f();
 
   private boolean useCameraWobble_800fabb8;
+
+  public static int[] playerCameraAngles = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84 };
+  public static int[] sideCameraAngles = new int[] { 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 39, 85, 86, 87, 88, 89, 90, 91, 92 };
+  public static int[] enemyCameraAngles = new int[] { 40, 41, 42, 43, 44, 45, 46, 47, 95, 96, 97, 99 };
 
   public void setWobble(final int frames, final int framesUntil, final int offsetX, final int offsetY) {
     this.wobbleFramesRemaining_800c67c4 = frames;
@@ -2566,6 +2577,50 @@ public class BattleCamera {
   @Method(0x800dd118L)
   public float calculateXAngleFromRefpointToViewpoint() {
     return this.refpointComponentMethods_800fad7c[5].apply(0, null, this.rview2_00.viewpoint_00);
+  }
+
+  public void trySetPreferredCameraAngle(final BattleHud hud, final boolean isBattleStart, final boolean keepCurrentAngleIfNoPreference) {
+    hud.currentCameraPositionIndicesIndex_800c66b0 = this.getPreferredCameraAngle(hud, isBattleStart, keepCurrentAngleIfNoPreference);
+    hud.currentCameraIndex_800c6780 = encounter.cameraPosIndices[hud.currentCameraPositionIndicesIndex_800c66b0];
+  }
+
+  private int getPreferredCameraAngle(final BattleHud hud, final boolean isBattleStart, final boolean keepCurrentAngleIfNoPreference) {
+    final PreferredBattleCameraAngle config = CONFIG.getConfig(CoreMod.PREFERRED_BATTLE_CAMERA_ANGLE.get());
+    if(config != PreferredBattleCameraAngle.NORMAL) {
+      int filteredArrayIndex = 0;
+      final int[] filteredIndices = new int[encounter.cameraPosIndices.length];
+      final int[] cameraAngles = switch(config) {
+        case PreferredBattleCameraAngle.PLAYER -> BattleCamera.playerCameraAngles;
+        case PreferredBattleCameraAngle.SIDE -> BattleCamera.sideCameraAngles;
+        case PreferredBattleCameraAngle.ENEMY -> BattleCamera.enemyCameraAngles;
+        default -> throw new IllegalArgumentException("Couldn't match the config " + config + " to a camera angles preset array");
+      };
+
+      for(int i = 0; i < encounter.cameraPosIndices.length; i++) {
+        if(this.cameraArrayContainsIndex(encounter.cameraPosIndices[i], cameraAngles)) {
+          if(!isBattleStart && hud.currentCameraPositionIndicesIndex_800c66b0 == i) {
+            return i;
+          }
+          filteredIndices[filteredArrayIndex] = i;
+          filteredArrayIndex++;
+        }
+        if(filteredArrayIndex > 0) {
+          return filteredIndices[new Random().nextInt(filteredArrayIndex)];
+        }
+      }
+    } else if(keepCurrentAngleIfNoPreference) {
+      return hud.currentCameraPositionIndicesIndex_800c66b0;
+    }
+    return simpleRand() & 3; //Falls back to the default behavior
+  }
+
+  private boolean cameraArrayContainsIndex(final int index, final int[] array) {
+    for(int i = 0; i < array.length; i++) {
+      if(array[i] == index) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

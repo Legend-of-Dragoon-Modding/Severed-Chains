@@ -446,9 +446,6 @@ public class Battle extends EngineState<Battle> {
   public int mcqOffsetX_800c6774;
   public int mcqOffsetY_800c6778;
 
-  /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
-  public int currentCameraIndex_800c6780;
-
   public int _800c67c8;
   public int _800c67cc;
   public int _800c67d0;
@@ -8622,6 +8619,10 @@ public class Battle extends EngineState<Battle> {
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
+
+    final boolean isDragoon = attacker instanceof final PlayerBattleEntity player && player.isDragoon();
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, !isDragoon);
+
     return FlowControl.CONTINUE;
   }
 
@@ -8658,6 +8659,9 @@ public class Battle extends EngineState<Battle> {
     //LAB_800f27ec
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
+
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, false);
+
     return FlowControl.CONTINUE;
   }
 
@@ -8694,6 +8698,8 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.ITEM_MAGIC));
     this.applyItemSpecialEffects(attacker, defender);
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, false);
+
     return FlowControl.CONTINUE;
   }
 
@@ -9293,8 +9299,7 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
-    this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
+    camera_800c67f0.trySetPreferredCameraAngle(this.hud, true, false);
     battleFlags_800bc960 |= 0x2;
   }
 
