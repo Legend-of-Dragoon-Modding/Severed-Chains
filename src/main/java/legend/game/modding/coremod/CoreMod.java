@@ -33,6 +33,7 @@ import legend.game.modding.coremod.config.AutoTextDelayConfigEntry;
 import legend.game.modding.coremod.config.AutoSaveAfterBattleConfig;
 import legend.game.modding.coremod.config.BattleTransitionModeConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindsConfigEntry;
+import legend.game.modding.coremod.config.AdditionCounterAmountConfigEntry;
 import legend.game.modding.coremod.config.CreateCrashSaveConfigEntry;
 import legend.game.modding.coremod.config.DeadzoneConfigEntry;
 import legend.game.modding.coremod.config.DisableMouseInputConfigEntry;
@@ -189,6 +190,7 @@ public class CoreMod {
   public static final RegistryDelegate<ElementIconConfig> DISPLAY_ELEMENT_ICON_CONFIG = CONFIG_REGISTRAR.register("element_icon_config", ElementIconConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> EQUIP_EFFECTS_IN_DRAGOON = CONFIG_REGISTRAR.register("equip_effects_in_dragoon", EquipEffectsInDragoonConfig::new);
   public static final RegistryDelegate<BoolConfigEntry> SHOW_FPS = CONFIG_REGISTRAR.register("show_fps", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL, ConfigCategory.USER_INTERFACE));
+  public static final RegistryDelegate<AdditionCounterAmountConfigEntry> ADDITION_COUNTER_AMOUNT_CONFIG = CONFIG_REGISTRAR.register("addition_counter_amount", AdditionCounterAmountConfigEntry::new);
 
   private static final Registrar<InputAction, InputActionRegistryEvent> INPUT_ACTION_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.inputActions, MOD_ID);
 
