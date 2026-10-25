@@ -9303,8 +9303,6 @@ public class Battle extends EngineState<Battle> {
     battleFlags_800bc960 |= 0x2;
   }
 
-
-
   @Method(0x80109808L)
   public void loadEnemyDropsAndScript(final int enemyAndCombatantId) {
     final int enemyId = enemyAndCombatantId & 0xffff;
