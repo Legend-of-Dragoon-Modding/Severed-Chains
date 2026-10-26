@@ -2371,6 +2371,8 @@ public class SMap extends EngineState<SMap> {
 
       if(!flEq(model.coord2_14.transforms.rotate.y, destAngle)) {
         sobj.finishInterpolatedRotationY();
+        // GH#2895, broken in retail
+        this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c = 0;
 
         if((this.smapTicks_800c6ae0 - sobj.lastRotationTickY) >= 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
           model.coord2_14.transforms.rotate.y = destAngle;
