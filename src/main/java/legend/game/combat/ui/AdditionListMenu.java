@@ -19,7 +19,7 @@ import static legend.game.Text.renderText;
 import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public class AdditionListMenu extends ListMenu {
-  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE_246);
 
   private UiBox description;
 

@@ -45,6 +45,7 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.LoadedDeff24;
 import legend.game.combat.effects.AdditionCharEffectData0c;
 import legend.game.combat.effects.AdditionNameTextEffect1c;
+import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionSparksEffect08;
 import legend.game.combat.effects.AdditionStarburstEffect10;
 import legend.game.combat.effects.Attachment18;
@@ -94,6 +95,8 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
+import legend.game.combat.ui.AdditionFeedbackText;
+import legend.game.combat.ui.AdditionFeedback;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleActionTickFlowControl;
 import legend.game.combat.ui.BattleHud;
@@ -279,6 +282,7 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
+import static legend.game.modding.coremod.CoreMod.ADDITION_FEEDBACK_CONFIG;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
@@ -715,6 +719,9 @@ public class Battle extends EngineState<Battle> {
 
       if(battleLoaded_800bc94c) {
         this.renderBattleEnvironment();
+        if(SEffe.additionFeedbackText != null) {
+          SEffe.additionFeedbackText.renderAdditionFeedbackText();
+        }
       }
     } else {
       //LAB_8001870c
@@ -2164,6 +2171,12 @@ public class Battle extends EngineState<Battle> {
     }
 
     this.initPlayerBattleEntityStats();
+
+    if (CONFIG.getConfig(ADDITION_FEEDBACK_CONFIG.get()) == AdditionFeedback.FEEDBACK) {
+      SEffe.additionFeedbackText = new AdditionFeedbackText();
+    } else {
+      SEffe.additionFeedbackText = null;
+    }
 
     this.loadingStage++;
   }
@@ -4387,9 +4400,11 @@ public class Battle extends EngineState<Battle> {
         return FlowControl.CONTINUE;
       }
 
-      //LAB_800cd208
-      final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(charData.selectedAddition_19);
-      additionInfo.xp++;
+      if(AdditionOverlaysEffect44.additionResults.hits >= AdditionOverlaysEffect44.additionResults.additionHits) {
+        //LAB_800cd208
+        final CharacterAdditionInfo additionInfo = charData.getAdditionInfo(charData.selectedAddition_19);
+        additionInfo.xp++;
+      }
     }
 
     //LAB_800cd3ac

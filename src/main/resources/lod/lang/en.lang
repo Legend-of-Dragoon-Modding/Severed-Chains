@@ -688,6 +688,17 @@ lod.battle_actions.special.name=Special
 lod.battle_actions.d_attack.name=Attack
 lod.battle_actions.additions.name=Change Addition
 
+lod.addition_feedback.wrong = Wrong
+lod.addition_feedback.counter = Counter
+lod.addition_feedback.late = Late
+lod.addition_feedback.early = Early
+lod.addition_feedback.no_press = Late
+lod.addition_feedback.good = Good
+lod.addition_feedback.good_plus = Good+
+lod.addition_feedback.good_minus = Good-
+lod.addition_feedback.perfect = Perfect
+lod.addition_feedback.flawless = Flawless
+
 # Statuses
 lod.status.poison.name=Poison
 lod.status.dispirit.name=Dispirit

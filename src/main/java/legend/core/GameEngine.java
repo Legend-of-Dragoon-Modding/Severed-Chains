@@ -162,7 +162,7 @@ public final class GameEngine {
   private static Texture noSlopTexture;
   private static Obj texturedObj;
 
-  private static final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE).noShadow().size(0.75f);
+  private static final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE_246).noShadow().size(0.75f);
 
   private static String statusText = "";
 
@@ -576,5 +576,5 @@ public final class GameEngine {
     textZ_800bdf00 = oldTextZ;
   }
 
-  private static final FontOptions FONT = new FontOptions().colour(TextColour.WHITE).size(0.5f).horizontalAlign(HorizontalAlign.CENTRE);
+  private static final FontOptions FONT = new FontOptions().colour(TextColour.WHITE_246).size(0.5f).horizontalAlign(HorizontalAlign.CENTRE);
 }

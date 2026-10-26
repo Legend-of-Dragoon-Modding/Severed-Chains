@@ -21,7 +21,7 @@ import static legend.game.combat.ui.BattleHud.battleMenuIconHeights_800fb6bc;
 import static legend.game.combat.ui.BattleMenuStruct58.battleMenuIconMetrics_800fb674;
 
 public class SpecialBattleAction extends BattleAction {
-  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE_246).shadowColour(TextColour.BLACK_8).horizontalAlign(HorizontalAlign.CENTRE);
 
   protected static final int[] battleMenuIconStates_800c71e4 = {0, 1, 2, 1};
 

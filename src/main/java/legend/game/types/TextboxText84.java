@@ -83,7 +83,7 @@ public class TextboxText84 {
 
   public LodString str_24;
 
-  public TextColour textColour_28 = TextColour.WHITE;
+  public TextColour textColour_28 = TextColour.WHITE_246;
 
   public float scrollSpeed_2a;
   /** Adjusts the Y value of the text as the box is scrolling */
@@ -131,7 +131,7 @@ public class TextboxText84 {
     this.state_00 = TextboxTextState.INIT_TEXTBOX_TYPE_1;
     this.flags_08 = 0;
     this.z_0c = 13;
-    this.textColour_28 = TextColour.WHITE;
+    this.textColour_28 = TextColour.WHITE_246;
     this.scrollSpeed_2a = 2.0f / currentEngineState_8004dd04.tickMultiplier();
     this.scrollAmount_2c = 0.0f;
     this.charIndex_30 = 0;

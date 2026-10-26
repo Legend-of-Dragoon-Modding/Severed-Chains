@@ -21,7 +21,7 @@ import static legend.game.Text.renderText;
 import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
 public class SpellListMenu extends ListMenu {
-  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE_246);
 
   private UiBox description;
 
@@ -48,9 +48,9 @@ public class SpellListMenu extends ListMenu {
     final TextColour textColour;
     this.setActiveSpell(index);
     if(!this.canUse()) {
-      textColour = TextColour.GREY;
+      textColour = TextColour.GREY_120;
     } else {
-      textColour = TextColour.WHITE;
+      textColour = TextColour.WHITE_246;
     }
 
     final SpellStats0c spell = this.spells.spells_01.get(index);
@@ -60,7 +60,7 @@ public class SpellListMenu extends ListMenu {
     this.fontOptions.colour(textColour);
     renderText(I18n.translate(spell), x, y, this.fontOptions);
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
-    this.fontOptions.colour(TextColour.WHITE);
+    this.fontOptions.colour(TextColour.WHITE_246);
     renderText(String.valueOf(this.player_08.spell_94.mp_06), x + 152, y, this.fontOptions);
 
     this.transforms.scaling(0.75f);

@@ -172,9 +172,9 @@ public class TurnOrderMod {
         } else if(targeted) {
           FONT.colour(TextColour.YELLOW);
         } else if(bentIndex == 0) {
-          FONT.colour(TextColour.WHITE);
+          FONT.colour(TextColour.WHITE_246);
         } else {
-          FONT.colour(TextColour.LIGHT_GREY);
+          FONT.colour(TextColour.GREY_165);
         }
 
         final float y = 14.0f + bentIndex * 8.0f;

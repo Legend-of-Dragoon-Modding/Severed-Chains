@@ -75,6 +75,7 @@ import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.PerfectDragoonAdditionEffect30;
 import legend.game.combat.types.PerfectDragoonAdditionEffectGlyph06;
 import legend.game.combat.types.VertexDifferenceAnimation18;
+import legend.game.combat.ui.AdditionFeedbackText;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -196,6 +197,8 @@ public final class SEffe {
   private static int[] daddyHitSuccessWindowsPointer_8011a02c;
 
   private static final MV seffeTransforms = new MV();
+
+  public static AdditionFeedbackText additionFeedbackText;
 
   @Method(0x800cea1cL)
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
