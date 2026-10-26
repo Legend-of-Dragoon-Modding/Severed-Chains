@@ -6,7 +6,6 @@ import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import org.apache.commons.lang3.StringUtils;
 
-import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderText;
 
 public class AdditionFeedbackText {
@@ -137,7 +136,7 @@ public class AdditionFeedbackText {
     }
   }
 
-  public void renderAdditionFeedbackTexture() {
+  public void renderAdditionFeedbackText() {
     for (int i = 0; i < this.feedbackTextElements.length; i++) {
       final FeedbackTextElement element = this.feedbackTextElements[i];
       if (element != null && element.hasRemainingFrames()) {
