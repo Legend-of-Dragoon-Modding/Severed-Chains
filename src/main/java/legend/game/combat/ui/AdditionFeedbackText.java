@@ -142,7 +142,7 @@ public class AdditionFeedbackText {
       if (element != null && element.hasRemainingFrames()) {
         final FeedbackTextFrameData frame = element.getFrame();
         if (frame != null) {
-          renderText(element.text, frame.x, frame.y, element.font);
+          renderText(element.text, frame.x, frame.y, element.font.translucency(frame.translucency));
         }
       }
     }

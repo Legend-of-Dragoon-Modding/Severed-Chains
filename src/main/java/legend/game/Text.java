@@ -1875,6 +1875,10 @@ public final class Text {
             if(i == 0 || font.usesColour(c)) {
               final QueuedModelStandard model = font.queueChar(InputCodepoints.getCodepoint(PLATFORM.getGamepadType(), c), textTransforms);
 
+              if(options.hasTranslucency()) {
+                model.translucency(options.getTranslucency());
+              }
+
               if(font.usesColour(c)) {
                 if(i == 0) {
                   model.colour(options.getRed(), options.getGreen(), options.getBlue());
