@@ -15,7 +15,7 @@ import legend.game.combat.AdditionResults;
 import legend.game.combat.SEffe;
 import legend.game.combat.AdditionCounterAmount;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.combat.ui.AdditionButtonFeedback;
+import legend.game.combat.ui.AdditionFeedbackValue;
 import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
@@ -47,7 +47,7 @@ import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
 public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.VoidType> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AdditionOverlaysEffect44.class);
-  private static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  private static final FontOptions UI_WHITE_SHADOWED = new FontOptions().colour(TextColour.WHITE_246).shadowColour(TextColour.BLACK_8).horizontalAlign(HorizontalAlign.CENTRE);
 
   public int attackerScriptIndex_00;
   public int targetScriptIndex_04;
@@ -70,7 +70,6 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
   /** ubyte; 0 = no auto complete, 2 = WC and UW auto-complete */
   public int autoCompleteType_3a;
 
-  private int additionButtonFramesToRender; //Remaining frames that the addition button will render for
   private boolean flawlessAddition;
 
   // Not needed anymore, just reference hit overlay array at index lastCompletedHit_39
@@ -198,8 +197,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       }
     }
 
-    if(SEffe.additionButtonFeedbackText != null) {
-      SEffe.additionButtonFeedbackText.initializeFeedbackTextElements(hitCount);
+    if(SEffe.additionFeedbackText != null) {
+      SEffe.additionFeedbackText.initializeFeedbackTextElements(hitCount);
     }
   }
 
@@ -512,7 +511,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final boolean allowMisinput = CONFIG.getConfig(CoreMod.ADDITION_ALLOW_MISINPUT_CONFIG.get());
 
     if(this.pauseTickerAndRenderer_31 == 0) {
-      AdditionButtonFeedback currentInputStatus = AdditionButtonFeedback.NONE;
+      AdditionFeedbackValue currentInputStatus = AdditionFeedbackValue.NONE;
       final AdditionOverlaysHit20[] hitArray = this.hitOverlays_40;
       this.currentFrame_34++;
 
@@ -527,9 +526,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
               additionHitCompletionState_8011a014[hitNum] = -2;
               this.propagateFailedAdditionHitFlag(hitArray, hitNum);
             }
-            currentInputStatus = AdditionButtonFeedback.NO_PRESS;
-            if (SEffe.additionButtonFeedbackText != null) {
-              SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, currentInputStatus);
+            currentInputStatus = AdditionFeedbackValue.NO_PRESS;
+            if (SEffe.additionFeedbackText != null) {
+              SEffe.additionFeedbackText.setFeedbackTextElement(hitNum, currentInputStatus);
             }
             //LAB_80107478
           }
@@ -609,7 +608,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014[hitNum] = -3;
-                    currentInputStatus = hitOverlay.isCounter_1c ? AdditionButtonFeedback.COUNTER : AdditionButtonFeedback.WRONG;
+                    currentInputStatus = hitOverlay.isCounter_1c ? AdditionFeedbackValue.COUNTER : AdditionFeedbackValue.WRONG;
                   } else if(this.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 && this.currentFrame_34 <= hitOverlay.frameSuccessUpperBound_12) { // Good Input
                     additionHitCompletionState_8011a014[hitNum] = 1;
                     hitOverlay.hitSuccessful_01 = true;
@@ -635,26 +634,26 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                         break;
                     }
 
-                    currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionButtonFeedback.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionButtonFeedback.GOOD_MINUS : AdditionButtonFeedback.GOOD_PLUS);
-                    if (this.flawlessAddition && currentInputStatus != AdditionButtonFeedback.PERFECT) {
+                    currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionFeedbackValue.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionFeedbackValue.GOOD_MINUS : AdditionFeedbackValue.GOOD_PLUS);
+                    if (this.flawlessAddition && currentInputStatus != AdditionFeedbackValue.PERFECT) {
                       this.flawlessAddition = false;
                     }
                   }
                   else { // Late/Early Input
-                    currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionButtonFeedback.EARLY : AdditionButtonFeedback.LATE;
+                    currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionFeedbackValue.EARLY : AdditionFeedbackValue.LATE;
                     this.flawlessAddition = false;
                   }
 
                   if (hitNum == hitArray.length - 1) {
                     additionResults.flawless = this.flawlessAddition;
 
-                    if (SEffe.additionButtonFeedbackText != null) {
-                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, this.flawlessAddition ? AdditionButtonFeedback.FLAWLESS : currentInputStatus);
+                    if (SEffe.additionFeedbackText != null) {
+                      SEffe.additionFeedbackText.setFeedbackTextElement(hitNum, this.flawlessAddition ? AdditionFeedbackValue.FLAWLESS : currentInputStatus);
                     }
                   }
                   else {
-                    if (SEffe.additionButtonFeedbackText != null) {
-                      SEffe.additionButtonFeedbackText.setFeedbackTextElement(hitNum, currentInputStatus);
+                    if (SEffe.additionFeedbackText != null) {
+                      SEffe.additionFeedbackText.setFeedbackTextElement(hitNum, currentInputStatus);
                     }
                   }
 

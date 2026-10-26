@@ -95,7 +95,7 @@ import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageDeffThing08;
-import legend.game.combat.ui.AdditionButtonFeedbackText;
+import legend.game.combat.ui.AdditionFeedbackText;
 import legend.game.combat.ui.AdditionFeedback;
 import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleActionTickFlowControl;
@@ -719,8 +719,8 @@ public class Battle extends EngineState<Battle> {
 
       if(battleLoaded_800bc94c) {
         this.renderBattleEnvironment();
-        if(SEffe.additionButtonFeedbackText != null) {
-          SEffe.additionButtonFeedbackText.renderAdditionFeedbackTexture();
+        if(SEffe.additionFeedbackText != null) {
+          SEffe.additionFeedbackText.renderAdditionFeedbackTexture();
         }
       }
     } else {
@@ -2173,9 +2173,9 @@ public class Battle extends EngineState<Battle> {
     this.initPlayerBattleEntityStats();
 
     if (CONFIG.getConfig(ADDITION_FEEDBACK_CONFIG.get()) == AdditionFeedback.FEEDBACK) {
-      SEffe.additionButtonFeedbackText = new AdditionButtonFeedbackText();
+      SEffe.additionFeedbackText = new AdditionFeedbackText();
     } else {
-      SEffe.additionButtonFeedbackText = null;
+      SEffe.additionFeedbackText = null;
     }
 
     this.loadingStage++;
