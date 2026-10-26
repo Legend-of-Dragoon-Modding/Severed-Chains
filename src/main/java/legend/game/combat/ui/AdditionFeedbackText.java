@@ -1,6 +1,7 @@
 package legend.game.combat.ui;
 
 import legend.core.renderer.Translucency;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
@@ -43,27 +44,15 @@ public class AdditionFeedbackText {
 
     private void setText()
     {
-      String value = this.feedback.toString();
-
       switch(this.feedback) {
-        case AdditionFeedbackValue.GOOD:
+        case AdditionFeedbackValue.GOOD, AdditionFeedbackValue.GOOD_MINUS, AdditionFeedbackValue.GOOD_PLUS:
           this.font = defaultFont.colour(TextColour.NEON_GREEN).shadowColour(TextColour.BLACK_0);
-          value = AdditionFeedbackValue.GOOD.toString();
-          break;
-        case AdditionFeedbackValue.GOOD_MINUS:
-          this.font = defaultFont.colour(TextColour.NEON_GREEN).shadowColour(TextColour.BLACK_0);
-          value = AdditionFeedbackValue.GOOD.toString() + '-';
-          break;
-        case AdditionFeedbackValue.GOOD_PLUS:
-          this.font = defaultFont.colour(TextColour.NEON_GREEN).shadowColour(TextColour.BLACK_0);
-          value = AdditionFeedbackValue.GOOD.toString() + '+';
           break;
         case AdditionFeedbackValue.EARLY:
           this.font = defaultFont.colour(TextColour.MAGENTA).shadowColour(TextColour.BLACK_0);
           break;
         case AdditionFeedbackValue.LATE, AdditionFeedbackValue.NO_PRESS:
           this.font = defaultFont.colour(TextColour.RED_ORANGE).shadowColour(TextColour.BLACK_0);
-          value = AdditionFeedbackValue.LATE.toString();
           break;
         case AdditionFeedbackValue.PERFECT:
           this.font = defaultFont.colour(TextColour.VIVID_BLUE).shadowColour(TextColour.BLACK_0);
@@ -78,8 +67,7 @@ public class AdditionFeedbackText {
           this.font = defaultFont.colour(TextColour.GREY_90).shadowColour(TextColour.BLACK_0);
           break;
       }
-
-      this.text = StringUtils.capitalize(value.toLowerCase()); //LANG.getTranslation("addition_feedback_value_%s", feedback.toString());
+      this.text = I18n.translate("lod.addition_feedback." + this.feedback.toString().toLowerCase());
     }
 
     public boolean hasRemainingFrames() {
