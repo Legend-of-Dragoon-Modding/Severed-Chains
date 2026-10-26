@@ -1806,6 +1806,8 @@ public class SMap extends EngineState<SMap> {
 
     if(!flEq(model.coord2_14.transforms.rotate.y, y)) {
       sobj.finishInterpolatedRotationY();
+      // GH#2895, broken in retail
+      this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c = 0;
 
       if((this.smapTicks_800c6ae0 - sobj.lastRotationTickY) >= 2 / vsyncMode_8007a3b8) {
         model.coord2_14.transforms.rotate.y = y;
