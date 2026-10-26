@@ -12,7 +12,6 @@ import legend.game.types.McqHeader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.bent.BattleEntity27c.FLAG_DRAGOON;
@@ -37,8 +36,9 @@ public class BattlePreloadedEntities_18cb0 {
 
     //LAB_800c74fc
     final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
-    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(character.selectedAddition_19);
-    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHit(character, additionInfo, hitNum);
+    final var player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
+    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(player.selectedAddition_58);
+    return player.addition.getHit(character, additionInfo, hitNum);
   }
 
   public int getHitCount(final int charSlot) {
@@ -48,8 +48,9 @@ public class BattlePreloadedEntities_18cb0 {
 
     //LAB_800c74fc
     final CharacterData2c character = gameState_800babc8.getCharacterBySlot(charSlot);
-    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(character.selectedAddition_19);
-    return REGISTRIES.additions.getEntry(character.selectedAddition_19).get().getHitCount(character, additionInfo);
+    final var player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
+    final CharacterAdditionInfo additionInfo = character.getAdditionInfo(player.selectedAddition_58);
+    return player.addition.getHitCount(character, additionInfo);
   }
 
   @Method(0x800c7488L)
