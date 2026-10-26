@@ -253,9 +253,9 @@ public class WMapModelAndAnimData258 {
   }
 
   public void deleteMapMarkers() {
-    this.mapArrow.delete();
+    if(this.mapArrow != null) this.mapArrow.delete();
     this.mapArrow = null;
-    this.coolonPlaceMarker.delete();
+    if(this.coolonPlaceMarker != null) this.coolonPlaceMarker.delete();
     this.coolonPlaceMarker = null;
   }
 }

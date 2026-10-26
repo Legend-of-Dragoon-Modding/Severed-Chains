@@ -1,5 +1,9 @@
 package legend.lodmod;
 
+import legend.game.submap.RegisterSubmapProvidersEvent;
+
+import legend.game.combat.environment.RegisterBattleStagesEvent;
+
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
@@ -82,6 +86,24 @@ import legend.game.textures.RegisterAtlasTexturesEvent;
 import legend.game.tim.Tim;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
+import legend.game.wmap.registries.RegisterWorldMapAvatarsEvent;
+import legend.game.wmap.registries.RegisterWorldMapBattleStagesEvent;
+import legend.game.wmap.registries.RegisterWorldMapBehavioursEvent;
+import legend.game.wmap.registries.RegisterWorldMapCoolonDestinationsEvent;
+import legend.game.wmap.registries.RegisterWorldMapEncounterPoolsEvent;
+import legend.game.wmap.registries.RegisterWorldMapGeometryEvent;
+import legend.game.wmap.registries.RegisterWorldMapNodesEvent;
+import legend.game.wmap.registries.RegisterWorldMapPlacesEvent;
+import legend.game.wmap.registries.RegisterWorldMapPortalsEvent;
+import legend.game.wmap.registries.RegisterWorldMapPresentationProfilesEvent;
+import legend.game.wmap.registries.RegisterWorldMapRegionsEvent;
+import legend.game.wmap.registries.RegisterWorldMapRoutesEvent;
+import legend.game.wmap.registries.RegisterWorldMapServicesEvent;
+import legend.game.wmap.registries.RegisterWorldMapSoundsEvent;
+import legend.game.wmap.registries.RegisterWorldMapStoryPresetsEvent;
+import legend.game.wmap.registries.RegisterWorldMapSubmapDestinationsEvent;
+import legend.game.wmap.registries.RegisterWorldMapTeleportLinksEvent;
+import legend.game.wmap.registries.RegisterWorldMapThumbnailsEvent;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.Registrar;
@@ -345,6 +367,11 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerSubmapProviders(final RegisterSubmapProvidersEvent event) {
+    LodSubmapProviders.register(event);
+  }
+
+  @EventListener
   public static void registerInputActions(final InputActionRegistryEvent event) {
     INPUT_ACTION_REGISTRAR.registryEvent(event);
   }
@@ -426,6 +453,66 @@ public class LodMod {
   }
 
   @EventListener
+  public static void registerWorldMapNodes(final RegisterWorldMapNodesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapAvatars(final RegisterWorldMapAvatarsEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapThumbnails(final RegisterWorldMapThumbnailsEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapServices(final RegisterWorldMapServicesEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapSounds(final RegisterWorldMapSoundsEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapBattleStages(final RegisterWorldMapBattleStagesEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapSubmapDestinations(final RegisterWorldMapSubmapDestinationsEvent event) {
+    LodWorldMapAuthoringData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapRegions(final RegisterWorldMapRegionsEvent event) {
+    LodWorldMapRegions.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapGeometry(final RegisterWorldMapGeometryEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapRoutes(final RegisterWorldMapRoutesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapPlaces(final RegisterWorldMapPlacesEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapPortals(final RegisterWorldMapPortalsEvent event) {
+    LodWorldMap.register(event);
+  }
+
+  @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     LodItems.register(event);
   }
@@ -448,6 +535,11 @@ public class LodMod {
   @EventListener
   public static void registerEncounters(final EncounterRegistryEvent event) {
     LodEncounters.register(event);
+  }
+
+  @EventListener
+  public static void registerBattleStages(final RegisterBattleStagesEvent event) {
+    LodBattleStages.register(event);
   }
 
   @EventListener
@@ -968,5 +1060,34 @@ public class LodMod {
       event.addMapping(ItemIcon.HORN, ItemIcon.RING);
       event.addMapping(ItemIcon.SHIELD, ItemIcon.RING);
     }
+  }
+  @EventListener
+  public static void registerWorldMapStoryPresets(final RegisterWorldMapStoryPresetsEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapCoolonDestinations(final RegisterWorldMapCoolonDestinationsEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapTeleportLinks(final RegisterWorldMapTeleportLinksEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapEncounterPools(final RegisterWorldMapEncounterPoolsEvent event) {
+    LodWorldMapTravelData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapPresentationProfiles(final RegisterWorldMapPresentationProfilesEvent event) {
+    LodWorldMapPresentationData.register(event);
+  }
+
+  @EventListener
+  public static void registerWorldMapBehaviours(final RegisterWorldMapBehavioursEvent event) {
+    LodWorldMapPresentationData.register(event);
   }
 }

@@ -11,9 +11,15 @@ import javax.annotation.Nullable;
 /// Load data from a save. Data is saved using {@link WriteSaveDataEvent}.
 public class ReadSaveDataEvent extends Event {
   private final ListTag tags;
+  private final SaveSchemaCatalog schemas;
 
   public ReadSaveDataEvent(final ListTag tags) {
-    this.tags = tags;
+    this(tags, SaveSchemaCatalog.current());
+  }
+
+  public ReadSaveDataEvent(final ListTag tags, final SaveSchemaCatalog schemas) {
+    this.tags = tags.clone();
+    this.schemas = schemas;
   }
 
   @Nullable
@@ -22,8 +28,8 @@ public class ReadSaveDataEvent extends Event {
       final MapTag tag = this.tags.get(i).asMap();
       final RegistryId tagId = tag.get("id").asRegistryId().get();
 
-      if(tagId.equals(id)) {
-        return tag.get("data");
+      if(this.schemas.canonical(SaveSchema.Domain.MOD_DATA, tagId).equals(this.schemas.canonical(SaveSchema.Domain.MOD_DATA, id)) && this.schemas.readable(tag)) {
+        return tag.get("data").clone();
       }
     }
 

@@ -70,7 +70,10 @@ class EngineBootTest {
     Wait.waitForEngineState(Ttle.class);
     Input.sendKeyPress(InputKey.RETURN);
 
-    Harness.createFreshGameState();
+    Harness.onEngineThread(() -> {
+      Harness.createFreshGameState();
+      return null;
+    });
 
     CONFIG.setConfig(CoreMod.AUTO_TEXT_CONFIG.get(), true);
     CONFIG.setConfig(CoreMod.AUTO_TEXT_DELAY_CONFIG.get(), 0.0f);
@@ -130,7 +133,8 @@ class EngineBootTest {
     Wait.waitForPlayerTurn();
     Harness.selectBattleMenuIcon(1);
     Input.sendKeyPress(InputKey.RETURN);
-
+    final var battle = (legend.game.combat.Battle)legend.game.EngineStates.currentEngineState_8004dd04;
+    Wait.waitFor(() -> (battle.hud.battleMenu_800c6c34.highlightState_02 & 0x2) == 0, 30_000, "Guard command consumed");
     Wait.waitForPlayerTurn();
 
     final int hpAfter = hp.getCurrent();
@@ -138,11 +142,34 @@ class EngineBootTest {
     LOGGER.info("[E2E] PASS: guardDoesNotChangeMonsterHp - HP=%d (unchanged)", hpAfter);
   }
 
+  @Test
+  @Timeout(180)
+  void test4_worldMapReturnTravelAndSave() {
+    WorldMapRuntimeChecks.runAfterBattle();
+    LOGGER.info("[E2E] PASS: worldMapReturnTravelAndSave");
+  }
+
+  @Test
+  @Timeout(180)
+  void test5_submapTypedReturnAndLifetime() {
+    SubmapRuntimeChecks.runAfterWorldMap();
+    LOGGER.info("[E2E] PASS: submapTypedReturnAndLifetime");
+  }
+
+  @Test
+  @Timeout(180)
+  void test6_worldMapPresetSwitchAndExactPosition() {
+    WorldMapRuntimeChecks.runPresetSwitch();
+    LOGGER.info("[E2E] PASS: worldMapPresetSwitchAndExactPosition");
+  }
+
   @AfterAll
   void shutdownEngine() {
     if(engine != null) {
       LOGGER.info("[E2E] Shutting down engine thread...");
-      engine.interrupt();
+      if(GameEngine.RENDERER.window() != null) {
+        GameEngine.RENDERER.window().close();
+      }
       try {
         engine.join(5000);
         if(engine.isAlive()) {
