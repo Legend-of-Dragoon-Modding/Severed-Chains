@@ -658,8 +658,8 @@ public class GameVarArrayParam extends Param {
     }
   }
 
-  private int readStatusConditionsVar(final int combatantIndex, final int varIndex) {
-    final StatusConditions20 conditions = ((Battle)currentEngineState_8004dd04).getCombatant(combatantIndex).extendedConditions;
+  private int readStatusConditionsVar(final int bentIndex, final int varIndex) {
+    final StatusConditions20 conditions = Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c.get(bentIndex).innerStruct_00.extendedConditions;
 
     return switch(varIndex) {
       case 0 -> conditions._00;
@@ -675,8 +675,8 @@ public class GameVarArrayParam extends Param {
     };
   }
 
-  private void writeStatusConditionsVar(final int combatantIndex, final int varIndex, final int val) {
-    final StatusConditions20 conditions = ((Battle)currentEngineState_8004dd04).getCombatant(combatantIndex).extendedConditions;
+  private void writeStatusConditionsVar(final int bentIndex, final int varIndex, final int val) {
+    final StatusConditions20 conditions = Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c.get(bentIndex).innerStruct_00.extendedConditions;
 
     switch(varIndex) {
       case 0 -> conditions._00 = val;

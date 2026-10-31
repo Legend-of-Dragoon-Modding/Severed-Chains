@@ -55,9 +55,6 @@ public class CombatantStruct1a8 {
 
   public PlayerBattleEntity playerBent;
 
-  /// Moved from BattleStateEf4#statusConditions_00
-  public final StatusConditions20 extendedConditions = new StatusConditions20();
-
   public boolean isPlayer() {
     return (this.flags_19e & 0x4) != 0;
   }

@@ -17,6 +17,7 @@ import legend.game.combat.types.BattleSoundUsage;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.battlestate.Status04;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.inventory.ItemStack;
 import legend.game.inventory.SpellStats0c;
 import legend.game.modding.events.battle.ActiveItemEvent;
@@ -253,6 +254,8 @@ public abstract class BattleEntity27c extends BattleObject {
   /** Was .8 */
   public float movementStepYAcceleration_f4;
 
+  /// Moved from BattleStateEf4#statusConditions_00
+  public final StatusConditions20 extendedConditions = new StatusConditions20();
   /// Moved from {@link BattleStateEf4}
   public final Status04 status_384 = new Status04();
 
