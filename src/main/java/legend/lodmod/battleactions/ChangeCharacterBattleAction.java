@@ -7,7 +7,7 @@ import legend.game.combat.ui.CharSwapListMenu;
 
 public class ChangeCharacterBattleAction extends SeveredBattleAction {
   public ChangeCharacterBattleAction() {
-    super(0, 3);
+    super(2, 3);
   }
 
   @Override
