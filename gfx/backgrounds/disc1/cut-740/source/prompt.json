@@ -1,0 +1,9 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Fixed camera prerendered game environment. Image 1 exact composition, image 2 approved modern realistic Seles style only. Repaint original forest path outside burning village in photorealistic AAA detail. Preserve original 385:256 canvas and camera, every trunk and root silhouette, big dark trunk at left, pair of narrow trunks at center rear, big trunk at right, fallen hollow log mouth at x75% y59%, pale walkable path from bottom center curving left to distant burning timber buildings. Keep log cavity size, path contours and positions exact. Real bark, moss, earth, ash, natural shadows, distant orange glow between conifers. No new trees, rocks, vegetation or obstacles, no characters/text/UI. Do not zoom crop rotate reframe. Match Seles realistic material fidelity without copying its landscape. Final canvas 1540x1024.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-1ca1aa33-75ea-40d2-be9c-d94eedb818f2.png",
+  "references": [
+    "gfx/backgrounds/disc1/cut-740/source/original-composite.png",
+    "gfx/backgrounds/seles-overlook/background.png"
+  ]
+}

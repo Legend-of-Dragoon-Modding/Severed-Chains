@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: style-transfer. Recreate reference image 1 (original Bale upper tower audience chamber game background) as a modern photorealistic prerendered RPG environment. Reference image 2 (approved residential floor below) is only a material quality/style reference. Exact original full 640x384 composition, expanded to a full 2560x1536 canvas. Preserve the top-down oblique camera, black outer void, all cutaway wall boundaries, central descending green-carpeted stair opening with curved balustrade and white stone posts, semicircular upper stone floor, throne/chair recess at top center, original side benches and bookshelves, all four round corner chambers, left upper room and spiral stair, bottom wooden balcony, and every passage/doorway at precisely the original normalized coordinates and elevations. Upgrade surfaces only: finely weathered sandstone, carved plaster, dark aged timber, green woven rugs, warm soft lantern light and subdued afternoon window glow, crisp realistic rich materials consistent with approved Bale artwork. Preserve clear walkable floor and each furniture footprint; no extra props, furniture, plants or obstacles on paths. Do not invent a new layout, crop, rotate or reframe. No people, characters, UI, text, arrows, watermark. Fully paint continuous floor beneath occluding foreground walls. Maintain original dark cutaway silhouette.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-92/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-91/source/base.png"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "tool": "built-in ImageGen",
+  "source": "../cut-37/source/base.png",
+  "promptSource": "../cut-37/prompts.json",
+  "reason": "All original background and foreground RGBA pixels match cut 37 exactly. Reuse its approved master; validate this explorable scene separately."
+}

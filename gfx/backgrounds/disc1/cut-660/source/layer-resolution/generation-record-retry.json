@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Create a faithful high-resolution texture reconstruction of the provided small original game throne sprite. EDIT TARGET image1: original throne crop; preserve its exact projected camera, wide squat proportions, silhouette, placement inside canvas, seat red velvet, and green-black carved metal frame. It fills canvas like original; backrest extends across left two-thirds, right arm extends to right edge, bottom feet to bottom edge. Supporting image2: modern throne style only. Do not use image2's narrow tall silhouette. Every pixel inside original nontransparent silhouette must depict proper carved chair surface, with no flat edge color extensions. Outside original silhouette genuinely transparent. No shadows or walls, floor, new objects. 780x820 reference ratio, crisp painterly fantasy game detail faithful to original pose.",
+  "inputs": [
+    "original-throne-crop.png",
+    "generated-throne-sprite.png"
+  ],
+  "output": "generated-throne-sprite-v2.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-4f49ced4-b58c-4a26-a10e-7540bb378482.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

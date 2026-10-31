@@ -1,0 +1,173 @@
+[
+  {
+    "name": "background",
+    "bounds": [
+      0,
+      0,
+      512,
+      384
+    ]
+  },
+  {
+    "name": "foreground-0",
+    "bounds": [
+      186,
+      218,
+      216,
+      265
+    ]
+  },
+  {
+    "name": "foreground-1",
+    "bounds": [
+      264,
+      103,
+      392,
+      245
+    ]
+  },
+  {
+    "name": "foreground-2",
+    "bounds": [
+      100,
+      260,
+      142,
+      299
+    ]
+  },
+  {
+    "name": "foreground-3",
+    "bounds": [
+      270,
+      170,
+      412,
+      274
+    ]
+  },
+  {
+    "name": "foreground-4",
+    "bounds": [
+      431,
+      253,
+      512,
+      364
+    ]
+  },
+  {
+    "name": "foreground-5",
+    "bounds": [
+      123,
+      268,
+      256,
+      384
+    ]
+  },
+  {
+    "name": "foreground-6",
+    "bounds": [
+      380,
+      188,
+      414,
+      225
+    ]
+  },
+  {
+    "name": "foreground-7",
+    "bounds": [
+      330,
+      193,
+      358,
+      227
+    ]
+  },
+  {
+    "name": "foreground-8",
+    "bounds": [
+      337,
+      191,
+      367,
+      226
+    ]
+  },
+  {
+    "name": "foreground-9",
+    "bounds": [
+      332,
+      195,
+      370,
+      227
+    ]
+  },
+  {
+    "name": "foreground-10",
+    "bounds": [
+      395,
+      187,
+      431,
+      225
+    ]
+  },
+  {
+    "name": "foreground-11",
+    "bounds": [
+      395,
+      187,
+      431,
+      225
+    ]
+  },
+  {
+    "name": "foreground-12",
+    "bounds": [
+      256,
+      264,
+      512,
+      384
+    ]
+  },
+  {
+    "name": "foreground-13",
+    "bounds": [
+      384,
+      186,
+      416,
+      225
+    ]
+  },
+  {
+    "name": "foreground-14",
+    "bounds": [
+      102,
+      242,
+      176,
+      312
+    ]
+  },
+  {
+    "name": "foreground-15",
+    "bounds": [
+      328,
+      192,
+      364,
+      226
+    ]
+  },
+  {
+    "name": "foreground-16",
+    "bounds": [
+      229,
+      65,
+      310,
+      170
+    ]
+  },
+  {
+    "name": "foreground-17",
+    "bounds": [
+      0,
+      222,
+      107,
+      376
+    ]
+  }
+]

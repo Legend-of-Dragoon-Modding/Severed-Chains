@@ -1,0 +1,17 @@
+{
+  "cut": 79,
+  "packagingPrepared": true,
+  "status": "independent-plates-staged",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "issues": [],
+  "trace": "build/disc1/captures/cut-79/original/alignment.csv",
+  "validation": "build/disc1/staged/cut-79/layered-validation.json",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/243",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ],
+  "endpointReview": "Both visible door leaves and both open recesses fit their native footprints without a floating doorstep; narrow upper gaps follow the original foreground silhouettes.",
+  "limits": "Asset endpoint review only; actual story-state traversal and character-dependent depth remain for gameplay testing."
+}

@@ -1,0 +1,8 @@
+{
+  "prompt": "Edit the full background master attached. Make ONE visible change: replace the tiny diagonal wooden stair in the UPPER-LEFT storage chamber (its right corner, just above the circular ladder shaft) with a substantially LONGER AND WIDER flight of wooden treads. The wooden treads must extend DOWNWARD into the black horizontal band under that stair by about 4% of the total image height, and LEFTWARD by about 2% of total image width. Paint solid warm brown wooden steps beneath the entire existing stair, eliminating the black wedge below its lowest tread. This is deliberate: the current stair is too short for the original game walking surface. Make the extension visibly obvious. All other areas, all rooms and objects, camera, composition and full canvas stay exactly unchanged. No people, arrows, text, UI or watermark. Output full environment.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "gfx/backgrounds/disc1/cut-90/source/initial-reference.png"
+  ],
+  "output": "stair-revision-3.png"
+}

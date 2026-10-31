@@ -1,0 +1,23 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "open-underlay.png",
+    "1": "open-underlay.png",
+    "2": "open-underlay.png",
+    "3": "open-underlay.png",
+    "4": "../base.png",
+    "5": "../base.png",
+    "6": "open-underlay.png",
+    "7": "open-underlay.png",
+    "8": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    4,
+    5
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Parent-generated clean underlay removes right wooden door leaf and adjacent props; modern base supplies independent closed door textures. Endpoint asset preview review required.",
+    "Prior wrong-directory script citations removed; actual original renderer trace independently proves dynamic slots. Correct sourceIndex+2 script audit pending."
+  ]
+}

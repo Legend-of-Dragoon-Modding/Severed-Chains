@@ -1,0 +1,534 @@
+{
+  "worker": "middle",
+  "scope": "Read-only visual review of completed actual modern GPU captures and synthetic state probes. No engine/source/runtime mutations by this reviewer.",
+  "planSlice": [
+    24,
+    48
+  ],
+  "cuts": [
+    111,
+    120,
+    121,
+    134,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    637,
+    636,
+    647,
+    155,
+    158,
+    159,
+    165,
+    166,
+    32
+  ],
+  "fullGameplayVerified": false,
+  "blockingMaterialIssues": [],
+  "capturesReviewed": 82,
+  "screens": [
+    {
+      "cut": 111,
+      "completion": "build/disc1/captures/cut-111-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 111",
+      "gpuEvidence": "build/disc1/captures/cut-111-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-111-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-111-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-111-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Mossy branch walkways and water render continuously. Treasure-box actors are distinct 3D objects; no missing background or visible crop seam."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 120,
+      "completion": "build/disc1/captures/cut-120-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 120",
+      "gpuEvidence": "build/disc1/captures/cut-120-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-120-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-120-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-120-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-120-focused-v1/modern/synthetic-claw-6.png",
+        "build/disc1/captures/cut-120-focused-v1/modern/synthetic-claw-7.png",
+        "build/disc1/captures/cut-120-focused-v1/modern/synthetic-claw-8.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Lava skeleton scenery continuous. Independent warm-brown claw6/7/8 render pointed tips in separate GPU probes, and hidden state exposes uninterrupted lava/path underlay. All-visible combines mutually exclusive poses and is synthetic only."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 121,
+      "completion": "build/disc1/captures/cut-121-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 121",
+      "gpuEvidence": "build/disc1/captures/cut-121-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-121-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-121-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-121-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Lava waterfall, foreground rock shelves and upper path continuous across probes; no obvious misplaced texture rectangle."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 134,
+      "completion": "build/disc1/captures/cut-134-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 134",
+      "gpuEvidence": "build/disc1/captures/cut-134-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-134-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-134-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-134-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Root-city terraces, stairs and purple doorway lights render coherently; no obvious layer holes or texture borders."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 141,
+      "completion": "build/disc1/captures/cut-141-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 141",
+      "gpuEvidence": "build/disc1/captures/cut-141-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-141-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-141-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-141-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Market floor, rugs, produce and foreground wares render coherently around actors. All-visible/hidden captures preserve fixed scenery."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 142,
+      "completion": "build/disc1/captures/cut-142-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 142",
+      "gpuEvidence": "build/disc1/captures/cut-142-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-142-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-142-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-142-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Red and green doorway leaves visible in normal/all-visible capture become dark open recesses in hidden state without baked duplicate door faces; walkways remain continuous."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 143,
+      "completion": "build/disc1/captures/cut-143-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 143",
+      "gpuEvidence": "build/disc1/captures/cut-143-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-143-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-143-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-143-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Multiple side-profile door leaves and top blue door change into open recesses. Wooden stairs and bridge retain continuous detail without detached RGB strips."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 144,
+      "completion": "build/disc1/captures/cut-144-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 144",
+      "gpuEvidence": "build/disc1/captures/cut-144-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-144-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-144-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-144-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions-with-coverage-limits",
+      "observations": [
+        "Two right-hand room door leaves visible in captured camera open cleanly in hidden state; bedroom/parlor textures around them remain coherent."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Camera covers right-hand rooms only; other two changing door leaves are outside this GPU view.",
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 145,
+      "completion": "build/disc1/captures/cut-145-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 145",
+      "gpuEvidence": "build/disc1/captures/cut-145-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-145-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-145-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-145-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions-with-coverage-limits",
+      "observations": [
+        "Captured library bookcase panel disappears into coherent bare wood/plaster/floor alcove. Main library, kitchen and stairwell render continuously."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Telescope windows20 and doors15/16 are outside this GPU camera; those assets have prior source-state review, but not visual GPU coverage in these captures.",
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 146,
+      "completion": "build/disc1/captures/cut-146-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 146",
+      "gpuEvidence": "build/disc1/captures/cut-146-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-146-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-146-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-146-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Interior room cutaways, bedroom and lower alley render cleanly; visible save effect is a game effect, not a painted background duplicate."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 147,
+      "completion": "build/disc1/captures/cut-147-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 147",
+      "gpuEvidence": "build/disc1/captures/cut-147-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-147-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-147-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-147-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Four rooftop hatch/door regions change between wood faces and dark openings. Roof tiles, rope bridges and thresholds remain continuous."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 148,
+      "completion": "build/disc1/captures/cut-148-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 148",
+      "gpuEvidence": "build/disc1/captures/cut-148-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-148-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-148-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-148-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions-with-coverage-limits",
+      "observations": [
+        "Upper shop balconies, bookcases, staircase and foreground railing render coherently with no visible background seam."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Lowest-room cellar hatch13 is almost entirely below this GPU camera, so this capture set does not visually verify hatch open/closed. Parent notified; targeted lower-room modern camera probe would close this coverage gap.",
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 149,
+      "completion": "build/disc1/captures/cut-149-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 149",
+      "gpuEvidence": "build/disc1/captures/cut-149-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-149-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-149-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-149-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Large stable/arena interior, rails, dirt floor and fire render coherently around actor silhouettes."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 150,
+      "completion": "build/disc1/captures/cut-150-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 150",
+      "gpuEvidence": "build/disc1/captures/cut-150-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-150-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-150-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-150-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Raised wooden walkway and background stalls continuous. Foreground bridge properly crosses the lower screen without rectangular patch edges."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 151,
+      "completion": "build/disc1/captures/cut-151-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 151",
+      "gpuEvidence": "build/disc1/captures/cut-151-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-151-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-151-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-151-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Arena tents, stairs, rails and merchant stall continuous in visible camera; no missing foreground plate apparent."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 637,
+      "completion": "build/disc1/captures/cut-637-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 637",
+      "gpuEvidence": "build/disc1/captures/cut-637-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-637-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-637-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-637-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Weapon shop posts, timber floor, display counter and hanging equipment render coherently around party/NPC actors."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 636,
+      "completion": "build/disc1/captures/cut-636-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 636",
+      "gpuEvidence": "build/disc1/captures/cut-636-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-636-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-636-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-636-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-636-focused-v1/modern/synthetic-alternate-props.png",
+        "build/disc1/captures/cut-636-focused-v1/modern/synthetic-base-props.png",
+        "build/disc1/captures/cut-636-focused-v1/modern/synthetic-parchment-raised.png"
+      ],
+      "result": "pass-visible-regions-with-coverage-limits",
+      "observations": [
+        "Base and alternate prop probes visibly swap sword/axe, books/shoes, head/fish, basket/armor, painting/clock, shield/gloves, bed/sofa, ladder/wall, red/blue flowers and basket/boots; no obvious baked leftovers or RGB rectangles. Parchment visible/raised probes cover/reveal room separately."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Dialogue overlay obscures portions of upper props. Prop colors/shapes remain visible through the translucent box, but these stills are not a complete scripted memory-game playthrough.",
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 647,
+      "completion": "build/disc1/captures/cut-647-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 647",
+      "gpuEvidence": "build/disc1/captures/cut-647-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-647-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-647-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-647-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Bedroom story scene loads detailed room around actors and dialogue overlay without background holes or obvious plate seams."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 155,
+      "completion": "build/disc1/captures/cut-155-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 155",
+      "gpuEvidence": "build/disc1/captures/cut-155-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-155-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-155-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-155-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Water channels, stone footings and timber rail loop render continuously; no visible background tearing in sampled camera."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 158,
+      "completion": "build/disc1/captures/cut-158-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 158",
+      "gpuEvidence": "build/disc1/captures/cut-158-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-158-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-158-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-158-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-158-focused-v1/modern/synthetic-railway-and-stairs.png",
+        "build/disc1/captures/cut-158-focused-v1/modern/synthetic-ramp-gold7-silver6.png",
+        "build/disc1/captures/cut-158-focused-v1/modern/synthetic-ramp-gold8-silver11.png",
+        "build/disc1/captures/cut-158-focused-v1/modern/synthetic-stairs-gold15-silver13.png"
+      ],
+      "result": "pass-visible-regions-with-coverage-limits",
+      "observations": [
+        "Selected gold/silver statue pairs, stairs/ramp and railway/foliage probes visibly differ as intended. Hidden state reveals rail track; foliage states hide it without obvious rectangular seams. Gold/silver colors and geometry remain distinguishable."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Camera samples lower stair landing, statues, pavilion and railway; upper arch and ramp top are above screen. Synthetic pose changes are not a natural timed puzzle playthrough.",
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 159,
+      "completion": "build/disc1/captures/cut-159-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 159",
+      "gpuEvidence": "build/disc1/captures/cut-159-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-159-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-159-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-159-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Circular stepped dais, stone pathways and water architecture render coherently around entrance actor; no visible texture plate gap."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 165,
+      "completion": "build/disc1/captures/cut-165-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 165",
+      "gpuEvidence": "build/disc1/captures/cut-165-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-165-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-165-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-165-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Secret-panel visible/hidden endpoints show closed star stone and revealed lit passage at left. Rail architecture and stone hall remain continuous; suspended cart is a separate 3D actor."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 166,
+      "completion": "build/disc1/captures/cut-166-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 166",
+      "gpuEvidence": "build/disc1/captures/cut-166-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-166-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-166-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-166-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Stone ruins, water, ladders and curving rail display continuously. Cart and chest are separate 3D objects; no visible background corruption."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 32,
+      "completion": "build/disc1/captures/cut-32-focused-v1/modern/completion.txt",
+      "completionText": "Inspection only; GPU loading and synthetic layer endpoints; full story/traversal verification pending for cut 32",
+      "gpuEvidence": "build/disc1/captures/cut-32-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-32-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-32-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-32-focused-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "result": "pass-visible-regions",
+      "observations": [
+        "Rock cavern, wooden landing, torch-lit wall and doorway render coherently. No visible missing texture or foreground edge seam."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Fixed camera and synthetic foreground endpoints only; full traversal, intermediate motion and story-state continuity are not claimed."
+      ],
+      "fullGameplayVerified": false
+    }
+  ]
+}

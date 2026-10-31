@@ -1,0 +1,9 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Modernize the original Prairie crossroads game background (Disc 1 cut 39) in reference 1. Reference 1 is the exact full-canvas geometry target; reference 2 is the modern coastal material quality and daylight continuity reference, not a layout. Output a 2560x1536 landscape, 5:3 full canvas. Preserve original perspective, exact silhouettes, framing, paths and object positions: huge old broadleaf tree slightly left of center, trunk leaning right, canopy from x12% through77% of width across upperhalf; low thick right branch with the original small hanging wooden boards/platforms at x56-68% y42-55%; keep these exact shapes and heights, no invented furniture. Stone path at far-left climbs upper-left, dusty right path curves from lower-right towards x80% upper-center; broad shaded central clearing beneath tree, foreground mossy boulder at x47-75% y70-100%, rounded boulder along right edge at y50-70%, low flowering green plants lower-left, grassy rock country and distant jagged gray formations. Preserve every walkable opening, stair elevation, tree root, rock edge, board silhouette, occlusion edge and path boundary. Do not add obstacles, new trees, new rocks or any decoration on paths. Replace old pixel detail with high-end 2026 realistic fantasy game artwork: richly detailed bark, rock fractures and moss, fine meadow grasses, individual leaves, physically credible sunny daylight and dappled canopy shadows, clear atmospheric distance, subtle natural color, cohesive with modern coast reference. No characters, UI, lettering, borders or crop, no camera change. Paint every pixel; no transparency. Original geometry takes priority over embellishment.",
+  "references": [
+    "build/disc1/original/cut-39/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-38/source/base.png"
+  ],
+  "generatedSource": "exec-7db7ea15-3269-4ef1-9f7a-97cdc1d4fa44.png"
+}

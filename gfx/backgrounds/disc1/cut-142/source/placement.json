@@ -1,0 +1,10 @@
+{
+  "mapping": "full-canvas",
+  "width": 1983,
+  "height": 793,
+  "stationary_layers_verified": true,
+  "gameplay": "deferred",
+  "targetWidth": 2560,
+  "targetHeight": 1024,
+  "evidence": "Original-only121frame trace exactGPU/export fixed visible; generic door table terminates before any hidecall."
+}

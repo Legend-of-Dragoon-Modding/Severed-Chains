@@ -1,0 +1,35 @@
+{
+  "completed": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "current": null,
+  "state": "complete-approved-focused-scope",
+  "next": null,
+  "remaining": [],
+  "step1": "Deferred: user explicitly started at step 2",
+  "requiresExplicitUserApproval": false,
+  "step2ScopeAdjustment": "User approved proceeding with 88 prepared screens and deferring 12 additional blockers to step 4.",
+  "workflowUpdate": "2026-10-31: user authorizes completion of remaining steps without approval pauses and asks for reduced test time, aiming for roughly10activehours.",
+  "testingApproach": "Batched loading/fallback checks, targeted original/modern dynamic-layer and geometry checks, existing evidence reused; record untested story variants explicitly.",
+  "targetRemainingActiveHours": 10,
+  "targetIsEstimate": true,
+  "step4Evidence": "docs/disc1-backgrounds/resolution/summary.json:72/72 prepared, exact native masks and source/trace hashes audited",
+  "step5Evidence": {
+    "activePacks": 217,
+    "freshPackTests": 5,
+    "modernGpuPacks": 72,
+    "selectedExtraStates": 25,
+    "rendererSeconds": 382
+  },
+  "step6Findings": [
+    "102/626 supporting floor repaired and final GPU/state views reviewed.",
+    "Camera followups completed; all untested story/traversal limits retained."
+  ],
+  "step6Evidence": "docs/disc1-backgrounds/resolution/focused-verification.json",
+  "step7Evidence": "docs/disc1-backgrounds/completion.md"
+}

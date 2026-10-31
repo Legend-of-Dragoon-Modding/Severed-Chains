@@ -1,0 +1,43 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "open-underlay.png",
+    "1": "open-underlay.png",
+    "2": "open-underlay.png",
+    "3": {
+      "source": "open-underlay.png",
+      "patches": [
+        {
+          "source": "web-transparent.png",
+          "sourceBounds": [
+            0,
+            0,
+            1983,
+            793
+          ],
+          "targetBounds": [
+            56,
+            124,
+            232,
+            194
+          ]
+        }
+      ]
+    },
+    "4": "open-underlay.png",
+    "5": "open-underlay.png",
+    "6": "open-underlay.png",
+    "7": "open-underlay.png",
+    "8": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    3
+  ],
+  "visualReview": true,
+  "reviewStatus": "Independent web RGBA composited over exposed chasm RGB, eliminating black rectangle; exact original slot alpha retained. Endpoint review pending.",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/405",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ]
+}

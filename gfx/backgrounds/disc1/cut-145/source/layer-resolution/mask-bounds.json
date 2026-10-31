@@ -1,0 +1,164 @@
+[
+  {
+    "name": "background",
+    "bounds": [
+      0,
+      0,
+      768,
+      256
+    ]
+  },
+  {
+    "name": "foreground-0",
+    "bounds": [
+      398,
+      75,
+      420,
+      107
+    ]
+  },
+  {
+    "name": "foreground-1",
+    "bounds": [
+      309,
+      31,
+      484,
+      224
+    ]
+  },
+  {
+    "name": "foreground-2",
+    "bounds": [
+      501,
+      64,
+      649,
+      209
+    ]
+  },
+  {
+    "name": "foreground-3",
+    "bounds": null
+  },
+  {
+    "name": "foreground-4",
+    "bounds": null
+  },
+  {
+    "name": "foreground-5",
+    "bounds": null
+  },
+  {
+    "name": "foreground-6",
+    "bounds": [
+      285,
+      82,
+      308,
+      134
+    ]
+  },
+  {
+    "name": "foreground-7",
+    "bounds": [
+      347,
+      164,
+      423,
+      181
+    ]
+  },
+  {
+    "name": "foreground-8",
+    "bounds": [
+      428,
+      142,
+      466,
+      168
+    ]
+  },
+  {
+    "name": "foreground-9",
+    "bounds": [
+      438,
+      99,
+      459,
+      117
+    ]
+  },
+  {
+    "name": "foreground-10",
+    "bounds": [
+      515,
+      96,
+      538,
+      114
+    ]
+  },
+  {
+    "name": "foreground-11",
+    "bounds": null
+  },
+  {
+    "name": "foreground-12",
+    "bounds": [
+      494,
+      129,
+      517,
+      158
+    ]
+  },
+  {
+    "name": "foreground-13",
+    "bounds": null
+  },
+  {
+    "name": "foreground-14",
+    "bounds": null
+  },
+  {
+    "name": "foreground-15",
+    "bounds": [
+      55,
+      94,
+      81,
+      123
+    ]
+  },
+  {
+    "name": "foreground-16",
+    "bounds": [
+      604,
+      173,
+      629,
+      201
+    ]
+  },
+  {
+    "name": "foreground-17",
+    "bounds": null
+  },
+  {
+    "name": "foreground-18",
+    "bounds": [
+      46,
+      32,
+      220,
+      221
+    ]
+  },
+  {
+    "name": "foreground-19",
+    "bounds": null
+  },
+  {
+    "name": "foreground-20",
+    "bounds": [
+      579,
+      83,
+      619,
+      143
+    ]
+  },
+  {
+    "name": "foreground-21",
+    "bounds": null
+  }
+]

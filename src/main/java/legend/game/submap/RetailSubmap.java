@@ -645,6 +645,10 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void prepareSobjModel(final SubmapObject210 sobj) {
+    if(legend.game.tmd.DartSelesPrototype.prepare(drgnBinIndex_800bc058, this.cut, sobj)) {
+      if(this.cut == 10) legend.game.tmd.DartSelesMotion.install(this.objects.get(sobj.sobjIndex_12e).animations);
+      return;
+    }
     if(this.sobjTextureOverrides.containsKey(sobj.sobjIndex_12e)) {
       sobj.texture = Texture.create("Sobj " + sobj.sobjIndex_12e + " texture override", this.sobjTextureOverrides.get(sobj.sobjIndex_12e));
       final Tim oldTexture = this.pxls.get(sobj.sobjIndex_12e);

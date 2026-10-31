@@ -1,0 +1,40 @@
+{
+  "background": "underlay-generated.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "underlay-generated.png",
+    "2": "../base.png",
+    "3": "underlay-generated.png",
+    "4": "../base.png",
+    "5": "underlay-generated.png",
+    "6": "underlay-generated.png",
+    "7": "../base.png",
+    "8": "underlay-generated.png",
+    "9": "underlay-generated.png",
+    "10": "underlay-generated.png",
+    "11": "../base.png",
+    "12": "underlay-generated.png",
+    "13": "../base.png",
+    "14": "underlay-generated.png",
+    "15": "../base.png",
+    "16": "underlay-generated.png",
+    "17": "underlay-generated.png",
+    "18": "underlay-generated.png",
+    "19": "underlay-generated.png"
+  },
+  "dynamicLayers": [
+    0,
+    2,
+    4,
+    7,
+    11,
+    13,
+    15
+  ],
+  "evidence": [
+    "Correct runtime environment+2 scripts identify these exact changing slots.",
+    "Clean underlay removes the dynamic door geometry; closed door RGB remains independently clipped to exact original alpha.",
+    "Generated underlay visually reviewed against the original clean state and modern scene."
+  ],
+  "visualReview": true
+}

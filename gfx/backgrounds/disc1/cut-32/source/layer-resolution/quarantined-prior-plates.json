@@ -1,0 +1,24 @@
+{
+  "background": "generated-underlay.png",
+  "layers": {
+    "0": "generated-underlay.png",
+    "1": "generated-underlay.png",
+    "2": "generated-underlay.png",
+    "3": "generated-underlay.png",
+    "4": "generated-underlay.png",
+    "5": "generated-underlay.png",
+    "6": "generated-underlay.png",
+    "7": "../base.png",
+    "8": "generated-underlay.png",
+    "9": "generated-underlay.png"
+  },
+  "dynamicLayers": [
+    7
+  ],
+  "evidence": [
+    "Original script99/5.txt520 hides foreground7 on original barrel/jump interaction.",
+    "Raw master preserved. Built-in ImageGen removed only disappearing central railing, reconstructing continuous bridge deck.",
+    "All visible and hidden endpoint asset composites reviewed separately; not gameplay proof."
+  ],
+  "visualReview": true
+}

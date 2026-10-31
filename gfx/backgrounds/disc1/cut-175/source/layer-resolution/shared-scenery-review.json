@@ -1,0 +1,42 @@
+{
+  "cut": 175,
+  "layers": [
+    1,
+    2,
+    3,
+    4,
+    9,
+    10
+  ],
+  "geometryUnchanged": true,
+  "reviewers": [
+    "parent native BG/FG and64-state review",
+    "final_resolution independent native contact review"
+  ],
+  "traceSha256": "149e99bfcba4c31bb5381c31a755622fcedbbf1cdb9e2d8b504f6ec8252fbb51",
+  "nativeHashes": {
+    "background.png": "9f7a6d704108c10fe19b19724ad383650677618825b387becad5de31c12c5a89",
+    "foreground-0.png": "fdc4e63d475064959b8eebe72750d3a05e5e4a95b6b159dc61c8b2cc722ab37c",
+    "foreground-1.png": "94ed93dddfff5437ecb984282dc996ba3b4f5ed4699ee52ba86e472c0af6b983",
+    "foreground-10.png": "a960db0f802cb76e16584b75764aa752899bdd513b1d19c8fba012bb53fbefba",
+    "foreground-11.png": "5c128084898b1c107d468fa371a2b31ce0b96ccc2cf05ea9c1de6cfd5ec67ca6",
+    "foreground-12.png": "8289236930504aac3e4f1a49ded32772f3be351b557f5e12a33c543ba500334f",
+    "foreground-13.png": "49fb7e86b00aaa2dd4de3804cfce697bf311c546bf64210d5535f817c0439787",
+    "foreground-14.png": "0fc7eb8f9449e3103a71ffa47b41bab0af997ae9838a8859f401abb01d5728c6",
+    "foreground-15.png": "9f5926e81e7c3c139d29f03111ecb609d3e069e7c255d39631695f22a67cf3d2",
+    "foreground-16.png": "467a22e3712770b511cc82998cdc008532b7c994edc08d3d08df442b986efd94",
+    "foreground-17.png": "609796c8626fb3b6de97c8dba8210250b910619c0c2f2cc1a96c5dccd78b26ba",
+    "foreground-2.png": "577731f68749752ff20f663038cbf6d20f8f75593e84f68fdf6c9284f77440ed",
+    "foreground-3.png": "3dd06c2de672c40dfdb70de4f220a2cfbee018b99c69675389e0d278dbf0db08",
+    "foreground-4.png": "10640a6152744f7c409c28aa304beae1a416d4fddc57117eb2ab6b967938de3e",
+    "foreground-5.png": "10255b472e4b6439c65edd0e4d559e18c26c0a7f35173938c7bb2db932bdbcea",
+    "foreground-6.png": "2af78828273136cacd9145a58463099e146568a947e52f5468b66b9963f248f2",
+    "foreground-7.png": "ec18f4a04019b66d04a1fcb8402650a5fcadf48da005e0ea074bd2bfeba99c3e",
+    "foreground-8.png": "0ec3b1cb33faf6837d60fc8eba8949d9cbd6b8c607404caf75d4be1cee12796b",
+    "foreground-9.png": "673683efdc66ed1cd6100194ea6b9b86ee46f43443d51310891795d1050549c7"
+  },
+  "nativeStateAnalysis": "native-state-analysis.json",
+  "nativeStateAnalysisSha256": "b4921619fb13002de8626853abef6ce62f067b8c6b35f6515172090bb7fe368c",
+  "reason": "Native slots reproduce floor/wall scenery for depth and occlusion. The64composites are NOT pixel-identical: they contain native palette/texture differences, not distinct door poses or newly revealed room geometry. FG9/10 maximum RGB delta16. Two reviewers inspected all native state contact panels. Preserve every original slot, alpha, depth and scripted visibility; one continuous modern painting avoids invented doors and mismatched floor rectangles.",
+  "limits": "Only zero-offset/hide states reviewed. Character occlusion and real GPU rendering still need focused checks; no full story/traversal claim."
+}

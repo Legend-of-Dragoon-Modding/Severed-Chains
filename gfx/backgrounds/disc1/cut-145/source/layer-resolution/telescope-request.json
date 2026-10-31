@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit target image1 is a fantasy house cutaway. Preserve all room geometry, furnishings, lighting, camera and colors. Change only telescope poses in the two stacked open-window observatory rooms at right-center. In upper room, rotate the small brass telescope to point UP LEFT at 25 degrees rather than horizontal. In lower room, rotate its tall telescope head to point UP RIGHT at 30 degrees. Keep all brass stands and window positions. No other edits, no additional objects. Detailed faithful painted game background.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/base.png"
+  ],
+  "transparent_background": false
+}

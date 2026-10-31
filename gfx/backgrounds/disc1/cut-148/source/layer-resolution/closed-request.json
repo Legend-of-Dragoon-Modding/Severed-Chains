@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit image1, fantasy timber multilevel shop, keeping entire composition, lighting, floors, beams, props, camera, and every other pixel as close as possible. Change ONLY open cellar hatch in the LOWEST room: cover the dark rectangular opening and its descending rung ladder with a CLOSED flat wooden floor hatch, with planks matching surrounding floor grain and perspective. Exact opening is just right of tall central post, left of glowing lamp, normalized x0.53..0.665 y0.73..0.84. Cover fits entire hole, small subtle iron hinges/handle; no books or objects on it. Keep adjacent lamp and room walls. New detailed realistic painted surface, no text, no characters.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-148/source/layer-resolution/open-hatch-underlay.png"
+  ],
+  "transparent_background": false
+}

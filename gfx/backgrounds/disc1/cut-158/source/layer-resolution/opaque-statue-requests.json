@@ -1,0 +1,22 @@
+[
+  {
+    "name": "gold",
+    "args": {
+      "prompt": "Use case: precise-object-edit. Image1 is the generated gold ancient winged geometric statue atlas. Preserve statue camera, all visible carving and weathered golden ochre material detail. Create an OPAQUE rectangular material-continuation tile: extend matching richly textured carved stone/gold surface from statue behind ALL currently transparent pixels, to every canvas edge. No black, no transparent holes, no color stripes or blur smears. Broad plausible smooth weathered planes behind existing wings and base, same directional light. Main existing statue remains exactly centered and same size. This is RGB donor art for a different original geometry stencil; entire canvas must contain newly painted plausible gold stone. Do not add scenery, text, people or a second statue.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/gold-statue.png"
+      ],
+      "transparent_background": false
+    }
+  },
+  {
+    "name": "silver",
+    "args": {
+      "prompt": "Use case: precise-object-edit. Image1 is the generated silver ancient winged geometric statue atlas. Preserve statue camera, all visible carving and weathered silver grey stone material detail. Create an OPAQUE rectangular material-continuation tile: extend matching richly textured carved stone/gold surface from statue behind ALL currently transparent pixels, to every canvas edge. No black, no transparent holes, no color stripes or blur smears. Broad plausible smooth weathered planes behind existing wings and base, same directional light. Main existing statue remains exactly centered and same size. This is RGB donor art for a different original geometry stencil; entire canvas must contain newly painted plausible silver stone. Do not add scenery, text, people or a second statue.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/silver-statue.png"
+      ],
+      "transparent_background": false
+    }
+  }
+]

@@ -1,0 +1,106 @@
+{
+  "background": "underlay-generated.png",
+  "layers": {
+    "0": "underlay-generated.png",
+    "1": "alternate-paths.png",
+    "2": "underlay-generated.png",
+    "3": "underlay-generated.png",
+    "4": "underlay-generated.png",
+    "5": "foliage-and-blockage.png",
+    "6": {
+      "source": "silver-statue-opaque.png",
+      "sourceBounds": [
+        290,
+        92,
+        1192,
+        1017
+      ]
+    },
+    "7": {
+      "source": "gold-statue-opaque.png",
+      "sourceBounds": [
+        374,
+        184,
+        1127,
+        989
+      ]
+    },
+    "8": {
+      "source": "gold-statue-opaque.png",
+      "sourceBounds": [
+        374,
+        184,
+        1127,
+        989
+      ]
+    },
+    "9": {
+      "source": "gold-statue-opaque.png",
+      "sourceBounds": [
+        374,
+        184,
+        1127,
+        989
+      ]
+    },
+    "10": {
+      "source": "silver-statue-opaque.png",
+      "sourceBounds": [
+        290,
+        92,
+        1192,
+        1017
+      ]
+    },
+    "11": {
+      "source": "silver-statue-opaque.png",
+      "sourceBounds": [
+        290,
+        92,
+        1192,
+        1017
+      ]
+    },
+    "12": "foliage-and-blockage.png",
+    "13": {
+      "source": "silver-statue-opaque.png",
+      "sourceBounds": [
+        290,
+        92,
+        1192,
+        1017
+      ]
+    },
+    "14": "foliage-and-blockage.png",
+    "15": {
+      "source": "gold-statue-opaque.png",
+      "sourceBounds": [
+        374,
+        184,
+        1127,
+        989
+      ]
+    },
+    "16": "underlay-generated.png",
+    "17": "underlay-generated.png"
+  },
+  "dynamicLayers": [
+    1,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Retail stair/ramp swap, pavilion blockage, gold/silver monuments and hiding foliage independently authored. Clean underlying railway restored. Native exact masks preserve all slot silhouettes. Candidate endpoints need final visual review.",
+    "New opaque carved-material continuation tiles replace extrapolated transparent RGB; original exact gold/silver geometry masks retained."
+  ]
+}

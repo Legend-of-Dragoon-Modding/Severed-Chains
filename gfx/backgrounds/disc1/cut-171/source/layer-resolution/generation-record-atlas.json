@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Reconstruct this exact sprite atlas at high detail. Image1 is the ORIGINAL six door overlay crops from a 1999 fantasy RPG, arranged 3 columns x2 rows on transparent background; its projected shapes, poses, bounding boxes and placement are ABSOLUTE layout authority. Preserve every sprite's contour and position inside its existing cell. These are closed wooden plank doors viewed obliquely down a medieval street; some overlay crops include a torch, narrow stone door jamb, and a little threshold. Repaint their details into image2's modern realistic fantasy stone/timber style, warm torch lighting, grain, forged strap hinges. Keep included torch/jamb/threshold fragments exactly where image1 has them; do not replace all shapes with flat door wood. Keep clean genuinely transparent gaps between sprites, no sheet labels, no extra doors, no borders. Same square atlas composition. Do not rearrange, scale or recenter the six panels. Each panel must remain independently usable in its original cell.",
+  "inputs": [
+    "original-door-atlas.png",
+    "../base.png"
+  ],
+  "output": "generated-door-atlas.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-46c1ca04-62f3-47a0-95f9-9227f10ecd5d.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

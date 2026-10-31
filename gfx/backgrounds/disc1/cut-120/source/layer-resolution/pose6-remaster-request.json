@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: sketch-to-render. Faithfully repaint image1 geometry guide into new high-detail fantasy dragon claw art. Image1 controls exact tight crop, projected silhouette, FOUR finger positions, pose, camera and proportions. Image2 is ONLY the cracked brown dragon hide and pale ivory talon material reference, do not copy its pose or aspect. Exactly FOUR pointed talons: tip1 touches left edge at y40%; tip2 x16%,y49%; tip3 x15%,y73%; tip4 x27%,y84%. All end in sharp pointed tips at those precise coordinates, none flat, no extra fifth talon. Wrist fills bottom and right edge. Make rich new finely painted scales and worn pale cracked bone with warm lighting. Keep all geometry and framing EXACTLY as first guide, no margins or recentering. IMPORTANT fill ALL grey-background areas with newly painted coherent dark brown dragon-hide material continuation, no grey matte, black, gaps, scenery, blur stripes or transparency; this opaque RGB donor will be clipped to a separate exact original geometry stencil. Do not simply upscale original pixels. No text or added objects.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/pose6-cropped-native-guide.png",
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6-opaque.png"
+  ],
+  "transparent_background": false
+}

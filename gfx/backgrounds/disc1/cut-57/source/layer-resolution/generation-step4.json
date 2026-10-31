@@ -1,0 +1,9 @@
+{
+  "tool": "built-in imagegen",
+  "references": [
+    "../base.png",
+    "original-underlay-guide.png"
+  ],
+  "output": "generated-underlay-step4.png",
+  "purpose": "Independent changing scenery and exposed underlay; original full-canvas master is preserved."
+}

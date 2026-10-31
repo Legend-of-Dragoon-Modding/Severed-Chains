@@ -1,0 +1,7 @@
+{
+  "tool": "built-in imagegen",
+  "request": "Remove only the throne chair; continue red carpet and dark stone dais behind it. Preserve sculpture and all fixed hall geometry.",
+  "generatedFile": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-7328dea3-80f1-4627-8059-83d0f8843110.png",
+  "target": "generated-underlay-step4.png",
+  "ready": false
+}

@@ -1,0 +1,33 @@
+{
+  "cut": 176,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 5658,
+      "timestamp": "2026-10-31T01:36:05.520Z",
+      "referencedCuts": [
+        176
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Remaster the FIRST image (original game room cutaway) into a detailed faithful prerendered background. SECOND image is material/lighting reference only; do not copy its changed room geometry. Preserve EXACT first image camera, framing, floor plan, wall corners, room sizes, furniture locations, every door opening and threshold. Same512:384 composition. Warm amber stone inn and bedroom below, cool dark storage rooms above, outside cobblestone lane. The original lower main-room right entrance sits at native x318..347,y278..331; keep it THERE, not further to right. Bedroom doorway native x79..108,y150..215. Both of these entry doorways should be OPEN empty passages, no wooden leaf baked into them: show continuous threshold floor and shadowed opening. Preserve the stone door frames and walls. Do not remove other doors, do not invent ladders or people. Faithfully detailed weathered wood, warm candles, stonework matching second image. Main point: exact original floor plan and both open door underlays, at original native screen coordinates.\";\nstore(\"cut176underlayPrompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/original-underlay-guide.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/base.png\"],transparent_background:false});\nawait yield_control();const r=await pending;store(\"cut176underlay\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 5703,
+      "timestamp": "2026-10-31T01:38:31.820Z",
+      "referencedCuts": [
+        176
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Faithfully remaster this exact low-resolution PlayStation background to a sharp detailed prerendered fantasy game environment. Strict composition and geometry lock: retain the EXACT original camera, room floor plan, every wall segment, furniture location, door opening and floor boundary as shown. Do NOT enlarge rooms or move doors to make a prettier layout. Four-room cutaway in a stone town: warm amber bedroom lower-left, warm inn dining/living room lower-center, two cool blue storage rooms above. Cobbled outside lanes at left and lower-right. Dark empty void beyond cutaway walls. Weathered sandstone, dark wood, simple period furniture, realistic directional candle/fire light. Preserve both existing partly open doorway passages without their moving wooden leaves: bedroom door at x~90,y~180 and front main-room entrance at x~330,y~305 on this512x384 canvas. Keep the main-room entrance beside the lower-right wall corner where it is in this reference, not on an enlarged far-right wall. No characters, no UI, no text. Match the supplied original scene exactly, with richer resolution and faithful surfaces rather than a redesigned room.\";\nstore(\"cut176nativePrompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/original-underlay-guide.png\"],transparent_background:false});\nawait yield_control();const r=await pending;store(\"cut176native\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 5992,
+      "timestamp": "2026-10-31T01:53:21.376Z",
+      "referencedCuts": [
+        176
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Edit the FIRST full game room image with one tiny precise change only. Remove the upright wooden door leaf at the lower-right edge of the warm dining room, just left of the barrels and dark chair/crate (around x64\u201368%width,y70\u201385%height). Make the plank floor continue naturally through that now-open threshold. SECOND image is the corrected close-up showing the desired same entry with NO door; use it as the target state of this little area. Preserve the entire full image's camera, pixel positions, architecture, every furniture item, all lighting, cutaway wall borders, and all other doors exactly. Bedroom doorway stays empty/open. No new door, stairs or props. Output the full first scene in identical framing, with only that one leaf absent.\";\nstore(\"cut176fullOpenPrompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/native-geometry-v1.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/entry-open-patch.png\"],transparent_background:false});\nawait yield_control();const r=await pending;store(\"cut176fullOpen\",r);generatedImage(r);\n"
+    }
+  ]
+}

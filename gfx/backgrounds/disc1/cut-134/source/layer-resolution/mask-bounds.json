@@ -1,0 +1,110 @@
+[
+  {
+    "name": "background",
+    "bounds": [
+      0,
+      0,
+      384,
+      384
+    ]
+  },
+  {
+    "name": "foreground-0",
+    "bounds": [
+      34,
+      196,
+      60,
+      227
+    ]
+  },
+  {
+    "name": "foreground-1",
+    "bounds": [
+      12,
+      0,
+      144,
+      98
+    ]
+  },
+  {
+    "name": "foreground-2",
+    "bounds": [
+      90,
+      196,
+      114,
+      229
+    ]
+  },
+  {
+    "name": "foreground-3",
+    "bounds": [
+      206,
+      184,
+      256,
+      232
+    ]
+  },
+  {
+    "name": "foreground-4",
+    "bounds": [
+      36,
+      132,
+      91,
+      170
+    ]
+  },
+  {
+    "name": "foreground-5",
+    "bounds": [
+      282,
+      66,
+      314,
+      94
+    ]
+  },
+  {
+    "name": "foreground-6",
+    "bounds": [
+      178,
+      0,
+      363,
+      79
+    ]
+  },
+  {
+    "name": "foreground-7",
+    "bounds": [
+      120,
+      130,
+      187,
+      238
+    ]
+  },
+  {
+    "name": "foreground-8",
+    "bounds": [
+      288,
+      228,
+      346,
+      276
+    ]
+  },
+  {
+    "name": "foreground-9",
+    "bounds": [
+      156,
+      174,
+      204,
+      208
+    ]
+  },
+  {
+    "name": "foreground-10",
+    "bounds": [
+      269,
+      114,
+      335,
+      178
+    ]
+  }
+]

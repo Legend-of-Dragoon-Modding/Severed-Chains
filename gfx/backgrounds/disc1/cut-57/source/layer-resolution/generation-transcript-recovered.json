@@ -1,0 +1,16 @@
+{
+  "tool": "built-in imagegen",
+  "provenance": "Exact imagegen invocation inputs recovered from this task session; includes rejected candidates as well as accepted outputs. See sibling generation records and plates.json for selected source filenames.",
+  "invocations": [
+    {
+      "timestamp": "2026-10-31T00:26:07.833Z",
+      "callId": "call_d1577d1db04f4e9398b142cf754588a6",
+      "exactToolInput": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-57/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-57/source/layer-resolution/original-underlay-guide.png\"],transparent_background:false,prompt:\"Edit FIRST ruinedvillage sunsetbackground into clean underlyingplate matching SECOND originalguide. Preserve exact2:1camera/framing/ruin/well/tree/foregroundfence/alllighting/materials. Remove ONLY loose flat charredwoodbeam/plank lying acrossdirt justLEFT ofcentralruin, originalnativefootprint normalizedx.277..400,y.504..594. Reconstruct continuousdirt/ash/verylowrubble beneath asSECOND. Do NOT remove fixed leaningbeams/roofremnants orchangebuildingfooting. Thisonebeamwillbe independentforegroundsprite, so no raisedhorizontalbeam ghost remainsatitsfootprint. Noobjectsadded,characters,text,crop/zoom. Keep original layout; FIRSTstyle,SECONDcleanunderlyinggeometry.\"});store(\"final57underlay\",r);generatedImage(r);\n"
+    },
+    {
+      "timestamp": "2026-10-31T00:26:40.789Z",
+      "callId": "call_8038b481b16d4f6a8fdff731b0e68c5a",
+      "exactToolInput": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-57/foreground-8.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-57/source/base.png\"],transparent_background:true,prompt:\"Create one isolated charredwoodbeam/plank sprite, faithfulhighdetailremaster of FIRST originalsmallforegroundpiece. SECOND supplies sunsetwarmcharredwoodstyle. MatchFIRST projectedshape/proportions: longlowflat timber, approximately3timeswiderthantall, slightisometricdiagonal, irregularburnedends, darkbrownblackcharredgrain withwarmtopedge. No otherboards,ground,rubble,shadowoutsidewood,room,characters,text. Isolate largecentered ontransparentbackground; atlaspackerwillfitexactoriginalalpha. Allvisiblepixelsbelongonlytooneburntplank, preserve original lowrectangularsilhouette.\"});store(\"final57sprite\",r);generatedImage(r);\n"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "cut": 109,
+  "tool": "builtin-imagegen",
+  "scope": "Selected current source PNGs matched by exact file hash to retained default generated outputs. Original worker-base provenance is in its earlier source records.",
+  "images": [
+    {
+      "workspaceImage": "gfx/backgrounds/disc1/cut-109/source/geometry-candidate-step4.png",
+      "sha256": "00e68bb68043265ce65f590f9b8571c5b53177cb17bf8ee8dff142c602f85af5",
+      "matchingDefaultGeneratedFiles": [
+        "exec-1940bff4-12fb-4cd9-95c6-7a3c70c0d0e7.png"
+      ]
+    }
+  ]
+}

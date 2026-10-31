@@ -1,0 +1,19 @@
+{
+  "cut": 102,
+  "packagingPrepared": true,
+  "gameplayVerified": false,
+  "runtimeInstalled": false,
+  "status": "independent-plates-staged",
+  "issues": [],
+  "attempts": [
+    "open-door.png",
+    "closed-door-generated.png",
+    "geometry-candidate.png"
+  ],
+  "reviewPreviews": "gfx/backgrounds/disc1/cut-102/source/layer-resolution",
+  "nextRequired": "Focused modern GPU/door-state check after runtime integration.",
+  "endpointReview": "Native paired-door architecture retained: fixed open outer leaf5 projects in front of independently closed inner leaf6. Empty passage BG, separate native202 body/landing registration and visible/hidden endpoints reviewed without the former black wedge or floating step. Original masks retained.",
+  "trace": "build/disc1/captures/cut-102/original/alignment.csv",
+  "validation": "build/disc1/staged/cut-102/layered-validation.json",
+  "limits": "Asset-state review only; focused GPU/gameplay validation still pending."
+}

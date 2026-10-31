@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Exact fixed camera prerendered RPG fortress city street. Rebuild supplied original into modern photorealistic Seles-quality materials preserving portrait386:512 full canvas, camera and every geometry position. High oblique view down steep narrow cobbled street from foreground stair x50% y75% toward distant huge dark fortress centered top. Tall stone houses line both sides, small doorways and wall lamps at original positions, low red-brown roofs, dark timber struts and crossing cables above street. Preserve stair width, exact tread endpoints, door thresholds, all walkable road surfaces and roof silhouettes. Original gloomy reddish overcast dusk, warm tiny wall lamps, worn cobbles and heavy masonry. Do not add gates, new lamps, carts, people or obstacles. No text/UI, crop zoom rotation or camera change. Final1544x2048.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-0b80f654-a763-468a-bb03-f1085af2fabc.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-171\\source\\original-composite.png"
+  ]
+}

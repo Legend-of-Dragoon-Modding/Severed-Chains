@@ -1,0 +1,52 @@
+{
+  "background": "underlay-generated.png",
+  "layers": {
+    "0": "underlay-generated.png",
+    "1": "underlay-generated.png",
+    "2": "underlay-generated.png",
+    "3": "underlay-generated.png",
+    "4": "underlay-generated.png",
+    "5": "underlay-generated.png",
+    "6": {
+      "source": "claw-pose-6-matched-filled.png",
+      "sourceBounds": [
+        0,
+        0,
+        1386,
+        1135
+      ]
+    },
+    "7": {
+      "source": "claw-pose-7-warm.png",
+      "sourceBounds": [
+        84,
+        59,
+        1477,
+        992
+      ]
+    },
+    "8": {
+      "source": "claw-pose-8-matched-filled.png",
+      "sourceBounds": [
+        0,
+        0,
+        1437,
+        1094
+      ]
+    }
+  },
+  "dynamicLayers": [
+    6,
+    7,
+    8
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime scripts366 identify three independent giant claw poses6/7/8; original inspection records7/8hidden,6visible.",
+    "Generated clean lava/stone underlay contains no claw; each alternate claw pose was remastered separately from its own original layer and same modern material reference.",
+    "Generated isolated sprites atlas-fitted to exact original alpha footprints; endpoint and individual-pose reviews required before readiness.",
+    "Opaque independently painted donor continuation removes transparent RGB streaks while exact native pose alpha remains authoritative.",
+    "Pose6 and8 regenerated from tightly cropped native geometry guides to restore pointed tips; pose7 material edited against6/8 for animation consistency. Native alpha, slots and z-order unchanged."
+  ],
+  "reviewStatus": "Three native geometry poses reviewed; warm material animation consistency"
+}

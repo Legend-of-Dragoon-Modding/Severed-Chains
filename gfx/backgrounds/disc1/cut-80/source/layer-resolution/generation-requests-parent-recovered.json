@@ -1,0 +1,51 @@
+{
+  "cut": 80,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 2988,
+      "timestamp": "2026-10-30T18:52:22.322Z",
+      "referencedCuts": [
+        80
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 400}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/original-composite.png\"],transparent_background:false,prompt:\"Edit first image (modern game background), using second original low-resolution image as strict geometric guide. Preserve camera, framing, scene architecture, lighting and realistic painted detail. Correct only the lower circular floor landing/platform and its connecting narrow stone walkway: the lower round landing must have center at normalized x=0.455,y=0.767 (original reference), instead of current x about0.39,y0.78. Keep its original elliptical silhouette size and stone surface, move the connecting walkway endpoint with it, preserve the lower stair/aisle boundaries and surrounding dark water/ground exactly as original guide. Original landing rim x approximately0.39..0.52, y0.71..0.82. Do not shift whole scene. No characters,text,extra objects. Output same aspect ratio as first image, full unchanged canvas. This is a faithful geometry correction for Legend of Dragoon exploration background; walkable footprints must coincide with second image.\"}); store(\"cut80imageResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 3203,
+      "timestamp": "2026-10-30T18:56:32.160Z",
+      "referencedCuts": [
+        80
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 400}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/geometry-candidate-step4.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/original-composite.png\"],transparent_background:false,prompt:\"First image is edit target, second is original layout guide. Make ONE very precise tiny geometric adjustment. On first1538x1023canvas, lower round stone landing currently center(665,795) must move RIGHT39pixels and UP11pixels so center becomes(704,784), normalized(.458,.766). Keep its diameter and elliptical shape unchanged. Move walkway endpoint tojoin it. Repaint old location as continuous darkground/water. Preserve EVERY other object, all framing/camera, materials and lighting. Do not recenter scene, do not change image dimensions/aspect. No extra people,text,objects. This precise alignment is required to match game collision geometry.\"}); store(\"cut80v2Result\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 3832,
+      "timestamp": "2026-10-30T19:15:44.717Z",
+      "referencedCuts": [
+        80
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/geometry-candidate-step4-v2.png\"],transparent_background:false,prompt:\"Edit this image into a clean underlying scenery plate for a game. Preserve camera, fullcanvas, entire lighting/materials/architecture, lower round landing at normalized(.458,.766), floor, furniture and upperlargebeam/rope. Remove ONLY two foreground props: (1) thin wooden railing POST near normalizedx.56,y.58..90, includingits tiedrope. Reveal continuous stonefloor/walkway edge behind it, no poststumpghost. (2) the diagonal foreground ROPE across the lowerleft doorway running fromleftedge near y.68 toaroundx.35,y.53. Remove this foreground ropeonly and reveal existing door/stonewall/floor underneath. DoNOTremove top-leftthickropes wrappedaroundceilingbeam. DoNOTchange lowerforegroundhorizontalbeam atverybottom. No otherchanges; these two removed objects will be separate moving gameplates. Keep exactaspect/framing.\"}); store(\"cut80underlayResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 3839,
+      "timestamp": "2026-10-30T19:16:06.826Z",
+      "referencedCuts": [
+        80
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-80/foreground-0.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/geometry-candidate-step4-v2.png\"],transparent_background:true,prompt:\"Remaster the single isolated WOODEN RAILING POST inFIRST originalgameforegroundplate. SECOND detailedroomreference supplieswoodtexture/warmtorchlighting style. Output oneisolatedpost ontransparentbackground, largeenoughfordetail. Match EXACT original post silhouette/proportions/isometricangle: tallveryslenderverticalwoodpost with pointed/narrowupperextension andslightlythickerbottom, smallropebinding aroundmiddle. No ground,room,shadow outsidepost, text,extraobjects. Preserve recognizableoriginalshape and projectedwoodfaces, realistically detailedagedwood andropefibers. Thissprite will be atlas-fitted tooriginalpostalpha, so matchingoriginalsilhouette iscritical.\"}); store(\"cut80postResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 3843,
+      "timestamp": "2026-10-30T19:16:23.033Z",
+      "referencedCuts": [
+        80
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-80/foreground-1.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-80/source/geometry-candidate-step4-v2.png\"],transparent_background:true,prompt:\"Remaster the isolated diagonal ROPE SEGMENT fromFIRST originalgameforegroundplate. SECOND detailedmedievalroom supplieswarmtorchlighting/materialstyle only. Outputjusta straighttwistedhemp rope segment on transparentbackground. Match original projected angle: fromlowerleft toupperright, about22degreesabovehorizontal, veryslendersilhouette, slightlytaperedfar-righttip. No knots, noverticalpost, nowall/door/floor, no text, extraobjects orbackgroundshadow. Warmgoldenbrowncoarsetwistedhempfibers, faithful originalproportions. Spritewill be atlas-fit tooriginalalpha; exactoriginalstraightangledsilhouette required. Composeasoneisolatedropewithroomaroundit.\"}); store(\"cut80ropeResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

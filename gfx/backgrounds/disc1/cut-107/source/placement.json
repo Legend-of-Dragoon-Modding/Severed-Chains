@@ -1,0 +1,22 @@
+{
+  "mapping": "full-canvas",
+  "width": 1086,
+  "height": 1448,
+  "stationary_layers_verified": true,
+  "evidence": "Original GPU/export comparison and 49 recorded frames; inspection only, not traversal/gameplay verification. See build/disc1/captures/cut-107/original/alignment.csv.",
+  "reference": "original-composite.png",
+  "layerInspection": {
+    "cut": 107,
+    "entry": 0,
+    "frames": 49,
+    "trace": "build/disc1/captures/cut-107/original/alignment.csv",
+    "gpuExportEvidence": "build/disc1/captures/cut-107/original/original-gpu-export.txt",
+    "allRecordedLayersFixedVisible": true,
+    "assetChecksPassed": true,
+    "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+    "inspectionEnd": "Original scene transitioned after 49 recorded frames to cut 106",
+    "fullTraversalVerified": false,
+    "gameplayVerified": false,
+    "runtimeInstalled": false
+  }
+}

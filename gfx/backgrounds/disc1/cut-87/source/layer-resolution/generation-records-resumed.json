@@ -1,0 +1,27 @@
+{
+  "records": [
+    {
+      "key": "early87",
+      "cut": 87,
+      "prompt": "Edit FIRST high-detail tower gamebackground into an OPEN UPPER-ROOM CUTAWAY state matching SECOND original-reference composite. Do NOT remove whole tower or its roof/base. Only remove the curved front OUTER WALL band on the upper right round tower, normalizedx0.471..0.961,y0.174..0.389, to reveal the furnished circular room from SECOND: cream plaster rear wall with dark wooden vertical beams, central tall wooden cabinet/clock, small right cupboard, curved wood floor and small desk. Keep lower cylindrical stone wall belowy0.389, roof, spiral support, bridge/camera/landscape/light fixed. The closed outer wall will be an independent foreground sprite. Also make the small left-tower door atx0.133..0.240,y0.184..0.266 OPEN as dark empty arch, preserving stone jamb; make right-tower room's left entrance arch open as in SECOND. No additional swung leaves/objects/people/text. Preservefull3:4portraitcanvas and perspective, nozoom/crop.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-87/source/base.png",
+        "build/disc1/cut87-open-analysis.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-fd843538-7be3-4c9d-906e-0eaec1e2c5e3.png",
+      "localAssetOrRole": "cutaway-open-underlay-resumed.png"
+    },
+    {
+      "key": "early87Closed",
+      "cut": 87,
+      "prompt": "Edit FIRST cutaway-tower gamebackground into closed ENTRANCE DOORS state while keeping the upper room fully exposed/cutaway. Close only two currently dark open arches with fitting aged dark oak doors: left tower entrance atnormalizedx0.133..0.240,y0.184..0.266 and right tower room's left entry arch atx0.458..0.549,y0.217..0.307. Fit doors naturally inside exact existing jambs/perspective, darkverticalplanks/subtleironbrace. Do NOT restore the outer curved cylinder wall; keep furnished room visible. Preserve every other object, camera, light, roof, bridge, floor geometry and landscape. No new people/text. Samefull3:4portraitcanvas.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-87/source/layer-resolution/cutaway-open-underlay-resumed.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-b8262f1c-98e4-4dbb-bb36-9e5db75918c9.png",
+      "localAssetOrRole": "closed-entrances-resumed.png"
+    }
+  ]
+}

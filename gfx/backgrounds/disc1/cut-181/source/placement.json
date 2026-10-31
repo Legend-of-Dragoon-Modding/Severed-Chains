@@ -1,0 +1,8 @@
+{
+  "mapping": "full-canvas",
+  "width": 1448,
+  "height": 1086,
+  "stationary_layers_verified": true,
+  "gameplay": "deferred",
+  "stationaryEvidence": "Actual envsource+2 script audit has no rendered-slot transform/hide; GPU/export matched original121-frametrace allfixedvisible:build/disc1/captures/cut-181/original/alignment.csv"
+}

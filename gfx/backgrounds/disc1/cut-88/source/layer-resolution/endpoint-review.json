@@ -1,0 +1,16 @@
+{
+  "cut": 88,
+  "assetEndpointReview": true,
+  "states": [
+    "all-visible",
+    "dynamic-hidden",
+    "recorded-dest"
+  ],
+  "scope": "Visual asset endpoints and exact-alpha staging; no full gameplay traversal or story-state coverage implied.",
+  "configSha256": "9ae57c1238fecd464f7df09eca416e6cca9759e39c39826de7ee791cc5863782",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "additionalReviewedStatePreviews": [
+    "scripted-open-gates.png"
+  ]
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "layer": 0,
+    "alphaPixels": 592,
+    "backgroundOverlap": 592,
+    "differentRgb": 551
+  },
+  {
+    "layer": 2,
+    "alphaPixels": 482,
+    "backgroundOverlap": 482,
+    "differentRgb": 458
+  },
+  {
+    "layer": 4,
+    "alphaPixels": 703,
+    "backgroundOverlap": 703,
+    "differentRgb": 625
+  },
+  {
+    "layer": 7,
+    "alphaPixels": 353,
+    "backgroundOverlap": 353,
+    "differentRgb": 316
+  },
+  {
+    "layer": 11,
+    "alphaPixels": 287,
+    "backgroundOverlap": 287,
+    "differentRgb": 276
+  },
+  {
+    "layer": 13,
+    "alphaPixels": 346,
+    "backgroundOverlap": 346,
+    "differentRgb": 315
+  },
+  {
+    "layer": 15,
+    "alphaPixels": 358,
+    "backgroundOverlap": 358,
+    "differentRgb": 315
+  }
+]

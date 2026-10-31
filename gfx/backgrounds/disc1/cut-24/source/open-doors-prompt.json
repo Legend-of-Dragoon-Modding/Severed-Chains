@@ -1,0 +1,4 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Precise-object edit for a layered game background. Keep this entire 1536x1024 image exactly aligned and otherwise unchanged. ONLY remove the iron bars and barred door from the far-right arched cell doorway (approximately x79%-91%, y11%-35%). Paint a complete empty shadowed stone recess and continuous flagstone threshold behind that door, matching the same warm torchlight and weathered stone. Preserve the surrounding arch, wooden door immediately to its left, torch, barrels, all architecture, chains, railings, bridges, floor geometry, camera framing, texture detail and lighting exactly. No new objects or characters. This is the hidden background plate beneath a disappearing foreground door; remove all of the far-right gate including its horizontal bars, leaving a believable unobstructed dark cell entrance. Do not crop, reframe, resize or change any other door."
+}

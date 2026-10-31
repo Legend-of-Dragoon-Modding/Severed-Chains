@@ -1,0 +1,36 @@
+{
+  "records": [
+    {
+      "key": "early95",
+      "cut": 95,
+      "prompt": "Edit FIRST medieval fortified village game background to a clean OPEN-DOOR underlay. Preserve full exact camera/framing, roofs, walkways, railings, stairs, trees, light and materials. Only remove door panels at TWO small original door slots: (1) small left-center tower at normalized x0.306..0.331,y0.362..0.430, reveal dark doorway; (2) under the central wooden balcony at x0.545..0.577,y0.464..0.531, replace the bricked/panelled patch with an empty dark open doorway of original size. Keep pillars, arches, thresholds and wall positions fixed, no new architecture. SECOND original background guides exact slot position; IGNORE its cyan placeholders. No swung door leaves outside openings; doors will be separate foreground plates. No people/text. Same full 5:3 canvas aspect.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-95/source/base.png",
+        "build/disc1/original/cut-95/background.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-c86f304b-3b4a-4cfa-9220-5b2608b49f6f.png",
+      "localAssetOrRole": "open-underlay-resumed.png"
+    },
+    {
+      "key": "earlyWood",
+      "cut": 95,
+      "prompt": "Generate one full-canvas RGB texture plate for closed medieval game doors: dark aged vertical oak planks, subtle forged iron horizontal bands around one-third and two-thirds height, low-contrast warm brown old wood, painterly realistic fantasy RPG material. Entire rectangular image must be door material with no outside background, frame, empty space, handle, text, emblem or objects. Medium portrait ratio roughly3:4. Dark side edges and slightly lighter broad center, enough calm woodgrain detail for a small gameplay sprite. Original game door silhouettes will clip this material exactly, so no decorative features that depend on a rectangular outline.",
+      "references": [],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-79fbf2bb-9ffb-4770-ac84-c299c3a85309.png",
+      "localAssetOrRole": "rejected material-only candidate"
+    },
+    {
+      "key": "early95Closed",
+      "cut": 95,
+      "prompt": "Edit this image into the CLOSED-DOOR state, retaining exactly the same entire scene and geometry. Close TWO currently empty arched door openings with aged dark-oak wooden doors fitted exactly inside their existing jambs: small left-center tower door at normalizedx0.306..0.331,y0.362..0.430 and under central balcony door atx0.545..0.577,y0.464..0.531. Door perspective, curved tops and bottom thresholds must match the existing openings naturally; subtle vertical planks/darkironbrace. Preserve all pixels/composition outside those tiny openings as closely as possible. Do not create larger doors or rectangular panels over stone frame, do not move frame/floor/pillars. No extraobjects/people/text. Samefull5:3canvas.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-95/source/layer-resolution/open-underlay-resumed.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-4613271c-de1e-4756-aa6f-0c434f02b464.png",
+      "localAssetOrRole": "closed-doors-scene-resumed.png"
+    }
+  ]
+}

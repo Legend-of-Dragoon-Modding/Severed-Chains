@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: precise-object-edit. Image1 edit target is a detailed warm painted fantasy house cross-section. Image2 is retail background reference with EXACT geometry. Preserve every room, camera, architecture, props and warm lighting except three tightly limited rectangles. Canvas 768x256 coordinate system regardless output size. (A) x398..420 y75..107, small part of central upper library near bottom right of tall bookcase: remove the moving SMALL bookshelf panel only, restore bare wooden wall and red skirting behind it. (B) x55..81 y94..123 in leftmost upper small room at doorway: replace open doorway with CLOSED red-painted wooden door. (C) x579..619 y83..143, telescope room upper right across two stacked windows: keep telescope existing base pose and everything else. All other room doors remain OPEN as image1. These are independent background states for game overlays; do not change whole room layouts or invent additions. No people or text.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/base.png",
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/reference-original.png"
+  ],
+  "transparent_background": false
+}

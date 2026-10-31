@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="legend.lodmod.SelesBackgroundsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-31T01:39:09.950Z" hostname="DESKTOP-ANFIHSN" time="9.483">
+  <properties/>
+  <testcase name="quarantinedPacksUseOriginalEvenWhenTheirFilesRemainPresent()" classname="legend.lodmod.SelesBackgroundsTest" time="0.463"/>
+  <testcase name="otherDiscsUnfinishedScenesAndUnexpectedLayerCountsRemainOriginal()" classname="legend.lodmod.SelesBackgroundsTest" time="0.006"/>
+  <testcase name="installedBatchesMatchRetailMetadataAndBlockedScenesStayOriginal()" classname="legend.lodmod.SelesBackgroundsTest" time="9.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[2026-10-31T01:39:10.384625300Z Test worker INFO Starting configuration XmlConfiguration[location=C:\Users\20te\workspaces\Severed-Chains\build\resources\test\log4j2-test.xml, lastModified=2026-10-28T19:47:44.276Z]...
+2026-10-31T01:39:10.387625400Z Test worker INFO Start watching for changes to [C:\Users\20te\workspaces\Severed-Chains\build\resources\test\log4j2-test.xml] every 5 seconds
+2026-10-31T01:39:10.389625900Z Test worker INFO Configuration XmlConfiguration[location=C:\Users\20te\workspaces\Severed-Chains\build\resources\test\log4j2-test.xml, lastModified=2026-10-28T19:47:44.276Z] started.
+2026-10-31T01:39:10.390625600Z Test worker INFO Stopping configuration org.apache.logging.log4j.core.config.DefaultConfiguration@1ad777f...
+2026-10-31T01:39:10.390625600Z Test worker INFO Configuration org.apache.logging.log4j.core.config.DefaultConfiguration@1ad777f stopped.
+]]></system-err>
+</testsuite>

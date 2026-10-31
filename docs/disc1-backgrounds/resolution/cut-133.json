@@ -1,0 +1,18 @@
+{
+  "cut": 133,
+  "packagingPrepared": true,
+  "status": "independent-plates-staged",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "issues": [],
+  "trace": "build/disc1/captures/cut-133/original/alignment.csv",
+  "validation": "build/disc1/staged/cut-133/layered-validation.json",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/405",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ],
+  "endpointReview": "Independent transparent web RGB composited over the clean chasm. All-visible, hidden and1-native-pixel-shift endpoints reviewed: no black rectangle or visibly displaced creature/rock feature at the sampled shift. Original slot alpha retained.",
+  "limits": "Asset-state review only; focused GPU/gameplay validation still pending.",
+  "motionPreview": "gfx/backgrounds/disc1/cut-133/source/layer-resolution/web-offset-1.png"
+}

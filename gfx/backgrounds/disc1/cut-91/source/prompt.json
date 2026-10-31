@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: style-transfer. Rebuild the first reference image, the original Bale tower residential interior game environment, as a highly detailed modern photorealistic prerendered RPG environment. Second reference is the approved modern Seles/Bale exterior quality and warm material style only. Output exact full rectangular 2560x1536 canvas, same top-down oblique camera and architectural cutaway layout as image 1. Preserve every wall boundary, dark outer void, room footprint, floor elevation, doorway threshold, central long green-carpeted entrance hallway, stair flight and landing, dining hall to right with its long table and red rug, bedroom/wood floor to left with beds, kitchen and rear service counters, and round corner rooms. Upgrade textures and lighting only: warm weathered sandstone and plaster walls, dark aged timber beams and boards, fine stone floors, richly woven rugs, brass lanterns, linen bedcovers and believable dishes. Keep all furniture in its original footprint. No extra furniture or obstructions on walkable floors. No people, characters, arrows, UI, text, watermark. Preserve clear continuous floor beneath occluding walls and original transparency silhouette. Keep original room colors distinguishable. Do not crop, rotate, change perspective or recompose.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-91/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-66/source/base.png"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "background": "generated-open-coherent.png",
+  "layers": {
+    "0": "generated-closed-coherent.png",
+    "1": "generated-open-coherent.png",
+    "2": "generated-open-coherent.png",
+    "3": "generated-open-coherent.png",
+    "4": "generated-open-coherent.png",
+    "5": "generated-open-coherent.png",
+    "6": "generated-open-coherent.png",
+    "7": "generated-open-coherent.png",
+    "8": "generated-open-coherent.png",
+    "9": "generated-open-coherent.png",
+    "10": "generated-closed-coherent.png",
+    "11": "generated-closed-coherent.png",
+    "12": "generated-closed-coherent.png",
+    "13": "generated-closed-coherent.png",
+    "14": "generated-closed-coherent.png",
+    "15": "generated-open-coherent.png"
+  },
+  "dynamicLayers": [
+    0,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Actual runtime environment+2 script calls and original recorded layer states/masks are documented in audit.json.",
+    "A separate built-in ImageGen clean exposed plate follows the original underlay guide; raw source master is preserved.",
+    "Source artwork reviewed; exact-alpha staging and independent endpoint review determine final readiness."
+  ]
+}

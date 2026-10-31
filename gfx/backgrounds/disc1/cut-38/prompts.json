@@ -1,0 +1,9 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Create the modern game background for Disc 1 cut 38, Prairie coastal path. Edit target is reference 1, the complete original geometry guide. Reference 2 is only the approved modern material/detail quality reference; DO NOT copy its sunset, ravine layout or vegetation arrangement. Produce a 2560x1536 landscape full-canvas image (5:3). Preserve reference 1 composition and all terrain silhouettes EXACTLY: sea horizon near top, distant pointed sea stack near x66%, left tree trunk and roots, pale dusty path from lower central x43% y65% up-left to x30% y33%, meeting the narrow cross-path along y30-42% toward right edge then ascending upper-right. Huge dark rocky foreground cliff occupies lower-right, its top edge slopes from x21% bottom to x66% y42%; retain every ledge and walking boundary. Match tree trunk and foreground cliff silhouettes for original foreground masks. Preserve all original rocks' positions and shapes, do not invent any new rocks or vegetation on paths. Bright coastal daylight, cool blue sea and atmospheric distant coast, sunlit grass, weathered granite with fine geological stratification, realistic bark and individual grassy tufts, polished 2026 high-end realistic fantasy remake quality, physically plausible lighting, rich but natural material variation, crisp detail and depth. Original terrain topology/camera/perspective and walking routes are mandatory. No characters, text, UI, signs, buildings, new props, extra foreground objects, letterboxing or border. Every pixel fully painted, no transparency. This is a replacement texture, not a cinematic reinterpretation; no zooming/cropping/reframing.",
+  "references": [
+    "build/disc1/original/cut-38/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-6/source/base.png"
+  ],
+  "generatedSource": "exec-b6937dfb-efa6-4a9c-b68b-a77dce4bd93b.png"
+}

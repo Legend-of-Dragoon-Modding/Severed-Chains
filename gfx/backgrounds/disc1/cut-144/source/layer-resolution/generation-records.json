@@ -1,0 +1,16 @@
+{
+  "scope": "Source generation requests; readiness is separate in resolution/middle.json",
+  "records": [
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/closed-candidate.png",
+      "prompt": "Edit FIRST fullwide3:1 medieval housecutaway background into CLOSED DOOR state. Preserveeveryroom,floor,beams,furniture,camera,framing,lightingandstyle. SECOND magenta marks FOUR small independentdoorpanel footprints; THIRD originalreference determinesprojecteddoorpose. Paint one woodencloseddoorleaf in each magentaregion, matching original narrowverticalprojectedprofile, hinges/redthresholdfootprint. Do not move orresize doorway/frame/floor. The4locations: far-rightbottomroom door nearx.86..895,y.75..875; rightupperbedroomdoor nearx.783..811,y.437..566; bottomleftstoreroom doors nearx.256..286,y.707..84 andx.098..126,y.707..84. Warmagedwoodpanel and subtleironbands, consistenttorchlight. No magenta inoutput, no extra objects,people,text. Onlythese4smallcloseddoorleaves added; separatealpha maskswillcuttheexactnativefootprints. Keepfull3:1canvas.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-144/source/base.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-144/source/layer-resolution/removal-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-144/source/reference-original.png"
+      ],
+      "transparent_background": false
+    }
+  ]
+}

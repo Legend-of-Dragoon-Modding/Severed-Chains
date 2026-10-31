@@ -1,0 +1,117 @@
+{
+  "screens": [
+    {
+      "cut": 133,
+      "actualScriptDirectory": "build\\disc1\\scripts\\405",
+      "calls": [
+        {
+          "file": "build\\disc1\\scripts\\405\\3.txt",
+          "line": 72,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\405\\3.txt",
+          "line": 79,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\405\\3.txt",
+          "line": 100,
+          "call": "call SMap::scriptSetEnvForegroundPosition, stor[13], stor[10], stor[8] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\405\\3.txt",
+          "line": 108,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "status": "real-dynamic-layers",
+      "dynamicLayers": [
+        3
+      ],
+      "evidence": [
+        "Runtime script directory=environment+2 verified against RetailSubmap.loadAssets."
+      ]
+    },
+    {
+      "cut": 140,
+      "actualScriptDirectory": "build\\disc1\\scripts\\426",
+      "calls": [
+        {
+          "file": "build\\disc1\\scripts\\426\\1.txt",
+          "line": 847,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\426\\1.txt",
+          "line": 866,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+        }
+      ],
+      "status": "empty-generic-door-table-false-positive",
+      "dynamicLayers": [],
+      "evidence": [
+        "Runtime script directory=environment+2 verified against RetailSubmap.loadAssets.",
+        "build\\disc1\\scripts\\426\\1.txt:2272 LABEL_165: followed by data0xff; helperterminates before any overlay index."
+      ],
+      "provenEmptyGenericTable": true
+    },
+    {
+      "cut": 154,
+      "actualScriptDirectory": "build\\disc1\\scripts\\468",
+      "calls": [
+        {
+          "file": "build\\disc1\\scripts\\468\\1.txt",
+          "line": 728,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\468\\1.txt",
+          "line": 756,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\468\\1.txt",
+          "line": 790,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\468\\1.txt",
+          "line": 819,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "status": "real-dynamic-layers",
+      "dynamicLayers": [
+        4
+      ],
+      "evidence": [
+        "Runtime script directory=environment+2 verified against RetailSubmap.loadAssets."
+      ]
+    },
+    {
+      "cut": 646,
+      "actualScriptDirectory": "build\\disc1\\scripts\\672",
+      "calls": [
+        {
+          "file": "build\\disc1\\scripts\\672\\1.txt",
+          "line": 918,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\672\\1.txt",
+          "line": 937,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+        }
+      ],
+      "status": "empty-generic-door-table-false-positive",
+      "dynamicLayers": [],
+      "evidence": [
+        "Runtime script directory=environment+2 verified against RetailSubmap.loadAssets.",
+        "build\\disc1\\scripts\\672\\1.txt:2012 LABEL_155: followed by data0xff; helperterminates before any overlay index."
+      ],
+      "provenEmptyGenericTable": true
+    }
+  ],
+  "runtimeEdited": false
+}

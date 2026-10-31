@@ -1,0 +1,9 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Edit this exact medieval game street by opening the SIX wooden doors: two distant upper side doors, two middle side doors, two near lower side doors beside the stairs. Remove ONLY the plank door leaves INSIDE their existing stone frames, revealing dark empty black-brown doorway recesses, with their existing warm threshold lights. Preserve EVERY surrounding jamb/arch/lantern/stone block, threshold, step, sign, barrel, roof, street, sky and camera framing exactly. No leaves remain visible in any of the six openings, all six openings should be empty dark recesses. Do not change the central distant castle gate. Do not enlarge, shift, or add openings or modify architecture. This is a minimal game state texture edit; same full portrait aspect and exact scene composition.",
+  "inputs": [
+    "generated-closed-coherent.png"
+  ],
+  "output": "generated-open-coherent.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-1c304ea8-0953-452f-a085-92525671a7d5.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

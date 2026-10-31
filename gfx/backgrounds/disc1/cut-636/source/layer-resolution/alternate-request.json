@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit target image1 is a faithful high-detail fantasy memory-game room. Image2 is exact retail alternate-state layout guide. Preserve camera, room architecture, framing, every object location, warm lighting and all unchanged pixels as closely as possible. Swap exactly these ten props IN PLACE at their existing footprint: wall sword becomes axe; four books on left shelf become a single brown shoe; mounted boar head upper-right becomes mounted green fish; hanging leather basket upper-left becomes a suit of steel armor; framed landscape becomes round wall clock; shield left-center becomes pair of red boxing gloves; bed becomes dark upholstered sofa; ladder between fireplace and bed disappears revealing uninterrupted log wall; red flowers become blue flowers; small basket by fireplace floor becomes pair of brown boots. Match the second guide for exact placement of replacement silhouettes. No parchment cover. Do not move props or resize room. Keep timber, fireplace, rug, open doors and all background continuous. New detailed painted realistic textures, no pixel-art upscale, no characters, no extra objects, no writing changes.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/room-base-v2.png",
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/alternate-original-guide.png"
+  ],
+  "transparent_background": false
+}

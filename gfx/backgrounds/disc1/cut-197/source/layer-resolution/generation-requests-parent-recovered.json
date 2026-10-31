@@ -1,0 +1,33 @@
+{
+  "cut": 197,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 5342,
+      "timestamp": "2026-10-31T01:26:33.925Z",
+      "referencedCuts": [
+        197
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Edit target: first image, the modern sewer machinery room. Supporting reference: second image shows four native animation phase panels labeled4,5,3,7. Produce an alternate animation frame of the modern room. Preserve camera, exact architecture, lighting and image framing. Only rotate the wooden slatted cylindrical rollers of the central eight-column, three-row waterwheel mechanism a quarter turn: the irregular wood knots and dark slots must visibly move vertically around each roller compared with the current image. Keep all metal frames, black iron brackets, axle, exact eight-column count and outer mechanism silhouette fixed. Do not add objects. No people or text. This is a game animation plate so fixed metal registration and clearly different wood phase are essential. Keep all eight wooden columns, do not simplify to six.\";\nstore(\"cut197prompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/cut197-frame-analysis.png\"],transparent_background:false});\nawait yield_control();\nconst r=await pending;store(\"cut197phase\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 5425,
+      "timestamp": "2026-10-31T01:28:31.751Z",
+      "referencedCuts": [
+        197
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Create one compact game texture atlas, exactly four equal panels in a 2 by 2 grid, no text, no dividers. Style: dark realistic damp medieval sewer machinery, mossy stone, aged brass, warm green light matching the first image. Supporting second reference shows precise two states of each object in original low-resolution game. Top-left: close-up rectangular brass lever control plate on stone wall, black vertical slot and silver lever with a red spherical knob in the UP position near top of slot. Top-right: IDENTICAL view, plate, wall and lighting, but red knob and lever DOWN near bottom of slot. Bottom-left: close-up small rectangular opening in the stone floor viewed from above at a steep isometric angle, a cellar ladder descending diagonally down-right into darkness; no door covering opening. Bottom-right: IDENTICAL camera and surroundings, opening covered by closed dark weathered wood planks, diagonally tilted matching the opaque dark floor hatch cover in second reference bottom-right. Keep each prop centered, fill its panel with prop plus small consistent border, no people, no text. Four panels are independent animation state textures and each pair must match exact size/perspective.\";\nstore(\"cut197atlasPrompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/cut197-lever-ladder-guide.png\"],transparent_background:false});\nawait yield_control();\nconst r=await pending;store(\"cut197atlas\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 5495,
+      "timestamp": "2026-10-31T01:30:04.028Z",
+      "referencedCuts": [
+        197
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Edit this game background only in the central eight-column three-row wooden roller mechanism. Make a distinctly different intermediate rotation phase of the rollers: broad smooth dark amber wood slats face the viewer, with small dark knots mostly near upper edges rather than central cracks. Preserve all metal brackets, rails, outer contour, eight columns and three rows, camera, room architecture, colors, lighting and all surrounding pixels as closely as possible. Do not move or resize the machinery. No added objects or text. This image supplies the third animation pose; the pattern on the wooden slats must visibly differ, but the fixed mechanism frame must be identical.\";\nstore(\"cut197phaseCprompt\",prompt);\nconst p=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/base.png\"],transparent_background:false});\nawait yield_control();const r=await p;store(\"cut197phaseC\",r);generatedImage(r);\n"
+    }
+  ]
+}

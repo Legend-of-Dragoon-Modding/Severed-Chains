@@ -1,0 +1,384 @@
+{
+  "background": {
+    "source": "clean-room.png",
+    "patches": [
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          40,
+          146,
+          621,
+          282
+        ],
+        "targetBounds": [
+          103,
+          64,
+          185,
+          90
+        ],
+        "maskLayer": 0
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          38,
+          454,
+          253,
+          661
+        ],
+        "targetBounds": [
+          38,
+          140,
+          70,
+          169
+        ],
+        "maskLayer": 1
+      },
+      {
+        "source": "base-boar.png",
+        "sourceBounds": [
+          246,
+          17,
+          1255,
+          999
+        ],
+        "targetBounds": [
+          276,
+          56,
+          332,
+          104
+        ],
+        "maskLayer": 2
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          281,
+          763,
+          492,
+          940
+        ],
+        "targetBounds": [
+          30,
+          79,
+          68,
+          139
+        ],
+        "maskLayer": 3
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          656,
+          143,
+          1022,
+          416
+        ],
+        "targetBounds": [
+          192,
+          80,
+          238,
+          114
+        ],
+        "maskLayer": 4
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          281,
+          368,
+          542,
+          731
+        ],
+        "targetBounds": [
+          119,
+          104,
+          157,
+          156
+        ],
+        "maskLayer": 5
+      },
+      {
+        "source": "base-bed.png",
+        "sourceBounds": [
+          53,
+          197,
+          1484,
+          887
+        ],
+        "targetBounds": [
+          181,
+          139,
+          297,
+          193
+        ],
+        "maskLayer": 6
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          557,
+          425,
+          716,
+          947
+        ],
+        "targetBounds": [
+          158,
+          123,
+          178,
+          185
+        ],
+        "maskLayer": 7
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          943,
+          412,
+          1257,
+          640
+        ],
+        "targetBounds": [
+          244,
+          105,
+          294,
+          135
+        ],
+        "maskLayer": 8
+      },
+      {
+        "source": "base-props-atlas.png",
+        "sourceBounds": [
+          281,
+          763,
+          492,
+          940
+        ],
+        "targetBounds": [
+          101,
+          169,
+          129,
+          193
+        ],
+        "maskLayer": 9
+      }
+    ]
+  },
+  "layers": {
+    "0": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-axe.png",
+          "sourceBounds": [
+            48,
+            31,
+            2129,
+            699
+          ],
+          "targetBounds": [
+            103,
+            64,
+            185,
+            90
+          ],
+          "maskLayer": 0
+        }
+      ]
+    },
+    "1": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            33,
+            593,
+            285,
+            785
+          ],
+          "targetBounds": [
+            38,
+            140,
+            70,
+            169
+          ],
+          "maskLayer": 1
+        }
+      ]
+    },
+    "2": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            1122,
+            23,
+            1509,
+            359
+          ],
+          "targetBounds": [
+            276,
+            56,
+            332,
+            104
+          ],
+          "maskLayer": 2
+        }
+      ]
+    },
+    "3": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            47,
+            179,
+            307,
+            580
+          ],
+          "targetBounds": [
+            30,
+            79,
+            68,
+            139
+          ],
+          "maskLayer": 3
+        }
+      ]
+    },
+    "4": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            702,
+            235,
+            1022,
+            498
+          ],
+          "targetBounds": [
+            192,
+            80,
+            238,
+            114
+          ],
+          "maskLayer": 4
+        }
+      ]
+    },
+    "5": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            396,
+            292,
+            654,
+            645
+          ],
+          "targetBounds": [
+            119,
+            104,
+            157,
+            156
+          ],
+          "maskLayer": 5
+        }
+      ]
+    },
+    "6": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            668,
+            577,
+            1512,
+            975
+          ],
+          "targetBounds": [
+            181,
+            139,
+            297,
+            193
+          ],
+          "maskLayer": 6
+        }
+      ]
+    },
+    "7": "clean-room.png",
+    "8": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            1078,
+            398,
+            1430,
+            603
+          ],
+          "targetBounds": [
+            244,
+            105,
+            294,
+            135
+          ],
+          "maskLayer": 8
+        }
+      ]
+    },
+    "9": {
+      "source": "clean-room.png",
+      "patches": [
+        {
+          "source": "alternate-props-atlas.png",
+          "sourceBounds": [
+            350,
+            716,
+            612,
+            933
+          ],
+          "targetBounds": [
+            101,
+            169,
+            129,
+            193
+          ],
+          "maskLayer": 9
+        }
+      ]
+    },
+    "10": "clean-room.png",
+    "11": "clean-room.png",
+    "12": "clean-room.png",
+    "13": "clean-room.png",
+    "14": "../base.png",
+    "15": "../base.png",
+    "16": "clean-room.png"
+  },
+  "dynamicLayers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    14,
+    15
+  ],
+  "visualReview": true,
+  "evidence": [
+    "New independently generated clean room and transparent base/alternate prop atlases. Ten prop pairs composited within exact native masks, clean RGB under every swap prevents ghosts and wall crop seams. Base hanging basket shares independently generated wicker basket material with floor basket; parchment14/15 independent. Candidate final endpoint review pending."
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "background": "generated-underlay-step4.png",
+  "layers": {
+    "0": "generated-underlay-step4.png",
+    "1": "generated-underlay-step4.png",
+    "2": "generated-underlay-step4.png",
+    "3": "generated-closed-walls.png",
+    "4": "generated-closed-walls.png",
+    "5": "generated-underlay-step4.png",
+    "6": "generated-underlay-step4.png",
+    "7": "generated-open-door-walls.png",
+    "8": "generated-closed-walls.png",
+    "9": "generated-underlay-step4.png",
+    "10": "generated-open-rectangular-door-walls.png",
+    "11": "generated-underlay-step4.png",
+    "12": {
+      "source": "generated-opaque-door12.png",
+      "sourceBounds": [
+        0,
+        0,
+        1363,
+        1154
+      ]
+    },
+    "13": "generated-underlay-step4.png",
+    "14": "generated-closed-walls.png",
+    "15": "generated-closed-walls.png",
+    "16": "generated-underlay-step4.png",
+    "17": "generated-underlay-step4.png",
+    "18": "generated-underlay-step4.png",
+    "19": "generated-underlay-step4.png",
+    "20": "generated-underlay-step4.png"
+  },
+  "dynamicLayers": [
+    3,
+    4,
+    7,
+    8,
+    10,
+    12,
+    15
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Actual runtime environment+2 script calls and original recorded layer states/masks are documented in audit.json.",
+    "A separate built-in ImageGen clean exposed plate follows the original underlay guide; raw source master is preserved.",
+    "Source artwork reviewed; exact-alpha staging and independent endpoint review determine final readiness."
+  ]
+}

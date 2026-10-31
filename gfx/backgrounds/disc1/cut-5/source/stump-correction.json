@@ -1,0 +1,4 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Make one precise correction to this image. Remove ONLY the small uppermost stump at approximately x17%,y46% (the small stump on the path above the two larger foreground stumps). Replace that stump and its tiny root base with continuous flat dirt/grassy path matching surrounding ground. Keep the TWO foreground stumps around x15%,y72% and x6%,y85% unchanged. Keep EVERYTHING else exactly unchanged: cliff contour, fallen log, all trees, branches, lighting, distant landscape, camera framing and3:2ratio. No new objects. This edit clears a gameplay walking route."
+}

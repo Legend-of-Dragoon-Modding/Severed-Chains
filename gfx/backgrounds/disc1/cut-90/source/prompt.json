@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: style-transfer. Remake image 1 (original Bale tower basement workshop game background) as a detailed photorealistic modern prerendered RPG environment matching image 2's warm stone/timber material quality. Keep the original EXACT full 640x384 canvas composition, top-down oblique fixed camera and every wall silhouette, room footprint, threshold, stair, floor level, prop footprint and walking aisle; target 2560x1536. Preserve black outside cutaway void, left brick storage corridor and stacked crates, top recessed furnace/workbench and fireplace, central circular red floor/pool with curved enclosing masonry and its exact original shape, center-right alchemy bench with jars and blue circular tabletop, lower-right metal-tiled work area with original prone/standing skeleton props and wall painting, and left rows of open wood bins. Do not add or remove props. Upgrade only stone mortar, aged wood grain, iron, glass, ceramics, worn tiled floors and soft warm practical light. No people or live characters, no text, UI, arrows, or watermark. Preserve unobstructed original paths, original elevations, and continuous floor under foreground architecture. No reframing, cropping, rotating, or redesigned layout.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-90/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-91/source/base.png"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Exact fixed camera RPG cave-prison environment. Upgrade original image to photorealistic modern Seles-quality game materials while preserving original portrait384x512 full composition, camera and geometry. Lock upper right stone doorway at x81% y20%, timber landing x74% y28%; central broad staircase descending left from y31%-46%; horizontal timber bridge x30%-85% y53%; lower left exit path and door at x23% y64%; inset barred cell x76% y45%. Same railings, stair tread endpoints, central chasm rock silhouettes and dark foreground cave spires. No new platforms or obstacles. Rough warm brown cave stone, aged timber, existing wall lantern glow, deep shadows. No characters, text, UI, crop, zoom or camera change. Preserve all walkway widths and thresholds. Final1536x2048.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-9a47cb11-6a31-4baf-950c-48966fe5c0d3.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-32\\source\\original-composite.png"
+  ]
+}

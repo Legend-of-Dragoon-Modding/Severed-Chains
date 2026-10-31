@@ -1,0 +1,4 @@
+{
+  "prompt": "Create an underlay version of the provided shed image. Keep the exact camera, framing, lighting and all foreground ropes, top beam, walls, doorway, floor, right-side props and large hanging left vessel unchanged. Remove ONLY the tilted broken wooden crate and loose axe/tool in the lower-left quadrant around x8-35%, y53-82%. Fully paint the exposed continuous worn floorboards and shadows underneath where that crate and tool stood. Do not add props. Keep the diagonal foreground ropes crossing in front of this area, in exactly their original positions. This is the scenery behind a removable game prop; clear uninterrupted wooden floor is required beneath it. Output1536x1024 full canvas, same realistic quality, no text or UI.",
+  "generatedSource": "exec-612636e3-be59-4892-b0af-36cd59fa96a3.png"
+}

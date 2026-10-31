@@ -1,0 +1,17 @@
+{
+  "cut": 154,
+  "packagingPrepared": true,
+  "status": "independent-plates-staged",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "issues": [],
+  "trace": "build/disc1/captures/cut-154/original/alignment.csv",
+  "validation": "build/disc1/staged/cut-154/layered-validation.json",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/468",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ],
+  "endpointReview": "Stone secret-passage panel appears only in foreground4; hiding it reveals the original passage area without a residual stone panel.",
+  "limits": "Asset endpoint review only; actual story-state traversal and character-dependent depth remain for gameplay testing."
+}

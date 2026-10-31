@@ -1,0 +1,32 @@
+[
+  {
+    "layer": 6,
+    "args": {
+      "prompt": "Use case: precise-object-edit. Image1 is generated fantasy dragon claw source. Keep all visible claws, talons, knuckles, scales, pose, camera, colors and directional light exactly unchanged. Make an OPAQUE material donor image by painting coherent new organic claw/bone/scaled dragon-hide surface behind every transparent pixel, filling all margins, gaps between fingers and all canvas edges. Do not paint lava, orange glow patches, black matte, flat color, smears or striping in the formerly transparent space. Continue natural brown stony dragon skin and pale bone texture with richly detailed irregular scales. The source will be clipped by a separate exact geometry mask; the entire rectangle must have plausible detailed dragon material. Do not add fingers or alter main pose; no text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6.png"
+      ],
+      "transparent_background": false
+    }
+  },
+  {
+    "layer": 7,
+    "args": {
+      "prompt": "Use case: precise-object-edit. Image1 is generated fantasy dragon claw source. Keep all visible claws, talons, knuckles, scales, pose, camera, colors and directional light exactly unchanged. Make an OPAQUE material donor image by painting coherent new organic claw/bone/scaled dragon-hide surface behind every transparent pixel, filling all margins, gaps between fingers and all canvas edges. Do not paint lava, orange glow patches, black matte, flat color, smears or striping in the formerly transparent space. Continue natural brown stony dragon skin and pale bone texture with richly detailed irregular scales. The source will be clipped by a separate exact geometry mask; the entire rectangle must have plausible detailed dragon material. Do not add fingers or alter main pose; no text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-7.png"
+      ],
+      "transparent_background": false
+    }
+  },
+  {
+    "layer": 8,
+    "args": {
+      "prompt": "Use case: precise-object-edit. Image1 is generated fantasy dragon claw source. Keep all visible claws, talons, knuckles, scales, pose, camera, colors and directional light exactly unchanged. Make an OPAQUE material donor image by painting coherent new organic claw/bone/scaled dragon-hide surface behind every transparent pixel, filling all margins, gaps between fingers and all canvas edges. Do not paint lava, orange glow patches, black matte, flat color, smears or striping in the formerly transparent space. Continue natural brown stony dragon skin and pale bone texture with richly detailed irregular scales. The source will be clipped by a separate exact geometry mask; the entire rectangle must have plausible detailed dragon material. Do not add fingers or alter main pose; no text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8.png"
+      ],
+      "transparent_background": false
+    }
+  }
+]

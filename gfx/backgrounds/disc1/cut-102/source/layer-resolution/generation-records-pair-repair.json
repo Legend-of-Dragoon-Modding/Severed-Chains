@@ -1,0 +1,21 @@
+{
+  "tool": "builtin-imagegen",
+  "requests": [
+    {
+      "prompt": "Edit this transparent game doorway asset. REMOVE THE WOODEN HALF-HEIGHT DOOR COMPLETELY, including every plank, iron strap, handle, door edge and leaf. Keep the exact stone arch, wall stones, both hanging lamps, camera, crop, sill, landing and lighting unchanged. The opening must be an EMPTY dark passage with a continuous worn stone threshold and landing where the removed wooden leaf stood. No wooden leaf anywhere, no open door swung aside, no replacement door, no bar, no gate. Transparent outside the doorway assembly, opaque dark recess inside the arch. Match all original stone/lantern geometry closely; only remove the wooden gate and reconstruct the revealed stone floor/shadow behind it.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-102/source/layer-resolution/portal-open-unit.png"
+      ],
+      "output": "exec-ef9f2b0b-24f2-49a3-a3b9-c607b640d4b4.png",
+      "status": "Unused tall empty passage; final uses squat paired atlas"
+    },
+    {
+      "prompt": "Create a transparent game atlas with TWO MATCHING doorway assemblies side by side, equal panels, clear transparent gutter. Use this reference for warm stone material, lamp style, isometric angle and overall silhouette, but CORRECT ITS PROPORTIONS. Each doorway assembly is SHORTER with a LONG projecting stone landing. Within EACH panel: top stone arch/wall occupies y0–25% of height; the actual doorway opening/wooden door occupies y25–62%; the remaining y62–100% is ONLY a long continuous worn-stone landing/floor projecting toward the viewer. No upright wood anywhere below62%height. Left assembly: EMPTY open dark passage, absolutely no wooden leaf. Right assembly: exact same fixed stone arch, lamps and landing, but passage CLOSED with a weathered brown wooden door; door bottom terminates at62%height, then the SAME long empty stone floor to100%. Both panels same viewpoint and exact fixed geometry. The door must not extend down across the projecting landing. No half-height gate. Transparent outside assemblies, opaque black recess inside left arch, stone flooring opaque, no text. Needed for a 50x81-native-pixel doorway with leaf only about30pixels high and floor about30pixels long.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-102/source/layer-resolution/portal-open-unit.png"
+      ],
+      "output": "exec-f1571d43-4147-4e5d-96a0-63212da89766.png",
+      "status": "Used portal-pair-v2.png; split body and landing native202. Fixed outerleaf5 uses earlier portal asset."
+    }
+  ]
+}

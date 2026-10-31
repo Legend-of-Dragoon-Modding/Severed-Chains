@@ -1,0 +1,9 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Change ONLY lighting and color temperature of image1. Keep every ruin, beam, door, stone, path, camera and pixel composition unchanged. Replace golden sunset with the original reference image2's cold neutral overcast gray daylight and smoky desaturated atmosphere. No orange sunshine or warm sky, no new objects. Preserve detailed photorealistic materials. Same 2:1 full canvas; no crop or reframe. Original ruined street composition.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-a45cb08c-0304-4586-a45d-d5d50a9673a2.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-741\\source\\initial-warm-draft.png",
+    "gfx\\backgrounds\\disc1\\cut-741\\source\\original-composite.png"
+  ]
+}

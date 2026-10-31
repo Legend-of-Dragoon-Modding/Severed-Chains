@@ -1,0 +1,2175 @@
+{
+  "complete": true,
+  "scope": "Focused GPU loading, exact installed texture bytes, synthetic layer endpoints and selected camera/state probes.",
+  "screenCount": 72,
+  "recordingCount": 89,
+  "selectedStateProfileCount": 34,
+  "remainingBlockingAssetIssues": [],
+  "resolvedFindings": {
+    "102/626": "Supporting entrance floor repaired; final GPU views reviewed with original alpha and independent door states preserved."
+  },
+  "parentAdditionalReview": {
+    "145": "Left door shown in final camera followup.",
+    "194": "Left facade hidden/shown in final camera followup.",
+    "193": "Room entry and door state profiles reviewed."
+  },
+  "workerVisualReports": [
+    "docs/disc1-backgrounds/resolution/focused-review-early.json",
+    "docs/disc1-backgrounds/resolution/focused-review-final-followup.json",
+    "docs/disc1-backgrounds/resolution/focused-review-final.json",
+    "docs/disc1-backgrounds/resolution/focused-review-middle-followup.json",
+    "docs/disc1-backgrounds/resolution/focused-review-middle.json"
+  ],
+  "limitations": [
+    "Full story traversal and later variants are not exhaustively verified.",
+    "Synthetic probes do not establish normal gameplay transitions; paused scripts do not freeze every actor/effect.",
+    "Cut 58 has a dark story fade; cut 180 origin view clips the lower crate edge, with raised view available.",
+    "Cut 197 phase artwork has stronger wood texture variation; no blocking layer defect found.",
+    "Native mask contours, including entrance edges, remain pixel stepped."
+  ],
+  "fullGameplayVerified": false,
+  "checks": [
+    {
+      "path": "docs/disc1-backgrounds/resolution/runtime-pack-tests.xml",
+      "sha256": "1b65b01a93f122c8d9922f5e3a75d19b16a4d7da8c6bbf96ae91e69b2065544d",
+      "tests": 5,
+      "seconds": 74.72
+    },
+    {
+      "path": "docs/disc1-backgrounds/resolution/modern-focused-focused-v1.xml",
+      "sha256": "158f53da043a46fa834db05e07d43d5caeb7979e83431b18a70e9a822ad64a39",
+      "tests": 1,
+      "seconds": 375.056
+    },
+    {
+      "path": "docs/disc1-backgrounds/resolution/modern-focused-followup-v1.xml",
+      "sha256": "31059b62fa8ee02610a63f749bccaacbb00a599a9c1cad49dd6b045a5f7d49cf",
+      "tests": 1,
+      "seconds": 63.388
+    },
+    {
+      "path": "docs/disc1-backgrounds/resolution/modern-focused-final-check-v1.xml",
+      "sha256": "1d2b95b8fba4faf542138ab3215f52469fd2438f6adb24c4eefc4caa9d60b8a5",
+      "tests": 1,
+      "seconds": 40.023
+    },
+    {
+      "path": "docs/disc1-backgrounds/resolution/modern-focused-footing-resolved-v1.xml",
+      "sha256": "a3ae39329cb3ca709e97372bdad78e2d9fff9c819e116d7b927d4290e8c439db",
+      "tests": 1,
+      "seconds": 18.974
+    }
+  ],
+  "screens": [
+    {
+      "cut": 30,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-30-focused-v1/modern",
+          "completionSha256": "c6e51c170a569ddb11a83d01d476b0e58c53c001a7804b4ae0eb27b222765b8b",
+          "gpuEvidenceSha256": "580024f55d3bb6a629f74cca6a9b699568eb44e421fe05607cb4a6fede647419",
+          "traceSha256": "4e0d268937e83ea46ac45179ffa313127efa78bc2e0144d1b8f725ec2256eb46",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-30-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-30-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-30-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-30-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 32,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-32-focused-v1/modern",
+          "completionSha256": "e4f1e06a753cf4329398d70a3b31c60fa0c32be6a2688e8912f97d74efbefeb3",
+          "gpuEvidenceSha256": "b443e21440cb0b94b109cd8822afabf777549ca177fb410851f6854568fecc3c",
+          "traceSha256": "eec33d15541262cb6f258cefc155b5cbf86a475451e65c5585cb3637ed242f0a",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-32-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-32-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-32-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-32-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 57,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-57-focused-v1/modern",
+          "completionSha256": "ba0ac581ce03d5b54f65efb0ee1b6875648505a58af67089bc11d99e2f765fc3",
+          "gpuEvidenceSha256": "d3374727d2c47c97429b75bdae905de78db71be253a4b4ffa723c32d2771d839",
+          "traceSha256": "407d0c35495df2b067f876ef12a1ce558cb9b6eacae45c59b94d6bd62215e85e",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-57-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-57-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-57-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-57-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 58,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-58-focused-v1/modern",
+          "completionSha256": "7973c79e964e9fc954bfd1a8437d18b62650facaaac7f44e85716a3659e65c14",
+          "gpuEvidenceSha256": "7d4d7f5bb401ebd7333721bee7af1c58c3c45a12a0166cdc2d991c018ec6b24b",
+          "traceSha256": "aceaced25033a6fc87824cd7098f7c536927e28655d3afc79b21cfe02188edf3",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-58-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-58-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-58-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-58-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 67,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-67-focused-v1/modern",
+          "completionSha256": "7b3370a5d78058c34b247f98a489596d2e92784501f58b6c4dc547357ce773f1",
+          "gpuEvidenceSha256": "779d9d40a581fbc15e0abdfcbc31472d9d4fd416bdec15ed5df124c26c10f2aa",
+          "traceSha256": "bc24670063e7d17ba43ffde0346b091a647a7d18643684b29ff44f14c2ad207a",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-67-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-67-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-67-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-67-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 68,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-68-focused-v1/modern",
+          "completionSha256": "6d1bff7f3a95d38db935d34a8ee9c0ba3eec782c4f2d7d46b618b82dc03cad8d",
+          "gpuEvidenceSha256": "145e13de7cab38ec92aac625668fb7a8a560e548829dd434837b0f081f15e278",
+          "traceSha256": "03bf2542fdb61725aabb97b613de0bd717dca13548bc9600b847aa332aab8e89",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-68-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-68-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-68-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-68-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 70,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-70-focused-v1/modern",
+          "completionSha256": "d168930d69f353347a689514c96c02ce85bba367bccef539c6a563d3e6873bd8",
+          "gpuEvidenceSha256": "de4c889cc6c97211384d936375d9fd2329df6c2a03ec4c52484493da838c3077",
+          "traceSha256": "ac1be599560b770569c026832e21cec7ecd198b70077f1891676780041a41ff7",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-70-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-70-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-70-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-70-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 71,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-71-focused-v1/modern",
+          "completionSha256": "a883765c04b9666be712b60659cf0cf8a217782c8efe597cbfeaaf25d8582d4b",
+          "gpuEvidenceSha256": "d23c80d3308484b538e47811bde6cb30edacf4fe5e1dccc240a799942a3ee34b",
+          "traceSha256": "0c0f63ac944dac925edd29fd51f3ea7c3bdeb72fd45d054f6f19c44522357774",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-71-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-71-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-71-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-71-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 79,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-79-focused-v1/modern",
+          "completionSha256": "d6f30a9d7c5a661527ff3f9407b2de15fe41a05ebb3a69493ee7ebbeb0b83ee8",
+          "gpuEvidenceSha256": "3051cc274344825b067d8d8f289eedeba221b5515aaba5d11bf9f8cea72eb546",
+          "traceSha256": "d06786ed5e4667aacc17adbc5cfad1a3a2b2bd05946e5174ae5f53032602efc8",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-79-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-79-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-79-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-79-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 80,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-80-focused-v1/modern",
+          "completionSha256": "bb5715bdcfc49f75f53fde503ff6e7a097139c8454375222fceebc4f9e78e815",
+          "gpuEvidenceSha256": "08a8bcabde54471ce3b604967810e6bcde4b731b479a2e384c9df407c8e090cd",
+          "traceSha256": "e6d783d1201fc34004239741587efe46c26d51c999270d4a61e428ea0267c79c",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-80-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-80-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-80-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-80-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 87,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-87-focused-v1/modern",
+          "completionSha256": "38f5bdce3c2b3d5c404f166815d0092c4110939278178219c4a02cc4185c402f",
+          "gpuEvidenceSha256": "443848c6cfa5e360ff039f2b7668a7fdf43fdd7fa30ba13d9468a67c42a4e72a",
+          "traceSha256": "6a9df8ea8d27c919de62b2e013753aee6952755f27e039eb923c065b9bb29015",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-87-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-87-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-87-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-87-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 88,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-88-focused-v1/modern",
+          "completionSha256": "35aea76e26b8e599ac76e90c67d063812db1caf480826dabc90f43d289263029",
+          "gpuEvidenceSha256": "d0d1bf55dc2890ea34fc2e050b3e488b7c56dacdf7a46b7413c476203084d601",
+          "traceSha256": "ccf406dfb387ce770248a16c56314ecd6069260c540d04538cefe711f0e3140c",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-88-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-88-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-88-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-88-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 89,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-89-focused-v1/modern",
+          "completionSha256": "80ad3685fc8c4613b85dd99d2e334ca686cf19abaa732b1578232ce3851b7af8",
+          "gpuEvidenceSha256": "38858ed5d11c76dce698422412b1d205e42ba3825fe293f44ebcdff76f1c174d",
+          "traceSha256": "89c59219cc0b15eb6150b7c55af23bda3788b8c265f6237c1ad64366f9bd2e76",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-89-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-89-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-89-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-89-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 93,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-93-focused-v1/modern",
+          "completionSha256": "7d55af22fcc2b5803fc8201c6a557630c1826d568bcebcdf8a01ca2a5261385d",
+          "gpuEvidenceSha256": "f27876c44e09c451bc346e97be70c4507fe64f19183cc4d49217456709c788de",
+          "traceSha256": "7e07a55db275ae87b3622a345fdff7ef8642b64fa0caa275ad1981d405d15ecb",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-93-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-93-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-93-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-93-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 94,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-94-focused-v1/modern",
+          "completionSha256": "8d668a1155ebae0ad0e06a0a341e1bf0c00d8a8c2c41039536f3f692ef2ce44e",
+          "gpuEvidenceSha256": "fa68198f829cca575e6997df3d873374ee74ede5f364a87cb98065c746da7630",
+          "traceSha256": "a3436ffee2ae185ab8d3342ec0e822c757a48d3ed774637de5ff603916aaf8d4",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "name": "parallax-origin"
+            },
+            {
+              "visible": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "name": "parallax-offset",
+              "positions": {
+                "0": [
+                  0,
+                  100
+                ],
+                "1": [
+                  0,
+                  100
+                ],
+                "2": [
+                  0,
+                  100
+                ],
+                "3": [
+                  0,
+                  100
+                ]
+              }
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-94-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-94-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-94-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-94-focused-v1/modern/synthetic-parallax-origin.png",
+            "build/disc1/captures/cut-94-focused-v1/modern/synthetic-parallax-offset.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-94-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 95,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-95-focused-v1/modern",
+          "completionSha256": "5dd580b44e6a63b034024b84d794ebc99b7b59671729f417add585d25a2fc3fe",
+          "gpuEvidenceSha256": "51d5f79dea54c61f202a091a2e880af04fda797f15d71ffd99696b8c8529189a",
+          "traceSha256": "b5dee608c97c05fcb3e4a8551b77522de153d27dd38fdddcb040f911004df9b4",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-95-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-95-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-95-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-95-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 96,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-96-focused-v1/modern",
+          "completionSha256": "6e5d1b98a1ae0bb2de9b82fbb6f25383ce45d3427f5e89817c297f00551805df",
+          "gpuEvidenceSha256": "0b9df32838fe31e446be36517e9b278adcd0ed45e47fb58f6047054ae533d0c1",
+          "traceSha256": "6d41bae848dd1e1abad029485095afc7ec01fafcf13c22725abd73cc2855a4aa",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-96-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-96-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-96-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-96-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 97,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-97-focused-v1/modern",
+          "completionSha256": "633e286f701b0e57f9e7d2456436539aafb2ceffd2e57dffbdaa2fa718e25ed4",
+          "gpuEvidenceSha256": "5af39dbe03ffe63d11627814b7683eb6199ccd07a0d74abd1d35119f3be11811",
+          "traceSha256": "bd39efd03d5ae7232b94a84aa82b0c0d462670e41a2eb7e15293d9faa6f0b051",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-97-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-97-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-97-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-97-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 99,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-99-focused-v1/modern",
+          "completionSha256": "7e0584f2ab85474e9b69b9488447682b41c3f990613df124178d20f5315adc40",
+          "gpuEvidenceSha256": "152ea637a377dda27cee89461bc5938ca56f6d2ef9ee15d5ede2cbf1492b0cfe",
+          "traceSha256": "a839b17537152aec0ff25702dcc64172d537317d1b44e08f42405889a59b7fcf",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-99-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-99-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-99-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-99-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 100,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-100-focused-v1/modern",
+          "completionSha256": "8bb7fd0179d984fec5b9b4e5176e9de607f4ca28c65b97271e8754a7bc2ecd7b",
+          "gpuEvidenceSha256": "1a4f91cc357b7544b13ed5bd4fb3963f08218de7c97db23e683f9aebec9ba9ce",
+          "traceSha256": "a14568ae850f5786b2472f97b044c18bb7c56398f7237b11f541b6ce33157e15",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-100-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-100-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-100-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-100-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 102,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-102-focused-v1/modern",
+          "completionSha256": "5c5f78a9310a4957afec7240637a3ad6d68bbf0ca41a76f48a80bb1f85b6e69b",
+          "gpuEvidenceSha256": "cb8d6360c0c07b82c33e0892a45c4f920dd637cc71b8926ded98bfd9783ed7bc",
+          "traceSha256": "6cf66619e987cbe9563448bdf94aab498f6295543575db824438ee70949e0e03",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-102-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-102-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-102-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-102-followup-v1/modern",
+          "completionSha256": "5c5f78a9310a4957afec7240637a3ad6d68bbf0ca41a76f48a80bb1f85b6e69b",
+          "gpuEvidenceSha256": "cb8d6360c0c07b82c33e0892a45c4f920dd637cc71b8926ded98bfd9783ed7bc",
+          "traceSha256": "be195db9dbcca2cd6bb09d77ff7d670572ee9124d85d3f04959293bbdcae6844",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-102-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-102-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-102-followup-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "final-check-v1",
+          "directory": "build/disc1/captures/cut-102-final-check-v1/modern",
+          "completionSha256": "5c5f78a9310a4957afec7240637a3ad6d68bbf0ca41a76f48a80bb1f85b6e69b",
+          "gpuEvidenceSha256": "cb8d6360c0c07b82c33e0892a45c4f920dd637cc71b8926ded98bfd9783ed7bc",
+          "traceSha256": "be195db9dbcca2cd6bb09d77ff7d670572ee9124d85d3f04959293bbdcae6844",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-102-final-check-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-102-final-check-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-102-final-check-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "footing-resolved-v1",
+          "directory": "build/disc1/captures/cut-102-footing-resolved-v1/modern",
+          "completionSha256": "5c5f78a9310a4957afec7240637a3ad6d68bbf0ca41a76f48a80bb1f85b6e69b",
+          "gpuEvidenceSha256": "cb8d6360c0c07b82c33e0892a45c4f920dd637cc71b8926ded98bfd9783ed7bc",
+          "traceSha256": "be195db9dbcca2cd6bb09d77ff7d670572ee9124d85d3f04959293bbdcae6844",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-102-footing-resolved-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-102-footing-resolved-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-102-footing-resolved-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-102-footing-resolved-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 103,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-103-focused-v1/modern",
+          "completionSha256": "a61de3d8a2de620a781a85d686d6fab16058b59465b957d18b55050838e3fa5c",
+          "gpuEvidenceSha256": "86cc712e32c39f7611d6394ae660d351f923fdaff8defa249dade2304a186ac0",
+          "traceSha256": "5044d7b9618a08ec21454e112d883fa9449cc888e43e4a982e261b34c1686e38",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-103-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-103-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-103-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-103-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 104,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-104-focused-v1/modern",
+          "completionSha256": "ae48a9d4c3ed17e3b93bfbbb09983f85faf128f1378faf65dd81e7ad98f70f87",
+          "gpuEvidenceSha256": "14bdf10fe074372cdd977588689d296d46e83672f38342118e302a4a58ce57ab",
+          "traceSha256": "a09c3496d2bdd0967ca9eda50596331cf2822ef6a2c14e94c4ec62238aa88f6b",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-104-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-104-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-104-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-104-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 109,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-109-focused-v1/modern",
+          "completionSha256": "caf398d79a37b508a08d0b28e647ab110c5aa8df2e2db43b87e96a5c55ea7bee",
+          "gpuEvidenceSha256": "58e2c547701137bdb5553d93283559f1324222ca0aa07217c300980932a36ac6",
+          "traceSha256": "f8153f003e12b0943ab6b5482280939e1b064c40cf5391afec8e81c7721407e9",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-109-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-109-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-109-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-109-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 111,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-111-focused-v1/modern",
+          "completionSha256": "efa6974b18abb5fd913b6dfd2cc0fe22bdbe631da0d9c9c36a0a82a6226e24b4",
+          "gpuEvidenceSha256": "47f511793cff05d05d9dd249794e9c57d6a8b08512a070580b08b409c409c242",
+          "traceSha256": "9ab78fc382f5b0fce2026b799dc168eaec6b3487f6cde3da34cfd776635b548f",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-111-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-111-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-111-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-111-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 120,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-120-focused-v1/modern",
+          "completionSha256": "2f90b9b771734697a4b5dc816ed2c2c5ed3a7912b1204db1351dd618c1c9f64f",
+          "gpuEvidenceSha256": "9329e14dc4ee773a3d1d47cb37d0d99b5198c53a7ad1e1eb2905cde86f59c8d0",
+          "traceSha256": "9c06f8ad5fe07bbd1ece2979864fd181b86df4b683b5dbec48d57b40951c96ac",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                6
+              ],
+              "name": "claw-6"
+            },
+            {
+              "visible": [
+                7
+              ],
+              "name": "claw-7"
+            },
+            {
+              "visible": [
+                8
+              ],
+              "name": "claw-8"
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-120-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-120-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-120-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-120-focused-v1/modern/synthetic-claw-6.png",
+            "build/disc1/captures/cut-120-focused-v1/modern/synthetic-claw-7.png",
+            "build/disc1/captures/cut-120-focused-v1/modern/synthetic-claw-8.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-120-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 121,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-121-focused-v1/modern",
+          "completionSha256": "e1beaf797a6c1b9f2672c3bcd446b92d2419610feceb7f542a23095582fc2334",
+          "gpuEvidenceSha256": "fa00d10afd16a5632573883829001ad156d0e027af2a55f457100adfe869e088",
+          "traceSha256": "d257c11cbb9b707de80e0ffde6bafc3c2fbcd576540c40233bae4b5d4bc0b4a2",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-121-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-121-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-121-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-121-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 133,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-133-focused-v1/modern",
+          "completionSha256": "676585b1915c9186969d02f2506978546f2a5316e923a1bf0718e2d22761873c",
+          "gpuEvidenceSha256": "9ea9e92426ee348ba2656f7585b637072900e9c21ed944f60ee2ee65fb0cc25d",
+          "traceSha256": "a06feb3d7f48d8552794be00cfb4ae4516ab0eac73ad82c1581d6320022c3c04",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                3
+              ],
+              "name": "web-shift",
+              "positions": {
+                "3": [
+                  1,
+                  0
+                ]
+              }
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-133-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-133-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-133-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-133-focused-v1/modern/synthetic-web-shift.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-133-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 134,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-134-focused-v1/modern",
+          "completionSha256": "2556d566b73a08d7eaa83b4a358574542dcf6a311a989dcc316f8d6700674296",
+          "gpuEvidenceSha256": "4a70e5d0ab1a0c314fa3b2ee6f5c7f7d4f5508795fcc9a3f316ee95b2f87c590",
+          "traceSha256": "ea20b2e32715bdaf737d72cd6d37ac25b4e9bc21b1e991cf329379bdaeac6a64",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-134-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-134-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-134-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-134-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 141,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-141-focused-v1/modern",
+          "completionSha256": "a300a4bcc57e0d9cf2f22b43521a28141193bc00764d60140597da4bc2e04054",
+          "gpuEvidenceSha256": "36782b56510cac4161662c7434855c54ddf885a38ec2b5de7f35ad1c28a8e891",
+          "traceSha256": "7e034a0ede005dc919adaf708b5b76ba9cb9bd6eda6b865b8023bf92680d52df",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-141-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-141-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-141-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-141-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 142,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-142-focused-v1/modern",
+          "completionSha256": "5c1f1a3b471f1f28c5a0817aa5c219d11a0e84ab9b45e382f758d95f405a6df5",
+          "gpuEvidenceSha256": "30670387279819ca6df1d50448cf077e5edca1b19ce588cfcc4ef517d8ca1cce",
+          "traceSha256": "7b0db245cdf8cec36f23478fa2fd8170d0d0557d8325cd8db1c71bb0ee8164e4",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-142-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-142-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-142-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-142-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 143,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-143-focused-v1/modern",
+          "completionSha256": "f9311b4ea837ff50c0cf929e2a18e2e3d95cd6126221e64230e64116b2d3bff7",
+          "gpuEvidenceSha256": "a5e303d7cda9789f9a6caad81c45d34dad78d5f14fe38faa2c337b4290ee8deb",
+          "traceSha256": "becc3336e4de6e27f23de6375207fa1ec95077f40b56ed537dcfadbfad700ec6",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-143-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-143-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-143-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-143-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 144,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-144-focused-v1/modern",
+          "completionSha256": "ca4cb4aaa725987ce0162bdac4a2db058d43338890bd073f9bc8b4b0378531f7",
+          "gpuEvidenceSha256": "36180126e98b84b471e18edb4c7223998719cad2fdc4d11914154a7262aac7a2",
+          "traceSha256": "630f671decbcd120483fd1efaa3de31285f5dca70d8aa7d990b0da91cbf75096",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-144-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-144-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-144-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-144-followup-v1/modern",
+          "completionSha256": "ca4cb4aaa725987ce0162bdac4a2db058d43338890bd073f9bc8b4b0378531f7",
+          "gpuEvidenceSha256": "36180126e98b84b471e18edb4c7223998719cad2fdc4d11914154a7262aac7a2",
+          "traceSha256": "5db239d07607a7af7c355f831b845c613aeb02342a88d5403088d0da6aa37728",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-144-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-144-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-144-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-144-followup-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-144-followup-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 145,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-145-focused-v1/modern",
+          "completionSha256": "48300e5bd172fee45159029ea8678b918c2e63b1469868653fd29033b5f87f67",
+          "gpuEvidenceSha256": "b03baa7ae1927df473e42c35a901fbedebe3baaa66a600de3b0cc7823ffdf270",
+          "traceSha256": "7d3d3499d7257cbf6a4bf180013c9316baff5c4cbe12e7f6f59ce40e4db4d3d8",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-145-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-145-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-145-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-145-followup-v1/modern",
+          "completionSha256": "48300e5bd172fee45159029ea8678b918c2e63b1469868653fd29033b5f87f67",
+          "gpuEvidenceSha256": "b03baa7ae1927df473e42c35a901fbedebe3baaa66a600de3b0cc7823ffdf270",
+          "traceSha256": "3106bcd4413cd214e753231e20df7a347f49946ebb910dd7f641c1a4d06c4b1c",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-145-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-145-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-145-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-145-followup-v1/modern/camera-centered.png"
+          ]
+        },
+        {
+          "variant": "final-check-v1",
+          "directory": "build/disc1/captures/cut-145-final-check-v1/modern",
+          "completionSha256": "48300e5bd172fee45159029ea8678b918c2e63b1469868653fd29033b5f87f67",
+          "gpuEvidenceSha256": "b03baa7ae1927df473e42c35a901fbedebe3baaa66a600de3b0cc7823ffdf270",
+          "traceSha256": "e1186824805195ffd61dffa3fb6f2151f5e3a1606845d97583dfc2baa7a05410",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-145-final-check-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-145-final-check-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-145-final-check-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-145-final-check-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-145-final-check-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 146,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-146-focused-v1/modern",
+          "completionSha256": "8e9e830c22300bd8e40ea945bf1d7dfa9b4eaa40db3dc6530a558d9af4a63b59",
+          "gpuEvidenceSha256": "55e63aec83bb55be74fb3f081be5f5bed5e0fcb012539f45fe48c824801fe17b",
+          "traceSha256": "44cc5439bfa962a652889bfefdc98488e934eab344c7dc8f9a919c5dfedee708",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-146-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-146-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-146-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-146-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 147,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-147-focused-v1/modern",
+          "completionSha256": "65b49d38e4e6953951d0c8eb79da827022e22fc24ee505ccc3bf27e37941a34a",
+          "gpuEvidenceSha256": "12642d4630e0acef2c8596bc7baaa53d6f038f32e54705ee26ec50736c7b84a8",
+          "traceSha256": "07fe0e436b995397d0c77b8d9dae25e53d464a1ba74fce8883cf0534c6daa0c0",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-147-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-147-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-147-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-147-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 148,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-148-focused-v1/modern",
+          "completionSha256": "0a3a6351deabd85451741b2f139c4a07d85bf340ae7c9a76fb092cbea072cf61",
+          "gpuEvidenceSha256": "52752596f8baf5d889f7e21c53bd26a2eddc19a2b2f12613bc5cb12810996f46",
+          "traceSha256": "c1574cd13e65f30c3d90f4733acf8390c20aef8df79ce6a44ec726b6548349b9",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-148-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-148-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-148-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-148-followup-v1/modern",
+          "completionSha256": "0a3a6351deabd85451741b2f139c4a07d85bf340ae7c9a76fb092cbea072cf61",
+          "gpuEvidenceSha256": "52752596f8baf5d889f7e21c53bd26a2eddc19a2b2f12613bc5cb12810996f46",
+          "traceSha256": "f492b87d861b0c49fdae9a829d7fca2b3a5f4d9eb199296c9c8340523f4ada5c",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-148-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-148-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-148-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-148-followup-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-148-followup-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 149,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-149-focused-v1/modern",
+          "completionSha256": "4589833a1a3f2a6af807019600572bad26e22b67b28afe5208a2d2a1e1afd043",
+          "gpuEvidenceSha256": "de2e28851e45367094603419de74f8bf690dd094b4a7f9ab7739d9e615deed21",
+          "traceSha256": "a7321dce1e0d62f065367c6a23c4137edeb20d06708f62d479884c6e767622cc",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-149-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-149-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-149-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-149-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 150,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-150-focused-v1/modern",
+          "completionSha256": "df2c546d17ce6953d526b2c4b2d0994020f0d9f9a96d73f4de9bb615a675de9c",
+          "gpuEvidenceSha256": "fdf45736db6a8639d0a5a786c8f9e4eea97353b09f41885ccefc49d7cb70d5a0",
+          "traceSha256": "74b857c060c1ac29aaa2e9b477ad6d077039cfe760cf6162ff65573e27d8691f",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-150-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-150-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-150-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-150-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 151,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-151-focused-v1/modern",
+          "completionSha256": "5a5adad735ed2cc320f85678afb4985aa508f47d4ca350204bf077c697e99c6b",
+          "gpuEvidenceSha256": "911ba7f7c96828f22a4707f71c82b5bdec8cdde4a3e7ab8a30af0f3a9a981399",
+          "traceSha256": "db72413b82ced7b09de7aab6908f4032770b8fcb4b6d1978d3d89843ef6229f4",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-151-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-151-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-151-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-151-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 154,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-154-focused-v1/modern",
+          "completionSha256": "fc07af8048164980af39fb08c056e0101e8890da15820103b53a627bada3c665",
+          "gpuEvidenceSha256": "d82fedfd06da2b526f06fdf44df6fa43cf883fcd71b813bd541979f4ed3135a0",
+          "traceSha256": "1e55e37fd4744c3607642bd8e2c7ff9ea9e40cf15edbf81884e42ecaee0cd64e",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-154-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-154-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-154-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-154-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 155,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-155-focused-v1/modern",
+          "completionSha256": "3f8928b4860c0abbf318592f4f3e12375b2f190170edde17a9f931e988419f30",
+          "gpuEvidenceSha256": "78fb1c0efd14799cdd741a5c9ce83434f065a50570a4325693154d335674ee1b",
+          "traceSha256": "8c2572a7e2d9f63b42197ac43214b955b74de5ed8b855bc779b2688aa468458a",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-155-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-155-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-155-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-155-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 158,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-158-focused-v1/modern",
+          "completionSha256": "65e69a22ed31ec2459214a420e6e64b358cd354be710ea6b019d6e1fc3fefd68",
+          "gpuEvidenceSha256": "e2eabf9a0a774643f7954af1c51b7705e2fabaceab0b69343b34718f322c834e",
+          "traceSha256": "b624941b48231a22f86ae9123206bc626449c70e394a784d6e7bec07660184a7",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                1,
+                5,
+                6,
+                7,
+                12,
+                14
+              ],
+              "name": "ramp-gold7-silver6"
+            },
+            {
+              "visible": [
+                1,
+                5,
+                8,
+                11,
+                12,
+                14
+              ],
+              "name": "ramp-gold8-silver11"
+            },
+            {
+              "visible": [
+                5,
+                12,
+                14,
+                15,
+                13
+              ],
+              "name": "stairs-gold15-silver13"
+            },
+            {
+              "visible": [],
+              "name": "railway-and-stairs"
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-158-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-158-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-158-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-158-focused-v1/modern/synthetic-ramp-gold7-silver6.png",
+            "build/disc1/captures/cut-158-focused-v1/modern/synthetic-ramp-gold8-silver11.png",
+            "build/disc1/captures/cut-158-focused-v1/modern/synthetic-stairs-gold15-silver13.png",
+            "build/disc1/captures/cut-158-focused-v1/modern/synthetic-railway-and-stairs.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-158-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 159,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-159-focused-v1/modern",
+          "completionSha256": "005758d3061ac28cdd0819165a1b8b0fd713d3453289e7ebd458bc2f016da281",
+          "gpuEvidenceSha256": "856501a5741d48689bc2cc7f76e0475384b4701fb056ae7d4edd517c8f6a0609",
+          "traceSha256": "b252f9b1582de2f641776daaf0ce509863cc4a86ffdf29911fe9f7a1063031bb",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-159-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-159-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-159-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-159-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 165,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-165-focused-v1/modern",
+          "completionSha256": "960641313605b8bff037b191d7afe3990da465f5a56b726286c26a2f427a54c5",
+          "gpuEvidenceSha256": "cb5871b3aeddf0fddeb937aea591e4e49e4f0c225bea6ecf917ad3112d4941ab",
+          "traceSha256": "a9081f7fa6190ef40f21ce80ada93f7688959eb2394bdd7309bd3629a6854f71",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-165-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-165-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-165-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-165-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 166,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-166-focused-v1/modern",
+          "completionSha256": "102bbf8d1d120aeb5d423e13e5816e319ae39e574acf999b3c45d6f409add85b",
+          "gpuEvidenceSha256": "4cf5dc91c7b691cf720533552a0085135aa4f1d46c3bd5010fc15a7d1fc2370a",
+          "traceSha256": "999ceef137f0ace6ff47877db088a6c43a710d5cee23c08afeb869cfd2dcefa0",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-166-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-166-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-166-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-166-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 171,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-171-focused-v1/modern",
+          "completionSha256": "dc9bf4a9004a8231330361cdc48473ce2e8756f9e6b642c68af7f8dc804843e8",
+          "gpuEvidenceSha256": "ba76d579684fa584e77fef616ae5d58cb879eadffaac9c60cc9e2ca75fe5fa47",
+          "traceSha256": "2c9a8f0c2c6a0e95ea62d099b904d24598b9d7018526876c4b0f4fe18c791c1f",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-171-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-171-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-171-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-171-followup-v1/modern",
+          "completionSha256": "dc9bf4a9004a8231330361cdc48473ce2e8756f9e6b642c68af7f8dc804843e8",
+          "gpuEvidenceSha256": "ba76d579684fa584e77fef616ae5d58cb879eadffaac9c60cc9e2ca75fe5fa47",
+          "traceSha256": "3942abb14724d7511f27f17adec4d6ae87a42ff4896cf3475cfcce177210870f",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-171-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-171-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-171-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-171-followup-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-171-followup-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 172,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-172-focused-v1/modern",
+          "completionSha256": "2ab0b8de85ef8c822d914affd54abc3db622fbf1eb509d2978da750cb47a47d8",
+          "gpuEvidenceSha256": "e352d34e76e3765093020e1204b74fff19dc42ea5121b0e2c7176b66d919391e",
+          "traceSha256": "4972b0e28e52235e5ecdb63c72e6ca2f335289d5c0f0f2e826a9cc58884eda76",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-172-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-172-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-172-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-172-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 175,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-175-focused-v1/modern",
+          "completionSha256": "f4c233140c694667ae030fe3395d54f1c1b8983ac7c32128f7d71fa1295fc85b",
+          "gpuEvidenceSha256": "d80fa5a84b219d1d9ceb3151fbda3c528d26cf6f6d7443fb169d10047c149490",
+          "traceSha256": "e3d25094209e00700c57783301187a097cdf37ff0083c8ebf45efa4b82fd8975",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-175-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-175-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-175-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-175-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 176,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-176-focused-v1/modern",
+          "completionSha256": "98f5e3746ea63b6e075fa39355d229807df46f4e644ced2c360dc73048c0dc3b",
+          "gpuEvidenceSha256": "72b97f3634c8d44dd13b98ec0a68e799856178d6e282c61441a8fc1267150ada",
+          "traceSha256": "cb79f2dd51c81ed4dfa7b43bb13656a165e4b92c4134160ed73380b800523723",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-176-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-176-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-176-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-176-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 177,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-177-focused-v1/modern",
+          "completionSha256": "88108f0e8d2d21c5caea5cd7b4750750fdc437dea6fa9b8936a1d72dfe5f646b",
+          "gpuEvidenceSha256": "92981bc95825ea4a5cc7a7aec8e86a1d395324819b5089c68a1ff8fe611fe029",
+          "traceSha256": "107ea078c1ffc635e59058670cbf6f1af40d0d4be0badefd4ae00b23faa77f06",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-177-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-177-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-177-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-177-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 180,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-180-focused-v1/modern",
+          "completionSha256": "32a898dea4ae4a3e28d1c9808041029ef82e5c40fadb7258d473a077a8e651b0",
+          "gpuEvidenceSha256": "ecc11cee5e74a7daf7171440f1db7ce1f9f351bfc092a5a7abbf6d59d70054b4",
+          "traceSha256": "ea34c6054e23aa6cb0e5081a029b737fefb37e5da08b64621a3ae3fdf3654289",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                5
+              ],
+              "name": "crate-origin"
+            },
+            {
+              "visible": [
+                5
+              ],
+              "name": "crate-raised",
+              "positions": {
+                "5": [
+                  0,
+                  -120
+                ]
+              }
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-180-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-180-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-180-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-180-focused-v1/modern/synthetic-crate-origin.png",
+            "build/disc1/captures/cut-180-focused-v1/modern/synthetic-crate-raised.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-180-followup-v1/modern",
+          "completionSha256": "32a898dea4ae4a3e28d1c9808041029ef82e5c40fadb7258d473a077a8e651b0",
+          "gpuEvidenceSha256": "ecc11cee5e74a7daf7171440f1db7ce1f9f351bfc092a5a7abbf6d59d70054b4",
+          "traceSha256": "8da8e8d0c8b71d81c7d8b5cad1636bb23d0ae81e013581c9786f52f189366bf4",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                5
+              ],
+              "name": "crate-origin"
+            },
+            {
+              "visible": [
+                5
+              ],
+              "name": "crate-raised",
+              "positions": {
+                "5": [
+                  0,
+                  -120
+                ]
+              }
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-180-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-180-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-180-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-180-followup-v1/modern/synthetic-crate-origin.png",
+            "build/disc1/captures/cut-180-followup-v1/modern/synthetic-crate-raised.png",
+            "build/disc1/captures/cut-180-followup-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-180-followup-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 181,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-181-focused-v1/modern",
+          "completionSha256": "00f02d3d8875889da1d03354d0f9d3effc378d7489d3b3feabe38d1797649d20",
+          "gpuEvidenceSha256": "351729a0d1540ff5b67bd88e7e130255a37d51c241e75504f9b1151eb36a9e0d",
+          "traceSha256": "10067711b06b2b4b0b79b9d1b8cf28d01d96454fafd08855a098cb8738fb7d1a",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-181-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-181-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-181-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-181-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 192,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-192-focused-v1/modern",
+          "completionSha256": "85626fac6d229fe82eb8a92a3462654323ad781c2904dcd83183b1aba512d911",
+          "gpuEvidenceSha256": "6d95c492f557a154aab6e9d910a3db7ca11f2bda11c9c9fdf45559a58ec15881",
+          "traceSha256": "586655f257b19f739d420b388d1a617b8b56b6d27c7105dc45bd8c9aefdc8633",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-192-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-192-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-192-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-192-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 193,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-193-focused-v1/modern",
+          "completionSha256": "337fd652c081a593bd97a9673f1ea33a73b4e146bbae20e40d683a00eada63bf",
+          "gpuEvidenceSha256": "12960e6d411459b9b5ea8295e3379fecc7f25b53284a352623936b2adb5f8ee9",
+          "traceSha256": "5f54475283f56c48579a19c8974e36fc2eacf27b4ba5aa7883f575aba6c47c91",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                3,
+                4,
+                7,
+                10,
+                15
+              ],
+              "name": "default-facades"
+            },
+            {
+              "visible": [
+                3,
+                4,
+                7,
+                8,
+                15
+              ],
+              "name": "lower-room-entered"
+            },
+            {
+              "visible": [
+                4,
+                10
+              ],
+              "name": "right-room-entered"
+            },
+            {
+              "visible": [
+                3,
+                7,
+                10,
+                15
+              ],
+              "name": "middle-room-entered"
+            },
+            {
+              "visible": [
+                3,
+                4,
+                7,
+                10,
+                12,
+                15
+              ],
+              "name": "lower-door-closed"
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-193-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-default-facades.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-lower-room-entered.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-right-room-entered.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-middle-room-entered.png",
+            "build/disc1/captures/cut-193-focused-v1/modern/synthetic-lower-door-closed.png"
+          ]
+        },
+        {
+          "variant": "final-check-v1",
+          "directory": "build/disc1/captures/cut-193-final-check-v1/modern",
+          "completionSha256": "337fd652c081a593bd97a9673f1ea33a73b4e146bbae20e40d683a00eada63bf",
+          "gpuEvidenceSha256": "12960e6d411459b9b5ea8295e3379fecc7f25b53284a352623936b2adb5f8ee9",
+          "traceSha256": "95eb3828ab2126dfd1db3a405796fa2470eedce1572ba79416e41eb880199227",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                3,
+                4,
+                7,
+                10,
+                15
+              ],
+              "name": "default-facades"
+            },
+            {
+              "visible": [
+                3,
+                4,
+                7,
+                8,
+                15
+              ],
+              "name": "lower-room-entered"
+            },
+            {
+              "visible": [
+                4,
+                10
+              ],
+              "name": "right-room-entered"
+            },
+            {
+              "visible": [
+                3,
+                7,
+                10,
+                15
+              ],
+              "name": "middle-room-entered"
+            },
+            {
+              "visible": [
+                3,
+                4,
+                7,
+                10,
+                12,
+                15
+              ],
+              "name": "lower-door-closed"
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-193-final-check-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-default-facades.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-lower-room-entered.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-right-room-entered.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-middle-room-entered.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/synthetic-lower-door-closed.png",
+            "build/disc1/captures/cut-193-final-check-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-193-final-check-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 194,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-194-focused-v1/modern",
+          "completionSha256": "80f5cb4a09cb242787f8b5c973eb0126b9d38cf46b887c2f02204099d9863710",
+          "gpuEvidenceSha256": "c98d5fbace2caca673b06d8472c51adb7c45dc40fbc42163735e62719514bef4",
+          "traceSha256": "a4c0484d0e75a2033f33a1da1c55c15b06badecec6532602543182068ff5b96b",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-194-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-194-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-194-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-194-followup-v1/modern",
+          "completionSha256": "80f5cb4a09cb242787f8b5c973eb0126b9d38cf46b887c2f02204099d9863710",
+          "gpuEvidenceSha256": "c98d5fbace2caca673b06d8472c51adb7c45dc40fbc42163735e62719514bef4",
+          "traceSha256": "1f4f72aae17bc707388402bb6a440d1d40002d6c6409d59e90575d2fdf62cef0",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-194-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-194-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-194-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-194-followup-v1/modern/camera-centered.png"
+          ]
+        },
+        {
+          "variant": "final-check-v1",
+          "directory": "build/disc1/captures/cut-194-final-check-v1/modern",
+          "completionSha256": "80f5cb4a09cb242787f8b5c973eb0126b9d38cf46b887c2f02204099d9863710",
+          "gpuEvidenceSha256": "c98d5fbace2caca673b06d8472c51adb7c45dc40fbc42163735e62719514bef4",
+          "traceSha256": "f94a1ff1982c106e81a5accb555bb79149b59d4e771a8e9132031426ac8897a2",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-194-final-check-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-194-final-check-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-194-final-check-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-194-final-check-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-194-final-check-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 195,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-195-focused-v1/modern",
+          "completionSha256": "2b03c3b1cb90ac8a25880fea43db79c691691dac3c386f507cf84aa4a96ce02c",
+          "gpuEvidenceSha256": "e4977a587cc8a070f62b89ab5a96c10cce7e3e9a46bf1082a6741536f4fc3eb7",
+          "traceSha256": "2864b84f246858677535917fe819bbd709420f2438e6b9fbfbd437ce40fd329a",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-195-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-195-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-195-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-195-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 197,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-197-focused-v1/modern",
+          "completionSha256": "e81789c042446658b28d44c0cb24523236e93ff81e4783ecb07432a77d834658",
+          "gpuEvidenceSha256": "12b8aaba4f2a760940b6fde431381b4b78f4cdba1b76afce513d4d5aa1d221ea",
+          "traceSha256": "4183644c58c4b1f1db044685746dad90092b347f3d4daf6ac375845db2de230a",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                3,
+                4
+              ],
+              "name": "machine-phase-a"
+            },
+            {
+              "visible": [
+                5,
+                7
+              ],
+              "name": "machine-phase-b"
+            },
+            {
+              "visible": [],
+              "name": "machine-background-phase"
+            },
+            {
+              "visible": [
+                2,
+                3,
+                4
+              ],
+              "name": "lever-down"
+            },
+            {
+              "visible": [
+                2,
+                3,
+                4,
+                6
+              ],
+              "name": "room-panel-visible"
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-197-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-phase-a.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-phase-b.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-background-phase.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-lever-down.png",
+            "build/disc1/captures/cut-197-focused-v1/modern/synthetic-room-panel-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-197-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 198,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-198-focused-v1/modern",
+          "completionSha256": "f9c834d8ab3f841963cbd7e95af63c8f92c697395a2617723c6e5161ecdf40c2",
+          "gpuEvidenceSha256": "b9bd4936fde7aa8bdcefa134ab1cf96f303135b35fc16f2089fcd2a2f4c02c02",
+          "traceSha256": "e61bcc5c812fabecb19e9d03512a6943793e36c4aa922b5e3ee9e5272032899d",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-198-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-198-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-198-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-198-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 626,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-626-focused-v1/modern",
+          "completionSha256": "ce6bfb3c92ea9a1732d75d5ddd0d16fcc5074e528c2fab72e31de875abecdbfa",
+          "gpuEvidenceSha256": "8aecfff89b80458648cfe98a1c3a37a9409ac41e7742e560bae5da247e2f4cc6",
+          "traceSha256": "7483d523250157258eecd415800f3089b85da78b0d8ef6c36d6ddca779abf8c7",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-626-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-626-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-626-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-626-followup-v1/modern",
+          "completionSha256": "ce6bfb3c92ea9a1732d75d5ddd0d16fcc5074e528c2fab72e31de875abecdbfa",
+          "gpuEvidenceSha256": "8aecfff89b80458648cfe98a1c3a37a9409ac41e7742e560bae5da247e2f4cc6",
+          "traceSha256": "7d794993a408fc0b233bb6a462671acd543bc9dba3179d0a7687b61ea9c15cc6",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-626-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-626-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-626-followup-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "final-check-v1",
+          "directory": "build/disc1/captures/cut-626-final-check-v1/modern",
+          "completionSha256": "ce6bfb3c92ea9a1732d75d5ddd0d16fcc5074e528c2fab72e31de875abecdbfa",
+          "gpuEvidenceSha256": "8aecfff89b80458648cfe98a1c3a37a9409ac41e7742e560bae5da247e2f4cc6",
+          "traceSha256": "a54826b14e6049f79e2ca855c76cbac6f4778acd8d7a5f4520d2e29300d5c901",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-626-final-check-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-626-final-check-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-626-final-check-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "footing-resolved-v1",
+          "directory": "build/disc1/captures/cut-626-footing-resolved-v1/modern",
+          "completionSha256": "ce6bfb3c92ea9a1732d75d5ddd0d16fcc5074e528c2fab72e31de875abecdbfa",
+          "gpuEvidenceSha256": "8aecfff89b80458648cfe98a1c3a37a9409ac41e7742e560bae5da247e2f4cc6",
+          "traceSha256": "7d794993a408fc0b233bb6a462671acd543bc9dba3179d0a7687b61ea9c15cc6",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-626-footing-resolved-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-626-footing-resolved-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-626-footing-resolved-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-626-footing-resolved-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 627,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-627-focused-v1/modern",
+          "completionSha256": "28da040f49be246eba0b70403f91c519f79547216f06561daca5ef432144e421",
+          "gpuEvidenceSha256": "d384ab62a459ace6b966d3373396c65045cf5bb86fbbaf6a8558ab259965f038",
+          "traceSha256": "69e746ca718825566f8f4c5ad0e7425838d58be8d153f617b90a4cfd68aec4e2",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-627-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-627-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-627-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-627-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 628,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-628-focused-v1/modern",
+          "completionSha256": "e250abc5b914ced8a541a712af7afd444043249f53c1778075cfe96a742d06cc",
+          "gpuEvidenceSha256": "5c09edaa6a451c72cd89b66fe91ec4f83a32045d21f04849a06aa638cf75a588",
+          "traceSha256": "62b9e0f66d05459c94d2b510accfd4ce3b002587fe2d6fb59daaee5028189920",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-628-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-628-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-628-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-628-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 631,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-631-focused-v1/modern",
+          "completionSha256": "d695a1a145b0dbdd387ceb8cb96448611463466abfb5f34dad408c6a69528950",
+          "gpuEvidenceSha256": "590a5988f574c41955985717cbb882384c4c5e91ee4bacd05cde93f9025b11ea",
+          "traceSha256": "e840077847e79b9aee39e6121354585f8489dd51bb56974dfccb33071a8eeeae",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-631-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-631-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-631-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-631-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 632,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-632-focused-v1/modern",
+          "completionSha256": "8433f941707bca79b393c454bb503a0ba7a44c41dab78fbee2a3a653f00e4bd6",
+          "gpuEvidenceSha256": "c475146b76e8170bffd4f0771a97871b37706b4d06ae96b9c2c6dd23a879f1af",
+          "traceSha256": "2d4ce8dc0fdef30d84fb67f8c8050c99b0d17ce6ecd524e7a37c0ebf90f1139f",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-632-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-632-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-632-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-632-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 636,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-636-focused-v1/modern",
+          "completionSha256": "723e4855f62bf581a7bff363febf87a9249ce52fe544a23d1fa600c0fb168f9c",
+          "gpuEvidenceSha256": "6df6dcd4a94c592757835e4b15e2bc869469e7f3d44213541ac3fcb0e0b034ba",
+          "traceSha256": "175cb93d9fbf5bf81a0dfdb1608bc27b4a2070225b0536df2218a78a2f0e55e4",
+          "selectedStateProfiles": [
+            {
+              "visible": [],
+              "name": "base-props"
+            },
+            {
+              "visible": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "name": "alternate-props"
+            },
+            {
+              "visible": [
+                14,
+                15
+              ],
+              "name": "parchment-raised",
+              "positions": {
+                "14": [
+                  0,
+                  -140
+                ],
+                "15": [
+                  0,
+                  -140
+                ]
+              }
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-636-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-636-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-636-focused-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-636-focused-v1/modern/synthetic-base-props.png",
+            "build/disc1/captures/cut-636-focused-v1/modern/synthetic-alternate-props.png",
+            "build/disc1/captures/cut-636-focused-v1/modern/synthetic-parchment-raised.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-636-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 637,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-637-focused-v1/modern",
+          "completionSha256": "8a6effb00be9f4559677685f180b13b6957d94539f79aabd4f9d5f1409be98e7",
+          "gpuEvidenceSha256": "48d67a74b164c0f7d5095b4c820f84ae3e33685cedb71796628d12710078545f",
+          "traceSha256": "28fa4cefea7f60b175704d58ede442854997494f179ca543273f4e16d53c6d45",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-637-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-637-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-637-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-637-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 647,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-647-focused-v1/modern",
+          "completionSha256": "0d4b656fc30e85ede804980521a7cb95a8f62364029d0aa61c14780cb0e32d9f",
+          "gpuEvidenceSha256": "2fed42c407d3ef9cc73819d2d59c5982b0baa6e5313c879458f1afb3bc57eb54",
+          "traceSha256": "05853c14395a1fd80267bd0f826bf352ee74477840ba1a4d3760cf9aec04a7a6",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-647-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-647-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-647-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-647-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 657,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-657-focused-v1/modern",
+          "completionSha256": "a25f0dba5b6713d3c5da5241b3ea0366dfaeb95847ffc266e7775b70fa91577b",
+          "gpuEvidenceSha256": "a4446ea72a14196888f5b6414b91bcb70e95ab3670bc5643b9a031edfe5a0bf9",
+          "traceSha256": "a13d8fc30334a9c925a9a14cc49d89703d2e774e670dc388e4f01c8d75ceae29",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-657-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-657-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-657-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-657-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 658,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-658-focused-v1/modern",
+          "completionSha256": "1cc003ef384df1999d39eb35f490722bf4c8094caee73eaca2b2d5af1e9316ed",
+          "gpuEvidenceSha256": "cd38ee673fb8ac4202ded0379a27316ccb97ba8c48f4a0a01370c81e54abf257",
+          "traceSha256": "593930714dd9dde62aac174af9b78e068f81dbef0ad24ddbe2f89bd3396c0be4",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-658-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-658-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-658-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-658-focused-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 659,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-659-focused-v1/modern",
+          "completionSha256": "0ca5427903602eb83d1bc26b254503f4433ae33f866680f139aa9775d7c60ba6",
+          "gpuEvidenceSha256": "bf3037e67a4c3e074090f4d993acc03271ea3cc8b136903cb9153539ff303d5b",
+          "traceSha256": "3f7d7b41c8bdcf971a17f608d388f8922d2e537ffa8437d14e3d8693a1a778f1",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-659-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-659-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-659-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-659-followup-v1/modern",
+          "completionSha256": "0ca5427903602eb83d1bc26b254503f4433ae33f866680f139aa9775d7c60ba6",
+          "gpuEvidenceSha256": "bf3037e67a4c3e074090f4d993acc03271ea3cc8b136903cb9153539ff303d5b",
+          "traceSha256": "86d82f5b10b9a9d849a75381518e2ae82f2d11b675292d5afbace767b8bedec2",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-659-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-659-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-659-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-659-followup-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-659-followup-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 660,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-660-focused-v1/modern",
+          "completionSha256": "8629677008b68ff7a483a14cc75bff7f0916c2b37a935f74cb68a166aa3f34c3",
+          "gpuEvidenceSha256": "48b31951480fd6828f052e5db42f5cb408cfb0bf1de4face37b422b700a1bfb7",
+          "traceSha256": "fe620693325607c6503cec8aebd3543aa55526e8f1385225f1994910043e3d39",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-660-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-660-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-660-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        },
+        {
+          "variant": "followup-v1",
+          "directory": "build/disc1/captures/cut-660-followup-v1/modern",
+          "completionSha256": "8629677008b68ff7a483a14cc75bff7f0916c2b37a935f74cb68a166aa3f34c3",
+          "gpuEvidenceSha256": "48b31951480fd6828f052e5db42f5cb408cfb0bf1de4face37b422b700a1bfb7",
+          "traceSha256": "1a45e2dd886bc9b3af4125a850c2d4f7bca7298994cac771cc5d8c3c261d36b9",
+          "selectedStateProfiles": [
+            {
+              "visible": [
+                3
+              ],
+              "name": "throne-origin"
+            },
+            {
+              "visible": [
+                3
+              ],
+              "name": "throne-raised",
+              "positions": {
+                "3": [
+                  0,
+                  -56
+                ]
+              }
+            }
+          ],
+          "images": [
+            "build/disc1/captures/cut-660-followup-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-660-followup-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-660-followup-v1/modern/synthetic-all-visible.png",
+            "build/disc1/captures/cut-660-followup-v1/modern/synthetic-throne-origin.png",
+            "build/disc1/captures/cut-660-followup-v1/modern/synthetic-throne-raised.png",
+            "build/disc1/captures/cut-660-followup-v1/modern/camera-centered.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-660-followup-v1/modern/frame-0120.png"
+    },
+    {
+      "cut": 674,
+      "focusedGpuChecked": true,
+      "fullGameplayVerified": false,
+      "recordings": [
+        {
+          "variant": "focused-v1",
+          "directory": "build/disc1/captures/cut-674-focused-v1/modern",
+          "completionSha256": "d004895674f7bcb25aa4c332ecde6484519550ee20860b3f3de40f4c4503297f",
+          "gpuEvidenceSha256": "fbf94955744c9f2a9cdb60ee98cb9ac63a9b86db6465e5516845dcd1512d4305",
+          "traceSha256": "ef991a540a45392e20607d90909b6392e123e805cbb338f883ff2cb3386487b3",
+          "selectedStateProfiles": [],
+          "images": [
+            "build/disc1/captures/cut-674-focused-v1/modern/frame-0120.png",
+            "build/disc1/captures/cut-674-focused-v1/modern/synthetic-dynamic-hidden.png",
+            "build/disc1/captures/cut-674-focused-v1/modern/synthetic-all-visible.png"
+          ]
+        }
+      ],
+      "primaryImage": "build/disc1/captures/cut-674-focused-v1/modern/frame-0120.png"
+    }
+  ]
+}

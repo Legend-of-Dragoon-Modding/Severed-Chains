@@ -1,0 +1,26 @@
+[
+  {
+    "layer": 0,
+    "alphaPixels": 762,
+    "backgroundOverlap": 762,
+    "differentRgb": 631
+  },
+  {
+    "layer": 1,
+    "alphaPixels": 1107,
+    "backgroundOverlap": 1107,
+    "differentRgb": 867
+  },
+  {
+    "layer": 2,
+    "alphaPixels": 950,
+    "backgroundOverlap": 950,
+    "differentRgb": 713
+  },
+  {
+    "layer": 3,
+    "alphaPixels": 757,
+    "backgroundOverlap": 757,
+    "differentRgb": 618
+  }
+]

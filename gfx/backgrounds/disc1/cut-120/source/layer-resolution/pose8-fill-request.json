@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit. Change ONLY plain grey background of image1 into a coherent continuation of the claw's dark brown dragon hide and rough scales, filling every formerly grey pixel to all canvas edges with newly painted natural stony dragon skin detail. Keep the existing hand, ALL five talons, pointed tip coordinates, joints, wrist, framing and lighting EXACTLY unchanged. Do not shift, resize or rotate anything. Do not alter the existing bone claws. The entire opaque rectangle is a donor tile clipped by separate geometry, so absolutely no grey matte, gaps, blur smears, flat color or transparency may remain. Natural detailed painted material continuation, no extra talons, no scene or text.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8-matched.png"
+  ],
+  "transparent_background": false
+}

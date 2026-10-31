@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit image1 fantasy timber memory-game room. Remove exactly these ten props completely: wall sword; books on left shelf; mounted boar head and plaque upper right; hanging basket/leather bag upper left; framed landscape painting; shield left center; entire bed including wooden frame and pillows; ladder center; flower vase on right shelf; little basket on floor beside fireplace. Reveal continuous empty plaster/log wall, empty shelf and wooden floor behind each. Keep every other pixel, fireplace, beams, chains, sconce, rug, doors, all shelves and warm lighting and camera composition as closely as possible. This is a clean game underlay, no objects substituted, no parchment, no text changes, no people. Detailed painted realism matching original.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/room-base-v2.png"
+  ],
+  "transparent_background": false
+}

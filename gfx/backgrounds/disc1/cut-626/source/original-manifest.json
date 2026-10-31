@@ -1,0 +1,130 @@
+{
+  "cut": 626,
+  "disk": 1,
+  "source": "files\\SECT\\DRGN21.BIN\\616",
+  "bounds": [
+    0,
+    0,
+    512,
+    256
+  ],
+  "notes": [],
+  "background_fragments": 4,
+  "foreground_layers": 15,
+  "pieces": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 128,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 256,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 384,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 278,
+      "y": 147,
+      "width": 140,
+      "height": 70
+    },
+    {
+      "x": 164,
+      "y": 98,
+      "width": 114,
+      "height": 86
+    },
+    {
+      "x": 84,
+      "y": 84,
+      "width": 80,
+      "height": 48
+    },
+    {
+      "x": 114,
+      "y": 37,
+      "width": 40,
+      "height": 32
+    },
+    {
+      "x": 276,
+      "y": 48,
+      "width": 34,
+      "height": 32
+    },
+    {
+      "x": 248,
+      "y": 183,
+      "width": 30,
+      "height": 46
+    },
+    {
+      "x": 248,
+      "y": 171,
+      "width": 30,
+      "height": 58
+    },
+    {
+      "x": 314,
+      "y": 100,
+      "width": 40,
+      "height": 22
+    },
+    {
+      "x": 271,
+      "y": 135,
+      "width": 34,
+      "height": 22
+    },
+    {
+      "x": 215,
+      "y": 104,
+      "width": 36,
+      "height": 22
+    },
+    {
+      "x": 280,
+      "y": 82,
+      "width": 30,
+      "height": 22
+    },
+    {
+      "x": 155,
+      "y": 55,
+      "width": 78,
+      "height": 40
+    },
+    {
+      "x": 225,
+      "y": 79,
+      "width": 14,
+      "height": 14
+    },
+    {
+      "x": 145,
+      "y": 70,
+      "width": 14,
+      "height": 14
+    },
+    {
+      "x": 177,
+      "y": 51,
+      "width": 12,
+      "height": 14
+    }
+  ]
+}

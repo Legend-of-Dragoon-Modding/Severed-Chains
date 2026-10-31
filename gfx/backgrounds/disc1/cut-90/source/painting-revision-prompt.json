@@ -1,0 +1,8 @@
+{
+  "prompt": "Edit this modern basement full-canvas background. Change ONLY the large framed landscape painting on the partition wall separating the blue alchemy area above from the gray tiled skeleton room below, at approximately (0.69,0.61) of the canvas. Move this entire framed painting DOWN by exactly 6% of total canvas height and LEFT by 2% of total canvas width, and reduce its width by 10% while preserving height. Remove the painting completely from its former location, restoring ordinary wall/stone where it was. The original game's walkable passage runs just above/right of this painting, so moving it down is essential to keep that passage clear. Keep all skeleton props, lab bench, stairs, floors, doorways and room silhouettes exactly where they are; change no other region. Preserve full rectangular canvas, fixed camera and all existing lighting/style. No people, UI, text, arrows or watermark.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "gfx/backgrounds/disc1/cut-90/source/stair-revision-3.png"
+  ],
+  "output": "painting-revision.png"
+}

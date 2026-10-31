@@ -1,0 +1,47 @@
+{
+  "background": "../base.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "../base.png",
+    "3": "../base.png",
+    "4": "../base.png",
+    "5": "../base.png",
+    "6": "../base.png",
+    "7": "../base.png",
+    "8": "../base.png",
+    "9": "../base.png",
+    "10": "../base.png",
+    "11": "../base.png",
+    "12": "../base.png",
+    "13": "../base.png",
+    "14": "../base.png",
+    "15": "../base.png",
+    "16": "../base.png",
+    "17": "../base.png"
+  },
+  "dynamicLayers": [
+    1,
+    2,
+    3,
+    4,
+    9,
+    10
+  ],
+  "evidence": [
+    "Original BG-vs-FG paired analysis: these slots contain full floor/wall context, not six isolated door sprites. Atlas attempts rejected.",
+    "Native64 zero-offset visibility composites inspected; most changes are floor/wall texture/shading, with FG9/10 per-channel delta at most16. Original alpha and depth retained.",
+    "Two-reviewer shared-scenery evidence binds all19native PNG hashes, actualtrace and64native visibility-state comparisons. No gameplay comparator changes."
+  ],
+  "visualReview": true,
+  "reviewStatus": "Reviewed native depth-only floor/wall copies; endpoint review pending",
+  "sharedSceneryLayers": [
+    1,
+    2,
+    3,
+    4,
+    9,
+    10
+  ],
+  "sharedSceneryReview": "shared-scenery-review.json"
+}

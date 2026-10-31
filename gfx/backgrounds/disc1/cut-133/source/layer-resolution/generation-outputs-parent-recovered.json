@@ -1,0 +1,26 @@
+{
+  "cut": 133,
+  "tool": "builtin-imagegen",
+  "scope": "Selected current source PNGs matched by exact file hash to retained default generated outputs. Original worker-base provenance is in its earlier source records.",
+  "images": [
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-133/source/layer-resolution/open-underlay.png",
+      "sha256": "ff24630509efb89c0a984cf543d8e59b8ce9a3a8dfeec491b683afc9eeb71eba",
+      "matchingDefaultGeneratedFiles": [
+        "exec-16fb3d67-5b6b-44d2-9539-6fb960f7f388.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-133/source/layer-resolution/web-transparent.png",
+      "sha256": "6cbc1cbc3948a5d72f16b035635be79b8e253c34139f7c7f802f5f032b8a9b8f",
+      "matchingDefaultGeneratedFiles": [
+        "exec-763258c0-95fb-48ee-83f1-58d110d5d0a1.png"
+      ]
+    },
+    {
+      "workspaceImage": "gfx/backgrounds/disc1/cut-133/source/base.png",
+      "sha256": "07fd819a014ed8f8b7d32ab580049f15af5e0f86d29c1fda69f5551926081d7c",
+      "matchingDefaultGeneratedFiles": []
+    }
+  ]
+}

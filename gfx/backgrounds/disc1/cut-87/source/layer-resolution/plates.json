@@ -1,0 +1,31 @@
+{
+  "background": "cutaway-open-underlay-resumed.png",
+  "layers": {
+    "0": "cutaway-open-underlay-resumed.png",
+    "1": "cutaway-open-underlay-resumed.png",
+    "2": "cutaway-open-underlay-resumed.png",
+    "3": "closed-entrances-resumed.png",
+    "4": "cutaway-open-underlay-resumed.png",
+    "5": "closed-entrances-resumed.png",
+    "6": "cutaway-open-underlay-resumed.png",
+    "7": "cutaway-open-underlay-resumed.png",
+    "8": "cutaway-open-underlay-resumed.png",
+    "9": "../base.png",
+    "10": "cutaway-open-underlay-resumed.png",
+    "11": "cutaway-open-underlay-resumed.png"
+  },
+  "dynamicLayers": [
+    3,
+    5,
+    9
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Runtime archive267 correct +2 association; rendered nonempty3/5door states and9outer wall hide are independent.",
+    "Original native far-to-near composite excluding3/5/9 exposes furnished upper room, not missing landscape. Native analysis saved build/disc1/cut87-open-analysis.png.",
+    "Builtin ImageGen room cutaway/open entrances and full-scene closed entrance variants; original modern master supplies only independently hiding upper outer wall9. Exact original alpha retained."
+  ],
+  "reviewStatus": "Source plates reviewed; endpoint review pending",
+  "runtimeInstalled": false,
+  "gameplayVerified": false
+}

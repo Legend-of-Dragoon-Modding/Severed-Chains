@@ -1,0 +1,13 @@
+{
+  "cut": 176,
+  "packagingPrepared": true,
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "status": "independent-plates-staged",
+  "issues": [],
+  "endpointReview": "Main entrance restored to native floor-plan position. Full-scene open/closed entry sources preserve floor context for9/10; bedroom leaf source uses continuous floor below native196. All-visible, hidden and recorded endpoints reviewed; isolated full-height-door fits and rectangular floor-patch trial rejected.",
+  "validation": "build/disc1/staged/cut-176/layered-validation.json",
+  "trace": "build/disc1/captures/cut-176/original/alignment.csv",
+  "reviewPreviews": "gfx/backgrounds/disc1/cut-176/source/layer-resolution",
+  "limits": "Prepared asset review only. Focused GPU, doorway and traversal checks pending."
+}

@@ -1,0 +1,14 @@
+{
+  "cut": 145,
+  "assetEndpointReview": true,
+  "states": [
+    "all-visible",
+    "dynamic-hidden",
+    "recorded-start",
+    "recorded-dest"
+  ],
+  "scope": "Independent bookcase reveal, door states and telescope poses visually reviewed at asset scale. Exact original alpha/depth staging passed. Full gameplay/story traversal remains unverified.",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "configSha256": "8edad57fd0c4e2c9242ef6b9b522d166809e40611fdcdc291c177e429bb527ad"
+}

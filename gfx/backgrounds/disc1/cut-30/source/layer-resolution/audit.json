@@ -1,0 +1,180 @@
+{
+  "cut": 30,
+  "dynamicLayers": [
+    4
+  ],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        20,
+        174,
+        146,
+        256
+      ],
+      "opaquePixels": 5560,
+      "backgroundOverlapPixels": 5560,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        146,
+        244,
+        246,
+        256
+      ],
+      "opaquePixels": 769,
+      "backgroundOverlapPixels": 769,
+      "dynamic": false
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        246,
+        184,
+        333,
+        256
+      ],
+      "opaquePixels": 3386,
+      "backgroundOverlapPixels": 3386,
+      "dynamic": false
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        134,
+        43,
+        201,
+        88
+      ],
+      "opaquePixels": 2284,
+      "backgroundOverlapPixels": 2284,
+      "dynamic": false
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        212,
+        110,
+        337,
+        216
+      ],
+      "opaquePixels": 11834,
+      "backgroundOverlapPixels": 11834,
+      "dynamic": true
+    },
+    {
+      "layer": 5,
+      "bbox": [
+        298,
+        104,
+        353,
+        179
+      ],
+      "opaquePixels": 2096,
+      "backgroundOverlapPixels": 2096,
+      "dynamic": false
+    }
+  ],
+  "scriptEvidence": [
+    {
+      "file": "build\\disc1\\scripts\\96\\1.txt",
+      "line": 626,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\96\\1.txt",
+      "line": 662,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    }
+  ],
+  "genericDoorTables": [],
+  "observed": {
+    "cut": 30,
+    "inspectionPassed": true,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-30/original/alignment.csv",
+    "gpuExportMatches": true,
+    "allObservedLayersFixedVisible": true,
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ],
+    "fullGameplayVerified": false
+  }
+}

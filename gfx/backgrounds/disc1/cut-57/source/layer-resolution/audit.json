@@ -1,0 +1,240 @@
+{
+  "cut": 57,
+  "dynamicLayers": [
+    8
+  ],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        139,
+        142,
+        219,
+        209
+      ],
+      "opaquePixels": 4567,
+      "backgroundOverlapPixels": 4567,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        0,
+        87,
+        71,
+        166
+      ],
+      "opaquePixels": 3133,
+      "backgroundOverlapPixels": 3133,
+      "dynamic": false
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        295,
+        97,
+        375,
+        159
+      ],
+      "opaquePixels": 4466,
+      "backgroundOverlapPixels": 4466,
+      "dynamic": false
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        89,
+        217,
+        122,
+        233
+      ],
+      "opaquePixels": 273,
+      "backgroundOverlapPixels": 273,
+      "dynamic": false
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        54,
+        182,
+        120,
+        256
+      ],
+      "opaquePixels": 2688,
+      "backgroundOverlapPixels": 2688,
+      "dynamic": false
+    },
+    {
+      "layer": 5,
+      "bbox": [
+        368,
+        174,
+        512,
+        256
+      ],
+      "opaquePixels": 10415,
+      "backgroundOverlapPixels": 10415,
+      "dynamic": false
+    },
+    {
+      "layer": 6,
+      "bbox": [
+        21,
+        158,
+        64,
+        208
+      ],
+      "opaquePixels": 1837,
+      "backgroundOverlapPixels": 1837,
+      "dynamic": false
+    },
+    {
+      "layer": 7,
+      "bbox": [
+        113,
+        159,
+        369,
+        256
+      ],
+      "opaquePixels": 9811,
+      "backgroundOverlapPixels": 9811,
+      "dynamic": false
+    },
+    {
+      "layer": 8,
+      "bbox": [
+        142,
+        129,
+        205,
+        152
+      ],
+      "opaquePixels": 1028,
+      "backgroundOverlapPixels": 1028,
+      "dynamic": true
+    }
+  ],
+  "scriptEvidence": [
+    {
+      "file": "build\\disc1\\scripts\\177\\1.txt",
+      "line": 854,
+      "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+      "index": "0x8",
+      "inRange": true
+    }
+  ],
+  "genericDoorTables": [],
+  "observed": {
+    "cut": 57,
+    "trace": "build\\disc1\\captures\\cut-57\\original\\alignment.csv",
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 6,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 7,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 8,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ]
+  }
+}

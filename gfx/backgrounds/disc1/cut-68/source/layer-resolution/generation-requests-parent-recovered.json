@@ -1,0 +1,15 @@
+{
+  "cut": 68,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 4217,
+      "timestamp": "2026-10-30T19:35:34.973Z",
+      "referencedCuts": [
+        68
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-68/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-68/foreground-15.png\"],transparent_background:false,prompt:\"EditFIRSTautumntowncourtyardbackground with ONE tiny localstatechange. Keepwholeimageexactcamera/framing/buildings/well/roofs/lighting/materials unchanged. OnRIGHT sideofcourtyard is smallcarvedgrey-stone canopy withtwocurvedsupportcolumns, aroundnormalizedx.707..797,y.471..581. Add CLOSED darkwooden verticalplankdoorpanel behindthosecolumns, fillingblackrecessfromtopbeam tobottomstep. Matchwooddoorpose/areaofSECONDoriginalforegroundplate: darkagedwood, subtlehorizontalbrace,closedpanel behindcurvedstoneedges. TheoriginalFIRSTcanopycurrentlyshowsopenrecess/woodbars;replaceonlyrecesswithcloseddoor,doNOTmovestonecolumns/step/canopy oraddanotherstructure. No extraobjects/characters/text. Full4:3canvasunchanged. Thisisaclosedstate RGBsourceforindependentdoorlayer; originalmaskwillclipit.\"}); store(\"cut68closedResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

@@ -1,0 +1,493 @@
+{
+  "background": {
+    "source": "../base.png",
+    "patches": [
+      {
+        "source": "machine-phaseC.png",
+        "sourceBounds": [
+          408,
+          344,
+          1183,
+          735
+        ],
+        "targetBounds": [
+          88,
+          96,
+          360,
+          214
+        ]
+      },
+      {
+        "source": "lever-hatch-atlas.png",
+        "sourceBounds": [
+          170,
+          40,
+          545,
+          470
+        ],
+        "targetBounds": [
+          354,
+          54,
+          386,
+          84
+        ]
+      }
+    ]
+  },
+  "layers": {
+    "0": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "1": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "2": {
+      "source": "lever-hatch-atlas.png",
+      "sourceBounds": [
+        900,
+        40,
+        1275,
+        470
+      ]
+    },
+    "3": {
+      "source": "../base.png",
+      "sourceBounds": [
+        795,
+        344,
+        1183,
+        735
+      ]
+    },
+    "4": {
+      "source": "../base.png",
+      "sourceBounds": [
+        408,
+        344,
+        795,
+        735
+      ]
+    },
+    "5": {
+      "source": "machine-phaseB.png",
+      "sourceBounds": [
+        408,
+        344,
+        795,
+        735
+      ]
+    },
+    "6": {
+      "source": "lever-hatch-atlas.png",
+      "sourceBounds": [
+        1060,
+        705,
+        1285,
+        960
+      ]
+    },
+    "7": {
+      "source": "machine-phaseB.png",
+      "sourceBounds": [
+        795,
+        344,
+        1183,
+        735
+      ]
+    },
+    "8": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "9": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "10": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "11": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "12": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "13": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "14": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "15": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    },
+    "16": {
+      "source": "../base.png",
+      "patches": [
+        {
+          "source": "machine-phaseC.png",
+          "sourceBounds": [
+            408,
+            344,
+            1183,
+            735
+          ],
+          "targetBounds": [
+            88,
+            96,
+            360,
+            214
+          ]
+        },
+        {
+          "source": "lever-hatch-atlas.png",
+          "sourceBounds": [
+            170,
+            40,
+            545,
+            470
+          ],
+          "targetBounds": [
+            354,
+            54,
+            386,
+            84
+          ]
+        }
+      ]
+    }
+  },
+  "dynamicLayers": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Original GPU/export and recorded states in cut197 original capture.",
+    "Native paired guide distinguishes up/down lever; foreground6 is the narrow dark occluding panel at the upper-room entrance. Its original silhouette is preserved; no ladder/hatch is added to the exposed room.",
+    "Eight-column machine phases registered to native88,96..360,214; independent pose masters preserve original alpha."
+  ],
+  "reviewStatus": "Endpoint review pending; not accepted for runtime installation"
+}

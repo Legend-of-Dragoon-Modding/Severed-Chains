@@ -1,0 +1,18 @@
+{
+  "mode": "Built-in image_gen editing with base.png as target and original-composite.png as geometric reference",
+  "accepted": false,
+  "candidates": [
+    {
+      "cut": 80,
+      "path": "gfx/backgrounds/disc1/cut-80/source/geometry-candidate-step4.png",
+      "request": "Move the lower circular floor landing and connecting walkway to match the original footprint; target normalized center (0.455, 0.767). Preserve framing, architecture, materials and lighting. No added objects or characters.",
+      "status": "Independent geometry review pending; not used by runtime"
+    },
+    {
+      "cut": 109,
+      "path": "gfx/backgrounds/disc1/cut-109/source/geometry-candidate-step4.png",
+      "request": "Match the original lower broken arch silhouette and stepping-stone footprints, sizes and spacing. Preserve full framing, architecture, bed, materials and lighting. No added objects or characters.",
+      "status": "Independent geometry review pending; not used by runtime"
+    }
+  ]
+}

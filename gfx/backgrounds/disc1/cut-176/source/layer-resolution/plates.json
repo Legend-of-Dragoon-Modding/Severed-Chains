@@ -1,0 +1,89 @@
+{
+  "background": {
+    "source": "open-scene-v2.png",
+    "patches": []
+  },
+  "layers": {
+    "0": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "1": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "2": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "3": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "4": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "5": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "6": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "7": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "8": {
+      "source": "open-scene-v2.png",
+      "patches": []
+    },
+    "9": "native-geometry-v1.png",
+    "10": "native-geometry-v1.png",
+    "11": {
+      "source": "door-sprites.png",
+      "sourceBounds": [
+        956,
+        124,
+        1284,
+        760
+      ],
+      "bleedTransparentRgb": true,
+      "bleedAlphaThreshold": 240
+    },
+    "12": {
+      "source": "open-scene-v2.png",
+      "patches": [
+        {
+          "source": "door-sprites.png",
+          "sourceBounds": [
+            1336,
+            105,
+            1728,
+            650
+          ],
+          "targetBounds": [
+            79,
+            150,
+            108,
+            196
+          ]
+        }
+      ]
+    }
+  },
+  "dynamicLayers": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Native floor-plan reference used alone to correct the displaced main-room entry.",
+    "Main entry leaf removed using a bounded generated patch; native alpha masks and original state trace retained."
+  ],
+  "reviewStatus": "Endpoint review pending; not accepted yet"
+}

@@ -1,0 +1,15 @@
+{
+  "cut": 79,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 4211,
+      "timestamp": "2026-10-30T19:35:12.548Z",
+      "referencedCuts": [
+        79
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-79/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-79/background.png\"],transparent_background:false,prompt:\"Edit FIRST isometric house/interior gamebackground into a CLEAN TWO-DOOR OPEN UNDERLAY. Preserve entiregeometry/camera/framing, beds/screens,roof,stonewalls,lanterns,fullblackexterior,materialsandlighting. Remove ONLY the closed wooden door leaves from TWO doors onlargecentralstonebuilding: frontLEFTwall door at normalizedx.226..277,y.565..677 and rightwall door atx.611..650,y.497..602. Reveal emptydarkinteriorrecess/passage in bothopenings, keepingstonearches/doorframes/thresholds unchanged. No doorplanks/ironbands remain in eitheropening; doorswillbe separateforegroundplates. Use SECOND originalbackground asgeometricguide butIGNOREcyanplaceholderregions, neverpaintcyan. Preserveallexistingfloorandlandingfootprints. Don'taddswungopendoor leaves outsideopenings, don'tmoveobjects, nopeople/text. Fullsame4:3aspectcanvasasFIRST.\"}); store(\"cut79underlayResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

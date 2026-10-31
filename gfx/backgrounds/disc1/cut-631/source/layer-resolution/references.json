@@ -1,0 +1,12 @@
+{
+  "editTarget": "../base.png",
+  "composition": "../original-composite.png",
+  "generatedOriginal": "generated-open-original.png",
+  "patchBounds": [
+    120,
+    650,
+    295,
+    802
+  ],
+  "featherPixels": 4
+}

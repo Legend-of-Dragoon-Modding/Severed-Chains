@@ -1,0 +1,33 @@
+{
+  "cut": 176,
+  "tool": "builtin-imagegen",
+  "scope": "Selected current source PNGs matched by exact file hash to retained default generated outputs. Original worker-base provenance is in its earlier source records.",
+  "images": [
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/door-sprites.png",
+      "sha256": "24a901b0a9729538dce442979bff6b3d6e0efe76a07222ae9530aea812a6c993",
+      "matchingDefaultGeneratedFiles": [
+        "exec-721fa594-151d-43fa-ac3d-a8d413ea23b9.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/native-geometry-v1.png",
+      "sha256": "0c0b56f085563400d75bc0dabb26d014e6aa74f9fc0b3422c96657b683d26ec5",
+      "matchingDefaultGeneratedFiles": [
+        "exec-89d2852c-3086-4c96-bf80-a76c06a3a699.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-176/source/layer-resolution/open-scene-v2.png",
+      "sha256": "b52020e3a68e1395982dc32d20a478620b054bdc391e46d05ddf84c4a31bbe52",
+      "matchingDefaultGeneratedFiles": [
+        "exec-4f90bfe9-2577-480c-9b32-01d7db44b2d9.png"
+      ]
+    },
+    {
+      "workspaceImage": "gfx/backgrounds/disc1/cut-176/source/base.png",
+      "sha256": "71256f0c4df58a11c9d58d0e4b6d08465344af9aefc080f505a9281f7863b8e7",
+      "matchingDefaultGeneratedFiles": []
+    }
+  ]
+}

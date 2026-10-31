@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Reconstruct image1 as a high-resolution fantasy game foreground texture panel. Preserve EXACT original projected geometry and placement: three luminous green rounded windows across upper-left wall, dark bowl-like wall trough at upper-right, dark green-brown stone masonry and vertical stone buttress slits below. At LOWER RIGHT is a RECTANGULAR open doorway, bright green-lit stone threshold/inside floor, with a reddish-brown wooden door leaf swung open along its RIGHT side. Keep this opening exactly where image1 places it, at rightmost quarter and bottom half; no rounded stone arch above the opening. Image2 supplies modern stone/wood/green light detail style only. Keep perspective, upper sloping platform edges, window contours, trough and opening proportions of image1. Complete rectangular opaque texture, no transparency, no border, no extra props or invented architecture. Sharp rich game texture matching modern scene.",
+  "inputs": [
+    "original-panel-10.png",
+    "generated-closed-walls.png"
+  ],
+  "output": "generated-open-panel10.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-38b13eaa-f9e9-4229-b714-27ce2fd32c7a.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

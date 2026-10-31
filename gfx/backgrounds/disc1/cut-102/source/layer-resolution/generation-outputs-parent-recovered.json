@@ -1,0 +1,33 @@
+{
+  "cut": 102,
+  "tool": "builtin-imagegen",
+  "scope": "Selected current source PNGs matched by exact file hash to retained default generated outputs. Original worker-base provenance is in its earlier source records.",
+  "images": [
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/continuous-wall.png",
+      "sha256": "315606de28892071a26d723e36d721c7aab42e2f494ec77562f87e0eb2d9a315",
+      "matchingDefaultGeneratedFiles": [
+        "exec-1b6b949b-1112-4d62-9f70-a5e2125446b7.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/portal-open-unit.png",
+      "sha256": "fc78f28d54785ffe6c8b896e81e6f34306bcec5426ca05d03ef0bf81bc67e683",
+      "matchingDefaultGeneratedFiles": [
+        "exec-1e177b40-d75a-49ab-939e-7e2ee4477ce0.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/portal-pair-v2.png",
+      "sha256": "9e3e15c0b51ffada764387ab9b32e48c1543745dd85ea4a2514605f27ffd69e5",
+      "matchingDefaultGeneratedFiles": [
+        "exec-f1571d43-4147-4e5d-96a0-63212da89766.png"
+      ]
+    },
+    {
+      "workspaceImage": "gfx/backgrounds/disc1/cut-102/source/base.png",
+      "sha256": "89c9cd0062e0374ffd0c228b9a9a20fca4e239515c6a5a11cf9398cca54e22cf",
+      "matchingDefaultGeneratedFiles": []
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "cut": 68,
+  "packagingPrepared": true,
+  "status": "independent-plates-staged",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "issues": [],
+  "trace": "build/disc1/captures/cut-68/original/alignment.csv",
+  "validation": "build/disc1/staged/cut-68/layered-validation.json",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/210",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ],
+  "endpointReview": "Visible wood panel and open recess both fit the stone canopy; original foreground15 mask retained with no fixed closed-panel ghost.",
+  "limits": "Asset endpoint review only; actual story-state traversal and character-dependent depth remain for gameplay testing."
+}

@@ -1,0 +1,9 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Create a finished 2026-quality photorealistic fantasy game environment background, exactly 1536x1024 landscape, remaking the first reference's geometry in the natural warm sunlight/material quality of the second reference. FIRST IMAGE is strict camera and layout guide: a narrow dirt and moss shelf along a monumental steep rock wall at left, curving from lower-left toward center-right to a fresh flat-topped cut tree stump at x65%, y62%; exposed roots hang off the near vertical cliff at right, huge pale grey opposite rock face and hazy gorge in the background. Long old dark fallen timber lies horizontally along the back left shelf near y56%. Keep the ledge contour, stump top position/size, traversable ground, drop-off, horizon, and exact fixed perspective. Full canvas no crop/no border. Rich physically believable stratified weathered stone, fine moss, sparse grass, roots, soil detail and atmospheric sunlight. Clear flat walkable dirt around stump; do not add rocks, trees or obstacles onto it. Match original scene geometry closely, improve materials and light rather than rearranging. No characters, no UI, no text. The stump is cut flat, not a standing tree; retain recognizable original layout.",
+  "references": [
+    "build/disc1/original/cut-42/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-40/source/base.png"
+  ],
+  "generatedSource": "exec-bae507e3-4cd4-4d13-873b-a16182899a2c.png"
+}

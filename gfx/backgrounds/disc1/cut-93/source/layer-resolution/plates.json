@@ -1,0 +1,24 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "open-underlay.png",
+    "1": "open-underlay.png",
+    "2": "open-underlay.png",
+    "3": "../base.png",
+    "4": "open-underlay.png",
+    "5": "open-underlay.png",
+    "6": "open-underlay.png",
+    "7": "open-underlay.png",
+    "8": "open-underlay.png",
+    "9": "open-underlay.png",
+    "10": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    3
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct retail scripts285/1 LABEL124 collision table changes foreground3; 121-frame initial trace fixed visible, scripted collision state must remain independent.",
+    "Retail foreground3 bbox292,84..320,132 maps to rear-right door in modern source. Builtin-generated empty-passage underlay removes closed door; modern approved door kept independent. Endpoint review pending."
+  ]
+}

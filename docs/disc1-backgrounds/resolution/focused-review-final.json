@@ -1,0 +1,604 @@
+{
+  "reviewer": "final_resolution",
+  "scope": "Final24 plan.screens[48:72], actual modern focused GPU captures after completion markers and installed-PNG match confirmations. Read-only visual review; no engine, runtime or source mutations.",
+  "cutOrder": [
+    30,
+    172,
+    175,
+    176,
+    177,
+    180,
+    181,
+    192,
+    193,
+    194,
+    195,
+    197,
+    198,
+    658,
+    659,
+    660,
+    68,
+    79,
+    87,
+    657,
+    57,
+    133,
+    154,
+    171
+  ],
+  "completionMarkersVerified": 24,
+  "gpuTextureMatchConfirmationsVerified": 24,
+  "actualFrameAndSyntheticPairsReviewed": 24,
+  "extraProfilesReviewed": 10,
+  "blockingVisualIssuesFound": 0,
+  "qualityNotesRequiringParentJudgment": 1,
+  "probeSemantics": "Scripts paused, but actor/effect animation and camera settling may continue. Hidden probe moves dynamic slots to1024,1024; visible probe sets0,0; selected profiles follow. Pixel differences alone do not prove an environmental state change. Only visibly covered scenery is assessed.",
+  "limitations": [
+    "No full story or route traversal claim.",
+    "Native screenshots can use different camera/story poses and are context, not exact pixel alignment baselines.",
+    "GPU texture-match files validate loaded PNG bytes even for offscreen plates; they do not establish visual endpoint coverage outside the current viewport."
+  ],
+  "contactSheets": [
+    "build/disc1/focused-review-final-1.png",
+    "build/disc1/focused-review-final-2.png",
+    "build/disc1/focused-review-final-3.png",
+    "build/disc1/focused-review-final-4.png",
+    "build/disc1/focused-review-final-extra-193.png",
+    "build/disc1/focused-review-final-extra-197.png"
+  ],
+  "screens": [
+    {
+      "cut": 30,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-30-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-30-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-30-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-30-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-30-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-30/original/frame-0120.png",
+      "findings": "Cave floor, bones and secret staircase/pillar region render coherently; exposed passage visible in synthetic hidden view.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 172,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-172-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-172-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-172-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-172-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-172-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-172/original/frame-0120.png",
+      "findings": "Armory floor, long table, rail and troop silhouettes remain coherent; no environmental seam or missing texture seen.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 175,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-175-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-175-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-175-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-175-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-175-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-175/original/frame-0120.png",
+      "findings": "Continuous house floor/wall scenery remains seamless across hidden/visible probes, consistent with reviewed shared-scenery native evidence.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 176,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-176-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-176-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-176-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-176-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-176-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-176/original/frame-0120.png",
+      "findings": "Room floor, dining table and entry-door region render coherently; visible door probe change has no detached RGB fragment.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 177,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-177-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-177-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-177-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-177-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-177-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-177/original/frame-0120.png",
+      "findings": "Bridge, landing edges, chains and cliff gap remain continuous and readable.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 180,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-180-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-180-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-180-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-180-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-180-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-180/original/frame-0120.png",
+      "findings": "Visible inn floor, rails, tables and stairs load coherently; crate movement is outside this camera coverage.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Synthetic hidden and visible PNGs are byte-identical in this viewport; hanging crate endpoint remains visually unassessed here."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 181,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-181-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-181-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-181-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-181-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-181-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-181/original/frame-0120.png",
+      "findings": "Loft, stairs, bedding and tables render coherently, with actor placements readable.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 192,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-192-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-192-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-192-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-192-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-192-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-192/original/frame-0120.png",
+      "findings": "Exposed sigil room and foreground window-wall toggle coherently in the covered viewport; no fixed wall ghost visible.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 193,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-193-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-193-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-193-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-default-facades.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-lower-room-entered.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-right-room-entered.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-middle-room-entered.png",
+        "build/disc1/captures/cut-193-focused-v1/modern/synthetic-lower-door-closed.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-193/original/frame-0120.png",
+      "findings": "Default facade/open lower passage, lower-room cutaway, right-room cutaway and closed lower door are coherent in actual GPU probes.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Middle-room cutaway is above this camera view; its supplied probe does not visually assess the exposed upper storage room."
+      ],
+      "extraProfiles": [
+        {
+          "profile": "default-facades",
+          "visibleDynamicLayers": [
+            3,
+            4,
+            7,
+            10,
+            15
+          ],
+          "capture": "build/disc1/captures/cut-193-focused-v1/modern/synthetic-default-facades.png"
+        },
+        {
+          "profile": "lower-room-entered",
+          "visibleDynamicLayers": [
+            3,
+            4,
+            7,
+            8,
+            15
+          ],
+          "capture": "build/disc1/captures/cut-193-focused-v1/modern/synthetic-lower-room-entered.png"
+        },
+        {
+          "profile": "right-room-entered",
+          "visibleDynamicLayers": [
+            4,
+            10
+          ],
+          "capture": "build/disc1/captures/cut-193-focused-v1/modern/synthetic-right-room-entered.png"
+        },
+        {
+          "profile": "middle-room-entered",
+          "visibleDynamicLayers": [
+            3,
+            7,
+            10,
+            15
+          ],
+          "capture": "build/disc1/captures/cut-193-focused-v1/modern/synthetic-middle-room-entered.png"
+        },
+        {
+          "profile": "lower-door-closed",
+          "visibleDynamicLayers": [
+            3,
+            4,
+            7,
+            10,
+            12,
+            15
+          ],
+          "capture": "build/disc1/captures/cut-193-focused-v1/modern/synthetic-lower-door-closed.png"
+        }
+      ],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 194,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-194-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-194-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-194-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-194-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-194-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-194/original/frame-0120.png",
+      "findings": "Visible corridor columns, portals and wooden platforms render coherently; changing upper walls are outside the current viewport.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Synthetic hidden and visible PNGs are byte-identical in this viewport; upper changing wall/window endpoints remain visually unassessed here."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 195,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-195-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-195-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-195-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-195-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-195-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-195/original/frame-0120.png",
+      "findings": "Library platforms, central pedestal/ladder and beam render coherently; no new texture hole seen.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 197,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-197-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-197-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-197-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-phase-a.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-phase-b.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-background-phase.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-lever-down.png",
+        "build/disc1/captures/cut-197-focused-v1/modern/synthetic-room-panel-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-197/original/frame-0120.png",
+      "findings": "All five GPU phase/lever/panel profiles render complete machinery inside a stable frame; no missing texture or detached alpha fragment seen.",
+      "blockingIssues": [],
+      "qualityNotes": [
+        "Background machine phase has plainer rounded wooden roller faces, while phases A/B have stronger band/grain detail. The phase texture difference is more pronounced than the small native rotation changes; parent notified for aesthetic judgment. This is not a loading/alpha failure."
+      ],
+      "coverageLimitations": [],
+      "extraProfiles": [
+        {
+          "profile": "machine-phase-a",
+          "visibleDynamicLayers": [
+            3,
+            4
+          ],
+          "capture": "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-phase-a.png"
+        },
+        {
+          "profile": "machine-phase-b",
+          "visibleDynamicLayers": [
+            5,
+            7
+          ],
+          "capture": "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-phase-b.png"
+        },
+        {
+          "profile": "machine-background-phase",
+          "visibleDynamicLayers": [],
+          "capture": "build/disc1/captures/cut-197-focused-v1/modern/synthetic-machine-background-phase.png"
+        },
+        {
+          "profile": "lever-down",
+          "visibleDynamicLayers": [
+            2,
+            3,
+            4
+          ],
+          "capture": "build/disc1/captures/cut-197-focused-v1/modern/synthetic-lever-down.png"
+        },
+        {
+          "profile": "room-panel-visible",
+          "visibleDynamicLayers": [
+            2,
+            3,
+            4,
+            6
+          ],
+          "capture": "build/disc1/captures/cut-197-focused-v1/modern/synthetic-room-panel-visible.png"
+        }
+      ],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 198,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-198-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-198-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-198-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-198-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-198-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-198/original/frame-0120.png",
+      "findings": "Organic wall/grating layout and foreground depth read coherently in the captured area.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 658,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-658-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-658-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-658-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-658-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-658-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-658/original/frame-0120.png",
+      "findings": "Visible statue body/robe, lift shaft opening, console and lower platforms render coherently across hidden/visible probes.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 659,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-659-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-659-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-659-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-659-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-659-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-659/original/frame-0120.png",
+      "findings": "Visible statue relief, columns, platforms and rails are coherent; barred-door endpoint itself is outside the current view.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Barred stair-door slot at native x58..98,y31..81 is outside the focused center/right view; its GPU visual endpoint is not assessed."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 660,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-660-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-660-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-660-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-660-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-660-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-660/original/frame-0120.png",
+      "findings": "Visible floor medallions, stair/bridge edges and portals render coherently; throne endpoint itself is outside the current view.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Throne slot at native x160..199,y145..186 and its raised endpoint are outside the focused floor/portal view; no throne GPU visual endpoint claim."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 68,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-68-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-68-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-68-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-68-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-68-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-68/original/frame-0120.png",
+      "findings": "Square, well, roof foregrounds and street paths remain coherent.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 79,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-79-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-79-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-79-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-79-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-79-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-79/original/frame-0120.png",
+      "findings": "Modern room/wall/roof cutaway and beds render without the GPU error overlay present in the older native-context screenshot.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Older native-context capture contains a GL error overlay and is not trusted as a clean rendering comparison."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 87,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-87-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-87-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-87-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-87-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-87-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-87/original/frame-0120.png",
+      "findings": "Tower exterior and exposed interior cutaway render coherently, preserving the balcony/corridor edge.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 657,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-657-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-657-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-657-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-657-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-657-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-657/original/frame-0120.png",
+      "findings": "Street floor, foreground structure and scene actors remain coherent; no missing texture seen.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 57,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-57-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-57-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-57-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-57-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-57-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-57/original/frame-0120.png",
+      "findings": "Ruin ground and independent burned beam probe region render without the rejected sprite stretching artifact.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 133,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-133-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-133-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-133-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-133-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-133-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-133/original/frame-0120.png",
+      "findings": "Rock/root passage, webs and actor footing read coherently in this viewpoint.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 154,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-154-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-154-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-154-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-154-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-154-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-154/original/frame-0120.png",
+      "findings": "Ruined hall, stair route, foreground props and actors read coherently in this viewpoint.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 171,
+      "result": "passed-visible-focused-review",
+      "completion": "build/disc1/captures/cut-171-focused-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-171-focused-v1/modern/modern-gpu-pack.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-171-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-171-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-171-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "nativeContext": "build/disc1/captures/cut-171/original/frame-0120.png",
+      "findings": "Covered upper/middle street door overlays and empty recesses are coherent; narrow recess slivers follow original projected masks.",
+      "blockingIssues": [],
+      "qualityNotes": [],
+      "coverageLimitations": [
+        "Current upper-street camera does not cover both nearest lower door leaves; no complete six-door traversal claim."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    }
+  ]
+}

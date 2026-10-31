@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Create a faithful 2026 photorealistic fantasy game remake of this cave entrance background. Exactly1536x2048 portrait full canvas. Preserve original fixed camera, perspective, composition, silhouettes and walking geometry. We look from inside a huge dark limestone cavern toward a sunlit coastal opening in the upper quarter. Jagged cave arch and long pointed stalactites frame top and upper-left/right. Outside: calm blue-grey water, original narrow natural stone bridges and grassy sunlit rock shelves, winding entrance path curves from upper-right at x82%,y10% down-left along pale upper ledge, then enters darker central rock path. Main interior walking ledge fills left-middle at y38-64% and connects by a very narrow natural bridge crossing center around y39% to the rock bank at right. Below is a vast dark vertical sinkhole filling lower half with cold cyan-blue reflected light, detailed wet limestone, stalactites and stalagmites framing sides/bottom. Keep every ledge lip, bridge width, walkable plateau, cave opening, overhang and rock shelf exactly aligned to reference; no added boulders or barriers on paths, no new structures. Modern cinematic physically believable weathered limestone microdetail, damp mineral streaks, subtle mist in deep chasm, beautiful strong warm exterior daylight contrasting cool blue cave bounce light, realistic restrained colors. Detail all surfaces while retaining deep shadows. No people, creatures, UI, text or borders; no camera changes/cropping. Fully painted canvas.",
+  "references": [
+    "build/disc1/original/cut-45/geometry-guide.png"
+  ],
+  "generatedSource": "exec-2300856c-65b6-4dcd-bf36-fd16f575bb62.png"
+}

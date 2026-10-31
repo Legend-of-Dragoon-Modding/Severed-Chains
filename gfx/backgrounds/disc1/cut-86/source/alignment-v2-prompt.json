@@ -1,0 +1,9 @@
+{
+  "prompt": "Use case: style-transfer. Edit image 1, the original 384x384 Bale tower environment, into a modern photorealistic prerendered RPG background. Image 2 is a material and lighting reference ONLY; its geometry has drifted and must NOT be copied. Match image 1 exactly at every normalized coordinate: entire tower silhouette and its roof tips, lower door threshold at approximately (0.439,0.700), upper door and landing at (0.458,0.491), diagonal stair footprint from that landing to roughly (0.66,0.696), planted beds, all rails, paving, terrace outline, canal, right path. Keep image 1 camera, perspective, full square framing and elevations. Beautify surfaces only: detailed weathered sandstone, terracotta roofs, fine ironwork, golden trees, cinematic warm sunset and distant city. Do not enlarge doors or shift staircase, terrace or walls. No added objects, people, UI, text or watermark. Output full 1536x1536 canvas. Preserve the exact original traversable geometry, with continuous paving behind occluding foreground elements.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-86/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-86/source/initial-reference.png"
+  ],
+  "output": "alignment-v2.png"
+}

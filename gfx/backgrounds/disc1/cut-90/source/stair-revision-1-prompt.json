@@ -1,0 +1,10 @@
+{
+  "prompt": "Use case: precise-object-edit. Image 1 is the current modern basement master. Image 2 is the original geometry reference. Change ONLY the small wooden stair at the upper-right corner of the UPPER-LEFT storage room (approximately x=0.40 to 0.455 and y=0.12 to 0.225 of the full canvas). In the current modern painting, a black wedge covers the lowest wooden treads where the character must step. Extend the wooden steps downward and left to exactly fill the original reference stair's footprint and match the original lowest tread at about x=0.414,y=0.204. Keep the original staircase orientation and the existing dark cutaway wall outside its original silhouette. Do not alter any other pixel region of the environment: retain all surrounding storage crates, jars, stone floors, all other rooms, props, lighting, camera and full rectangular canvas unchanged. Preserve exact full-canvas registration. No people, text, UI or watermark. This fixes character footing on the existing stairs; do not redesign them.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "gfx/backgrounds/disc1/cut-90/source/initial-reference.png",
+    "build/disc1/original/cut-90/geometry-guide.png"
+  ],
+  "output": "stair-revision-1.png",
+  "status": "Not installed; footing requires further revision."
+}

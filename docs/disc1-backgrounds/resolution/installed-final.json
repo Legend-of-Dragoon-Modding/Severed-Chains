@@ -1,0 +1,9 @@
+{
+  "worker": "final",
+  "scriptAttribution": "RetailSubmap.loadAssets uses environment source index + 2, confirmed RetailSubmap.java:237 and :570.",
+  "runtimeModified": false,
+  "screens": [
+    {"cut":57,"status":"real-textured-layer-change","ready":false,"dynamicLayers":[8],"evidence":["build/disc1/scripts/177/1.txt:854 mode3 hidesFG8; branch gated by globalflag2 0x57.","Original foreground8 alpha bbox[142,129,205,152] is nonempty.","121-frame fixed-visible inspection does not exercise later story flag2 0x57."],"needed":"Inspect FG8 RGB/underlay and prepare independent hidden-state artwork before treating later story variant as safe."},
+    {"cut":171,"status":"real-textured-layer-change","ready":false,"dynamicLayers":[0,10,11,12,13,14],"evidence":["build/disc1/scripts/519/1.txt:209 and :228 show/hide generic door foreground index stor26.","LABEL48 five-word records select foreground0,14,12,13,10,11; each is within16 foregrounds and has nonempty alpha.","Original nonempty alpha bboxes:0[143,149,156,188],10[48,322,75,372],11[278,330,302,376],12[103,203,125,251],13[252,198,270,254],14[230,148,247,191]."],"needed":"Create clean door recesses/background and independent door plates; inspect all6 show/hide states. Fixed-visible arrival trace is insufficient."}
+  ]
+}

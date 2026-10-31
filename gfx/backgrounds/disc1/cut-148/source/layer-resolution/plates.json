@@ -1,0 +1,49 @@
+{
+  "background": {
+    "source": "closed-hatch-source.png",
+    "patches": [
+      {
+        "source": "open-hatch-underlay.png",
+        "sourceBounds": [
+          637,
+          853,
+          850,
+          1093
+        ],
+        "targetBounds": [
+          191,
+          256,
+          255,
+          328
+        ],
+        "maskLayer": 13
+      }
+    ]
+  },
+  "layers": {
+    "0": "closed-hatch-source.png",
+    "1": "closed-hatch-source.png",
+    "2": "closed-hatch-source.png",
+    "3": "closed-hatch-source.png",
+    "4": "closed-hatch-source.png",
+    "5": "closed-hatch-source.png",
+    "6": "closed-hatch-source.png",
+    "7": "closed-hatch-source.png",
+    "8": "closed-hatch-source.png",
+    "9": "closed-hatch-source.png",
+    "10": "closed-hatch-source.png",
+    "11": "closed-hatch-source.png",
+    "12": "closed-hatch-source.png",
+    "13": "closed-hatch-source.png",
+    "14": "closed-hatch-source.png",
+    "15": "closed-hatch-source.png"
+  },
+  "dynamicLayers": [
+    13
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Actual parent native GPU lower-room layer13 visible/hidden probe and retail450 dialogue establish Dabas cellar hatch. Independent ladder recess underlay and wooden closed floor cover authored at matching perspective; final mask endpoint review pending.",
+    "Recess on BG restricted to exact native13 mask, preventing uncovered generated hole fragments beyond wooden cover."
+  ]
+}

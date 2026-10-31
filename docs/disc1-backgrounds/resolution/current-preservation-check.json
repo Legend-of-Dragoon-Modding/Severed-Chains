@@ -1,0 +1,7 @@
+{
+  "baselineFiles": 3130,
+  "changed": [
+    "src/main/java/legend/lodmod/SelesBackgrounds.java"
+  ],
+  "expectedChange": "src/main/java/legend/lodmod/SelesBackgrounds.java removes8quarantined mappings only"
+}

@@ -1,0 +1,9 @@
+{
+  "prompt": "Use case: style-transfer. Edit IMAGE1 dragon claw RGB donor tile. Preserve its exact existing five-finger pose, talon coordinates, camera, scale, tight atlas placement, every geometric edge and hand shape; DO NOT MOVE, reshape, crop, rotate or resize anything. Change ONLY materials, color and lighting to match images2 and3 from adjacent frames of the SAME hand: warm brown rough pebbled cracked scales instead of pale grey plates; weathered warm ivory talons with golden orange fire reflections and dark brown joints. Same consistent warm orange directional light as images2/3, no cold grey cast. Every formerly background pixel remains opaque naturally textured brown hide continuation. No grey or transparent matte, no lava scene, no new fingers or props, no text. This is an animation pose material match, consistency essential.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-7-opaque.png",
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6-rejected-five.png",
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8-matched-filled.png"
+  ],
+  "transparent_background": false
+}

@@ -1,0 +1,139 @@
+{
+  "cut": 177,
+  "dynamicLayers": [],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        386,
+        239,
+        612,
+        298
+      ],
+      "opaquePixels": 2399,
+      "backgroundOverlapPixels": 2399,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        101,
+        255,
+        316,
+        301
+      ],
+      "opaquePixels": 1379,
+      "backgroundOverlapPixels": 1379,
+      "dynamic": false
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        16,
+        210,
+        101,
+        301
+      ],
+      "opaquePixels": 2913,
+      "backgroundOverlapPixels": 2913,
+      "dynamic": false
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        0,
+        304,
+        67,
+        347
+      ],
+      "opaquePixels": 920,
+      "backgroundOverlapPixels": 920,
+      "dynamic": false
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        96,
+        172,
+        207,
+        270
+      ],
+      "opaquePixels": 4187,
+      "backgroundOverlapPixels": 4187,
+      "dynamic": false
+    }
+  ],
+  "scriptEvidence": [],
+  "genericDoorTables": [],
+  "observed": {
+    "cut": 177,
+    "inspectionPassed": true,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-177/original/alignment.csv",
+    "gpuExportMatches": true,
+    "allObservedLayersFixedVisible": true,
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ],
+    "fullGameplayVerified": false
+  }
+}

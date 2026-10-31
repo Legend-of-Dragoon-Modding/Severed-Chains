@@ -1,0 +1,130 @@
+{
+  "scope": "Source generation requests; readiness is separate in resolution/middle.json",
+  "records": [
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-6.png",
+      "prompt": "Remaster ONLY the isolated giant petrified dragon CLAW in FIRST original foreground reference, pose 6. SECOND detailed lava-cavern image supplies grey cracked bone/stone material and warm orange lava edge lighting. Output one isolated claw on transparent background, large for fine detail. Preserve exact FIRST pose, projected silhouette, digit count, bent finger angles, viewpoint, palm mound and lower wrist outline; do NOT change pose to match second. This is one animation frame and must remain distinct from other poses. No room, lava, rocks, text, label, extra hand, detached shadow or background. Faithful high-detail stone/bone claw, four tapered fingers/nails as original. A separate atlas packer will fit this sprite to original alpha; preserve original proportions.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-120/foreground-6.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/base.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-7.png",
+      "prompt": "Remaster ONLY the isolated giant petrified dragon CLAW in FIRST original foreground reference, pose 7. SECOND detailed lava-cavern image supplies grey cracked bone/stone material and warm orange lava edge lighting. Output one isolated claw on transparent background, large for fine detail. Preserve exact FIRST pose, projected silhouette, digit count, bent finger angles, viewpoint, palm mound and lower wrist outline; do NOT change pose to match second. This is one animation frame and must remain distinct from other poses. No room, lava, rocks, text, label, extra hand, detached shadow or background. Faithful high-detail stone/bone claw, four tapered fingers/nails as original. A separate atlas packer will fit this sprite to original alpha; preserve original proportions.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-120/foreground-7.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/base.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-8.png",
+      "prompt": "Remaster ONLY the isolated giant petrified dragon CLAW in FIRST original foreground reference, pose 8. SECOND detailed lava-cavern image supplies grey cracked bone/stone material and warm orange lava edge lighting. Output one isolated claw on transparent background, large for fine detail. Preserve exact FIRST pose, projected silhouette, digit count, bent finger angles, viewpoint, palm mound and lower wrist outline; do NOT change pose to match second. This is one animation frame and must remain distinct from other poses. No room, lava, rocks, text, label, extra hand, detached shadow or background. Faithful high-detail stone/bone claw, four tapered fingers/nails as original. A separate atlas packer will fit this sprite to original alpha; preserve original proportions.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-120/foreground-8.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/base.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-6-opaque.png",
+      "generatedOutput": "exec-0b7b254d-4d4a-4f9a-93d8-89ab53a33284.png",
+      "prompt": "Use case: precise-object-edit. Image1 is generated fantasy dragon claw source. Keep all visible claws, talons, knuckles, scales, pose, camera, colors and directional light exactly unchanged. Make an OPAQUE material donor image by painting coherent new organic claw/bone/scaled dragon-hide surface behind every transparent pixel, filling all margins, gaps between fingers and all canvas edges. Do not paint lava, orange glow patches, black matte, flat color, smears or striping in the formerly transparent space. Continue natural brown stony dragon skin and pale bone texture with richly detailed irregular scales. The source will be clipped by a separate exact geometry mask; the entire rectangle must have plausible detailed dragon material. Do not add fingers or alter main pose; no text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-7-opaque.png",
+      "generatedOutput": "exec-c0d924c9-a34a-4d16-9046-23b0ca3708d6.png",
+      "prompt": "Use case: precise-object-edit. Image1 is generated fantasy dragon claw source. Keep all visible claws, talons, knuckles, scales, pose, camera, colors and directional light exactly unchanged. Make an OPAQUE material donor image by painting coherent new organic claw/bone/scaled dragon-hide surface behind every transparent pixel, filling all margins, gaps between fingers and all canvas edges. Do not paint lava, orange glow patches, black matte, flat color, smears or striping in the formerly transparent space. Continue natural brown stony dragon skin and pale bone texture with richly detailed irregular scales. The source will be clipped by a separate exact geometry mask; the entire rectangle must have plausible detailed dragon material. Do not add fingers or alter main pose; no text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-7.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-8-opaque.png",
+      "generatedOutput": "exec-3b81eea5-920c-41cf-805a-a959d7676bfc.png",
+      "prompt": "Use case: precise-object-edit. Image1 is generated fantasy dragon claw source. Keep all visible claws, talons, knuckles, scales, pose, camera, colors and directional light exactly unchanged. Make an OPAQUE material donor image by painting coherent new organic claw/bone/scaled dragon-hide surface behind every transparent pixel, filling all margins, gaps between fingers and all canvas edges. Do not paint lava, orange glow patches, black matte, flat color, smears or striping in the formerly transparent space. Continue natural brown stony dragon skin and pale bone texture with richly detailed irregular scales. The source will be clipped by a separate exact geometry mask; the entire rectangle must have plausible detailed dragon material. Do not add fingers or alter main pose; no text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-8-matched.png",
+      "generatedOutput": "exec-acb8def4-c721-4660-a2ad-8e2e996e80cf.png",
+      "prompt": "Use case: sketch-to-render. Faithfully repaint image1 geometry guide into new richly detailed dragon claw art. IMAGE1 controls EXACT camera, silhouette, five finger positions, joints, claws, proportions, and tight framing. Image2 supplies ONLY cracked dragon hide/pale bone material and directional warm light; do not copy its pose. CRITICAL do not recenter or add margins: first talon tip touches LEFT edge at y39%; second talon tip x12%,y50%; third x14%,y66%; fourth x21%,y78%; small fifth talon x39%,y76%. Wrist fills bottom-right. All FIVE talons end at those exact pointed tip positions. The hand fills same projected outline as first guide. Paint new natural hard ridged scales, worn pale ivory bone talons, dark brown stony hide. Do not simply sharpen pixel art: render genuine fine painted material detail. Keep background plain grey as first guide, opaque RGB. No scene, glow, extra fingers, nails cut off, text or changes of view. Output landscape aspect exactly like image1, full tight crop no padding.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/pose8-cropped-native-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8-opaque.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-8-matched-filled.png",
+      "generatedOutput": "exec-432ea08e-d93b-48dd-a1df-a5543aafa8b6.png",
+      "prompt": "Use case: precise-object-edit. Change ONLY plain grey background of image1 into a coherent continuation of the claw's dark brown dragon hide and rough scales, filling every formerly grey pixel to all canvas edges with newly painted natural stony dragon skin detail. Keep the existing hand, ALL five talons, pointed tip coordinates, joints, wrist, framing and lighting EXACTLY unchanged. Do not shift, resize or rotate anything. Do not alter the existing bone claws. The entire opaque rectangle is a donor tile clipped by separate geometry, so absolutely no grey matte, gaps, blur smears, flat color or transparency may remain. Natural detailed painted material continuation, no extra talons, no scene or text.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8-matched.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-6-rejected-five.png",
+      "generatedOutput": "exec-b026d904-bf21-4293-b58e-c37320d68a08.png",
+      "prompt": "Use case: sketch-to-render. Faithfully repaint image1 geometry guide into new high-detail fantasy dragon claw art. Image1 controls exact tight crop, projected silhouette, FOUR finger positions, pose, camera and proportions. Image2 is ONLY the cracked brown dragon hide and pale ivory talon material reference, do not copy its pose or aspect. Exactly FOUR pointed talons: tip1 touches left edge at y40%; tip2 x16%,y49%; tip3 x15%,y73%; tip4 x27%,y84%. All end in sharp pointed tips at those precise coordinates, none flat, no extra fifth talon. Wrist fills bottom and right edge. Make rich new finely painted scales and worn pale cracked bone with warm lighting. Keep all geometry and framing EXACTLY as first guide, no margins or recentering. IMPORTANT fill ALL grey-background areas with newly painted coherent dark brown dragon-hide material continuation, no grey matte, black, gaps, scenery, blur stripes or transparency; this opaque RGB donor will be clipped to a separate exact original geometry stencil. Do not simply upscale original pixels. No text or added objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/pose6-cropped-native-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6-opaque.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-6-unused-grey.png",
+      "generatedOutput": "exec-3ac0f8fc-727b-4928-babf-27b2de207ad5.png",
+      "prompt": "Faithful new high-resolution painting of the EXACT FOUR-TALON DRAGON HAND in image1. This is a fixed geometry game sprite; copy its layout exactly while repainting all surfaces in new highly detailed worn ivory bone and dark cracked dragon hide. There are exactly FOUR talons visible, count 1,2,3,4; no fifth talon anywhere. Tight crop and same aspect ratio as image1. Preserve each fingertip at its exact location: first at left edge/y40%, second at x16%/y49%, third x15%/y73%, fourth x27%/y84%. The top part is knuckles and scales, NOT an extra nail. Do not change original pose, camera, hand anatomy, finger gaps, framing or add margins. Soft warm side light, natural rocky brown scales with subtle orange reflections. Solid grey background matching guide. Render new detailed art, not pixelated upscale. No scenery, text or extra objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/pose6-cropped-native-guide.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-6-matched-filled.png",
+      "generatedOutput": "exec-b026d904-bf21-4293-b58e-c37320d68a08.png",
+      "prompt": "Use case: sketch-to-render. Faithfully repaint image1 geometry guide into new high-detail fantasy dragon claw art. Image1 controls exact tight crop, projected silhouette, FOUR finger positions, pose, camera and proportions. Image2 is ONLY the cracked brown dragon hide and pale ivory talon material reference, do not copy its pose or aspect. Exactly FOUR pointed talons: tip1 touches left edge at y40%; tip2 x16%,y49%; tip3 x15%,y73%; tip4 x27%,y84%. All end in sharp pointed tips at those precise coordinates, none flat, no extra fifth talon. Wrist fills bottom and right edge. Make rich new finely painted scales and worn pale cracked bone with warm lighting. Keep all geometry and framing EXACTLY as first guide, no margins or recentering. IMPORTANT fill ALL grey-background areas with newly painted coherent dark brown dragon-hide material continuation, no grey matte, black, gaps, scenery, blur stripes or transparency; this opaque RGB donor will be clipped to a separate exact original geometry stencil. Do not simply upscale original pixels. No text or added objects.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/pose6-cropped-native-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6-opaque.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/claw-pose-7-warm.png",
+      "generatedOutput": "exec-4c63c2aa-6730-416b-9785-73ed095f03b2.png",
+      "prompt": "Use case: style-transfer. Edit IMAGE1 dragon claw RGB donor tile. Preserve its exact existing five-finger pose, talon coordinates, camera, scale, tight atlas placement, every geometric edge and hand shape; DO NOT MOVE, reshape, crop, rotate or resize anything. Change ONLY materials, color and lighting to match images2 and3 from adjacent frames of the SAME hand: warm brown rough pebbled cracked scales instead of pale grey plates; weathered warm ivory talons with golden orange fire reflections and dark brown joints. Same consistent warm orange directional light as images2/3, no cold grey cast. Every formerly background pixel remains opaque naturally textured brown hide continuation. No grey or transparent matte, no lava scene, no new fingers or props, no text. This is an animation pose material match, consistency essential.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-7-opaque.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-6-rejected-five.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/claw-pose-8-matched-filled.png"
+      ],
+      "transparent_background": false
+    }
+  ]
+}

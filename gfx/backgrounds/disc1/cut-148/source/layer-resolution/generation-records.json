@@ -1,0 +1,27 @@
+{
+  "scope": "Exact built-in image generation requests, including rejected candidates; readiness separate.",
+  "records": [
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/open-hatch-underlay.png",
+      "generatedOutput": "exec-03df50fc-c679-4604-919c-4b85575d9ff5.png",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-148/source/base.png",
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/captures/cut-148-lower-room-v3/original/lower-layer13-hidden.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-148/source/layer-resolution/removal-guide.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Edit FIRST woodenitemshop/libraryinterior to OPENCELLARHATCH state. SECOND is actualoriginalgame view oflowerroom hatch, THIRD magentamarks exact originalfloorpatch region. Only inlowestroom, back-rightcorner justrightofcentralpost: removethepileofbooksthere andshow a darkrecessedrectangularcellaropening withwoodenrungladder descending, matchingSECOND nativeview. Region normalizedx.497..664,y.667..854 onFIRSTfullcanvas. The hatchshouldreadasapassage down throughthewoodfloor, notawallwindow. Retainadjacentrightwalllampandfixedladder elsewhere, originalflooredges/roomgeometry. Preserveentirerestofimage,camera,framing,lighting/materials,bookcases,upperrooms. Nomagenta,people,text,newprops. Closedfloorcoverwillbeaseparateforegroundplate; nofixedwoodcoverorbookpile remains overhatch. Fullsquarecanvasunchanged."
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/closed-hatch-source.png",
+      "generatedOutput": "exec-cfea255c-7dcf-4e59-a956-694bb85d5cd1.png",
+      "prompt": "Use case: precise-object-edit. Edit image1, fantasy timber multilevel shop, keeping entire composition, lighting, floors, beams, props, camera, and every other pixel as close as possible. Change ONLY open cellar hatch in the LOWEST room: cover the dark rectangular opening and its descending rung ladder with a CLOSED flat wooden floor hatch, with planks matching surrounding floor grain and perspective. Exact opening is just right of tall central post, left of glowing lamp, normalized x0.53..0.665 y0.73..0.84. Cover fits entire hole, small subtle iron hinges/handle; no books or objects on it. Keep adjacent lamp and room walls. New detailed realistic painted surface, no text, no characters.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-148/source/layer-resolution/open-hatch-underlay.png"
+      ],
+      "transparent_background": false
+    }
+  ]
+}

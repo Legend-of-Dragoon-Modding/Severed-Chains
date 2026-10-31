@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Faithfully reconstruct image1, a low-resolution original game window-wall texture, as a high-resolution painted fantasy stone texture. Keep exact original composition and proportions: dark curved ceiling fills top quarter, lower wall with THREE green glowing slit windows positioned exactly like original, carved stone mullions, dark rectangular sockets along bottom ledge. This is a rectangular texture crop, not an isolated object: fill the ENTIRE rectangular canvas with opaque wall/ceiling/ledge artwork edge-to-edge, no transparent corners or cutout edges, no border. Match modern detail/lighting/materials of image2 style reference but preserve image1's projected perspective and every major line placement. No new windows, no scene exterior, no characters. The ceiling top must be detailed dark masonry, never an extended color smear.",
+  "inputs": [
+    "original-wall-crop.png",
+    "../base.png"
+  ],
+  "output": "generated-window-wall-v2.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-1221de50-7a4f-4516-a768-c38d5c9edf7e.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

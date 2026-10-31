@@ -1,0 +1,371 @@
+{
+  "worker": "early",
+  "reviewComplete": true,
+  "reviewedScreens": 24,
+  "checksPassed": false,
+  "materialIssueCuts": [
+    102,
+    626
+  ],
+  "scope": "Read-only visual review of completed focused-v1 modern GPU captures and listed original comparisons. Sampled frame and synthetic layer/parallax endpoints only; no full story-state, movement, transition or gameplay traversal claim. Debug arrows and markers are inspection overlays.",
+  "screens": [
+    {
+      "cut": 70,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-70-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-70-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-70-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-70-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Closed door and bright exposed interior remain registered; street, benches and visible character footing compose coherently.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 80,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-80-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-80-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-80-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-80-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Static forge geometry, bridges, vats and foreground workbench remain coherent across endpoints; visible entrance/player pose shows no new clipping.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 631,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-631-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-631-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-631-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-631-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Entrance states change inside the same doorway; tower roof, water and stair framing remain stable.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 67,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-67-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-67-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-67-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-67-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Tree roots, stairs and platform stay coherent. Visible characters are occluded by scene geometry without a new rectangular layer boundary.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 89,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-89-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-89-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-89-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-89-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Cutaway black areas follow the scene's architectural presentation; no changing-object duplicate or endpoint seam observed. Character is substantially behind the upper-right wall in this sampled pose.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 88,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-88-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-88-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-88-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-88-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "originalCaptureReviewed": "build/disc1/captures/cut-88/original/frame-0120.png",
+      "observations": "Bridge/gate endpoints load without a background seam. Black silhouettes on the upper-right platform also appear in the original capture and are not a new artwork defect. Synthetic all-visible forces alternate gates together; exclusive scripted gate combinations are not proven by this probe.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 628,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-628-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-628-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-628-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-628-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Canal, stair landing, banner and roofs remain coherent; player remains at the tower entrance.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 93,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-93-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-93-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-93-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-93-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Both stairways, balustrades, floor reflections and visible character placement remain stable across endpoints.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 94,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-94-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-94-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-94-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-94-focused-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-94-focused-v1/modern/synthetic-parallax-origin.png",
+        "build/disc1/captures/cut-94-focused-v1/modern/synthetic-parallax-offset.png"
+      ],
+      "observations": "Panorama and foreground balcony separate under parallax; origin/offset probes show no duplicated sky ribbon. Finial silhouette retains coarse retail-mask edges; this is a visible cosmetic limit, not an exposed sky rectangle.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 71,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-71-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-71-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-71-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-71-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Tavern tables, bar and characters remain registered; no state-dependent artwork changes or new seams observed.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 58,
+      "reviewed": true,
+      "result": "limited-by-story-fade",
+      "completionFile": "build/disc1/captures/cut-58-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-58-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-58-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-58-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Captured during a dark story fade/text overlay. Layout loads and endpoints remain stable, but the overlay prevents a full-detail texture/occlusion judgment; no controllable-player traversal is represented.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 95,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-95-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-95-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-95-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-95-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Two door slots switch between exposed passages and closed leaves; surrounding balconies and player/NPC silhouettes remain coherent.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 99,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-99-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-99-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-99-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-99-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Exposed doorway and visible leaf compose against the same room; beds, furniture and sampled character footing show no new seam.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 100,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-100-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-100-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-100-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-100-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Static room, upper walkway, stairs and bed remain coherent. Sampled characters retain plausible depth against the railing.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 102,
+      "reviewed": true,
+      "result": "needs-correction",
+      "completionFile": "build/disc1/captures/cut-102-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-102-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-102-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-102-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "originalCaptureReviewed": "build/disc1/captures/cut-102/original/frame-0120.png",
+      "observations": "Paired outer/inner doors are independently visible, but the remade entrance does not fully support the sampled player's footing to the left of the outer leaf.",
+      "issues": [
+        {
+          "severity": "material",
+          "category": "player-footing",
+          "description": "In frame-0120 the player's feet around x490,y625 partly overlap black space left of the outer door/landing. The original capture at the same pose has supporting stone floor; the portal floor starts lower/right in the remake.",
+          "capture": "build/disc1/captures/cut-102-focused-v1/modern/frame-0120.png",
+          "comparison": "build/disc1/captures/cut-102/original/frame-0120.png"
+        }
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 103,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-103-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-103-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-103-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-103-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Bedroom doorway states remain registered with the floor. Synthetic all-visible includes both alternative dynamic leaves simultaneously; exclusive scripted leaf combinations are not proven by this probe.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 104,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-104-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-104-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-104-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-104-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Attic beams, floor, light shafts and sampled character footing remain coherent with no new state seam.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 96,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-96-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-96-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-96-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-96-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Night doorway changes within its frame; stairs, roofs and upper battlement characters remain registered.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 97,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-97-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-97-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-97-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-97-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Damaged exterior, stair runs and sampled character position remain coherent across static endpoints.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 626,
+      "reviewed": true,
+      "result": "needs-correction",
+      "completionFile": "build/disc1/captures/cut-626-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-626-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-626-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-626-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "originalCaptureReviewed": "build/disc1/captures/cut-626/original/frame-0120.png",
+      "observations": "Paired doors load without a black triangle between the leaves, but the sampled player's left foot overlaps black space where the original entrance supplies stone flooring.",
+      "issues": [
+        {
+          "severity": "material",
+          "category": "player-footing",
+          "description": "In frame-0120 the player's left leg/foot around x488..501,y615..638 overlaps black space left of the outer door. The original capture has stone flooring beneath the same pose. Correct the supporting floor registration, retaining original masks/depth.",
+          "capture": "build/disc1/captures/cut-626-focused-v1/modern/frame-0120.png",
+          "comparison": "build/disc1/captures/cut-626/original/frame-0120.png"
+        }
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 627,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-627-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-627-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-627-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-627-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Damaged bedroom entrance remains registered to the surrounding floor; synthetic all-visible combines alternative door leaves and is not proof of an exclusive scripted door state.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 632,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-632-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-632-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-632-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-632-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Beds, floor, doorway/foreground leaf and sampled character occlusion remain coherent across endpoints.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 674,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-674-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-674-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-674-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-674-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "observations": "Damaged courtyard geometry and the group of visible characters remain stable with no new rectangular layer edge.",
+      "issues": [],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 109,
+      "reviewed": true,
+      "result": "pass-observed-frames",
+      "completionFile": "build/disc1/captures/cut-109-focused-v1/modern/completion.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-109-focused-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-109-focused-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-109-focused-v1/modern/synthetic-all-visible.png"
+      ],
+      "originalCaptureReviewed": "build/disc1/captures/cut-109/original/frame-0120.png",
+      "observations": "Cutaway walls and railings remain coherent. The black patch immediately under the player is also present in the original pose; no new player-footing defect was established here.",
+      "issues": [],
+      "fullGameplayVerified": false
+    }
+  ]
+}

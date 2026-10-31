@@ -1,0 +1,19 @@
+{
+  "tool": "Built-in ImageGen",
+  "background": {
+    "references": [
+      "approved-modern.png",
+      "original/background.png"
+    ],
+    "transparent_background": false,
+    "prompt": "Edit target image 1 is the approved modern photorealistic Seles remake. Image 2 is the original game background, used strictly as a geometry/layout guide; ignore its transparent right/bottom padding and use only its top-left 384x256 artwork. Produce an opaque full-bleed EXACTLY 1536x1024 image. Keep the modern image's exceptionally realistic foliage, physical materials, sunset illumination, fine rock detail, distant haze and volumetric smoke. Align the principal landforms to the original reference: the small village centered at roughly (32% width,60% height), the mountain skyline and dominant left conifer, original open right hillside. CRITICAL GAMEPLAY: the foreground/lower half must read as gently sloping grassy terrain, not an obstacle course. Remove the new large foreground rocks, fallen branches, large shrubs and small trees that were invented across the lower foreground and right walkable slope. Replace them with continuous natural short grass and subdued ground texture matching the hill; retain dense woodland only around the distant village and left edge. Render ALL ground behind future foreground overlays, no blank holes, no grass cutouts painted as floating patches. Preserve the hill silhouette and perspective of the original as closely as possible while keeping the approved realistic modern style. No characters, UI, text or borders. This is the background plate only; foreground rocks and tall grass will be separate layers."
+  },
+  "foreground": {
+    "references": [
+      "foreground-layout-guide.png",
+      "background-plate.png"
+    ],
+    "transparent_background": true,
+    "prompt": "EDIT TARGET IMAGE 1: a composite foreground ground surface for a game. Image 2 is the modern approved Seles landscape and is ONLY a photorealistic style/material/lighting reference. Rebuild the exact foreground in image 1 in current-generation AAA photorealistic detail. Preserve full 512x356 canvas composition, all object positions and camera perspective, and all transparent padding. Output 2048x1424 or the exact same aspect ratio, transparent background. The ground must be ONE continuous seamless grassy hillside, with no vertical tile seams or patches. A rocky ledge at bottom-left and left edge, one flat low stone near (65% width,39% height), small spiky grass tufts near original positions on right and left, a stone on far lower-right edge, a few tiny pale flowers at original spots. Keep a clear gently sloping grass area through the CENTER where a character walks. NO extra rocks or big bushes in center. The hill's top silhouette gently rises from left (roughly y47%) to right (y28%); do not change it or recenter the hill. Below that silhouette, cover ALL pixels to bottom and side canvas edges with coherent fine grass/earth/rocks, no transparency holes inside the ground. Upper area remains transparent. Lighting matches image2: warm upper-left sunset with soft cool ambient shadows, naturally varied olive-green/brown grass with golden tips, detailed believable physical stone material. Entire foreground should look like it was rendered in the same scene as image2, NOT sharpened original pixels, NOT painted, NOT huge reeds or overgrown grass. Transparent upper area must contain no landscape, sky, trees, buildings or text. Preserve full canvas coordinates; do not crop to silhouette."
+  }
+}

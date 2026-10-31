@@ -1,0 +1,15 @@
+{
+  "cut": 99,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 3702,
+      "timestamp": "2026-10-30T19:09:27.548Z",
+      "referencedCuts": [
+        99
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-99/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-99/background.png\"],transparent_background:false,prompt:\"Edit FIRST detailed medieval room into a CLEAN DOOR UNDERLAY for independent game foregroundplates. Keep the entire room geometry/camera/framing/furniture/bed/lighting/materials pixel-consistent. ONLY edit lower RIGHT stone arched doorway at normalized x0.80..0.92,y0.47..0.82. REMOVE the entire wooden swinging/open doorleaf currently in front of this opening. Remove all visible doorplanks/ironbands in that doorway region. Fill with empty dark doorway recess/passagethrough and continuous floor/stone threshold according to original SECOND background reference. Retain stonearch and originalwall, sacks and boxes nearby, no extraobjects. Door itself will be rendered by separate foregroundlayers, so no fixed door or wooddoor ghost can remain in this underlay. SECOND lowresref has green placeholders: ignore them, do NOT paint any green. No people/text. Full same2:1aspectcanvas asFIRST, nozoom, nocrop.\"}); store(\"cut99underlayResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

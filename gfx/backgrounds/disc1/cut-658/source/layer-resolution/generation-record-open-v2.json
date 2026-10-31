@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Use image1 as EDIT TARGET (modern complete marble statue room). Use image2 as the EXACT open-state structural guide. Open the secret elevator by removing ONLY the foreground FRONT statue slice as shown in image2: the woman's face and LEFT/front portion of torso and gown disappear, revealing a vertical green cylindrical elevator shaft LEFT of the surviving RIGHT edge of her torso. Important: retain the original RIGHT forearm/hand holding the right side of the orb and the narrow right edge of her draped gown, exactly as image2 shows. Do not remove the right half of the statue; the exposed shaft belongs left of it. Keep upper hair crown, outer left hair, right stone rim and surviving stone body aligned. The opening corresponds to native x84..193,y48..251 on384square, with long shaft at x95..145. Match image2 exactly: green interior, thin purple shaft cable, two small magenta controls, round bottom lift pad. Remove three colored control gems on the triangle console leaving dark inset sockets. All room architecture, platforms, rails, stairs, camera and lighting outside changing statue section must remain unchanged from image1. Full square scene, detailed fantasy stone texture.",
+  "inputs": [
+    "generated-closed-statue.png",
+    "original-open-guide-large.png"
+  ],
+  "output": "generated-underlay-v2.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-caa494f8-820d-45eb-891c-fc2641584163.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

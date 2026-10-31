@@ -1,0 +1,13 @@
+{
+  "cut": 95,
+  "assetEndpointReview": true,
+  "states": [
+    "all-visible",
+    "dynamic-hidden",
+    "recorded-dest"
+  ],
+  "scope": "Visual asset endpoints and exact-alpha staging; no full gameplay traversal or story-state coverage implied.",
+  "configSha256": "d875b0a07daa873af6a31843cc7d4f7d01ad3832d3d10282c55a536084989363",
+  "runtimeInstalled": false,
+  "gameplayVerified": false
+}

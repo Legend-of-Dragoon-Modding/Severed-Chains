@@ -1,0 +1,15 @@
+{
+  "cut": 109,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 3047,
+      "timestamp": "2026-10-30T18:53:26.172Z",
+      "referencedCuts": [
+        109
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 400}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-109/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-109/source/original-composite.png\"],transparent_background:false,prompt:\"Correct first modern isometric exploration game background using second original image as exact composition and walkable geometry guide. Preserve entire camera, full canvas, walls, bed, lighting and high-quality materials. Only correct the LOWER broken stone arch and stepping-stone path. First image currently invents a much too large arch front-center at normalized x0.38,y0.81. In original the lower broken arch lies near x0.38,y0.86 with its stone crown and broken right end around x0.46,y0.77; keep original much smaller/low silhouette, no tall intact arch atfront. Match every original stone path footprint: lower-left walkway curves down through arch and exits bottom aroundx0.4; right steppingstones curve fromx0.77,y0.75 throughx0.70,y0.85 thenx0.62,y0.94. Match original stone count, spacing, sizes and silhouettes carefully. Retain water gaps and original clear aisles. Do not move rest of architecture. No new objects, people, text. Full unchanged aspect and framing. Faithful remaster requiring collision footprints coincide with second image.\"}); store(\"cut109imageResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

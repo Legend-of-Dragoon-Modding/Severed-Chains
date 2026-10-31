@@ -1,0 +1,31 @@
+{
+  "background": "generated-underlay-v2.png",
+  "layers": {
+    "0": "generated-underlay-v2.png",
+    "1": "generated-closed-statue.png",
+    "2": "generated-underlay-v2.png",
+    "3": "generated-underlay-v2.png",
+    "4": "generated-underlay-v2.png",
+    "5": "generated-underlay-v2.png",
+    "6": "generated-underlay-v2.png",
+    "7": "generated-underlay-v2.png",
+    "8": "generated-closed-statue.png",
+    "9": "../base.png",
+    "10": "../base.png",
+    "11": "../base.png"
+  },
+  "dynamicLayers": [
+    1,
+    8,
+    9,
+    10,
+    11
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Actual runtime environment+2 script calls and original recorded layer states/masks are documented in audit.json.",
+    "A separate built-in ImageGen clean exposed plate follows the original underlay guide; raw source master is preserved.",
+    "Source artwork reviewed; exact-alpha staging and independent endpoint review determine final readiness.",
+    "An isolated modern sprite supplies independent object RGB, fitted to the exact original alpha. Low-alpha matte noise is excluded from atlas bounds and edge RGB extension."
+  ]
+}

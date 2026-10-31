@@ -1,0 +1,20 @@
+{
+  "background": "generated-underlay-step4.png",
+  "layers": {
+    "0": "generated-underlay-step4.png",
+    "1": "generated-underlay-step4.png",
+    "2": "generated-underlay-step4.png",
+    "3": "generated-underlay-step4.png",
+    "4": "generated-underlay-step4.png",
+    "5": "../base.png"
+  },
+  "dynamicLayers": [
+    5
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime script archive (environment index+2), actual native masks and observed layer states in gfx/backgrounds/disc1/cut-659/source/layer-resolution/audit.json.",
+    "Built-in imagegen produced a separate exposed underlay; raw modern master supplies only independent changing foreground RGB. Original master preserved.",
+    "Source underlay reviewed; exact-alpha staging and endpoint visual review determine readiness separately."
+  ]
+}

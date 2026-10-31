@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Exact fixed camera RPG cave-prison environment, full portrait384:512 canvas. Modern photorealistic Seles-level material fidelity. Retain original camera and every geometry position: upper-left rectangular stone doorway at x20% y20%, timber landing x24% y29%; central staircase descending right y32%-46%; narrow horizontal timber bridge x23%-80% y54%; lower right path descends out of frame; inset barred door x21% y45%; tall dark rock spires cover lower-left foreground. Preserve bridge width, railing posts and endpoints, all stair treads, walkable floor contours, every door threshold and original stone silhouettes. Warm amber existing lanterns, rough ochre cave stone, dark worn timber, deep chasm shadows. Do not add objects, platforms, trees, stairs or obstacles. No characters, text or UI. No crop zoom rotate or reframe. Final1536x2048.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-7077080a-128c-4a90-8e54-f3377f092611.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-33\\source\\original-composite.png"
+  ]
+}

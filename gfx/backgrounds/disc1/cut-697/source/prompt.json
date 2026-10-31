@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Fixed camera cinematic environment plate. Repaint exact original image into modern photorealistic game graphics. Preserve full canvas768x544 composition INCLUDING the empty black lower half: environment imagery occupies only top256 pixels, lower288 pixels remain pure black. Do not fill or extend into lower black area. Burning ruined village with huge fallen carved dragonlike stone head in central foreground facing viewer, orange glow visible within its mouth, jagged stone ruins and broken beams behind, flames lighting windows at left and right. Lock all object silhouettes and positions, identical camera, perspective, top image crop. Match modern realistic Seles materials: charred timber, rough stone, soot, credible fire lighting. No characters, text, UI, new objects or geometry changes. Output aspect768:544 full canvas. Final asset3072x2176.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-c048ecc2-2a1b-4892-a591-155cf9409af7.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-697\\source\\original-composite.png"
+  ]
+}

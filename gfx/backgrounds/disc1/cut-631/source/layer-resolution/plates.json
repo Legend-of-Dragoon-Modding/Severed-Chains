@@ -1,0 +1,21 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "open-underlay.png",
+    "1": "open-underlay.png",
+    "2": "open-underlay.png",
+    "3": "../base.png",
+    "4": "open-underlay.png",
+    "5": "open-underlay.png",
+    "6": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    3
+  ],
+  "evidence": [
+    "Original121-frame trace changes foreground3 hidden state. Retail alpha bbox52,262,108,308 on640x384 covers lower-left sunken doorway.",
+    "Builtin imagegen removed closed door from static underlay; dynamic door RGB retained from approved modern base; raw base untouched. Endpoint reviews pending final confirmation.",
+    "Prior wrong-directory script citations removed; actual original renderer trace independently proves dynamic slots. Correct sourceIndex+2 script audit pending."
+  ],
+  "visualReview": true
+}

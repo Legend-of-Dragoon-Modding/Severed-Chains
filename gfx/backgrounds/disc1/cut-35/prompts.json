@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Fixed camera prerendered prison rooftop night environment. Repaint exact supplied original in photorealistic detailed modern Seles-quality materials while retaining3:2 full canvas and exact camera, silhouette and geometry. Empty circular firepit of black stones and unburned sticks fills lower-left foreground; broad cracked stone terrace; two small existing braziers left mid-ground. Huge jagged stone dragon-mouth architectural arch at back right around x70% y40%, ring of pointed stone spikes extending around it; dark canyon and distant rock spires at back left. Preserve exact firepit contour, arch opening, terrace edge and spiked silhouette. Original dim teal night/canyon with subdued warm orange light on rock from existing braziers. No extra structures, flames in pit, objects, characters, text/UI. Do not crop zoom rotate or reframe. Final1536x1024.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-33a05887-5004-48a3-9936-bb4104867511.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-35\\source\\original-composite.png"
+  ]
+}

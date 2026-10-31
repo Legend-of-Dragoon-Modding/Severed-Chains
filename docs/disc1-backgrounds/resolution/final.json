@@ -1,0 +1,292 @@
+{
+  "worker": "final",
+  "complete": false,
+  "assigned": [
+    32,
+    30,
+    172,
+    175,
+    176,
+    177,
+    180,
+    181,
+    192,
+    193,
+    194,
+    195,
+    197,
+    198,
+    658,
+    659,
+    660,
+    57,
+    171
+  ],
+  "screens": [
+    {
+      "cut": 32,
+      "status": "resolved-static",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [],
+      "stagedValidation": "build/disc1/staged/cut-32/validation.json",
+      "evidence": "gfx/backgrounds/disc1/cut-32/source/layer-resolution/audit.json",
+      "reason": "Correct envsource+2 actual scripts: no rendered foreground transform/hide. Actual121-frameGPU/exportmatchedtracefixedvisible; unchanged strictstaticCJSpackagepassed."
+    },
+    {
+      "cut": 172,
+      "status": "resolved-static",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [],
+      "stagedValidation": "build/disc1/staged/cut-172/validation.json",
+      "evidence": "gfx/backgrounds/disc1/cut-172/source/layer-resolution/audit.json",
+      "reason": "Correct envsource+2 actual scripts: no rendered foreground transform/hide. Actual121-frameGPU/exportmatchedtracefixedvisible; unchanged strictstaticCJSpackagepassed."
+    },
+    {
+      "cut": 177,
+      "status": "resolved-static",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [],
+      "stagedValidation": "build/disc1/staged/cut-177/validation.json",
+      "evidence": "gfx/backgrounds/disc1/cut-177/source/layer-resolution/audit.json",
+      "reason": "Correct envsource+2 actual scripts: no rendered foreground transform/hide. Actual121-frameGPU/exportmatchedtracefixedvisible; unchanged strictstaticCJSpackagepassed."
+    },
+    {
+      "cut": 181,
+      "status": "resolved-static",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [],
+      "stagedValidation": "build/disc1/staged/cut-181/validation.json",
+      "evidence": "gfx/backgrounds/disc1/cut-181/source/layer-resolution/audit.json",
+      "reason": "Correct envsource+2 actual scripts: no rendered foreground transform/hide. Actual121-frameGPU/exportmatchedtracefixedvisible; unchanged strictstaticCJSpackagepassed."
+    },
+    {
+      "cut": 195,
+      "status": "resolved-static",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [],
+      "stagedValidation": "build/disc1/staged/cut-195/validation.json",
+      "evidence": "gfx/backgrounds/disc1/cut-195/source/layer-resolution/audit.json",
+      "reason": "Correct envsource+2 actual scripts: no rendered foreground transform/hide. Actual121-frameGPU/exportmatchedtracefixedvisible; unchanged strictstaticCJSpackagepassed."
+    },
+    {
+      "cut": 198,
+      "status": "resolved-static",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [],
+      "stagedValidation": "build/disc1/staged/cut-198/validation.json",
+      "evidence": "gfx/backgrounds/disc1/cut-198/source/layer-resolution/audit.json",
+      "reason": "Correct envsource+2 actual scripts: no rendered foreground transform/hide. Actual121-frameGPU/exportmatchedtracefixedvisible; unchanged strictstaticCJSpackagepassed."
+    },
+    {
+      "cut": 30,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        4
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-30/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-30/layered-validation.json",
+      "review": "Closed rock pillar and exposed lit staircase endpoints match original open-passage guide; no fixed pillar ghost in hidden state. Raw master and static foreground5 retained; exact retail masks and current metric depth order checked."
+    },
+    {
+      "cut": 175,
+      "status": "independent-layer-review-in-progress",
+      "ready": false,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        10
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-175/source/layer-resolution/audit.json"
+    },
+    {
+      "cut": 176,
+      "status": "independent-layer-review-in-progress",
+      "ready": false,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-176/source/layer-resolution/audit.json"
+    },
+    {
+      "cut": 180,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        5
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-180/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-180/layered-validation.json",
+      "review": "Crate and rope removed cleanly from underlay; all-visible and recorded y-120 endpoints preserve independent crate with no fixed ghost."
+    },
+    {
+      "cut": 192,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        2,
+        15
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-192/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-192/layered-validation.json",
+      "review": "Upper window-wall and lower-left wall independently reveal original sigil room and arch/stair scenery. All-visible, dynamic-hidden and recorded endpoint previews reviewed; no fixed wall ghost. Original masks and metricdepth order preserved."
+    },
+    {
+      "cut": 193,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        3,
+        4,
+        7,
+        8,
+        10,
+        12,
+        15
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-193/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-193/layered-validation.json",
+      "review": "Independent right-middle slit facade, lower merchant facade and right stair facade reveal original room spaces. Actual scripts toggle3/7/15 together as cutaway group; static14 uses dark bridge-wall RGB. Lower facade10 has native rectangular open passage plus leaf swung right; separate12 closed leaf preserves opaque stone corners. All-visible, hidden, recorded endpoints and four actual script visibility-group previews reviewed. Borrowed staged preview refreshed; no gameplay/full traversal claim."
+    },
+    {
+      "cut": 194,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        3,
+        5
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-194/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-194/layered-validation.json",
+      "review": "Three-window upper-right wall independently uses opaque native-layout reconstructed texture, with detailed ceiling and ledge rather than matte edge extension. Left wall original modern RGB retained; exposed bedroom/bath underlay, all-visible and hidden endpoints reviewed. Borrowed staging preview refreshed."
+    },
+    {
+      "cut": 197,
+      "status": "independent-layer-review-in-progress",
+      "ready": false,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-197/source/layer-resolution/audit.json"
+    },
+    {
+      "cut": 658,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        1,
+        8,
+        9,
+        10,
+        11
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-658/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-658/layered-validation.json",
+      "review": "Corrected open plate preserves native RIGHT forearm/orb/gown while LEFT/front statue section exposes green lift with magenta cable/controls. Independent closed statue source rejoins static right portion, preserving exact native mask. Closed/open endpoints, three gem controls and copper edge reviewed; prior wrong-side underlay and mismatched isolated sprite rejected. Borrowed staging preview refreshed."
+    },
+    {
+      "cut": 659,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        5
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-659/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-659/layered-validation.json",
+      "review": "Closed barred door and exposed greenish stair passage reviewed against original guide; exactmask/depth endpoints passed."
+    },
+    {
+      "cut": 660,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        3
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-660/source/layer-resolution/audit.json",
+      "review": "Second isolated throne reconstruction follows exact original wide projected pose. Threshold128 bounds and edge RGB extension remove black/green matte noise. All-visible and recorded raised y-56 endpoints reviewed; clean carpet underlay has no fixed throne ghost. Borrowed staged preview refreshed.",
+      "stagedValidation": "build/disc1/staged/cut-660/layered-validation.json"
+    },
+    {
+      "cut": 57,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        8
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-57/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-57/layered-validation.json",
+      "review": "Original beam mask uses original modern source RGB; exposed underlay removes charred beam and preserves ruin/ground. All-visible and hidden endpoints reviewed; isolated-sprite fit rejected because it stretched beam RGB beyond object silhouette. Borrowed staged preview refreshed."
+    },
+    {
+      "cut": 171,
+      "status": "independent-plates-staged",
+      "ready": true,
+      "gameplayVerified": false,
+      "dynamicLayers": [
+        0,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "evidence": "gfx/backgrounds/disc1/cut-171/source/layer-resolution/audit.json",
+      "stagedValidation": "build/disc1/staged/cut-171/layered-validation.json",
+      "review": "Six independent door overlays now use matched coherent modern closed/open scene pair. Atlas and raw-master cuts that carried hard jamb seams were rejected. Exposed dark recesses remove fixed leaves; exact native projected leaf/jamb contours restored. All-visible and hidden endpoints reviewed; borrowed staged preview refreshed. Native contour leaves narrow recess slivers around some projected leaves."
+    }
+  ],
+  "initialFindings": {
+    "fixedTraceFalsePositives": [
+      32,
+      172,
+      177,
+      181,
+      195,
+      198
+    ],
+    "needsIndependentPlateReview": [
+      30,
+      175,
+      176,
+      180,
+      192,
+      193,
+      194,
+      197,
+      658,
+      659,
+      660
+    ],
+    "method": "Preserve raw master; exclude real dynamic foregrounds from original reference, repaint clean underlying background, derive independent per-layer RGB sources and restore exact original alpha using shared strict layered packager. Out-of-range script overlay indices excluded only with manifest count plus actual fixed-visible original trace evidence.",
+    "scriptAttributionCorrection": "Prior audit used envsource-1 inherited production-plan; actual RetailSubmap scripts use envsource+2. Prior script claims quarantined, observed originalstates remain valid."
+  }
+}

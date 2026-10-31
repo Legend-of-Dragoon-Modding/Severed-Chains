@@ -1,0 +1,898 @@
+{
+  "step": 4,
+  "screens": [
+    {
+      "cut": 70,
+      "scene": 2,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 69,
+        "scene": 2
+      }
+    },
+    {
+      "cut": 80,
+      "scene": 9,
+      "issues": [
+        "Lower circular floor platform remains left of original by about6% of canvas width after one focused correction; clear aisle and footing require alignment check",
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 79,
+        "scene": 9
+      }
+    },
+    {
+      "cut": 631,
+      "scene": 1,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 3"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 75,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 67,
+      "scene": 46,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 66,
+        "scene": 46
+      }
+    },
+    {
+      "cut": 89,
+      "scene": 34,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 69,
+        "scene": 34
+      }
+    },
+    {
+      "cut": 88,
+      "scene": 33,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 89,
+        "scene": 33
+      }
+    },
+    {
+      "cut": 628,
+      "scene": 26,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 92,
+        "scene": 26
+      }
+    },
+    {
+      "cut": 93,
+      "scene": 29,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 92,
+        "scene": 29
+      }
+    },
+    {
+      "cut": 94,
+      "scene": 3,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 93,
+        "scene": 3
+      }
+    },
+    {
+      "cut": 71,
+      "scene": 31,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 66,
+        "scene": 31
+      }
+    },
+    {
+      "cut": 58,
+      "scene": 0,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 95,
+      "scene": 31,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 99,
+        "scene": 31
+      }
+    },
+    {
+      "cut": 99,
+      "scene": 18,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 4, 5"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 95,
+        "scene": 18
+      }
+    },
+    {
+      "cut": 100,
+      "scene": 29,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 95,
+        "scene": 29
+      }
+    },
+    {
+      "cut": 102,
+      "scene": 24,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 6"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 95,
+        "scene": 24
+      }
+    },
+    {
+      "cut": 103,
+      "scene": 0,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 104,
+      "scene": 16,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 95,
+        "scene": 16
+      }
+    },
+    {
+      "cut": 96,
+      "scene": 0,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 97,
+      "scene": 8,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 626,
+        "scene": 8
+      }
+    },
+    {
+      "cut": 626,
+      "scene": 24,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 6"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 97,
+        "scene": 24
+      }
+    },
+    {
+      "cut": 627,
+      "scene": 0,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 632,
+      "scene": 1,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 97,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 674,
+      "scene": 0,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 109,
+      "scene": 0,
+      "issues": [
+        "Lower broken arch/stepping-stone shore alignment remains uncertain after one focused correction; do not count as artwork-ready"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 111,
+      "scene": 0,
+      "issues": [
+        "Engine/exporter applies special cut111 placement correction;1536x1540 preview is not GPU/export alignment proof"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 120,
+      "scene": 0,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 7, 8"
+      ],
+      "existingTrace": true,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 121,
+      "scene": 6,
+      "issues": [
+        "build\\disc1\\scripts\\366\\5.txt:105 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[24]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:107 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[24]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:129 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[26]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:130 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[27]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:142 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[26]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:143 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[27]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:155 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[26]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:156 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[27]]] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 118,
+        "scene": 6
+      }
+    },
+    {
+      "cut": 134,
+      "scene": 0,
+      "issues": [
+        "build\\disc1\\scripts\\405\\3.txt:72 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\405\\3.txt:79 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\405\\3.txt:100 call SMap::scriptSetEnvForegroundPosition, stor[13], stor[10], stor[8] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\405\\3.txt:108 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 141,
+      "scene": 1,
+      "issues": [
+        "build\\disc1\\scripts\\426\\1.txt:866 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 140,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 142,
+      "scene": 0,
+      "issues": [
+        "build\\disc1\\scripts\\429\\1.txt:1043 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 141,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 143,
+      "scene": 51,
+      "issues": [
+        "build\\disc1\\scripts\\432\\1.txt:1005 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 142,
+        "scene": 51
+      }
+    },
+    {
+      "cut": 144,
+      "scene": 62,
+      "issues": [
+        "build\\disc1\\scripts\\435\\1.txt:925 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 142,
+        "scene": 62
+      }
+    },
+    {
+      "cut": 145,
+      "scene": 34,
+      "issues": [
+        "build\\disc1\\scripts\\438\\1.txt:815 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 142,
+        "scene": 34
+      }
+    },
+    {
+      "cut": 146,
+      "scene": 0,
+      "issues": [
+        "build\\disc1\\scripts\\441\\1.txt:913 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1431 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x14 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1543 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x15 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1546 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x14 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1849 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1862 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1882 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1893 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 143,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 147,
+      "scene": 55,
+      "issues": [
+        "build\\disc1\\scripts\\444\\1.txt:870 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 144,
+        "scene": 55
+      }
+    },
+    {
+      "cut": 148,
+      "scene": 0,
+      "issues": [
+        "build\\disc1\\scripts\\447\\1.txt:1084 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1085 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x1 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1086 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1087 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1158 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x0 ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 142,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 149,
+      "scene": 1,
+      "issues": [
+        "build\\disc1\\scripts\\450\\1.txt:1445 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xd ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\450\\1.txt:1989 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xd ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 646,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 150,
+      "scene": 60,
+      "issues": [
+        "build\\disc1\\scripts\\453\\1.txt:999 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 149,
+        "scene": 60
+      }
+    },
+    {
+      "cut": 151,
+      "scene": 35,
+      "issues": [
+        "build\\disc1\\scripts\\456\\1.txt:956 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 149,
+        "scene": 35
+      }
+    },
+    {
+      "cut": 637,
+      "scene": 1,
+      "issues": [
+        "build\\disc1\\scripts\\642\\1.txt:958 call SMap::scriptSetEnvForegroundPosition, 0x0, 0xffffff74, 0xe ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:959 call SMap::scriptSetEnvForegroundPosition, 0x0, 0xffffff74, 0xf ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1001 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xe ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1002 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xf ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1015 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xe ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1016 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xf ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1112 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[20] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1113 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[21] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1114 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[22] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 151,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 636,
+      "scene": 0,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 14, 15"
+      ],
+      "existingTrace": true,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 647,
+      "scene": 0,
+      "issues": [
+        "build\\disc1\\scripts\\672\\1.txt:937 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 155,
+      "scene": 7,
+      "issues": [
+        "build\\disc1\\scripts\\468\\1.txt:728 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\468\\1.txt:756 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\468\\1.txt:790 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\468\\1.txt:819 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 154,
+        "scene": 7
+      }
+    },
+    {
+      "cut": 158,
+      "scene": 14,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 1, 6, 7, 8, 11, 13, 15"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 157,
+        "scene": 14
+      }
+    },
+    {
+      "cut": 159,
+      "scene": 44,
+      "issues": [
+        "build\\disc1\\scripts\\480\\1.txt:655 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:656 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:657 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:658 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:659 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:660 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xf, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:661 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xb, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:668 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:669 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:670 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:671 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:672 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:673 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xf, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:674 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xb, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:677 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:678 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:679 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:680 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:681 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:682 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:683 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:809 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:895 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:896 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:897 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:898 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:899 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:900 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:901 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:937 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x5, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:938 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xc, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:944 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xe, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1037 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1038 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1039 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1040 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1041 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1042 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1043 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1394 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1395 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1396 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1397 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xf, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1430 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1431 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1432 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xb, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1433 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 160,
+        "scene": 44
+      }
+    },
+    {
+      "cut": 165,
+      "scene": 0,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 4"
+      ],
+      "existingTrace": true,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 166,
+      "scene": 0,
+      "issues": [
+        "build\\disc1\\scripts\\501\\1.txt:183 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 32,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 31,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 30,
+      "scene": 8,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 32,
+        "scene": 8
+      }
+    },
+    {
+      "cut": 172,
+      "scene": 17,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 171,
+        "scene": 17
+      }
+    },
+    {
+      "cut": 175,
+      "scene": 3,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 2"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 171,
+        "scene": 3
+      }
+    },
+    {
+      "cut": 176,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 171,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 177,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 171,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 180,
+      "scene": 46,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 5"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 178,
+        "scene": 46
+      }
+    },
+    {
+      "cut": 181,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 178,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 192,
+      "scene": 37,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 15"
+      ],
+      "existingTrace": true,
+      "entryEvidence": {
+        "sourceCut": 193,
+        "scene": 37
+      }
+    },
+    {
+      "cut": 193,
+      "scene": 53,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 192,
+        "scene": 53
+      }
+    },
+    {
+      "cut": 194,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 192,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 195,
+      "scene": 4,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 189,
+        "scene": 4
+      }
+    },
+    {
+      "cut": 197,
+      "scene": 0,
+      "issues": [
+        "Original-renderer inspection: Hidden or offset foreground layers: 2, 3, 4, 6"
+      ],
+      "existingTrace": true,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 198,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": "Exploratory entry 0; story coverage deferred"
+    },
+    {
+      "cut": 658,
+      "scene": 1,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 194,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 659,
+      "scene": 0,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 658,
+        "scene": 0
+      }
+    },
+    {
+      "cut": 660,
+      "scene": 1,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "existingTrace": false,
+      "entryEvidence": {
+        "sourceCut": 192,
+        "scene": 1
+      }
+    },
+    {
+      "cut": 68,
+      "scene": 18,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/210"
+    },
+    {
+      "cut": 79,
+      "scene": 21,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/243"
+    },
+    {
+      "cut": 87,
+      "scene": 1,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/267"
+    },
+    {
+      "cut": 657,
+      "scene": 0,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/681"
+    },
+    {
+      "cut": 57,
+      "scene": 0,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/177"
+    },
+    {
+      "cut": 133,
+      "scene": 20,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/405"
+    },
+    {
+      "cut": 154,
+      "scene": 0,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/468"
+    },
+    {
+      "cut": 171,
+      "scene": 14,
+      "existingTrace": true,
+      "issues": [
+        "Confirmed independently changing nonempty layers in corrected runtime scripts"
+      ],
+      "newlyDiscoveredDuringStep4": true,
+      "wasInstalled": true,
+      "scriptDirectory": "build/disc1/scripts/519"
+    }
+  ],
+  "initialCandidates": 64,
+  "additionalQuarantinedPacks": 8
+}

@@ -1,0 +1,8 @@
+{
+  "tool": "built-in imagegen",
+  "request": "Remove upper central window wall and lower-left wall, revealing original sigil/carpet room and stone arches; preserve all fixed camera and architecture.",
+  "references": [
+    "../base.png",
+    "original-underlay-guide.png"
+  ]
+}

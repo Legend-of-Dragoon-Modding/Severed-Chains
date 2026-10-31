@@ -1,0 +1,8 @@
+{
+  "prompt": "Edit image 1, the original Bale fountain square game background, into a premium 2026 photorealistic pre-rendered game environment. Image 2 is ONLY a material realism/lighting quality reference; do not borrow its terrain or camera. Preserve image 1's exact elevated fixed camera, crop, perspective, ALL architecture outlines, rooflines, round fountain rim and statue positions, canal, stone bridge arches, stairs, paths, door thresholds and iron rails. Full 4:3 canvas 2048x1536. Match every walkway and elevation to the original for character footing. Warm late afternoon autumn light, fine weathered cream sandstone blocks and mortar, realistic clay roof tiles, aged timber and plaster, restrained moss in joints, golden autumn foliage with fine leaves, subtle realistic reflections on the fountain. Keep fountain exactly its original size and shape. Preserve foreground roof/chimney silhouettes and all tree placement. No people, characters, UI, labels, text. No added obstacles, pots, rocks or plants on paths. All dark canal/arch interiors must be fully painted, retaining the original occlusion shapes. Transform material detail and illumination dramatically while retaining original geometry precisely. Crisp cinematic realism, no painterly brushwork, no stylized low-poly look.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-66/geometry-guide.png",
+    "gfx/backgrounds/seles-overlook/references/approved-modern.png"
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "layer": 0,
+    "alphaPixels": 2132,
+    "backgroundOverlap": 2132,
+    "differentRgb": 1374
+  },
+  {
+    "layer": 1,
+    "alphaPixels": 928,
+    "backgroundOverlap": 928,
+    "differentRgb": 853
+  },
+  {
+    "layer": 2,
+    "alphaPixels": 2688,
+    "backgroundOverlap": 2688,
+    "differentRgb": 2158
+  },
+  {
+    "layer": 3,
+    "alphaPixels": 2201,
+    "backgroundOverlap": 2201,
+    "differentRgb": 1917
+  },
+  {
+    "layer": 4,
+    "alphaPixels": 1564,
+    "backgroundOverlap": 1564,
+    "differentRgb": 1389
+  },
+  {
+    "layer": 5,
+    "alphaPixels": 1976,
+    "backgroundOverlap": 1976,
+    "differentRgb": 1586
+  },
+  {
+    "layer": 6,
+    "alphaPixels": 6264,
+    "backgroundOverlap": 6264,
+    "differentRgb": 5504
+  },
+  {
+    "layer": 7,
+    "alphaPixels": 1240,
+    "backgroundOverlap": 1240,
+    "differentRgb": 978
+  },
+  {
+    "layer": 8,
+    "alphaPixels": 1500,
+    "backgroundOverlap": 1500,
+    "differentRgb": 1155
+  },
+  {
+    "layer": 9,
+    "alphaPixels": 672,
+    "backgroundOverlap": 672,
+    "differentRgb": 544
+  },
+  {
+    "layer": 14,
+    "alphaPixels": 42344,
+    "backgroundOverlap": 42344,
+    "differentRgb": 42211
+  },
+  {
+    "layer": 15,
+    "alphaPixels": 9981,
+    "backgroundOverlap": 9981,
+    "differentRgb": 9902
+  }
+]

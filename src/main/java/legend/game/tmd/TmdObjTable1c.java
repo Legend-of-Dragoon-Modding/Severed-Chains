@@ -26,6 +26,19 @@ public class TmdObjTable1c {
 
   Obj obj;
 
+  /** Separate renderer ownership while retaining the original animation/collision metadata. */
+  TmdObjTable1c(final TmdObjTable1c source, final Obj replacement) {
+    this.name = source.name;
+    this.vert_top_00 = source.vert_top_00;
+    this.n_vert_04 = source.n_vert_04;
+    this.normal_top_08 = source.normal_top_08;
+    this.n_normal_0c = source.n_normal_0c;
+    this.primitives_10 = source.primitives_10;
+    this.n_primitive_14 = source.n_primitive_14;
+    this.scale_18 = source.scale_18;
+    this.obj = replacement;
+  }
+
   public TmdObjTable1c(final String name, final FileData data, final FileData baseOffset) {
     this.name = name;
 

@@ -1,0 +1,20 @@
+{
+  "cut": 148,
+  "purpose": "Identify original foreground13 floor-cover/ladder opening in lower shop room",
+  "syntheticStateProbe": true,
+  "fullStoryOrTraversalVerified": false,
+  "evidenceDirectory": "build\\disc1\\captures\\cut-148-lower-room-v3\\original",
+  "actualImageDifferenceBounds": [
+    417,
+    252,
+    585,
+    468
+  ],
+  "cameraAtCapture": "(-3.100E+1 -1.000E+2)",
+  "failedCameraAttempts": [
+    "lower-room: originalcameraunchanged",
+    "lower-room-v2: requestedcameraoffscreen"
+  ],
+  "dialogueEvidence": "build/disc1/cut148-decoded-text.txt",
+  "interpretation": "Original actual-state pair reveals a wooden ladder/recessed opening under the floor cover; shop dialogue describes Dabas underground. New artwork must preserve both states."
+}

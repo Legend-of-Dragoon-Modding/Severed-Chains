@@ -1,0 +1,78 @@
+{
+  "cut": 102,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 3610,
+      "timestamp": "2026-10-30T19:05:11.421Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-102/background.png\"],transparent_background:false,prompt:\"Edit first high-resolution medieval tavern background into OPEN-DOOR clean underlay. Preserve entire camera and layout, furniture, all walls, black exterior canvas, materials and lighting. ONLY change the lower front-center entrance at normalized x0.49..0.55,y0.66..0.87. Remove the closed wooden door filling its stone arch and show the dark interior passage and continuous threshold floor. Follow the open doorway shape visible in second original reference, keeping its right-hinged wooden door swung to the right side, narrow and edge-on; no wood door should block center of doorway. Keep stone arch, lanterns and threshold unchanged. The second low-resolution reference has green placeholder patches elsewhere: IGNORE those entirely and don't reproduce green. No people,text,newobjects. Output same fullcanvas dimensions and aspect as first. This image supplies exposed scenery when a separate original door foreground plate is hidden, so no closed door ghost can remain in the opening.\"}); store(\"cut102underlayResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 3684,
+      "timestamp": "2026-10-30T19:08:48.661Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-102/foreground-6.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/base.png\"],transparent_background:false,prompt:\"Create a faithful high-detail remaster of the SINGLE isolated foreground door plate in FIRST reference. FIRST image is strict placement and silhouette target, SECOND reference supplies warm realistic medieval wooden door and stone materials/style only. Output full2:1black canvas, with the small door plate at EXACT normalized bbox x0.484375..0.548828,y0.667969..0.890625, identical overall camera/footprint/silhouette to FIRST image. Do NOT enlarge or center the plate. All area outside original small plate remainsblack. This layer is a CLOSED woodplank door and its short lower stone doorstep, rendered at the same isometric angle as original. Paint wood all the way to original door-top/door-side silhouette, retain originaldarkironband placements and projected stone thresholdbottom. No whole room, no arch opening, no otherobjects. Originalalpha mask will later clip this RGBplate exactly; ensure woodpanel andfloor align precisely tooriginalpixels. Full2:1canvas mandatory.\"}); store(\"cut102doorResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 3817,
+      "timestamp": "2026-10-30T19:14:59.214Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/original-composite.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/base.png\"],transparent_background:false,prompt:\"Create geometrically faithful high-resolution remaster of FIRST original2:1isometric medieval tavern gamebackground, using SECOND image only for warm realistic material/detail/lighting style. EXACT FIRST composition, framing, projected floor/wall outlines and landmarks required. Important: SECOND image has incorrect front doorway much too HIGH; don'tcopysecondgeometry. Original front doorway/closed wooden panel lies at normalized x0.484..0.549,y0.668..0.891, doorpanel spanningmost of thattallregion. Match original narrowdoor and its arch/floor landing exactly, with originalfrontwall atthatlocation. All furniture, table, stairs, ceilingcutaway, roomperimeter, crates/barrels/hammock preserved at FIRST originalcoordinates. Match2:1fullcanvasandblackexterior. Do not zoom orcrop. Do not invent architecture. Nocharacters,text. Build closeddoorstate following firstreference with enoughtexturequality of second. Strict gamewalkable geometry and foregroundmask alignment dependonfaithfuloriginalfootprints.\"}); store(\"cut102geometryResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 4501,
+      "timestamp": "2026-10-31T00:07:15.291Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/open-door.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/cut102-retail-footprint-guide.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/original-composite.png\"],transparent_background:false,prompt:\"Precise local gamegeometry correction. FIRSTimage is edit target. SECOND diagnostic guide marks REQUIREDoriginaldoor/thresholdposition inmagenta insidecyanbox. THIRD originalgamebackground is exactgeometryauthority. Rebuild ONLY frontcenter stone doorportal/arch and its protrudinglanding so an independentdoorplate fits SECONDmarkedfootprint. CurrentFIRSTportal/landingistooHIGH. Move/extendopeningDOWNandslightlyRIGHT: doorway opening shouldstartaroundpixel(860,592), endaround(954,750); thresholdandstoneprojectedlandingextenddown topixel790, withinx859..963. Stonearchrimandlampjambsmustsurroundthisloweropening. Continuefrontwallmasonryconvincinglywhereoldhigherportalwas. Keepentire restofroom/furniture/framing/blackexterior/lighting/materialsunmodified. KeepentranceOPEN, darkpassage,no wooddoorleaf (separateplate). OutputcleanartONLY: NOmagenta/cyanbox/markers/text. Same1774x887fullcanvas/aspect,camera,nocrop. Matchingoriginalgameforegroundmaskiscritical, don'tleaveoldhigherportaloroldlandingghost.\"}); store(\"cut102guidedResult\",r); generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 4701,
+      "timestamp": "2026-10-31T00:26:38.285Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 120000, \"max_output_tokens\": 300}\nconst pending=tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/open-door.png\"],transparent_background:false,prompt:\"Createcleancontinuousfront-wallunderlayfromthismedievaltavernscene. Preserveentirecamera/framing,room,furniture,crates,barrels,light/materialstyle. Remove ENTIRE frontcenterDOORPORTAL: stonearch,dooropening,doorleaf,bothflankinglampsandprojectingdoorstep/landing, aroundnormalizedx.43..57,y.52..90. Fillwithcontinuouscurvedstonewallandmatchingfoundationplinth thatconnectsseamlesslytotheleftstoragealcovewallandrightnoticewall. No traceofoldarch/opening/door/step/lamps remains. Preserveleftcrate/barrelalcoveandrightnotices,don'taddobjects. Thisisunderlayfornewpreciselyregisteredportalunitplacedlater; doorwaymustbecompletelygonehere. Samefull2:1canvasasinput,nocrop/zoom,text,characters,newobjects.\"});\nawait yield_control();\nconst r=await pending;store(\"cut102wallResult\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 4706,
+      "timestamp": "2026-10-31T00:27:10.071Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 120000, \"max_output_tokens\": 300}\nconst pending=tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/cut102-open-portal-reference.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/base.png\"],transparent_background:true,prompt:\"RemasterFIRSTcroppedoriginalgameportal intoONEisolateddoorway/thresholdunit ontransparentbackground. FIRSTisexactgeometry/poseauthority: preserveitsprojectedstonearch,jambs,darkopening,half-openwoodendoorleafinside loweropening,andstonefloor/threshold atbottom atEXACTrelativepositions/proportions. SECONDfullroomreference supplieswarmrealisticstonemasonry/wooddetail/torchlightstyleONLY. Outputtallportraitunitwithwidth-toheight50:81, tightlyframedlikeFIRST. No restofroom/furniture oranythingoutsideportalunit. Keeporiginalisometricprojection: portalleftedgevertical, topstonearchslantingwithwall, wooddoorleafhalfopen diagonallyintheopening, projectedstonethresholdatbottom. DoNOTstraightenintoaflatfrontaldoor. Thinsofttransparentoutsideedgesaroundstoneworkallowjoiningexistingwall; solidstone/opening/floorinterioropaque. Two verysmallwarmmetaldoorlampsmayfitjambs ifpartofunit,matchingSECONDstyle. Noperson/text/newarchitecture. Thiswillbeplacedasexactnative50x81worldpatch; innerdoorfootprintmustmatchFIRSTcrop.\"});\nawait yield_control();\nconst r=await pending;store(\"cut102portalResult\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 5752,
+      "timestamp": "2026-10-31T01:40:30.473Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Edit this transparent game doorway asset. REMOVE THE WOODEN HALF-HEIGHT DOOR COMPLETELY, including every plank, iron strap, handle, door edge and leaf. Keep the exact stone arch, wall stones, both hanging lamps, camera, crop, sill, landing and lighting unchanged. The opening must be an EMPTY dark passage with a continuous worn stone threshold and landing where the removed wooden leaf stood. No wooden leaf anywhere, no open door swung aside, no replacement door, no bar, no gate. Transparent outside the doorway assembly, opaque dark recess inside the arch. Match all original stone/lantern geometry closely; only remove the wooden gate and reconstruct the revealed stone floor/shadow behind it.\";\nstore(\"cut102leafPrompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/portal-open-unit.png\"],transparent_background:true});\nawait yield_control();const r=await pending;store(\"cut102leaf\",r);generatedImage(r);\n"
+    },
+    {
+      "sessionLine": 5824,
+      "timestamp": "2026-10-31T01:43:49.608Z",
+      "referencedCuts": [
+        102
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "const prompt=\"Create a transparent game atlas with TWO MATCHING doorway assemblies side by side, equal panels, clear transparent gutter. Use this reference for warm stone material, lamp style, isometric angle and overall silhouette, but CORRECT ITS PROPORTIONS. Each doorway assembly is SHORTER with a LONG projecting stone landing. Within EACH panel: top stone arch/wall occupies y0\u201325% of height; the actual doorway opening/wooden door occupies y25\u201362%; the remaining y62\u2013100% is ONLY a long continuous worn-stone landing/floor projecting toward the viewer. No upright wood anywhere below62%height. Left assembly: EMPTY open dark passage, absolutely no wooden leaf. Right assembly: exact same fixed stone arch, lamps and landing, but passage CLOSED with a weathered brown wooden door; door bottom terminates at62%height, then the SAME long empty stone floor to100%. Both panels same viewpoint and exact fixed geometry. The door must not extend down across the projecting landing. No half-height gate. Transparent outside assemblies, opaque black recess inside left arch, stone flooring opaque, no text. Needed for a 50x81-native-pixel doorway with leaf only about30pixels high and floor about30pixels long.\";\nstore(\"cut102pairPrompt\",prompt);\nconst pending=tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-102/source/layer-resolution/portal-open-unit.png\"],transparent_background:true});\nawait yield_control();const r=await pending;store(\"cut102pair\",r);generatedImage(r);\n"
+    }
+  ]
+}

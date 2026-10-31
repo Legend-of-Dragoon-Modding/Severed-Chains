@@ -1,0 +1,16 @@
+{
+  "scope": "Source generation requests; readiness is separate in resolution/middle.json",
+  "records": [
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/underlay-generated.png",
+      "prompt": "EditFIRSTruinedshrinebackground to OPEN SECRET PASSAGE state. Remove ONLY narrow carvedstarstonepanel in SECOND magenta region (left archside nearx.125..208,y.449..664). Reveal originalsunlitpassage/openarchedgap andstairsbehind matchingTHIRDnativecleanreference. No starpanel, solidstoneblockorghostofpanel remains insidethisopening. Preserve surroundingstonejambandcolumn, stairs/walkablefootprints, fullcamera,railtrack,statue,water,foliage,lighting/materials,everythingelse. No magenta,people,text,newobjects. Samefull3:2canvasnoframingchange.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-165/source/base.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-165/source/layer-resolution/removal-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-165/source/layer-resolution/clean-original-guide.png"
+      ],
+      "transparent_background": false
+    }
+  ]
+}

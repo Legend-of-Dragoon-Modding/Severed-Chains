@@ -1,0 +1,9 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Fixed camera prerendered RPG ruined village environment. Image 1 exact geometry reference; image 2 approved modern realistic Seles material fidelity only. Repaint the original in detailed photorealistic materials. Preserve full 2:1 composition, camera, perspective, every broken wall and heavy charred beam silhouette. Foreground collapsed masonry at left, diagonal beam and deep ruined house doorway at right, empty debris-strewn street receding to pale smoky center x45% y44%, roofless timber skeletons across back center. Retain exact walkable street contour and all openings, no new obstacles. Original muted gray daylight, dusty haze, brown charred wood, dull stone. No active flames, characters, new trees, UI or text. No zoom crop rotate or reframe. Final canvas 2048x1024.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-758d48fb-52b5-436c-b75f-119351ede5c6.png",
+  "references": [
+    "gfx/backgrounds/disc1/cut-741/source/original-composite.png",
+    "gfx/backgrounds/seles-overlook/background.png"
+  ]
+}

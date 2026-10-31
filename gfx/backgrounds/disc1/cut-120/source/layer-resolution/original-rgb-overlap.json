@@ -1,0 +1,20 @@
+[
+  {
+    "layer": 6,
+    "alphaPixels": 6746,
+    "backgroundOverlap": 6746,
+    "differentRgb": 6482
+  },
+  {
+    "layer": 7,
+    "alphaPixels": 6807,
+    "backgroundOverlap": 6807,
+    "differentRgb": 6556
+  },
+  {
+    "layer": 8,
+    "alphaPixels": 6967,
+    "backgroundOverlap": 6967,
+    "differentRgb": 6712
+  }
+]

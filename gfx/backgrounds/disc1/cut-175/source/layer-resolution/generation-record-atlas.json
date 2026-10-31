@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Modernize these SIX original foreground texture crops in the exact same atlas layout. Image1 is layout authority: preserve each crop's geometry, visible surfaces, perspective, silhouette, location and bounding rectangle inside its cell; transparent space must stay transparent. Image2 is the modern target HOUSE style and texture palette. Top-left/top-middle are oblique open doorway leaves plus adjacent warm floor/threshold. Top-right and bottom row are partial stone/timber interior cutaway wall segments with door recesses, shelf bottles and upper black timber cap; keep their wall edges and original open/closed poses, do not invent freestanding doors or furniture. Replace pixelation with crisp warm stone blocks, dark timber, wood grain, bottles and warm torchlight as image2. For floor patches use image2's warm stone floor material at the same projected angle. No new chairs/tables, no new props, no rearranging/recentering/scaling crops, no borders or text. Output same square transparent sprite atlas.",
+  "inputs": [
+    "original-foreground-atlas.png",
+    "generated-underlay.png"
+  ],
+  "output": "generated-foreground-atlas.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-131b18ad-2ab9-43bb-bf2d-6f3fe538106d.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

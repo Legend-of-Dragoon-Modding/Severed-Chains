@@ -1,0 +1,18 @@
+{
+  "cuts": [],
+  "reason": "Corrected independent plates installed; focused renderer verification pending.",
+  "workerEvidence": {
+    "early": "docs\\disc1-backgrounds\\resolution\\installed-early.json",
+    "middle": "docs\\disc1-backgrounds\\resolution\\installed-middle.json"
+  },
+  "repairedCuts": [
+    57,
+    68,
+    79,
+    87,
+    133,
+    154,
+    171,
+    657
+  ]
+}

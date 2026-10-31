@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Exact fixed camera fantasy prison rooftop environment plate. Upgrade original to modern photorealistic Seles-quality materials while preserving exact2:1 full canvas, perspective and geometry. Broad flat cracked stone terrace occupies lower half, circular ring of firepit stones and dry sticks at lower left, small existing brazier at left near parapet. Huge jagged stone dragon-mouth arch with spiked stone ribs at back center-left, doorway x52% y38%, dark stone wall pillar cropped at right. Misty vertical canyon spires left background under blue-gray dusk. Keep all original shapes, firepit outline, terrace edge, opening, stone paving levels and walkable clear surfaces exactly. Original cool dusky palette with subdued warm existing light. No new props, stairs, structures, people, active pit flames, UI/text. No crop zoom rotate or reframe. Final2048x1024.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-5d293e21-d4ba-4bb3-aa4e-149d2e5be9d5.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-36\\source\\original-composite.png"
+  ]
+}

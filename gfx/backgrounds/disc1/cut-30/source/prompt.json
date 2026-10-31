@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Fixed camera game cave chamber. Repaint exact original image into modern photorealistic Seles-level materials and lighting quality. Preserve 3:2 full canvas camera and geometry: broad sandy bare cave floor center/bottom; ribcage skeleton at bottom-left; human skull at far lower-right; rubble at edges; huge rough blue-gray stone pillar/right wall occupying right third, low stone step/ledge at its base; warm sunlit opening upper-left around x38% y27% framed by dark cave roof and collapsed beams. Keep floor contour and every entrance, bone, stone and silhouette at exact positions. No new objects, stairs, lights or obstacles, no characters, text or UI. Subtle dust beam, realistic rock and gritty sand. No crop zoom rotate or camera change. Final1536x1024.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-282ddb68-2da2-447f-8a1b-13fb904633f4.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-30\\source\\original-composite.png"
+  ]
+}

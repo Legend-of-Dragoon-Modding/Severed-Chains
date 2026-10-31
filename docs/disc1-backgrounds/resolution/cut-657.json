@@ -1,0 +1,17 @@
+{
+  "cut": 657,
+  "packagingPrepared": true,
+  "status": "independent-plates-staged",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "issues": [],
+  "trace": "build/disc1/captures/cut-657/original/alignment.csv",
+  "validation": "build/disc1/staged/cut-657/layered-validation.json",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/681",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ],
+  "endpointReview": "Visible door fits its original opening and hiding it leaves a clean dark recess and continuous threshold.",
+  "limits": "Asset endpoint review only; actual story-state traversal and character-dependent depth remain for gameplay testing."
+}

@@ -1,0 +1,5104 @@
+{
+  "scope": "All 217 visible Disc 1 screens: installed texture layers and uninstalled preview layers only.",
+  "reportDirectory": "docs/disc1-backgrounds/storage-optimization",
+  "jobs": [
+    {
+      "cut": 5,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-5",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4902627,
+      "worker": 3
+    },
+    {
+      "cut": 6,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-6",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 9562881,
+      "worker": 2
+    },
+    {
+      "cut": 7,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-7",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 7947543,
+      "worker": 2
+    },
+    {
+      "cut": 8,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-8/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        2560,
+        2048
+      ],
+      "beforeBytes": 51897387,
+      "worker": 2
+    },
+    {
+      "cut": 9,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/seles-overlook",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        2048,
+        1424
+      ],
+      "beforeBytes": 9664706,
+      "worker": 3
+    },
+    {
+      "cut": 10,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-10",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 10211466,
+      "worker": 3
+    },
+    {
+      "cut": 11,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-11/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 33604371,
+      "worker": 2
+    },
+    {
+      "cut": 12,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-12",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 13240617,
+      "worker": 3
+    },
+    {
+      "cut": 13,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-13",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 6518569,
+      "worker": 1
+    },
+    {
+      "cut": 14,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-14",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4387872,
+      "worker": 1
+    },
+    {
+      "cut": 15,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-15",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        2560,
+        1024
+      ],
+      "beforeBytes": 7714957,
+      "worker": 1
+    },
+    {
+      "cut": 16,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-16",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 10562257,
+      "worker": 3
+    },
+    {
+      "cut": 17,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-17",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        2560,
+        1024
+      ],
+      "beforeBytes": 7071923,
+      "worker": 3
+    },
+    {
+      "cut": 18,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-18/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "beforeBytes": 164744350,
+      "worker": 3
+    },
+    {
+      "cut": 19,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-19",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 9042972,
+      "worker": 3
+    },
+    {
+      "cut": 20,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-20",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 9322745,
+      "worker": 3
+    },
+    {
+      "cut": 21,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-21",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 12769656,
+      "worker": 1
+    },
+    {
+      "cut": 22,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-22",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5150074,
+      "worker": 1
+    },
+    {
+      "cut": 23,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-23",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 8678321,
+      "worker": 1
+    },
+    {
+      "cut": 24,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-24",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5226462,
+      "worker": 2
+    },
+    {
+      "cut": 25,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-25",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5253277,
+      "worker": 2
+    },
+    {
+      "cut": 26,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-26",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5366901,
+      "worker": 1
+    },
+    {
+      "cut": 27,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-27",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5453955,
+      "worker": 3
+    },
+    {
+      "cut": 28,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-28",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5193882,
+      "worker": 3
+    },
+    {
+      "cut": 29,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-29",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5315131,
+      "worker": 3
+    },
+    {
+      "cut": 30,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-30/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 22878893,
+      "worker": 3
+    },
+    {
+      "cut": 31,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-31",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 11322097,
+      "worker": 3
+    },
+    {
+      "cut": 32,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-32/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 56838227,
+      "worker": 3
+    },
+    {
+      "cut": 33,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-33/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 60141791,
+      "worker": 1
+    },
+    {
+      "cut": 34,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-34/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 23471856,
+      "worker": 2
+    },
+    {
+      "cut": 35,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-35/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 6458085,
+      "worker": 3
+    },
+    {
+      "cut": 36,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-36/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 8690754,
+      "worker": 1
+    },
+    {
+      "cut": 37,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-37",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        2560,
+        1024
+      ],
+      "beforeBytes": 7714957,
+      "worker": 2
+    },
+    {
+      "cut": 38,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-38",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 14088448,
+      "worker": 2
+    },
+    {
+      "cut": 39,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-39",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 14938469,
+      "worker": 2
+    },
+    {
+      "cut": 40,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-40",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 7176842,
+      "worker": 3
+    },
+    {
+      "cut": 41,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-41",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5597600,
+      "worker": 1
+    },
+    {
+      "cut": 42,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-42",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5269088,
+      "worker": 1
+    },
+    {
+      "cut": 43,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-43",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4484579,
+      "worker": 3
+    },
+    {
+      "cut": 44,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-44",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2560,
+        1024
+      ],
+      "beforeBytes": 10234361,
+      "worker": 2
+    },
+    {
+      "cut": 45,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-45",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 8959162,
+      "worker": 3
+    },
+    {
+      "cut": 46,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-46",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 10103362,
+      "worker": 3
+    },
+    {
+      "cut": 47,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-47",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 8028702,
+      "worker": 3
+    },
+    {
+      "cut": 48,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-48",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 10442246,
+      "worker": 2
+    },
+    {
+      "cut": 49,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-49",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 11533110,
+      "worker": 1
+    },
+    {
+      "cut": 50,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-50",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4224439,
+      "worker": 2
+    },
+    {
+      "cut": 51,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-51",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4170637,
+      "worker": 3
+    },
+    {
+      "cut": 52,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-52",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        2048,
+        1028
+      ],
+      "beforeBytes": 9015944,
+      "worker": 2
+    },
+    {
+      "cut": 53,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-53",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5592978,
+      "worker": 3
+    },
+    {
+      "cut": 54,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-54",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 4829301,
+      "worker": 3
+    },
+    {
+      "cut": 56,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-56",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4387872,
+      "worker": 3
+    },
+    {
+      "cut": 57,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-57/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        2048,
+        1028
+      ],
+      "beforeBytes": 41742503,
+      "worker": 1
+    },
+    {
+      "cut": 58,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-58/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 123290620,
+      "worker": 1
+    },
+    {
+      "cut": 65,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-65/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 10757680,
+      "worker": 1
+    },
+    {
+      "cut": 66,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-66",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 13024623,
+      "worker": 1
+    },
+    {
+      "cut": 67,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-67/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 47027983,
+      "worker": 2
+    },
+    {
+      "cut": 68,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-68/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png"
+      ],
+      "dimensions": [
+        2048,
+        1540
+      ],
+      "beforeBytes": 133101657,
+      "worker": 2
+    },
+    {
+      "cut": 69,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-69",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 13966364,
+      "worker": 1
+    },
+    {
+      "cut": 70,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-70/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 51331632,
+      "worker": 3
+    },
+    {
+      "cut": 71,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-71/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png",
+        "foreground-21.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 114803851,
+      "worker": 1
+    },
+    {
+      "cut": 72,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-72/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 13407369,
+      "worker": 2
+    },
+    {
+      "cut": 73,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-73/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 8627254,
+      "worker": 1
+    },
+    {
+      "cut": 74,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-74/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 55491992,
+      "worker": 1
+    },
+    {
+      "cut": 75,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-75/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 17196026,
+      "worker": 1
+    },
+    {
+      "cut": 76,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-76/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 13296409,
+      "worker": 1
+    },
+    {
+      "cut": 77,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-77/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 54442694,
+      "worker": 1
+    },
+    {
+      "cut": 78,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-78/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 63003709,
+      "worker": 1
+    },
+    {
+      "cut": 79,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-79/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 59972162,
+      "worker": 2
+    },
+    {
+      "cut": 80,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-80/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        1540,
+        1024
+      ],
+      "beforeBytes": 23286571,
+      "worker": 1
+    },
+    {
+      "cut": 81,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-81/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 28927359,
+      "worker": 3
+    },
+    {
+      "cut": 82,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-82/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        2560,
+        2048
+      ],
+      "beforeBytes": 66151999,
+      "worker": 1
+    },
+    {
+      "cut": 83,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-83/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 20070756,
+      "worker": 1
+    },
+    {
+      "cut": 84,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-84/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2048,
+        1028
+      ],
+      "beforeBytes": 34139832,
+      "worker": 1
+    },
+    {
+      "cut": 85,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-85/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 44916045,
+      "worker": 1
+    },
+    {
+      "cut": 86,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-86",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 7306410,
+      "worker": 3
+    },
+    {
+      "cut": 87,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-87/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 83104715,
+      "worker": 3
+    },
+    {
+      "cut": 88,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-88/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 65355235,
+      "worker": 1
+    },
+    {
+      "cut": 89,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-89/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 93160291,
+      "worker": 2
+    },
+    {
+      "cut": 90,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-90",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 8442144,
+      "worker": 1
+    },
+    {
+      "cut": 91,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-91",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 8765943,
+      "worker": 1
+    },
+    {
+      "cut": 92,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-92",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 8121388,
+      "worker": 1
+    },
+    {
+      "cut": 93,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-93/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 60373888,
+      "worker": 2
+    },
+    {
+      "cut": 94,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-94/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        1208
+      ],
+      "beforeBytes": 15161614,
+      "worker": 1
+    },
+    {
+      "cut": 95,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-95/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 167138294,
+      "worker": 3
+    },
+    {
+      "cut": 96,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-96/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 132820860,
+      "worker": 2
+    },
+    {
+      "cut": 97,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-97/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 102068717,
+      "worker": 1
+    },
+    {
+      "cut": 98,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-98/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4822283,
+      "worker": 3
+    },
+    {
+      "cut": 99,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-99/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 22108400,
+      "worker": 1
+    },
+    {
+      "cut": 100,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-100/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 22199539,
+      "worker": 2
+    },
+    {
+      "cut": 101,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-101/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 6046958,
+      "worker": 2
+    },
+    {
+      "cut": 102,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-102/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 34232779,
+      "worker": 2
+    },
+    {
+      "cut": 103,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-103/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 38596875,
+      "worker": 2
+    },
+    {
+      "cut": 104,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-104/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 17889102,
+      "worker": 2
+    },
+    {
+      "cut": 105,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-105/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 20111743,
+      "worker": 3
+    },
+    {
+      "cut": 106,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-106/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 74199459,
+      "worker": 3
+    },
+    {
+      "cut": 107,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-107/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 65153380,
+      "worker": 2
+    },
+    {
+      "cut": 108,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-108/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        1536,
+        1540
+      ],
+      "beforeBytes": 45361222,
+      "worker": 1
+    },
+    {
+      "cut": 109,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-109/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 116768157,
+      "worker": 3
+    },
+    {
+      "cut": 110,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-110/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 57671102,
+      "worker": 1
+    },
+    {
+      "cut": 111,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-111/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1540
+      ],
+      "beforeBytes": 19995084,
+      "worker": 2
+    },
+    {
+      "cut": 112,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-112/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 132820860,
+      "worker": 1
+    },
+    {
+      "cut": 113,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-113/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 132820860,
+      "worker": 2
+    },
+    {
+      "cut": 114,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-114/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 28040711,
+      "worker": 1
+    },
+    {
+      "cut": 115,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-115/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        2056,
+        1024
+      ],
+      "beforeBytes": 53102389,
+      "worker": 2
+    },
+    {
+      "cut": 116,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-116/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 13719756,
+      "worker": 2
+    },
+    {
+      "cut": 117,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-117/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        1540,
+        1540
+      ],
+      "beforeBytes": 58479655,
+      "worker": 3
+    },
+    {
+      "cut": 118,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-118/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 41649597,
+      "worker": 1
+    },
+    {
+      "cut": 119,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-119/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 128355607,
+      "worker": 1
+    },
+    {
+      "cut": 120,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-120/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1540,
+        1028
+      ],
+      "beforeBytes": 35124330,
+      "worker": 3
+    },
+    {
+      "cut": 121,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-121/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1540,
+        1536
+      ],
+      "beforeBytes": 51877730,
+      "worker": 2
+    },
+    {
+      "cut": 122,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-122/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1540,
+        1024
+      ],
+      "beforeBytes": 10256583,
+      "worker": 2
+    },
+    {
+      "cut": 123,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-123/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        1540,
+        1028
+      ],
+      "beforeBytes": 22495734,
+      "worker": 1
+    },
+    {
+      "cut": 130,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-130/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 14651875,
+      "worker": 3
+    },
+    {
+      "cut": 131,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-131/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 77375092,
+      "worker": 1
+    },
+    {
+      "cut": 132,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-132/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 41593156,
+      "worker": 2
+    },
+    {
+      "cut": 133,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-133/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 63936180,
+      "worker": 3
+    },
+    {
+      "cut": 134,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-134/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 60076025,
+      "worker": 3
+    },
+    {
+      "cut": 135,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-135/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 38670754,
+      "worker": 1
+    },
+    {
+      "cut": 136,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-136/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 28302715,
+      "worker": 3
+    },
+    {
+      "cut": 140,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-140/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2048,
+        1028
+      ],
+      "beforeBytes": 39478612,
+      "worker": 2
+    },
+    {
+      "cut": 141,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-141/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 59775318,
+      "worker": 2
+    },
+    {
+      "cut": 142,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-142/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        2560,
+        1024
+      ],
+      "beforeBytes": 90937207,
+      "worker": 3
+    },
+    {
+      "cut": 143,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-143/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        1536,
+        1028
+      ],
+      "beforeBytes": 77155694,
+      "worker": 1
+    },
+    {
+      "cut": 144,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-144/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 69800859,
+      "worker": 3
+    },
+    {
+      "cut": 145,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-145/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png",
+        "foreground-21.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 101594613,
+      "worker": 2
+    },
+    {
+      "cut": 146,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-146/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 43325233,
+      "worker": 1
+    },
+    {
+      "cut": 147,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-147/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 28140954,
+      "worker": 2
+    },
+    {
+      "cut": 148,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-148/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 61511979,
+      "worker": 3
+    },
+    {
+      "cut": 149,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-149/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        2564,
+        1028
+      ],
+      "beforeBytes": 65956272,
+      "worker": 3
+    },
+    {
+      "cut": 150,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-150/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 88705106,
+      "worker": 1
+    },
+    {
+      "cut": 151,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-151/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "beforeBytes": 177173766,
+      "worker": 1
+    },
+    {
+      "cut": 152,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-152/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 16107001,
+      "worker": 2
+    },
+    {
+      "cut": 153,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-153/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 27346335,
+      "worker": 1
+    },
+    {
+      "cut": 154,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-154/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        1032
+      ],
+      "beforeBytes": 63800919,
+      "worker": 2
+    },
+    {
+      "cut": 155,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-155/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png"
+      ],
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "beforeBytes": 179432142,
+      "worker": 2
+    },
+    {
+      "cut": 156,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-156/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 83137901,
+      "worker": 1
+    },
+    {
+      "cut": 157,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-157/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 91547418,
+      "worker": 2
+    },
+    {
+      "cut": 158,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-158/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png"
+      ],
+      "dimensions": [
+        2052,
+        1544
+      ],
+      "beforeBytes": 128222270,
+      "worker": 2
+    },
+    {
+      "cut": 159,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-159/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 65763630,
+      "worker": 1
+    },
+    {
+      "cut": 160,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-160/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 25971948,
+      "worker": 1
+    },
+    {
+      "cut": 161,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-161/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 7596774,
+      "worker": 1
+    },
+    {
+      "cut": 162,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-162/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1028
+      ],
+      "beforeBytes": 11351145,
+      "worker": 1
+    },
+    {
+      "cut": 163,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-163/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 84763680,
+      "worker": 3
+    },
+    {
+      "cut": 164,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-164/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "beforeBytes": 74080899,
+      "worker": 2
+    },
+    {
+      "cut": 165,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-165/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        1536,
+        1032
+      ],
+      "beforeBytes": 51793950,
+      "worker": 1
+    },
+    {
+      "cut": 166,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-166/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 85277540,
+      "worker": 2
+    },
+    {
+      "cut": 171,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-171/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        1544,
+        2048
+      ],
+      "beforeBytes": 91112988,
+      "worker": 3
+    },
+    {
+      "cut": 172,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-172/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 42332117,
+      "worker": 2
+    },
+    {
+      "cut": 173,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-173/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 52751461,
+      "worker": 3
+    },
+    {
+      "cut": 174,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-174/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 42025330,
+      "worker": 2
+    },
+    {
+      "cut": 175,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-175/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 91870537,
+      "worker": 2
+    },
+    {
+      "cut": 176,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-176/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 70552579,
+      "worker": 2
+    },
+    {
+      "cut": 177,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-177/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 37404458,
+      "worker": 3
+    },
+    {
+      "cut": 178,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-178/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 90444014,
+      "worker": 1
+    },
+    {
+      "cut": 179,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-179/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 78068799,
+      "worker": 3
+    },
+    {
+      "cut": 180,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-180/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        2048,
+        1540
+      ],
+      "beforeBytes": 124249589,
+      "worker": 3
+    },
+    {
+      "cut": 181,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-181/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 87060277,
+      "worker": 2
+    },
+    {
+      "cut": 182,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-182/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        3072,
+        1536
+      ],
+      "beforeBytes": 92577447,
+      "worker": 3
+    },
+    {
+      "cut": 183,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-183/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 8649977,
+      "worker": 3
+    },
+    {
+      "cut": 187,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-187/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 51754405,
+      "worker": 3
+    },
+    {
+      "cut": 188,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-188/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 46288854,
+      "worker": 2
+    },
+    {
+      "cut": 189,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-189/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 69554502,
+      "worker": 3
+    },
+    {
+      "cut": 190,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-190/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 60199102,
+      "worker": 2
+    },
+    {
+      "cut": 191,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-191/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 31523143,
+      "worker": 2
+    },
+    {
+      "cut": 192,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-192/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 111291484,
+      "worker": 3
+    },
+    {
+      "cut": 193,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-193/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png",
+        "foreground-20.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 134147777,
+      "worker": 3
+    },
+    {
+      "cut": 194,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-194/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png",
+        "foreground-17.png",
+        "foreground-18.png",
+        "foreground-19.png"
+      ],
+      "dimensions": [
+        1544,
+        2048
+      ],
+      "beforeBytes": 122376257,
+      "worker": 1
+    },
+    {
+      "cut": 195,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-195/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 79740136,
+      "worker": 2
+    },
+    {
+      "cut": 196,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-196/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 62455146,
+      "worker": 3
+    },
+    {
+      "cut": 197,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-197/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 76691659,
+      "worker": 2
+    },
+    {
+      "cut": 198,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-198/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 12481045,
+      "worker": 3
+    },
+    {
+      "cut": 199,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-199/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 41802730,
+      "worker": 3
+    },
+    {
+      "cut": 200,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-200/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 9410735,
+      "worker": 2
+    },
+    {
+      "cut": 623,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-623/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 4199307,
+      "worker": 2
+    },
+    {
+      "cut": 624,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-624",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 8696431,
+      "worker": 3
+    },
+    {
+      "cut": 625,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-625",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 14143423,
+      "worker": 1
+    },
+    {
+      "cut": 626,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-626/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 52424073,
+      "worker": 3
+    },
+    {
+      "cut": 627,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-627/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 40238566,
+      "worker": 3
+    },
+    {
+      "cut": 628,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-628/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 34520371,
+      "worker": 1
+    },
+    {
+      "cut": 631,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-631/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 65349744,
+      "worker": 2
+    },
+    {
+      "cut": 632,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-632/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 21802259,
+      "worker": 3
+    },
+    {
+      "cut": 633,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-633/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5634448,
+      "worker": 1
+    },
+    {
+      "cut": 634,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-634/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 13686360,
+      "worker": 1
+    },
+    {
+      "cut": 636,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-636/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 56644891,
+      "worker": 2
+    },
+    {
+      "cut": 637,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-637/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 35949972,
+      "worker": 2
+    },
+    {
+      "cut": 638,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-638/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        2048,
+        1536
+      ],
+      "beforeBytes": 31686843,
+      "worker": 3
+    },
+    {
+      "cut": 639,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-639/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png"
+      ],
+      "dimensions": [
+        3072,
+        1536
+      ],
+      "beforeBytes": 94033260,
+      "worker": 1
+    },
+    {
+      "cut": 640,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-640",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 3911972,
+      "worker": 2
+    },
+    {
+      "cut": 641,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-641",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4355686,
+      "worker": 2
+    },
+    {
+      "cut": 642,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-642",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        1540,
+        1024
+      ],
+      "beforeBytes": 4739448,
+      "worker": 3
+    },
+    {
+      "cut": 643,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-643",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 3985121,
+      "worker": 3
+    },
+    {
+      "cut": 644,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-644",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 3465599,
+      "worker": 3
+    },
+    {
+      "cut": 645,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-645",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 4203591,
+      "worker": 1
+    },
+    {
+      "cut": 646,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-646/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        2052,
+        1028
+      ],
+      "beforeBytes": 41019821,
+      "worker": 1
+    },
+    {
+      "cut": 647,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-647/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 6601200,
+      "worker": 2
+    },
+    {
+      "cut": 656,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-656/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 7428508,
+      "worker": 2
+    },
+    {
+      "cut": 657,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-657/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 23438119,
+      "worker": 2
+    },
+    {
+      "cut": 658,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-658/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 60996114,
+      "worker": 2
+    },
+    {
+      "cut": 659,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-659/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 30268079,
+      "worker": 3
+    },
+    {
+      "cut": 660,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-660/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 47167267,
+      "worker": 1
+    },
+    {
+      "cut": 674,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-674/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 31252478,
+      "worker": 3
+    },
+    {
+      "cut": 675,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-675",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 7169455,
+      "worker": 3
+    },
+    {
+      "cut": 676,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-676",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 8087646,
+      "worker": 1
+    },
+    {
+      "cut": 677,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-677",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 7547328,
+      "worker": 2
+    },
+    {
+      "cut": 694,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-694",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 3985121,
+      "worker": 2
+    },
+    {
+      "cut": 695,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-695",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png",
+        "foreground-9.png",
+        "foreground-10.png",
+        "foreground-11.png",
+        "foreground-12.png",
+        "foreground-13.png",
+        "foreground-14.png",
+        "foreground-15.png",
+        "foreground-16.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 5150074,
+      "worker": 2
+    },
+    {
+      "cut": 696,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-696/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png"
+      ],
+      "dimensions": [
+        2560,
+        1536
+      ],
+      "beforeBytes": 47167267,
+      "worker": 3
+    },
+    {
+      "cut": 697,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-697/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        3072,
+        2176
+      ],
+      "beforeBytes": 17172470,
+      "worker": 2
+    },
+    {
+      "cut": 703,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-703",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 10838430,
+      "worker": 1
+    },
+    {
+      "cut": 704,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-704",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png"
+      ],
+      "dimensions": [
+        3072,
+        1024
+      ],
+      "beforeBytes": 13109982,
+      "worker": 2
+    },
+    {
+      "cut": 716,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-716/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 7428508,
+      "worker": 1
+    },
+    {
+      "cut": 725,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-725",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        2048,
+        1028
+      ],
+      "beforeBytes": 7227979,
+      "worker": 1
+    },
+    {
+      "cut": 726,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-726/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "beforeBytes": 9336250,
+      "worker": 1
+    },
+    {
+      "cut": 740,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-740/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png"
+      ],
+      "dimensions": [
+        1540,
+        1024
+      ],
+      "beforeBytes": 9134063,
+      "worker": 3
+    },
+    {
+      "cut": 741,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-741/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png"
+      ],
+      "dimensions": [
+        2048,
+        1024
+      ],
+      "beforeBytes": 7499371,
+      "worker": 2
+    },
+    {
+      "cut": 742,
+      "kind": "installed",
+      "directory": "gfx/backgrounds/disc1/cut-742",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png"
+      ],
+      "dimensions": [
+        1536,
+        2048
+      ],
+      "beforeBytes": 6518569,
+      "worker": 1
+    },
+    {
+      "cut": 743,
+      "kind": "preview",
+      "directory": "gfx/backgrounds/disc1/cut-743/source/asset-preview",
+      "names": [
+        "background.png",
+        "foreground-0.png",
+        "foreground-1.png",
+        "foreground-2.png",
+        "foreground-3.png",
+        "foreground-4.png",
+        "foreground-5.png",
+        "foreground-6.png",
+        "foreground-7.png",
+        "foreground-8.png"
+      ],
+      "dimensions": [
+        1536,
+        1536
+      ],
+      "beforeBytes": 46288854,
+      "worker": 3
+    }
+  ],
+  "beforeBytes": 8825771014,
+  "protectedFiles": 3293
+}

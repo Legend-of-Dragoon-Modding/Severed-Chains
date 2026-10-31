@@ -1,0 +1,88 @@
+[
+  {
+    "cuts": [
+      0,
+      1,
+      791
+    ],
+    "rgba_sha256": "6dee38aa2132db3a04cec570be213262ae8f538c3344ce8811f55decac2e9d60"
+  },
+  {
+    "cuts": [
+      13,
+      742
+    ],
+    "rgba_sha256": "760150d2790affcedb738dd3b7679c2e4c7da7f4503a34e66ce1f03378cb664e"
+  },
+  {
+    "cuts": [
+      14,
+      56
+    ],
+    "rgba_sha256": "901d3b92c4ae64ead5ded6519a127337c0360892ce773e538717a59a195d0291"
+  },
+  {
+    "cuts": [
+      15,
+      37
+    ],
+    "rgba_sha256": "7f2975f91a33752375046fce019af3ca0d1f35e8a912eb0dcb499791e8ccb891"
+  },
+  {
+    "cuts": [
+      22,
+      695
+    ],
+    "rgba_sha256": "acc0c4acb5008904cd79f0d6c25967ef85c37f130d6f18bb29fe0882f47b206a"
+  },
+  {
+    "cuts": [
+      57,
+      725
+    ],
+    "rgba_sha256": "85daed7b88783f20c20646d5ddec478bbbc9c12987cef4476430f31d3e014658"
+  },
+  {
+    "cuts": [
+      58,
+      66
+    ],
+    "rgba_sha256": "8d587d5464572e3af878860d11c22702de2dcb1332edcb3fa13fbac2f43392eb"
+  },
+  {
+    "cuts": [
+      96,
+      112,
+      113
+    ],
+    "rgba_sha256": "6284d5ba67f06682817fc237e672829d6e75245ceac2ee4970357decd16538df"
+  },
+  {
+    "cuts": [
+      188,
+      743
+    ],
+    "rgba_sha256": "18803e776094240b49f378712d99bf2fbb0a1c03dbc1c034bd87ac858e2745fd"
+  },
+  {
+    "cuts": [
+      643,
+      694
+    ],
+    "rgba_sha256": "d7f5d478aa192ca74b1a05e52dfdf8bd7f30c19e782eb4cc77919fdefd6d970c"
+  },
+  {
+    "cuts": [
+      656,
+      716
+    ],
+    "rgba_sha256": "6b76f04e7a8c05ecf1d2ba50940c6ab9a2fb76d80f6717b76c7abc98ac96617b"
+  },
+  {
+    "cuts": [
+      660,
+      696
+    ],
+    "rgba_sha256": "7863cf1bc71db2b79a9d1bd9d788eae3c06f19986c5e2cf105d520b1050221af"
+  }
+]

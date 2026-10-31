@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Correct ONLY the bottom-center doorway in image1. The original game has a SMALL RECTANGULAR opening, not a stone arch: opening native coordinates x172..224,y412..456 on the384x512 full canvas (about45%-58% across,80%-89% down), with a reddish wooden leaf swung open along its RIGHT edge and green-lit stone floor inside. Image2 is the exact original lower-facade layout; use its lower-right doorway geometry/proportions and position relative to windows/buttresses. Rebuild the currently oversized rounded arch in image1 as continuous dark stone wall above native y412, with rectangular horizontal stone lintel at y412. The opening top MUST be below the bottom edge of the vertical buttress slits. Keep all three green windows, trough, facade material, upper platforms, right-side door, stairs, lighting and camera unchanged. Same full portrait canvas, minimal edit. No additional props.",
+  "inputs": [
+    "generated-open-door-walls.png",
+    "original-panel-10.png"
+  ],
+  "output": "generated-open-rectangular-door-walls.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-6c23b50b-f64b-4387-b534-5805767609f6.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

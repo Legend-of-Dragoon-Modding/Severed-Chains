@@ -1,0 +1,150 @@
+{
+  "reviewer": "final_resolution",
+  "scope": "Read-only targeted GPU camera followup for final-group cuts171,180,659,660 after fresh completion markers and exact installed-PNG GPU match confirmations.",
+  "cuts": [
+    171,
+    180,
+    659,
+    660
+  ],
+  "completionMarkersVerified": 4,
+  "gpuTextureMatchConfirmationsVerified": 4,
+  "cameraCenteredAndFrame120Reviewed": 4,
+  "hiddenVisiblePairsReviewed": 4,
+  "extraPositionProfilesReviewed": 4,
+  "blockingVisualIssuesFound": 0,
+  "scopeCaveat": "Scripts paused; actor/effect animation and camera settling may continue. Synthetic profiles show visible endpoints, not full story traversal or event timing.",
+  "contactSheet": "build/disc1/focused-review-final-followup.png",
+  "native659PlateComparison": "build/disc1/followup659-door-plate-review.png",
+  "screens": [
+    {
+      "cut": 171,
+      "result": "passed-visible-followup-review",
+      "completion": "build/disc1/captures/cut-171-followup-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-171-followup-v1/modern/modern-gpu-pack.txt",
+      "targetCameraEvidence": "build/disc1/captures/cut-171-followup-v1/modern/target-view.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-171-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-171-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-171-followup-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-171-followup-v1/modern/synthetic-all-visible.png"
+      ],
+      "findings": "Camera now covers both nearest lower street doors. Hidden probe exposes two dark recesses; visible probe restores wooden leaves coherently with jambs/thresholds. No fixed closed-leaf ghost or detached patch seen. Left doorway is partly obscured by scene actors/effects.",
+      "issues": [],
+      "residualLimitations": [
+        "Actors/effects partially obscure the nearest left door; no full six-door story traversal claim."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 180,
+      "result": "passed-visible-followup-review",
+      "completion": "build/disc1/captures/cut-180-followup-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-180-followup-v1/modern/modern-gpu-pack.txt",
+      "targetCameraEvidence": "build/disc1/captures/cut-180-followup-v1/modern/target-view.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-180-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-180-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-180-followup-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-180-followup-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-180-followup-v1/modern/synthetic-crate-origin.png",
+        "build/disc1/captures/cut-180-followup-v1/modern/synthetic-crate-raised.png"
+      ],
+      "findings": "Crate and rope are visibly independent. Origin probe shows rope and visible upper/body portion at the lower viewport edge; raised y-120 probe shows full crate higher up with no fixed crate duplicate. The forced exploratory camera extends above the painted background rectangle, producing expected black outside-canvas area, not a missing loaded texture.",
+      "issues": [],
+      "residualLimitations": [
+        "Origin crate lower edge/body portion is clipped by bottom of this viewport; raised full crate is visible.",
+        "Forced camera includes outside-background black area and is not evidence of normal gameplay camera framing."
+      ],
+      "extraProfiles": [
+        {
+          "name": "crate-origin",
+          "visible": [
+            5
+          ],
+          "positions": {},
+          "capture": "build/disc1/captures/cut-180-followup-v1/modern/synthetic-crate-origin.png"
+        },
+        {
+          "name": "crate-raised",
+          "visible": [
+            5
+          ],
+          "positions": {
+            "5": [
+              0,
+              -120
+            ]
+          },
+          "capture": "build/disc1/captures/cut-180-followup-v1/modern/synthetic-crate-raised.png"
+        }
+      ],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 659,
+      "result": "passed-visible-followup-review",
+      "completion": "build/disc1/captures/cut-659-followup-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-659-followup-v1/modern/modern-gpu-pack.txt",
+      "targetCameraEvidence": "build/disc1/captures/cut-659-followup-v1/modern/target-view.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-659-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-659-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-659-followup-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-659-followup-v1/modern/synthetic-all-visible.png"
+      ],
+      "findings": "Doorway barrier now covered. Hidden probe exposes the greenish stair passage; visible probe restores staggered stone-block barrier/door surface with no fixed barrier ghost. Compared native foreground5 and modern plate crop: native geometry is staggered masonry rather than an iron-bar gate; modern stone-block treatment is faithful.",
+      "issues": [],
+      "residualLimitations": [
+        "Forced target camera includes outside-background black area; this is an endpoint visibility probe, not a traversal."
+      ],
+      "extraProfiles": [],
+      "fullStoryTraversalVerified": false
+    },
+    {
+      "cut": 660,
+      "result": "passed-visible-followup-review",
+      "completion": "build/disc1/captures/cut-660-followup-v1/modern/completion.txt",
+      "gpuTextureMatch": "build/disc1/captures/cut-660-followup-v1/modern/modern-gpu-pack.txt",
+      "targetCameraEvidence": "build/disc1/captures/cut-660-followup-v1/modern/target-view.txt",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-660-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-660-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-660-followup-v1/modern/synthetic-dynamic-hidden.png",
+        "build/disc1/captures/cut-660-followup-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-660-followup-v1/modern/synthetic-throne-origin.png",
+        "build/disc1/captures/cut-660-followup-v1/modern/synthetic-throne-raised.png"
+      ],
+      "findings": "Throne is now covered at both origin and raised y-56 positions. Origin shows chair on lower dais; raised shows chair at upper balcony; former position is clean in each reciprocal view. No black/green matte lobes or fixed chair duplicate seen; native mask/depth edges remain coherent in the GPU view.",
+      "issues": [],
+      "residualLimitations": [
+        "Actor/effect animation continues and partly overlaps upper throne; no full event timing or actor collision traversal claim."
+      ],
+      "extraProfiles": [
+        {
+          "name": "throne-origin",
+          "visible": [
+            3
+          ],
+          "positions": {},
+          "capture": "build/disc1/captures/cut-660-followup-v1/modern/synthetic-throne-origin.png"
+        },
+        {
+          "name": "throne-raised",
+          "visible": [
+            3
+          ],
+          "positions": {
+            "3": [
+              0,
+              -56
+            ]
+          },
+          "capture": "build/disc1/captures/cut-660-followup-v1/modern/synthetic-throne-raised.png"
+        }
+      ],
+      "fullStoryTraversalVerified": false
+    }
+  ]
+}

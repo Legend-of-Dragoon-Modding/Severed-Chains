@@ -1,0 +1,1903 @@
+{
+  "worker": 1,
+  "assignedCuts": [
+    70,
+    78,
+    79,
+    80,
+    85,
+    76,
+    75,
+    631,
+    83,
+    67,
+    623,
+    89,
+    88,
+    628,
+    87,
+    93,
+    94,
+    68,
+    72,
+    77,
+    82,
+    81,
+    71,
+    73,
+    74,
+    84,
+    65,
+    58,
+    95,
+    99,
+    98,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    96,
+    112,
+    113,
+    97,
+    626,
+    627,
+    632,
+    633,
+    657,
+    674,
+    726,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111
+  ],
+  "gameplay": "deferred",
+  "screens": [
+    {
+      "cut": 70,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 11,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "visualIssues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-70\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-70\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-70\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-70\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 70,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 11,
+        "eligible": false
+      },
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\213\\1.txt",
+          "line": 236,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 78,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "foregrounds": 15,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-78\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-78\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-78\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-78\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 78,
+        "width": 2048,
+        "height": 1536,
+        "foregrounds": 15,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 79,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "foregrounds": 12,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-79\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-79\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-79\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-79\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 79,
+        "width": 2048,
+        "height": 1536,
+        "foregrounds": 12,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 80,
+      "status": "unresolved-geometry",
+      "canvas": [
+        1540,
+        1024
+      ],
+      "foregrounds": 7,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-80\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Lower circular floor platform remains left of original by about6% of canvas width after one focused correction; clear aisle and footing require alignment check",
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "smallestCheck": "Align floor platform/beam to original x46%,y77% before runtime packaging",
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-80\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-80\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-80\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 80,
+        "width": 1540,
+        "height": 1024,
+        "foregrounds": 7,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\243\\1.txt",
+          "line": 228,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ]
+    },
+    {
+      "cut": 85,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 10,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-85\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-85\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-85\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-85\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 85,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 10,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 76,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 4,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-76\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-76\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-76\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-76\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 76,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 4,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 75,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 5,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-75\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-75\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-75\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-75\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 75,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 5,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 631,
+      "status": "source-preview-ready",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 7,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-631\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-631\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-631\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-631\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 631,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 7,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 83,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 4,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-83\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-83\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-83\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-83\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 83,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 4,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 67,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 9,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-67\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-67\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-67\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-67\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 67,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 9,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\204\\1.txt",
+          "line": 696,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 623,
+      "status": "source-preview-ready",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 1,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-623\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-623\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-623\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-623\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 623,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 1,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 89,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "foregrounds": 20,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-89\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Indels Castle",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-89\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-89\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-89\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 89,
+        "width": 1536,
+        "height": 2048,
+        "foregrounds": 20,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 500,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 503,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 504,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 756,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 757,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 88,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 16,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-88\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Indels Castle",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-88\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-88\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-88\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 88,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 16,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\267\\1.txt",
+          "line": 477,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\267\\1.txt",
+          "line": 961,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x9 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 628,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 8,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-628\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Indels Castle",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-628\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-628\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-628\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 628,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 8,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 707,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 728,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 747,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 760,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[26]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 87,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "foregrounds": 12,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-87\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Indels Castle",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-87\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-87\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-87\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 87,
+        "width": 1536,
+        "height": 2048,
+        "foregrounds": 12,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 93,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "foregrounds": 11,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-93\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Indels Castle",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-93\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-93\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-93\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 93,
+        "width": 1536,
+        "height": 1536,
+        "foregrounds": 11,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\282\\1.txt",
+          "line": 432,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x1 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 94,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1208
+      ],
+      "foregrounds": 4,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-94\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Indels Castle",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-94\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-94\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-94\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 94,
+        "width": 1536,
+        "height": 1208,
+        "foregrounds": 4,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\285\\1.txt",
+          "line": 376,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 68,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1540
+      ],
+      "foregrounds": 18,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-68\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-68\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-68\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-68\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 68,
+        "width": 2048,
+        "height": 1540,
+        "foregrounds": 18,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 72,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 4,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-72\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-72\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-72\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-72\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 72,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 4,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 77,
+      "status": "source-preview-ready",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 6,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-77\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-77\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-77\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-77\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 77,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 6,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 82,
+      "status": "source-preview-ready",
+      "canvas": [
+        2560,
+        2048
+      ],
+      "foregrounds": 10,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-82\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-82\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-82\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-82\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 82,
+        "width": 2560,
+        "height": 2048,
+        "foregrounds": 10,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 81,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "foregrounds": 7,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-81\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-81\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-81\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-81\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 81,
+        "width": 2048,
+        "height": 1536,
+        "foregrounds": 7,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 71,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 22,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-71\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-71\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-71\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-71\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 71,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 22,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\216\\1.txt",
+          "line": 228,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 73,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 1,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-73\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-73\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-73\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-73\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 73,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 1,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 74,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 15,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-74\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-74\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-74\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-74\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 74,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 15,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 84,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1028
+      ],
+      "foregrounds": 7,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-84\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-84\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-84\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-84\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 84,
+        "width": 2048,
+        "height": 1028,
+        "foregrounds": 7,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 65,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 2,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-65\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "issues": [],
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-65\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-65\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-65\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 65,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 2,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 58,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "foregrounds": 17,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "preview": "gfx\\backgrounds\\disc1\\cut-58\\source\\asset-preview\\comparison.png",
+      "area": "Bale",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-58\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-58\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-58\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 58,
+        "width": 2048,
+        "height": 1536,
+        "foregrounds": 17,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\177\\1.txt",
+          "line": 854,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 95,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 21,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "preview": "gfx\\backgrounds\\disc1\\cut-95\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-95\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-95\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-95\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 95,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 21,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 951,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x0 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 952,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x1 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 953,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x2 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 954,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x3 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 963,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x0 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 964,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x1 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 965,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x2 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 966,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x3 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 99,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 9,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-99\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-99\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-99\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-99\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 99,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 9,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 98,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 1,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-98\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-98\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-98\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-98\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 98,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 1,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 100,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 9,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-100\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-100\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-100\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-100\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 100,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 9,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 328,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 349,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 368,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 381,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[26]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 101,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 1,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-101\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-101\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-101\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-101\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 101,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 1,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 102,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 14,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-102\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-102\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-102\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-102\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 102,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 14,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 103,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 16,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-103\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-103\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-103\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-103\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 103,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 16,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1115,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1136,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1155,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1168,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[26]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 104,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 5,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-104\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-104\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-104\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-104\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 104,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 5,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 741,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 762,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 781,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 794,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[26]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 105,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 7,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-105\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-105\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-105\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-105\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 105,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 7,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 96,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 21,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-96\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-96\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-96\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-96\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 96,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 21,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1295,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1316,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1335,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1348,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[26]]] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1763,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 112,
+      "status": "source-preview-ready",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 21,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "preview": "gfx\\backgrounds\\disc1\\cut-112\\source\\asset-preview\\comparison.png",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-112\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-112\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-112\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 112,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 21,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 113,
+      "status": "source-preview-ready",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 21,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "preview": "gfx\\backgrounds\\disc1\\cut-113\\source\\asset-preview\\comparison.png",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-113\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-113\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-113\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 113,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 21,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 97,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "foregrounds": 13,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-97\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-97\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-97\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-97\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 97,
+        "width": 2560,
+        "height": 1536,
+        "foregrounds": 13,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\294\\5.txt",
+          "line": 352,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 626,
+      "status": "source-preview-ready",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 15,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-626\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-626\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-626\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-626\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 626,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 15,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 627,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 16,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-627\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-627\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-627\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-627\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 627,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 16,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\618\\1.txt",
+          "line": 329,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x6 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 632,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 9,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-632\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-632\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-632\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-632\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 632,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 9,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\627\\1.txt",
+          "line": 200,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 633,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 1,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-633\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-633\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-633\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-633\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 633,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 1,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 657,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 6,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-657\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-657\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-657\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-657\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 657,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 6,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 674,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "foregrounds": 6,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Original scripts change foreground position/visibility; full-canvas source may bake independently changing geometry; separate plates or state proof required"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-674\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; scripted layer change requires supported independent plates/state evidence",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-674\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-674\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-674\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 674,
+        "width": 2048,
+        "height": 1024,
+        "foregrounds": 6,
+        "eligible": false
+      },
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\690\\6.txt",
+          "line": 283,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0xffffffc8, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-offset"
+        },
+        {
+          "file": "build\\disc1\\scripts\\690\\6.txt",
+          "line": 305,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x3 ; x, y, overlayIndex",
+          "classification": "dynamic-offset-needs-inspection"
+        }
+      ],
+      "smallestCheck": "Inspect exact layerRisks calls and original overlay masks to determine affected indices/states; derive clean underlay/independent plate before targeted later state check"
+    },
+    {
+      "cut": 726,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "foregrounds": 2,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-726\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Town of Hoax",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-726\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-726\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-726\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 726,
+        "width": 1536,
+        "height": 1024,
+        "foregrounds": 2,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 106,
+      "status": "source-preview-ready",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "foregrounds": 11,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-106\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Marshland",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-106\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-106\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-106\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 106,
+        "width": 3072,
+        "height": 1024,
+        "foregrounds": 11,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 107,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "foregrounds": 9,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-107\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Marshland",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-107\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-107\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-107\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 107,
+        "width": 1536,
+        "height": 2048,
+        "foregrounds": 9,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 108,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        1540
+      ],
+      "foregrounds": 8,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-108\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Marshland",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-108\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-108\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-108\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 108,
+        "width": 1536,
+        "height": 1540,
+        "foregrounds": 8,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 109,
+      "status": "unresolved-geometry",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "foregrounds": 20,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Lower broken arch/stepping-stone shore alignment remains uncertain after one focused correction; do not count as artwork-ready"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-109\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "smallestCheck": "Register lower arch and stone landing footprints against original route/walkmesh before runtime packaging",
+      "area": "Marshland",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-109\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-109\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-109\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 109,
+        "width": 2048,
+        "height": 1536,
+        "foregrounds": 20,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 110,
+      "status": "source-preview-ready",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "foregrounds": 9,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-110\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed",
+      "area": "Marshland",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-110\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-110\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-110\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 110,
+        "width": 1536,
+        "height": 2048,
+        "foregrounds": 9,
+        "eligible": false
+      },
+      "layerRisks": []
+    },
+    {
+      "cut": 111,
+      "status": "source-preview-ready-exception",
+      "canvas": [
+        1536,
+        1540
+      ],
+      "foregrounds": 3,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "Engine/exporter applies special cut111 placement correction;1536x1540 preview is not GPU/export alignment proof"
+      ],
+      "preview": "gfx\\backgrounds\\disc1\\cut-111\\source\\asset-preview\\comparison.png",
+      "packagingBlocker": "Existing strict recorded-layer packaging gate retained; no original per-cut stationary visible trace; runtime not installed; cut111 special placement requires original GPU/export check",
+      "smallestCheck": "Later targeted original GPU/export alignment check of cut111 correction and384x385 edge row; preserve comparator",
+      "area": "Marshland",
+      "sourceDirectory": "gfx\\backgrounds\\disc1\\cut-111\\source",
+      "compositePreview": "gfx\\backgrounds\\disc1\\cut-111\\source\\asset-preview\\composite.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-111\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "intendedRuntimeMapping": {
+        "cut": 111,
+        "width": 1536,
+        "height": 1540,
+        "foregrounds": 3,
+        "eligible": false
+      },
+      "layerRisks": []
+    }
+  ],
+  "chronologyNote": "Production sequence follows connected Bale west-street/inn branches, remaining Bale/Indels branches, then Hoax and Marshland location order. Optional-room relative visits and story variants58,65,96,112,113,97,626,627,632,633,657,674,726 remain inferred from inventory exits and location groups, not confirmed first-visit gameplay. confirmedOpeningOrder remains parent-owned65.",
+  "completeProductionPass": true,
+  "runtimeInstalledCount": 0,
+  "gameplayVerifiedCount": 0,
+  "summary": {
+    "source-preview-ready-exception": 19,
+    "source-preview-ready": 33,
+    "unresolved-geometry": 2
+  },
+  "validationSummary": "All54 source asset previews decode, exactly4x original canvas, exact original foreground names/count/alpha masks, consistent placement; one visual comparison/composite review each; runtime and gameplay deferred",
+  "laterTesting": "Resolve geometry80/109, decompose scripted layer exceptions from exact layerRisks evidence, verify111 GPU/export placement, then parent-only sequential runtime/fallback and targeted gameplay routes with strict comparator unchanged"
+}

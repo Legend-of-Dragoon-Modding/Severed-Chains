@@ -1,0 +1,30 @@
+{
+  "screens": 217,
+  "texturePngs": 2275,
+  "beforeBytes": 8825771014,
+  "afterBytes": 1227988804,
+  "savedBytes": 7597782210,
+  "savedPercent": 86.08632829865984,
+  "rewrittenPngs": 2275,
+  "visiblePixelsExact": true,
+  "alphaMasksExact": true,
+  "compositesExact": true,
+  "protectedFilesUnchanged": 3293,
+  "existingInstalledDecodedPixelsIdentical": true,
+  "installedScreensNeedingFilterCheck": [],
+  "newRuntimeInstallations": 0,
+  "newGameplayVerifications": 0,
+  "inGameFilterTestingPerformed": false,
+  "byKind": {
+    "installed": {
+      "screens": 65,
+      "beforeBytes": 507435715,
+      "afterBytes": 368167118
+    },
+    "preview": {
+      "screens": 152,
+      "beforeBytes": 8318335299,
+      "afterBytes": 859821686
+    }
+  }
+}

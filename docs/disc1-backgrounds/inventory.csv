@@ -1,0 +1,225 @@
+cut,area,source,backgrounds,foregrounds,status,production_status,gameplay_verification
+0,Forest,files\SECT\DRGN21.BIN\4,3,1,excluded-debug-menu,,
+1,Forest,files\SECT\DRGN21.BIN\7,3,1,excluded-debug-menu,,
+2,Forest,files\SECT\DRGN21.BIN\10,3,1,excluded-debug-menu,,
+3,Forest,files\SECT\DRGN21.BIN\13,3,1,excluded-debug-menu,,
+4,Forest,files\SECT\DRGN21.BIN\16,3,1,excluded-debug-menu,,
+5,Forest,files\SECT\DRGN21.BIN\19,3,3,installed,,
+6,Forest,files\SECT\DRGN21.BIN\22,6,2,installed,,
+7,Forest,files\SECT\DRGN21.BIN\25,6,6,installed,,
+8,Seles,files\SECT\DRGN21.BIN\28,10,5,installed,artwork-preview-ready,deferred
+9,Seles,files\SECT\DRGN21.BIN\31,3,4,installed,,
+10,Seles,files\SECT\DRGN21.BIN\34,6,5,installed,,
+11,Seles,files\SECT\DRGN21.BIN\37,6,6,installed,artwork-preview-ready,deferred
+12,Seles,files\SECT\DRGN21.BIN\40,10,14,installed,,
+13,Hellena Prison,files\SECT\DRGN21.BIN\43,6,4,installed,,
+14,Hellena Prison,files\SECT\DRGN21.BIN\46,3,3,installed,,
+15,Hellena Prison,files\SECT\DRGN21.BIN\49,5,13,installed,,
+16,Hellena Prison,files\SECT\DRGN21.BIN\52,8,9,installed,,
+17,Hellena Prison,files\SECT\DRGN21.BIN\55,5,10,installed,,
+18,Hellena Prison,files\SECT\DRGN21.BIN\58,8,20,installed,artwork-preview-ready,deferred
+19,Hellena Prison,files\SECT\DRGN21.BIN\61,6,13,installed,,
+20,Hellena Prison,files\SECT\DRGN21.BIN\64,6,16,installed,,
+21,Hellena Prison,files\SECT\DRGN21.BIN\67,10,21,installed,,
+22,Hellena Prison,files\SECT\DRGN21.BIN\70,3,17,installed,,
+23,Hellena Prison,files\SECT\DRGN21.BIN\73,6,11,installed,,
+24,Hellena Prison,files\SECT\DRGN21.BIN\76,3,15,installed,,
+25,Hellena Prison,files\SECT\DRGN21.BIN\79,3,13,installed,,
+26,Hellena Prison,files\SECT\DRGN21.BIN\82,3,16,installed,,
+27,Hellena Prison,files\SECT\DRGN21.BIN\85,3,16,installed,,
+28,Hellena Prison,files\SECT\DRGN21.BIN\88,3,13,installed,,
+29,Hellena Prison,files\SECT\DRGN21.BIN\91,3,16,installed,,
+30,Hellena Prison,files\SECT\DRGN21.BIN\94,3,6,installed,artwork-preview-ready,deferred
+31,Hellena Prison,files\SECT\DRGN21.BIN\97,8,17,installed,,
+32,Hellena Prison,files\SECT\DRGN21.BIN\100,6,10,installed,artwork-preview-ready,deferred
+33,Hellena Prison,files\SECT\DRGN21.BIN\103,6,10,installed,artwork-preview-ready,deferred
+34,Hellena Prison,files\SECT\DRGN21.BIN\106,3,6,installed,artwork-preview-ready,deferred
+35,Hellena Prison,files\SECT\DRGN21.BIN\109,3,1,installed,artwork-preview-ready,deferred
+36,Hellena Prison,files\SECT\DRGN21.BIN\112,4,1,installed,artwork-preview-ready,deferred
+37,Hellena Prison,files\SECT\DRGN21.BIN\115,5,13,installed,,
+38,Prairie,files\SECT\DRGN21.BIN\118,10,7,installed,,
+39,Prairie,files\SECT\DRGN21.BIN\121,10,11,installed,,
+40,Prairie,files\SECT\DRGN21.BIN\124,3,8,installed,,
+41,Prairie,files\SECT\DRGN21.BIN\127,3,9,installed,,
+42,Prairie,files\SECT\DRGN21.BIN\130,3,1,installed,,
+43,Prairie,files\SECT\DRGN21.BIN\133,3,4,installed,,
+44,Prairie,files\SECT\DRGN21.BIN\136,5,7,installed,,
+45,Cave,files\SECT\DRGN21.BIN\139,6,5,installed,,
+46,Cave,files\SECT\DRGN21.BIN\142,6,17,installed,,
+47,Cave,files\SECT\DRGN21.BIN\145,6,2,installed,,
+48,Cave,files\SECT\DRGN21.BIN\148,10,2,installed,,
+49,Cave,files\SECT\DRGN21.BIN\151,6,5,installed,,
+50,Cave,files\SECT\DRGN21.BIN\154,3,5,installed,,
+51,Cave,files\SECT\DRGN21.BIN\157,3,1,installed,,
+52,Cave,files\SECT\DRGN21.BIN\160,4,10,installed,,
+53,Cave,files\SECT\DRGN21.BIN\163,3,7,installed,,
+54,Cave,files\SECT\DRGN21.BIN\166,6,7,installed,,
+55,Forest,files\SECT\DRGN21.BIN\169,3,1,pending,no-visible-environment,
+56,Hellena Prison,files\SECT\DRGN21.BIN\172,3,3,installed,,
+57,Seles,files\SECT\DRGN21.BIN\175,4,9,installed,artwork-preview-ready,deferred
+58,Bale,files\SECT\DRGN21.BIN\178,8,17,installed,artwork-preview-ready,deferred
+65,Bale,files\SECT\DRGN21.BIN\199,3,2,installed,artwork-preview-ready,deferred
+66,Bale,files\SECT\DRGN21.BIN\202,8,17,installed,,
+67,Bale,files\SECT\DRGN21.BIN\205,4,9,installed,artwork-preview-ready,deferred
+68,Bale,files\SECT\DRGN21.BIN\208,8,18,installed,artwork-preview-ready,deferred
+69,Bale,files\SECT\DRGN21.BIN\211,10,16,installed,,
+70,Bale,files\SECT\DRGN21.BIN\214,4,11,installed,artwork-preview-ready,deferred
+71,Bale,files\SECT\DRGN21.BIN\217,10,22,installed,artwork-preview-ready,deferred
+72,Bale,files\SECT\DRGN21.BIN\220,3,4,installed,artwork-preview-ready,deferred
+73,Bale,files\SECT\DRGN21.BIN\223,4,1,installed,artwork-preview-ready,deferred
+74,Bale,files\SECT\DRGN21.BIN\226,4,15,installed,artwork-preview-ready,deferred
+75,Bale,files\SECT\DRGN21.BIN\229,3,5,installed,artwork-preview-ready,deferred
+76,Bale,files\SECT\DRGN21.BIN\232,3,4,installed,artwork-preview-ready,deferred
+77,Bale,files\SECT\DRGN21.BIN\235,10,6,installed,artwork-preview-ready,deferred
+78,Bale,files\SECT\DRGN21.BIN\238,8,15,installed,artwork-preview-ready,deferred
+79,Bale,files\SECT\DRGN21.BIN\241,8,12,installed,artwork-preview-ready,deferred
+80,Bale,files\SECT\DRGN21.BIN\244,3,7,installed,artwork-preview-ready,deferred
+81,Bale,files\SECT\DRGN21.BIN\247,8,7,installed,artwork-preview-ready,deferred
+82,Bale,files\SECT\DRGN21.BIN\250,10,10,installed,artwork-preview-ready,deferred
+83,Bale,files\SECT\DRGN21.BIN\253,4,4,installed,artwork-preview-ready,deferred
+84,Bale,files\SECT\DRGN21.BIN\256,4,7,installed,artwork-preview-ready,deferred
+85,Bale,files\SECT\DRGN21.BIN\259,4,10,installed,artwork-preview-ready,deferred
+86,Indels Castle,files\SECT\DRGN21.BIN\262,6,12,installed,,
+87,Indels Castle,files\SECT\DRGN21.BIN\265,6,12,installed,artwork-preview-ready,deferred
+88,Indels Castle,files\SECT\DRGN21.BIN\268,4,16,installed,artwork-preview-ready,deferred
+89,Indels Castle,files\SECT\DRGN21.BIN\271,6,20,installed,artwork-preview-ready,deferred
+90,Indels Castle,files\SECT\DRGN21.BIN\274,10,19,installed,,
+91,Indels Castle,files\SECT\DRGN21.BIN\277,10,20,installed,,
+92,Indels Castle,files\SECT\DRGN21.BIN\280,10,19,installed,,
+93,Indels Castle,files\SECT\DRGN21.BIN\283,6,11,installed,artwork-preview-ready,deferred
+94,Indels Castle,files\SECT\DRGN21.BIN\286,3,4,installed,artwork-preview-ready,deferred
+95,Town of Hoax,files\SECT\DRGN21.BIN\289,10,21,installed,artwork-preview-ready,deferred
+96,Town of Hoax,files\SECT\DRGN21.BIN\292,10,21,installed,artwork-preview-ready,deferred
+97,Town of Hoax,files\SECT\DRGN21.BIN\295,10,13,installed,artwork-preview-ready,deferred
+98,Town of Hoax,files\SECT\DRGN21.BIN\298,3,1,installed,artwork-preview-ready,deferred
+99,Town of Hoax,files\SECT\DRGN21.BIN\301,3,9,installed,artwork-preview-ready,deferred
+100,Town of Hoax,files\SECT\DRGN21.BIN\304,3,9,installed,artwork-preview-ready,deferred
+101,Town of Hoax,files\SECT\DRGN21.BIN\307,3,1,installed,artwork-preview-ready,deferred
+102,Town of Hoax,files\SECT\DRGN21.BIN\310,4,14,installed,artwork-preview-ready,deferred
+103,Town of Hoax,files\SECT\DRGN21.BIN\313,4,16,installed,artwork-preview-ready,deferred
+104,Town of Hoax,files\SECT\DRGN21.BIN\316,3,5,installed,artwork-preview-ready,deferred
+105,Town of Hoax,files\SECT\DRGN21.BIN\319,3,7,installed,artwork-preview-ready,deferred
+106,Marshland,files\SECT\DRGN21.BIN\322,6,11,installed,artwork-preview-ready,deferred
+107,Marshland,files\SECT\DRGN21.BIN\325,6,9,installed,artwork-preview-ready,deferred
+108,Marshland,files\SECT\DRGN21.BIN\328,6,8,installed,artwork-preview-ready,deferred
+109,Marshland,files\SECT\DRGN21.BIN\331,8,20,installed,artwork-preview-ready,deferred
+110,Marshland,files\SECT\DRGN21.BIN\334,6,9,installed,artwork-preview-ready,deferred
+111,Marshland,files\SECT\DRGN21.BIN\337,6,3,installed,artwork-preview-ready,deferred
+112,Town of Hoax,files\SECT\DRGN21.BIN\340,10,21,installed,artwork-preview-ready,deferred
+113,Town of Hoax,files\SECT\DRGN21.BIN\343,10,21,installed,artwork-preview-ready,deferred
+114,Vol. Villude,files\SECT\DRGN21.BIN\346,6,4,installed,artwork-preview-ready,deferred
+115,Vol. Villude,files\SECT\DRGN21.BIN\349,4,11,installed,artwork-preview-ready,deferred
+116,Vol. Villude,files\SECT\DRGN21.BIN\352,6,1,installed,artwork-preview-ready,deferred
+117,Vol. Villude,files\SECT\DRGN21.BIN\355,6,11,installed,artwork-preview-ready,deferred
+118,Vol. Villude,files\SECT\DRGN21.BIN\358,8,6,installed,artwork-preview-ready,deferred
+119,Vol. Villude,files\SECT\DRGN21.BIN\361,10,17,installed,artwork-preview-ready,deferred
+120,Vol. Villude,files\SECT\DRGN21.BIN\364,3,9,installed,artwork-preview-ready,deferred
+121,Vol. Villude,files\SECT\DRGN21.BIN\367,6,9,installed,artwork-preview-ready,deferred
+122,Vol. Villude,files\SECT\DRGN21.BIN\370,3,2,installed,artwork-preview-ready,deferred
+123,Vol. Villude,files\SECT\DRGN21.BIN\373,3,6,installed,artwork-preview-ready,deferred
+130,Nest of Dragon,files\SECT\DRGN21.BIN\394,3,3,installed,artwork-preview-ready,deferred
+131,Nest of Dragon,files\SECT\DRGN21.BIN\397,10,9,installed,artwork-preview-ready,deferred
+132,Nest of Dragon,files\SECT\DRGN21.BIN\400,3,10,installed,artwork-preview-ready,deferred
+133,Nest of Dragon,files\SECT\DRGN21.BIN\403,6,9,installed,artwork-preview-ready,deferred
+134,Nest of Dragon,files\SECT\DRGN21.BIN\406,6,11,installed,artwork-preview-ready,deferred
+135,Nest of Dragon,files\SECT\DRGN21.BIN\409,6,7,installed,artwork-preview-ready,deferred
+136,Nest of Dragon,files\SECT\DRGN21.BIN\412,6,5,installed,artwork-preview-ready,deferred
+140,Lohan,files\SECT\DRGN21.BIN\424,4,7,installed,artwork-preview-ready,deferred
+141,Lohan,files\SECT\DRGN21.BIN\427,8,8,installed,artwork-preview-ready,deferred
+142,Lohan,files\SECT\DRGN21.BIN\430,5,16,installed,artwork-preview-ready,deferred
+143,Lohan,files\SECT\DRGN21.BIN\433,3,20,installed,artwork-preview-ready,deferred
+144,Lohan,files\SECT\DRGN21.BIN\436,6,15,installed,artwork-preview-ready,deferred
+145,Lohan,files\SECT\DRGN21.BIN\439,6,22,installed,artwork-preview-ready,deferred
+146,Lohan,files\SECT\DRGN21.BIN\442,4,12,installed,artwork-preview-ready,deferred
+147,Lohan,files\SECT\DRGN21.BIN\445,6,4,installed,artwork-preview-ready,deferred
+148,Lohan,files\SECT\DRGN21.BIN\448,6,16,installed,artwork-preview-ready,deferred
+149,Lohan,files\SECT\DRGN21.BIN\451,5,12,installed,artwork-preview-ready,deferred
+150,Lohan,files\SECT\DRGN21.BIN\454,6,13,installed,artwork-preview-ready,deferred
+151,Lohan,files\SECT\DRGN21.BIN\457,8,21,installed,artwork-preview-ready,deferred
+152,Lohan,files\SECT\DRGN21.BIN\460,3,4,installed,artwork-preview-ready,deferred
+153,Shirley's Shrine,files\SECT\DRGN21.BIN\463,4,5,installed,artwork-preview-ready,deferred
+154,Shirley's Shrine,files\SECT\DRGN21.BIN\466,3,16,installed,artwork-preview-ready,deferred
+155,Shirley's Shrine,files\SECT\DRGN21.BIN\469,8,19,installed,artwork-preview-ready,deferred
+156,Shirley's Shrine,files\SECT\DRGN21.BIN\472,6,11,installed,artwork-preview-ready,deferred
+157,Shirley's Shrine,files\SECT\DRGN21.BIN\475,6,16,installed,artwork-preview-ready,deferred
+158,Shirley's Shrine,files\SECT\DRGN21.BIN\478,8,18,installed,artwork-preview-ready,deferred
+159,Shirley's Shrine,files\SECT\DRGN21.BIN\481,8,8,installed,artwork-preview-ready,deferred
+160,Shirley's Shrine,files\SECT\DRGN21.BIN\484,3,7,installed,artwork-preview-ready,deferred
+161,Shirley's Shrine,files\SECT\DRGN21.BIN\487,3,1,installed,artwork-preview-ready,deferred
+162,Shirley's Shrine,files\SECT\DRGN21.BIN\490,3,2,installed,artwork-preview-ready,deferred
+163,Shirley's Shrine,files\SECT\DRGN21.BIN\493,6,15,installed,artwork-preview-ready,deferred
+164,Shirley's Shrine,files\SECT\DRGN21.BIN\496,8,8,installed,artwork-preview-ready,deferred
+165,Shirley's Shrine,files\SECT\DRGN21.BIN\499,3,13,installed,artwork-preview-ready,deferred
+166,Shirley's Shrine,files\SECT\DRGN21.BIN\502,6,11,installed,artwork-preview-ready,deferred
+171,Kazas,files\SECT\DRGN21.BIN\517,6,16,installed,artwork-preview-ready,deferred
+172,Kazas,files\SECT\DRGN21.BIN\520,6,8,installed,artwork-preview-ready,deferred
+173,Kazas,files\SECT\DRGN21.BIN\523,6,11,installed,artwork-preview-ready,deferred
+174,Kazas,files\SECT\DRGN21.BIN\526,4,11,installed,artwork-preview-ready,deferred
+175,Kazas,files\SECT\DRGN21.BIN\529,8,18,installed,artwork-preview-ready,deferred
+176,Kazas,files\SECT\DRGN21.BIN\532,8,13,installed,artwork-preview-ready,deferred
+177,Kazas,files\SECT\DRGN21.BIN\535,10,5,installed,artwork-preview-ready,deferred
+178,Kazas,files\SECT\DRGN21.BIN\538,6,15,installed,artwork-preview-ready,deferred
+179,Kazas,files\SECT\DRGN21.BIN\541,10,11,installed,artwork-preview-ready,deferred
+180,Kazas,files\SECT\DRGN21.BIN\544,8,20,installed,artwork-preview-ready,deferred
+181,Kazas,files\SECT\DRGN21.BIN\547,8,16,installed,artwork-preview-ready,deferred
+182,Kazas,files\SECT\DRGN21.BIN\550,12,16,installed,artwork-preview-ready,deferred
+183,Kazas,files\SECT\DRGN21.BIN\553,3,2,installed,artwork-preview-ready,deferred
+187,Black Castle,files\SECT\DRGN21.BIN\565,6,9,installed,artwork-preview-ready,deferred
+188,Black Castle,files\SECT\DRGN21.BIN\568,6,9,installed,artwork-preview-ready,deferred
+189,Black Castle,files\SECT\DRGN21.BIN\571,6,11,installed,artwork-preview-ready,deferred
+190,Black Castle,files\SECT\DRGN21.BIN\574,8,9,installed,artwork-preview-ready,deferred
+191,Black Castle,files\SECT\DRGN21.BIN\577,4,7,installed,artwork-preview-ready,deferred
+192,Black Castle,files\SECT\DRGN21.BIN\580,6,19,installed,artwork-preview-ready,deferred
+193,Black Castle,files\SECT\DRGN21.BIN\583,6,21,installed,artwork-preview-ready,deferred
+194,Black Castle,files\SECT\DRGN21.BIN\586,6,20,installed,artwork-preview-ready,deferred
+195,Black Castle,files\SECT\DRGN21.BIN\589,8,12,installed,artwork-preview-ready,deferred
+196,Black Castle,files\SECT\DRGN21.BIN\592,6,12,installed,artwork-preview-ready,deferred
+197,Black Castle,files\SECT\DRGN21.BIN\595,4,17,installed,artwork-preview-ready,deferred
+198,Black Castle,files\SECT\DRGN21.BIN\598,8,1,installed,artwork-preview-ready,deferred
+199,Black Castle,files\SECT\DRGN21.BIN\601,6,8,installed,artwork-preview-ready,deferred
+200,Black Castle,files\SECT\DRGN21.BIN\604,6,1,installed,artwork-preview-ready,deferred
+623,Bale,files\SECT\DRGN21.BIN\607,10,1,installed,artwork-preview-ready,deferred
+624,Forest,files\SECT\DRGN21.BIN\610,4,5,installed,,
+625,Forest,files\SECT\DRGN21.BIN\613,8,10,installed,,
+626,Town of Hoax,files\SECT\DRGN21.BIN\616,4,15,installed,artwork-preview-ready,deferred
+627,Town of Hoax,files\SECT\DRGN21.BIN\619,4,16,installed,artwork-preview-ready,deferred
+628,Indels Castle,files\SECT\DRGN21.BIN\622,3,8,installed,artwork-preview-ready,deferred
+631,Bale,files\SECT\DRGN21.BIN\625,10,7,installed,artwork-preview-ready,deferred
+632,Town of Hoax,files\SECT\DRGN21.BIN\628,3,9,installed,artwork-preview-ready,deferred
+633,Town of Hoax,files\SECT\DRGN21.BIN\631,3,1,installed,artwork-preview-ready,deferred
+634,Lohan,files\SECT\DRGN21.BIN\634,3,3,installed,artwork-preview-ready,deferred
+636,Lohan,files\SECT\DRGN21.BIN\640,3,17,installed,artwork-preview-ready,deferred
+637,Lohan,files\SECT\DRGN21.BIN\643,3,9,installed,artwork-preview-ready,deferred
+638,Lohan,files\SECT\DRGN21.BIN\646,8,4,installed,artwork-preview-ready,deferred
+639,Lohan,files\SECT\DRGN21.BIN\649,12,10,installed,artwork-preview-ready,deferred
+640,Hellena Prison,files\SECT\DRGN21.BIN\652,3,2,installed,,
+641,Hellena Prison,files\SECT\DRGN21.BIN\655,3,8,installed,,
+642,Hellena Prison,files\SECT\DRGN21.BIN\658,3,5,installed,,
+643,Hellena Prison,files\SECT\DRGN21.BIN\661,3,2,installed,,
+644,Hellena Prison,files\SECT\DRGN21.BIN\664,3,3,installed,,
+645,Hellena Prison,files\SECT\DRGN21.BIN\667,3,2,installed,,
+646,Lohan,files\SECT\DRGN21.BIN\670,4,8,installed,artwork-preview-ready,deferred
+647,Lohan,files\SECT\DRGN21.BIN\673,3,1,installed,artwork-preview-ready,deferred
+656,Nest of Dragon,files\SECT\DRGN21.BIN\676,3,1,installed,artwork-preview-ready,deferred
+657,Town of Hoax,files\SECT\DRGN21.BIN\679,3,6,installed,artwork-preview-ready,deferred
+658,Black Castle,files\SECT\DRGN21.BIN\682,6,12,installed,artwork-preview-ready,deferred
+659,Black Castle,files\SECT\DRGN21.BIN\685,4,6,installed,artwork-preview-ready,deferred
+660,Black Castle,files\SECT\DRGN21.BIN\688,10,6,installed,artwork-preview-ready,deferred
+674,Town of Hoax,files\SECT\DRGN21.BIN\691,4,6,installed,artwork-preview-ready,deferred
+675,Intro Forest,files\SECT\DRGN21.BIN\694,4,7,installed,,
+676,Intro Forest,files\SECT\DRGN21.BIN\697,6,3,installed,,
+677,Intro Forest,files\SECT\DRGN21.BIN\700,4,3,installed,,
+694,Seles,files\SECT\DRGN21.BIN\703,3,2,installed,,
+695,Seles,files\SECT\DRGN21.BIN\706,3,17,installed,,
+696,Seles,files\SECT\DRGN21.BIN\709,10,6,installed,artwork-preview-ready,deferred
+697,Prairie,files\SECT\DRGN21.BIN\712,6,2,installed,artwork-preview-ready,deferred
+703,Intro Forest,files\SECT\DRGN21.BIN\715,6,5,installed,,
+704,Intro Forest,files\SECT\DRGN21.BIN\718,6,8,installed,,
+716,Nest of Dragon,files\SECT\DRGN21.BIN\721,3,1,installed,artwork-preview-ready,deferred
+725,Seles,files\SECT\DRGN21.BIN\724,4,9,installed,,
+726,Town of Hoax,files\SECT\DRGN21.BIN\727,3,2,installed,artwork-preview-ready,deferred
+740,Prairie,files\SECT\DRGN21.BIN\730,3,2,installed,artwork-preview-ready,deferred
+741,Prairie,files\SECT\DRGN21.BIN\733,4,1,installed,artwork-preview-ready,deferred
+742,Seles,files\SECT\DRGN21.BIN\736,6,4,installed,,
+743,Seles,files\SECT\DRGN21.BIN\739,6,9,installed,artwork-preview-ready,deferred
+791,,files\SECT\DRGN21.BIN\4,3,1,excluded-debug-menu,,

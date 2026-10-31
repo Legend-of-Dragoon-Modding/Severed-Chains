@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Exact fixed-camera isometric RPG interior cutaway, portrait3:4 full canvas. Repaint original in modern photorealistic Seles-level materials without changing geometry or objects. Two-story narrow stone house: upstairs cluttered storage room, wooden chests and stacked sacks, long objects leaning at upper-left, back dresser center, cool light from small upper-right opening; downstairs shop counter makes an L across lower center-left with papers/books on it, ladder climbs right wall, crates/barrels at lower right, stone-paved floor, small stair entry at lower left. Preserve every floor edge, ladder endpoint, countertop shape, object silhouette, wall and threshold at exact original positions. Keep black void around cutaway exactly black. Muted green-gray stone and warm worn timber, existing light only. No people, new items, extra architecture, text/UI. No zoom crop rotate reframe. Final1536x2048.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-2a63c565-ffe5-4c39-b70e-0f62f2d745d6.png",
+  "references": [
+    "gfx\\backgrounds\\disc1\\cut-173\\source\\original-composite.png"
+  ]
+}

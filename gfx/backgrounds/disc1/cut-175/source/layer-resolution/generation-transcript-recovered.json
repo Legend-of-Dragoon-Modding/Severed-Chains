@@ -1,0 +1,11 @@
+{
+  "tool": "built-in imagegen",
+  "provenance": "Exact imagegen invocation inputs recovered from this task session; includes rejected candidates as well as accepted outputs. See sibling generation records and plates.json for selected source filenames.",
+  "invocations": [
+    {
+      "timestamp": "2026-10-31T01:48:38.238Z",
+      "callId": "call_420856e0762b40f39ec3d4dc00c8fba4",
+      "exactToolInput": "const prompt=\"Modernize these SIX original foreground texture crops in the exact same atlas layout. Image1 is layout authority: preserve each crop's geometry, visible surfaces, perspective, silhouette, location and bounding rectangle inside its cell; transparent space must stay transparent. Image2 is the modern target HOUSE style and texture palette. Top-left/top-middle are oblique open doorway leaves plus adjacent warm floor/threshold. Top-right and bottom row are partial stone/timber interior cutaway wall segments with door recesses, shelf bottles and upper black timber cap; keep their wall edges and original open/closed poses, do not invent freestanding doors or furniture. Replace pixelation with crisp warm stone blocks, dark timber, wood grain, bottles and warm torchlight as image2. For floor patches use image2's warm stone floor material at the same projected angle. No new chairs/tables, no new props, no rearranging/recentering/scaling crops, no borders or text. Output same square transparent sprite atlas.\";\nstore(\"atlas175_prompt\",prompt);const r=await tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-175/source/layer-resolution/original-foreground-atlas.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-175/source/layer-resolution/generated-underlay.png\"],transparent_background:true});store(\"atlas175_result\",r);text(r.output_hint);\n"
+    }
+  ]
+}

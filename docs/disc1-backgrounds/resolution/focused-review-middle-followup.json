@@ -1,0 +1,92 @@
+{
+  "scope": "Read-only actual GPU follow-up camera/state review; no engine/source/runtime writes by reviewer.",
+  "screens": [
+    {
+      "cut": 144,
+      "result": "pass-observed-target-endpoints",
+      "completion": "build/disc1/captures/cut-144-followup-v1/modern/completion.txt",
+      "gpuEvidence": "build/disc1/captures/cut-144-followup-v1/modern/modern-gpu-pack.txt",
+      "targetView": "Exploratory camera centers native canvas point 146.0,198.0 using actual background rectangle and renderer submap offsets. Camera=238.0,-70.0; no story/traversal claim.",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-144-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-144-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-144-followup-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-144-followup-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "observations": [
+        "New left-room camera exposes the two door leaves absent from the original focused camera. Both wood leaves disappear independently into coherent room/floor views; no residual duplicate door or conspicuous source-crop rectangle. Together with focused-v1 right-room view, all four door locations have visible GPU endpoint coverage."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Static exploratory endpoints only; no door crossing/traversal claim."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 145,
+      "result": "pass-observed-target-endpoints",
+      "completion": "build/disc1/captures/cut-145-followup-v1/modern/completion.txt",
+      "gpuEvidence": "build/disc1/captures/cut-145-followup-v1/modern/modern-gpu-pack.txt",
+      "targetView": "Exploratory camera centers native canvas point 599.0,113.0 using actual background rectangle and renderer submap offsets. Camera=-215.0,15.0; no story/traversal claim.",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-145-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-145-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-145-followup-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-145-followup-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "observations": [
+        "Right camera exposes both telescope windows20 and lower bedroom door16. Magnified telescope comparison confirms small tube-angle/position changes while stands, window sky and furniture remain continuous; no doubled optical tube or clipped flat head. Door16 closed wood leaf becomes clear open doorway."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Door15 remains outside this right camera and is scheduled in the next left-side probe."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 148,
+      "result": "pass-observed-target-endpoints",
+      "completion": "build/disc1/captures/cut-148-followup-v1/modern/completion.txt",
+      "gpuEvidence": "build/disc1/captures/cut-148-followup-v1/modern/modern-gpu-pack.txt",
+      "targetView": "Exploratory camera centers native canvas point 223.0,292.0 using actual background rectangle and renderer submap offsets. Camera=-31.0,-100.0; no story/traversal claim.",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-148-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-148-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-148-followup-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-148-followup-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "observations": [
+        "Lower-room camera centered at native223,292 exposes hatch13. Closed floor hatch with iron handle/hinges changes to dark cellar recess with descending wooden ladder; adjacent lamp, floor edge, central post and wall remain coherent. No closed cover ghost or uncovered dark rectangular fragment visible."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "An NPC overlaps the hatch position and player is outside the painted room due exploratory camera/state manipulation. These stills establish asset endpoint appearance, not a natural story sequence or character traversal."
+      ],
+      "fullGameplayVerified": false
+    },
+    {
+      "cut": 194,
+      "result": "pass-observed-target-endpoints",
+      "completion": "build/disc1/captures/cut-194-followup-v1/modern/completion.txt",
+      "gpuEvidence": "build/disc1/captures/cut-194-followup-v1/modern/modern-gpu-pack.txt",
+      "targetView": "Exploratory camera centers native canvas point 275.0,82.0 using actual background rectangle and renderer submap offsets. Camera=-83.0,174.0; no story/traversal claim.",
+      "capturesReviewed": [
+        "build/disc1/captures/cut-194-followup-v1/modern/camera-centered.png",
+        "build/disc1/captures/cut-194-followup-v1/modern/frame-0120.png",
+        "build/disc1/captures/cut-194-followup-v1/modern/synthetic-all-visible.png",
+        "build/disc1/captures/cut-194-followup-v1/modern/synthetic-dynamic-hidden.png"
+      ],
+      "observations": [
+        "Right-wall3 camera shows outer green-window masonry skin in visible state; hidden state reveals furnished interior room behind retained foreground parapet/post. No baked green-window duplicate remains in exposed interior and no obvious texture gap or detached wall strip."
+      ],
+      "materialIssues": [],
+      "coverageLimitations": [
+        "Left-wall5 remains outside this right-wall camera and is scheduled separately."
+      ],
+      "fullGameplayVerified": false
+    }
+  ],
+  "capturesReviewed": 16,
+  "blockingMaterialIssues": [],
+  "fullGameplayVerified": false
+}

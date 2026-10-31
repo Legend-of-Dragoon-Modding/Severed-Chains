@@ -1,0 +1,28 @@
+{
+  "background": "underlay-generated.png",
+  "layers": {
+    "0": "underlay-generated.png",
+    "1": "underlay-generated.png",
+    "2": "underlay-generated.png",
+    "3": "underlay-generated.png",
+    "4": "../base.png",
+    "5": "underlay-generated.png",
+    "6": "underlay-generated.png",
+    "7": "underlay-generated.png",
+    "8": "underlay-generated.png",
+    "9": "underlay-generated.png",
+    "10": "underlay-generated.png",
+    "11": "underlay-generated.png",
+    "12": "underlay-generated.png"
+  },
+  "dynamicLayers": [
+    4
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime+2 script501hides foreground4secretstonepanel; actualoriginal121frametraceconfirms hidden4.",
+    "Open native background and modernbase retain passage; generated154closedstonepanel reused forsamephysicalruins and independently checked at165mask footprint.",
+    "Generatedsource provenance:154/source/layer-resolution/closed-source.png sha256=e7cec6a702d5334717ae7907114cd37af15c631a78c48859ee91e79c325ce6e4"
+  ],
+  "reviewStatus": "Sourceclosedpanel+cleanopenpassagereviewed;endpointreviewpending"
+}

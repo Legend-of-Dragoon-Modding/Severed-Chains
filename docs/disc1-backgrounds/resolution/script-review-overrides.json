@@ -1,0 +1,16 @@
+[
+  {
+    "cut": 140,
+    "file": "build/disc1/scripts/426/1.txt",
+    "sha256": "6068d1cad64e4892b93f9759191fd65f9637b487dfdb5504308eff36bfd092c0",
+    "tableLabel": "LABEL_165",
+    "reason": "Generic door helper exits on first0xff table entry before any hide/show path; manually checked runtime+2 script control flow."
+  },
+  {
+    "cut": 646,
+    "file": "build/disc1/scripts/672/1.txt",
+    "sha256": "b5736d299f55f103674a6793a0539bb1c0605b9e2e03a9110b5056ee879c991d",
+    "tableLabel": "LABEL_155",
+    "reason": "Generic door helper exits on first0xff table entry before any hide/show path; manually checked runtime+2 script control flow."
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "background": "../base.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "../base.png",
+    "3": "../base.png",
+    "4": "../base.png",
+    "5": "../base.png",
+    "6": "../base.png",
+    "7": "../base.png",
+    "8": "../base.png",
+    "9": "../base.png",
+    "10": "../base.png",
+    "11": "../base.png",
+    "12": "../base.png",
+    "13": "../base.png",
+    "14": "../base.png",
+    "15": "closed-source.png",
+    "16": "../base.png",
+    "17": "../base.png"
+  },
+  "dynamicLayers": [
+    15
+  ],
+  "visualReview": true,
+  "reviewStatus": "All-visible and dynamic-hidden endpoint review passed: Visible wood panel and open recess both fit the stone canopy; original foreground15 mask retained with no fixed closed-panel ghost.",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/210",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ]
+}

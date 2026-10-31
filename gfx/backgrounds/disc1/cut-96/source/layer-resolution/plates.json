@@ -1,0 +1,38 @@
+{
+  "background": "open-underlay-resumed.png",
+  "layers": {
+    "0": "open-underlay-resumed.png",
+    "1": "open-underlay-resumed.png",
+    "2": "open-underlay-resumed.png",
+    "3": "closed-doors-scene-resumed.png",
+    "4": "open-underlay-resumed.png",
+    "5": "open-underlay-resumed.png",
+    "6": "open-underlay-resumed.png",
+    "7": "open-underlay-resumed.png",
+    "8": "open-underlay-resumed.png",
+    "9": "open-underlay-resumed.png",
+    "10": "open-underlay-resumed.png",
+    "11": "open-underlay-resumed.png",
+    "12": "open-underlay-resumed.png",
+    "13": "open-underlay-resumed.png",
+    "14": "open-underlay-resumed.png",
+    "15": "open-underlay-resumed.png",
+    "16": "open-underlay-resumed.png",
+    "17": "open-underlay-resumed.png",
+    "18": "open-underlay-resumed.png",
+    "19": "open-underlay-resumed.png",
+    "20": "open-underlay-resumed.png"
+  },
+  "dynamicLayers": [
+    3
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime script archive is environment source index+2; exact calls and observed states are retained in resolution/early.json.",
+    "Independent builtin ImageGen open underlay and RGB material plates; exact original alpha and silhouette retained by atlas packing. Raw base and runtime files unchanged.",
+    "Source plates reviewed; endpoint composites require final per-cut review before resolved status."
+  ],
+  "reviewStatus": "Full scene closed variants replace rejected flat material; endpoint review pending",
+  "runtimeInstalled": false,
+  "gameplayVerified": false
+}

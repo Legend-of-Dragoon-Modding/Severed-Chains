@@ -1,0 +1,259 @@
+{
+  "cut": 32,
+  "dynamicLayers": [],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        90,
+        242,
+        206,
+        264
+      ],
+      "opaquePixels": 1549,
+      "backgroundOverlapPixels": 1549,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        187,
+        170,
+        227,
+        248
+      ],
+      "opaquePixels": 1160,
+      "backgroundOverlapPixels": 1160,
+      "dynamic": false
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        236,
+        210,
+        355,
+        289
+      ],
+      "opaquePixels": 3115,
+      "backgroundOverlapPixels": 3115,
+      "dynamic": false
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        80,
+        305,
+        116,
+        365
+      ],
+      "opaquePixels": 462,
+      "backgroundOverlapPixels": 462,
+      "dynamic": false
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        226,
+        202,
+        302,
+        262
+      ],
+      "opaquePixels": 2977,
+      "backgroundOverlapPixels": 2977,
+      "dynamic": false
+    },
+    {
+      "layer": 5,
+      "bbox": [
+        263,
+        125,
+        341,
+        167
+      ],
+      "opaquePixels": 815,
+      "backgroundOverlapPixels": 815,
+      "dynamic": false
+    },
+    {
+      "layer": 6,
+      "bbox": [
+        0,
+        344,
+        80,
+        435
+      ],
+      "opaquePixels": 926,
+      "backgroundOverlapPixels": 926,
+      "dynamic": false
+    },
+    {
+      "layer": 7,
+      "bbox": [
+        112,
+        240,
+        210,
+        295
+      ],
+      "opaquePixels": 1148,
+      "backgroundOverlapPixels": 1148,
+      "dynamic": false
+    },
+    {
+      "layer": 8,
+      "bbox": [
+        90,
+        264,
+        170,
+        321
+      ],
+      "opaquePixels": 2092,
+      "backgroundOverlapPixels": 2092,
+      "dynamic": false
+    },
+    {
+      "layer": 9,
+      "bbox": [
+        170,
+        264,
+        206,
+        321
+      ],
+      "opaquePixels": 1782,
+      "backgroundOverlapPixels": 1782,
+      "dynamic": false
+    }
+  ],
+  "scriptEvidence": [],
+  "genericDoorTables": [],
+  "observed": {
+    "cut": 32,
+    "inspectionPassed": true,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-32/original/alignment.csv",
+    "gpuExportMatches": true,
+    "allObservedLayersFixedVisible": true,
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 6,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 7,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 8,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 9,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ],
+    "fullGameplayVerified": false
+  }
+}

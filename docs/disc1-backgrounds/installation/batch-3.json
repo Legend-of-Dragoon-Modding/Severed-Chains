@@ -1,0 +1,1013 @@
+{
+  "batch": 3,
+  "packaged": [
+    {
+      "cut": 123,
+      "batch": 3,
+      "width": 1540,
+      "height": 1028,
+      "layers": 6,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3022736,
+          "sha256": "15751a1b16894407762a71f0013809186af76c8d8967867752463b82bef03976",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 142335,
+          "sha256": "2af2020dc38dc2a95976e1957cb8ac3d976eb09355723c9071617a82cdedae1b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 58636,
+          "sha256": "be47d18009ad74edac20d34554bc2ac18f689a322de2b064d826fdc451903dad",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 6217,
+          "sha256": "22160bd871a03c6b8d46f496a60d31a64618cd6622fa7c5c71252b0bf049ba3d",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 64936,
+          "sha256": "6318c80bd45729c8c6593afbeba2200d1efd5cdff0165e0b8814894f6719ba46",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 6217,
+          "sha256": "22160bd871a03c6b8d46f496a60d31a64618cd6622fa7c5c71252b0bf049ba3d",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 60220,
+          "sha256": "f01a4d4f5a4c3fbf9aa3a866288ac8cc6a632c2c2c05116b9bcbeae90d7628d3",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 130,
+      "batch": 3,
+      "width": 1536,
+      "height": 1024,
+      "layers": 3,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3592388,
+          "sha256": "7b8bc79c9ec09b0e1813b0a2420d97f2cbbada8904cb7765c157bac8a08c5942",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 262958,
+          "sha256": "423c2715f7f6761c90260845e8d88dd12552db2b914bfcb9730ae17d5cf8261f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 42768,
+          "sha256": "58fb3d1bcb7780f78e29cee2808a51f97f3cbc32f5c259c58d64a8fadf910552",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 71222,
+          "sha256": "0498af6f3e6786e6a9133cf2173487c44788c2dd30707df754759a2401bc1640",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 131,
+      "batch": 3,
+      "width": 2560,
+      "height": 1536,
+      "layers": 9,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 7298548,
+          "sha256": "fe6cf4aaf923a4948db64b01a2ec64b587b6f1f9d0e7d600638b89b3ac825cc2",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 279148,
+          "sha256": "2423eff55cbe0e1e767ae2184c24886289e6130362d09ce6b436580777cee36e",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 80678,
+          "sha256": "66219ad9f248f6ee5aaace3dcb8b822c453957d1cdd0428c38f192ef904908c9",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 412939,
+          "sha256": "d5bd7d0a7c10de2c1ebbfdd2161dd4e0ff5f0294b2d4a13707a4e2fa49100c6e",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 64531,
+          "sha256": "4015f1d18079e8c9e94934a2bc94e8b675817380e98a97902879dd45527099cf",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 181792,
+          "sha256": "24d98ce4c9b5a9f1fa11cb8c133d60ee38b912a6336d1d3322bcc0e1bfe9dfce",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 85117,
+          "sha256": "5c092ffe07e3355085fcf9f42495d13973758da4f70a2b8455f14745bd6841f9",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 376643,
+          "sha256": "c58e5d8c4dcdd8a43f35f226816df3948b6a4cdfb164455b104380ca4bb480a6",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 60568,
+          "sha256": "85f06d55b561dc034fe9ef9b645ce62130da7c9c7cc7223249fcfd243cbf0476",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-8.png",
+          "bytes": 89796,
+          "sha256": "305ecf3ea232c73ce24251a097c0f49139f65e970ba9563beea22813820d10f0",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 132,
+      "batch": 3,
+      "width": 1536,
+      "height": 1024,
+      "layers": 10,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3717198,
+          "sha256": "86ac859ad003eb19b140f5abb7d7c92c98d36bc8fc233f50403cae041ff5515b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 710640,
+          "sha256": "02d070d2777c8c023532e7f57d65e377a14849e0c9e3f28a7f602bcb7942515d",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 11759,
+          "sha256": "67c8abd14f8ebf69ec51a970457c85ea351c4c2597117756c44e61d9ac1370aa",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 34870,
+          "sha256": "4c9383c5f1595e0d41d2d0445327ffc3f02beb5e46e66df8e20601d289752efa",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 263296,
+          "sha256": "1321be2d042193dea8eeb954b05d5c857f9c31fe5faacfff5ad7014ee6da07ae",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 123508,
+          "sha256": "d389273072030641dd05ccc47fc1c6c6de124cfa6f071b0c6c45c27321ba93c6",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 339855,
+          "sha256": "8029098c2b1fcac3c8b14d13f3eaeee330fa497a494ef4a04605c904aa7edd36",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 98584,
+          "sha256": "83c807c4bc789b97025d27ce5c226111292d9e2a4eb2f46e1d39d2b7d05d7f3b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 90130,
+          "sha256": "7ea9136e910b15bc53914ca26e7f065027650331941608f9417418af699d46e0",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-8.png",
+          "bytes": 42073,
+          "sha256": "d46d5b7111156c4527fbb801fef213c1ab2e066eb724b2ffcd25046c7120d549",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-9.png",
+          "bytes": 24031,
+          "sha256": "199275a77b6d676ad9a38a47faea38456dc940ec22bce56754fc5970f2cf5d57",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 133,
+      "batch": 3,
+      "width": 1536,
+      "height": 2048,
+      "layers": 9,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 6161057,
+          "sha256": "50298727f91b34b677dfc46035f797d0da8bd5096ff6fca315f2d142db3cdf06",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 73040,
+          "sha256": "2b83a457d8ad465938407a2e0ba03e47af7e85be58d9ad8dfa23c4de5b42d6fb",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 28417,
+          "sha256": "d16e7c0271223df7a085577ac5eeb4dfdbf4fa50e482a5e2c90cafa50d29dd1d",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 910562,
+          "sha256": "8745afc8411def8577c10098d160c80683327246536640686ef2a51fbec6f79d",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 410235,
+          "sha256": "531f47d9d6ede107085db925b28071cc2b8b82ce1ed5fb0c18d045ebacdf2cbf",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 44281,
+          "sha256": "71047c4ef1eb5fd1368008ba778675e9a835a68f31fc561e34f443859e22e436",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 261261,
+          "sha256": "81e27493c209b140b425fc7f3fa6de43ad96d726e69de256f24f31419f790271",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 105322,
+          "sha256": "a48aff5e39e023642392c6ba397dc5e39248b668de95d487aded0bd4b7f2daf7",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 266264,
+          "sha256": "c2aa44ee9b2be31b65f9ca9e650d7d283af6a52a1795544ab8383706297b314c",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-8.png",
+          "bytes": 54799,
+          "sha256": "4fba0a27fe116c3f2d9dc93120f6835672309e1d7f6d2069ab46f5f7f041405e",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 135,
+      "batch": 3,
+      "width": 1536,
+      "height": 1536,
+      "layers": 7,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 4572113,
+          "sha256": "8058ce3ebe05ea051d181b1fabfa74f219cb584a13dd623e4a16249038938873",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 167988,
+          "sha256": "9164cf2c568f87696e259c2bad4a01557967c9a39829cb62e1558a3d538bcc8a",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 47783,
+          "sha256": "c7ef121608b2d39a971b744a0e43db2ce147d0e1581390344a5f6e5d83b8ea80",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 31532,
+          "sha256": "6bea015df8df151b31937e8fe3d40dfb409c7e65bbb4745212016260be764298",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 65938,
+          "sha256": "0adeb5a7eb88c9ad794e8a95bdd6e0352003523d688ef9b618b07492441c7896",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 51971,
+          "sha256": "074ac560daff756455858c2b9a47cbda1ef58650bb6659cd3d0d8c3c9f5ae0bb",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 40778,
+          "sha256": "370718e3ee792c18727092e8fcf311594934b33ef4214d19694598e43cf06060",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 37346,
+          "sha256": "4d707abf0030d96215bb0abd1738c18aff31ad1c38fa22fcefd6b4e931a6e903",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 136,
+      "batch": 3,
+      "width": 1536,
+      "height": 1536,
+      "layers": 5,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 4532614,
+          "sha256": "8c12d8f34d9d5c85ecb87d71968b045f58eec3c16759812d503b3e55d9a6a14b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 119313,
+          "sha256": "85e87ba31b5e993534f80070cc2427a0936ca9a0766ad4eece5cf0afb8574ea1",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 95641,
+          "sha256": "822c3b0bb2e465b52684ad469b702c158ada66cf16042a548f618d4888ec321e",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 163408,
+          "sha256": "097ea8aa83635d954bb7773d55dbd3e012bb3604d89167d9174659a0522a15cf",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 78346,
+          "sha256": "cc6c561cfe1eebbeb189448182d2885d8e3d437262735a66705fce53a327764b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 26827,
+          "sha256": "064ba5f78bd1b9b216591f66d89014445be2e74429283c3a679364559f4ac08f",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 656,
+      "batch": 3,
+      "width": 1536,
+      "height": 1024,
+      "layers": 1,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3674148,
+          "sha256": "120f41c98ac6be6ecb6faf9df10d574f3f629a92ca9c74cd14507b81a58da064",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 6177,
+          "sha256": "867ef35c248288475d2ba4be7076dbe44d5806e037d1af66819675eb95686b63",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 716,
+      "batch": 3,
+      "width": 1536,
+      "height": 1024,
+      "layers": 1,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3674148,
+          "sha256": "120f41c98ac6be6ecb6faf9df10d574f3f629a92ca9c74cd14507b81a58da064",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 6177,
+          "sha256": "867ef35c248288475d2ba4be7076dbe44d5806e037d1af66819675eb95686b63",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 140,
+      "batch": 3,
+      "width": 2048,
+      "height": 1028,
+      "layers": 7,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 4720726,
+          "sha256": "309778c6b56f2d899339ee3a8385db2ccba1aca3baf39ab650a52f6f45bf24f5",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 304305,
+          "sha256": "09791d4865e9b0bf00bbe7b778081f3e4199f4f778548c515411df40cd6c216f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 238551,
+          "sha256": "7aa2a33761effa9776174b9444c5846961100459a584819c65380f175e296ee2",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 181135,
+          "sha256": "ca594f0beb4fc0d3e8f516c24cd653cf42a68b0502e2f6af5ad4921be00f35d8",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 109407,
+          "sha256": "e1151c92f7c8fa5d8f44eadaa684441f5be361645b02ff1e79cbbf490f1711f5",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 37848,
+          "sha256": "f9009599f2ee1e90967e27b3a9cc5fbd1b62ba639a24b8bd29c4789774adb92b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 15130,
+          "sha256": "f451ff65990dc1486e563f8bb1f38cf2da57409b6484cd9ff96c8e2c52a6d900",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 216442,
+          "sha256": "428585b0630208009f7c1e446e4ef7ca03a98b24ac603fd47a6c47ab2a0570e3",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 646,
+      "batch": 3,
+      "width": 2052,
+      "height": 1028,
+      "layers": 8,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 4317892,
+          "sha256": "3c7d94a0b2ea3fa9633c5dbf1b008e20bc87f7e8e5c7cd37c1111adf7bcb8f56",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 22122,
+          "sha256": "2a5e9dbf2ee2173c53c72f24f29517e139532f945d67bf92da37fb61f6da9b6c",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 112981,
+          "sha256": "5c024ef22c94d7e305c1beb5f9d6e37a049cae31dcf602468d1678882edb921b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 75241,
+          "sha256": "cef16a4361404865991755e8e8807a5869f39cc32da9f4047a57d9083654a040",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 24490,
+          "sha256": "39475be6a58c867c16c123f76d65f4dcf6a3b2894dd028a633bc247ac64b7d86",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 124810,
+          "sha256": "c6db62d2dbc81cf46713b655d3eb60ae7a71153d6bf63ec92200b2a1039e7ee5",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 142140,
+          "sha256": "7a6b89950bfd8967235ba6fefb028263f9e9dfcfc1dca8ac55b879e15d8ee7f9",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 147388,
+          "sha256": "5c989ca9925f6fdca0dff0b7e2323e016ed692750081b662d3aa728c7d727ef0",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 63969,
+          "sha256": "7706c933de551cbe8a369293defe893032568f6c29788e167ae4103869e97114",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 638,
+      "batch": 3,
+      "width": 2048,
+      "height": 1536,
+      "layers": 4,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 6042081,
+          "sha256": "4e118c205a15ecc31ff58c2c887127264979e7c735c591f6d6aaa7a52c06d794",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 102710,
+          "sha256": "0c50a3320d34f5f718ba13fd5107530d699e30d2aabf4cd1be6560cb597679fd",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 42520,
+          "sha256": "ed6b9ddf719ae9952e458b73174e65a4a37351395f6a0d5cbfa7d7bf086a8028",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 31648,
+          "sha256": "b96e98ae7ad15985d7191d8c6f77b5419ca3e488bb6dc0516f153fc5cce607bb",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 28003,
+          "sha256": "ed002d1686b2d4212f8059e77b807620f22adb2d3309f9aaa4f192db8f42f191",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 634,
+      "batch": 3,
+      "width": 1536,
+      "height": 1024,
+      "layers": 3,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3315429,
+          "sha256": "23b2fac57c9e17806f13bf353ceb9601193bdab098ea7dea59e067a2a84afe1f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 6177,
+          "sha256": "867ef35c248288475d2ba4be7076dbe44d5806e037d1af66819675eb95686b63",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 6177,
+          "sha256": "867ef35c248288475d2ba4be7076dbe44d5806e037d1af66819675eb95686b63",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 6177,
+          "sha256": "867ef35c248288475d2ba4be7076dbe44d5806e037d1af66819675eb95686b63",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 639,
+      "batch": 3,
+      "width": 3072,
+      "height": 1536,
+      "layers": 10,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 8024547,
+          "sha256": "ee58888fb6a67712bb18ea2ea5ffd7ccba6458b5d8303e962748a767dd5bee01",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 64413,
+          "sha256": "6c5e938470a9225bd885a192bea8af23ea89d24ea601649ec9b0f6af1624aac0",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 81070,
+          "sha256": "39b9a12480f831ab73a4328ced099e894d673ae743bd67345c03f5f1cd2b4881",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 68339,
+          "sha256": "49ff6a3558865b90e179fd869d968e5be90ef6c1ad6a38a37809f4b324d57920",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 78944,
+          "sha256": "e211ba6a38a0d75c81cf4827e8577a2cc9834d8e3541019525a2d4b059b092d1",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 68061,
+          "sha256": "124fdcfba1700cec5c6e2cfb15f3a0f85c623f4309cc041a0318f838b59f06cb",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 76413,
+          "sha256": "1af3a38fe63fb7b20c29e2658534a24b3d240d124f2b045ca7ecac2ae5bbbfbf",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 66081,
+          "sha256": "538d2875ccbf9fafeb55c2fd5be22ebe0c1cd06150cca386292828bcb745b37b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 91004,
+          "sha256": "6b29d051a6ea1fc37dd72ca148c31d1ed92942ac08430a382da9377fbf74d4d8",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-8.png",
+          "bytes": 106818,
+          "sha256": "cca970aef567224da1141d054c8929112c86bf6fed8d8da8d939af538e5d6747",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-9.png",
+          "bytes": 68760,
+          "sha256": "4446af0875a2625c86bddb84ac77a8cc049b9a8c6bf44723e3247f289515c660",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 152,
+      "batch": 3,
+      "width": 1536,
+      "height": 1024,
+      "layers": 4,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3189030,
+          "sha256": "2b963b8a8c7e4edfcde42ffb3382e0f63fd7b948d2be11ecf6dd3aa4d4ee4e76",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 305100,
+          "sha256": "35766f25b483b5676203376bbe09edc642a37e3a5bde9dce06a63af1fbfd8668",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 127960,
+          "sha256": "0d9220a75a84844933e0e09e0661b316199e5afb6b476457ac0062dc290068b5",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 111759,
+          "sha256": "263dd020e36d2b4fcd29c86d07b2f9fbe144322b4aaeb2094e009a3e93afba1f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 102413,
+          "sha256": "f82e078baefeb16e2d5ca6ce00b413377163f64eff3651b19c3b5a63dc144cc0",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 153,
+      "batch": 3,
+      "width": 2048,
+      "height": 1024,
+      "layers": 5,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 4342816,
+          "sha256": "8f5d179cdbd81601d1f5fed69c1955fe7a42871ecc1c3966edceffa6c32fef4b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 135112,
+          "sha256": "a662fe039270d6d17972db3d11ac29a5b552d5478355c6ccb5cf5fa0fc101872",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 42171,
+          "sha256": "45faefdb8b871f9d8fff9fe407265f52a1415ceba0fa18b90b18502cc425b79d",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 44603,
+          "sha256": "b29b7d7e9835ef077dcbd3cf7bf6023532ae28d3d886ea9e62efef650002a5b7",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 394873,
+          "sha256": "5dc7e83f59a97644cce8b3f82bfa3b4905e2360f03a09684a6bc4326e4ab4c9f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 424139,
+          "sha256": "4bff8954717fc1b29f5e92fd3fa71520ce886ac2d016a69a8f335fadb3984c63",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 154,
+      "batch": 3,
+      "width": 1536,
+      "height": 1032,
+      "layers": 16,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 3489037,
+          "sha256": "97ae74d5dceb7ea68826c420708c5433e9a2acd7bf30f19611db6959a384e15b",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 53118,
+          "sha256": "c766b05652755b575ea6e5a4f097b0e90f9a0f86090d8cd6a27814c1e8161dc0",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 38504,
+          "sha256": "1bda6450169701f05b20036ecbf214764c8d9e10eadf4e3cfe6432e8c6d7dee1",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 96485,
+          "sha256": "ce60c07b2e99f0f3d314a794939a42cedc6ab90c41c862ded4138a0589358581",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 28531,
+          "sha256": "0b4d3227bf93fecab67c05857c77d868e2abbb18c012a1000c9a6a401e9fcca2",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 64595,
+          "sha256": "1fe2ac1c2705109cb5f32f0d89bb855bd9ee9d861112102e62e1229d6aa3358f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 29778,
+          "sha256": "b582f3584a2498b5b5b1e0cd42cefb8964200c644342bc9c59d46cb15334fee4",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 298472,
+          "sha256": "7c028b22f4782aa18a680885158e25cd8ea7307b6daff55098ad17906abbf36a",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 35151,
+          "sha256": "5e5edf9bff7c52d6f36c180a0b3979fb45b758d01baa8163d41c6233fba918f1",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-8.png",
+          "bytes": 25625,
+          "sha256": "79589db96a86caa485e09483b403fba219c651a0f9f9fdffb3a8b3460d925c64",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-9.png",
+          "bytes": 30677,
+          "sha256": "ea4083fafe48bfe4ba6b8e3d4ac45572acabcf36b32f007ed97c532467c8bcc2",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-10.png",
+          "bytes": 175684,
+          "sha256": "dffbdd9633ad4a8f42e90233ee02bf3e520598c5b272e9cdaa7949d3fb811bba",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-11.png",
+          "bytes": 41636,
+          "sha256": "121873fba9616339aeed0a4b120bf2f3155dea0792ed8ef35702650d8632993a",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-12.png",
+          "bytes": 40769,
+          "sha256": "e585b8d5e660d37779c7d4bf77e3b896c035cb86eb74d5b0ce05c91fe06a9a3f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-13.png",
+          "bytes": 36401,
+          "sha256": "145ce2ddacc7d88c1ee5b5afd247c757ee1fd85f50d74c8fbf86f1b61883726a",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-14.png",
+          "bytes": 43735,
+          "sha256": "e4794817d7adde98709b56896e4a8019a443ab3205475f3058a37bbcbdfa5ae7",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-15.png",
+          "bytes": 13275,
+          "sha256": "a2b468d68e2f7e87f28b6257bef1d2de66bb2bce05b5b1f79551afee106bf88f",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    },
+    {
+      "cut": 156,
+      "batch": 3,
+      "width": 3072,
+      "height": 1024,
+      "layers": 11,
+      "files": [
+        {
+          "name": "background.png",
+          "bytes": 6621732,
+          "sha256": "18b3398bec93c271a0ee8df4bd54bbf30a068dbce8e71adf027b6f7c391ffb6f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-0.png",
+          "bytes": 241838,
+          "sha256": "e867b3fc145abe6ec51691c51d179435074a16ce93b7e5bb14763a2c78eaa1d8",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-1.png",
+          "bytes": 186350,
+          "sha256": "9b8d030916105e27bae08fbbe5c1340f98253aa95bd8756a29cfc48af3a50292",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-2.png",
+          "bytes": 53859,
+          "sha256": "8f99c2085597f239ee04d2d7ef5053afe49241892b86e066b27f5165eb36f90e",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-3.png",
+          "bytes": 30184,
+          "sha256": "74512c71c68811f93d9f4d752f09b5e6902755094f85cc55cf4589225c791266",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-4.png",
+          "bytes": 129085,
+          "sha256": "4572eab4cdf052f1b91e457e019bb0be6ca35b2bdff49fd340aee8e7c00b98b6",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-5.png",
+          "bytes": 60633,
+          "sha256": "cbbc4a636d5707c30f0e6f33e2f9ffead83cf54ebda020c2e16d1d430a4eed62",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-6.png",
+          "bytes": 123770,
+          "sha256": "5dcc3bf13355bc8796d603418f70a04f664ab837a87de94b2e1ba9c4d87eafa2",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-7.png",
+          "bytes": 50016,
+          "sha256": "aa4db27009d0c835d1f3ba4fc78e61a36784067f280de8fa2c50ab1dd0af834f",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-8.png",
+          "bytes": 71704,
+          "sha256": "f5d3054b1566a1ccfc398b5f650a2d6fe0f4ac976f53689d2a14baeaccdbba7c",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-9.png",
+          "bytes": 62280,
+          "sha256": "5987ccc0b3ed7dd88022933302b466d2556e949ff582f4069bdeb8be1bc00d8e",
+          "exactOriginalAlpha": true
+        },
+        {
+          "name": "foreground-10.png",
+          "bytes": 72850,
+          "sha256": "bb852fe412291faf9801e544ae68d91c897d2ee2723da272d75f8c438ff0f3ed",
+          "exactOriginalAlpha": true
+        }
+      ],
+      "copied": true
+    }
+  ],
+  "registered": true,
+  "checksPassed": true,
+  "packValidationPassed": true,
+  "loadingSmokeCuts": [
+    140
+  ]
+}

@@ -1,0 +1,1240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="legend.game.Disc1LayerPreparationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-31T03:03:43.018Z" hostname="DESKTOP-ANFIHSN" time="63.388">
+  <properties/>
+  <testcase name="inspectLayersSequentially()" classname="legend.game.Disc1LayerPreparationTest" time="63.388"/>
+  <system-out><![CDATA[04:03:43.398 [Thread-3 legend.game.Main:64] ?[32mINFO ?[m: Initialising LWJGL version 3.4.3+4
+04:03:43.404 [Test worker legend.core.font.FontManager:30] ?[32mINFO ?[m: Loading font gfx\fonts\default.json
+04:03:43.565 [Thread-3 legend.core.Updater:59] ?[32mINFO ?[m: Custom build, skipping update check
+04:03:44.116 [Thread-3 legend.core.platform.SdlPlatformManager:209] ?[32mINFO ?[m: Loading gamepads...
+04:03:44.122 [Thread-5 legend.core.GameEngine:196] ?[32mINFO ?[m: Severed Chains 3.0.0-SNAPSHOT-CHANNEL commit COMMIT built null starting
+04:03:44.122 [Thread-3 org.legendofdragoon.modloader.ModManager:96] ?[32mINFO ?[m: Scanning for mods...
+04:03:44.152 [Thread-5 legend.game.unpacker.Unpacker:395] ?[32mINFO ?[m: Found disk 1: isos\Legend of Dragoon, The (USA) (Disc 1).bin
+04:03:44.153 [Thread-5 legend.game.unpacker.Unpacker:395] ?[32mINFO ?[m: Found disk 2: isos\Legend of Dragoon, The (USA) (Disc 2).bin
+04:03:44.154 [Thread-5 legend.game.unpacker.Unpacker:395] ?[32mINFO ?[m: Found disk 3: isos\Legend of Dragoon, The (USA) (Disc 3).bin
+04:03:44.155 [Thread-5 legend.game.unpacker.Unpacker:395] ?[32mINFO ?[m: Found disk 4: isos\Legend of Dragoon, The (USA) (Disc 4).bin
+04:03:44.158 [Thread-5 legend.game.unpacker.Unpacker:204] ?[32mINFO ?[m: Populating initial file tree...
+04:03:44.162 [Thread-5 legend.game.unpacker.Unpacker:210] ?[32mINFO ?[m: Initial file tree populated in 0.004122s with 0 files
+04:03:44.163 [Thread-5 legend.game.unpacker.Unpacker:315] ?[32mINFO ?[m: Files unpacked in 0.007311s
+04:03:44.218 [Thread-5 legend.game.unpacker.scripts.ScriptPatcher:158] ?[32mINFO ?[m: Applying script patches
+04:03:45.025 [Thread-3 org.legendofdragoon.modloader.ModManager:139] ?[32mINFO ?[m: Found mod: turn_order
+04:03:45.028 [Thread-3 org.legendofdragoon.modloader.ModManager:139] ?[32mINFO ?[m: Found mod: lod
+04:03:45.029 [Thread-3 org.legendofdragoon.modloader.ModManager:139] ?[32mINFO ?[m: Found mod: lod_core
+04:03:45.030 [Thread-3 legend.core.GameEngine:308] ?[32mINFO ?[m: Booting mods...
+04:03:45.031 [Thread-3 legend.core.GameEngine:314] ?[32mINFO ?[m: Loading mods [lod, turn_order, lod_core]...
+04:03:45.070 [Thread-3 org.legendofdragoon.modloader.ModManager:196] ?[32mINFO ?[m: Loaded mod: lod
+04:03:45.081 [Thread-3 org.legendofdragoon.modloader.ModManager:196] ?[32mINFO ?[m: Loaded mod: turn_order
+04:03:45.147 [Thread-3 org.legendofdragoon.modloader.ModManager:196] ?[32mINFO ?[m: Loaded mod: lod_core
+04:03:45.147 [Thread-3 org.legendofdragoon.modloader.events.EventManager:47] ?[32mINFO ?[m: Scanning for event consumers...
+04:03:45.832 [Thread-3 legend.game.saves.ConfigStorage:38] ?[32mINFO ?[m: Loading config GLOBAL from config.dcnf
+04:03:45.833 [Thread-3 legend.core.font.FontManager:30] ?[32mINFO ?[m: Loading font gfx\fonts\smooth.json
+04:03:45.899 [Thread-3 legend.core.audio.AudioThread:242] ?[32mINFO ?[m: Using first audio device OpenAL Soft on Haut-parleurs (6- USB Audio Device)
+04:03:45.977 [Thread-3 legend.core.audio.AudioThread:165] ?[32mINFO ?[m: Created audio context 0x2d4e48b0080
+04:03:46.031 [Thread-3 legend.core.platform.SdlWindow:146] ?[32mINFO ?[m: Initializing OpenGL 3.3...
+04:03:46.339 [Thread-3 legend.core.platform.SdlWindow:329] ?[32mINFO ?[m: Centering window (window [960, 720], display [0, 0, 1920, 1080])
+04:03:46.343 [Thread-3 legend.core.renderer.opengl.GlApi:133] ?[32mINFO ?[m: OpenGL version: 3.3.0 NVIDIA 616.92
+04:03:46.343 [Thread-3 legend.core.renderer.opengl.GlApi:134] ?[32mINFO ?[m: GLSL version: 3.30 NVIDIA via Cg compiler
+04:03:46.344 [Thread-3 legend.core.renderer.opengl.GlApi:135] ?[32mINFO ?[m: Device manufacturer: NVIDIA Corporation
+04:03:46.381 [Thread-3 legend.core.renderer.opengl.GlShader:76] ?[32mINFO ?[m: Compiling shader Simple vs[gfx\shaders\simple.vsh] fs[gfx\shaders\simple.fsh]
+04:03:46.382 [Thread-3 legend.core.renderer.opengl.GlShader:98] ?[32mINFO ?[m: Recompiling shader Simple
+04:03:46.398 [Thread-3 legend.core.renderer.opengl.GlShader:76] ?[32mINFO ?[m: Compiling shader Copy vs[gfx\shaders\copy.vsh] fs[gfx\shaders\copy.fsh]
+04:03:46.398 [Thread-3 legend.core.renderer.opengl.GlShader:98] ?[32mINFO ?[m: Recompiling shader Copy
+04:03:46.401 [Thread-3 legend.core.renderer.opengl.GlShader:76] ?[32mINFO ?[m: Compiling shader Post vs[gfx\shaders\post.vsh] fs[gfx\shaders\screen.fsh]
+04:03:46.401 [Thread-3 legend.core.renderer.opengl.GlShader:98] ?[32mINFO ?[m: Recompiling shader Post
+04:03:46.407 [Thread-3 legend.core.renderer.opengl.GlShader:76] ?[32mINFO ?[m: Compiling shader Standard vs[gfx\shaders\standard.vsh] fs[gfx\shaders\standard.fsh]
+04:03:46.407 [Thread-3 legend.core.renderer.opengl.GlShader:98] ?[32mINFO ?[m: Recompiling shader Standard
+04:03:46.412 [Thread-3 legend.core.renderer.opengl.GlShader:86] ?[32mINFO ?[m: Compiling shader TMD vs[gfx\shaders\tmd.vsh] gs[gfx\shaders\tmd.gsh] fs[gfx\shaders\tmd.fsh]
+04:03:46.413 [Thread-3 legend.core.renderer.opengl.GlShader:98] ?[32mINFO ?[m: Recompiling shader TMD
+04:03:46.417 [Thread-3 legend.core.renderer.opengl.GlShader:86] ?[32mINFO ?[m: Compiling shader Battle TMD vs[gfx\shaders\battle_tmd.vsh] gs[gfx\shaders\tmd.gsh] fs[gfx\shaders\battle_tmd.fsh]
+04:03:46.418 [Thread-3 legend.core.renderer.opengl.GlShader:98] ?[32mINFO ?[m: Recompiling shader Battle TMD
+04:03:46.452 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:46.556 [Thread-3 legend.game.fmv.VideoPlayer:79] ?[32mINFO ?[m: Playing FMV gfx\intro.mp4
+04:03:49.897 [Thread-3 legend.game.fmv.VideoPlayer:95] ?[32mINFO ?[m: Video size 1280x720
+04:03:49.902 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:50.116 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: engine loading (6.9s)
+04:03:50.116 [Hardware legend.game.Wait:30] ?[32mINFO ?[m: [E2E] Waiting for: renderer window created (timeout 30s)
+04:03:50.116 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: renderer window created (0.0s)
+04:03:50.117 [Hardware legend.game.Wait:30] ?[32mINFO ?[m: [E2E] Waiting for: test input window registered (timeout 10s)
+04:03:50.117 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: test input window registered (0.0s)
+04:03:51.123 [Hardware legend.game.Wait:30] ?[32mINFO ?[m: [E2E] Waiting for: FMV to start (timeout 30s)
+04:03:51.153 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:51.185 [Thread-3 legend.core.spu.Spu:457] ?[32mINFO ?[m: Unmuting SPU
+04:03:51.185 [Thread-3 legend.core.spu.Spu:373] ?[32mINFO ?[m: Setting SPU main volume to 0000, 0000
+04:03:51.185 [Thread-3 legend.core.audio.AudioThread:408] ?[32mINFO ?[m: Setting main volume to 0.00, 0.00
+04:03:51.185 [Thread-3 legend.core.audio.AudioThread:444] ?[32mINFO ?[m: Fading in to 0.00 for 0.00s
+04:03:51.185 [Thread-3 legend.core.spu.Spu:465] ?[32mINFO ?[m: Enabling SPU reverb
+04:03:51.186 [Thread-3 legend.core.spu.Spu:394] ?[32mINFO ?[m: Setting SPU reverb volume to 3000, 3000
+04:03:51.199 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\font.tim
+04:03:51.200 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:03:51.201 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.ctmd
+04:03:51.209 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.anim
+04:03:51.211 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18d03bdc (animation legend.game.types.TmdAnimationFile@1195eb33)
+04:03:51.216 [Thread-3 legend.game.DrgnFiles:44] ?[32mINFO ?[m: Loading DRGN0 5739/0, 5739/1, 5739/2, 5739/3 from legend.game.sound.Audio.loadMenuSounds(Audio.java:687)
+04:03:51.217 [Thread-3 legend.game.unpacker.Loader:85] ?[32mINFO ?[m: Queueing files [SECT/DRGN0.BIN/5739/0, SECT/DRGN0.BIN/5739/1, SECT/DRGN0.BIN/5739/2, SECT/DRGN0.BIN/5739/3] (total queued: 4)
+04:03:51.218 [pool-3-thread-2 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5739\0
+04:03:51.219 [pool-3-thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5739\1
+04:03:51.219 [pool-3-thread-4 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5739\2
+04:03:51.219 [pool-3-thread-5 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5739\3
+04:03:51.219 [Thread-3 legend.game.Graphics:156] ?[32mINFO ?[m: Changing resolution to (320, 240) from legend.game.Graphics.resizeDisplay(Graphics.java:155)
+04:03:51.220 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6669 from legend.game.Scus94491BpeSegment.loadBasicUiTexturesAndSomethingElse(Scus94491BpeSegment.java:558)
+04:03:51.220 [pool-3-thread-5 legend.game.unpacker.Loader:99] ?[32mINFO ?[m: Files [SECT/DRGN0.BIN/5739/0, SECT/DRGN0.BIN/5739/1, SECT/DRGN0.BIN/5739/2, SECT/DRGN0.BIN/5739/3] loaded (remaining queued: 0)
+04:03:51.220 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6669 (total queued: 1)
+04:03:51.220 [pool-3-thread-6 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6669
+04:03:51.226 [Thread-3 legend.game.DrgnFiles:79] ?[32mINFO ?[m: Loading DRGN0 6665 from legend.game.SItem.loadMenuAssets(SItem.java:745)
+04:03:51.227 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\6665
+04:03:51.228 [pool-3-thread-6 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6669 loaded (remaining queued: 0)
+04:03:51.233 [Thread-3 legend.game.DrgnFiles:79] ?[32mINFO ?[m: Loading DRGN0 6666 from legend.game.SItem.loadMenuAssets(SItem.java:746)
+04:03:51.233 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\6666
+04:03:51.242 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5815 from legend.game.SItem.loadMenuAssets(SItem.java:747)
+04:03:51.242 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5815 (total queued: 1)
+04:03:51.243 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5815
+04:03:51.246 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5815 loaded (remaining queued: 0)
+04:03:51.248 [pool-3-thread-7 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5816
+04:03:51.248 [pool-3-thread-7 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5817
+04:03:51.256 [Thread-3 legend.core.audio.AudioThread:474] ?[32mINFO ?[m: Stopping sequence
+04:03:51.257 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5721\0
+04:03:51.259 [Thread-3 legend.game.fmv.Fmv:313] ?[32mINFO ?[m: Playing FMV STR/DEMOH.IKI
+04:03:51.263 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\STR\DEMOH.IKI
+04:03:51.267 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: FMV to start (0.1s)
+04:03:51.285 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:51.519 [Hardware legend.game.Wait:30] ?[32mINFO ?[m: [E2E] Waiting for: FMV to stop (timeout 30s)
+04:03:51.581 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: FMV to stop (0.1s)
+04:03:51.581 [Hardware legend.game.Wait:30] ?[32mINFO ?[m: [E2E] Waiting for: engine state: Ttle (timeout 30s)
+04:03:51.642 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:51.711 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:51.713 [Thread-3 legend.game.EngineStates:69] ?[32mINFO ?[m: Transitioning to engine state EngineStateType lod_core:title
+04:03:51.715 [Thread-3 legend.core.audio.AudioThread:474] ?[32mINFO ?[m: Stopping sequence
+04:03:51.715 [Thread-3 legend.core.spu.Spu:373] ?[32mINFO ?[m: Setting SPU main volume to 3f80, 3f80
+04:03:51.715 [Thread-3 legend.core.audio.AudioThread:408] ?[32mINFO ?[m: Setting main volume to 0.50, 0.50
+04:03:51.718 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: engine state: Ttle (0.1s)
+04:03:51.718 [Hardware legend.game.Wait:30] ?[32mINFO ?[m: [E2E] Waiting for: Title ready (timeout 30s)
+04:03:51.742 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5820 from legend.game.sound.Audio.loadMusicPackage(Audio.java:743)
+04:03:51.743 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5820 (total queued: 1)
+04:03:51.743 [Thread-3 legend.game.Graphics:156] ?[32mINFO ?[m: Changing resolution to (384, 240) from legend.game.Graphics.resizeDisplay(Graphics.java:155)
+04:03:51.743 [pool-3-thread-8 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5820
+04:03:51.744 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5718 from legend.game.title.Ttle.initializeMainMenu(Ttle.java:287)
+04:03:51.744 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5718 (total queued: 2)
+04:03:51.744 [Thread-3 legend.game.DrgnFiles:68] ?[32mINFO ?[m: Loading DRGN0 5719 from legend.game.title.Ttle.initializeMainMenu(Ttle.java:288)
+04:03:51.744 [Thread-3 legend.game.unpacker.Loader:71] ?[32mINFO ?[m: Queueing file SECT/DRGN0.BIN/5719 (total queued: 3)
+04:03:51.744 [pool-3-thread-9 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5718
+04:03:51.745 [pool-3-thread-10 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5719
+04:03:51.746 [pool-3-thread-10 legend.game.unpacker.Loader:78] ?[32mINFO ?[m: File SECT/DRGN0.BIN/5719 loaded (remaining queued: 2)
+04:03:51.747 [pool-3-thread-8 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5820 loaded (remaining queued: 1)
+04:03:51.747 [pool-3-thread-8 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 5820 loaded
+04:03:51.748 [pool-3-thread-8 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:03:51.749 [pool-3-thread-8 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:03:51.750 [pool-3-thread-9 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5718 loaded (remaining queued: 0)
+04:03:51.757 [Thread-3 legend.core.renderer.RenderEngine:1259] ?[32mINFO ?[m: Resizing window to 960x720
+04:03:51.804 [Hardware legend.game.Wait:39] ?[32mINFO ?[m: [E2E] Wait completed: Title ready (0.1s)
+04:03:51.974 [Thread-3 legend.core.GameEngine:370] ?[32mINFO ?[m: Creating texture atlas...
+04:03:51.975 [Thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\4113
+04:03:52.002 [Thread-3 legend.core.GameEngine:386] ?[32mINFO ?[m: Texture atlas created in 0.03s
+04:03:52.028 [Thread-3 legend.game.EngineStates:69] ?[32mINFO ?[m: Transitioning to engine state EngineStateType lod:submap
+04:03:52.044 [Thread-3 legend.core.audio.AudioThread:474] ?[32mINFO ?[m: Stopping sequence
+04:03:52.064 [Thread-3 legend.game.DrgnFiles:26] ?[32mINFO ?[m: Loading file \SUBMAP\NEWROOT.RDT from legend.game.submap.SMap.tick(SMap.java:4066)
+04:03:52.064 [Thread-3 legend.game.unpacker.Loader:71] ?[32mINFO ?[m: Queueing file \SUBMAP\NEWROOT.RDT (total queued: 1)
+04:03:52.065 [Thread-3 legend.game.DrgnFiles:33] ?[32mINFO ?[m: Loading dir \SUBMAP\savepoint from legend.game.submap.SMap.tick(SMap.java:4067)
+04:03:52.065 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory \SUBMAP\savepoint (total queued: 2)
+04:03:52.065 [pool-3-thread-12 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\NEWROOT.RDT
+04:03:52.065 [pool-3-thread-1 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SUBMAP\savepoint
+04:03:52.066 [pool-3-thread-12 legend.game.unpacker.Loader:78] ?[32mINFO ?[m: File \SUBMAP\NEWROOT.RDT loaded (remaining queued: 1)
+04:03:52.069 [pool-3-thread-1 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory \SUBMAP\savepoint loaded (remaining queued: 0)
+04:03:52.124 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 102 environment
+04:03:52.124 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 310 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:03:52.124 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/310 (total queued: 1)
+04:03:52.125 [pool-3-thread-2 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\310
+04:03:52.129 [pool-3-thread-2 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/310 loaded (remaining queued: 0)
+04:03:52.148 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 102 preparing environment
+04:03:52.833 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:03:52.838 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5760 from legend.game.submap.RetailSubmap.loadSubmapSounds(RetailSubmap.java:326)
+04:03:52.838 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5760 (total queued: 1)
+04:03:52.838 [pool-3-thread-4 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5760
+04:03:52.838 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5965 from legend.game.sound.Audio.loadMusicPackage(Audio.java:743)
+04:03:52.838 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5965 (total queued: 2)
+04:03:52.839 [pool-3-thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5965
+04:03:52.841 [pool-3-thread-3 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5965 loaded (remaining queued: 1)
+04:03:52.841 [pool-3-thread-3 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 5965 loaded
+04:03:52.841 [pool-3-thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5966
+04:03:52.841 [pool-3-thread-4 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5760 loaded (remaining queued: 0)
+04:03:52.842 [pool-3-thread-3 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:03:52.843 [pool-3-thread-3 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:03:52.870 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:03:52.871 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:03:52.872 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:03:52.872 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:03:52.872 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:03:52.872 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:03:52.873 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:03:52.874 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:03:52.874 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:03:52.875 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:03:52.875 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:03:52.887 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:03:52.888 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:03:52.903 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 102 assets
+04:03:52.904 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 311 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:03:52.904 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/311 (total queued: 1)
+04:03:52.904 [pool-3-thread-5 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\311
+04:03:52.904 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 312 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:03:52.904 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/312 (total queued: 2)
+04:03:52.904 [pool-3-thread-6 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\312
+04:03:52.905 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/311/textures (total queued: 3)
+04:03:52.905 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\311\textures
+04:03:52.905 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 102 overlay model file 6796
+04:03:52.906 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6796 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:03:52.906 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6796 (total queued: 4)
+04:03:52.906 [pool-3-thread-10 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6796
+04:03:52.906 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 102 overlay texture and matrix file 6797
+04:03:52.906 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6797 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:03:52.907 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6797 (total queued: 5)
+04:03:52.907 [pool-3-thread-8 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6797
+04:03:52.908 [pool-3-thread-10 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6796 loaded (remaining queued: 4)
+04:03:52.908 [pool-3-thread-10 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 102 overlay model loaded
+04:03:52.908 [pool-3-thread-8 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6797 loaded (remaining queued: 3)
+04:03:52.909 [pool-3-thread-8 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 102 overlay texture and matrix loaded
+04:03:52.909 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/311/textures loaded (remaining queued: 2)
+04:03:52.910 [pool-3-thread-6 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/312 loaded (remaining queued: 1)
+04:03:52.912 [pool-3-thread-10 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 102 preparing map
+04:03:52.912 [pool-3-thread-10 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@2f3a6a2a (animation legend.game.types.TmdAnimationFile@5fd8867b)
+04:03:52.951 [pool-3-thread-5 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/311 loaded (remaining queued: 0)
+04:03:52.951 [pool-3-thread-5 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 102 preparing sobjs
+04:03:52.988 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:03:52.994 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:03:52.997 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:03:52.998 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/312/1) into index 10 (entry point 0x0)
+04:03:52.998 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@56ff2b04 (animation legend.game.types.TmdAnimationFile@4f900b10)
+04:03:53.001 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:03:53.001 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/312/2) into index 11 (entry point 0x0)
+04:03:53.001 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@70f8ce3 (animation legend.game.types.TmdAnimationFile@4888cf99)
+04:03:53.003 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:03:53.003 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/312/3) into index 12 (entry point 0x0)
+04:03:53.003 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@543b7905 (animation legend.game.types.TmdAnimationFile@45821ebb)
+04:03:53.005 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:03:53.005 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/312/4) into index 13 (entry point 0x0)
+04:03:53.005 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3e91ea7c (animation legend.game.types.TmdAnimationFile@306b1e30)
+04:03:53.006 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:03:53.007 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/312/5) into index 14 (entry point 0x0)
+04:03:53.007 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3f17ba69 (animation legend.game.types.TmdAnimationFile@6a351cf6)
+04:03:53.008 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:03:53.008 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/312/6) into index 15 (entry point 0x0)
+04:03:53.008 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5b46c9c6 (animation legend.game.types.TmdAnimationFile@33b4c600)
+04:03:53.009 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:03:53.009 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/312/7) into index 16 (entry point 0x0)
+04:03:53.009 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3172f6ed (animation legend.game.types.TmdAnimationFile@73e28e99)
+04:03:53.009 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:03:53.009 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/312/8) into index 17 (entry point 0x0)
+04:03:53.009 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3172f6ed (animation legend.game.types.TmdAnimationFile@1e8771da)
+04:03:53.009 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:03:53.010 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/312/9) into index 18 (entry point 0x0)
+04:03:53.010 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3172f6ed (animation legend.game.types.TmdAnimationFile@b9630cc)
+04:03:53.010 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:03:54.374 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:03:54.378 [Thread-3 legend.game.submap.SMap:2286] ?[32mINFO ?[m: Sobj Submap object 5 (file 165) (legend.game.types.Model124@23b8c5f5) switching model to sobj 4
+DISC1 MODERN INSPECTION 1/10 cut=102
+04:03:56.714 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 626 scene 24
+04:03:56.899 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:03:56.899 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:03:56.899 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:03:56.900 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:03:56.901 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:03:56.901 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:03:56.901 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:03:56.901 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:03:56.902 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:03:56.902 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:03:56.915 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 626 environment
+04:03:56.915 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 616 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:03:56.915 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/616 (total queued: 1)
+04:03:56.916 [pool-3-thread-11 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\616
+04:03:56.920 [pool-3-thread-11 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/616 loaded (remaining queued: 0)
+04:03:56.932 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 626 preparing environment
+04:03:57.559 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:03:57.595 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:03:57.596 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:03:57.596 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:03:57.597 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:03:57.597 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:03:57.598 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:03:57.598 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:03:57.599 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:03:57.599 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:03:57.600 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:03:57.600 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:03:57.613 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:03:57.613 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:03:57.628 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 626 assets
+04:03:57.629 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 617 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:03:57.629 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/617 (total queued: 1)
+04:03:57.629 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 618 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:03:57.629 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/618 (total queued: 2)
+04:03:57.629 [pool-3-thread-9 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\617
+04:03:57.629 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/617/textures (total queued: 3)
+04:03:57.629 [pool-3-thread-12 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\618
+04:03:57.629 [pool-3-thread-1 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\617\textures
+04:03:57.633 [pool-3-thread-1 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/617/textures loaded (remaining queued: 2)
+04:03:57.634 [pool-3-thread-12 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/618 loaded (remaining queued: 1)
+04:03:57.662 [pool-3-thread-9 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/617 loaded (remaining queued: 0)
+04:03:57.662 [pool-3-thread-9 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 626 preparing sobjs
+04:03:57.679 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:03:57.680 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:03:57.680 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:03:57.680 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/618/1) into index 10 (entry point 0x0)
+04:03:57.680 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7732edb3 (animation legend.game.types.TmdAnimationFile@304988c3)
+04:03:57.681 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:03:57.681 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/618/2) into index 11 (entry point 0x0)
+04:03:57.681 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5b3d98d1 (animation legend.game.types.TmdAnimationFile@5b9ae031)
+04:03:57.681 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:03:57.681 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/618/3) into index 12 (entry point 0x0)
+04:03:57.682 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3ba5d184 (animation legend.game.types.TmdAnimationFile@47d659a3)
+04:03:57.682 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:03:57.682 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/618/4) into index 13 (entry point 0x0)
+04:03:57.682 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@701aaa98 (animation legend.game.types.TmdAnimationFile@7c8d47c2)
+04:03:57.683 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:03:57.683 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/618/5) into index 14 (entry point 0x0)
+04:03:57.683 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@69318026 (animation legend.game.types.TmdAnimationFile@1c5fd7e2)
+04:03:57.684 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:03:57.684 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/618/6) into index 15 (entry point 0x0)
+04:03:57.684 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3934f09b (animation legend.game.types.TmdAnimationFile@2f111328)
+04:03:57.684 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:03:57.684 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/618/7) into index 16 (entry point 0x0)
+04:03:57.684 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3934f09b (animation legend.game.types.TmdAnimationFile@4ac4865c)
+04:03:57.684 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:03:57.685 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+DISC1 MODERN INSPECTION 2/10 cut=626
+04:04:01.421 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 144 scene 62
+04:04:01.605 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:01.605 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:01.605 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:01.605 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:01.605 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:01.605 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:01.606 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:01.606 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:01.623 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 144 environment
+04:04:01.623 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 436 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:01.623 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/436 (total queued: 1)
+04:04:01.623 [pool-3-thread-2 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\436
+04:04:01.628 [pool-3-thread-2 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/436 loaded (remaining queued: 0)
+04:04:01.629 [pool-3-thread-2 legend.game.submap.CollisionGeometry:202] ?[33mWARN ?[m: Submap file too short, padding with 0's
+04:04:01.639 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 144 preparing environment
+04:04:02.615 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:02.619 [Thread-3 legend.game.sound.Audio:1115] ?[32mINFO ?[m: Unloading playableSound Submap SFX
+04:04:02.620 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5764 from legend.game.submap.RetailSubmap.loadSubmapSounds(RetailSubmap.java:326)
+04:04:02.620 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5764 (total queued: 1)
+04:04:02.620 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5970 from legend.game.sound.Audio.loadMusicPackage(Audio.java:743)
+04:04:02.620 [pool-3-thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5764
+04:04:02.620 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5970 (total queued: 2)
+04:04:02.620 [pool-3-thread-4 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5970
+04:04:02.623 [pool-3-thread-4 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5970 loaded (remaining queued: 1)
+04:04:02.623 [pool-3-thread-4 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 5970 loaded
+04:04:02.623 [pool-3-thread-4 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5971
+04:04:02.623 [pool-3-thread-3 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5764 loaded (remaining queued: 0)
+04:04:02.624 [pool-3-thread-4 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:04:02.624 [pool-3-thread-4 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:04:02.651 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:02.652 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:02.652 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:02.654 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:02.654 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:02.655 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:02.655 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:02.656 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:02.656 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:02.656 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:02.657 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:02.670 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:02.670 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:02.685 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 144 assets
+04:04:02.685 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 437 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:02.685 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/437 (total queued: 1)
+04:04:02.686 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 438 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:02.686 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/438 (total queued: 2)
+04:04:02.686 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/437/textures (total queued: 3)
+04:04:02.686 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\438
+04:04:02.686 [pool-3-thread-8 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\437
+04:04:02.686 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 144 overlay model file 6850
+04:04:02.686 [pool-3-thread-6 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\437\textures
+04:04:02.686 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6850 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:04:02.686 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6850 (total queued: 4)
+04:04:02.686 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 144 overlay texture and matrix file 6851
+04:04:02.686 [pool-3-thread-10 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6850
+04:04:02.686 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6851 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:04:02.686 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6851 (total queued: 5)
+04:04:02.686 [pool-3-thread-5 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6851
+04:04:02.688 [pool-3-thread-10 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6850 loaded (remaining queued: 4)
+04:04:02.688 [pool-3-thread-10 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 144 overlay model loaded
+04:04:02.688 [pool-3-thread-5 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6851 loaded (remaining queued: 3)
+04:04:02.688 [pool-3-thread-5 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 144 overlay texture and matrix loaded
+04:04:02.688 [pool-3-thread-5 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 144 preparing map
+04:04:02.688 [pool-3-thread-5 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@78c9f4c0 (animation legend.game.types.TmdAnimationFile@119cefe3)
+04:04:02.690 [pool-3-thread-6 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/437/textures loaded (remaining queued: 2)
+04:04:02.691 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/438 loaded (remaining queued: 1)
+04:04:02.723 [pool-3-thread-8 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/437 loaded (remaining queued: 0)
+04:04:02.723 [pool-3-thread-8 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 144 preparing sobjs
+04:04:02.737 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:02.738 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:02.738 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:02.738 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/438/1) into index 10 (entry point 0x0)
+04:04:02.738 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4a031e0e (animation legend.game.types.TmdAnimationFile@1862f12f)
+04:04:02.739 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:02.739 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/438/2) into index 11 (entry point 0x0)
+04:04:02.739 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@189c4a3e (animation legend.game.types.TmdAnimationFile@1048606a)
+04:04:02.740 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:02.740 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/438/3) into index 12 (entry point 0x0)
+04:04:02.740 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4269ef03 (animation legend.game.types.TmdAnimationFile@4d0d85e8)
+04:04:02.741 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:02.741 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/438/4) into index 13 (entry point 0x0)
+04:04:02.741 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@37baebcd (animation legend.game.types.TmdAnimationFile@64228660)
+04:04:02.741 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:02.741 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/438/5) into index 14 (entry point 0x0)
+04:04:02.741 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@693e6c10 (animation legend.game.types.TmdAnimationFile@48bd861a)
+04:04:02.743 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:02.743 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/438/6) into index 15 (entry point 0x0)
+04:04:02.743 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@2839f843 (animation legend.game.types.TmdAnimationFile@58587aa2)
+04:04:02.744 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:02.744 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/438/7) into index 16 (entry point 0x0)
+04:04:02.744 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@429cd355 (animation legend.game.types.TmdAnimationFile@6635004a)
+04:04:02.744 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:04:04.721 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:04.723 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:04.723 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:04.724 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:04.724 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:04.724 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:04.725 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+DISC1 MODERN INSPECTION 3/10 cut=144
+04:04:07.060 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 145 scene 34
+04:04:07.243 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:07.243 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:07.243 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:07.244 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:07.244 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:07.261 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 145 environment
+04:04:07.261 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 439 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:07.261 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/439 (total queued: 1)
+04:04:07.261 [pool-3-thread-11 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\439
+04:04:07.266 [pool-3-thread-11 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/439 loaded (remaining queued: 0)
+04:04:07.267 [pool-3-thread-11 legend.game.submap.CollisionGeometry:202] ?[33mWARN ?[m: Submap file too short, padding with 0's
+04:04:07.277 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 145 preparing environment
+04:04:08.529 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:08.566 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:08.566 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:08.567 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:08.567 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:08.568 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:08.568 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:08.568 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:08.568 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:08.569 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:08.569 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:08.570 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:08.584 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:08.584 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:08.599 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 145 assets
+04:04:08.599 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 440 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:08.599 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/440 (total queued: 1)
+04:04:08.599 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 441 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:08.599 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/441 (total queued: 2)
+04:04:08.599 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/440/textures (total queued: 3)
+04:04:08.599 [pool-3-thread-1 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\440
+04:04:08.599 [pool-3-thread-12 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\441
+04:04:08.599 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 145 overlay model file 6852
+04:04:08.599 [pool-3-thread-9 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\440\textures
+04:04:08.600 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6852 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:04:08.600 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6852 (total queued: 4)
+04:04:08.600 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 145 overlay texture and matrix file 6853
+04:04:08.600 [pool-3-thread-2 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6852
+04:04:08.600 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6853 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:04:08.600 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6853 (total queued: 5)
+04:04:08.600 [pool-3-thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6853
+04:04:08.602 [pool-3-thread-2 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6852 loaded (remaining queued: 4)
+04:04:08.602 [pool-3-thread-3 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6853 loaded (remaining queued: 3)
+04:04:08.602 [pool-3-thread-2 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 145 overlay model loaded
+04:04:08.602 [pool-3-thread-3 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 145 overlay texture and matrix loaded
+04:04:08.602 [pool-3-thread-2 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 145 preparing map
+04:04:08.602 [pool-3-thread-2 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@2772bfa3 (animation legend.game.types.TmdAnimationFile@29b4d61)
+04:04:08.604 [pool-3-thread-9 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/440/textures loaded (remaining queued: 2)
+04:04:08.605 [pool-3-thread-12 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/441 loaded (remaining queued: 1)
+04:04:08.640 [pool-3-thread-1 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/440 loaded (remaining queued: 0)
+04:04:08.640 [pool-3-thread-1 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 145 preparing sobjs
+04:04:08.652 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:08.652 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:08.652 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:08.652 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/441/1) into index 10 (entry point 0x0)
+04:04:08.652 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@624a1279 (animation legend.game.types.TmdAnimationFile@1882bb9b)
+04:04:08.652 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:08.652 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/441/2) into index 11 (entry point 0x0)
+04:04:08.652 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@14afb435 (animation legend.game.types.TmdAnimationFile@56e4f010)
+04:04:08.653 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:08.653 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/441/3) into index 12 (entry point 0x0)
+04:04:08.653 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@640ff96f (animation legend.game.types.TmdAnimationFile@695cc816)
+04:04:08.653 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:08.653 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/441/4) into index 13 (entry point 0x0)
+04:04:08.653 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@bbd714 (animation legend.game.types.TmdAnimationFile@71aed363)
+04:04:08.654 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:08.654 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/441/5) into index 14 (entry point 0x0)
+04:04:08.654 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@6a7188b8 (animation legend.game.types.TmdAnimationFile@65e2f198)
+04:04:08.654 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:08.654 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/441/6) into index 15 (entry point 0x0)
+04:04:08.654 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3bbf8947 (animation legend.game.types.TmdAnimationFile@3c0d7098)
+04:04:08.655 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:08.655 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/441/7) into index 16 (entry point 0x0)
+04:04:08.655 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5a5f1be9 (animation legend.game.types.TmdAnimationFile@28435f0b)
+04:04:08.655 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:04:08.656 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/441/8) into index 17 (entry point 0x0)
+04:04:08.656 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@6f710ef5 (animation legend.game.types.TmdAnimationFile@382f3a33)
+04:04:08.656 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:04:08.656 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/441/9) into index 18 (entry point 0x0)
+04:04:08.656 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@1a8dfe8c (animation legend.game.types.TmdAnimationFile@288451d1)
+04:04:08.656 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 19 (Submap object 9 (file 297))
+04:04:08.656 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 9 (DRGN21/441/10) into index 19 (entry point 0x0)
+04:04:08.656 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4f65f492 (animation legend.game.types.TmdAnimationFile@e5ab1ef)
+04:04:08.657 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:04:08.658 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.658 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.659 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.659 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.660 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.660 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.661 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:08.661 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+DISC1 MODERN INSPECTION 4/10 cut=145
+04:04:13.755 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 148 scene 0
+04:04:13.937 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:04:13.937 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:04:13.938 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:04:13.938 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:04:13.938 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 19 children
+04:04:13.938 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 19
+04:04:13.938 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:13.955 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 148 environment
+04:04:13.955 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 448 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:13.955 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/448 (total queued: 1)
+04:04:13.955 [pool-3-thread-4 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\448
+04:04:13.960 [pool-3-thread-4 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/448 loaded (remaining queued: 0)
+04:04:13.971 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 148 preparing environment
+04:04:14.709 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:14.745 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:14.746 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:14.746 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:14.747 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:14.747 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:14.747 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:14.748 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:14.748 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:14.748 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:14.749 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:14.749 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:14.762 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:14.762 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:14.778 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 148 assets
+04:04:14.778 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 449 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:14.778 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/449 (total queued: 1)
+04:04:14.778 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 450 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:14.778 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/450 (total queued: 2)
+04:04:14.779 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/449/textures (total queued: 3)
+04:04:14.779 [pool-3-thread-10 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\449
+04:04:14.779 [pool-3-thread-5 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\450
+04:04:14.779 [pool-3-thread-6 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\449\textures
+04:04:14.784 [pool-3-thread-6 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/449/textures loaded (remaining queued: 2)
+04:04:14.784 [pool-3-thread-5 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/450 loaded (remaining queued: 1)
+04:04:14.834 [pool-3-thread-10 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/449 loaded (remaining queued: 0)
+04:04:14.834 [pool-3-thread-10 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 148 preparing sobjs
+04:04:14.846 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:14.846 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:14.846 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:14.846 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/450/1) into index 10 (entry point 0x0)
+04:04:14.846 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@58f378b7 (animation legend.game.types.TmdAnimationFile@3ed225fe)
+04:04:14.847 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:14.847 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/450/2) into index 11 (entry point 0x0)
+04:04:14.847 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@20f0bd56 (animation legend.game.types.TmdAnimationFile@34561e5d)
+04:04:14.847 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:14.848 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/450/3) into index 12 (entry point 0x0)
+04:04:14.848 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7723fea0 (animation legend.game.types.TmdAnimationFile@58f1c86f)
+04:04:14.848 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:14.848 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/450/4) into index 13 (entry point 0x0)
+04:04:14.848 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7d4ec42a (animation legend.game.types.TmdAnimationFile@79ee9928)
+04:04:14.849 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:14.849 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/450/5) into index 14 (entry point 0x0)
+04:04:14.849 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@11d0be4b (animation legend.game.types.TmdAnimationFile@4734aeae)
+04:04:14.849 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:14.849 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/450/6) into index 15 (entry point 0x0)
+04:04:14.849 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@58f378b7 (animation legend.game.types.TmdAnimationFile@4c504df6)
+04:04:14.850 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:14.850 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/450/7) into index 16 (entry point 0x0)
+04:04:14.850 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@417aaa8d (animation legend.game.types.TmdAnimationFile@554c760f)
+04:04:14.850 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:04:14.850 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/450/8) into index 17 (entry point 0x0)
+04:04:14.850 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@417aaa8d (animation legend.game.types.TmdAnimationFile@376ff3d6)
+04:04:14.850 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:04:14.850 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/450/9) into index 18 (entry point 0x0)
+04:04:14.850 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@791e2730 (animation legend.game.types.TmdAnimationFile@6d24d45c)
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 19 (Submap object 9 (file 297))
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 9 (DRGN21/450/10) into index 19 (entry point 0x0)
+04:04:14.851 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5b6e3bf9 (animation legend.game.types.TmdAnimationFile@13578201)
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 20 (Submap object 10 (file 330))
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 10 (DRGN21/450/11) into index 20 (entry point 0x0)
+04:04:14.851 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5b6e3bf9 (animation legend.game.types.TmdAnimationFile@1b7810fc)
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 21 (Submap object 11 (file 363))
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 11 (DRGN21/450/12) into index 21 (entry point 0x0)
+04:04:14.851 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5035b1fb (animation legend.game.types.TmdAnimationFile@7aaef9f7)
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 22 (Submap object 12 (file 396))
+04:04:14.851 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 12 (DRGN21/450/13) into index 22 (entry point 0x0)
+04:04:14.851 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@55c63b29 (animation legend.game.types.TmdAnimationFile@e623e9d)
+04:04:14.852 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:04:14.853 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:14.853 [Thread-3 legend.game.scripting.ScriptState:1381] ?[32mINFO ?[m: Script 10 forking script script[10].stor[24] 0xb and jumping to script[10].inl[0x4b6c] 0x6a0138
+04:04:14.854 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 23 (Forked Submap object 1 (file 33))
+04:04:14.854 [Thread-3 legend.game.scripting.ScriptState:367] ?[32mINFO ?[m: Forking script 11 to 23 legend.game.scripting.ScriptState.fork(ScriptState.java:366)
+04:04:14.854 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:14.854 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:14.854 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:14.854 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+04:04:14.855 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\darker_shadow.tim
+DISC1 MODERN INSPECTION 5/10 cut=148
+04:04:18.745 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 180 scene 46
+04:04:18.928 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 23
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:18.928 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 19 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 19
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 20 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 20
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 21 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 21
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 22 children
+04:04:18.929 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 22
+04:04:18.929 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:18.947 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 180 environment
+04:04:18.947 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 544 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:18.947 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/544 (total queued: 1)
+04:04:18.947 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\544
+04:04:18.951 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/544 loaded (remaining queued: 0)
+04:04:18.952 [pool-3-thread-7 legend.game.submap.CollisionGeometry:202] ?[33mWARN ?[m: Submap file too short, padding with 0's
+04:04:18.961 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 180 preparing environment
+04:04:20.193 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:20.197 [Thread-3 legend.game.sound.Audio:1115] ?[32mINFO ?[m: Unloading playableSound Submap SFX
+04:04:20.197 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5767 from legend.game.submap.RetailSubmap.loadSubmapSounds(RetailSubmap.java:326)
+04:04:20.197 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5767 (total queued: 1)
+04:04:20.198 [pool-3-thread-8 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5767
+04:04:20.198 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5975 from legend.game.sound.Audio.loadMusicPackage(Audio.java:743)
+04:04:20.198 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5975 (total queued: 2)
+04:04:20.198 [pool-3-thread-11 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5975
+04:04:20.201 [pool-3-thread-11 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5975 loaded (remaining queued: 1)
+04:04:20.201 [pool-3-thread-11 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 5975 loaded
+04:04:20.201 [pool-3-thread-11 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5976
+04:04:20.201 [pool-3-thread-8 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5767 loaded (remaining queued: 0)
+04:04:20.201 [pool-3-thread-11 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5977
+04:04:20.202 [pool-3-thread-11 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:04:20.202 [pool-3-thread-11 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:04:20.230 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:20.231 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:20.231 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:20.232 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:20.232 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:20.232 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:20.233 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:20.233 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:20.233 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:20.233 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:20.233 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:20.248 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:20.248 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:20.262 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 180 assets
+04:04:20.262 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 545 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:20.262 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/545 (total queued: 1)
+04:04:20.263 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 546 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:20.263 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/546 (total queued: 2)
+04:04:20.263 [pool-3-thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\545
+04:04:20.263 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/545/textures (total queued: 3)
+04:04:20.263 [pool-3-thread-2 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\546
+04:04:20.263 [pool-3-thread-9 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\545\textures
+04:04:20.263 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 180 overlay model file 6890
+04:04:20.263 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6890 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:04:20.263 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6890 (total queued: 4)
+04:04:20.263 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 180 overlay texture and matrix file 6891
+04:04:20.263 [pool-3-thread-12 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6890
+04:04:20.263 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6891 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:04:20.263 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6891 (total queued: 5)
+04:04:20.263 [pool-3-thread-1 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6891
+04:04:20.265 [pool-3-thread-12 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6890 loaded (remaining queued: 4)
+04:04:20.265 [pool-3-thread-12 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 180 overlay model loaded
+04:04:20.265 [pool-3-thread-1 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6891 loaded (remaining queued: 3)
+04:04:20.265 [pool-3-thread-1 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 180 overlay texture and matrix loaded
+04:04:20.265 [pool-3-thread-1 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 180 preparing map
+04:04:20.265 [pool-3-thread-1 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@19302614 (animation legend.game.types.TmdAnimationFile@608dad68)
+04:04:20.268 [pool-3-thread-9 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/545/textures loaded (remaining queued: 2)
+04:04:20.268 [pool-3-thread-2 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/546 loaded (remaining queued: 1)
+04:04:20.306 [pool-3-thread-3 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/545 loaded (remaining queued: 0)
+04:04:20.306 [pool-3-thread-3 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 180 preparing sobjs
+04:04:20.315 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:20.315 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:20.315 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:20.315 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/546/1) into index 10 (entry point 0x0)
+04:04:20.315 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3bfd72f3 (animation legend.game.types.TmdAnimationFile@1c6101e2)
+04:04:20.316 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:20.316 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/546/2) into index 11 (entry point 0x0)
+04:04:20.316 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@287ee9f (animation legend.game.types.TmdAnimationFile@55c63b9)
+04:04:20.316 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:20.316 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/546/3) into index 12 (entry point 0x0)
+04:04:20.316 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5566f30b (animation legend.game.types.TmdAnimationFile@411c9654)
+04:04:20.317 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:20.317 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/546/4) into index 13 (entry point 0x0)
+04:04:20.317 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7c526bfe (animation legend.game.types.TmdAnimationFile@1a758e66)
+04:04:20.317 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:20.317 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/546/5) into index 14 (entry point 0x0)
+04:04:20.317 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7869d888 (animation legend.game.types.TmdAnimationFile@5de25fe7)
+04:04:20.318 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:20.318 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/546/6) into index 15 (entry point 0x0)
+04:04:20.318 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3200d23e (animation legend.game.types.TmdAnimationFile@4b06ca6)
+04:04:20.318 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:20.318 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/546/7) into index 16 (entry point 0x0)
+04:04:20.319 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@32ab4920 (animation legend.game.types.TmdAnimationFile@7d7935f5)
+04:04:20.319 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:04:20.319 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/546/8) into index 17 (entry point 0x0)
+04:04:20.319 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@49dc9946 (animation legend.game.types.TmdAnimationFile@4e0e0987)
+04:04:20.319 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:04:20.319 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/546/9) into index 18 (entry point 0x0)
+04:04:20.319 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@2684bb2f (animation legend.game.types.TmdAnimationFile@1266e497)
+04:04:20.320 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+DISC1 MODERN INSPECTION 6/10 cut=180
+04:04:25.408 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 194 scene 0
+04:04:25.592 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:04:25.592 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:04:25.592 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:25.609 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 194 environment
+04:04:25.609 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 586 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:25.609 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/586 (total queued: 1)
+04:04:25.609 [pool-3-thread-4 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\586
+04:04:25.614 [pool-3-thread-4 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/586 loaded (remaining queued: 0)
+04:04:25.625 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 194 preparing environment
+04:04:26.892 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:26.895 [Thread-3 legend.game.sound.Audio:1115] ?[32mINFO ?[m: Unloading playableSound Submap SFX
+04:04:26.895 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5768 from legend.game.submap.RetailSubmap.loadSubmapSounds(RetailSubmap.java:326)
+04:04:26.895 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5768 (total queued: 1)
+04:04:26.895 [pool-3-thread-6 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5768
+04:04:26.895 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6040 from legend.game.sound.Audio.loadMusicPackage(Audio.java:743)
+04:04:26.895 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6040 (total queued: 2)
+04:04:26.896 [pool-3-thread-5 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6040
+04:04:26.898 [pool-3-thread-5 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6040 loaded (remaining queued: 1)
+04:04:26.898 [pool-3-thread-5 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 6040 loaded
+04:04:26.898 [pool-3-thread-6 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5768 loaded (remaining queued: 0)
+04:04:26.898 [pool-3-thread-5 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\6041
+04:04:26.899 [pool-3-thread-5 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\6042
+04:04:26.900 [pool-3-thread-5 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:04:26.900 [pool-3-thread-5 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:04:26.928 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:26.928 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:26.929 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:26.929 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:26.930 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:26.930 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:26.930 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:26.931 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:26.931 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:26.931 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:26.932 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:26.945 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:26.945 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:26.961 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 194 assets
+04:04:26.961 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 587 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:26.961 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/587 (total queued: 1)
+04:04:26.961 [pool-3-thread-10 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\587
+04:04:26.961 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 588 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:26.962 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/588 (total queued: 2)
+04:04:26.962 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/587/textures (total queued: 3)
+04:04:26.962 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\588
+04:04:26.962 [pool-3-thread-8 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\587\textures
+04:04:26.966 [pool-3-thread-8 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/587/textures loaded (remaining queued: 2)
+04:04:26.968 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/588 loaded (remaining queued: 1)
+04:04:27.019 [pool-3-thread-10 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/587 loaded (remaining queued: 0)
+04:04:27.019 [pool-3-thread-10 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 194 preparing sobjs
+04:04:27.046 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:27.046 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:27.046 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:27.046 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/588/1) into index 10 (entry point 0x0)
+04:04:27.046 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@57524268 (animation legend.game.types.TmdAnimationFile@32ed5770)
+04:04:27.047 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:27.047 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/588/2) into index 11 (entry point 0x0)
+04:04:27.047 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@373be776 (animation legend.game.types.TmdAnimationFile@2827aba0)
+04:04:27.048 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:27.049 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/588/3) into index 12 (entry point 0x0)
+04:04:27.049 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@6d23fdce (animation legend.game.types.TmdAnimationFile@35ad61cd)
+04:04:27.049 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:27.049 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/588/4) into index 13 (entry point 0x0)
+04:04:27.049 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@6d23fdce (animation legend.game.types.TmdAnimationFile@5dc53059)
+04:04:27.049 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:27.050 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/588/5) into index 14 (entry point 0x0)
+04:04:27.050 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@482aeaea (animation legend.game.types.TmdAnimationFile@3a15b3ac)
+04:04:27.051 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:27.051 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/588/6) into index 15 (entry point 0x0)
+04:04:27.051 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@64e81e2a (animation legend.game.types.TmdAnimationFile@10dbad16)
+04:04:27.051 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:27.051 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/588/7) into index 16 (entry point 0x0)
+04:04:27.051 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@f39685d (animation legend.game.types.TmdAnimationFile@182622c5)
+04:04:27.051 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:04:27.051 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/588/8) into index 17 (entry point 0x0)
+04:04:27.052 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3c1b76a5 (animation legend.game.types.TmdAnimationFile@7165df2d)
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/588/9) into index 18 (entry point 0x0)
+04:04:27.052 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3c1b76a5 (animation legend.game.types.TmdAnimationFile@355a3adc)
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 19 (Submap object 9 (file 297))
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 9 (DRGN21/588/10) into index 19 (entry point 0x0)
+04:04:27.052 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3c1b76a5 (animation legend.game.types.TmdAnimationFile@1c4316b8)
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 20 (Submap object 10 (file 330))
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 10 (DRGN21/588/11) into index 20 (entry point 0x0)
+04:04:27.052 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3c1b76a5 (animation legend.game.types.TmdAnimationFile@7b0af5cb)
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 21 (Submap object 11 (file 363))
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 11 (DRGN21/588/12) into index 21 (entry point 0x0)
+04:04:27.052 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3c1b76a5 (animation legend.game.types.TmdAnimationFile@2449d130)
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 22 (Submap object 12 (file 396))
+04:04:27.052 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 12 (DRGN21/588/13) into index 22 (entry point 0x0)
+04:04:27.052 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3c1b76a5 (animation legend.game.types.TmdAnimationFile@40a193bf)
+04:04:27.053 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 23 (Submap object 13 (file 429))
+04:04:27.053 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 13 (DRGN21/588/14) into index 23 (entry point 0x0)
+04:04:27.053 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@44d3abc5 (animation legend.game.types.TmdAnimationFile@685baa39)
+04:04:27.054 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:04:27.055 [Thread-3 legend.game.submap.SMap:2286] ?[32mINFO ?[m: Sobj Submap object 13 (file 429) (legend.game.types.Model124@2713653) switching model to sobj 2
+DISC1 MODERN INSPECTION 7/10 cut=194
+04:04:31.923 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 659 scene 0
+04:04:32.106 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:32.106 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:32.106 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:32.106 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:32.106 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 19 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 19
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 20 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 20
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 21 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 21
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 22 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 22
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 23 children
+04:04:32.107 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 23
+04:04:32.107 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:32.124 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 659 environment
+04:04:32.124 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 685 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:32.124 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/685 (total queued: 1)
+04:04:32.124 [pool-3-thread-11 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\685
+04:04:32.127 [pool-3-thread-11 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/685 loaded (remaining queued: 0)
+04:04:32.140 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 659 preparing environment
+04:04:32.526 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:32.564 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:32.564 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:32.565 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:32.565 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:32.566 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:32.566 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:32.567 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:32.567 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:32.567 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:32.568 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:32.568 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:32.580 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:32.580 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:32.596 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 659 assets
+04:04:32.596 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 686 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:32.596 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/686 (total queued: 1)
+04:04:32.596 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 687 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:32.596 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/687 (total queued: 2)
+04:04:32.596 [pool-3-thread-12 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\686
+04:04:32.596 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/686/textures (total queued: 3)
+04:04:32.597 [pool-3-thread-1 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\687
+04:04:32.597 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 659 overlay model file 7480
+04:04:32.597 [pool-3-thread-9 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\686\textures
+04:04:32.597 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 7480 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:04:32.597 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/7480 (total queued: 4)
+04:04:32.597 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 659 overlay texture and matrix file 7481
+04:04:32.597 [pool-3-thread-2 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\7480
+04:04:32.597 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 7481 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:04:32.597 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/7481 (total queued: 5)
+04:04:32.597 [pool-3-thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\7481
+04:04:32.599 [pool-3-thread-3 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/7481 loaded (remaining queued: 4)
+04:04:32.599 [pool-3-thread-2 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/7480 loaded (remaining queued: 3)
+04:04:32.599 [pool-3-thread-3 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 659 overlay texture and matrix loaded
+04:04:32.599 [pool-3-thread-2 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 659 overlay model loaded
+04:04:32.599 [pool-3-thread-2 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 659 preparing map
+04:04:32.599 [pool-3-thread-2 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4a37334e (animation legend.game.types.TmdAnimationFile@30e7986b)
+04:04:32.601 [pool-3-thread-9 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/686/textures loaded (remaining queued: 2)
+04:04:32.602 [pool-3-thread-1 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/687 loaded (remaining queued: 1)
+04:04:32.644 [pool-3-thread-12 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/686 loaded (remaining queued: 0)
+04:04:32.644 [pool-3-thread-12 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 659 preparing sobjs
+04:04:32.664 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:32.664 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:32.664 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:32.664 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/687/1) into index 10 (entry point 0x0)
+04:04:32.664 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4b433ead (animation legend.game.types.TmdAnimationFile@b757c6)
+04:04:32.664 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:32.664 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/687/2) into index 11 (entry point 0x0)
+04:04:32.664 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@256fc3e (animation legend.game.types.TmdAnimationFile@3ac50cf5)
+04:04:32.666 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:32.666 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/687/3) into index 12 (entry point 0x0)
+04:04:32.666 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@6821fb56 (animation legend.game.types.TmdAnimationFile@529288f3)
+04:04:32.666 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:32.666 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/687/4) into index 13 (entry point 0x0)
+04:04:32.666 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@67903993 (animation legend.game.types.TmdAnimationFile@75a02330)
+04:04:32.667 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:32.667 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/687/5) into index 14 (entry point 0x0)
+04:04:32.667 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@12bc9d99 (animation legend.game.types.TmdAnimationFile@54af4a2d)
+04:04:32.667 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:32.667 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/687/6) into index 15 (entry point 0x0)
+04:04:32.667 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3295bd8a (animation legend.game.types.TmdAnimationFile@4658a14b)
+04:04:32.668 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:32.668 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/687/7) into index 16 (entry point 0x0)
+04:04:32.668 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@307eac4c (animation legend.game.types.TmdAnimationFile@1eae764c)
+04:04:32.668 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:04:32.668 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/687/8) into index 17 (entry point 0x0)
+04:04:32.668 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@148e1fe (animation legend.game.types.TmdAnimationFile@2995a65)
+04:04:32.668 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:04:32.668 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/687/9) into index 18 (entry point 0x0)
+04:04:32.669 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@47408ab6 (animation legend.game.types.TmdAnimationFile@2a319804)
+04:04:32.669 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+DISC1 MODERN INSPECTION 8/10 cut=659
+04:04:35.569 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 660 scene 1
+04:04:35.751 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:35.751 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:35.751 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:35.751 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:35.751 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:04:35.752 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:04:35.752 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:35.769 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 660 environment
+04:04:35.769 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 688 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:35.769 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/688 (total queued: 1)
+04:04:35.770 [pool-3-thread-4 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\688
+04:04:35.777 [pool-3-thread-4 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/688 loaded (remaining queued: 0)
+04:04:35.778 [pool-3-thread-4 legend.game.submap.CollisionGeometry:202] ?[33mWARN ?[m: Submap file too short, padding with 0's
+04:04:35.787 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 660 preparing environment
+04:04:36.438 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:36.475 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:36.475 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:36.476 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:36.476 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:36.476 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:36.477 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:36.477 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:36.478 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:36.478 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:36.478 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:36.479 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:36.492 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:36.493 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:36.508 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 660 assets
+04:04:36.508 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 689 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:36.508 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/689 (total queued: 1)
+04:04:36.509 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 690 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:36.509 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/690 (total queued: 2)
+04:04:36.509 [pool-3-thread-6 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\689
+04:04:36.509 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/689/textures (total queued: 3)
+04:04:36.509 [pool-3-thread-5 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\690
+04:04:36.509 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 660 overlay model file 7482
+04:04:36.509 [pool-3-thread-8 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\689\textures
+04:04:36.509 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 7482 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:04:36.509 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/7482 (total queued: 4)
+04:04:36.509 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 660 overlay texture and matrix file 7483
+04:04:36.509 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\7482
+04:04:36.509 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 7483 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:04:36.509 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/7483 (total queued: 5)
+04:04:36.509 [pool-3-thread-10 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\7483
+04:04:36.511 [pool-3-thread-10 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/7483 loaded (remaining queued: 3)
+04:04:36.511 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/7482 loaded (remaining queued: 4)
+04:04:36.511 [pool-3-thread-10 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 660 overlay texture and matrix loaded
+04:04:36.511 [pool-3-thread-7 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 660 overlay model loaded
+04:04:36.511 [pool-3-thread-7 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 660 preparing map
+04:04:36.511 [pool-3-thread-7 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@2be2b259 (animation legend.game.types.TmdAnimationFile@22185283)
+04:04:36.514 [pool-3-thread-8 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/689/textures loaded (remaining queued: 2)
+04:04:36.515 [pool-3-thread-5 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/690 loaded (remaining queued: 1)
+04:04:36.560 [pool-3-thread-6 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/689 loaded (remaining queued: 0)
+04:04:36.560 [pool-3-thread-6 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 660 preparing sobjs
+04:04:36.576 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:36.576 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:36.576 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:36.576 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/690/1) into index 10 (entry point 0x0)
+04:04:36.576 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@72b979a1 (animation legend.game.types.TmdAnimationFile@65a5ead2)
+04:04:36.577 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:36.577 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/690/2) into index 11 (entry point 0x0)
+04:04:36.577 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@1387c58e (animation legend.game.types.TmdAnimationFile@128762d8)
+04:04:36.578 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:36.578 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/690/3) into index 12 (entry point 0x0)
+04:04:36.578 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@2b4a7558 (animation legend.game.types.TmdAnimationFile@6173f999)
+04:04:36.579 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:36.579 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/690/4) into index 13 (entry point 0x0)
+04:04:36.579 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4c75fb8c (animation legend.game.types.TmdAnimationFile@654dc178)
+04:04:36.580 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:36.580 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/690/5) into index 14 (entry point 0x0)
+04:04:36.580 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@1dd5883c (animation legend.game.types.TmdAnimationFile@6314152e)
+04:04:36.581 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:36.581 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/690/6) into index 15 (entry point 0x0)
+04:04:36.581 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5e3b5b (animation legend.game.types.TmdAnimationFile@b937c29)
+04:04:36.582 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 16 (Submap object 6 (file 198))
+04:04:36.582 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 6 (DRGN21/690/7) into index 16 (entry point 0x0)
+04:04:36.582 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@3a36910f (animation legend.game.types.TmdAnimationFile@79c85e02)
+04:04:36.583 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 17 (Submap object 7 (file 231))
+04:04:36.583 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 7 (DRGN21/690/8) into index 17 (entry point 0x0)
+04:04:36.583 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@8bd2683 (animation legend.game.types.TmdAnimationFile@18df6189)
+04:04:36.584 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 18 (Submap object 8 (file 264))
+04:04:36.584 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 8 (DRGN21/690/9) into index 18 (entry point 0x0)
+04:04:36.584 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@166f3574 (animation legend.game.types.TmdAnimationFile@2dec41f5)
+04:04:36.585 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 19 (Submap object 9 (file 297))
+04:04:36.585 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 9 (DRGN21/690/10) into index 19 (entry point 0x0)
+04:04:36.585 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4c84e3f5 (animation legend.game.types.TmdAnimationFile@2fb410c5)
+04:04:36.586 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 20 (Submap object 10 (file 330))
+04:04:36.586 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 10 (DRGN21/690/11) into index 20 (entry point 0x0)
+04:04:36.586 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@401f54d2 (animation legend.game.types.TmdAnimationFile@f3346cd)
+04:04:36.588 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:04:37.756 [Thread-3 legend.core.audio.AudioThread:430] ?[32mINFO ?[m: Setting sequence volume to 0.00 over 0.50s
+DISC1 MODERN INSPECTION 9/10 cut=660
+04:04:40.481 [Thread-3 legend.core.audio.AudioThread:474] ?[32mINFO ?[m: Stopping sequence
+04:04:40.482 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6190 from legend.game.sound.Audio.scriptLoadMusicPackage(Audio.java:763)
+04:04:40.482 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6190 (total queued: 1)
+04:04:40.483 [pool-3-thread-11 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6190
+04:04:40.485 [pool-3-thread-11 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6190 loaded (remaining queued: 0)
+04:04:40.485 [pool-3-thread-11 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 6190 loaded
+04:04:40.485 [pool-3-thread-11 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\6191
+04:04:40.486 [pool-3-thread-11 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:04:40.486 [pool-3-thread-11 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:04:40.497 [Thread-3 legend.game.submap.SMap:3939] ?[32mINFO ?[m: Transitioning to cut 171 scene 14
+04:04:40.682 [Thread-3 legend.game.submap.SMap:3384] ?[32mINFO ?[m: Unloading submap
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 0 children
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 0
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 10 children
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 10
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 11 children
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 11
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 12 children
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 12
+04:04:40.682 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 13 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 13
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 14 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 14
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 15 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 15
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 16 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 16
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 17 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 17
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 18 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 18
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 19 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 19
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:340] ?[32mINFO ?[m: Deallocating script 20 children
+04:04:40.683 [Thread-3 legend.game.scripting.ScriptState:320] ?[32mINFO ?[m: Deallocating script state 20
+04:04:40.683 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:40.698 [Thread-3 legend.game.submap.RetailSubmap:198] ?[32mINFO ?[m: Loading submap cut 171 environment
+04:04:40.699 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 517 from legend.game.submap.RetailSubmap.loadEnv(RetailSubmap.java:208)
+04:04:40.699 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/517 (total queued: 1)
+04:04:40.699 [pool-3-thread-3 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\517
+04:04:40.703 [pool-3-thread-3 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/517 loaded (remaining queued: 0)
+04:04:40.715 [Thread-3 legend.game.submap.RetailSubmap:809] ?[32mINFO ?[m: Submap cut 171 preparing environment
+04:04:41.703 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\shadow.tim
+04:04:41.706 [Thread-3 legend.game.sound.Audio:1115] ?[32mINFO ?[m: Unloading playableSound Submap SFX
+04:04:41.706 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5767 from legend.game.submap.RetailSubmap.loadSubmapSounds(RetailSubmap.java:326)
+04:04:41.706 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5767 (total queued: 1)
+04:04:41.707 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 5975 from legend.game.sound.Audio.loadMusicPackage(Audio.java:743)
+04:04:41.707 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/5975 (total queued: 2)
+04:04:41.707 [pool-3-thread-2 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5767
+04:04:41.707 [pool-3-thread-9 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\5975
+04:04:41.709 [pool-3-thread-9 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5975 loaded (remaining queued: 1)
+04:04:41.709 [pool-3-thread-9 legend.game.sound.Audio:557] ?[32mINFO ?[m: Music package 5975 loaded
+04:04:41.709 [pool-3-thread-9 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5976
+04:04:41.709 [pool-3-thread-2 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/5767 loaded (remaining queued: 0)
+04:04:41.710 [pool-3-thread-9 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SECT\DRGN0.BIN\5977
+04:04:41.711 [pool-3-thread-9 legend.core.audio.AudioThread:422] ?[32mINFO ?[m: Setting sequence volume to 0.31
+04:04:41.711 [pool-3-thread-9 legend.core.audio.AudioThread:464] ?[32mINFO ?[m: Starting sequence
+04:04:41.738 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\big_arrow.tim
+04:04:41.739 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\small_arrow.tim
+04:04:41.740 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint.tim
+04:04:41.740 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d8520.tim
+04:04:41.741 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\800d85e0.tim
+04:04:41.741 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\savepoint_big_circle.tim
+04:04:41.741 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\dust.tim
+04:04:41.742 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\left_foot.tim
+04:04:41.742 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\right_foot.tim
+04:04:41.742 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_1.tim
+04:04:41.743 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\smoke_2.tim
+04:04:41.756 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@18a8a5a4 (animation legend.game.types.TmdAnimationFile@758c5b20)
+04:04:41.757 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@475ca4f2 (animation legend.game.types.TmdAnimationFile@7f7017f)
+04:04:41.772 [Thread-3 legend.game.submap.RetailSubmap:214] ?[32mINFO ?[m: Loading submap cut 171 assets
+04:04:41.772 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 518 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:236)
+04:04:41.772 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/518 (total queued: 1)
+04:04:41.772 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN21 dir 519 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:237)
+04:04:41.772 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/519 (total queued: 2)
+04:04:41.772 [pool-3-thread-1 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\518
+04:04:41.772 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN21.BIN/518/textures (total queued: 3)
+04:04:41.772 [pool-3-thread-12 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\519
+04:04:41.772 [Thread-3 legend.game.submap.RetailSubmap:280] ?[32mINFO ?[m: Loading submap cut 171 overlay model file 6882
+04:04:41.772 [pool-3-thread-4 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN21.BIN\518\textures
+04:04:41.772 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6882 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:281)
+04:04:41.772 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6882 (total queued: 4)
+04:04:41.772 [Thread-3 legend.game.submap.RetailSubmap:287] ?[32mINFO ?[m: Loading submap cut 171 overlay texture and matrix file 6883
+04:04:41.772 [pool-3-thread-10 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6882
+04:04:41.772 [Thread-3 legend.game.DrgnFiles:90] ?[32mINFO ?[m: Loading DRGN0 dir 6883 from legend.game.submap.RetailSubmap.loadAssets(RetailSubmap.java:288)
+04:04:41.773 [Thread-3 legend.game.unpacker.Loader:127] ?[32mINFO ?[m: Queueing directory SECT/DRGN0.BIN/6883 (total queued: 5)
+04:04:41.773 [pool-3-thread-7 legend.game.unpacker.Loader:164] ?[32mINFO ?[m: Loading directory .\files\SECT\DRGN0.BIN\6883
+04:04:41.774 [pool-3-thread-10 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6882 loaded (remaining queued: 4)
+04:04:41.774 [pool-3-thread-10 legend.game.submap.RetailSubmap:282] ?[32mINFO ?[m: Submap cut 171 overlay model loaded
+04:04:41.774 [pool-3-thread-7 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN0.BIN/6883 loaded (remaining queued: 3)
+04:04:41.774 [pool-3-thread-7 legend.game.submap.RetailSubmap:289] ?[32mINFO ?[m: Submap cut 171 overlay texture and matrix loaded
+04:04:41.774 [pool-3-thread-7 legend.game.submap.RetailSubmap:626] ?[32mINFO ?[m: Submap cut 171 preparing map
+04:04:41.774 [pool-3-thread-7 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@f36f7d8 (animation legend.game.types.TmdAnimationFile@652d151c)
+04:04:41.775 [pool-3-thread-4 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/518/textures loaded (remaining queued: 2)
+04:04:41.776 [pool-3-thread-12 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/519 loaded (remaining queued: 1)
+04:04:41.801 [pool-3-thread-1 legend.game.unpacker.Loader:134] ?[32mINFO ?[m: Directory SECT/DRGN21.BIN/518 loaded (remaining queued: 0)
+04:04:41.801 [pool-3-thread-1 legend.game.submap.RetailSubmap:554] ?[32mINFO ?[m: Submap cut 171 preparing sobjs
+04:04:41.807 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 0 (Submap controller)
+04:04:41.807 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap controller into index 0 (entry point 0x0)
+04:04:41.807 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 10 (Submap object 0 (file 0))
+04:04:41.807 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 0 (DRGN21/519/1) into index 10 (entry point 0x0)
+04:04:41.807 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@4e81f387 (animation legend.game.types.TmdAnimationFile@40fb8890)
+04:04:41.808 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 11 (Submap object 1 (file 33))
+04:04:41.808 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 1 (DRGN21/519/2) into index 11 (entry point 0x0)
+04:04:41.808 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7269eac7 (animation legend.game.types.TmdAnimationFile@1eaf6d32)
+04:04:41.809 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 12 (Submap object 2 (file 66))
+04:04:41.809 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 2 (DRGN21/519/3) into index 12 (entry point 0x0)
+04:04:41.809 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@5ff3b8ab (animation legend.game.types.TmdAnimationFile@435004cd)
+04:04:41.810 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 13 (Submap object 3 (file 99))
+04:04:41.810 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 3 (DRGN21/519/4) into index 13 (entry point 0x0)
+04:04:41.810 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@7e52e1b2 (animation legend.game.types.TmdAnimationFile@1bf1d5b7)
+04:04:41.810 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 14 (Submap object 4 (file 132))
+04:04:41.810 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 4 (DRGN21/519/5) into index 14 (entry point 0x0)
+04:04:41.810 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@59050082 (animation legend.game.types.TmdAnimationFile@1ab00103)
+04:04:41.811 [Thread-3 legend.game.scripting.ScriptManager:317] ?[32mINFO ?[m: Allocating script index 15 (Submap object 5 (file 165))
+04:04:41.811 [Thread-3 legend.game.scripting.ScriptState:306] ?[32mINFO ?[m: Loading script Submap object 5 (DRGN21/519/6) into index 15 (entry point 0x0)
+04:04:41.811 [Thread-3 legend.game.Models:69] ?[32mINFO ?[m: Loading scripted TMD legend.game.types.CContainer@73062c96 (animation legend.game.types.TmdAnimationFile@66cf032c)
+04:04:41.812 [Thread-3 legend.game.unpacker.Loader:41] ?[32mINFO ?[m: Loading file .\files\SUBMAP\alert.tim
+04:04:43.849 [Thread-3 legend.game.submap.SMap:2286] ?[32mINFO ?[m: Sobj Submap object 1 (file 33) (legend.game.types.Model124@73dd360d) switching model to sobj 5
+04:04:43.850 [Thread-3 legend.game.submap.SMap:2286] ?[32mINFO ?[m: Sobj Submap object 2 (file 66) (legend.game.types.Model124@23828368) switching model to sobj 5
+04:04:43.851 [Thread-3 legend.game.submap.SMap:2286] ?[32mINFO ?[m: Sobj Submap object 3 (file 99) (legend.game.types.Model124@19bdf3a3) switching model to sobj 5
+04:04:43.852 [Thread-3 legend.game.submap.SMap:2286] ?[32mINFO ?[m: Sobj Submap object 4 (file 132) (legend.game.types.Model124@87b8a30) switching model to sobj 5
+DISC1 MODERN INSPECTION 10/10 cut=171
+04:04:46.373 [Thread-3 legend.core.renderer.RenderEngine:1240] ?[32mINFO ?[m: Shutting down...
+]]></system-out>
+  <system-err><![CDATA[2026-10-31T03:03:43.382617500Z Thread-3 INFO Starting configuration XmlConfiguration[location=C:\Users\20te\workspaces\Severed-Chains\log4j2.xml, lastModified=2026-10-28T17:12:50.831Z]...
+2026-10-31T03:03:43.385618Z Thread-3 INFO Start watching for changes to [C:\Users\20te\workspaces\Severed-Chains\log4j2.xml] every 5 seconds
+2026-10-31T03:03:43.386617700Z Thread-3 INFO Configuration XmlConfiguration[location=C:\Users\20te\workspaces\Severed-Chains\log4j2.xml, lastModified=2026-10-28T17:12:50.831Z] started.
+2026-10-31T03:03:43.387618300Z Thread-3 INFO Stopping configuration org.apache.logging.log4j.core.config.DefaultConfiguration@5a81ebac...
+2026-10-31T03:03:43.387618300Z Thread-3 INFO Configuration org.apache.logging.log4j.core.config.DefaultConfiguration@5a81ebac stopped.
+Info: avformat_open_input rejected some options:	Option: pixel_format, value: rgb24
+]]></system-err>
+</testsuite>

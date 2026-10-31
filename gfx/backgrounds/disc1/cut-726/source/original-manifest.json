@@ -1,0 +1,46 @@
+{
+  "cut": 726,
+  "disk": 1,
+  "source": "files\\SECT\\DRGN21.BIN\\727",
+  "bounds": [
+    0,
+    0,
+    384,
+    256
+  ],
+  "notes": [],
+  "background_fragments": 3,
+  "foreground_layers": 2,
+  "pieces": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 128,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 256,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 0,
+      "y": 194,
+      "width": 174,
+      "height": 62
+    },
+    {
+      "x": 184,
+      "y": 112,
+      "width": 146,
+      "height": 76
+    }
+  ]
+}

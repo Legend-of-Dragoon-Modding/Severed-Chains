@@ -1,0 +1,1292 @@
+{
+  "worker": 3,
+  "assigned": [
+    8,
+    11,
+    18,
+    30,
+    32,
+    33,
+    34,
+    35,
+    36,
+    55,
+    57,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    658,
+    659,
+    660,
+    696,
+    697,
+    740,
+    741,
+    743
+  ],
+  "gameplayVerified": false,
+  "runtimeInstalled": false,
+  "screens": [
+    {
+      "cut": 8,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "preview": "gfx/backgrounds/disc1/cut-8/source/asset-preview",
+      "packagingBlocker": "Strict static packager requires original layer trace; no recorded trace for this cut.",
+      "laterCheck": "Confirm original layer behavior and doorway/ground alignment with bounded original/modern recording.",
+      "issues": [],
+      "runtimeEntry": {
+        "width": 2560,
+        "height": 2048,
+        "layers": 5
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "3eb1557aa38cabf74c15dd4ee71392303ad2ae47c876e2bb20af96e53e9c8fd6"
+    },
+    {
+      "cut": 11,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "preview": "gfx/backgrounds/disc1/cut-11/source/asset-preview",
+      "packagingBlocker": "Strict static packager requires original layer trace; no recorded trace for this cut.",
+      "laterCheck": "Mode2 calls are camera mode only. Confirm original layer behavior and geometry in bounded original/modern recording.",
+      "issues": [],
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 6
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "d7105966da1ce311518d1d1020dd93fcfb073d4b1b3fbadd8d1a384c41de8abf"
+    },
+    {
+      "cut": 740,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "preview": "gfx/backgrounds/disc1/cut-740/source/asset-preview",
+      "packagingBlocker": "Strict static packager requires original layer trace; no recorded trace for this cut.",
+      "laterCheck": "Confirm original layer behavior and doorway/ground alignment with bounded original/modern recording.",
+      "issues": [],
+      "runtimeEntry": {
+        "width": 1540,
+        "height": 1024,
+        "layers": 2
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "7f987f626f023518d4ec0c156a9d7935c61833220ae0dce3b4567188179f608d"
+    },
+    {
+      "cut": 55,
+      "status": "no-visible-environment",
+      "visualReview": true,
+      "issues": [],
+      "packagingBlocker": null,
+      "gameplayVerified": false,
+      "evidence": "Both exported layers are fully transparent RGBA (every channel extrema [0,0]); preserve retail fallback, no artwork generated."
+    },
+    {
+      "cut": 57,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-57/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1028,
+        "layers": 9
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f27fb384c73be6e50a59be540a6b50f7b181f1cd3527043cf6e54c128ed5d7e7"
+    },
+    {
+      "cut": 741,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-741/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1024,
+        "layers": 1
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "690b9007e22d35c16a555fe22dbed92ee2665a97e279dd38a7634ae691cbb0b1"
+    },
+    {
+      "cut": 697,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-697/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 3072,
+        "height": 2176,
+        "layers": 2
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "0b0b20114abf99d915617d28a257a6b87807fb2d5b050887a5c422086dfb2931"
+    },
+    {
+      "cut": 18,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-18/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 2048,
+        "layers": 20
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "e9d85279ac3346f9c655a452498cd8d1089d77a46f0551f2f5ddfd07711ccdd8"
+    },
+    {
+      "cut": 32,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-32/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Dynamic foreground calls require separate plates/state review.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\99\\5.txt",
+          "line": 520,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x7 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 10
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "19366d2800b074d243411a66b629431cf026645745c778df246420cbc7932b17"
+    },
+    {
+      "cut": 30,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-30/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Dynamic foreground calls require separate plates/state review.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\93\\1.txt",
+          "line": 434,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x5, 0x0 ; mode, foregroundObjectIndex, out",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1024,
+        "layers": 6
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "d13d7c2e0582947a3175cfdcebe31600ee0d9f2fd1bc03ed43f764973dae5934"
+    },
+    {
+      "cut": 33,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-33/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 10
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "ed4abdd974b837b07c14c33cdb1a6a407b7cfdcd7efc60371c0f2ba54dfff088"
+    },
+    {
+      "cut": 34,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-34/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1024,
+        "layers": 6
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "69629caf0a668afb9ac2f723e938e013819d38975e8d7e6784307f3fc52177e1"
+    },
+    {
+      "cut": 35,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-35/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1024,
+        "layers": 1
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "8910fa085cc15dcba9b01ee00ec78dc567e5bbdda6247303548b29b641e519c3"
+    },
+    {
+      "cut": 36,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-36/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and geometry in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1024,
+        "layers": 1
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "54508fe3788a81cd1adfa2dc170572d53b9bc4da7983e43ae78cfb646a3f283e"
+    },
+    {
+      "cut": 171,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-171/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1544,
+        "height": 2048,
+        "layers": 16
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f4ad4c421a6482b2adac31304630d88aad4410767348efacd4297833f0b6a6e9"
+    },
+    {
+      "cut": 173,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-173/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 11
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "a61ba505f5fa6eec7dbb24c1aa813c527f8e4c51343dd0769180c05d32f38012"
+    },
+    {
+      "cut": 172,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-172/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Dynamic foreground calls require separate plates/state review.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\519\\1.txt",
+          "line": 228,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 8
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "a89601af2513f916b7949932fb340f4a274238faedc63673fc71e01c5e1c1d44"
+    },
+    {
+      "cut": 174,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-174/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1024,
+        "layers": 11
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f96b28ad2ecf88622498c1a45c91f4b46b350c56b1ba16ff831353853a3e89e2"
+    },
+    {
+      "cut": 175,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-175/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1536,
+        "layers": 18
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "e3240b356d429ac66905e2f97cc6194022d9180d2aadaa2ed08b24ff2d69c6c1"
+    },
+    {
+      "cut": 176,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-176/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Dynamic foreground calls require separate plates/state review.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\531\\1.txt",
+          "line": 349,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\531\\1.txt",
+          "line": 830,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\531\\1.txt",
+          "line": 842,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\531\\1.txt",
+          "line": 880,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\531\\1.txt",
+          "line": 893,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1536,
+        "layers": 13
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "71256f0c4df58a11c9d58d0e4b6d08465344af9aefc080f505a9281f7863b8e7"
+    },
+    {
+      "cut": 177,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-177/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Dynamic foreground calls require separate plates/state review.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\534\\1.txt",
+          "line": 316,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\534\\1.txt",
+          "line": 503,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xb ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\534\\1.txt",
+          "line": 686,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xb ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2560,
+        "height": 1536,
+        "layers": 5
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "3e8689e4258444b7578c9b31576128f5d65eccfa1183fbbe4ad888526547d63a"
+    },
+    {
+      "cut": 178,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-178/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 15
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "6830accda83321bce5e5a28baa73690f01e1f2ce50ce371ae28aa0b9349a21cc"
+    },
+    {
+      "cut": 180,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-180/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1540,
+        "layers": 20
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "c71f6be159a01dbca9deb11b4310c5c70739dccc5200a31be4d5f219031ca7ac"
+    },
+    {
+      "cut": 181,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-181/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Dynamic foreground calls require separate plates/state review.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\546\\1.txt",
+          "line": 841,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0xffffff88, 0x5 ; x, y, overlayIndex",
+          "classification": "foreground-offset"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1536,
+        "layers": 16
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "984c642e084cee49ff909fd1d53f9a4a5c3b8679d051b4a9a0c52d101c4176ed"
+    },
+    {
+      "cut": 183,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-183/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1024,
+        "layers": 2
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f43c06e1d5dff75b61cf1711505d257dfe3cae27db82052b85a880ef63551efd"
+    },
+    {
+      "cut": 179,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-179/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2560,
+        "height": 1536,
+        "layers": 11
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "0d2a7c14ef7070a63566db2a8ed9d3a7d8f747a79a909bcc1aa2cd5c66410a26"
+    },
+    {
+      "cut": 182,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-182/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 3072,
+        "height": 1536,
+        "layers": 16
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "5a1c7e103772a4279cfefad43602a7876e8cbc066a46100bf3ed11536b006415"
+    },
+    {
+      "cut": 187,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-187/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 3072,
+        "height": 1024,
+        "layers": 9
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "73a16248627a0d5fa5fc3c564735f9e40bc1bdc9f9783844950fe8c41658017b"
+    },
+    {
+      "cut": 188,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-188/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 9
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "1e98e46243ec972eb093444906f92813df13874c070ca79c584d0535bea0bde8"
+    },
+    {
+      "cut": 743,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-743/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 9
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "1e98e46243ec972eb093444906f92813df13874c070ca79c584d0535bea0bde8"
+    },
+    {
+      "cut": 189,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-189/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 11
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "4f130b1d0025f3e5f378d4bb4dc2a0a51e80a9ebefbd636d2b2b199fd6abca43"
+    },
+    {
+      "cut": 190,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-190/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1536,
+        "layers": 9
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "05977563ab3a6d1c03edce1dbf6ee64f00e8d5d6e82f23fa01991d67bd3775a0"
+    },
+    {
+      "cut": 191,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-191/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1024,
+        "layers": 7
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "725bce2c91c5fc2b9e9ea702b6247001d8bcfbfb243f40b9043f8a17e47fc9eb"
+    },
+    {
+      "cut": 192,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-192/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 19
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "259e08f1943d45f48b63c21e3f7ed22de1ae1c98ba69663a50fbb43d36ee4e89"
+    },
+    {
+      "cut": 193,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-193/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\582\\1.txt",
+          "line": 678,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xf ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\582\\1.txt",
+          "line": 689,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 2048,
+        "layers": 21
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "6db9cdc3edbae9d59add4d76692e3509b5380883407cc036398a3233f0a71af7"
+    },
+    {
+      "cut": 194,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-194/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 355,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x8 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 356,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xc ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 559,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 572,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xa ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 579,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x8 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 588,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 589,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x7 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\585\\1.txt",
+          "line": 590,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xf ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1544,
+        "height": 2048,
+        "layers": 20
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f7f949eb0e8cecf355618b9f68c4eff21a207d8d417be6f6ae5795345dc90dd6"
+    },
+    {
+      "cut": 195,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-195/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\588\\1.txt",
+          "line": 1604,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\588\\1.txt",
+          "line": 1614,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1536,
+        "layers": 12
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "49b418f35ce1777742a1f537963ee6a4f4f4e0c24098bb267c015348ac409b68"
+    },
+    {
+      "cut": 196,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-196/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 12
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "ebabeb619f12eaf23e17756d073b475aa8d730236bebee02eb87d515f734d1ef"
+    },
+    {
+      "cut": 197,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-197/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1024,
+        "layers": 17
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "0862a03ce11e81500846a8b346294c73ad3410271054948418ae7fbb3f86ac03"
+    },
+    {
+      "cut": 198,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-198/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\597\\1.txt",
+          "line": 435,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x6 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\1.txt",
+          "line": 436,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\1.txt",
+          "line": 981,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\1.txt",
+          "line": 982,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\15.txt",
+          "line": 358,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\15.txt",
+          "line": 471,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\15.txt",
+          "line": 472,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\2.txt",
+          "line": 380,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\2.txt",
+          "line": 381,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\2.txt",
+          "line": 382,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\597\\2.txt",
+          "line": 383,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x7 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1536,
+        "layers": 1
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f2412d833833e661db11516fb5ec2c1a39a49c5e0d8dc97e5d32e3ba73037ae0"
+    },
+    {
+      "cut": 199,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-199/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 8
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "bf06afe756e48dea5b3f34f1829a86dcf96d3ac5bc63641fd879658351aa8fa2"
+    },
+    {
+      "cut": 200,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-200/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 1
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "a5acb7774616e4644889e7b0d45b7a79f71c1128d375e295a7b11ef058146de6"
+    },
+    {
+      "cut": 658,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-658/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\681\\7.txt",
+          "line": 268,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 1536,
+        "height": 1536,
+        "layers": 12
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "5f5145cb3877c84b8f22276fdb82c5aaa66f0cea81b326d8fb1991357349fa3d"
+    },
+    {
+      "cut": 659,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-659/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\684\\1.txt",
+          "line": 666,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x9 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\684\\1.txt",
+          "line": 670,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xa ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\684\\1.txt",
+          "line": 674,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xb ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\684\\1.txt",
+          "line": 680,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x8 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\684\\1.txt",
+          "line": 1199,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x1 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\684\\1.txt",
+          "line": 1492,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x8 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2048,
+        "height": 1024,
+        "layers": 6
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "f18e5ffd9071f5e7148b323ae12a208d8ae148ae073929673100cefb08b58fab"
+    },
+    {
+      "cut": 660,
+      "status": "source-preview-ready-exception",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [
+        "Scripted foreground visibility/offset requires separate-plate review; this full-canvas master is source-preview-only."
+      ],
+      "preview": "gfx/backgrounds/disc1/cut-660/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace. Separate plates/state review required.",
+      "layerRisks": [
+        {
+          "file": "build\\disc1\\scripts\\687\\1.txt",
+          "line": 463,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build\\disc1\\scripts\\687\\1.txt",
+          "line": 744,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        }
+      ],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2560,
+        "height": 1536,
+        "layers": 6
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "2c4abc82965f7a79f899c4d007069eef32f3ac126e20624eba2fe81569d92a8a"
+    },
+    {
+      "cut": 696,
+      "status": "artwork-preview-ready",
+      "visualReview": true,
+      "gameplayVerified": false,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-696/source/asset-preview",
+      "packagingBlocker": "Strict packager requires original layer trace.",
+      "layerRisks": [],
+      "laterCheck": "Inspect original layer states and threshold/stair alignment in bounded original/modern recording.",
+      "reviewEvidence": "Side-by-side original and exact-mask modern composite inspected.",
+      "runtimeEntry": {
+        "width": 2560,
+        "height": 1536,
+        "layers": 6
+      },
+      "packagingStatus": "uninstalled asset previews only",
+      "sourceHash": "2c4abc82965f7a79f899c4d007069eef32f3ac126e20624eba2fe81569d92a8a"
+    }
+  ],
+  "productionOrder": [
+    8,
+    11,
+    57,
+    740,
+    741,
+    697,
+    55,
+    18,
+    32,
+    30,
+    33,
+    34,
+    35,
+    36,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    187,
+    188,
+    743,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    658,
+    659,
+    660,
+    696
+  ],
+  "chronologyNote": "Production/review location order only. Seles/forest/cinematic variant first-visit order8/11/57/740/741/697/55 remains unconfirmed; do not promote this order to confirmedOpeningOrder. Hellena connected routes32->30 and33->34 follow original exits; rooftop35/36 sequence order unconfirmed. Kazas/Black Castle optional side rooms are grouped by connected locations, not proven compulsory first visits.",
+  "summary": {
+    "assigned": 46,
+    "visibleSourcesReviewed": 45,
+    "noVisibleEnvironment": [
+      55
+    ],
+    "runtimeInstalled": 0,
+    "gameplayVerified": 0,
+    "sourceLayerExceptions": [
+      32,
+      30,
+      172,
+      176,
+      177,
+      181,
+      193,
+      194,
+      195,
+      198,
+      658,
+      659,
+      660
+    ],
+    "productionComplete": true,
+    "scope": "Artwork source production complete; strict packaging and gameplay remain deferred."
+  },
+  "productionComplete": true
+}

@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit image1 forest ruin underlay. Preserve camera, sunset lighting, all architecture, trees, foliage color, staircase and geometry exactly. Change only foreground and lower-left pavilion: hide the entire CURVING WOODEN RAILWAY at bottom under dense natural leafy bushes with the same leaf size/colors as adjacent vegetation, so NO rails or ties remain visible at all. Add a fallen carved stone crossbeam blocking the small steps at lower-left pavilion (normalized x.20..34,y.63..81), same stone material and perspective as existing pavilion. Do not alter main staircase or arch and do not add statues. No other edits. Faithful detailed painted game environment with matching light and texture, no text.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/underlay-generated.png"
+  ],
+  "transparent_background": false
+}

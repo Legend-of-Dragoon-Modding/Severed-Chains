@@ -1,0 +1,9 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Edit image1 with precise minimal change: open ONLY the TWO round-topped wooden leaf doors on the lower facades. One door is bottom-center beneath the three green glowing windows; the other is at far right above short stair landing. Remove the wooden planks, iron straps and handles INSIDE their stone arches, revealing deep dark empty doorway recesses. Retain every original stone jamb, curved arch, threshold and surrounding wall/window pixel position. Both openings should be black-green darkness, not portals, no visible wooden door fragments. Do NOT remove any facade walls. Keep all three green slit columns on the right middle room and all lower windows, walls, rails, platforms and stairs completely unchanged. Same exact full portrait camera/composition/lighting; no new props.",
+  "inputs": [
+    "generated-closed-walls.png"
+  ],
+  "output": "generated-open-door-walls.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-28ab4e0d-551d-41a8-a03d-3b2f16e6f567.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

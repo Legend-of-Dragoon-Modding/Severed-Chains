@@ -1,0 +1,34 @@
+{
+  "background": "generated-underlay-step4.png",
+  "layers": {
+    "0": "generated-underlay-step4.png",
+    "1": "generated-underlay-step4.png",
+    "2": "../base.png",
+    "3": "generated-underlay-step4.png",
+    "4": "generated-underlay-step4.png",
+    "5": "generated-underlay-step4.png",
+    "6": "generated-underlay-step4.png",
+    "7": "generated-underlay-step4.png",
+    "8": "generated-underlay-step4.png",
+    "9": "generated-underlay-step4.png",
+    "10": "generated-underlay-step4.png",
+    "11": "generated-underlay-step4.png",
+    "12": "generated-underlay-step4.png",
+    "13": "generated-underlay-step4.png",
+    "14": "generated-underlay-step4.png",
+    "15": "../base.png",
+    "16": "generated-underlay-step4.png",
+    "17": "generated-underlay-step4.png",
+    "18": "generated-underlay-step4.png"
+  },
+  "dynamicLayers": [
+    2,
+    15
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime+2 script layer states and exact mask geometry audited in audit.json.",
+    "Builtin imagegen exposes original upper sigil room and lower-left arch/stair; closed window-wall and lower wall remain independent raw-master layers.",
+    "Source underlay reviewed against original clean guide; endpoint visual acceptance pending."
+  ]
+}

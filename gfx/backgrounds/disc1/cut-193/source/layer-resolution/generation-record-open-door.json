@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Reconstruct image1 as a high-resolution game texture crop, keeping EXACT original projected layout: narrow green-lit rough stone jamb occupies left quarter, rounded arch and dark masonry across top, deep nearly black empty doorway recess fills remaining right three-quarters. This is the OPEN state, so NO wooden door leaf inside the recess. Preserve image1 silhouette/placement and high portrait crop proportions, no border, no floor/stairs beyond original crop. Use image2's modern dark green-brown stone texture and green magical light style. Output an opaque rectangular texture edge-to-edge; dark recess should be near black detailed darkness without any objects, people, door or portal glow. Exact original camera and arch placement; not a centered symmetric doorway.",
+  "inputs": [
+    "original-open-door-crop.png",
+    "generated-closed-walls.png"
+  ],
+  "output": "generated-open-door.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-6b9fe737-a91d-419f-9d29-ec8d2ee9f1c0.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

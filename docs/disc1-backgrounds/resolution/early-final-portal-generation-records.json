@@ -1,0 +1,115 @@
+{
+  "records": [
+    {
+      "key": "early103ClosedScene",
+      "cut": 103,
+      "prompt": "Use case: precise-object-edit. Edit target is this exact isometric medieval inn room scene. Change ONLY the central FRONT door opening (at normalized x0.49..0.535,y0.54..0.71) into a CLOSED wooden plank door in the existing arch. Fill the dark doorway with the brown closed wood leaf, iron cross-straps and handle, same perspective. Door top follows arch; leaf bottom rests exactly on existing threshold; retain all floor planks immediately below. Keep the portal frame, its location and size EXACTLY unchanged. Keep full 2:1 canvas, camera, black background, all beds,furniture,lamps,stairs,walls unchanged. No zoom, no crop, no extra objects. The source must remain a full scene, no transparent sprite. Crucial preserve original floor below door with real planks, no vertical smearing.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-103/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-31bb07c1-2ad8-4c01-aff5-3d943d6466e8.png",
+      "localAssetOrRole": "closed-door-scene-final.png"
+    },
+    {
+      "key": "early103OpenScene",
+      "cut": 103,
+      "prompt": "Use case: precise-object-edit. Edit this exact isometric medieval inn room fullscene. Change ONLY central front doorway: add a wooden door leaf OPEN INWARD from the right jamb. The wood leaf is visible diagonally from lower-left to upper-right, its hinges on the right side of the doorway. Its top right remains attached to upper-right jamb; lower-left near edge protrudes toward left front. Door panel occupies normalized x.490..532,y.574..703. Retain visible dark interior to left/above open leaf. Physically coherent vertical plank door with iron strap across it, same warm wood and lighting. Preserve exact arch and threshold geometry and ALL surrounding floorplanks beneath and behind leaf. No elongated floor into door. Keep full original camera, framing,2:1aspect,black background, all furniture and walls EXACTLY. No crop,zoom,people,text. Full opaque scene, no sprite extraction.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-103/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-c27ff45f-6590-4d5b-a049-e9e3bb5e3682.png",
+      "localAssetOrRole": "open-door-scene-final.png"
+    },
+    {
+      "key": "early626Wall",
+      "cut": 626,
+      "prompt": "Edit this burned medieval tavern background into CONTINUOUS FRONT WALL source for exact game atlas placement. Keep full camera/framing and all charred furniture, wall textures, maps, bar, barrels, crates, plankfloor and light unchanged. ONLY erase the front-center doorway including its wooddoor, stone arch/sidecolumns and projecting stone threshold/landing, aroundnormalizedx.47..58,y.58..89. Fill old opening/arch with continuous soot-darkened roughstone frontwall matching adjacent bricks; fill the old projecting landing footprint with continuous existing stone foundation/floor edge. No replacement doorway anywhere. This is a blank architectural underlay; a registered portal unit will be added later. Do not move otherobjects, nopeople/text. Samefull2:1canvas/nozoom/nocrop.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-626/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-388b8f36-7793-40f7-b5e0-45550c2f55d9.png",
+      "localAssetOrRole": "continuous-wall.png"
+    },
+    {
+      "key": "early627Wall",
+      "cut": 627,
+      "prompt": "Use case: precise-object-edit. Edit target: burned isometric medieval inn room, exact camera and full 2:1 canvas unchanged. Remove ONLY the central FRONT doorway (wood leaf, brick arch, jambs), at normalized x.47..56,y.48..64. Replace with continuous scorched cracked plaster/stone wall matching adjacent front wall. The wall must run down to its existing bottom edge, with charred floor planks below. No new door or arch anywhere. Keep all beds, furniture, black background, damaged railings,stairs,windows,burn marks and floor geometry unchanged. This is a continuous-wall underlay; another registered portal is added later. No zoom, no crop.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-627/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-e9b80f84-c9bf-4469-b16e-fd9a691253b9.png",
+      "localAssetOrRole": "continuous-wall-resumed.png"
+    },
+    {
+      "key": "early626Portal",
+      "cut": 626,
+      "prompt": "Edit exact isolated stone portal asset. REMOVE the entire wooden door leaf including its wood diagonal top rail, iron straps and ring handle. The entrance must be completely empty/open: dark recessed interior behind with a visible continuous stone threshold/floor across bottom of opening. Preserve stone arch,columngeometry,outer stones,twolanterns,lighting, perspective and exact imagecanvasposition/size. No wood leaf anywhere, no newobjects, no lettering. Preserve genuine transparent outer background. Inner opening should remain opaque black/dark brown interior shadow, not transparent. Keep all stone edges unchanged as closely as possible. This asset will receive a separate animated door leaf later.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-626/source/layer-resolution/portal-open-unit.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-afb3360d-8cf1-4813-be6d-07ab33bad1b6.png",
+      "localAssetOrRole": "Rejected: tall portal incompatible with native door/floor division"
+    },
+    {
+      "key": "early626SquatPortal",
+      "cut": 626,
+      "prompt": "Use case: precise-object-edit. Edit this isolated EMPTY stone portal asset, preserving full transparent 995x1588 canvas and samewidth. CRITICAL GEOMETRY CHANGE: move door threshold and bottom of doorway upward to 60 PERCENT of imageheight (y~950 of1588). The stone arch with entirely dark EMPTY opening occupies ONLY TOP60% of canvas. The BOTTOM40% of canvas must be a long solid stone landing projecting toward viewer, NO dark opening there. Floor begins y950 and extends tobottom1588, same isometric orientation. Make portal shorter/squatter with same stones/lanterns; keepouterleft/rightlimits same. Do not include any wooddoor leaf,handle,hinges orstraps. Opaque dark recess inupperopening. Genuine transparent OUTER background. Samewarmgoldstone,lanternlight. Architectural atlas must align native doorleaf top at y400,bottomy950; below950 onlystonefloor.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-626/source/layer-resolution/empty-portal-final.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-7abec554-ea8a-49ff-bd83-a3753e3242f5.png",
+      "localAssetOrRole": "empty-portal-squat.png"
+    },
+    {
+      "key": "early626ClosedScene",
+      "cut": 626,
+      "prompt": "Use case: precise-object-edit. Edit THIS exact full isometric burned tavern scene. Change ONLY tiny central front stoneportal's EMPTY dark opening into a CLOSED wooden plank door. Keep EXACT portalposition,size,arch,twolanterns and projecting stonefloor landing unchanged. Door fills ONLY dark recess, from archtop to existing threshold (normalized x.484..543,y.675..773); do NOT extend woodenleaf onto stonefloor/landing below. Keep floor perfectlyunchanged below threshold. Closedleaf vertical with archedtop, ironstraps, no openleaf anywhere. All room,furniture,damage,wall,camera,full2:1canvas,blackouterbackground EXACT unchanged. No crop orzoom. FullsceneRGB asset, no sprite.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-626/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-06466180-948f-425d-9807-43dfb5555a8d.png",
+      "localAssetOrRole": "closed-door-scene-final.png"
+    },
+    {
+      "key": "early626OuterLeaf",
+      "cut": 626,
+      "prompt": "Use case: precise-object-edit. FIRST image is edit target: exact full burned medieval tavern scene. SECOND is original retail separate foreground leaf SHAPE reference, only geometry. Add a SECOND OUTER door leaf OPEN outward in front of the existing closedinnerdoor at center front. Outerleaf hinges at RIGHT jamb, swings outward toward lower-left/viewer. Dark brown wood, long iron strap. Top edge slopes steeply UP toward right: native512x256 coordinates near-lefttop(250,204) tohingerighttop(276,183). Bottomedge slopes UPright: near-leftbottom(250,227) tohingerightbottom(276,206). This openouterleaf MUST occupy normalizedrectangle x.488..543,y.715..890. Keep innercloseddoor untouched behind it. Floor/landing at right and beneath must remain coherent. Match secondimage leafperspective,donotcopylowresolutiontexture. Keep restof fullscene,camera,allwall/furniture/lighting EXACT unchanged. Fullopaque2:1canvas,nozoom,nocrop. Only addthisouterdoorleaf.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-626/source/layer-resolution/closed-door-scene-final.png",
+        "build/disc1/626native-5.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-88ce9304-49fa-4e56-ac3d-bd29a2f328c2.png",
+      "localAssetOrRole": "Rejected: leaf generated on wrong side"
+    },
+    {
+      "key": "early626OuterSprite",
+      "cut": 626,
+      "prompt": "Use case: style-transfer. Repaint the supplied original game FOREGROUND OUTER DOOR LEAF into detailed warm brown medieval wood with iron horizontal strap. Preserve EXACT silhouette and geometric perspective from reference: top edge rises steeply toward RIGHT; near-left vertical edge tall; distant-right vertical edge shorter; bottom edge rises towardRIGHT. This is an OPEN door viewedfromoutside, a parallelogram broadwoodplane. Hinge attachedright,nearfreeedgeleft. Preserve the small stonefloor triangular pieces on lower/right of originalsilhouette, matching warmgoldstone. No stonearch, no frame, no background,no otherdoor,nopeople. Sameproportions28wide45tall. Fully transparent surroundingbackground. Native reference blackoutside silhouette means transparency, not blackborder. Use reference forgeometryonly, no pixelation inmaterial. Avoidchangingorientation/mirroring. Preserve the dark wooden facewithsmalltopedgehighlight.",
+      "references": [
+        "build/disc1/626native-5.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-bd654bfa-6b17-4887-a201-ace195982bba.png",
+      "localAssetOrRole": "Rejected: isolated source creates RGB edge/floor stretch after retail mask fitting"
+    },
+    {
+      "key": "early626OuterClean",
+      "cut": 626,
+      "prompt": "Use case: precise-object-edit. Edit this exact full burned tavern scene, repair ONLY material on the OPEN OUTER door leaf protruding in frontof central stoneportal. Door position/silhouette/perspective MUST stay EXACTLY as it currentlyis at normalized x.488..543,y.715..890: topedge risesupright, nearleftfreeedge low, rightjamb hinge high. Remove visible blocky stretched vertical texturebands alongleftedge andfloorbottom; replace with coherent dark woodgrain onleaf and continuous matchinggoldstone onsmallfloorpieces. Preserve eachsilhouetteedgeposition andtwoexistingdoorposes (closedinner behindopenouter). Preserve allportalstones,frame,steps,doorshape,camera,room,damage,furniture,light and full2:1canvas. No addingormovingobjects, noflip, nozoom,crop. Just clean existing materialpixelstretch aroundouterdoor, ensuringfloorright andbelow issolidstone matchinglanding. Fullopaque scene.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-626/source/layer-resolution/all-visible.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-9cf4fc00-2009-4402-97be-7f62c6eb0ea3.png",
+      "localAssetOrRole": "outer-open-leaf-clean-scene.png"
+    }
+  ]
+}

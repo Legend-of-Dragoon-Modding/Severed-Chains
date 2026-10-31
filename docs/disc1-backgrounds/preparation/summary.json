@@ -1,0 +1,1832 @@
+{
+  "step": 2,
+  "candidateCount": 100,
+  "assetAuditsPassed": 100,
+  "originalLayerInspectionsCompleted": 100,
+  "staticPackagingGatePassed": 88,
+  "blocked": [
+    {
+      "cut": 631,
+      "reason": "Hidden or offset foreground layers: 3",
+      "trace": "build/disc1/captures/cut-631/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 3,
+          "firstFrame": 1,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 99,
+      "reason": "Hidden or offset foreground layers: 4, 5",
+      "trace": "build/disc1/captures/cut-99/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 4,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 5,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 102,
+      "reason": "Hidden or offset foreground layers: 6",
+      "trace": "build/disc1/captures/cut-102/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 6,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 626,
+      "reason": "Hidden or offset foreground layers: 6",
+      "trace": "build/disc1/captures/cut-626/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 6,
+          "firstFrame": 2,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 120,
+      "reason": "Hidden or offset foreground layers: 7, 8",
+      "trace": "build/disc1/captures/cut-120/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 7,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 8,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 636,
+      "reason": "Hidden or offset foreground layers: 14, 15",
+      "trace": "build/disc1/captures/cut-636/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 14,
+          "firstFrame": 1,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "-140",
+              "0",
+              "-140",
+              "false"
+            ]
+          ]
+        },
+        {
+          "layer": 15,
+          "firstFrame": 1,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "-140",
+              "0",
+              "-140",
+              "false"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 158,
+      "reason": "Hidden or offset foreground layers: 1, 6, 7, 8, 11, 13, 15",
+      "trace": "build/disc1/captures/cut-158/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 1,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 6,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 7,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 8,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 11,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 13,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 15,
+          "firstFrame": 5,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 165,
+      "reason": "Hidden or offset foreground layers: 4",
+      "trace": "build/disc1/captures/cut-165/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 4,
+          "firstFrame": 3,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 175,
+      "reason": "Hidden or offset foreground layers: 2",
+      "trace": "build/disc1/captures/cut-175/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 2,
+          "firstFrame": 3,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 180,
+      "reason": "Hidden or offset foreground layers: 5",
+      "trace": "build/disc1/captures/cut-180/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 5,
+          "firstFrame": 2,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "-120",
+              "0",
+              "-120",
+              "false"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 192,
+      "reason": "Hidden or offset foreground layers: 15",
+      "trace": "build/disc1/captures/cut-192/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 15,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "cut": 197,
+      "reason": "Hidden or offset foreground layers: 2, 3, 4, 6",
+      "trace": "build/disc1/captures/cut-197/original/alignment.csv",
+      "violations": [
+        {
+          "layer": 2,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 3,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 4,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        },
+        {
+          "layer": 6,
+          "firstFrame": 0,
+          "lastFrame": 120,
+          "states": [
+            [
+              "0",
+              "0",
+              "0",
+              "0",
+              "true"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "complete": false,
+  "packaged": 0,
+  "newRuntimeInstallations": 0,
+  "newGameplayVerifications": 0,
+  "evidence": [
+    {
+      "cut": 78,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-78/original/alignment.csv",
+      "gpuExportEvidence": "docs/disc1-backgrounds/preparation/cut-78-initial-inspection.xml",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 70,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 79,
+      "entry": 21,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-79/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-79/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 78,
+        "scene": 21
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 85,
+      "entry": 42,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-85/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-85/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 70,
+        "scene": 42
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 76,
+      "entry": 14,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-76/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-76/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 69,
+        "scene": 14
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 75,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-75/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-75/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 76,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 83,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-83/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-83/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 69,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 623,
+      "entry": 5,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-623/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-623/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 67,
+        "scene": 5
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 87,
+      "entry": 1,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-87/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-87/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 93,
+        "scene": 1
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 68,
+      "entry": 18,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-68/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-68/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 66,
+        "scene": 18
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 72,
+      "entry": 14,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-72/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-72/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 68,
+        "scene": 14
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 77,
+      "entry": 3,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-77/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-77/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 68,
+        "scene": 3
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 82,
+      "entry": 15,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-82/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-82/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 68,
+        "scene": 15
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 81,
+      "entry": 15,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-81/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-81/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 82,
+        "scene": 15
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 73,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-73/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-73/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 66,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 74,
+      "entry": 6,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-74/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-74/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 73,
+        "scene": 6
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 84,
+      "entry": 3,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-84/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-84/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 66,
+        "scene": 3
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 65,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-65/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-65/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 98,
+      "entry": 5,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-98/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-98/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 99,
+        "scene": 5
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 101,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-101/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-101/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 95,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 105,
+      "entry": 28,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-105/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-105/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 104,
+        "scene": 28
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 112,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-112/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-112/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 113,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-113/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-113/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 633,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-633/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-633/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 97,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 657,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-657/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-657/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 726,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-726/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-726/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 106,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-106/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-106/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 107,
+      "entry": 0,
+      "frames": 49,
+      "trace": "build/disc1/captures/cut-107/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-107/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "Original scene transitioned after 49 recorded frames to cut 106",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 108,
+      "entry": 0,
+      "frames": 49,
+      "trace": "build/disc1/captures/cut-108/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-108/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "Original scene transitioned after 49 recorded frames to cut 107",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 110,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-110/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-110/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 114,
+      "entry": 10,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-114/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-114/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 115,
+        "scene": 10
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 115,
+      "entry": 36,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-115/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-115/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 114,
+        "scene": 36
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 116,
+      "entry": 35,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-116/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-116/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 115,
+        "scene": 35
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 117,
+      "entry": 5,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-117/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-117/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 116,
+        "scene": 5
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 118,
+      "entry": 40,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-118/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-118/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 116,
+        "scene": 40
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 119,
+      "entry": 31,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-119/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-119/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 118,
+        "scene": 31
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 122,
+      "entry": 1,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-122/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-122/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 121,
+        "scene": 1
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 123,
+      "entry": 18,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-123/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-123/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 119,
+        "scene": 18
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 130,
+      "entry": 7,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-130/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-130/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 131,
+        "scene": 7
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 131,
+      "entry": 13,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-131/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-131/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 130,
+        "scene": 13
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 132,
+      "entry": 2,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-132/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-132/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 131,
+        "scene": 2
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 133,
+      "entry": 20,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-133/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-133/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 131,
+        "scene": 20
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 135,
+      "entry": 47,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-135/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-135/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 134,
+        "scene": 47
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 136,
+      "entry": 5,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-136/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-136/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 135,
+        "scene": 5
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 656,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-656/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-656/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 716,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-716/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-716/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 140,
+      "entry": 13,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-140/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-140/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 141,
+        "scene": 13
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 646,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-646/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-646/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 141,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 638,
+      "entry": 2,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-638/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-638/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 637,
+        "scene": 2
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 634,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-634/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-634/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 639,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-639/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-639/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 152,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-152/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-152/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 153,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-153/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-153/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 154,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 154,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-154/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-154/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 153,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 156,
+      "entry": 16,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-156/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-156/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 154,
+        "scene": 16
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 157,
+      "entry": 12,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-157/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-157/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 154,
+        "scene": 12
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 160,
+      "entry": 11,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-160/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-160/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 159,
+        "scene": 11
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 161,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-161/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-161/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 162,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-162/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-162/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 163,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-163/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-163/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 164,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-164/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-164/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 8,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-8/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-8/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 11,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-11/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-11/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 57,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-57/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-57/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 740,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-740/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-740/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 741,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-741/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-741/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 697,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-697/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-697/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 18,
+      "entry": 2,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-18/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-18/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 19,
+        "scene": 2
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 33,
+      "entry": 14,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-33/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-33/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 31,
+        "scene": 14
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 34,
+      "entry": 4,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-34/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-34/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 33,
+        "scene": 4
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 35,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-35/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-35/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 36,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-36/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-36/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 171,
+      "entry": 14,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-171/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-171/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 172,
+        "scene": 14
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 173,
+      "entry": 2,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-173/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-173/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 171,
+        "scene": 2
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 174,
+      "entry": 32,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-174/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-174/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 171,
+        "scene": 32
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 178,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-178/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-178/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 177,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 179,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-179/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-179/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 178,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 182,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-182/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-182/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 183,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-183/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-183/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 187,
+      "entry": 1,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-187/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-187/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 188,
+        "scene": 1
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 188,
+      "entry": 25,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-188/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-188/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 187,
+        "scene": 25
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 743,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-743/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-743/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 189,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-189/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-189/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 188,
+        "scene": 0
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 190,
+      "entry": 23,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-190/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-190/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 177,
+        "scene": 23
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 191,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-191/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-191/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 196,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-196/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-196/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 199,
+      "entry": 6,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-199/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-199/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": {
+        "sourceCut": 189,
+        "scene": 6
+      },
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 200,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-200/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-200/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 696,
+      "entry": 0,
+      "frames": 121,
+      "trace": "build/disc1/captures/cut-696/original/alignment.csv",
+      "gpuExportEvidence": "build/disc1/captures/cut-696/original/original-gpu-export.txt",
+      "allRecordedLayersFixedVisible": true,
+      "assetChecksPassed": true,
+      "entryEvidence": "Exploratory entry 0; script/world-map entry and story order still require confirmation.",
+      "inspectionEnd": "121-frame inspection limit",
+      "fullTraversalVerified": false,
+      "gameplayVerified": false,
+      "runtimeInstalled": false
+    }
+  ]
+}

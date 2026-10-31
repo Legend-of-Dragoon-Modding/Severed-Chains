@@ -56,3 +56,7 @@ gradle-app.setting
 
 # JDK files
 /jdk*
+
+# Disc 1 runtime artwork is stored locally outside Git.
+/gfx/backgrounds/disc1/cut-*/*.png
+/gfx/backgrounds/seles-overlook/*.png

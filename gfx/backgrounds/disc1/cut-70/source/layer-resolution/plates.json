@@ -1,0 +1,26 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "open-underlay.png",
+    "1": "open-underlay.png",
+    "2": "open-underlay.png",
+    "3": "open-underlay.png",
+    "4": "open-underlay.png",
+    "5": "open-underlay.png",
+    "6": "open-underlay.png",
+    "7": "open-underlay.png",
+    "8": "generated-closed-original.png",
+    "9": "../base.png",
+    "10": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    8,
+    9
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct script216/1 LABEL44 changes nonempty foreground8 and9, collision-table hide/restore. Original initial trace fixed visible.",
+    "Builtin imagegen generated closed left door matching native rounded panel and a two-door clean underlay; right closed door retained from base. Static FG10 overlaps FG8 but is farther z469 versus370 and must composite first.",
+    "Endpoint review needs native depth order; current helper index-order preview may conceal FG8."
+  ]
+}

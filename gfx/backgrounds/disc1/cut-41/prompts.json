@@ -1,0 +1,8 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Remake the supplied original game background as a polished 2026 realistic fantasy game environment. Exactly1536x1024, full-canvas landscape, same elevated oblique camera, same object placement, silhouettes and perspective. This is a small dark rustic timber shed interior. Bright open doorway at upper center (x40-61%, y13-40%) opens onto pale daylight. Worn reddish brown floorboards run in perspective from doorway down center to bottom. Large dark roof crossbeam spans the very top; thick rough hemp ropes hang and cross diagonally in the foreground EXACTLY following reference; preserve their positions. Left edge has a hanging round dark vessel/basket; broken wooden containers and splintered planks occupy lower-left x5-35% y52-95%; dark stored timber and barrel shapes line right edge. Keep the central walking aisle completely clear and all foreground rope silhouettes and original prop footprints. Dark corners but readable wood grain, realistic old oak, dust, fibers, iron bands, aged rope, warm soft daylight and restrained bounce light. The goal is faithful geometry with vastly improved material detail and lighting, not redesigned room. No new furniture or props. No people, UI, labels, text, borders, cropping or camera movement. Fully paint the room.",
+  "references": [
+    "build/disc1/original/cut-41/geometry-guide.png"
+  ],
+  "generatedSource": "exec-29ecdbde-353f-4080-98a5-8830d71c91f8.png"
+}

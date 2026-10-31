@@ -1,0 +1,9 @@
+{
+  "mapping": "full-canvas",
+  "width": 1254,
+  "height": 1254,
+  "stationary_layers_verified": true,
+  "evidence": "Original GPU textures exactly match exported PNGs including the existing +1px foreground alignment correction; 121 original-renderer frames show all three layers fixed and visible. Full traversal verification pending.",
+  "reference": "original-composite.png",
+  "original_layer_trace": "build/disc1/captures/cut-111/original/alignment.csv"
+}

@@ -1,0 +1,7 @@
+{
+  "prompt": "Faithful new high-resolution painting of the EXACT FOUR-TALON DRAGON HAND in image1. This is a fixed geometry game sprite; copy its layout exactly while repainting all surfaces in new highly detailed worn ivory bone and dark cracked dragon hide. There are exactly FOUR talons visible, count 1,2,3,4; no fifth talon anywhere. Tight crop and same aspect ratio as image1. Preserve each fingertip at its exact location: first at left edge/y40%, second at x16%/y49%, third x15%/y73%, fourth x27%/y84%. The top part is knuckles and scales, NOT an extra nail. Do not change original pose, camera, hand anatomy, finger gaps, framing or add margins. Soft warm side light, natural rocky brown scales with subtle orange reflections. Solid grey background matching guide. Render new detailed art, not pixelated upscale. No scenery, text or extra objects.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-120/source/layer-resolution/pose6-cropped-native-guide.png"
+  ],
+  "transparent_background": false
+}

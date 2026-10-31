@@ -1,0 +1,139 @@
+{
+  "cut": 180,
+  "status": "asset-preview-only",
+  "scale": 4,
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "stationaryLayersEstablished": false,
+  "transparentRgbCleared": true,
+  "reusedLayerPlatesFrom": "build/disc1/staged/cut-180",
+  "composition": "All-visible asset composite using final recorded metric depth order; character-dependent depth and alternate/hidden states require separate review.",
+  "layers": [
+    {
+      "name": "background",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-0",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-1",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-2",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-3",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-4",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-5",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-6",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-7",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-8",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-9",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-10",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-11",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-12",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-13",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-14",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-15",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-16",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-17",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-18",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    },
+    {
+      "name": "foreground-19",
+      "width": 2048,
+      "height": 1540,
+      "exactOriginalMask": true
+    }
+  ]
+}

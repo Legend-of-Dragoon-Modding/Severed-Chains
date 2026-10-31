@@ -1,0 +1,135 @@
+{
+  "phase": 4,
+  "scriptAttribution": "Correct retail sourceIndex+2",
+  "screens": [
+    {
+      "cut": 68,
+      "correctScriptDirectory": 210,
+      "status": "installed-needs-independent-plates",
+      "dynamicLayers": [
+        15
+      ],
+      "slots": [
+        {
+          "slot": 15,
+          "bbox": [
+            362,
+            181,
+            408,
+            223
+          ],
+          "opaquePixels": 1849
+        }
+      ],
+      "evidence": "1.txt:371/390 generic table LABEL103 records2,40,251,15,1; collision-triggered hide/restore slot15",
+      "resolved": false,
+      "runtimeModified": false,
+      "gameplayVerified": false
+    },
+    {
+      "cut": 79,
+      "correctScriptDirectory": 243,
+      "status": "installed-needs-independent-plates",
+      "dynamicLayers": [
+        0,
+        1
+      ],
+      "slots": [
+        {
+          "slot": 0,
+          "bbox": [
+            116,
+            217,
+            142,
+            260
+          ],
+          "opaquePixels": 678
+        },
+        {
+          "slot": 1,
+          "bbox": [
+            313,
+            191,
+            333,
+            231
+          ],
+          "opaquePixels": 500
+        }
+      ],
+      "evidence": "1.txt:209/228 generic table LABEL50 collision records17,8,200,1,1 and5,10,201,0,1",
+      "resolved": false,
+      "runtimeModified": false,
+      "gameplayVerified": false
+    },
+    {
+      "cut": 87,
+      "correctScriptDirectory": 267,
+      "status": "installed-needs-independent-plates",
+      "dynamicLayers": [
+        3,
+        5,
+        9
+      ],
+      "slots": [
+        {
+          "slot": 3,
+          "bbox": [
+            176,
+            111,
+            211,
+            157
+          ],
+          "opaquePixels": 1131
+        },
+        {
+          "slot": 5,
+          "bbox": [
+            51,
+            94,
+            92,
+            136
+          ],
+          "opaquePixels": 1511
+        },
+        {
+          "slot": 9,
+          "bbox": [
+            181,
+            89,
+            369,
+            199
+          ],
+          "opaquePixels": 18805
+        }
+      ],
+      "evidence": "1.txt:458/477 LABEL66 records4,5,250,3,7 and0,1,251,5,7; direct slot9 hide961/restore966",
+      "resolved": false,
+      "runtimeModified": false,
+      "gameplayVerified": false
+    },
+    {
+      "cut": 657,
+      "correctScriptDirectory": 681,
+      "status": "installed-needs-independent-plates",
+      "dynamicLayers": [
+        4
+      ],
+      "slots": [
+        {
+          "slot": 4,
+          "bbox": [
+            204,
+            36,
+            247,
+            94
+          ],
+          "opaquePixels": 1793
+        }
+      ],
+      "evidence": "7.txt:268 direct hide slot4",
+      "resolved": false,
+      "runtimeModified": false,
+      "gameplayVerified": false
+    }
+  ]
+}

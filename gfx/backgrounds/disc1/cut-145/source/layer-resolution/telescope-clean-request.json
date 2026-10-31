@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit image1 fantasy cutaway house. Keep all geometry, room layout, lighting and all furniture unchanged. In the two observatory rooms at right center, REMOVE ONLY brass telescope optical TUBES/HEADS, preserving brass tripods, vertical supports and their bases in exactly the same positions. Reveal pale window sky behind removed tubes. Do not remove shelves or windows. Also keep original library bookshelf unchanged. No other edits, no extra props. This is independent background underlay; game will add telescope tubes separately.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/base.png"
+  ],
+  "transparent_background": false
+}

@@ -1,0 +1,65 @@
+{
+  "background": "../base.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "../base.png",
+    "3": "../base.png",
+    "4": "../base.png",
+    "5": "../base.png",
+    "6": "../base.png",
+    "7": "../base.png",
+    "8": "../base.png",
+    "9": {
+      "source": "closed-candidate.png",
+      "sourceBounds": [
+        1685,
+        274,
+        1738,
+        378
+      ]
+    },
+    "10": {
+      "source": "closed-candidate.png",
+      "sourceBounds": [
+        1685,
+        274,
+        1738,
+        378
+      ]
+    },
+    "11": {
+      "source": "closed-candidate.png",
+      "sourceBounds": [
+        1685,
+        274,
+        1738,
+        378
+      ]
+    },
+    "12": {
+      "source": "closed-candidate.png",
+      "sourceBounds": [
+        1685,
+        274,
+        1738,
+        378
+      ]
+    },
+    "13": "../base.png",
+    "14": "../base.png"
+  },
+  "dynamicLayers": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime438genericdoor table selects9,10,11,12; rawmodernmasteralreadyshowsopenentrances.",
+    "Built-in generatedcloseddoor material sprite independently atlas-fitted to eachoriginal projecteddooralpha footprint; openroom remains separate unchangedbase.",
+    "Nativecanvas/masks/slotcount retained; endpointreviewrequired before readiness.",
+    "Tightwooddoorfaceatlasbounds avoid copiedroom/flooredges aroundindependentpanels."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "records": [
+    {
+      "key": "early627Wall",
+      "cut": 627,
+      "prompt": "Use case: precise-object-edit. Edit target: burned isometric medieval inn room, exact camera and full 2:1 canvas unchanged. Remove ONLY the central FRONT doorway (wood leaf, brick arch, jambs), at normalized x.47..56,y.48..64. Replace with continuous scorched cracked plaster/stone wall matching adjacent front wall. The wall must run down to its existing bottom edge, with charred floor planks below. No new door or arch anywhere. Keep all beds, furniture, black background, damaged railings,stairs,windows,burn marks and floor geometry unchanged. This is a continuous-wall underlay; another registered portal is added later. No zoom, no crop.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-627/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-e9b80f84-c9bf-4469-b16e-fd9a691253b9.png",
+      "localAssetOrRole": "continuous-wall-resumed.png"
+    },
+    {
+      "key": "early103Portal",
+      "cut": 103,
+      "prompt": "Generate one isolated OPEN DOORWAY atlas patch from FIRST tiny original RPG door detail, using SECOND inn-room image only as material/lighting style. Preserve original projected/isometric angle and proportions: narrow tall doorway in pale plaster/dark timber wall, arched top, dark empty room recess, small brown wooden threshold/floor strip beneath. Remove the partly swung wooden door leaf so passage is empty. Outer jamb/arch pale plaster should blend softly to TRANSPARENT outside the isolated portal/frame; no rectangular outside background. Original detail is a roughly33x51pixel patch; make a high-detail faithful remaster at same roughly0.65width/height proportion, no whole room, no zoomed extra architecture, no people/text. Keep threshold direction/slant matching original. The sprite will be atlas-fit at exact original coordinates.",
+      "references": [
+        "build/disc1/cut103-portal-analysis.png",
+        "gfx/backgrounds/disc1/cut-103/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-f26fa0b6-237f-4490-9aef-985f82c4cc0c.png",
+      "localAssetOrRole": "isolated-open-portal-resumed.png",
+      "usageNote": "Copied source asset from cut103; identical native door masks, original alpha retained."
+    },
+    {
+      "key": "early103ClosedScene",
+      "cut": 103,
+      "prompt": "Use case: precise-object-edit. Edit target is this exact isometric medieval inn room scene. Change ONLY the central FRONT door opening (at normalized x0.49..0.535,y0.54..0.71) into a CLOSED wooden plank door in the existing arch. Fill the dark doorway with the brown closed wood leaf, iron cross-straps and handle, same perspective. Door top follows arch; leaf bottom rests exactly on existing threshold; retain all floor planks immediately below. Keep the portal frame, its location and size EXACTLY unchanged. Keep full 2:1 canvas, camera, black background, all beds,furniture,lamps,stairs,walls unchanged. No zoom, no crop, no extra objects. The source must remain a full scene, no transparent sprite. Crucial preserve original floor below door with real planks, no vertical smearing.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-103/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-31bb07c1-2ad8-4c01-aff5-3d943d6466e8.png",
+      "localAssetOrRole": "closed-door-scene-final.png",
+      "usageNote": "Copied source asset from cut103; identical native door masks, original alpha retained."
+    },
+    {
+      "key": "early103OpenScene",
+      "cut": 103,
+      "prompt": "Use case: precise-object-edit. Edit this exact isometric medieval inn room fullscene. Change ONLY central front doorway: add a wooden door leaf OPEN INWARD from the right jamb. The wood leaf is visible diagonally from lower-left to upper-right, its hinges on the right side of the doorway. Its top right remains attached to upper-right jamb; lower-left near edge protrudes toward left front. Door panel occupies normalized x.490..532,y.574..703. Retain visible dark interior to left/above open leaf. Physically coherent vertical plank door with iron strap across it, same warm wood and lighting. Preserve exact arch and threshold geometry and ALL surrounding floorplanks beneath and behind leaf. No elongated floor into door. Keep full original camera, framing,2:1aspect,black background, all furniture and walls EXACTLY. No crop,zoom,people,text. Full opaque scene, no sprite extraction.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-103/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-c27ff45f-6590-4d5b-a049-e9e3bb5e3682.png",
+      "localAssetOrRole": "open-door-scene-final.png",
+      "usageNote": "Copied source asset from cut103; identical native door masks, original alpha retained."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "tool": "builtin-imagegen",
+  "requests": [
+    {
+      "prompt": "Remaster the FIRST image (original game room cutaway) into a detailed faithful prerendered background. SECOND image is material/lighting reference only; do not copy its changed room geometry. Preserve EXACT first image camera, framing, floor plan, wall corners, room sizes, furniture locations, every door opening and threshold. Same512:384 composition. Warm amber stone inn and bedroom below, cool dark storage rooms above, outside cobblestone lane. The original lower main-room right entrance sits at native x318..347,y278..331; keep it THERE, not further to right. Bedroom doorway native x79..108,y150..215. Both of these entry doorways should be OPEN empty passages, no wooden leaf baked into them: show continuous threshold floor and shadowed opening. Preserve the stone door frames and walls. Do not remove other doors, do not invent ladders or people. Faithfully detailed weathered wood, warm candles, stonework matching second image. Main point: exact original floor plan and both open door underlays, at original native screen coordinates.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-176/source/layer-resolution/original-underlay-guide.png",
+        "gfx/backgrounds/disc1/cut-176/source/base.png"
+      ],
+      "output": "exec-9d5e5c58-b695-47dc-8db6-782878c7813d.png",
+      "status": "Rejected: copied modern geometry; main entrance remains displaced"
+    },
+    {
+      "prompt": "Create one transparent sprite atlas with FOUR isolated dark weathered wooden inn door leaves arranged left to right in four separated columns. Match the four low-resolution foreground silhouettes in the BOTTOM ROW of the reference exactly, in their same left-to-right order9,10,11,12. They are four game door animation poses, not rectangular front-view icons. First: wide slanted dark-brown door slab, perspective top rising toward right then falling at far-right edge, broad warm wooden face with very dark narrow edge. Second: nearly edge-on thin diagonal black/brown plank running lower-left to upper-right. Third: thin tall perspective wooden edge leaning from upper-left toward lower-right. Fourth: broad door swung inward, brown wood planks face, diagonal top edge rising toward right, with small warm threshold-floor foot at bottom matching native silhouette. Preserve each native pose and width/height proportion. High fidelity worn dark timber, subtle iron fittings, warm candlelight on wood, no ornate changes. Transparent background, no room, no shadows outside shapes, no labels, no text. Leave clear transparent gutters between all four sprites. These will be fitted to the ORIGINAL native alpha masks, so silhouette registration is essential.",
+      "references": [
+        "build/disc1/cut176-door-pairs.png"
+      ],
+      "output": "exec-721fa594-151d-43fa-ac3d-a8d413ea23b9.png",
+      "status": "Only bedroom leaf RGB patch and narrow edge used; full alpha fitting with floor context rejected"
+    },
+    {
+      "references": [
+        "gfx/backgrounds/disc1/cut-176/source/layer-resolution/original-underlay-guide.png"
+      ],
+      "output": "exec-89d2852c-3086-4c96-bf80-a76c06a3a699.png",
+      "status": "Native geometry source used for closed entry9/10"
+    },
+    {
+      "prompt": "Precisely edit this cropped isometric inn entry image. Remove ONLY the upright brown wooden door leaf in the middle, including hinges and handle. Reconstruct the continuous warm wooden plank floor behind its entire footprint, making a completely unobstructed walkable doorway threshold. Keep the diagonal thick black cutaway wall border in the foreground exactly in place. Keep the barrel and dark wooden chair/crate above the door unchanged, keep every surrounding floor plank perspective and lighting unchanged. Do not add a door, arch, stairs, rug, props or furniture. The output must be this same crop and camera, simply with the door leaf fully absent and natural continuous wood floor beneath it.",
+      "references": [
+        "build/disc1/cut176-entry-edit.png"
+      ],
+      "output": "exec-71ce8c13-9253-4c5c-92d8-1c5c6a5a371d.png",
+      "status": "Bounded patch trial rejected for floor seams; used as supporting reference for fullsceneopen"
+    },
+    {
+      "prompt": "Edit the FIRST full game room image with one tiny precise change only. Remove the upright wooden door leaf at the lower-right edge of the warm dining room, just left of the barrels and dark chair/crate (around x64–68%width,y70–85%height). Make the plank floor continue naturally through that now-open threshold. SECOND image is the corrected close-up showing the desired same entry with NO door; use it as the target state of this little area. Preserve the entire full image's camera, pixel positions, architecture, every furniture item, all lighting, cutaway wall borders, and all other doors exactly. Bedroom doorway stays empty/open. No new door, stairs or props. Output the full first scene in identical framing, with only that one leaf absent.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-176/source/layer-resolution/native-geometry-v1.png",
+        "gfx/backgrounds/disc1/cut-176/source/layer-resolution/entry-open-patch.png"
+      ],
+      "output": "exec-4f90bfe9-2577-480c-9b32-01d7db44b2d9.png",
+      "status": "Used open-scene-v2.png background and floor context"
+    }
+  ]
+}

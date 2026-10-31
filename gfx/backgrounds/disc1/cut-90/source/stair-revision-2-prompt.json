@@ -1,0 +1,10 @@
+{
+  "prompt": "Use case: precise-object-edit. Edit image 1, the full modern basement background master. Images 2 and 3 are diagnostic GAME SCREENSHOTS, not artwork targets: image 2 shows the current modern art in-game, image 3 shows original in-game geometry at the EXACT SAME player position. They demonstrate an error: at the upper-left storage room stair, Dart's boots stand over a dark wall/cutaway edge in image 2, while in image 3 his boots rest on visible wood treads. Repaint ONLY this small staircase area of image 1 so its lowest wooden treads extend underneath both boot positions shown in image 3, filling the dark wedge under the figure. Use the screenshot pair to match the original walking surface precisely. Keep full master canvas, camera, perspective, layout and every other room unchanged. Do not put the character, arrow, HUD or any screenshot content into the output. Output the complete full-canvas environment, no crop. Make the stair treads slightly wider/downward as needed to exactly match original foot support; keep adjacent crates and walls unchanged. Photorealistic aged timber in the existing style. No text, UI, people or watermark.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "gfx/backgrounds/disc1/cut-90/source/initial-reference.png",
+    "gfx/backgrounds/disc1/cut-90/source/diagnostic-modern-0360.png",
+    "gfx/backgrounds/disc1/cut-90/source/diagnostic-original-0360.png"
+  ],
+  "output": "stair-revision-2.png"
+}

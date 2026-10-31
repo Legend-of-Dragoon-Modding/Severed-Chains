@@ -1,0 +1,19 @@
+{
+  "composition": "original-composite.png",
+  "originalManifest": "original-manifest.json",
+  "approvedStyle": "gfx/backgrounds/seles-overlook/source/background-plate.png",
+  "generationTool": "Built-in ImageGen",
+  "rawGeneratedOutputs": [
+    "generated-100.png",
+    "generated-100revision.png"
+  ],
+  "prompts": [
+    "prompt-100.txt",
+    "prompt-100revision.txt"
+  ],
+  "selectedSource": "base.png",
+  "revisionReferences": [
+    "generated-100.png",
+    "original-composite.png"
+  ]
+}

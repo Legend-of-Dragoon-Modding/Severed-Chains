@@ -1,0 +1,9 @@
+{
+  "editTarget": "../base.png",
+  "nativeLeftDoor": "retail-slot-8-detail.png",
+  "composition": "../original-composite.png",
+  "rawOutputs": [
+    "generated-open-original.png",
+    "generated-closed-original.png"
+  ]
+}

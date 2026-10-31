@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Edit image1 (modern exposed-room game background) into CLOSED wall state according to image2 (original game CLOSED state; geometry authority). Preserve image1's camera and all unchanged architecture exactly. Restore the removed facade sections only: (1) right middle room at native x272..378,y154..292 must be covered by dark masonry wall with three narrow vertical columns of small green glowing slits; (2) bottom-left room at x0..234,y324..456 must be covered by masonry facade with THREE green glowing oval/arched windows and a closed round-topped wood door near x172..224,y412..456; (3) right lower storage room at x254..384,y292..392 must be covered with dark green-brown masonry, one green glowing window left and a closed round-topped plank door at far right, with short stone stair landing beneath. Use image2 for exact wall-window-door positions and projected edges. No exposed room objects may remain inside these wall sections. Keep wooden platforms, stair edges, upper rooms, torches, portals unchanged from image1. Full portrait scene; modern detailed fantasy stone and timber, no new lights or props.",
+  "inputs": [
+    "generated-underlay-step4.png",
+    "original-closed-guide.png"
+  ],
+  "output": "generated-closed-walls.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-11042d66-e06a-4c6d-938a-396d4c0d7fd7.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

@@ -1,0 +1,603 @@
+{
+  "cut": 197,
+  "dynamicLayers": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        360,
+        114,
+        512,
+        177
+      ],
+      "opaquePixels": 1146,
+      "backgroundOverlapPixels": 1146,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        88,
+        32,
+        344,
+        107
+      ],
+      "opaquePixels": 11598,
+      "backgroundOverlapPixels": 11598,
+      "dynamic": false
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        354,
+        54,
+        386,
+        84
+      ],
+      "opaquePixels": 948,
+      "backgroundOverlapPixels": 948,
+      "dynamic": true
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        224,
+        96,
+        360,
+        214
+      ],
+      "opaquePixels": 15840,
+      "backgroundOverlapPixels": 15840,
+      "dynamic": true
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        88,
+        96,
+        224,
+        214
+      ],
+      "opaquePixels": 15856,
+      "backgroundOverlapPixels": 15856,
+      "dynamic": true
+    },
+    {
+      "layer": 5,
+      "bbox": [
+        88,
+        96,
+        224,
+        214
+      ],
+      "opaquePixels": 15856,
+      "backgroundOverlapPixels": 15856,
+      "dynamic": true
+    },
+    {
+      "layer": 6,
+      "bbox": [
+        420,
+        65,
+        442,
+        104
+      ],
+      "opaquePixels": 610,
+      "backgroundOverlapPixels": 610,
+      "dynamic": true
+    },
+    {
+      "layer": 7,
+      "bbox": [
+        224,
+        96,
+        360,
+        214
+      ],
+      "opaquePixels": 15840,
+      "backgroundOverlapPixels": 15840,
+      "dynamic": true
+    },
+    {
+      "layer": 8,
+      "bbox": [
+        346,
+        54,
+        458,
+        114
+      ],
+      "opaquePixels": 2338,
+      "backgroundOverlapPixels": 2338,
+      "dynamic": false
+    },
+    {
+      "layer": 9,
+      "bbox": [
+        392,
+        60,
+        405,
+        98
+      ],
+      "opaquePixels": 333,
+      "backgroundOverlapPixels": 333,
+      "dynamic": false
+    },
+    {
+      "layer": 10,
+      "bbox": [
+        458,
+        89,
+        478,
+        114
+      ],
+      "opaquePixels": 115,
+      "backgroundOverlapPixels": 115,
+      "dynamic": false
+    },
+    {
+      "layer": 11,
+      "bbox": [
+        61,
+        133,
+        99,
+        172
+      ],
+      "opaquePixels": 315,
+      "backgroundOverlapPixels": 315,
+      "dynamic": false
+    },
+    {
+      "layer": 12,
+      "bbox": [
+        16,
+        0,
+        83,
+        108
+      ],
+      "opaquePixels": 5879,
+      "backgroundOverlapPixels": 5879,
+      "dynamic": false
+    },
+    {
+      "layer": 13,
+      "bbox": [
+        0,
+        150,
+        32,
+        172
+      ],
+      "opaquePixels": 198,
+      "backgroundOverlapPixels": 198,
+      "dynamic": false
+    },
+    {
+      "layer": 14,
+      "bbox": [
+        142,
+        56,
+        183,
+        105
+      ],
+      "opaquePixels": 1121,
+      "backgroundOverlapPixels": 1121,
+      "dynamic": false
+    },
+    {
+      "layer": 15,
+      "bbox": [
+        99,
+        100,
+        110,
+        136
+      ],
+      "opaquePixels": 359,
+      "backgroundOverlapPixels": 359,
+      "dynamic": false
+    },
+    {
+      "layer": 16,
+      "bbox": [
+        69,
+        214,
+        82,
+        242
+      ],
+      "opaquePixels": 95,
+      "backgroundOverlapPixels": 95,
+      "dynamic": false
+    }
+  ],
+  "scriptEvidence": [
+    {
+      "file": "build\\disc1\\scripts\\597\\1.txt",
+      "line": 435,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x6 ; x, y, overlayIndex",
+      "index": "0x6",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\1.txt",
+      "line": 436,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+      "index": "0x2",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\1.txt",
+      "line": 981,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\1.txt",
+      "line": 982,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\1.txt",
+      "line": 983,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x5 ; x, y, overlayIndex",
+      "index": "0x5",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\1.txt",
+      "line": 984,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x7 ; x, y, overlayIndex",
+      "index": "0x7",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 358,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+      "index": "0x2",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 463,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 464,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 465,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x5 ; x, y, overlayIndex",
+      "index": "0x5",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 466,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x7 ; x, y, overlayIndex",
+      "index": "0x7",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 471,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 472,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 473,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x5 ; x, y, overlayIndex",
+      "index": "0x5",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\15.txt",
+      "line": 474,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x7 ; x, y, overlayIndex",
+      "index": "0x7",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 266,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x2 ; x, y, overlayIndex",
+      "index": "0x2",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 380,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 381,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 382,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex",
+      "index": "0x5",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 383,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x7 ; x, y, overlayIndex",
+      "index": "0x7",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 388,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 389,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 390,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x5 ; x, y, overlayIndex",
+      "index": "0x5",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\597\\2.txt",
+      "line": 391,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x7 ; x, y, overlayIndex",
+      "index": "0x7",
+      "inRange": true
+    }
+  ],
+  "genericDoorTables": [],
+  "observed": {
+    "cut": 197,
+    "inspectionPassed": true,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-197/original/alignment.csv",
+    "gpuExportMatches": true,
+    "allObservedLayersFixedVisible": false,
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": true
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": true
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": true
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 6,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": true
+          }
+        ]
+      },
+      {
+        "layer": 7,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 8,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 9,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 10,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 11,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 12,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 13,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 15,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 16,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ],
+    "fullGameplayVerified": false
+  }
+}

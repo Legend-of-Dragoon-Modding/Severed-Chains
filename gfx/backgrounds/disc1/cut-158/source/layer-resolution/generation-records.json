@@ -1,0 +1,79 @@
+{
+  "scope": "Source generation requests; readiness is separate in resolution/middle.json",
+  "records": [
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/underlay-generated.png",
+      "prompt": "Faithfully remaster FIRST original forest-shrine gamebackground using SECOND only for realistic stone/foliage/sunsetmaterials. Exact FIRST camera,4:3fullframe,paths,ruinarch,stairsandwalkablefootprints required. IMPORTANT preserve the long CURVING WOODEN RAIL/SLATTED BRIDGE across LOWER foreground fromleft tobottomright exactlyasFIRST; SECONDwronglyomitsit—doNOTcopysecondgeometry. Preservemainlongstair fromuppercenterarchdownright,pedestalsatstairfoot,andlowerleftruinedpavilionandsteps. No gold/silverstatues orfigures (separateforegroundplates). Keep exactopening/landingpositions,forest/railwayvisiblethroughgaps. Nocharacters,text,newarchitecture. Highqualityrealisticremasterwithdetailedwornstone,timberrails,moss,leaves. Fulloriginalcomposition,nozoom/crop.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/clean-original-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/base.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/alternate-paths.png",
+      "generatedOutput": "exec-1faa9b66-fc85-45f0-9f6c-4b42a5b3165c.png",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/underlay-generated.png",
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-158/foreground-1.png",
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-158/foreground-14.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Edit FIRST forestshrinebackground into alternate puzzlepath state, changing ONLY two regions.1) Longmainstairpath fromupperarch tolowerright: replace individual stair treads with a smoothcontinuousslopingstone RAMP, sameexactprojectedfootprint andborderwalls. SECOND nativeforegrounddefinesramppose atnormalizedx.516..766,y.268..638. No stepedges remain inside ramp.2) Lowerleftpavilionstair opening atx.199..344,y.630..813: fillwithtumbledcarvedstonecrossbeam/wallpiece matching THIRD originalforeground, soleftstairsareblockedinthatalternatepatch. Preserveallotherarchitecture,forest,foregroundcurvingtimberrail,framing,lighting/materials. No statues/characters,text,newpaths. Fullsame4:3canvas."
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/gold-statue.png",
+      "generatedOutput": "exec-02b30ee0-5114-4251-a832-83d7c7dae30b.png",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-158/foreground-7.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/base.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remaster the SINGLE isolated GOLDEN shrine statue from FIRST original foregroundplate. SECOND modern scene supplies material/detail style only (two small winged/forked statues at stairfoot). Match FIRST projected silhouette/proportions/view precisely: small forked winged/chalice-like carvedstone monument onshortsquareplinth; no invented person/face. Agedgolden-yellowstone/metal, carvedwingridges andnarrowstem asoriginal. Outputoneisolatedstatue largeondetail withfullytransparentbackground. No otherstatue,ground,shadow,glow,halo,blackmatte,no scene/text. Opaqueobjectpixels, alpha0outside. Spriteatlaswillfitoriginalmask preserving smallposevariations, sofaithfulshape/lightingimportant."
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/silver-statue.png",
+      "generatedOutput": "exec-0af45a92-112b-496b-9bd6-127a1baf7dfd.png",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-158/foreground-6.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/base.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Remaster the SINGLE isolated SILVER GREY STONE shrine statue from FIRST original foregroundplate. SECOND modern scene supplies material/detail style only (two small winged/forked statues at stairfoot). Match FIRST projected silhouette/proportions/view precisely: small forked winged/chalice-like carvedstone monument onshortsquareplinth; no invented person/face. Weatheredpalesilvergreystone, carvedwingridges andnarrowstem asoriginal. Outputoneisolatedstatue largeondetail withfullytransparentbackground. No otherstatue,ground,shadow,glow,halo,blackmatte,no scene/text. Opaqueobjectpixels, alpha0outside. Spriteatlaswillfitoriginalmask preserving smallposevariations, sofaithfulshape/lightingimportant."
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/gold-statue-opaque.png",
+      "generatedOutput": "exec-7b660c71-99c0-4f8b-9d69-00514c43e167.png",
+      "prompt": "Use case: precise-object-edit. Image1 is the generated gold ancient winged geometric statue atlas. Preserve statue camera, all visible carving and weathered golden ochre material detail. Create an OPAQUE rectangular material-continuation tile: extend matching richly textured carved stone/gold surface from statue behind ALL currently transparent pixels, to every canvas edge. No black, no transparent holes, no color stripes or blur smears. Broad plausible smooth weathered planes behind existing wings and base, same directional light. Main existing statue remains exactly centered and same size. This is RGB donor art for a different original geometry stencil; entire canvas must contain newly painted plausible gold stone. Do not add scenery, text, people or a second statue.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/gold-statue.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/silver-statue-opaque.png",
+      "generatedOutput": "exec-60528e9c-b784-4e40-bee6-b7f4fbfca2ae.png",
+      "prompt": "Use case: precise-object-edit. Image1 is the generated silver ancient winged geometric statue atlas. Preserve statue camera, all visible carving and weathered silver grey stone material detail. Create an OPAQUE rectangular material-continuation tile: extend matching richly textured carved stone/gold surface from statue behind ALL currently transparent pixels, to every canvas edge. No black, no transparent holes, no color stripes or blur smears. Broad plausible smooth weathered planes behind existing wings and base, same directional light. Main existing statue remains exactly centered and same size. This is RGB donor art for a different original geometry stencil; entire canvas must contain newly painted plausible silver stone. Do not add scenery, text, people or a second statue.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/silver-statue.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/foliage-and-blockage.png",
+      "generatedOutput": "exec-c7e60132-aef1-45e0-a3a1-43a1c9b2790b.png",
+      "prompt": "Use case: precise-object-edit. Edit image1 forest ruin underlay. Preserve camera, sunset lighting, all architecture, trees, foliage color, staircase and geometry exactly. Change only foreground and lower-left pavilion: hide the entire CURVING WOODEN RAILWAY at bottom under dense natural leafy bushes with the same leaf size/colors as adjacent vegetation, so NO rails or ties remain visible at all. Add a fallen carved stone crossbeam blocking the small steps at lower-left pavilion (normalized x.20..34,y.63..81), same stone material and perspective as existing pavilion. Do not alter main staircase or arch and do not add statues. No other edits. Faithful detailed painted game environment with matching light and texture, no text.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-158/source/layer-resolution/underlay-generated.png"
+      ],
+      "transparent_background": false
+    }
+  ]
+}

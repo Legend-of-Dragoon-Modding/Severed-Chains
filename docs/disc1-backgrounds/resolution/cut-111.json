@@ -1,0 +1,12 @@
+{
+  "cut": 111,
+  "status": "resolved-static-placement",
+  "packagingPrepared": true,
+  "trace": "build/disc1/captures/cut-111/original/alignment.csv",
+  "traceSha256": "63cf3010986c05d52a8680b7b1816df7fe0948fa9e0f186a33475178c4f45381",
+  "gpuExportEvidence": "build/disc1/captures/cut-111/original/original-gpu-export.txt",
+  "geometry": "Existing renderer/export +1px correction matches GPU; canvas 1536x1540, three foreground layers",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "issues": []
+}

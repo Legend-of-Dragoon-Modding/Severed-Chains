@@ -1,0 +1,29 @@
+{
+  "tool": "builtin-imagegen",
+  "requests": [
+    {
+      "prompt": "Remaster the FIRST image (original game room cutaway) into a detailed faithful prerendered background. SECOND image is material/lighting reference only; do not copy its changed room geometry. Preserve EXACT first image camera, framing, floor plan, wall corners, room sizes, furniture locations, every door opening and threshold. Same512:384 composition. Warm amber stone inn and bedroom below, cool dark storage rooms above, outside cobblestone lane. The original lower main-room right entrance sits at native x318..347,y278..331; keep it THERE, not further to right. Bedroom doorway native x79..108,y150..215. Both of these entry doorways should be OPEN empty passages, no wooden leaf baked into them: show continuous threshold floor and shadowed opening. Preserve the stone door frames and walls. Do not remove other doors, do not invent ladders or people. Faithfully detailed weathered wood, warm candles, stonework matching second image. Main point: exact original floor plan and both open door underlays, at original native screen coordinates.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-176/source/layer-resolution/original-underlay-guide.png",
+        "gfx/backgrounds/disc1/cut-176/source/base.png"
+      ],
+      "output": "exec-9d5e5c58-b695-47dc-8db6-782878c7813d.png",
+      "status": "Rejected: copied modern geometry; main entrance remains displaced"
+    },
+    {
+      "prompt": "Create one transparent sprite atlas with FOUR isolated dark weathered wooden inn door leaves arranged left to right in four separated columns. Match the four low-resolution foreground silhouettes in the BOTTOM ROW of the reference exactly, in their same left-to-right order9,10,11,12. They are four game door animation poses, not rectangular front-view icons. First: wide slanted dark-brown door slab, perspective top rising toward right then falling at far-right edge, broad warm wooden face with very dark narrow edge. Second: nearly edge-on thin diagonal black/brown plank running lower-left to upper-right. Third: thin tall perspective wooden edge leaning from upper-left toward lower-right. Fourth: broad door swung inward, brown wood planks face, diagonal top edge rising toward right, with small warm threshold-floor foot at bottom matching native silhouette. Preserve each native pose and width/height proportion. High fidelity worn dark timber, subtle iron fittings, warm candlelight on wood, no ornate changes. Transparent background, no room, no shadows outside shapes, no labels, no text. Leave clear transparent gutters between all four sprites. These will be fitted to the ORIGINAL native alpha masks, so silhouette registration is essential.",
+      "references": [
+        "build/disc1/cut176-door-pairs.png"
+      ],
+      "output": null,
+      "status": "Pending generation and mask registration"
+    },
+    {
+      "references": [
+        "gfx/backgrounds/disc1/cut-176/source/layer-resolution/original-underlay-guide.png"
+      ],
+      "output": null,
+      "status": "Pending generation and native floor-plan review"
+    }
+  ]
+}

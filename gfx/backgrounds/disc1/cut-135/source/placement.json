@@ -1,0 +1,27 @@
+{
+  "mapping": "full-canvas",
+  "width": 1254,
+  "height": 1254,
+  "stationary_layers_verified": true,
+  "gameplay": "deferred",
+  "targetWidth": 1536,
+  "targetHeight": 1536,
+  "layerInspection": {
+    "cut": 135,
+    "entry": 47,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-135/original/alignment.csv",
+    "gpuExportEvidence": "build/disc1/captures/cut-135/original/original-gpu-export.txt",
+    "allRecordedLayersFixedVisible": true,
+    "assetChecksPassed": true,
+    "entryEvidence": {
+      "sourceCut": 134,
+      "scene": 47
+    },
+    "inspectionEnd": "121-frame inspection limit",
+    "fullTraversalVerified": false,
+    "gameplayVerified": false,
+    "runtimeInstalled": false
+  },
+  "evidence": "Original GPU/export comparison and 121 recorded frames; inspection only, not traversal/gameplay verification. See build/disc1/captures/cut-135/original/alignment.csv."
+}

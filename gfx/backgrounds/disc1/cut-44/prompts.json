@@ -1,0 +1,9 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Create a 2026-quality photorealistic fantasy game background from reference1, strictly preserving its wide panoramic layout, in the same daylight/material style as reference2. Target full canvas2560x1024 (2.5:1 wide landscape). Original exact fixed camera and geometry: gently rolling grassy Prairie hill with a pale dirt three-way crossroads. Broad dirt path crosses the lower-middle horizontally from left edge y65% to right edge y80%; one branch curves upward through x30-44% to the distant horizon near x32%, another branch curves upward at x86-96% to upper-right near x85%. Large dark tree trunk at x12%, rising out top edge, foot/root at x14% y53%; second tree trunk at x58%, rising out top, foot x58% y40%. Low twisted fallen roots/dead branch lies on grass right of second tree x66-80% y43%. Small low original stones in grassy foreground only. Grey blue distant horizon/sea visible upper-left/top between tree trunks. Keep every path junction, width, contour, tree trunk/root silhouette, stone position, camera crop and walkable space exactly as reference. Detailed naturally worn dirt, fine grasses and restrained wildflowers, weathered bark and organic roots, pale granite, coherent warm sunny Prairie lighting and atmospheric distance. No new obstacles or vegetation in the dirt paths; no invented objects/buildings/fences. No characters or UI/text/borders. Full canvas, no vignette, no cropping. High fidelity cinematic materials rather than illustration.",
+  "references": [
+    "build/disc1/original/cut-44/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-40/source/base.png"
+  ],
+  "generatedSource": "exec-7a3b9d9b-8c62-41ed-96f4-cd4869a6a8b1.png"
+}

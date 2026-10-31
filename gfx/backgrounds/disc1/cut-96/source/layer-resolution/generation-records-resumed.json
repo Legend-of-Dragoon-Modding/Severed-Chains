@@ -1,0 +1,27 @@
+{
+  "records": [
+    {
+      "key": "early96",
+      "cut": 96,
+      "prompt": "Edit FIRST night-time fortified village game background into clean open-door underlay. Keep full exact camera, framing, geometry, all objects, torchlight and moonlit materials unchanged. ONLY alter one tiny door panel in the lower wall beneath the center balcony: normalized x0.545..0.577,y0.464..0.531. The current filled stone/wood patch must be an empty dark passage opening. Keep stone jambs, balcony pillars and ground threshold fixed. Second original background is exact location guide; ignore its cyan placeholders entirely. No swung door leaf anywhere. A separate game door sprite will provide the closed state, so no closed panel can remain in this opening. No new objects, people or text. Same full 5:3 aspect.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-96/source/base.png",
+        "build/disc1/original/cut-96/background.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-fa162486-4443-454a-bb61-63369a7c98fe.png",
+      "localAssetOrRole": "open-underlay-resumed.png"
+    },
+    {
+      "key": "early96Closed",
+      "cut": 96,
+      "prompt": "Edit this exact night-time fortified village image into a CLOSED DOOR state. Only close the small empty arched opening under the central balcony atnormalizedx0.545..0.577,y0.464..0.531 with a dark aged oakwood door, subtleverticalplanks, dark ironbrace, appropriately dim cool moonlit material. Fit naturally inside existing stonejambs and threshold, preserving its exact projection and size. Absolutely no enlarged rectangles over frame, no changes elsewhere in scene. Keep all walls,pillars,floors,torchlight,moonlight/camera/framing identical. No people,text,newobjects. Samefull5:3canvas.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-96/source/layer-resolution/open-underlay-resumed.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-c3b57e25-f0b9-4467-b92f-fddb409f1309.png",
+      "localAssetOrRole": "closed-doors-scene-resumed.png"
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+[
+  {
+    "name": "background",
+    "bounds": [
+      0,
+      0,
+      384,
+      256
+    ]
+  },
+  {
+    "name": "foreground-0",
+    "bounds": [
+      74,
+      121,
+      90,
+      163
+    ]
+  },
+  {
+    "name": "foreground-1",
+    "bounds": [
+      204,
+      143,
+      294,
+      196
+    ]
+  },
+  {
+    "name": "foreground-2",
+    "bounds": [
+      185,
+      30,
+      207,
+      53
+    ]
+  },
+  {
+    "name": "foreground-3",
+    "bounds": [
+      116,
+      62,
+      175,
+      147
+    ]
+  },
+  {
+    "name": "foreground-4",
+    "bounds": [
+      279,
+      140,
+      295,
+      190
+    ]
+  },
+  {
+    "name": "foreground-5",
+    "bounds": [
+      214,
+      62,
+      240,
+      85
+    ]
+  },
+  {
+    "name": "foreground-6",
+    "bounds": [
+      46,
+      120,
+      82,
+      166
+    ]
+  },
+  {
+    "name": "foreground-7",
+    "bounds": [
+      224,
+      85,
+      237,
+      113
+    ]
+  },
+  {
+    "name": "foreground-8",
+    "bounds": [
+      264,
+      52,
+      289,
+      85
+    ]
+  },
+  {
+    "name": "foreground-9",
+    "bounds": [
+      83,
+      61,
+      119,
+      98
+    ]
+  },
+  {
+    "name": "foreground-10",
+    "bounds": [
+      235,
+      85,
+      257,
+      114
+    ]
+  },
+  {
+    "name": "foreground-11",
+    "bounds": [
+      141,
+      100,
+      152,
+      129
+    ]
+  },
+  {
+    "name": "foreground-12",
+    "bounds": [
+      121,
+      99,
+      147,
+      130
+    ]
+  },
+  {
+    "name": "foreground-13",
+    "bounds": [
+      107,
+      68,
+      120,
+      97
+    ]
+  },
+  {
+    "name": "foreground-14",
+    "bounds": [
+      176,
+      45,
+      217,
+      57
+    ]
+  },
+  {
+    "name": "foreground-15",
+    "bounds": [
+      255,
+      54,
+      267,
+      84
+    ]
+  },
+  {
+    "name": "foreground-16",
+    "bounds": [
+      98,
+      92,
+      332,
+      256
+    ]
+  },
+  {
+    "name": "foreground-17",
+    "bounds": [
+      279,
+      140,
+      295,
+      190
+    ]
+  },
+  {
+    "name": "foreground-18",
+    "bounds": [
+      109,
+      137,
+      167,
+      173
+    ]
+  },
+  {
+    "name": "foreground-19",
+    "bounds": [
+      103,
+      173,
+      167,
+      203
+    ]
+  }
+]

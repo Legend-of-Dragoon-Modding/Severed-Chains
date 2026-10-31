@@ -1,0 +1,3675 @@
+{
+  "worker": "early",
+  "phase": 4,
+  "screens": [
+    {
+      "cut": 70,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        8,
+        9
+      ],
+      "foregroundCount": 11,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct script216 generic table8/9; 121-frame actual initial trace; independent two-door underlay plusclosed-left generated plate andrightdoor original modernbase.",
+        "Native depth-order all-visible and dynamic-hidden previews reviewed; bothdoors match frames andopen withoutbaked ghosts."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 216,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\216\\1.txt",
+          "line": 209,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\216\\1.txt",
+          "line": 228,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-70/source/layer-resolution"
+    },
+    {
+      "cut": 80,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 7,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory246 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "geometry-candidate-step4-v2.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 246,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 631,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        3
+      ],
+      "foregroundCount": 7,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original trace changes FG3 hidden state; independently painted dark opening under approved door RGB. All-visible and hidden endpoint previews visually reviewed; no door ghost. Retail exact alpha/dimensions verified by strict layered packager."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-631/source/layer-resolution",
+      "correctScriptDirectory": 627,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\627\\1.txt",
+          "line": 181,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\627\\1.txt",
+          "line": 200,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+        }
+      ]
+    },
+    {
+      "cut": 67,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 9,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory207 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 207,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 89,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 20,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "16": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "17": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "18": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "19": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory273 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 273,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 88,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        2,
+        3,
+        5
+      ],
+      "foregroundCount": 16,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Resumed material-only trial retained as derived candidate; not accepted or installed.",
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 270,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 500,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x5 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 503,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 504,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 505,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x5 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 756,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 757,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\270\\1.txt",
+          "line": 758,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x5 ; x, y, overlayIndex"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-88/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-88/source/layer-resolution/endpoint-review.json"
+    },
+    {
+      "cut": 628,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 8,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory624 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 624,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 93,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        3
+      ],
+      "foregroundCount": 11,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct scripts285/1 LABEL124 controls nonempty foreground3. Builtin dark-passage underlay under modern closed-door RGB; exact retail masks preserved.",
+        "All-visible and dynamic-hidden endpoint previews reviewed: door opens to clean dark passage without doubled door or changed architecture."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 285,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\285\\1.txt",
+          "line": 357,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\285\\1.txt",
+          "line": 376,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-93/source/layer-resolution"
+    },
+    {
+      "cut": 94,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "foregroundCount": 4,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "100",
+            "0",
+            "98",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "100",
+            "0",
+            "100",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "100",
+            "0",
+            "98",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "100",
+            "0",
+            "100",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "100",
+            "0",
+            "98",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "100",
+            "0",
+            "100",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "100",
+            "0",
+            "98",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "100",
+            "0",
+            "100",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Resumed review: saved generated bronze material fills original finial alpha with no sky contamination. Restaged strict layer package; reviewed all-visible, dynamic-hidden and y100 asset composites. Genuine relative-parallax states preserved; gameplay camera transition remains deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 288,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 949,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x1, 0x0, stor[25] ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 951,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x0 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 952,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x1 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 953,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x2 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 954,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x3 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 961,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x1, 0x0, stor[25] ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 963,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x0 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 964,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x1 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 965,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x2 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\288\\1.txt",
+          "line": 966,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0x3 ; x, y, overlayIndex"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-94/source/layer-resolution/recorded-frame-1-y100.png"
+    },
+    {
+      "cut": 71,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 22,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "16": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "17": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "18": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "19": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "20": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "21": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory219 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 219,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 58,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 17,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "16": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory180 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 180,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\180\\1.txt",
+          "line": 377,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\180\\1.txt",
+          "line": 429,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\180\\4.txt",
+          "line": 45,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 95,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        2,
+        3
+      ],
+      "foregroundCount": 21,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "16": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "17": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "18": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "19": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "20": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Resumed material-only trial retained as derived candidate; not accepted or installed.",
+        "Final resumed endpoint review passed; full-scene state sources preserve perspective and frame integration. Material-only rejected candidates retained unused. Full gameplay traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 291,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1014,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1295,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1299,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1312,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1316,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1335,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1348,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_190[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1352,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_190[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1497,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1650,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1673,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1760,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\1.txt",
+          "line": 1763,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\291\\5.txt",
+          "line": 341,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-95/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-95/source/layer-resolution/endpoint-review.json"
+    },
+    {
+      "cut": 99,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        4,
+        5
+      ],
+      "foregroundCount": 9,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Actual original121-frame alignment changes FG4 and5 hidden state. Clean dark-passage underlay and independent modern door/crate plates staged; all-visible and dynamic-hidden endpoints visually reviewed. Prior script citations quarantined pending correct+2 directory inspection."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 303,
+      "scriptEvidenceValid": true,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-99/source/layer-resolution",
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 328,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 332,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 345,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 349,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 368,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 381,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_75[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 385,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_75[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\303\\1.txt",
+          "line": 448,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ]
+    },
+    {
+      "cut": 100,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 9,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory306 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 306,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\306\\1.txt",
+          "line": 378,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 102,
+      "status": "parent-artwork",
+      "dynamicLayers": [
+        6
+      ],
+      "foregroundCount": 14,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay"
+      ],
+      "sourceSelected": "base.png",
+      "resolved": false,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 312,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1115,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1119,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1132,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1136,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1155,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1168,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_146[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1172,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_146[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\312\\1.txt",
+          "line": 1202,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ]
+    },
+    {
+      "cut": 103,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        4,
+        6
+      ],
+      "foregroundCount": 16,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 315,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 741,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 745,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 758,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 762,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 781,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 794,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_139[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 798,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_139[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\315\\1.txt",
+          "line": 828,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-103/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-103/source/layer-resolution/endpoint-review.json"
+    },
+    {
+      "cut": 104,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 5,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory318 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 318,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\318\\1.txt",
+          "line": 450,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 96,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        3
+      ],
+      "foregroundCount": 21,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "16": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "17": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "18": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "19": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "20": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Resumed material-only trial retained as derived candidate; not accepted or installed.",
+        "Final resumed endpoint review passed; full-scene state sources preserve perspective and frame integration. Material-only rejected candidates retained unused. Full gameplay traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 294,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\294\\1.txt",
+          "line": 1005,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\294\\1.txt",
+          "line": 1097,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\294\\1.txt",
+          "line": 1119,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\294\\4.txt",
+          "line": 190,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\294\\5.txt",
+          "line": 352,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-96/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-96/source/layer-resolution/endpoint-review.json"
+    },
+    {
+      "cut": 97,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 13,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory297 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 297,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\297\\1.txt",
+          "line": 1705,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 626,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        6
+      ],
+      "foregroundCount": 15,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ],
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred.",
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred.",
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 618,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\618\\1.txt",
+          "line": 329,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x6 ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\618\\1.txt",
+          "line": 331,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-626/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-626/source/layer-resolution/endpoint-review.json"
+    },
+    {
+      "cut": 627,
+      "status": "independent-plates-staged",
+      "dynamicLayers": [
+        4,
+        6
+      ],
+      "foregroundCount": 16,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "true"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "9": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "10": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "11": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "12": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "13": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "14": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "15": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Original script references inspected; original masks overlap opaque background; independent geometry must not be baked into static underlay",
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 621,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 707,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 711,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 724,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 728,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 747,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[25]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 760,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_134[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 764,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, inl[:LABEL_134[stor[26]]] ; x, y, overlayIndex"
+        },
+        {
+          "file": "build\\disc1\\scripts\\621\\1.txt",
+          "line": 793,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-627/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-627/source/layer-resolution/endpoint-review.json"
+    },
+    {
+      "cut": 632,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 9,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "6": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "7": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "8": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory630 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 630,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\630\\1.txt",
+          "line": 364,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 674,
+      "status": "static-staged",
+      "dynamicLayers": [],
+      "foregroundCount": 6,
+      "traceFrames": 121,
+      "traceStates": {
+        "0": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "1": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "2": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "3": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "4": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ],
+        "5": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "false"
+          ]
+        ]
+      },
+      "evidence": [
+        "Correct retail script archive sourceIndex+2 directory693 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred."
+      ],
+      "sourceSelected": "base.png",
+      "resolved": true,
+      "gameplayVerified": false,
+      "correctScriptDirectory": 693,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build\\disc1\\scripts\\693\\1.txt",
+          "line": 823,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        },
+        {
+          "file": "build\\disc1\\scripts\\693\\7.txt",
+          "line": 65,
+          "call": "call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x2, 0x0, 0x0 ; mode, foregroundObjectIndex, out"
+        }
+      ],
+      "visualReview": true,
+      "issues": []
+    },
+    {
+      "cut": 87,
+      "evidence": [
+        "Final resumed endpoint review passed; independent state sources preserve perspective and frame integration. Rejected candidate assets retained unused. Full gameplay traversal deferred."
+      ],
+      "gameplayVerified": false,
+      "runtimeInstalled": false,
+      "correctScriptDirectory": 267,
+      "scriptEvidenceValid": true,
+      "correctScriptCalls": [
+        {
+          "file": "build/disc1/scripts/267/1.txt",
+          "line": 458,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex",
+          "classification": "show-at-origin"
+        },
+        {
+          "file": "build/disc1/scripts/267/1.txt",
+          "line": 477,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build/disc1/scripts/267/1.txt",
+          "line": 961,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x9 ; x, y, overlayIndex",
+          "classification": "foreground-hide"
+        },
+        {
+          "file": "build/disc1/scripts/267/1.txt",
+          "line": 966,
+          "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x9 ; x, y, overlayIndex",
+          "classification": "show-at-origin"
+        }
+      ],
+      "dynamicLayers": [
+        3,
+        5,
+        9
+      ],
+      "status": "independent-plates-staged",
+      "resolved": true,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx/backgrounds/disc1/cut-87/source/layer-resolution/recorded-dest.png",
+      "endpointReview": "gfx/backgrounds/disc1/cut-87/source/layer-resolution/endpoint-review.json"
+    }
+  ],
+  "scriptAttributionCorrection": "Prior sourceIndex-1 references invalid; actual retail script archive sourceIndex+2. Static proofs quarantined; actual original renderer traces retained.",
+  "summary": {
+    "resolved": 14,
+    "remaining": 9
+  }
+}

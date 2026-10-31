@@ -1,0 +1,25 @@
+{
+  "mapping": "full-canvas",
+  "width": 1536,
+  "height": 1024,
+  "stationary_layers_verified": true,
+  "evidence": "Original GPU/export comparison and 121 recorded frames; inspection only, not traversal/gameplay verification. See build/disc1/captures/cut-98/original/alignment.csv.",
+  "reference": "original-composite.png",
+  "layerInspection": {
+    "cut": 98,
+    "entry": 5,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-98/original/alignment.csv",
+    "gpuExportEvidence": "build/disc1/captures/cut-98/original/original-gpu-export.txt",
+    "allRecordedLayersFixedVisible": true,
+    "assetChecksPassed": true,
+    "entryEvidence": {
+      "sourceCut": 99,
+      "scene": 5
+    },
+    "inspectionEnd": "121-frame inspection limit",
+    "fullTraversalVerified": false,
+    "gameplayVerified": false,
+    "runtimeInstalled": false
+  }
+}

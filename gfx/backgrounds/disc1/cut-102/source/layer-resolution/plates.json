@@ -1,0 +1,1321 @@
+{
+  "background": {
+    "source": "continuous-wall.png",
+    "patches": [
+      {
+        "source": "portal-pair-v2.png",
+        "sourceBounds": [
+          100,
+          1000,
+          410,
+          1210
+        ],
+        "targetBounds": [
+          232,
+          202,
+          290,
+          236
+        ],
+        "maskBackgroundRgb": true,
+        "exteriorRgb": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ]
+        ]
+      },
+      {
+        "source": "portal-pair-v2.png",
+        "sourceBounds": [
+          10,
+          120,
+          486,
+          820
+        ],
+        "targetBounds": [
+          238,
+          151,
+          288,
+          202
+        ]
+      },
+      {
+        "source": "portal-pair-v2.png",
+        "sourceBounds": [
+          10,
+          820,
+          486,
+          1480
+        ],
+        "targetBounds": [
+          238,
+          202,
+          288,
+          232
+        ],
+        "maskBackgroundRgb": true,
+        "exteriorRgb": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ]
+        ]
+      }
+    ]
+  },
+  "layers": {
+    "0": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "1": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "2": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "3": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "4": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "5": {
+      "source": "portal-open-unit.png",
+      "sourceBounds": [
+        273,
+        590,
+        753,
+        1415
+      ],
+      "clearRetailExteriorRgb": {
+        "bounds": [
+          232,
+          202,
+          290,
+          236
+        ],
+        "colors": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ]
+        ],
+        "polygon": [
+          [
+            248,
+            228
+          ],
+          [
+            278,
+            204
+          ],
+          [
+            290,
+            236
+          ],
+          [
+            232,
+            236
+          ]
+        ]
+      }
+    },
+    "6": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            490,
+            120,
+            966,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            490,
+            820,
+            966,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ],
+      "clearRetailExteriorRgb": {
+        "bounds": [
+          232,
+          202,
+          290,
+          236
+        ],
+        "colors": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ]
+        ],
+        "polygon": [
+          [
+            248,
+            228
+          ],
+          [
+            278,
+            204
+          ],
+          [
+            290,
+            236
+          ],
+          [
+            232,
+            236
+          ]
+        ]
+      }
+    },
+    "7": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "8": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "9": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "10": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "11": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "12": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "13": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            100,
+            1000,
+            410,
+            1210
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            120,
+            486,
+            820
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "portal-pair-v2.png",
+          "sourceBounds": [
+            10,
+            820,
+            486,
+            1480
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "dynamicLayers": [
+    6
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Original GPU/export equality and complete121-frame trace: foreground6hidden; other13layersfixedvisible.",
+    "Original background plus foreground6 comparison confirms foreground6is closed wooden door; exposed background has open entrance.",
+    "Builtinimagegen open-door cleanplate reviewed against originalbackground; originalbase supplies only closeddoor layer. Exactalpha packaging followed by endpoint preview review required.",
+    "Portal patch mapped into native rectangle238,151..288,232 from original open-portal crop; previous higher portal and landing removed from continuous-wall underlay.",
+    "NativeFG5 is the fixed open outer leaf; nativeFG6 is the closed inner leaf plus landing. Independent sources avoid painting the open recess over the outer leaf. Portal body and landing separately registered at native202.",
+    "ActualGPU footing review: generated portal alpha left a black RGB wedge inside original opaque landing pixels. Opaque stone support now fills native232,202..290,236 before the portal patches; original BG/FG alpha silhouettes unchanged.",
+    "Supporting floor RGB is restricted to the original nonblack BG footprint. Retail BG has opaque black exterior pixels, so alpha alone cannot define its rounded landing edge. Native alpha remains unchanged.",
+    "Supporting floor RGB follows the native colored footprint, excluding opaque neutral-grey0/8/16 exterior checker pixels. Alpha alone cannot define the original rounded landing edge; all native alpha remains unchanged.",
+    "Supporting floor RGB follows the native footprint. Exterior checker palette is0/8/16 neutral grey;626 alsohas(24,16,16) red-tinted checker. These exact colors are excluded, while all native alpha remains unchanged.",
+    "Supporting floor RGB follows native BG/foreground footprints. Exterior checker palette is0/8/16 neutral grey;626 alsohas(24,16,16) red-tinted checker. Exact checker colors are cleared in foreground5/6 floor context below202, while all native alpha remains unchanged.",
+    "Supporting floor RGB follows native BG/foreground footprints. Exterior checker palette is0/8/16 neutral grey;626 alsohas(24,16,16) red-tinted checker. Exact checker colors are cleared in foreground5/6 floor context below202, while all native alpha remains unchanged."
+  ],
+  "reviewStatus": "Two-door native architecture corrected; endpoint review pending"
+}

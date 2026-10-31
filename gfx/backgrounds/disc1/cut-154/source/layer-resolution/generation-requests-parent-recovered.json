@@ -1,0 +1,15 @@
+{
+  "cut": 154,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 4278,
+      "timestamp": "2026-10-30T19:38:56.277Z",
+      "referencedCuts": [
+        154
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-154/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-154/foreground-4.png\"],transparent_background:false,prompt:\"EditFIRSTruinedshrinegamebackground toshow CLOSED SECRET STONE PANEL state. Preservefullcamera/framing,allarchitecture,railway,statue,water,stones,lighting/materials. ONLY replace the small left recessed passage area atnormalizedx.125..208,y.446..655 witha closed weatheredflatgreystonewallpanel matchingSECONDisolatedoriginalforeground's silhouette/angle. Originalpanel is narrowverticalslabwithasubtle diagonalcarvedstar/arrowmark. Fillthepassagewiththisstonepanel,matchingexistingwallblocks andsunlitweatheredstone;don'tchangeadjacentpillars/stairs. SECONDreferencecontainsblackoutsideplate:don'tpaintblackinroom. Noextraobjects,characters,text. Originalpanelwillbeclippedtoexactretailalpha;highdetailandfaithfulgeometryareimportant. Samefull3:2aspectcanvasunchanged.\"}); store(\"cut154closedResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

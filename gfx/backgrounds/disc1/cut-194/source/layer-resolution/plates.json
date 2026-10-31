@@ -1,0 +1,43 @@
+{
+  "background": "generated-underlay-step4.png",
+  "layers": {
+    "0": "generated-underlay-step4.png",
+    "1": "generated-underlay-step4.png",
+    "2": "generated-underlay-step4.png",
+    "3": {
+      "source": "generated-window-wall-v2.png",
+      "sourceBounds": [
+        0,
+        0,
+        1448,
+        1086
+      ]
+    },
+    "4": "generated-underlay-step4.png",
+    "5": "../base.png",
+    "6": "generated-underlay-step4.png",
+    "7": "generated-underlay-step4.png",
+    "8": "generated-underlay-step4.png",
+    "9": "generated-underlay-step4.png",
+    "10": "generated-underlay-step4.png",
+    "11": "generated-underlay-step4.png",
+    "12": "generated-underlay-step4.png",
+    "13": "generated-underlay-step4.png",
+    "14": "generated-underlay-step4.png",
+    "15": "generated-underlay-step4.png",
+    "16": "generated-underlay-step4.png",
+    "17": "generated-underlay-step4.png",
+    "18": "generated-underlay-step4.png",
+    "19": "generated-underlay-step4.png"
+  },
+  "dynamicLayers": [
+    3,
+    5
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Actual runtime+2 script and native layer masks/states in audit.json.",
+    "Original clean upperbedroom faithfully repainted from original-underlay-guide.png; wall3 has an independent three-window RGBplate and wall5 uses original modernarchedwindow artwork.",
+    "Originalalpha andslotidentities preserved; independent endpoint review determines readiness."
+  ]
+}

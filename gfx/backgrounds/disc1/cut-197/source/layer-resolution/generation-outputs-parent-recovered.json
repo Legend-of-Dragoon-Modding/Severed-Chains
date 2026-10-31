@@ -1,0 +1,38 @@
+{
+  "cut": 197,
+  "tool": "builtin-imagegen",
+  "scope": "Selected current source PNGs matched by exact file hash to retained default generated outputs. Original worker-base provenance is in its earlier source records.",
+  "images": [
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/base.png",
+      "sha256": "0862a03ce11e81500846a8b346294c73ad3410271054948418ae7fbb3f86ac03",
+      "matchingDefaultGeneratedFiles": []
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/layer-resolution/lever-hatch-atlas.png",
+      "sha256": "29982bc4c4a46397b50de12608c25d70b9b907293f66bbf2e022a5c713c811c1",
+      "matchingDefaultGeneratedFiles": [
+        "exec-9633896e-8316-4d70-944c-9ef58e553867.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/layer-resolution/machine-phaseB.png",
+      "sha256": "0bfa2895bb87443f9ace6e94e4c2fabd6c4b6db189dce0ec569f9d7de0ae4f9d",
+      "matchingDefaultGeneratedFiles": [
+        "exec-8270b456-b781-4541-8b45-27c95888821a.png"
+      ]
+    },
+    {
+      "workspaceImage": "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-197/source/layer-resolution/machine-phaseC.png",
+      "sha256": "f137179ffbdbd4cd4ab3cc570031b1264a8166a2c1cdcb2ae0ed059cfb3cc63a",
+      "matchingDefaultGeneratedFiles": [
+        "exec-888df9ce-8b39-4c4d-bd90-c782efd37d56.png"
+      ]
+    },
+    {
+      "workspaceImage": "gfx/backgrounds/disc1/cut-197/source/base.png",
+      "sha256": "0862a03ce11e81500846a8b346294c73ad3410271054948418ae7fbb3f86ac03",
+      "matchingDefaultGeneratedFiles": []
+    }
+  ]
+}

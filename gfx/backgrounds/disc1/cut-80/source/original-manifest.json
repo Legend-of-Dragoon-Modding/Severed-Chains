@@ -1,0 +1,78 @@
+{
+  "cut": 80,
+  "disk": 1,
+  "source": "files\\SECT\\DRGN21.BIN\\244",
+  "bounds": [
+    0,
+    0,
+    385,
+    256
+  ],
+  "notes": [
+    "Unused foreground slot 6: no retail texture"
+  ],
+  "background_fragments": 3,
+  "foreground_layers": 7,
+  "pieces": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 128,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 256,
+      "y": 0,
+      "width": 128,
+      "height": 256
+    },
+    {
+      "x": 217,
+      "y": 149,
+      "width": 16,
+      "height": 76
+    },
+    {
+      "x": 0,
+      "y": 137,
+      "width": 92,
+      "height": 38
+    },
+    {
+      "x": 0,
+      "y": 113,
+      "width": 50,
+      "height": 60
+    },
+    {
+      "x": 214,
+      "y": 115,
+      "width": 12,
+      "height": 60
+    },
+    {
+      "x": 208,
+      "y": 104,
+      "width": 10,
+      "height": 38
+    },
+    {
+      "x": 263,
+      "y": 129,
+      "width": 122,
+      "height": 100
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    }
+  ]
+}

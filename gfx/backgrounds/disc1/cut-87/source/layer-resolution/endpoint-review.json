@@ -1,0 +1,16 @@
+{
+  "cut": 87,
+  "assetEndpointReview": true,
+  "states": [
+    "all-visible",
+    "dynamic-hidden",
+    "recorded-dest"
+  ],
+  "scope": "Visual asset endpoints and exact-alpha staging; no full gameplay traversal or story-state coverage implied.",
+  "configSha256": "b2e10fbf5cdf3b13f4c7cd24d37f7d079d66919685b42ba15d44683cf35f2820",
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "additionalReviewedStatePreviews": [
+    "cutaway-closed-entrances.png"
+  ]
+}

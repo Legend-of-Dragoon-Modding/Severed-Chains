@@ -1,0 +1,49 @@
+{
+  "records": [
+    {
+      "key": "early88",
+      "cut": 88,
+      "prompt": "Edit FIRST flooded stone-arch game background into a CLEAN STONE-GATE-REMOVED underlay. Preserve exact full camera, bridge/stair floor footprints, all huge masonry pillars, wooden rails/ladders, light and water. Remove only movable small vertical stone gate panels at normalized x0.312..0.363,y0.578..0.754 on lower-left platform and x0.367..0.416,y0.332..0.523 on the middle elevated platform. Reveal continuous walkway boards/stone treads and water scenery behind each panel, matching second original background. Do not remove load-bearing arch pillars or wooden railings. No door/panel ghost remains; closed and open panels will be independent sprites. Ignore second image's cyan placeholder areas, do not reproduce cyan. No new objects, people, text. Same full2:1canvas/nozoom/nocrop.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-88/source/base.png",
+        "build/disc1/original/cut-88/background.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-467c5c06-f5d6-465f-9763-52b849eb186d.png",
+      "localAssetOrRole": "open-underlay-resumed.png"
+    },
+    {
+      "key": "earlyStone",
+      "cut": 88,
+      "prompt": "Generate a full-canvas material texture for flat medieval stone gate panels in a realistic painterly RPG remaster: worn dark-grey granite slabs with subtle lichen, restrained mottled microtexture, broad faint recessed geometric panel border but no writing, handles, outside frame, or objects. Entire image is uninterrupted dark stone surface, no background or empty space. Portrait roughly1:2. Slight warm muted light on left-center and deep shaded right edge so material clipped to an angled existing game silhouette reads as a solid heavy gate slab. Low contrast, not glowing, no big cracks or holes.",
+      "references": [],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-54297288-fe26-4d3a-a533-e6498dc4061b.png",
+      "localAssetOrRole": "rejected material-only candidate"
+    },
+    {
+      "key": "early88Closed",
+      "cut": 88,
+      "prompt": "Edit FIRST flooded-bridge background into CLOSED small stone-gate state, preserving full exact scene geometry. Add only two heavy dark weathered stone/iron-faced gate slabs, standing upright naturally across walkway openings: lower-left landing at normalizedx0.312..0.363,y0.578..0.754 and middle elevated landing atx0.367..0.416,y0.332..0.523. Match original second reference gate at lower landing and correct original native positions. Panels must be projected in scene perspective, integrated with existing timber hinge posts/frames and warm light, not flat rectangles pasted over scene. Keep railings/floor/stairs/camera/light/water/arches unchanged. No new stone support columns, people/text. Samefull2:1canvas.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-88/source/layer-resolution/open-underlay-resumed.png",
+        "gfx/backgrounds/disc1/cut-88/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-b2002ed7-9b9a-4cf7-bd37-f7388f36f1a0.png",
+      "localAssetOrRole": "closed-panels-scene-resumed.png"
+    },
+    {
+      "key": "early88Open",
+      "cut": 88,
+      "prompt": "Remaster FIRST small original game foreground OPEN GATE plate as an isolated high-detail sprite. Preserve FIRST exact silhouette, projected angle and internal proportions: dark timber/metal hinge frame on left and a heavy grey weathered gate slab swung OPEN nearly edge-on toward right, dark reverse face, narrow upright rectangle. SECOND room/bridge image supplies warm realistic material/light style only. Isolate on transparent background, no floor or architecture or extra objects, no text. Keep original thin frame and dark side contrast, do not turn it into a front-facing closed panel. Portrait proportions follow FIRST. This is atlas-fitted to exact original alpha, so faithful projected pose is critical.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-88/source/layer-resolution/retail-slot-5-detail.png",
+        "gfx/backgrounds/disc1/cut-88/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-1dfbc782-b74a-4721-974a-98801a083f24.png",
+      "localAssetOrRole": "isolated-open-gate-resumed.png"
+    }
+  ]
+}

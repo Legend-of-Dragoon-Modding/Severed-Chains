@@ -1,0 +1,13 @@
+{
+  "cut": 197,
+  "packagingPrepared": true,
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "status": "independent-plates-staged",
+  "issues": [],
+  "endpointReview": "Three distinct eight-column roller phases fit native machine bounds; visible/hidden lever states share a brass plate. Original narrow upper-room panel silhouette retained with independent dark wood material. No invented ladder patch remains.",
+  "reviewPreviews": "gfx/backgrounds/disc1/cut-197/source/layer-resolution",
+  "validation": "build/disc1/staged/cut-197/layered-validation.json",
+  "trace": "build/disc1/captures/cut-197/original/alignment.csv",
+  "limits": "Asset-state review only. Focused GPU state and animation checks pending; full story/traversal not verified."
+}

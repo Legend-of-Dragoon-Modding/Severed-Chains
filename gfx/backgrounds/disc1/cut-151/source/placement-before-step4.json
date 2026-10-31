@@ -1,0 +1,9 @@
+{
+  "mapping": "full-canvas",
+  "width": 1254,
+  "height": 1254,
+  "stationary_layers_verified": false,
+  "gameplay": "deferred",
+  "targetWidth": 2048,
+  "targetHeight": 2048
+}

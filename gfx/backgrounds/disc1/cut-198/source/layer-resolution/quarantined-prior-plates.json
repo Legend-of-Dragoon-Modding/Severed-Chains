@@ -1,0 +1,13 @@
+{
+  "background": "../base.png",
+  "layers": {
+    "0": "../base.png"
+  },
+  "dynamicLayers": [],
+  "evidence": [
+    "No nonzero foreground transform or hide call addresses a rendered slot. Generic table and literal indices audited in audit.json.",
+    "Actual original-renderer inspection passed GPU/export matching, all observed rendered layers fixed and visible.",
+    "Original masks and source composite already visually reviewed; no raw artwork change necessary."
+  ],
+  "visualReview": true
+}

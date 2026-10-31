@@ -1,0 +1,21 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "open-underlay.png",
+    "1": "open-underlay.png",
+    "2": "open-underlay.png",
+    "3": "open-underlay.png",
+    "4": "../base.png",
+    "5": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    4
+  ],
+  "visualReview": true,
+  "reviewStatus": "All-visible and dynamic-hidden endpoint review passed: Visible door fits its original opening and hiding it leaves a clean dark recess and continuous threshold.",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/681",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ]
+}

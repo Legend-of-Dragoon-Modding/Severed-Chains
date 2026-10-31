@@ -1,0 +1,22 @@
+{
+  "background": "underlay-generated.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "foreground2-corrected-source.png",
+    "3": "../base.png"
+  },
+  "dynamicLayers": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "evidence": [
+    "Correct runtime environment+2 scripts identify these exact changing slots.",
+    "Clean underlay removes the dynamic door geometry; closed door RGB remains independently clipped to exact original alpha.",
+    "Generated underlay visually reviewed against the original clean state and modern scene."
+  ],
+  "visualReview": true,
+  "reviewStatus": "FG2RGBwooddoorcorrectioninsideoriginalslot;endpointreviewpending"
+}

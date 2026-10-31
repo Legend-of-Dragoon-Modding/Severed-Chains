@@ -1,0 +1,10 @@
+{
+  "mapping": "full-canvas",
+  "width": 1254,
+  "height": 1254,
+  "stationary_layers_verified": true,
+  "gameplay": "deferred",
+  "targetWidth": 2048,
+  "targetHeight": 2048,
+  "evidence": "Actual script directory environment+2 (build\\disc1\\scripts\\459) inspected: no changing nonempty overlay reached; generic door helpers terminate at 0xff where present. Parent original-only121frame exactGPU/export fixed-visible trace. Traversal gameplay deferred."
+}

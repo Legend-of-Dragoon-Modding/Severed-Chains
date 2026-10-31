@@ -1,0 +1,7 @@
+{
+  "references": [
+    "gfx/backgrounds/disc1/cut-197/source/base.png"
+  ],
+  "output": "exec-888df9ce-8b39-4c4d-bd90-c782efd37d56.png",
+  "purpose": "Third background machine pose to support independent native phase overlays"
+}

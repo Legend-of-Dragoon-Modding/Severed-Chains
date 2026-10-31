@@ -1,0 +1,8 @@
+{
+  "prompt": "Edit image 1, Bale's market square original game background, into a premium 2026 photorealistic pre-rendered game environment. Image 2 is the approved adjacent Bale fountain-square remake: match its realistic sandstone, clay tiles, golden autumn foliage, warm sunlight and aged timber. Preserve EXACT original image 1 elevated fixed camera, full 5:3 canvas, all silhouettes, perspective, path surfaces, central pedestal and basin, bridge on lower right, left stairway, doors, foreground roof/chimneys and distant castle placement. Output 2560x1536 full canvas with no crop. Dramatically enrich fine material detail and plausible illumination while keeping gameplay landmarks and standing elevations identical. Keep central pedestal flat top (no added statue). Real weathered stone and mortar, individual terracotta tiles, timber-framed plaster houses, golden autumn trees, clear small canal water. Preserve rails, stall positions and building footprints. No new obstacles on walkable cobbles, no characters, no people, no text, no UI, no watermarks. Maintain underlying architecture geometry precisely; no painterly or low-poly look.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-69/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-66/source/base.png"
+  ]
+}

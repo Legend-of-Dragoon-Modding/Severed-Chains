@@ -1,0 +1,21 @@
+{
+  "tool": "built-in imagegen",
+  "provenance": "Exact imagegen invocation inputs recovered from this task session; includes rejected candidates as well as accepted outputs. See sibling generation records and plates.json for selected source filenames.",
+  "invocations": [
+    {
+      "timestamp": "2026-10-31T00:04:13.688Z",
+      "callId": "call_b1d6d8c52a3c44ffbdfeed49e04dcf0e",
+      "exactToolInput": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-660/source/base.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-660/source/layer-resolution/original-underlay-guide.png\"],transparent_background:false,prompt:\"Edit FIRST sinister green/purple thronehall game background into THRONE-REMOVED cleanunderlay. Preserve entire5:3canvas/camera/framing/stonearchitecture,stainedglass,greenlights,redcarpet,raisedplatform,facecarving,all stairs and materials unchanged. Remove ONLY the small red-and-darkmetal throne/chair at normalized x0.25..0.311,y0.377..0.484 from top of redcarpet dais. Continue redcarpet and darkstone dais naturally beneath/behind chair, matching SECOND original background guide where chair absent. Do not remove the large winglike green stone sculpture/wall behind, do not change steps or carpetfootprints. No ghost chair/backrest/arms/shadow remains; thronewillbe independentmovingforeground. No characters,text,newobjects,crop orzoom.\"});store(\"final660underlay\",r);generatedImage(r);\n"
+    },
+    {
+      "timestamp": "2026-10-31T00:14:48.705Z",
+      "callId": "call_d591cf67b1d144ba9772ca099fce8a53",
+      "exactToolInput": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/build/disc1/original/cut-660/foreground-3.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-660/source/base.png\"],transparent_background:true,prompt:\"Generate one isolated high-detail throne/chair sprite on transparent background, faithful remaster of FIRST original small throne foregroundplate. SECOND fullhall provides darkgreenmetal,redcushion,greenlight materials only. Match FIRST chair exactly: modest high rectangular back, two armrests,red seat, darkmetal/woodframe, projected isometric view from above facing down-right. No wall/architecture/greenlight column behind chair, no floor/carpet/dais/shadow outsidechair, no characters or text. Keep original modest narrow proportions and exact projected silhouette. Compose isolatedchairlargecentered fordetail; game packagerwillfitittooriginalalphamask. Avoid surrounding glow or background pixels; every visiblepixel belongs tochair itself.\"});store(\"final660sprite\",r);generatedImage(r);\n"
+    },
+    {
+      "timestamp": "2026-10-31T01:26:02.337Z",
+      "callId": "call_824d89edb5b449e5b2c9d6bdd63c563d",
+      "exactToolInput": "const prompt=\"Create a faithful high-resolution texture reconstruction of the provided small original game throne sprite. EDIT TARGET image1: original throne crop; preserve its exact projected camera, wide squat proportions, silhouette, placement inside canvas, seat red velvet, and green-black carved metal frame. It fills canvas like original; backrest extends across left two-thirds, right arm extends to right edge, bottom feet to bottom edge. Supporting image2: modern throne style only. Do not use image2's narrow tall silhouette. Every pixel inside original nontransparent silhouette must depict proper carved chair surface, with no flat edge color extensions. Outside original silhouette genuinely transparent. No shadows or walls, floor, new objects. 780x820 reference ratio, crisp painterly fantasy game detail faithful to original pose.\";\nstore(\"throne_retry_prompt\",prompt);\nconst r=await tools.image_gen__imagegen({prompt,referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-660/source/layer-resolution/original-throne-crop.png\",\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-660/source/layer-resolution/generated-throne-sprite.png\"],transparent_background:true}); store(\"throne_retry\",r); text(r.output_hint);\n"
+    }
+  ]
+}

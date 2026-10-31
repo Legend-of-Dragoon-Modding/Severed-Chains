@@ -1,0 +1,9 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Fixed camera RPG background. Image 1 is exact composition reference, image 2 approved realistic Seles material style. Rebuild image 1 into detailed photorealistic ruined stone room, square full canvas. Preserve camera, proportions and every silhouette exactly. Small high roof opening near x61% y13%, smoky daylight shaft onto rear stone arch fireplace x31% y64%, collapsed burned wooden furniture piled lower right, broken dark table lower left, open dusty floor across lower middle. Same irregular ashlar walls and ceiling perspective. Do not add doors, stairs, items, characters, text, flames or new obstacles. Keep all walkable floor clear and all debris at original positions; no camera change, no crop. Neutral smoky interior daylight and realistic charred wood, soot and dusty stone in approved modern Seles fidelity. Requested final canvas 1536x1536.",
+  "originalGeneratedOutput": "C:\\Users\\20te\\.codex\\generated_images\\01a18cf9-6239-77d2-9a60-290b30015994\\exec-5560a267-7455-40ca-9b3c-1d9cd682b2d0.png",
+  "references": [
+    "gfx/backgrounds/disc1/cut-11/source/original-composite.png",
+    "gfx/backgrounds/seles-overlook/background.png"
+  ]
+}

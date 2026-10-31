@@ -1,0 +1,22 @@
+[
+  {
+    "name": "boar",
+    "args": {
+      "prompt": "Use case: background-extraction. Extract ONLY the mounted boar head including its wooden plaque at upper right. Keep all fur, tusks, snout, eyes and plaque; no flowers/vase from image1. Preserve its detailed design, camera, exact perspective, warm light, texture and material. Remove EVERY other object completely. Center the complete single requested prop on genuine transparent background with small clear margins. No backdrop, no fragments of other objects, no writing, no labels, no frame around image. Faithful game prop sprite.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/base-props-atlas.png"
+      ],
+      "transparent_background": true
+    }
+  },
+  {
+    "name": "bed",
+    "args": {
+      "prompt": "Use case: background-extraction. Extract ONLY the entire wooden bed with four posts, white sheet, floral blanket and pillow at bottom right. Keep all four posts and the complete bed frame; no flower vase or flowers behind it from image1. Preserve its detailed design, camera, exact perspective, warm light, texture and material. Remove EVERY other object completely. Center the complete single requested prop on genuine transparent background with small clear margins. No backdrop, no fragments of other objects, no writing, no labels, no frame around image. Faithful game prop sprite.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/base-props-atlas.png"
+      ],
+      "transparent_background": true
+    }
+  }
+]

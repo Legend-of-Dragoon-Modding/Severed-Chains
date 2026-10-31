@@ -1,0 +1,1564 @@
+{
+  "worker": 2,
+  "screens": [
+    {
+      "cut": 114,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        768,
+        256
+      ],
+      "foregrounds": 4,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-114\\source\\asset-preview\\comparison.png",
+      "reviewNote": "Original-modern asset comparison inspected: paths, ledges, spires, roots and bridge positions retained; gameplay deferred.",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-114\\source\\base.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-114\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 115,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        514,
+        256
+      ],
+      "foregrounds": 11,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-115\\source\\asset-preview\\comparison.png",
+      "reviewNote": "Original-modern asset comparison inspected: paths, ledges, spires, roots and bridge positions retained; gameplay deferred.",
+      "canvas": [
+        2056,
+        1024
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-115\\source\\base.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-115\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 116,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        512
+      ],
+      "foregrounds": 1,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "source": "gfx\\backgrounds\\disc1\\cut-116\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-116\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "reviewNote": "Original-modern asset comparison inspected: paths, ledges, spires, roots and bridge positions retained; gameplay deferred.",
+      "validation": "gfx\\backgrounds\\disc1\\cut-116\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 117,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        385,
+        385
+      ],
+      "foregrounds": 11,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "source": "gfx\\backgrounds\\disc1\\cut-117\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-117\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1540,
+        1540
+      ],
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "reviewNote": "Original-modern asset comparison inspected: paths, ledges, spires, roots and bridge positions retained; gameplay deferred.",
+      "validation": "gfx\\backgrounds\\disc1\\cut-117\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 118,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        512,
+        384
+      ],
+      "foregrounds": 6,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-118\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-118\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-118\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 119,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        640,
+        384
+      ],
+      "foregrounds": 17,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-119\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-119\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-119\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 120,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        385,
+        257
+      ],
+      "foregrounds": 9,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-120\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-120\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1540,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-120\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 121,
+      "area": "Vol. Villude",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        385,
+        384
+      ],
+      "foregrounds": 9,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\366\\5.txt:105 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[24]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:107 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[24]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:129 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[26]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:130 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[27]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:142 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[26]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:143 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[27]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:155 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[26]]] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\366\\5.txt:156 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, inl[:LABEL_5[stor[27]]] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-121\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-121\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1540,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-121\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 122,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        385,
+        256
+      ],
+      "foregrounds": 2,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-122\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-122\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1540,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-122\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 123,
+      "area": "Vol. Villude",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        385,
+        257
+      ],
+      "foregrounds": 6,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-123\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-123\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1540,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-123\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 130,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 3,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-130\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-130\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-130\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 131,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        640,
+        384
+      ],
+      "foregrounds": 9,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-131\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-131\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2560,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-131\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 132,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 10,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-132\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-132\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-132\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 133,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        512
+      ],
+      "foregrounds": 9,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-133\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-133\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-133\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 134,
+      "area": "Nest of Dragon",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        384,
+        384
+      ],
+      "foregrounds": 11,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\405\\3.txt:72 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\405\\3.txt:79 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\405\\3.txt:100 call SMap::scriptSetEnvForegroundPosition, stor[13], stor[10], stor[8] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\405\\3.txt:108 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x3, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-134\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-134\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-134\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 135,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        384
+      ],
+      "foregrounds": 7,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-135\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-135\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-135\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 136,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        384
+      ],
+      "foregrounds": 5,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-136\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-136\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-136\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 140,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        512,
+        257
+      ],
+      "foregrounds": 7,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-140\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-140\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-140\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 141,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        512,
+        384
+      ],
+      "foregrounds": 8,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\426\\1.txt:866 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-141\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-141\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-141\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 142,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        640,
+        256
+      ],
+      "foregrounds": 16,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\429\\1.txt:1043 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-142\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-142\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2560,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-142\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 143,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        384,
+        257
+      ],
+      "foregrounds": 20,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\432\\1.txt:1005 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-143\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-143\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-143\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 144,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        768,
+        256
+      ],
+      "foregrounds": 15,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\435\\1.txt:925 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-144\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-144\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-144\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 145,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        768,
+        256
+      ],
+      "foregrounds": 22,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\438\\1.txt:815 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-145\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-145\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-145\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 146,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        512,
+        256
+      ],
+      "foregrounds": 12,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\441\\1.txt:913 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1431 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x14 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1543 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x15 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1546 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x14 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1849 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1862 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1882 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\441\\1.txt:1893 call SMap::scriptSetEnvForegroundPosition, stor[24], 0x0, 0x0 ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-146\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-146\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-146\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 147,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        384,
+        512
+      ],
+      "foregrounds": 4,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\444\\1.txt:870 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-147\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-147\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-147\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 148,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        384,
+        384
+      ],
+      "foregrounds": 16,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\447\\1.txt:1084 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x0 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1085 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x1 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1086 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x2 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1087 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\447\\1.txt:1158 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x0 ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-148\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-148\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-148\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 149,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        641,
+        257
+      ],
+      "foregrounds": 12,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\450\\1.txt:1445 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xd ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\450\\1.txt:1989 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0xd ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-149\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-149\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2564,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-149\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 150,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        768,
+        256
+      ],
+      "foregrounds": 13,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\453\\1.txt:999 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-150\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-150\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-150\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 151,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        512,
+        512
+      ],
+      "foregrounds": 21,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\456\\1.txt:956 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-151\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-151\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-151\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 152,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 4,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-152\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-152\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-152\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 153,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        512,
+        256
+      ],
+      "foregrounds": 5,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-153\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-153\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-153\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 154,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        258
+      ],
+      "foregrounds": 16,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-154\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-154\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1032
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-154\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 155,
+      "area": "Shirley's Shrine",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        512,
+        512
+      ],
+      "foregrounds": 19,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\468\\1.txt:728 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\468\\1.txt:756 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\468\\1.txt:790 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\468\\1.txt:819 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-155\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-155\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-155\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 156,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        768,
+        256
+      ],
+      "foregrounds": 11,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-156\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-156\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-156\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 157,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        384
+      ],
+      "foregrounds": 16,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-157\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-157\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-157\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 158,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        513,
+        386
+      ],
+      "foregrounds": 18,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-158\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-158\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2052,
+        1544
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-158\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 159,
+      "area": "Shirley's Shrine",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        512,
+        384
+      ],
+      "foregrounds": 8,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\480\\1.txt:655 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:656 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:657 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:658 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:659 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:660 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xf, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:661 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xb, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:668 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:669 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:670 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:671 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:672 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:673 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xf, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:674 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xb, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:677 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:678 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:679 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:680 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:681 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:682 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:683 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:809 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:895 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:896 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:897 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:898 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:899 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:900 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:901 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:937 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x5, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:938 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xc, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:944 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xe, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1037 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x1, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1038 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1039 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1040 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1041 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1042 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1043 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1394 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x7, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1395 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x8, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1396 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x9, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1397 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xf, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1430 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x6, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1431 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xa, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1432 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xb, 0x0 ; mode, foregroundObjectIndex, out",
+        "build\\disc1\\scripts\\480\\1.txt:1433 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0xd, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-159\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-159\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-159\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 160,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 7,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-160\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-160\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-160\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 161,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 1,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-161\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-161\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "correction": "One focused built-in ImageGen correction removed invented horizon from upper-right; original source/prompt retained.",
+      "validation": "gfx\\backgrounds\\disc1\\cut-161\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 162,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        257
+      ],
+      "foregrounds": 2,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-162\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-162\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-162\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 163,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        384
+      ],
+      "foregrounds": 15,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-163\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-163\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-163\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 164,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        512,
+        512
+      ],
+      "foregrounds": 8,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-164\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-164\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        2048
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-164\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "correction": "One focused built-in ImageGen correction replaced invented upper-left vista with original dense forest backdrop; initial source/prompt retained.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 165,
+      "area": "Shirley's Shrine",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        258
+      ],
+      "foregrounds": 13,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-165\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-165\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1032
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-165\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 166,
+      "area": "Shirley's Shrine",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        768,
+        256
+      ],
+      "foregrounds": 11,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\501\\1.txt:183 call SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject, 0x3, 0x4, 0x0 ; mode, foregroundObjectIndex, out"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-166\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-166\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        3072,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-166\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 634,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 3,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-634\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-634\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-634\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 636,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 17,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-636\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-636\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-636\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 637,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 9,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\642\\1.txt:958 call SMap::scriptSetEnvForegroundPosition, 0x0, 0xffffff74, 0xe ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:959 call SMap::scriptSetEnvForegroundPosition, 0x0, 0xffffff74, 0xf ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1001 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xe ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1002 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xf ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1015 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xe ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1016 call SMap::scriptSetEnvForegroundPosition, 0x0, stor[24], 0xf ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1112 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[20] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1113 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[21] ; x, y, overlayIndex",
+        "build\\disc1\\scripts\\642\\1.txt:1114 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[22] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-637\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-637\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-637\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 638,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        512,
+        384
+      ],
+      "foregrounds": 4,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-638\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-638\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2048,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-638\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 639,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        768,
+        384
+      ],
+      "foregrounds": 10,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-639\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-639\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        3072,
+        1536
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-639\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 646,
+      "area": "Lohan",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        513,
+        257
+      ],
+      "foregrounds": 8,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-646\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-646\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        2052,
+        1028
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-646\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 647,
+      "area": "Lohan",
+      "status": "artwork-source-ready-dynamic-packaging-unresolved",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 1,
+      "packagingBlocker": "Scripted foreground hiding/movement requires independent plate/clean-underlay inspection; flattened preview is not runtime-ready.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [
+        "build\\disc1\\scripts\\672\\1.txt:937 call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex"
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-647\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-647\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-647\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Inspect named foreground masks and scripted visibility/offset sequence; identify uncovered pixels, create separate plates where required; parent-only targeted playback later.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 656,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 1,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "source": "gfx\\backgrounds\\disc1\\cut-656\\source\\base.png",
+      "prompt": "prompt.json",
+      "preview": "gfx\\backgrounds\\disc1\\cut-656\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "validation": "gfx\\backgrounds\\disc1\\cut-656\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    },
+    {
+      "cut": 716,
+      "area": "Nest of Dragon",
+      "status": "artwork-preview-ready",
+      "originalDimensions": [
+        384,
+        256
+      ],
+      "foregrounds": 1,
+      "packagingBlocker": "Static packager requires actual fixed-visible layer recording; no new recording claimed.",
+      "gameplay": "deferred",
+      "gameplayVerified": false,
+      "visualReview": true,
+      "issues": [],
+      "preview": "gfx\\backgrounds\\disc1\\cut-716\\source\\asset-preview\\comparison.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "source": "gfx\\backgrounds\\disc1\\cut-716\\source\\base.png",
+      "validation": "gfx\\backgrounds\\disc1\\cut-716\\source\\asset-preview\\validation.json",
+      "runtimeInstalled": false,
+      "smallestLaterCheck": "Original layer/camera route recording, then strict packager plus paired original-modern test.",
+      "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix."
+    }
+  ],
+  "productionOrder": [
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    656,
+    716,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    646,
+    149,
+    150,
+    151,
+    637,
+    638,
+    634,
+    636,
+    639,
+    647,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166
+  ],
+  "chronologyNote": "Location order follows Volcano, Dragon Nest, Lohan, Shirley Shrine; exact optional branch/variant first visits uncertain and retained beside related locations; not a confirmed story prefix.",
+  "completeAssignedSourceProduction": true,
+  "remainingGeneration": [],
+  "counts": {
+    "artwork-preview-ready": 35,
+    "artwork-source-ready-dynamic-packaging-unresolved": 18
+  },
+  "validation": "All53 base outputs byte-identical to saved ImageGen output (716 exactRGBA reuse); all placement dimensions checked; per-cut helper reports validate exact4x canvas, decoded files, original alpha/count/names. All53 original-versus-masked-modern comparisons visually reviewed. No game/Gradle/capture/runtime hook changes."
+}

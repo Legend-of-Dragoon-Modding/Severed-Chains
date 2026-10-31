@@ -1,0 +1,28 @@
+{
+  "background": "open-underlay.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "open-underlay.png",
+    "3": "open-underlay.png",
+    "4": "open-underlay.png",
+    "5": "open-underlay.png",
+    "6": "open-underlay.png",
+    "7": "open-underlay.png",
+    "8": "open-underlay.png",
+    "9": "open-underlay.png",
+    "10": "open-underlay.png",
+    "11": "open-underlay.png"
+  },
+  "dynamicLayers": [
+    0,
+    1
+  ],
+  "visualReview": true,
+  "reviewStatus": "All-visible and dynamic-hidden endpoint review passed: Both visible door leaves and both open recesses fit their native footprints without a floating doorstep; narrow upper gaps follow the original foreground silhouettes.",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/243",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ]
+}

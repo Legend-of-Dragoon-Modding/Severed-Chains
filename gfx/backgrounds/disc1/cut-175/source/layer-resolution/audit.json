@@ -1,0 +1,601 @@
+{
+  "cut": 175,
+  "dynamicLayers": [
+    1,
+    2,
+    3,
+    4,
+    9,
+    10
+  ],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        378,
+        103,
+        476,
+        193
+      ],
+      "opaquePixels": 3313,
+      "backgroundOverlapPixels": 3313,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        36,
+        130,
+        106,
+        204
+      ],
+      "opaquePixels": 5180,
+      "backgroundOverlapPixels": 5180,
+      "dynamic": true
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        125,
+        257,
+        161,
+        325
+      ],
+      "opaquePixels": 2448,
+      "backgroundOverlapPixels": 2448,
+      "dynamic": true
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        307,
+        120,
+        373,
+        220
+      ],
+      "opaquePixels": 5219,
+      "backgroundOverlapPixels": 5219,
+      "dynamic": true
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        305,
+        45,
+        347,
+        117
+      ],
+      "opaquePixels": 2410,
+      "backgroundOverlapPixels": 2410,
+      "dynamic": true
+    },
+    {
+      "layer": 5,
+      "bbox": [
+        17,
+        122,
+        78,
+        208
+      ],
+      "opaquePixels": 2164,
+      "backgroundOverlapPixels": 2164,
+      "dynamic": false
+    },
+    {
+      "layer": 6,
+      "bbox": [
+        260,
+        180,
+        333,
+        257
+      ],
+      "opaquePixels": 2370,
+      "backgroundOverlapPixels": 2370,
+      "dynamic": false
+    },
+    {
+      "layer": 7,
+      "bbox": [
+        325,
+        176,
+        399,
+        226
+      ],
+      "opaquePixels": 1648,
+      "backgroundOverlapPixels": 1648,
+      "dynamic": false
+    },
+    {
+      "layer": 8,
+      "bbox": [
+        218,
+        57,
+        257,
+        104
+      ],
+      "opaquePixels": 1085,
+      "backgroundOverlapPixels": 1085,
+      "dynamic": false
+    },
+    {
+      "layer": 9,
+      "bbox": [
+        240,
+        103,
+        378,
+        186
+      ],
+      "opaquePixels": 4864,
+      "backgroundOverlapPixels": 4864,
+      "dynamic": true
+    },
+    {
+      "layer": 10,
+      "bbox": [
+        297,
+        25,
+        361,
+        105
+      ],
+      "opaquePixels": 2569,
+      "backgroundOverlapPixels": 2569,
+      "dynamic": true
+    },
+    {
+      "layer": 11,
+      "bbox": [
+        202,
+        78,
+        387,
+        148
+      ],
+      "opaquePixels": 3929,
+      "backgroundOverlapPixels": 3929,
+      "dynamic": false
+    },
+    {
+      "layer": 12,
+      "bbox": [
+        160,
+        67,
+        196,
+        119
+      ],
+      "opaquePixels": 1476,
+      "backgroundOverlapPixels": 1476,
+      "dynamic": false
+    },
+    {
+      "layer": 13,
+      "bbox": [
+        99,
+        123,
+        159,
+        170
+      ],
+      "opaquePixels": 1586,
+      "backgroundOverlapPixels": 1586,
+      "dynamic": false
+    },
+    {
+      "layer": 14,
+      "bbox": [
+        77,
+        113,
+        216,
+        208
+      ],
+      "opaquePixels": 3195,
+      "backgroundOverlapPixels": 3195,
+      "dynamic": false
+    },
+    {
+      "layer": 15,
+      "bbox": [
+        95,
+        167,
+        253,
+        250
+      ],
+      "opaquePixels": 5102,
+      "backgroundOverlapPixels": 5102,
+      "dynamic": false
+    },
+    {
+      "layer": 16,
+      "bbox": [
+        322,
+        209,
+        441,
+        272
+      ],
+      "opaquePixels": 3342,
+      "backgroundOverlapPixels": 3342,
+      "dynamic": false
+    },
+    {
+      "layer": 17,
+      "bbox": [
+        110,
+        265,
+        280,
+        348
+      ],
+      "opaquePixels": 4818,
+      "backgroundOverlapPixels": 4818,
+      "dynamic": false
+    }
+  ],
+  "scriptEvidence": [
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 330,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, stor[26] ; x, y, overlayIndex",
+      "index": "stor[26]",
+      "inRange": null
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 349,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, stor[26] ; x, y, overlayIndex",
+      "index": "stor[26]",
+      "inRange": null
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 817,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 818,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0xa ; x, y, overlayIndex",
+      "index": "0xa",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 830,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 831,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0xa ; x, y, overlayIndex",
+      "index": "0xa",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 842,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 843,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0xa ; x, y, overlayIndex",
+      "index": "0xa",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 854,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x4 ; x, y, overlayIndex",
+      "index": "0x4",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 855,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0xa ; x, y, overlayIndex",
+      "index": "0xa",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 867,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 868,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x9 ; x, y, overlayIndex",
+      "index": "0x9",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 880,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 881,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x9 ; x, y, overlayIndex",
+      "index": "0x9",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 893,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x400, 0x400, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 894,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x9 ; x, y, overlayIndex",
+      "index": "0x9",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 906,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x3 ; x, y, overlayIndex",
+      "index": "0x3",
+      "inRange": true
+    },
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "line": 907,
+      "call": "call SMap::scriptSetEnvForegroundPosition, 0x0, 0x0, 0x9 ; x, y, overlayIndex",
+      "index": "0x9",
+      "inRange": true
+    }
+  ],
+  "genericDoorTables": [
+    {
+      "file": "build\\disc1\\scripts\\531\\1.txt",
+      "table": "LABEL_106",
+      "indices": [
+        1,
+        2
+      ]
+    }
+  ],
+  "observed": {
+    "cut": 175,
+    "inspectionPassed": true,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-175/original/alignment.csv",
+    "gpuExportMatches": true,
+    "allObservedLayersFixedVisible": false,
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          },
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": true
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 6,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 7,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 8,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 9,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 10,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 11,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 12,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 13,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 15,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 16,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 17,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ],
+    "fullGameplayVerified": false
+  }
+}

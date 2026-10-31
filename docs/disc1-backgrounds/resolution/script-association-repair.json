@@ -1,0 +1,1087 @@
+{
+  "affectedMetadata": 153,
+  "newlyInstalledNeedingScriptReview": [
+    57,
+    68,
+    79,
+    87,
+    133,
+    154,
+    171,
+    657
+  ],
+  "screens": [
+    {
+      "cut": 8,
+      "previousDirectory": "build/disc1/scripts/30",
+      "actualDirectory": "build/disc1/scripts/30",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 11,
+      "previousDirectory": "build/disc1/scripts/39",
+      "actualDirectory": "build/disc1/scripts/39",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 18,
+      "previousDirectory": "build/disc1/scripts/60",
+      "actualDirectory": "build/disc1/scripts/60",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 30,
+      "previousDirectory": "build/disc1/scripts/96",
+      "actualDirectory": "build/disc1/scripts/96",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 32,
+      "previousDirectory": "build/disc1/scripts/102",
+      "actualDirectory": "build/disc1/scripts/102",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 33,
+      "previousDirectory": "build/disc1/scripts/105",
+      "actualDirectory": "build/disc1/scripts/105",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 34,
+      "previousDirectory": "build/disc1/scripts/108",
+      "actualDirectory": "build/disc1/scripts/108",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 35,
+      "previousDirectory": "build/disc1/scripts/111",
+      "actualDirectory": "build/disc1/scripts/111",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 36,
+      "previousDirectory": "build/disc1/scripts/114",
+      "actualDirectory": "build/disc1/scripts/114",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 55,
+      "previousDirectory": "build/disc1/scripts/171",
+      "actualDirectory": "build/disc1/scripts/171",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 57,
+      "previousDirectory": "build/disc1/scripts/177",
+      "actualDirectory": "build/disc1/scripts/177",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 58,
+      "previousDirectory": "build/disc1/scripts/180",
+      "actualDirectory": "build/disc1/scripts/180",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 65,
+      "previousDirectory": "build/disc1/scripts/201",
+      "actualDirectory": "build/disc1/scripts/201",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 67,
+      "previousDirectory": "build/disc1/scripts/207",
+      "actualDirectory": "build/disc1/scripts/207",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 68,
+      "previousDirectory": "build/disc1/scripts/210",
+      "actualDirectory": "build/disc1/scripts/210",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 70,
+      "previousDirectory": "build/disc1/scripts/216",
+      "actualDirectory": "build/disc1/scripts/216",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 71,
+      "previousDirectory": "build/disc1/scripts/219",
+      "actualDirectory": "build/disc1/scripts/219",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 72,
+      "previousDirectory": "build/disc1/scripts/222",
+      "actualDirectory": "build/disc1/scripts/222",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 73,
+      "previousDirectory": "build/disc1/scripts/225",
+      "actualDirectory": "build/disc1/scripts/225",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 74,
+      "previousDirectory": "build/disc1/scripts/228",
+      "actualDirectory": "build/disc1/scripts/228",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 75,
+      "previousDirectory": "build/disc1/scripts/231",
+      "actualDirectory": "build/disc1/scripts/231",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 76,
+      "previousDirectory": "build/disc1/scripts/234",
+      "actualDirectory": "build/disc1/scripts/234",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 77,
+      "previousDirectory": "build/disc1/scripts/237",
+      "actualDirectory": "build/disc1/scripts/237",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 78,
+      "previousDirectory": "build/disc1/scripts/240",
+      "actualDirectory": "build/disc1/scripts/240",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 79,
+      "previousDirectory": "build/disc1/scripts/243",
+      "actualDirectory": "build/disc1/scripts/243",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 80,
+      "previousDirectory": "build/disc1/scripts/246",
+      "actualDirectory": "build/disc1/scripts/246",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 81,
+      "previousDirectory": "build/disc1/scripts/249",
+      "actualDirectory": "build/disc1/scripts/249",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 82,
+      "previousDirectory": "build/disc1/scripts/252",
+      "actualDirectory": "build/disc1/scripts/252",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 83,
+      "previousDirectory": "build/disc1/scripts/255",
+      "actualDirectory": "build/disc1/scripts/255",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 84,
+      "previousDirectory": "build/disc1/scripts/258",
+      "actualDirectory": "build/disc1/scripts/258",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 85,
+      "previousDirectory": "build/disc1/scripts/261",
+      "actualDirectory": "build/disc1/scripts/261",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 87,
+      "previousDirectory": "build/disc1/scripts/267",
+      "actualDirectory": "build/disc1/scripts/267",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 88,
+      "previousDirectory": "build/disc1/scripts/270",
+      "actualDirectory": "build/disc1/scripts/270",
+      "potentialLayerRisks": 5,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 89,
+      "previousDirectory": "build/disc1/scripts/273",
+      "actualDirectory": "build/disc1/scripts/273",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 93,
+      "previousDirectory": "build/disc1/scripts/285",
+      "actualDirectory": "build/disc1/scripts/285",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 94,
+      "previousDirectory": "build/disc1/scripts/288",
+      "actualDirectory": "build/disc1/scripts/288",
+      "potentialLayerRisks": 8,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 95,
+      "previousDirectory": "build/disc1/scripts/291",
+      "actualDirectory": "build/disc1/scripts/291",
+      "potentialLayerRisks": 5,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 96,
+      "previousDirectory": "build/disc1/scripts/294",
+      "actualDirectory": "build/disc1/scripts/294",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 97,
+      "previousDirectory": "build/disc1/scripts/297",
+      "actualDirectory": "build/disc1/scripts/297",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 98,
+      "previousDirectory": "build/disc1/scripts/300",
+      "actualDirectory": "build/disc1/scripts/300",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 99,
+      "previousDirectory": "build/disc1/scripts/303",
+      "actualDirectory": "build/disc1/scripts/303",
+      "potentialLayerRisks": 4,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 100,
+      "previousDirectory": "build/disc1/scripts/306",
+      "actualDirectory": "build/disc1/scripts/306",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 101,
+      "previousDirectory": "build/disc1/scripts/309",
+      "actualDirectory": "build/disc1/scripts/309",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 102,
+      "previousDirectory": "build/disc1/scripts/312",
+      "actualDirectory": "build/disc1/scripts/312",
+      "potentialLayerRisks": 4,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 103,
+      "previousDirectory": "build/disc1/scripts/315",
+      "actualDirectory": "build/disc1/scripts/315",
+      "potentialLayerRisks": 4,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 104,
+      "previousDirectory": "build/disc1/scripts/318",
+      "actualDirectory": "build/disc1/scripts/318",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 105,
+      "previousDirectory": "build/disc1/scripts/321",
+      "actualDirectory": "build/disc1/scripts/321",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 106,
+      "previousDirectory": "build/disc1/scripts/324",
+      "actualDirectory": "build/disc1/scripts/324",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 107,
+      "previousDirectory": "build/disc1/scripts/327",
+      "actualDirectory": "build/disc1/scripts/327",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 108,
+      "previousDirectory": "build/disc1/scripts/330",
+      "actualDirectory": "build/disc1/scripts/330",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 109,
+      "previousDirectory": "build/disc1/scripts/333",
+      "actualDirectory": "build/disc1/scripts/333",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 110,
+      "previousDirectory": "build/disc1/scripts/336",
+      "actualDirectory": "build/disc1/scripts/336",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 111,
+      "previousDirectory": "build/disc1/scripts/339",
+      "actualDirectory": "build/disc1/scripts/339",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 112,
+      "previousDirectory": "build/disc1/scripts/342",
+      "actualDirectory": "build/disc1/scripts/342",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 113,
+      "previousDirectory": "build/disc1/scripts/345",
+      "actualDirectory": "build/disc1/scripts/345",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 114,
+      "previousDirectory": "build/disc1/scripts/348",
+      "actualDirectory": "build/disc1/scripts/348",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 115,
+      "previousDirectory": "build/disc1/scripts/351",
+      "actualDirectory": "build/disc1/scripts/351",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 116,
+      "previousDirectory": "build/disc1/scripts/354",
+      "actualDirectory": "build/disc1/scripts/354",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 117,
+      "previousDirectory": "build/disc1/scripts/357",
+      "actualDirectory": "build/disc1/scripts/357",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 118,
+      "previousDirectory": "build/disc1/scripts/360",
+      "actualDirectory": "build/disc1/scripts/360",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 119,
+      "previousDirectory": "build/disc1/scripts/363",
+      "actualDirectory": "build/disc1/scripts/363",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 120,
+      "previousDirectory": "build/disc1/scripts/366",
+      "actualDirectory": "build/disc1/scripts/366",
+      "potentialLayerRisks": 8,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 121,
+      "previousDirectory": "build/disc1/scripts/369",
+      "actualDirectory": "build/disc1/scripts/369",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 122,
+      "previousDirectory": "build/disc1/scripts/372",
+      "actualDirectory": "build/disc1/scripts/372",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 123,
+      "previousDirectory": "build/disc1/scripts/375",
+      "actualDirectory": "build/disc1/scripts/375",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 130,
+      "previousDirectory": "build/disc1/scripts/396",
+      "actualDirectory": "build/disc1/scripts/396",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 131,
+      "previousDirectory": "build/disc1/scripts/399",
+      "actualDirectory": "build/disc1/scripts/399",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 132,
+      "previousDirectory": "build/disc1/scripts/402",
+      "actualDirectory": "build/disc1/scripts/402",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 133,
+      "previousDirectory": "build/disc1/scripts/405",
+      "actualDirectory": "build/disc1/scripts/405",
+      "potentialLayerRisks": 4,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 134,
+      "previousDirectory": "build/disc1/scripts/408",
+      "actualDirectory": "build/disc1/scripts/408",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 135,
+      "previousDirectory": "build/disc1/scripts/411",
+      "actualDirectory": "build/disc1/scripts/411",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 136,
+      "previousDirectory": "build/disc1/scripts/414",
+      "actualDirectory": "build/disc1/scripts/414",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 140,
+      "previousDirectory": "build/disc1/scripts/426",
+      "actualDirectory": "build/disc1/scripts/426",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 141,
+      "previousDirectory": "build/disc1/scripts/429",
+      "actualDirectory": "build/disc1/scripts/429",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 142,
+      "previousDirectory": "build/disc1/scripts/432",
+      "actualDirectory": "build/disc1/scripts/432",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 143,
+      "previousDirectory": "build/disc1/scripts/435",
+      "actualDirectory": "build/disc1/scripts/435",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 144,
+      "previousDirectory": "build/disc1/scripts/438",
+      "actualDirectory": "build/disc1/scripts/438",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 145,
+      "previousDirectory": "build/disc1/scripts/441",
+      "actualDirectory": "build/disc1/scripts/441",
+      "potentialLayerRisks": 8,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 146,
+      "previousDirectory": "build/disc1/scripts/444",
+      "actualDirectory": "build/disc1/scripts/444",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 147,
+      "previousDirectory": "build/disc1/scripts/447",
+      "actualDirectory": "build/disc1/scripts/447",
+      "potentialLayerRisks": 5,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 148,
+      "previousDirectory": "build/disc1/scripts/450",
+      "actualDirectory": "build/disc1/scripts/450",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 149,
+      "previousDirectory": "build/disc1/scripts/453",
+      "actualDirectory": "build/disc1/scripts/453",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 150,
+      "previousDirectory": "build/disc1/scripts/456",
+      "actualDirectory": "build/disc1/scripts/456",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 151,
+      "previousDirectory": "build/disc1/scripts/459",
+      "actualDirectory": "build/disc1/scripts/459",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 152,
+      "previousDirectory": "build/disc1/scripts/462",
+      "actualDirectory": "build/disc1/scripts/462",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 153,
+      "previousDirectory": "build/disc1/scripts/465",
+      "actualDirectory": "build/disc1/scripts/465",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 154,
+      "previousDirectory": "build/disc1/scripts/468",
+      "actualDirectory": "build/disc1/scripts/468",
+      "potentialLayerRisks": 4,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 155,
+      "previousDirectory": "build/disc1/scripts/471",
+      "actualDirectory": "build/disc1/scripts/471",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 156,
+      "previousDirectory": "build/disc1/scripts/474",
+      "actualDirectory": "build/disc1/scripts/474",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 157,
+      "previousDirectory": "build/disc1/scripts/477",
+      "actualDirectory": "build/disc1/scripts/477",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 158,
+      "previousDirectory": "build/disc1/scripts/480",
+      "actualDirectory": "build/disc1/scripts/480",
+      "potentialLayerRisks": 47,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 159,
+      "previousDirectory": "build/disc1/scripts/483",
+      "actualDirectory": "build/disc1/scripts/483",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 160,
+      "previousDirectory": "build/disc1/scripts/486",
+      "actualDirectory": "build/disc1/scripts/486",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 161,
+      "previousDirectory": "build/disc1/scripts/489",
+      "actualDirectory": "build/disc1/scripts/489",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 162,
+      "previousDirectory": "build/disc1/scripts/492",
+      "actualDirectory": "build/disc1/scripts/492",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 163,
+      "previousDirectory": "build/disc1/scripts/495",
+      "actualDirectory": "build/disc1/scripts/495",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 164,
+      "previousDirectory": "build/disc1/scripts/498",
+      "actualDirectory": "build/disc1/scripts/498",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 165,
+      "previousDirectory": "build/disc1/scripts/501",
+      "actualDirectory": "build/disc1/scripts/501",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 166,
+      "previousDirectory": "build/disc1/scripts/504",
+      "actualDirectory": "build/disc1/scripts/504",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 171,
+      "previousDirectory": "build/disc1/scripts/519",
+      "actualDirectory": "build/disc1/scripts/519",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 172,
+      "previousDirectory": "build/disc1/scripts/522",
+      "actualDirectory": "build/disc1/scripts/522",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 173,
+      "previousDirectory": "build/disc1/scripts/525",
+      "actualDirectory": "build/disc1/scripts/525",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 174,
+      "previousDirectory": "build/disc1/scripts/528",
+      "actualDirectory": "build/disc1/scripts/528",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 175,
+      "previousDirectory": "build/disc1/scripts/531",
+      "actualDirectory": "build/disc1/scripts/531",
+      "potentialLayerRisks": 5,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 176,
+      "previousDirectory": "build/disc1/scripts/534",
+      "actualDirectory": "build/disc1/scripts/534",
+      "potentialLayerRisks": 3,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 177,
+      "previousDirectory": "build/disc1/scripts/537",
+      "actualDirectory": "build/disc1/scripts/537",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 178,
+      "previousDirectory": "build/disc1/scripts/540",
+      "actualDirectory": "build/disc1/scripts/540",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 179,
+      "previousDirectory": "build/disc1/scripts/543",
+      "actualDirectory": "build/disc1/scripts/543",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 180,
+      "previousDirectory": "build/disc1/scripts/546",
+      "actualDirectory": "build/disc1/scripts/546",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 181,
+      "previousDirectory": "build/disc1/scripts/549",
+      "actualDirectory": "build/disc1/scripts/549",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 182,
+      "previousDirectory": "build/disc1/scripts/552",
+      "actualDirectory": "build/disc1/scripts/552",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 183,
+      "previousDirectory": "build/disc1/scripts/555",
+      "actualDirectory": "build/disc1/scripts/555",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 187,
+      "previousDirectory": "build/disc1/scripts/567",
+      "actualDirectory": "build/disc1/scripts/567",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 188,
+      "previousDirectory": "build/disc1/scripts/570",
+      "actualDirectory": "build/disc1/scripts/570",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 189,
+      "previousDirectory": "build/disc1/scripts/573",
+      "actualDirectory": "build/disc1/scripts/573",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 190,
+      "previousDirectory": "build/disc1/scripts/576",
+      "actualDirectory": "build/disc1/scripts/576",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 191,
+      "previousDirectory": "build/disc1/scripts/579",
+      "actualDirectory": "build/disc1/scripts/579",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 192,
+      "previousDirectory": "build/disc1/scripts/582",
+      "actualDirectory": "build/disc1/scripts/582",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 193,
+      "previousDirectory": "build/disc1/scripts/585",
+      "actualDirectory": "build/disc1/scripts/585",
+      "potentialLayerRisks": 8,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 194,
+      "previousDirectory": "build/disc1/scripts/588",
+      "actualDirectory": "build/disc1/scripts/588",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 195,
+      "previousDirectory": "build/disc1/scripts/591",
+      "actualDirectory": "build/disc1/scripts/591",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 196,
+      "previousDirectory": "build/disc1/scripts/594",
+      "actualDirectory": "build/disc1/scripts/594",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 197,
+      "previousDirectory": "build/disc1/scripts/597",
+      "actualDirectory": "build/disc1/scripts/597",
+      "potentialLayerRisks": 11,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 198,
+      "previousDirectory": "build/disc1/scripts/600",
+      "actualDirectory": "build/disc1/scripts/600",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 199,
+      "previousDirectory": "build/disc1/scripts/603",
+      "actualDirectory": "build/disc1/scripts/603",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 200,
+      "previousDirectory": "build/disc1/scripts/606",
+      "actualDirectory": "build/disc1/scripts/606",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 623,
+      "previousDirectory": "build/disc1/scripts/609",
+      "actualDirectory": "build/disc1/scripts/609",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 626,
+      "previousDirectory": "build/disc1/scripts/618",
+      "actualDirectory": "build/disc1/scripts/618",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 627,
+      "previousDirectory": "build/disc1/scripts/621",
+      "actualDirectory": "build/disc1/scripts/621",
+      "potentialLayerRisks": 4,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 628,
+      "previousDirectory": "build/disc1/scripts/624",
+      "actualDirectory": "build/disc1/scripts/624",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 631,
+      "previousDirectory": "build/disc1/scripts/627",
+      "actualDirectory": "build/disc1/scripts/627",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 632,
+      "previousDirectory": "build/disc1/scripts/630",
+      "actualDirectory": "build/disc1/scripts/630",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 633,
+      "previousDirectory": "build/disc1/scripts/633",
+      "actualDirectory": "build/disc1/scripts/633",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 634,
+      "previousDirectory": "build/disc1/scripts/636",
+      "actualDirectory": "build/disc1/scripts/636",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 636,
+      "previousDirectory": "build/disc1/scripts/642",
+      "actualDirectory": "build/disc1/scripts/642",
+      "potentialLayerRisks": 9,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 637,
+      "previousDirectory": "build/disc1/scripts/645",
+      "actualDirectory": "build/disc1/scripts/645",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 638,
+      "previousDirectory": "build/disc1/scripts/648",
+      "actualDirectory": "build/disc1/scripts/648",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 639,
+      "previousDirectory": "build/disc1/scripts/651",
+      "actualDirectory": "build/disc1/scripts/651",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 646,
+      "previousDirectory": "build/disc1/scripts/672",
+      "actualDirectory": "build/disc1/scripts/672",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 647,
+      "previousDirectory": "build/disc1/scripts/675",
+      "actualDirectory": "build/disc1/scripts/675",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 656,
+      "previousDirectory": "build/disc1/scripts/678",
+      "actualDirectory": "build/disc1/scripts/678",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 657,
+      "previousDirectory": "build/disc1/scripts/681",
+      "actualDirectory": "build/disc1/scripts/681",
+      "potentialLayerRisks": 1,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 658,
+      "previousDirectory": "build/disc1/scripts/684",
+      "actualDirectory": "build/disc1/scripts/684",
+      "potentialLayerRisks": 6,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 659,
+      "previousDirectory": "build/disc1/scripts/687",
+      "actualDirectory": "build/disc1/scripts/687",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 660,
+      "previousDirectory": "build/disc1/scripts/690",
+      "actualDirectory": "build/disc1/scripts/690",
+      "potentialLayerRisks": 2,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 674,
+      "previousDirectory": "build/disc1/scripts/693",
+      "actualDirectory": "build/disc1/scripts/693",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": false
+    },
+    {
+      "cut": 696,
+      "previousDirectory": "build/disc1/scripts/711",
+      "actualDirectory": "build/disc1/scripts/711",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 697,
+      "previousDirectory": "build/disc1/scripts/714",
+      "actualDirectory": "build/disc1/scripts/714",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 716,
+      "previousDirectory": "build/disc1/scripts/723",
+      "actualDirectory": "build/disc1/scripts/723",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 726,
+      "previousDirectory": "build/disc1/scripts/729",
+      "actualDirectory": "build/disc1/scripts/729",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 740,
+      "previousDirectory": "build/disc1/scripts/732",
+      "actualDirectory": "build/disc1/scripts/732",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 741,
+      "previousDirectory": "build/disc1/scripts/735",
+      "actualDirectory": "build/disc1/scripts/735",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    },
+    {
+      "cut": 743,
+      "previousDirectory": "build/disc1/scripts/741",
+      "actualDirectory": "build/disc1/scripts/741",
+      "potentialLayerRisks": 0,
+      "runtimeInstalled": true
+    }
+  ],
+  "warning": "Generic calls and variable indices require table/path analysis. Scanner hits are potential risks, not confirmed dynamic objects."
+}

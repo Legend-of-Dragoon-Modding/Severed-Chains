@@ -1,0 +1,10 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Edit image1 with extreme layout preservation: this is the modern underlay of a game street. Close all six currently open dark doorways with wooden plank door leaves matching the same street style in image2 (style reference). Door positions, sizes, angles and thresholds must remain exactly those in image1. Keep all other bricks, arches, steps, lights, roofs, signs, barrels, skyline, ground and camera framing pixel-aligned and visually unchanged. Six doors: two small distant upper doors, two mid-street side doors, two near bottom side doors. All six must be CLOSED, filling each dark opening to its edges, no black recess visible within leaf. Do not add hinges beyond existing frames; do not change architecture. Output complete same-aspect full scene, no borders. Only interior of the six openings may change.",
+  "inputs": [
+    "generated-underlay-step4.png",
+    "../base.png"
+  ],
+  "output": "generated-closed-doors.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-2e0edddb-dcfc-4c5c-ae6d-12822c91bd04.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

@@ -1,0 +1,8 @@
+{
+  "mapping": "full-canvas",
+  "width": 1774,
+  "height": 887,
+  "stationary_layers_verified": true,
+  "evidence": "Correct retail script archive sourceIndex+2 directory207 inspected all txt files: no foreground-position calls, only camera-mode2 calls if any. Actual original121-frame trace all layers fixed visible. Existing composition/alpha preview previously reviewed; full traversal deferred.",
+  "reference": "original-composite.png"
+}

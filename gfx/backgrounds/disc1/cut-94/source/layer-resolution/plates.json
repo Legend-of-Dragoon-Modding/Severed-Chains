@@ -1,0 +1,30 @@
+{
+  "background": "generated-panorama-original.png",
+  "layers": {
+    "0": "../base.png",
+    "1": {
+      "source": "generated-bronze-original.png",
+      "sourceBounds": [
+        0,
+        0,
+        846,
+        1860
+      ]
+    },
+    "2": "../base.png",
+    "3": "../base.png"
+  },
+  "dynamicLayers": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct script288/1 lines949-966 sets camera mode1 then foreground0..3 y100 decreasingby2 to0. SMap4436 mode1 changes geomOffset only; background screenOffset unchanged, RetailSubmap1242 versus1377 shows genuine relative foreground movement.",
+    "Builtin ImageGen independently remade original clean panorama background.png using modern base only as style reference. Existing approved modern foreground plates retained with exact native masks.",
+    "Need preview y100 state in addition to all-visible zero endpoints; no stationary claim or fullgameplay verification.",
+    "Independent builtin bronze material source fills only exact original finial alpha silhouette, removing old source sky contamination; native shape and holes preserved. Need motion review."
+  ]
+}

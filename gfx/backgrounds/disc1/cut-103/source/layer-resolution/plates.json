@@ -1,0 +1,319 @@
+{
+  "background": {
+    "source": "continuous-wall-resumed.png",
+    "patches": [
+      {
+        "source": "isolated-open-portal-resumed.png",
+        "sourceBounds": [
+          0,
+          9,
+          995,
+          1559
+        ],
+        "targetBounds": [
+          244,
+          133,
+          277,
+          184
+        ]
+      }
+    ]
+  },
+  "layers": {
+    "0": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "1": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "2": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "3": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "4": "open-door-scene-final.png",
+    "5": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "6": "closed-door-scene-final.png",
+    "7": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "8": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "9": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "10": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "11": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "12": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "13": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "14": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    },
+    "15": {
+      "source": "continuous-wall-resumed.png",
+      "patches": [
+        {
+          "source": "isolated-open-portal-resumed.png",
+          "sourceBounds": [
+            0,
+            9,
+            995,
+            1559
+          ],
+          "targetBounds": [
+            244,
+            133,
+            277,
+            184
+          ]
+        }
+      ]
+    }
+  },
+  "dynamicLayers": [
+    4,
+    6
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime archive315 and original renderer trace retained; door4/6 are independent alternating foreground plates.",
+    "Builtin ImageGen continuous wall removes old high portal; transparent isolated portal atlas target[244,133,277,184] registers against exact native foreground4/6 bounds.",
+    "Generated door/floor sprite atlas-fit into exact native alpha, with independent RGB and open underlay. Endpoint review pending; no runtime install."
+  ],
+  "reviewStatus": "Source assets reviewed; exact atlas endpoint review pending",
+  "runtimeInstalled": false,
+  "gameplayVerified": false
+}

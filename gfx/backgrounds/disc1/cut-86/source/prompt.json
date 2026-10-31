@@ -1,0 +1,8 @@
+{
+  "prompt": "Edit image 1 (original Bale fortified tower exterior game background) into a stunning 2026 photorealistic pre-rendered RPG environment. Image 2 provides the established Bale material quality and warm golden autumn lighting. Preserve image 1's EXACT square canvas, fixed elevated camera, original silhouette, tower footprint, all conical roofs/spires, central diagonal staircase and upper doorway, lower arched door, plaza paving, planted beds, walls, iron rails, canal and right-hand path. No crop or perspective changes. Full 1536x1536 canvas. Crisp finely weathered sandstone masonry and mortar, aged terracotta roofs, fine ironwork, detailed golden trees, warm sunset clouds above distant mountains and dense city rooftops. Natural believable cinematic light, detailed but not cluttered. All walkable surfaces must retain precisely the original locations, elevations and boundaries; no new obstacles, plants or rocks on paths. Fully paint background under foreground architecture. No people, characters, UI, text, signs or watermark. No painterly brushwork or stylized low-poly rendering.",
+  "generator": "Built-in image_gen",
+  "references": [
+    "build/disc1/original/cut-86/geometry-guide.png",
+    "gfx/backgrounds/disc1/cut-66/source/base.png"
+  ]
+}

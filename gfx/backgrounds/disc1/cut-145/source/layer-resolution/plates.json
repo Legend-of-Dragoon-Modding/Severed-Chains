@@ -1,0 +1,758 @@
+{
+  "background": {
+    "source": "empty-windows.png",
+    "patches": [
+      {
+        "source": "upper-unit-default.png",
+        "sourceBounds": [
+          0,
+          19,
+          1750,
+          855
+        ],
+        "targetBounds": [
+          583,
+          83,
+          613,
+          97
+        ]
+      },
+      {
+        "source": "lower-unit-default.png",
+        "sourceBounds": [
+          0,
+          0,
+          1474,
+          1060
+        ],
+        "targetBounds": [
+          584,
+          122,
+          615,
+          142
+        ]
+      },
+      {
+        "source": "bookcase-alcove.png",
+        "sourceBounds": [
+          1123,
+          212,
+          1185,
+          303
+        ],
+        "targetBounds": [
+          398,
+          75,
+          420,
+          107
+        ],
+        "maskLayer": 0
+      },
+      {
+        "source": "background-state-source.png",
+        "sourceBounds": [
+          278,
+          210,
+          336,
+          312
+        ],
+        "targetBounds": [
+          55,
+          94,
+          81,
+          123
+        ],
+        "maskLayer": 15
+      }
+    ]
+  },
+  "layers": {
+    "0": "../base.png",
+    "1": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "2": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "3": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "4": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "5": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "6": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "7": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "8": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "9": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "10": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "11": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "12": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "13": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "14": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "15": "../base.png",
+    "16": {
+      "source": "wooden-door-source.png",
+      "sourceBounds": [
+        1685,
+        274,
+        1738,
+        378
+      ]
+    },
+    "17": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "18": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "19": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "20": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-alternate.png",
+          "sourceBounds": [
+            98,
+            0,
+            1669,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-alternate.png",
+          "sourceBounds": [
+            37,
+            16,
+            1444,
+            1036
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    },
+    "21": {
+      "source": "empty-windows.png",
+      "patches": [
+        {
+          "source": "upper-unit-default.png",
+          "sourceBounds": [
+            0,
+            19,
+            1750,
+            855
+          ],
+          "targetBounds": [
+            583,
+            83,
+            613,
+            97
+          ]
+        },
+        {
+          "source": "lower-unit-default.png",
+          "sourceBounds": [
+            0,
+            0,
+            1474,
+            1060
+          ],
+          "targetBounds": [
+            584,
+            122,
+            615,
+            142
+          ]
+        }
+      ]
+    }
+  },
+  "dynamicLayers": [
+    0,
+    15,
+    16,
+    20,
+    21
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Native20 mask retains two independent telescope poses: fully cleared window underlay plus transparent independently generated telescope units, mapped inside native20 component bounds. No opaque sky atlas rectangle or old head remnants. Native0 bookcase and revealed alcove retain independent sources;15/16 alternate doors and21empty kept. Original alpha/depth unchanged."
+  ]
+}

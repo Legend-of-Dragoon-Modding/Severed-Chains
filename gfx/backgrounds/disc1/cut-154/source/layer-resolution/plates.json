@@ -1,0 +1,31 @@
+{
+  "background": "../base.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "../base.png",
+    "3": "../base.png",
+    "4": "closed-source.png",
+    "5": "../base.png",
+    "6": "../base.png",
+    "7": "../base.png",
+    "8": "../base.png",
+    "9": "../base.png",
+    "10": "../base.png",
+    "11": "../base.png",
+    "12": "../base.png",
+    "13": "../base.png",
+    "14": "../base.png",
+    "15": "../base.png"
+  },
+  "dynamicLayers": [
+    4
+  ],
+  "visualReview": true,
+  "reviewStatus": "All-visible and dynamic-hidden endpoint review passed: Stone secret-passage panel appears only in foreground4; hiding it reveals the original passage area without a residual stone panel.",
+  "evidence": [
+    "Correct retail script directory: build/disc1/scripts/468",
+    "Actual original GPU/export equality and complete recorded layer trace retained.",
+    "Built-in imagegen candidate supplies the independent state; raw base preserved. Endpoint review required before ready status."
+  ]
+}

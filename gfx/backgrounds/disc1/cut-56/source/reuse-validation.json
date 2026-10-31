@@ -1,0 +1,26 @@
+{
+  "sourceCut": 14,
+  "targetCut": 56,
+  "textures": [
+    {
+      "name": "background.png",
+      "rgba_sha256": "ba480ea731e0bc3e8694360ef6c1f6221bfaae1e631d7c481294b8e5f99e2e0c",
+      "exactMatch": true
+    },
+    {
+      "name": "foreground-0.png",
+      "rgba_sha256": "81d334b77dfb1c66bc91dd92a6f09d9ffceaec95e5db4d07fc445381d98d5390",
+      "exactMatch": true
+    },
+    {
+      "name": "foreground-1.png",
+      "rgba_sha256": "f0b9f3ca2ef666ab41e5c9dafcfc99207849970fe409cc0c36a566a9ebd0f2d4",
+      "exactMatch": true
+    },
+    {
+      "name": "foreground-2.png",
+      "rgba_sha256": "956e3f6ff04d0b6ae49a5747a00394ebea3943be46060013a99ac5be0a3353b9",
+      "exactMatch": true
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "background": "generated-underlay-step4.png",
+  "layers": {
+    "0": "generated-underlay-step4.png",
+    "1": "generated-underlay-step4.png",
+    "2": "generated-underlay-step4.png",
+    "3": {
+      "source": "generated-throne-sprite-v2.png",
+      "sourceBounds": [
+        3,
+        0,
+        1219,
+        1283
+      ],
+      "bleedTransparentRgb": true,
+      "bleedAlphaThreshold": 128
+    },
+    "4": "generated-underlay-step4.png",
+    "5": "generated-underlay-step4.png"
+  },
+  "dynamicLayers": [
+    3
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Correct runtime script archive (environment index+2), actual native masks and observed layer states in gfx/backgrounds/disc1/cut-660/source/layer-resolution/audit.json.",
+    "Built-in imagegen produced a separate exposed underlay; raw modern master supplies only independent changing foreground RGB. Original master preserved.",
+    "Source underlay reviewed; exact-alpha staging and endpoint visual review determine readiness separately.",
+    "Isolated modern throne sprite replaces initial raw-master cut that carried green wall halo; sprite atlas-fitted to original throne alpha."
+  ]
+}

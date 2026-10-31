@@ -73,6 +73,7 @@ import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.input.RegisterDefaultInputBindingsEvent;
 import legend.game.modding.events.inventory.GatherAttackItemsEvent;
 import legend.game.modding.events.inventory.GatherRecoveryItemsEvent;
+import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.saves.CampaignType;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.RegisterCampaignTypesEvent;
@@ -113,6 +114,11 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 @EventListener
 public class LodMod {
   public static final String MOD_ID = "lod";
+
+  @EventListener
+  public static void replaceSelesOverlook(final SubmapEnvironmentTextureEvent event) {
+    SelesBackgrounds.replace(event);
+  }
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);

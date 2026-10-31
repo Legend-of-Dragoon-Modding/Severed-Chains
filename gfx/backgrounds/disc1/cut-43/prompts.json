@@ -1,0 +1,10 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Edit the original game environment texture in reference 1: Prairie river crossing, Disc 1 cut 43. Reference 2 is the actual in-game original showing how animated water covers the dark channel, reference 3 supplies only modern daylight/material quality. Output exact 1536x1024 landscape full canvas. Preserve reference 1 camera, frame, every rock silhouette, river bank outline, stepping stones, and traversable surfaces exactly. The river flows diagonally from upper-left opening to bottom-right; channel center must remain very dark charcoal/near-black, softly textured only, because ORIGINAL ANIMATED WATER WILL BE DRAWN OVER IT. Do not bake whitewater, foam, waves, highlights or a new river surface into the texture. Rebuild all rock banks and grass at polished 2026 realistic fantasy game quality: weathered warm gray/tan granite and mineral strata, chips and cracks, restrained moss in crevices, crisp short grass and reeds, physically plausible sunny daylight and deep shaded recesses. Keep the right upper bank's flat cobbled ledge and paths, left lower approach, massive foreground lower-left boulder, and all small boulders protruding into the river at their original pixel-aligned positions and exact scales. No new rocks, new grass on walkable ground, fallen logs, bridges, railings, buildings, people, UI, arrows or text. Original shapes, camera, perspective and paths are mandatory, no redesign. Preserve the original foreground edge outlines so original transparency masks fit. Fully painted opaque image, no borders or crop.",
+  "references": [
+    "build/disc1/original/cut-43/geometry-guide.png",
+    "build/disc1/captures/cut-43/original/frame-0120.png",
+    "gfx/backgrounds/disc1/cut-38/source/base.png"
+  ],
+  "generatedSource": "exec-ff6468a2-b874-4107-aa70-325f2853d841.png"
+}

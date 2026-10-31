@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: background-extraction. Extract ONLY the horizontal steel double-headed battle AXE near top of image1. Keep exact axe design, golden fittings, dark wood handle, camera and orientation. Remove ALL other objects including armor, clock, fish, gloves, shoes, boots, flowers and sofa. Single entire axe on genuine transparent background, nothing else. No labels or shadows outside axe. Make opaque weapon metal and handle, transparent all surrounding pixels. Center axe with comfortable clear margins; same faithful detailed painted realism.",
+  "referenced_image_paths": [
+    "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/alternate-props-atlas.png"
+  ],
+  "transparent_background": true
+}

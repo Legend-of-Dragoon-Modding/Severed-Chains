@@ -1,0 +1,403 @@
+{
+  "cut": 181,
+  "dynamicLayers": [],
+  "layers": [
+    {
+      "layer": 0,
+      "bbox": [
+        266,
+        157,
+        317,
+        245
+      ],
+      "opaquePixels": 3829,
+      "backgroundOverlapPixels": 3829,
+      "dynamic": false
+    },
+    {
+      "layer": 1,
+      "bbox": [
+        219,
+        278,
+        249,
+        296
+      ],
+      "opaquePixels": 184,
+      "backgroundOverlapPixels": 184,
+      "dynamic": false
+    },
+    {
+      "layer": 2,
+      "bbox": [
+        188,
+        175,
+        266,
+        185
+      ],
+      "opaquePixels": 430,
+      "backgroundOverlapPixels": 430,
+      "dynamic": false
+    },
+    {
+      "layer": 3,
+      "bbox": [
+        268,
+        62,
+        313,
+        143
+      ],
+      "opaquePixels": 3437,
+      "backgroundOverlapPixels": 3437,
+      "dynamic": false
+    },
+    {
+      "layer": 4,
+      "bbox": [
+        104,
+        135,
+        156,
+        178
+      ],
+      "opaquePixels": 668,
+      "backgroundOverlapPixels": 668,
+      "dynamic": false
+    },
+    {
+      "layer": 5,
+      "bbox": [
+        87,
+        193,
+        122,
+        220
+      ],
+      "opaquePixels": 316,
+      "backgroundOverlapPixels": 316,
+      "dynamic": false
+    },
+    {
+      "layer": 6,
+      "bbox": [
+        190,
+        138,
+        212,
+        169
+      ],
+      "opaquePixels": 348,
+      "backgroundOverlapPixels": 348,
+      "dynamic": false
+    },
+    {
+      "layer": 7,
+      "bbox": [
+        292,
+        245,
+        462,
+        312
+      ],
+      "opaquePixels": 4473,
+      "backgroundOverlapPixels": 4473,
+      "dynamic": false
+    },
+    {
+      "layer": 8,
+      "bbox": [
+        356,
+        125,
+        374,
+        153
+      ],
+      "opaquePixels": 482,
+      "backgroundOverlapPixels": 482,
+      "dynamic": false
+    },
+    {
+      "layer": 9,
+      "bbox": [
+        56,
+        224,
+        174,
+        259
+      ],
+      "opaquePixels": 2709,
+      "backgroundOverlapPixels": 2709,
+      "dynamic": false
+    },
+    {
+      "layer": 10,
+      "bbox": [
+        0,
+        244,
+        56,
+        269
+      ],
+      "opaquePixels": 974,
+      "backgroundOverlapPixels": 974,
+      "dynamic": false
+    },
+    {
+      "layer": 11,
+      "bbox": [
+        272,
+        26,
+        290,
+        76
+      ],
+      "opaquePixels": 291,
+      "backgroundOverlapPixels": 291,
+      "dynamic": false
+    },
+    {
+      "layer": 12,
+      "bbox": [
+        354,
+        239,
+        415,
+        249
+      ],
+      "opaquePixels": 463,
+      "backgroundOverlapPixels": 463,
+      "dynamic": false
+    },
+    {
+      "layer": 13,
+      "bbox": [
+        73,
+        215,
+        208,
+        246
+      ],
+      "opaquePixels": 2827,
+      "backgroundOverlapPixels": 2827,
+      "dynamic": false
+    },
+    {
+      "layer": 14,
+      "bbox": [
+        73,
+        177,
+        215,
+        218
+      ],
+      "opaquePixels": 2784,
+      "backgroundOverlapPixels": 2784,
+      "dynamic": false
+    },
+    {
+      "layer": 15,
+      "bbox": [
+        188,
+        164,
+        219,
+        175
+      ],
+      "opaquePixels": 223,
+      "backgroundOverlapPixels": 223,
+      "dynamic": false
+    }
+  ],
+  "scriptEvidence": [],
+  "genericDoorTables": [],
+  "observed": {
+    "cut": 181,
+    "inspectionPassed": true,
+    "frames": 121,
+    "trace": "build/disc1/captures/cut-181/original/alignment.csv",
+    "gpuExportMatches": true,
+    "allObservedLayersFixedVisible": true,
+    "layers": [
+      {
+        "layer": 0,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 1,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 2,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 3,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 4,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 5,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 6,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 7,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 8,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 9,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 10,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 11,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 12,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 13,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 14,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      },
+      {
+        "layer": 15,
+        "states": [
+          {
+            "startX": 0,
+            "startY": 0,
+            "destX": 0,
+            "destY": 0,
+            "hidden": false
+          }
+        ]
+      }
+    ],
+    "fullGameplayVerified": false
+  }
+}

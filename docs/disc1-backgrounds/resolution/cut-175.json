@@ -1,0 +1,14 @@
+{
+  "cut": 175,
+  "packagingPrepared": true,
+  "runtimeInstalled": false,
+  "gameplayVerified": false,
+  "status": "native-depth-masks-shared-scenery-staged",
+  "issues": [],
+  "endpointReview": "Native BG/FG and64visibility combinations reviewed by parent and final_resolution: floor/wall palette variants preserve room geometry. One continuous painting with separate exact native mask textures avoids invented doors and source seams. Scripted visibility and depth remain intact.",
+  "sharedSceneryEvidence": "gfx/backgrounds/disc1/cut-175/source/layer-resolution/shared-scenery-review.json",
+  "validation": "build/disc1/staged/cut-175/layered-validation.json",
+  "trace": "build/disc1/captures/cut-175/original/alignment.csv",
+  "reviewPreviews": "gfx/backgrounds/disc1/cut-175/source/layer-resolution",
+  "limits": "Native variants are not pixel-identical; minor retail palette/texture variation intentionally unified. GPU character occlusion and full story/traversal remain unverified."
+}

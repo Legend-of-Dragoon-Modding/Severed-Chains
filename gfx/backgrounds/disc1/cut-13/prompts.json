@@ -1,0 +1,7 @@
+{
+  "tool": "built-in ImageGen (reused approved source)",
+  "source": "gfx/backgrounds/disc1/cut-742/source/base.png",
+  "generationPrompts": "gfx/backgrounds/disc1/cut-742/prompts.json",
+  "correctionPrompt": "gfx/backgrounds/disc1/cut-742/source/fortress-correction.json",
+  "reason": "Every original background and foreground texture is pixel-identical between cuts 13 and 742. Retain the approved fortress artwork consistently for the playable approach; validate its own gameplay separately."
+}

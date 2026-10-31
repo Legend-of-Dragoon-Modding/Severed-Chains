@@ -1,0 +1,16 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const cut = Number(process.argv[2]);
+assert(Number.isInteger(cut));
+assert(!process.argv[3] || ['--west-street', '--market-return', '--right-exit', '--lower-door', '--post-battle', '--upper-walkway', '--rear-exit', '--east-passage', '--storage-spur', '--lift-ascent', '--cell-spur', '--tower-exit', '--lift-return', '--tower-guards', '--upper-ascent', '--key-return', '--hall-exit', '--reunion-return', '--escape', '--storage-door', '--lower-bridge', '--upper-descent', '--cell-return', '--side-cell', '--cell-exit', '--lift-after-cell', '--lower-descent', '--escape-stairs', '--escape-hall', '--escape-boss', '--escape-victory', '--farmhouse', '--shed', '--cliff-return', '--chop', '--crossing', '--slide', '--upper-exit'].includes(process.argv[3]));
+const root = `build/disc1/captures/cut-${cut}${process.argv[3] ? process.argv[3].slice(1) : ''}/`;
+fs.rmSync(root + 'verification.json', {force: true});
+const original = fs.readFileSync(root + 'original/alignment.csv', 'utf8');
+const modern = fs.readFileSync(root + 'modern/alignment.csv', 'utf8');
+assert(original === modern, 'Alignment differs; check scripted starting pose before accepting');
+const completion = fs.readFileSync(root + 'original/completion.txt', 'utf8');
+assert(completion.startsWith(`Exited cut ${cut} to `));
+assert.equal(fs.readFileSync(root + 'modern/completion.txt', 'utf8'), completion);
+const report = {cut, exactAlignment: true, samples: original.trim().split('\n').length - 1, completion};
+fs.writeFileSync(root + 'verification.json', JSON.stringify(report, null, 2));
+console.log(JSON.stringify(report));

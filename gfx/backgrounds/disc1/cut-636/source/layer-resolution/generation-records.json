@@ -1,0 +1,96 @@
+{
+  "scope": "Source generation requests; readiness is separate in resolution/middle.json",
+  "records": [
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/room-base-candidate.png",
+      "prompt": "Create faithful high-resolution remaster of FIRST original FRONT-FACING timber cabin room. SECOND parchment-covered image is only realistic wood/warm-light/material style reference, do not paint parchment or copy its layout. Match FIRST exact3:2 fullcanvas room/framing/furniture positions: backwall atx.07..88,y.22..75, little arched brick fireplace leftlow, smallside tables, shield atx.36,y.46, sword horizontalx.28..48,y.29, mountedhorned animalhead atx.77,y.31, rectangularpainting atx.55,y.38, redflowersx.69,y.46, woodenladdercenterx.44,y.60, lowdoublebed rightx.47..77,y.55..75, redrug centeredbottomx.27..57,y.75. Books onlefttable. Smallfloorbasketnearx.3,y.72. Preserve ceiling beams and carvedwoodsignsilhouette, no legible text. Exterior outside original room should be darkwood/black, NEVERcyan fromsource placeholders. Realistically detailed agedtimber, clothbed, metalweapons, warmambientlight. Exact original object identities, no substitutedobjects, people, extra furniture, changed perspective, zoom/crop. This is BASE memory-game state; originalpixel footprints require fidelity.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/clean-original-guide.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/base.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/room-base-v2.png",
+      "prompt": "Correct FIRST timber-room picture to match SECOND original exact object identities/placements. Preserve roomcamera,framing,allbeams,floor,bed,redrug,painting,sword,flowers. ONLY fix these5items: replacecentral SHOVEL with SHORT WOODEN LADDER matchingoriginal atnormalizedx.411..464,y.48..723 (severalrungs,doNOTkeepanyshovel). Move SHIELDdownabout60pixels on1536x1024canvas: exactboundingrectangle x.310..409,y.406..609. Move lefttable BOOKSdown40pixels to x.099..182,y.547..660. Move mountedhornedanimalhead DOWN60pixels to originalboxx.718..865,y.258..406. Move small floor basket LEFT towardx.263..336,y.660..754. Fill olditempositionsnaturallywithsamewoodbackground,no duplicates. Followoriginal projectedshapes andidentities.No extraobjects/people/text. Same3:2fullcanvas.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/room-base-candidate.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/clean-original-guide.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/room-alternate.png",
+      "generatedOutput": "exec-8328584e-7fe9-4f73-a502-d95261b88c30.png",
+      "prompt": "Use case: precise-object-edit. Edit target image1 is a faithful high-detail fantasy memory-game room. Image2 is exact retail alternate-state layout guide. Preserve camera, room architecture, framing, every object location, warm lighting and all unchanged pixels as closely as possible. Swap exactly these ten props IN PLACE at their existing footprint: wall sword becomes axe; four books on left shelf become a single brown shoe; mounted boar head upper-right becomes mounted green fish; hanging leather basket upper-left becomes a suit of steel armor; framed landscape becomes round wall clock; shield left-center becomes pair of red boxing gloves; bed becomes dark upholstered sofa; ladder between fireplace and bed disappears revealing uninterrupted log wall; red flowers become blue flowers; small basket by fireplace floor becomes pair of brown boots. Match the second guide for exact placement of replacement silhouettes. No parchment cover. Do not move props or resize room. Keep timber, fireplace, rug, open doors and all background continuous. New detailed painted realistic textures, no pixel-art upscale, no characters, no extra objects, no writing changes.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/room-base-v2.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/alternate-original-guide.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/clean-room.png",
+      "generatedOutput": "exec-8145b13f-f68a-4c5f-afef-5188d2469068.png",
+      "prompt": "Use case: precise-object-edit. Edit image1 fantasy timber memory-game room. Remove exactly these ten props completely: wall sword; books on left shelf; mounted boar head and plaque upper right; hanging basket/leather bag upper left; framed landscape painting; shield left center; entire bed including wooden frame and pillows; ladder center; flower vase on right shelf; little basket on floor beside fireplace. Reveal continuous empty plaster/log wall, empty shelf and wooden floor behind each. Keep every other pixel, fireplace, beams, chains, sconce, rug, doors, all shelves and warm lighting and camera composition as closely as possible. This is a clean game underlay, no objects substituted, no parchment, no text changes, no people. Detailed painted realism matching original.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/room-base-v2.png"
+      ],
+      "transparent_background": false
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/base-props-atlas.png",
+      "generatedOutput": "exec-df74902b-a70b-4ca6-9c8c-4d01f76b8f10.png",
+      "prompt": "Use case: background-extraction. Extract ONLY these game props from image1 as a single transparent full-canvas atlas, retaining exact original pixel coordinates, size, color, light and silhouette: sword, books, boar head, leather basket upper left, painting, shield, bed, ladder, red flowers with vase, basket on floor. Make ALL surrounding architecture, plaster, log wall, shelves, fireplace, rug, floor, chains, door and framing fully transparent. Remove backdrop even between bars of ladder and around object edges. Keep each individual prop and its own mounting plaque/frame where relevant; do not keep rectangular wall patches or props' rectangular crop seams. Do not move, resize, duplicate or repaint objects. Genuine transparent PNG background; no checkered or solid-color matte. Canvas same aspect ratio. These separate sprites will be composited back over an independent clean room.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/alternate-props-atlas.png",
+      "generatedOutput": "exec-d9ecff82-8266-4edf-91a6-2d48815acefd.png",
+      "prompt": "Use case: background-extraction. Extract ONLY these game props from image1 as a single transparent full-canvas atlas, retaining exact original pixel coordinates, size, color, light and silhouette: axe, shoe, mounted green fish, suit of armor, clock, red boxing gloves, sofa, blue flowers with vase, boots. Make ALL surrounding architecture, plaster, log wall, shelves, fireplace, rug, floor, chains, door and framing fully transparent. Remove backdrop even between bars of ladder and around object edges. Keep each individual prop and its own mounting plaque/frame where relevant; do not keep rectangular wall patches or props' rectangular crop seams. Do not move, resize, duplicate or repaint objects. Genuine transparent PNG background; no checkered or solid-color matte. Canvas same aspect ratio. These separate sprites will be composited back over an independent clean room.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/swaps-visible.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/alternate-axe.png",
+      "generatedOutput": "exec-f5ab9b70-de3e-4af8-bfa6-91d53313e675.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the horizontal steel double-headed battle AXE near top of image1. Keep exact axe design, golden fittings, dark wood handle, camera and orientation. Remove ALL other objects including armor, clock, fish, gloves, shoes, boots, flowers and sofa. Single entire axe on genuine transparent background, nothing else. No labels or shadows outside axe. Make opaque weapon metal and handle, transparent all surrounding pixels. Center axe with comfortable clear margins; same faithful detailed painted realism.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/alternate-props-atlas.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/base-boar.png",
+      "generatedOutput": "exec-b5aafd45-3e98-4318-93e1-697f3080b36d.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the mounted boar head including its wooden plaque at upper right. Keep all fur, tusks, snout, eyes and plaque; no flowers/vase from image1. Preserve its detailed design, camera, exact perspective, warm light, texture and material. Remove EVERY other object completely. Center the complete single requested prop on genuine transparent background with small clear margins. No backdrop, no fragments of other objects, no writing, no labels, no frame around image. Faithful game prop sprite.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/base-props-atlas.png"
+      ],
+      "transparent_background": true
+    },
+    {
+      "mode": "built-in image_gen",
+      "output": "layer-resolution/base-bed.png",
+      "generatedOutput": "exec-03675318-d820-40c5-a6f4-0aaaa4635356.png",
+      "prompt": "Use case: background-extraction. Extract ONLY the entire wooden bed with four posts, white sheet, floral blanket and pillow at bottom right. Keep all four posts and the complete bed frame; no flower vase or flowers behind it from image1. Preserve its detailed design, camera, exact perspective, warm light, texture and material. Remove EVERY other object completely. Center the complete single requested prop on genuine transparent background with small clear margins. No backdrop, no fragments of other objects, no writing, no labels, no frame around image. Faithful game prop sprite.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/base-props-atlas.png"
+      ],
+      "transparent_background": true
+    }
+  ]
+}

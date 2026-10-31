@@ -1,0 +1,1465 @@
+{
+  "background": {
+    "source": "continuous-wall.png",
+    "patches": [
+      {
+        "source": "empty-portal-squat.png",
+        "sourceBounds": [
+          380,
+          1100,
+          680,
+          1300
+        ],
+        "targetBounds": [
+          232,
+          202,
+          290,
+          236
+        ],
+        "maskBackgroundRgb": true,
+        "exteriorRgb": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ],
+          [
+            24,
+            16,
+            16
+          ]
+        ]
+      },
+      {
+        "source": "empty-portal-squat.png",
+        "sourceBounds": [
+          0,
+          0,
+          1007,
+          984
+        ],
+        "targetBounds": [
+          238,
+          151,
+          288,
+          202
+        ]
+      },
+      {
+        "source": "empty-portal-squat.png",
+        "sourceBounds": [
+          0,
+          984,
+          1007,
+          1562
+        ],
+        "targetBounds": [
+          238,
+          202,
+          288,
+          232
+        ],
+        "maskBackgroundRgb": true,
+        "exteriorRgb": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ],
+          [
+            24,
+            16,
+            16
+          ]
+        ]
+      }
+    ]
+  },
+  "layers": {
+    "0": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "1": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "2": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "3": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "4": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "5": {
+      "source": "outer-open-leaf-clean-scene.png",
+      "clearRetailExteriorRgb": {
+        "bounds": [
+          232,
+          202,
+          290,
+          236
+        ],
+        "colors": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ],
+          [
+            24,
+            16,
+            16
+          ]
+        ],
+        "polygon": [
+          [
+            248,
+            228
+          ],
+          [
+            278,
+            204
+          ],
+          [
+            290,
+            236
+          ],
+          [
+            232,
+            236
+          ]
+        ]
+      }
+    },
+    "6": {
+      "source": "closed-door-scene-final.png",
+      "clearRetailExteriorRgb": {
+        "bounds": [
+          232,
+          202,
+          290,
+          236
+        ],
+        "colors": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            8,
+            8
+          ],
+          [
+            16,
+            16,
+            16
+          ],
+          [
+            24,
+            16,
+            16
+          ]
+        ],
+        "polygon": [
+          [
+            248,
+            228
+          ],
+          [
+            278,
+            204
+          ],
+          [
+            290,
+            236
+          ],
+          [
+            232,
+            236
+          ]
+        ]
+      }
+    },
+    "7": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "8": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "9": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "10": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "11": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "12": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "13": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    },
+    "14": {
+      "source": "continuous-wall.png",
+      "patches": [
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            380,
+            1100,
+            680,
+            1300
+          ],
+          "targetBounds": [
+            232,
+            202,
+            290,
+            236
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            0,
+            1007,
+            984
+          ],
+          "targetBounds": [
+            238,
+            151,
+            288,
+            202
+          ]
+        },
+        {
+          "source": "empty-portal-squat.png",
+          "sourceBounds": [
+            0,
+            984,
+            1007,
+            1562
+          ],
+          "targetBounds": [
+            238,
+            202,
+            288,
+            232
+          ],
+          "maskBackgroundRgb": true,
+          "exteriorRgb": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              8,
+              8,
+              8
+            ],
+            [
+              16,
+              16,
+              16
+            ],
+            [
+              24,
+              16,
+              16
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "dynamicLayers": [
+    6
+  ],
+  "visualReview": true,
+  "evidence": [
+    "Charred continuous-wall independent underlay with native-registered portal; cut626 foreground6 mask verified identical to102. Exact original alpha retained.",
+    "Native foreground5 is fixed open outer door leaf, foreground6 independent inner door. Dedicated full-scene RGB5 preserves paired-door semantics; all original alpha/depth retained.",
+    "ActualGPU footing review: generated portal alpha left a black RGB wedge inside original opaque landing pixels. Opaque stone support now fills native232,202..290,236 before the portal patches; original BG/FG alpha silhouettes unchanged.",
+    "Supporting floor RGB is restricted to the original nonblack BG footprint. Retail BG has opaque black exterior pixels, so alpha alone cannot define its rounded landing edge. Native alpha remains unchanged.",
+    "Supporting floor RGB follows the native colored footprint, excluding opaque neutral-grey0/8/16 exterior checker pixels. Alpha alone cannot define the original rounded landing edge; all native alpha remains unchanged.",
+    "Supporting floor RGB follows the native footprint. Exterior checker palette is0/8/16 neutral grey;626 alsohas(24,16,16) red-tinted checker. These exact colors are excluded, while all native alpha remains unchanged.",
+    "Supporting floor RGB follows native BG/foreground footprints. Exterior checker palette is0/8/16 neutral grey;626 alsohas(24,16,16) red-tinted checker. Exact checker colors are cleared in foreground5/6 floor context below202, while all native alpha remains unchanged.",
+    "Supporting floor RGB follows native BG/foreground footprints. Exterior checker palette is0/8/16 neutral grey;626 alsohas(24,16,16) red-tinted checker. Exact checker colors are cleared in foreground5/6 floor context below202, while all native alpha remains unchanged."
+  ],
+  "reviewStatus": "Precise portal atlas source review passed; endpoint review pending"
+}

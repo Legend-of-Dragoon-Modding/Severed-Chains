@@ -1,0 +1,8 @@
+{
+  "tool": "built-in ImageGen",
+  "prompt": "Use case: style-transfer. Asset type: fixed-camera prerendered RPG environment for cut 8, ruined Seles. Image 1 is the original composition reference; image 2 is approved modern Seles style reference only. Repaint image 1 as a detailed realistic 2026 game environment, preserving its exact 5:4 full canvas, camera and perspective. Lock all geometry: mountains and sunset horizon across upper third; ruined stone house left with arched door x10% y64%; well at x28% y73%; cemetery and leafless tree at x28% y48%; large roofless stone ruin at right x72%-100%, arched entrance x78% y73%; broad open dusty courtyard and central rear exit at x64% y56%; low ruined foreground walls and fences remain at their exact positions. Preserve every doorway, walkable surface, silhouette and foreground boundary. Add realistic masonry, charred timber, earth and bare bark detail without adding obstacles or changing positions. Match warm restrained sunset light and photorealistic material quality of reference 2. No characters, interface, text, extra trees, smoke, props or buildings. No zoom, crop or camera change. Produce full scene, not side-by-side. Requested final asset canvas 2560x2048.",
+  "references": [
+    "build/disc1/original/cut-8/background.png",
+    "gfx/backgrounds/seles-overlook/background.png"
+  ]
+}

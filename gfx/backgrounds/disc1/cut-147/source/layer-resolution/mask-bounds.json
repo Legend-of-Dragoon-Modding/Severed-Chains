@@ -1,0 +1,47 @@
+[
+  {
+    "name": "background",
+    "bounds": [
+      0,
+      0,
+      384,
+      512
+    ]
+  },
+  {
+    "name": "foreground-0",
+    "bounds": [
+      278,
+      213,
+      322,
+      232
+    ]
+  },
+  {
+    "name": "foreground-1",
+    "bounds": [
+      77,
+      401,
+      119,
+      429
+    ]
+  },
+  {
+    "name": "foreground-2",
+    "bounds": [
+      299,
+      383,
+      328,
+      417
+    ]
+  },
+  {
+    "name": "foreground-3",
+    "bounds": [
+      275,
+      79,
+      310,
+      102
+    ]
+  }
+]

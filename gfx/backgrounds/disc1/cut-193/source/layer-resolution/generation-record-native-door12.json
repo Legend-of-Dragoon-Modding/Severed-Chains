@@ -1,0 +1,9 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Faithfully reconstruct this original game CLOSED wooden door sprite at high resolution. Keep exact original canvas crop, projected wide proportions, rounded top, position and outline of image1. Rich reddish golden weathered planks with THREE dark green-black horizontal iron straps and small rivets, medieval fantasy style, slightly green ambient light. Preserve original subtle perspective. It is just the WOODEN LEAF, no stone frame, no walls, arch or floor, no handles beyond original tiny hardware. Fill every pixel inside the original wood door silhouette with proper wooden texture, genuinely transparent outside; do not leave a margin. Same original wide height-to-width ratio; no redesign or tall narrowing.",
+  "inputs": [
+    "original-panel-12.png"
+  ],
+  "output": "generated-closed-door12.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-47ef745f-d31b-4094-a4bc-379cada63e75.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

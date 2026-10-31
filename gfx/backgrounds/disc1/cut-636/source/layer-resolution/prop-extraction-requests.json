@@ -1,0 +1,22 @@
+[
+  {
+    "name": "base",
+    "args": {
+      "prompt": "Use case: background-extraction. Extract ONLY these game props from image1 as a single transparent full-canvas atlas, retaining exact original pixel coordinates, size, color, light and silhouette: sword, books, boar head, leather basket upper left, painting, shield, bed, ladder, red flowers with vase, basket on floor. Make ALL surrounding architecture, plaster, log wall, shelves, fireplace, rug, floor, chains, door and framing fully transparent. Remove backdrop even between bars of ladder and around object edges. Keep each individual prop and its own mounting plaque/frame where relevant; do not keep rectangular wall patches or props' rectangular crop seams. Do not move, resize, duplicate or repaint objects. Genuine transparent PNG background; no checkered or solid-color matte. Canvas same aspect ratio. These separate sprites will be composited back over an independent clean room.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/dynamic-hidden.png"
+      ],
+      "transparent_background": true
+    }
+  },
+  {
+    "name": "alternate",
+    "args": {
+      "prompt": "Use case: background-extraction. Extract ONLY these game props from image1 as a single transparent full-canvas atlas, retaining exact original pixel coordinates, size, color, light and silhouette: axe, shoe, mounted green fish, suit of armor, clock, red boxing gloves, sofa, blue flowers with vase, boots. Make ALL surrounding architecture, plaster, log wall, shelves, fireplace, rug, floor, chains, door and framing fully transparent. Remove backdrop even between bars of ladder and around object edges. Keep each individual prop and its own mounting plaque/frame where relevant; do not keep rectangular wall patches or props' rectangular crop seams. Do not move, resize, duplicate or repaint objects. Genuine transparent PNG background; no checkered or solid-color matte. Canvas same aspect ratio. These separate sprites will be composited back over an independent clean room.",
+      "referenced_image_paths": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-636/source/layer-resolution/swaps-visible.png"
+      ],
+      "transparent_background": true
+    }
+  }
+]

@@ -1,0 +1,129 @@
+{
+  "records": [
+    {
+      "key": "early145Bookcase",
+      "cut": 145,
+      "prompt": "Use case: precise-object-edit. Edit this exact cutaway fantasy house fullscene. Remove ONLY the small rightmost bookcase section on UPPER CENTRAL LIBRARY bookwall at normalized x.518..547,y.293..418. Leave that narrow section as a coherent empty alcove with warm plaster/timber back wall and existing woodfloor extending into it, seamlessly matching surrounding libraryarchitecture. This is a movable bookcase's revealed background, do not add redfloorcarpet ordoor inalcove. Keep all otherbookshelves/books, ladders, furniture,blackbackground,camera,lighting identical. Keep all telescope stands/headless windows identical frominput. Samefull3:1canvas nozoom,nocrop,nopeople.",
+      "references": [
+        "C:/Users/20te/.codex/generated_images/01a18f3e-c34d-72d2-832f-dcd378b8b2eb/exec-9b686259-9cf9-4281-a1d7-20b09e61e70d.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-0dd85a90-ea84-44eb-9305-cc28328406a5.png",
+      "localAssetOrRole": "bookcase-alcove.png"
+    },
+    {
+      "key": "early145Default",
+      "cut": 145,
+      "prompt": "Use case: precise-object-edit. Edit exact fullcutawayhouse image. Fix TWO headless telescope stands in stacked right observatory windows by adding brass telescope tubes at PRECISE height, and trimming unwanted old tall mount caps. Upper stand: horizontal brass opticaltube centered x1695,y244 in 2169x725 image; tubeextent x1648..1728,y237..249. Remove old isolated mount cap/stem ABOVE y237 inupperwindow, replacewithsky. Tripodbelow remainsattached atcenter1695,249. Lower stand: horizontal brass telescope tube centered x1712,y354, extent x1657..1740,y347..360. Trim old tall mount sticking ABOVE y347 inlowerwindow, replacingwithsky; tube mountsontopof column at1712,360. No metal tube/cap may exist outside these boundedboxes, apartfromexistingtripods BELOW. Both tubespointLEFT horizontally. Keep original standsbelowthoseheights, windows,woodbeams,scenery,camera,allrooms,books,lightingandfull3:1canvas exactunchanged. No newprops, nozoom/crop. These are exact gamesprite registration constraints.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-145/source/layer-resolution/headless-telescopes.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-4934ef63-69b8-431f-bce2-3b17ae83045b.png",
+      "localAssetOrRole": "Rejected final atlas: opaque window resampling introduced sky seams; retained as style reference"
+    },
+    {
+      "key": "early145Alternate",
+      "cut": 145,
+      "prompt": "Use case: precise-object-edit. Edit this exact house scene, changing ONLY two brass telescope optical tubes. Upper smalltelescope: tilt tube 8 degrees upward toLEFT aroundsamepivot; lowerlarge telescope: tilt tube8degrees upwardtoRIGHT aroundsamepivot. VERY small rotation. Keep opticaltube pivotcenter exactlysame, keepall stands/tripods/columns identical, no translating. Keep all tube pixels within existing narrowwindowarea, tube height changesatmost8pixels. Preserveeverywindowedge,wall,beam,book,floor,room,camera,lightingandfullcanvas exact. Nootheredits,nozoom/crop. This is alternate angle sprite-source; registrationiscritical.",
+      "references": [
+        "C:/Users/20te/.codex/generated_images/01a18f3e-52d2-7111-bb97-2fee9ecd46f4/exec-4934ef63-69b8-431f-bce2-3b17ae83045b.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-41e008cb-4a0e-4c5d-b859-06d02f57124c.png",
+      "localAssetOrRole": "Rejected final atlas: opaque window resampling introduced sky seams"
+    },
+    {
+      "key": "early145EmptyWindows",
+      "cut": 145,
+      "prompt": "Use case: precise-object-edit. Edit this exact cutawayhouse scene into clean window underlay. In TWO stacked observatory rooms at rightcenter, remove the TWO ENTIRE BRASS TELESCOPE UNITS: every telescope opticaltube, tripod/verticalstand, mountcapsandfeet. Upperunit atnormalized x.759..798,y.30..385; lowerunit atx.775..805,y.44..54. Reveal continuous existing window sky/scenery behind units and existing woodfloor ordesk surface below. NO telescopepart may remain in eitherwindow. Keep windows,beams,wall,shelves,woodfloor,deskedgeandallothersceneobjects unchanged. Nootheredits,nocrop,zoom. Samefull3:1canvas.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-145/source/layer-resolution/headless-telescopes.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-e2241f02-98b5-4dec-b681-86d7586e3f22.png",
+      "localAssetOrRole": "empty-windows.png"
+    },
+    {
+      "key": "early145UpperUnit",
+      "cut": 145,
+      "prompt": "Generate a single isolated miniature medieval BRASS TELESCOPE with short three-legged tripod, matching warmgold polished wornbrass style of supplied house's upper observatory telescope. Horizontal optical tube points LEFT; thick frontlensleft, small eyepieceright, centeredpivot under tube. Shorttripod attachedbelow center-right, threefeet ground on samebaseline. Entireunitinframe, transparentbackground, NO floor, NO sky, NO window, NOshadow outsideunit, noframe, nootherobjects. Unitproportions roughlywidth2timesheight, coherent3Dpainted fantasygameasset, view straightfrontslightlyfromabove. Tube/stand must be distinct crispmaterial edges with genuine alpha.",
+      "references": [
+        "C:/Users/20te/.codex/generated_images/01a18f3e-52d2-7111-bb97-2fee9ecd46f4/exec-4934ef63-69b8-431f-bce2-3b17ae83045b.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-f111f3fb-cd16-4937-8bc0-17c0b95b1884.png",
+      "localAssetOrRole": "upper-unit-default.png"
+    },
+    {
+      "key": "early145UpperAlt",
+      "cut": 145,
+      "prompt": "Edit this exact isolated brass telescope sprite. Rotate ONLY opticaltube 8 degrees upwardtoLEFT aboutsamepivot. Preserve exactlysamecanvasandalltripodparts positions,scale,lighting,materials andtransparentbackground. Opticaltube remainsfullyinsidecanvas, don'tmoveunit. Nootherchanges.",
+      "references": [
+        "C:/Users/20te/.codex/generated_images/01a18f3e-52d2-7111-bb97-2fee9ecd46f4/exec-f111f3fb-cd16-4937-8bc0-17c0b95b1884.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-1b7ccd48-0345-46e1-8bb1-6c5c1bb92257.png",
+      "localAssetOrRole": "upper-unit-alternate.png"
+    },
+    {
+      "key": "early145LowerUnit",
+      "cut": 145,
+      "prompt": "Generate isolated brass telescope matching opticaltube andwarmbrassmaterial ofreference. Horizontal longtube pointsLEFT. Replace shorttripod with a TALL SINGLE ORNATE BRASS COLUMN PEDESTAL onroundweightedbase. Columnextendsbelowpivot vertically, totalunitproportionwidth1.4timesheight. Viewstraightfrontslightlyabove, paintedfantasygameasset. Entireunitfullyinframe, centered, transparentbackground, NOsky/window/floor/shadow orotherobjects. Tube atopcolumn physicallyattached; three decoratedringsoncolumn.",
+      "references": [
+        "C:/Users/20te/.codex/generated_images/01a18f3e-52d2-7111-bb97-2fee9ecd46f4/exec-f111f3fb-cd16-4937-8bc0-17c0b95b1884.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-c642133c-582b-43eb-ae9d-d8d405d89600.png",
+      "localAssetOrRole": "lower-unit-default.png"
+    },
+    {
+      "key": "early145LowerAlt",
+      "cut": 145,
+      "prompt": "Edit this exact isolated brass telescope with column sprite. Rotate ONLY opticaltube 8degrees upwardtoRIGHT aboutsamepivot. Keep exactsametransparentcanvas dimensions,unitpositionandallcolumn/baseparts identicalpixels; no resizing,shiftingorrecropping. Pivotcenter unchanged. Tube remainsfullyinframe. Preservebrassmaterialandlighting. No other changes, no background.",
+      "references": [
+        "C:/Users/20te/.codex/generated_images/01a18f3e-52d2-7111-bb97-2fee9ecd46f4/exec-c642133c-582b-43eb-ae9d-d8d405d89600.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:\\Users\\20te\\.codex\\generated_images\\01a18f3e-52d2-7111-bb97-2fee9ecd46f4\\exec-2983b81d-5cba-432f-9427-d9287f75553d.png",
+      "localAssetOrRole": "lower-unit-alternate.png"
+    },
+    {
+      "cut": 145,
+      "key": "background-request.json",
+      "prompt": "Use case: precise-object-edit. Image1 edit target is a detailed warm painted fantasy house cross-section. Image2 is retail background reference with EXACT geometry. Preserve every room, camera, architecture, props and warm lighting except three tightly limited rectangles. Canvas 768x256 coordinate system regardless output size. (A) x398..420 y75..107, small part of central upper library near bottom right of tall bookcase: remove the moving SMALL bookshelf panel only, restore bare wooden wall and red skirting behind it. (B) x55..81 y94..123 in leftmost upper small room at doorway: replace open doorway with CLOSED red-painted wooden door. (C) x579..619 y83..143, telescope room upper right across two stacked windows: keep telescope existing base pose and everything else. All other room doors remain OPEN as image1. These are independent background states for game overlays; do not change whole room layouts or invent additions. No people or text.",
+      "references": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/base.png",
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/reference-original.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:/Users/20te/.codex/generated_images/01a18f3e-c34d-72d2-832f-dcd378b8b2eb/exec-b5e4eda7-8b94-4f43-a1a7-9a6814d658d4.png",
+      "localAssetOrRole": "background-state-source.png: red closed door15 only; previous bookcase patch rejected"
+    },
+    {
+      "cut": 145,
+      "key": "telescope-request.json",
+      "prompt": "Use case: precise-object-edit. Edit target image1 is a fantasy house cutaway. Preserve all room geometry, furnishings, lighting, camera and colors. Change only telescope poses in the two stacked open-window observatory rooms at right-center. In upper room, rotate the small brass telescope to point UP LEFT at 25 degrees rather than horizontal. In lower room, rotate its tall telescope head to point UP RIGHT at 30 degrees. Keep all brass stands and window positions. No other edits, no additional objects. Detailed faithful painted game background.",
+      "references": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:/Users/20te/.codex/generated_images/01a18f3e-c34d-72d2-832f-dcd378b8b2eb/exec-79081787-fcb9-44a1-99ac-5057291c8666.png",
+      "localAssetOrRole": "Rejected: fullscene alternate telescope positions extend outside native20 mask"
+    },
+    {
+      "cut": 145,
+      "key": "telescope-clean-request.json",
+      "prompt": "Use case: precise-object-edit. Edit image1 fantasy cutaway house. Keep all geometry, room layout, lighting and all furniture unchanged. In the two observatory rooms at right center, REMOVE ONLY brass telescope optical TUBES/HEADS, preserving brass tripods, vertical supports and their bases in exactly the same positions. Reveal pale window sky behind removed tubes. Do not remove shelves or windows. Also keep original library bookshelf unchanged. No other edits, no extra props. This is independent background underlay; game will add telescope tubes separately.",
+      "references": [
+        "C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-145/source/base.png"
+      ],
+      "mode": "builtin image_gen",
+      "output": "C:/Users/20te/.codex/generated_images/01a18f3e-c34d-72d2-832f-dcd378b8b2eb/exec-9b686259-9cf9-4281-a1d7-20b09e61e70d.png",
+      "localAssetOrRole": "Intermediate headless-telescopes.png; retained stands, required further cleanup"
+    }
+  ],
+  "reusedSource": {
+    "wooden-door-source.png": "Copied from cut144/source/layer-resolution/closed-candidate.png; sourceBounds1685,274..1738,378; original generation provenance retained by middle worker144."
+  }
+}

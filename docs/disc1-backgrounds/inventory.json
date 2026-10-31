@@ -1,0 +1,5098 @@
+[
+  {
+    "cut": 0,
+    "area": "Forest",
+    "area_id": 1,
+    "source": "files\\SECT\\DRGN21.BIN\\4",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 114,
+        "scene": 1
+      },
+      {
+        "cut": 624,
+        "scene": 10
+      },
+      {
+        "cut": 13,
+        "scene": 16
+      },
+      {
+        "cut": 45,
+        "scene": 0
+      },
+      {
+        "cut": 38,
+        "scene": 4
+      },
+      {
+        "cut": 171,
+        "scene": 0
+      },
+      {
+        "cut": 2,
+        "scene": 0
+      },
+      {
+        "cut": 153,
+        "scene": 11
+      },
+      {
+        "cut": 95,
+        "scene": 2
+      },
+      {
+        "cut": 130,
+        "scene": 11
+      },
+      {
+        "cut": 4,
+        "scene": 0
+      },
+      {
+        "cut": 140,
+        "scene": 1
+      },
+      {
+        "cut": 106,
+        "scene": 19
+      },
+      {
+        "cut": 675,
+        "scene": 3
+      },
+      {
+        "cut": 66,
+        "scene": 40
+      },
+      {
+        "cut": 9,
+        "scene": 6
+      }
+    ],
+    "status": "excluded-debug-menu",
+    "chronological_order": null
+  },
+  {
+    "cut": 1,
+    "area": "Forest",
+    "area_id": 1,
+    "source": "files\\SECT\\DRGN21.BIN\\7",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 114,
+        "scene": 1
+      },
+      {
+        "cut": 624,
+        "scene": 10
+      },
+      {
+        "cut": 13,
+        "scene": 16
+      },
+      {
+        "cut": 45,
+        "scene": 0
+      },
+      {
+        "cut": 38,
+        "scene": 4
+      },
+      {
+        "cut": 171,
+        "scene": 0
+      },
+      {
+        "cut": 2,
+        "scene": 0
+      },
+      {
+        "cut": 153,
+        "scene": 11
+      },
+      {
+        "cut": 95,
+        "scene": 2
+      },
+      {
+        "cut": 130,
+        "scene": 11
+      },
+      {
+        "cut": 4,
+        "scene": 0
+      },
+      {
+        "cut": 140,
+        "scene": 1
+      },
+      {
+        "cut": 106,
+        "scene": 19
+      },
+      {
+        "cut": 675,
+        "scene": 3
+      },
+      {
+        "cut": 66,
+        "scene": 40
+      },
+      {
+        "cut": 9,
+        "scene": 6
+      }
+    ],
+    "status": "excluded-debug-menu",
+    "chronological_order": null
+  },
+  {
+    "cut": 2,
+    "area": "Forest",
+    "area_id": 1,
+    "source": "files\\SECT\\DRGN21.BIN\\10",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 309,
+        "scene": 33
+      },
+      {
+        "cut": 239,
+        "scene": 7
+      },
+      {
+        "cut": 251,
+        "scene": 9
+      },
+      {
+        "cut": 285,
+        "scene": 32
+      },
+      {
+        "cut": 261,
+        "scene": 0
+      },
+      {
+        "cut": 3,
+        "scene": 0
+      },
+      {
+        "cut": 202,
+        "scene": 31
+      },
+      {
+        "cut": 297,
+        "scene": 43
+      },
+      {
+        "cut": 323,
+        "scene": 1
+      },
+      {
+        "cut": 1,
+        "scene": 0
+      },
+      {
+        "cut": 302,
+        "scene": 0
+      },
+      {
+        "cut": 201,
+        "scene": 0
+      },
+      {
+        "cut": 287,
+        "scene": 14
+      },
+      {
+        "cut": 231,
+        "scene": 0
+      }
+    ],
+    "status": "excluded-debug-menu",
+    "chronological_order": null
+  },
+  {
+    "cut": 3,
+    "area": "Forest",
+    "area_id": 1,
+    "source": "files\\SECT\\DRGN21.BIN\\13",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 465,
+        "scene": 0
+      },
+      {
+        "cut": 347,
+        "scene": 0
+      },
+      {
+        "cut": 379,
+        "scene": 1
+      },
+      {
+        "cut": 393,
+        "scene": 23
+      },
+      {
+        "cut": 381,
+        "scene": 24
+      },
+      {
+        "cut": 441,
+        "scene": 19
+      },
+      {
+        "cut": 4,
+        "scene": 0
+      },
+      {
+        "cut": 433,
+        "scene": 2
+      },
+      {
+        "cut": 477,
+        "scene": 1
+      },
+      {
+        "cut": 2,
+        "scene": 0
+      },
+      {
+        "cut": 457,
+        "scene": 1
+      },
+      {
+        "cut": 710,
+        "scene": 0
+      },
+      {
+        "cut": 413,
+        "scene": 0
+      },
+      {
+        "cut": 339,
+        "scene": 18
+      }
+    ],
+    "status": "excluded-debug-menu",
+    "chronological_order": null
+  },
+  {
+    "cut": 4,
+    "area": "Forest",
+    "area_id": 1,
+    "source": "files\\SECT\\DRGN21.BIN\\16",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 583,
+        "scene": 7
+      },
+      {
+        "cut": 264,
+        "scene": 27
+      },
+      {
+        "cut": 260,
+        "scene": 0
+      },
+      {
+        "cut": 563,
+        "scene": 7
+      },
+      {
+        "cut": 279,
+        "scene": 31
+      },
+      {
+        "cut": 1,
+        "scene": 0
+      },
+      {
+        "cut": 528,
+        "scene": 3
+      },
+      {
+        "cut": 599,
+        "scene": 0
+      },
+      {
+        "cut": 3,
+        "scene": 0
+      },
+      {
+        "cut": 539,
+        "scene": 0
+      },
+      {
+        "cut": 745,
+        "scene": 58
+      },
+      {
+        "cut": 569,
+        "scene": 0
+      },
+      {
+        "cut": 513,
+        "scene": 0
+      }
+    ],
+    "status": "excluded-debug-menu",
+    "chronological_order": null
+  },
+  {
+    "cut": 5,
+    "area": "Forest",
+    "area_id": 2,
+    "source": "files\\SECT\\DRGN21.BIN\\19",
+    "backgrounds": 3,
+    "foregrounds": 3,
+    "exits": [
+      {
+        "cut": 624,
+        "scene": 12
+      },
+      {
+        "cut": 625,
+        "scene": 20
+      },
+      {
+        "cut": 624,
+        "scene": 12
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 14
+  },
+  {
+    "cut": 6,
+    "area": "Forest",
+    "area_id": 2,
+    "source": "files\\SECT\\DRGN21.BIN\\22",
+    "backgrounds": 6,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 625,
+        "scene": 1
+      },
+      {
+        "cut": 7,
+        "scene": 1
+      },
+      {
+        "cut": 5,
+        "scene": 30
+      },
+      {
+        "cut": 6,
+        "scene": 17
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 16
+  },
+  {
+    "cut": 7,
+    "area": "Forest",
+    "area_id": 2,
+    "source": "files\\SECT\\DRGN21.BIN\\25",
+    "backgrounds": 6,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 6,
+        "scene": 15
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 17
+  },
+  {
+    "cut": 8,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\28",
+    "backgrounds": 10,
+    "foregrounds": 5,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 9,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\31",
+    "backgrounds": 3,
+    "foregrounds": 4,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 6
+  },
+  {
+    "cut": 10,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\34",
+    "backgrounds": 6,
+    "foregrounds": 5,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 7
+  },
+  {
+    "cut": 11,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\37",
+    "backgrounds": 6,
+    "foregrounds": 6,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 12,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\40",
+    "backgrounds": 10,
+    "foregrounds": 14,
+    "exits": [
+      {
+        "cut": 10,
+        "scene": 16
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 9
+  },
+  {
+    "cut": 13,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\43",
+    "backgrounds": 6,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 18
+  },
+  {
+    "cut": 14,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\46",
+    "backgrounds": 3,
+    "foregrounds": 3,
+    "exits": [
+      {
+        "cut": 13,
+        "scene": 23
+      },
+      {
+        "cut": 15,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 19
+  },
+  {
+    "cut": 15,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\49",
+    "backgrounds": 5,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 16,
+        "scene": 24
+      },
+      {
+        "cut": 17,
+        "scene": 11
+      },
+      {
+        "cut": 14,
+        "scene": 9
+      },
+      {
+        "cut": 23,
+        "scene": 0
+      },
+      {
+        "cut": 16,
+        "scene": 7
+      },
+      {
+        "cut": 23,
+        "scene": 23
+      },
+      {
+        "cut": 23,
+        "scene": 45
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 22
+  },
+  {
+    "cut": 16,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\52",
+    "backgrounds": 8,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 19,
+        "scene": 1
+      },
+      {
+        "cut": 15,
+        "scene": 45
+      },
+      {
+        "cut": 19,
+        "scene": 15
+      },
+      {
+        "cut": 15,
+        "scene": 4
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 21
+  },
+  {
+    "cut": 17,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\55",
+    "backgrounds": 5,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 15,
+        "scene": 11
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 23
+  },
+  {
+    "cut": 18,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\58",
+    "backgrounds": 8,
+    "foregrounds": 20,
+    "exits": [
+      {
+        "cut": 19,
+        "scene": 34
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 19,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\61",
+    "backgrounds": 6,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 16,
+        "scene": 6
+      },
+      {
+        "cut": 16,
+        "scene": 10
+      },
+      {
+        "cut": 18,
+        "scene": 2
+      },
+      {
+        "cut": 16,
+        "scene": 6
+      },
+      {
+        "cut": 16,
+        "scene": 10
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 24
+  },
+  {
+    "cut": 20,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\64",
+    "backgrounds": 6,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 28,
+        "scene": 4
+      },
+      {
+        "cut": 31,
+        "scene": 0
+      },
+      {
+        "cut": 25,
+        "scene": 18
+      },
+      {
+        "cut": 23,
+        "scene": 20
+      },
+      {
+        "cut": 21,
+        "scene": 28
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 26
+  },
+  {
+    "cut": 21,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\67",
+    "backgrounds": 10,
+    "foregrounds": 21,
+    "exits": [
+      {
+        "cut": 20,
+        "scene": 28
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 27
+  },
+  {
+    "cut": 22,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\70",
+    "backgrounds": 3,
+    "foregrounds": 17,
+    "exits": [
+      {
+        "cut": 31,
+        "scene": 5
+      },
+      {
+        "cut": 31,
+        "scene": 5
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 39
+  },
+  {
+    "cut": 23,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\73",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 20,
+        "scene": 22
+      },
+      {
+        "cut": 15,
+        "scene": 41
+      },
+      {
+        "cut": 15,
+        "scene": 33
+      },
+      {
+        "cut": 20,
+        "scene": 22
+      },
+      {
+        "cut": 15,
+        "scene": 33
+      },
+      {
+        "cut": 15,
+        "scene": 50
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 25
+  },
+  {
+    "cut": 24,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\76",
+    "backgrounds": 3,
+    "foregrounds": 15,
+    "exits": [
+      {
+        "cut": 25,
+        "scene": 34
+      },
+      {
+        "cut": 25,
+        "scene": 33
+      },
+      {
+        "cut": 640,
+        "scene": 0
+      },
+      {
+        "cut": 26,
+        "scene": 2
+      },
+      {
+        "cut": 26,
+        "scene": 23
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 29
+  },
+  {
+    "cut": 25,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\79",
+    "backgrounds": 3,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 26,
+        "scene": 34
+      },
+      {
+        "cut": 26,
+        "scene": 33
+      },
+      {
+        "cut": 21,
+        "scene": 28
+      },
+      {
+        "cut": 20,
+        "scene": 7
+      },
+      {
+        "cut": 24,
+        "scene": 23
+      },
+      {
+        "cut": 24,
+        "scene": 2
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 28
+  },
+  {
+    "cut": 26,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\82",
+    "backgrounds": 3,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 642,
+        "scene": 1
+      },
+      {
+        "cut": 24,
+        "scene": 34
+      },
+      {
+        "cut": 24,
+        "scene": 12
+      },
+      {
+        "cut": 641,
+        "scene": 2
+      },
+      {
+        "cut": 25,
+        "scene": 23
+      },
+      {
+        "cut": 25,
+        "scene": 2
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 30
+  },
+  {
+    "cut": 27,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\85",
+    "backgrounds": 3,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 643,
+        "scene": 0
+      },
+      {
+        "cut": 28,
+        "scene": 32
+      },
+      {
+        "cut": 645,
+        "scene": 0
+      },
+      {
+        "cut": 28,
+        "scene": 26
+      },
+      {
+        "cut": 29,
+        "scene": 14
+      },
+      {
+        "cut": 29,
+        "scene": 13
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 37
+  },
+  {
+    "cut": 28,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\88",
+    "backgrounds": 3,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 29,
+        "scene": 0
+      },
+      {
+        "cut": 29,
+        "scene": 24
+      },
+      {
+        "cut": 20,
+        "scene": 0
+      },
+      {
+        "cut": 27,
+        "scene": 35
+      },
+      {
+        "cut": 27,
+        "scene": 19
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 34
+  },
+  {
+    "cut": 29,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\91",
+    "backgrounds": 3,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 27,
+        "scene": 2
+      },
+      {
+        "cut": 27,
+        "scene": 30
+      },
+      {
+        "cut": 644,
+        "scene": 0
+      },
+      {
+        "cut": 28,
+        "scene": 22
+      },
+      {
+        "cut": 28,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 35
+  },
+  {
+    "cut": 30,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\94",
+    "backgrounds": 3,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 32,
+        "scene": 20
+      },
+      {
+        "cut": 32,
+        "scene": 20
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 31,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\97",
+    "backgrounds": 8,
+    "foregrounds": 17,
+    "exits": [
+      {
+        "cut": 20,
+        "scene": 20
+      },
+      {
+        "cut": 22,
+        "scene": 0
+      },
+      {
+        "cut": 32,
+        "scene": 0
+      },
+      {
+        "cut": 33,
+        "scene": 14
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 33
+  },
+  {
+    "cut": 32,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\100",
+    "backgrounds": 6,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 31,
+        "scene": 6
+      },
+      {
+        "cut": 30,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 33,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\103",
+    "backgrounds": 6,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 34,
+        "scene": 4
+      },
+      {
+        "cut": 31,
+        "scene": 8
+      },
+      {
+        "cut": 31,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 34,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\106",
+    "backgrounds": 3,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 33,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 35,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\109",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 36,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\112",
+    "backgrounds": 4,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 37,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\115",
+    "backgrounds": 5,
+    "foregrounds": 13,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 20
+  },
+  {
+    "cut": 38,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\118",
+    "backgrounds": 10,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 39,
+        "scene": 3
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 43
+  },
+  {
+    "cut": 39,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\121",
+    "backgrounds": 10,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 40,
+        "scene": 5
+      },
+      {
+        "cut": 43,
+        "scene": 6
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 38,
+        "scene": 9
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 44
+  },
+  {
+    "cut": 40,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\124",
+    "backgrounds": 3,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 42,
+        "scene": 0
+      },
+      {
+        "cut": 39,
+        "scene": 4
+      },
+      {
+        "cut": 41,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 46
+  },
+  {
+    "cut": 41,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\127",
+    "backgrounds": 3,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 40,
+        "scene": 15
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 48
+  },
+  {
+    "cut": 42,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\130",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 40,
+        "scene": 24
+      },
+      {
+        "cut": 40,
+        "scene": 24
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 47
+  },
+  {
+    "cut": 43,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\133",
+    "backgrounds": 3,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 44,
+        "scene": 20
+      },
+      {
+        "cut": 39,
+        "scene": 33
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 45
+  },
+  {
+    "cut": 44,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\136",
+    "backgrounds": 5,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 43,
+        "scene": 14
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 49
+  },
+  {
+    "cut": 45,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\139",
+    "backgrounds": 6,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 46,
+        "scene": 8
+      },
+      {
+        "cut": 46,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 50
+  },
+  {
+    "cut": 46,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\142",
+    "backgrounds": 6,
+    "foregrounds": 17,
+    "exits": [
+      {
+        "cut": 47,
+        "scene": 12
+      },
+      {
+        "cut": 45,
+        "scene": 26
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 51
+  },
+  {
+    "cut": 47,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\145",
+    "backgrounds": 6,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 48,
+        "scene": 37
+      },
+      {
+        "cut": 46,
+        "scene": 62
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 52
+  },
+  {
+    "cut": 48,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\148",
+    "backgrounds": 10,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 49,
+        "scene": 38
+      },
+      {
+        "cut": 47,
+        "scene": 9
+      },
+      {
+        "cut": 50,
+        "scene": 29
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 53
+  },
+  {
+    "cut": 49,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\151",
+    "backgrounds": 6,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 51,
+        "scene": 10
+      },
+      {
+        "cut": 50,
+        "scene": 4
+      },
+      {
+        "cut": 48,
+        "scene": 10
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 54
+  },
+  {
+    "cut": 50,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\154",
+    "backgrounds": 3,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 49,
+        "scene": 45
+      },
+      {
+        "cut": 48,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 55
+  },
+  {
+    "cut": 51,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\157",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 49,
+        "scene": 11
+      },
+      {
+        "cut": 52,
+        "scene": 33
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 56
+  },
+  {
+    "cut": 52,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\160",
+    "backgrounds": 4,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 53,
+        "scene": 2
+      },
+      {
+        "cut": 51,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 57
+  },
+  {
+    "cut": 53,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\163",
+    "backgrounds": 3,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 52,
+        "scene": 28
+      },
+      {
+        "cut": 54,
+        "scene": 34
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 58
+  },
+  {
+    "cut": 54,
+    "area": "Cave",
+    "area_id": 6,
+    "source": "files\\SECT\\DRGN21.BIN\\166",
+    "backgrounds": 6,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 53,
+        "scene": 15
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 59
+  },
+  {
+    "cut": 55,
+    "area": "Forest",
+    "area_id": 1,
+    "source": "files\\SECT\\DRGN21.BIN\\169",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "pending",
+    "chronological_order": null,
+    "production_status": "no-visible-environment"
+  },
+  {
+    "cut": 56,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\172",
+    "backgrounds": 3,
+    "foregrounds": 3,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 42
+  },
+  {
+    "cut": 57,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\175",
+    "backgrounds": 4,
+    "foregrounds": 9,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 58,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\178",
+    "backgrounds": 8,
+    "foregrounds": 17,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 65,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\199",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 66,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\202",
+    "backgrounds": 8,
+    "foregrounds": 17,
+    "exits": [
+      {
+        "cut": 67,
+        "scene": 46
+      },
+      {
+        "cut": 86,
+        "scene": 24
+      },
+      {
+        "cut": 71,
+        "scene": 31
+      },
+      {
+        "cut": 84,
+        "scene": 3
+      },
+      {
+        "cut": 71,
+        "scene": 28
+      },
+      {
+        "cut": 68,
+        "scene": 18
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 73,
+        "scene": 0
+      },
+      {
+        "cut": 69,
+        "scene": 20
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 60
+  },
+  {
+    "cut": 67,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\205",
+    "backgrounds": 4,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 89,
+        "scene": 7
+      },
+      {
+        "cut": 66,
+        "scene": 47
+      },
+      {
+        "cut": 66,
+        "scene": 7
+      },
+      {
+        "cut": 623,
+        "scene": 5
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 623,
+        "scene": 5
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 68,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\208",
+    "backgrounds": 8,
+    "foregrounds": 18,
+    "exits": [
+      {
+        "cut": 82,
+        "scene": 15
+      },
+      {
+        "cut": 72,
+        "scene": 14
+      },
+      {
+        "cut": 77,
+        "scene": 3
+      },
+      {
+        "cut": 66,
+        "scene": 34
+      },
+      {
+        "cut": 77,
+        "scene": 30
+      },
+      {
+        "cut": 82,
+        "scene": 48
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 69,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\211",
+    "backgrounds": 10,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 86,
+        "scene": 3
+      },
+      {
+        "cut": 70,
+        "scene": 2
+      },
+      {
+        "cut": 70,
+        "scene": 5
+      },
+      {
+        "cut": 89,
+        "scene": 34
+      },
+      {
+        "cut": 76,
+        "scene": 14
+      },
+      {
+        "cut": 83,
+        "scene": 0
+      },
+      {
+        "cut": 66,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 61
+  },
+  {
+    "cut": 70,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\214",
+    "backgrounds": 4,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 69,
+        "scene": 35
+      },
+      {
+        "cut": 69,
+        "scene": 25
+      },
+      {
+        "cut": 78,
+        "scene": 0
+      },
+      {
+        "cut": 85,
+        "scene": 42
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 71,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\217",
+    "backgrounds": 10,
+    "foregrounds": 22,
+    "exits": [
+      {
+        "cut": 66,
+        "scene": 37
+      },
+      {
+        "cut": 66,
+        "scene": 14
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 72,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\220",
+    "backgrounds": 3,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 68,
+        "scene": 11
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 73,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\223",
+    "backgrounds": 4,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 74,
+        "scene": 6
+      },
+      {
+        "cut": 66,
+        "scene": 11
+      },
+      {
+        "cut": 74,
+        "scene": 12
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 74,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\226",
+    "backgrounds": 4,
+    "foregrounds": 15,
+    "exits": [
+      {
+        "cut": 73,
+        "scene": 17
+      },
+      {
+        "cut": 73,
+        "scene": 7
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 75,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\229",
+    "backgrounds": 3,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 76,
+        "scene": 4
+      },
+      {
+        "cut": 631,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 76,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\232",
+    "backgrounds": 3,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 69,
+        "scene": 34
+      },
+      {
+        "cut": 75,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 77,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\235",
+    "backgrounds": 10,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 68,
+        "scene": 26
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 78,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\238",
+    "backgrounds": 8,
+    "foregrounds": 15,
+    "exits": [
+      {
+        "cut": 70,
+        "scene": 0
+      },
+      {
+        "cut": 79,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 79,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\241",
+    "backgrounds": 8,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 80,
+        "scene": 9
+      },
+      {
+        "cut": 78,
+        "scene": 16
+      },
+      {
+        "cut": 80,
+        "scene": 13
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 80,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\244",
+    "backgrounds": 3,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 79,
+        "scene": 10
+      },
+      {
+        "cut": 79,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 81,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\247",
+    "backgrounds": 8,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 82,
+        "scene": 3
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 82,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\250",
+    "backgrounds": 10,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 81,
+        "scene": 15
+      },
+      {
+        "cut": 68,
+        "scene": 40
+      },
+      {
+        "cut": 68,
+        "scene": 61
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 83,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\253",
+    "backgrounds": 4,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 69,
+        "scene": 38
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 84,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\256",
+    "backgrounds": 4,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 66,
+        "scene": 18
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 85,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\259",
+    "backgrounds": 4,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 70,
+        "scene": 9
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 86,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\262",
+    "backgrounds": 6,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 91,
+        "scene": 0
+      },
+      {
+        "cut": 69,
+        "scene": 8
+      },
+      {
+        "cut": 90,
+        "scene": 1
+      },
+      {
+        "cut": 90,
+        "scene": 3
+      },
+      {
+        "cut": 69,
+        "scene": 8
+      },
+      {
+        "cut": 69,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 62
+  },
+  {
+    "cut": 87,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\265",
+    "backgrounds": 6,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 93,
+        "scene": 34
+      },
+      {
+        "cut": 91,
+        "scene": 63
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 88,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\268",
+    "backgrounds": 4,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 628,
+        "scene": 13
+      },
+      {
+        "cut": 86,
+        "scene": 14
+      },
+      {
+        "cut": 90,
+        "scene": 14
+      },
+      {
+        "cut": 89,
+        "scene": 32
+      },
+      {
+        "cut": 90,
+        "scene": 30
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 89,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\271",
+    "backgrounds": 6,
+    "foregrounds": 20,
+    "exits": [
+      {
+        "cut": 631,
+        "scene": 14
+      },
+      {
+        "cut": 67,
+        "scene": 5
+      },
+      {
+        "cut": 69,
+        "scene": 43
+      },
+      {
+        "cut": 623,
+        "scene": 3
+      },
+      {
+        "cut": 88,
+        "scene": 33
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 90,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\274",
+    "backgrounds": 10,
+    "foregrounds": 19,
+    "exits": [
+      {
+        "cut": 86,
+        "scene": 39
+      },
+      {
+        "cut": 86,
+        "scene": 7
+      },
+      {
+        "cut": 91,
+        "scene": 35
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 65
+  },
+  {
+    "cut": 91,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\277",
+    "backgrounds": 10,
+    "foregrounds": 20,
+    "exits": [
+      {
+        "cut": 90,
+        "scene": 9
+      },
+      {
+        "cut": 92,
+        "scene": 11
+      },
+      {
+        "cut": 86,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 63
+  },
+  {
+    "cut": 92,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\280",
+    "backgrounds": 10,
+    "foregrounds": 19,
+    "exits": [
+      {
+        "cut": 628,
+        "scene": 26
+      },
+      {
+        "cut": 91,
+        "scene": 49
+      },
+      {
+        "cut": 628,
+        "scene": 24
+      },
+      {
+        "cut": 93,
+        "scene": 29
+      },
+      {
+        "cut": 91,
+        "scene": 22
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 64
+  },
+  {
+    "cut": 93,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\283",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 92,
+        "scene": 40
+      },
+      {
+        "cut": 94,
+        "scene": 3
+      },
+      {
+        "cut": 94,
+        "scene": 4
+      },
+      {
+        "cut": 87,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 94,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\286",
+    "backgrounds": 3,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 93,
+        "scene": 5
+      },
+      {
+        "cut": 93,
+        "scene": 10
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 95,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\289",
+    "backgrounds": 10,
+    "foregrounds": 21,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 102,
+        "scene": 24
+      },
+      {
+        "cut": 101,
+        "scene": 0
+      },
+      {
+        "cut": 104,
+        "scene": 16
+      },
+      {
+        "cut": 100,
+        "scene": 29
+      },
+      {
+        "cut": 99,
+        "scene": 18
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 96,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\292",
+    "backgrounds": 10,
+    "foregrounds": 21,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 97,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\295",
+    "backgrounds": 10,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 626,
+        "scene": 24
+      },
+      {
+        "cut": 633,
+        "scene": 0
+      },
+      {
+        "cut": 632,
+        "scene": 1
+      },
+      {
+        "cut": 632,
+        "scene": 18
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 98,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\298",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 99,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\301",
+    "backgrounds": 3,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 95,
+        "scene": 31
+      },
+      {
+        "cut": 98,
+        "scene": 5
+      },
+      {
+        "cut": 95,
+        "scene": 37
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 100,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\304",
+    "backgrounds": 3,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 95,
+        "scene": 30
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 101,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\307",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 95,
+        "scene": 17
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 102,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\310",
+    "backgrounds": 4,
+    "foregrounds": 14,
+    "exits": [
+      {
+        "cut": 95,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 103,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\313",
+    "backgrounds": 4,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 95,
+        "scene": 25
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 104,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\316",
+    "backgrounds": 3,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 95,
+        "scene": 22
+      },
+      {
+        "cut": 105,
+        "scene": 28
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 105,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\319",
+    "backgrounds": 3,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 104,
+        "scene": 26
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 106,
+    "area": "Marshland",
+    "area_id": 11,
+    "source": "files\\SECT\\DRGN21.BIN\\322",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 107,
+    "area": "Marshland",
+    "area_id": 11,
+    "source": "files\\SECT\\DRGN21.BIN\\325",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 108,
+    "area": "Marshland",
+    "area_id": 11,
+    "source": "files\\SECT\\DRGN21.BIN\\328",
+    "backgrounds": 6,
+    "foregrounds": 8,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 109,
+    "area": "Marshland",
+    "area_id": 11,
+    "source": "files\\SECT\\DRGN21.BIN\\331",
+    "backgrounds": 8,
+    "foregrounds": 20,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 110,
+    "area": "Marshland",
+    "area_id": 11,
+    "source": "files\\SECT\\DRGN21.BIN\\334",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 111,
+    "area": "Marshland",
+    "area_id": 11,
+    "source": "files\\SECT\\DRGN21.BIN\\337",
+    "backgrounds": 6,
+    "foregrounds": 3,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 112,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\340",
+    "backgrounds": 10,
+    "foregrounds": 21,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 113,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\343",
+    "backgrounds": 10,
+    "foregrounds": 21,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 114,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\346",
+    "backgrounds": 6,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 115,
+        "scene": 36
+      },
+      {
+        "cut": 115,
+        "scene": 36
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 115,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\349",
+    "backgrounds": 4,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 116,
+        "scene": 35
+      },
+      {
+        "cut": 114,
+        "scene": 10
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 116,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\352",
+    "backgrounds": 6,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 118,
+        "scene": 40
+      },
+      {
+        "cut": 117,
+        "scene": 5
+      },
+      {
+        "cut": 115,
+        "scene": 29
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 117,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\355",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 116,
+        "scene": 13
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 118,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\358",
+    "backgrounds": 8,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 121,
+        "scene": 6
+      },
+      {
+        "cut": 116,
+        "scene": 0
+      },
+      {
+        "cut": 119,
+        "scene": 31
+      },
+      {
+        "cut": 119,
+        "scene": 26
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 119,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\361",
+    "backgrounds": 10,
+    "foregrounds": 17,
+    "exits": [
+      {
+        "cut": 118,
+        "scene": 32
+      },
+      {
+        "cut": 118,
+        "scene": 7
+      },
+      {
+        "cut": 123,
+        "scene": 18
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 120,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\364",
+    "backgrounds": 3,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 119,
+        "scene": 54
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 121,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\367",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 118,
+        "scene": 20
+      },
+      {
+        "cut": 122,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 122,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\370",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 121,
+        "scene": 13
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 121,
+        "scene": 13
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 123,
+    "area": "Vol. Villude",
+    "area_id": 12,
+    "source": "files\\SECT\\DRGN21.BIN\\373",
+    "backgrounds": 3,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 119,
+        "scene": 46
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 130,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\394",
+    "backgrounds": 3,
+    "foregrounds": 3,
+    "exits": [
+      {
+        "cut": 131,
+        "scene": 13
+      },
+      {
+        "cut": 131,
+        "scene": 1
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 131,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\397",
+    "backgrounds": 10,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 130,
+        "scene": 7
+      },
+      {
+        "cut": 133,
+        "scene": 20
+      },
+      {
+        "cut": 130,
+        "scene": 12
+      },
+      {
+        "cut": 132,
+        "scene": 2
+      },
+      {
+        "cut": 133,
+        "scene": 29
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 132,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\400",
+    "backgrounds": 3,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 133,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\403",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 131,
+        "scene": 10
+      },
+      {
+        "cut": 131,
+        "scene": 10
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 131,
+        "scene": 23
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 134,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\406",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 135,
+        "scene": 47
+      },
+      {
+        "cut": 135,
+        "scene": 11
+      },
+      {
+        "cut": 135,
+        "scene": 39
+      },
+      {
+        "cut": 135,
+        "scene": 12
+      },
+      {
+        "cut": 135,
+        "scene": 50
+      },
+      {
+        "cut": 135,
+        "scene": 45
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 135,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\409",
+    "backgrounds": 6,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 136,
+        "scene": 5
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 136,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\412",
+    "backgrounds": 6,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 135,
+        "scene": 25
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 140,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\424",
+    "backgrounds": 4,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 1,
+        "scene": 21
+      },
+      {
+        "cut": 141,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 141,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\427",
+    "backgrounds": 8,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 140,
+        "scene": 13
+      },
+      {
+        "cut": 646,
+        "scene": 0
+      },
+      {
+        "cut": 646,
+        "scene": 0
+      },
+      {
+        "cut": 646,
+        "scene": 0
+      },
+      {
+        "cut": 142,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 142,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\430",
+    "backgrounds": 5,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 141,
+        "scene": 33
+      },
+      {
+        "cut": 145,
+        "scene": 34
+      },
+      {
+        "cut": 145,
+        "scene": 0
+      },
+      {
+        "cut": 144,
+        "scene": 62
+      },
+      {
+        "cut": 148,
+        "scene": 0
+      },
+      {
+        "cut": 145,
+        "scene": 5
+      },
+      {
+        "cut": 143,
+        "scene": 51
+      },
+      {
+        "cut": 143,
+        "scene": 15
+      },
+      {
+        "cut": 143,
+        "scene": 61
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 143,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\433",
+    "backgrounds": 3,
+    "foregrounds": 20,
+    "exits": [
+      {
+        "cut": 142,
+        "scene": 33
+      },
+      {
+        "cut": 142,
+        "scene": 27
+      },
+      {
+        "cut": 145,
+        "scene": 15
+      },
+      {
+        "cut": 144,
+        "scene": 54
+      },
+      {
+        "cut": 142,
+        "scene": 30
+      },
+      {
+        "cut": 145,
+        "scene": 58
+      },
+      {
+        "cut": 145,
+        "scene": 16
+      },
+      {
+        "cut": 146,
+        "scene": 0
+      },
+      {
+        "cut": 144,
+        "scene": 32
+      },
+      {
+        "cut": 144,
+        "scene": 7
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 144,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\436",
+    "backgrounds": 6,
+    "foregrounds": 15,
+    "exits": [
+      {
+        "cut": 146,
+        "scene": 33
+      },
+      {
+        "cut": 143,
+        "scene": 57
+      },
+      {
+        "cut": 147,
+        "scene": 55
+      },
+      {
+        "cut": 143,
+        "scene": 41
+      },
+      {
+        "cut": 147,
+        "scene": 37
+      },
+      {
+        "cut": 143,
+        "scene": 12
+      },
+      {
+        "cut": 147,
+        "scene": 49
+      },
+      {
+        "cut": 142,
+        "scene": 15
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 145,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\439",
+    "backgrounds": 6,
+    "foregrounds": 22,
+    "exits": [
+      {
+        "cut": 142,
+        "scene": 12
+      },
+      {
+        "cut": 142,
+        "scene": 25
+      },
+      {
+        "cut": 143,
+        "scene": 4
+      },
+      {
+        "cut": 147,
+        "scene": 1
+      },
+      {
+        "cut": 142,
+        "scene": 8
+      },
+      {
+        "cut": 143,
+        "scene": 26
+      },
+      {
+        "cut": 143,
+        "scene": 20
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 146,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\442",
+    "backgrounds": 4,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 143,
+        "scene": 34
+      },
+      {
+        "cut": 144,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 147,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\445",
+    "backgrounds": 6,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 145,
+        "scene": 28
+      },
+      {
+        "cut": 144,
+        "scene": 35
+      },
+      {
+        "cut": 144,
+        "scene": 58
+      },
+      {
+        "cut": 144,
+        "scene": 22
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 148,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\448",
+    "backgrounds": 6,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 142,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 149,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\451",
+    "backgrounds": 5,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 646,
+        "scene": 10
+      },
+      {
+        "cut": 150,
+        "scene": 60
+      },
+      {
+        "cut": 151,
+        "scene": 35
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 150,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\454",
+    "backgrounds": 6,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 151,
+        "scene": 2
+      },
+      {
+        "cut": 149,
+        "scene": 11
+      },
+      {
+        "cut": 149,
+        "scene": 11
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 151,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\457",
+    "backgrounds": 8,
+    "foregrounds": 21,
+    "exits": [
+      {
+        "cut": 150,
+        "scene": 0
+      },
+      {
+        "cut": 149,
+        "scene": 18
+      },
+      {
+        "cut": 637,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 152,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\460",
+    "backgrounds": 3,
+    "foregrounds": 4,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 153,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\463",
+    "backgrounds": 4,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 154,
+        "scene": 0
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 154,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\466",
+    "backgrounds": 3,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 153,
+        "scene": 0
+      },
+      {
+        "cut": 157,
+        "scene": 12
+      },
+      {
+        "cut": 156,
+        "scene": 16
+      },
+      {
+        "cut": 155,
+        "scene": 7
+      },
+      {
+        "cut": 155,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 155,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\469",
+    "backgrounds": 8,
+    "foregrounds": 19,
+    "exits": [
+      {
+        "cut": 154,
+        "scene": 18
+      },
+      {
+        "cut": 154,
+        "scene": 10
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 156,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\472",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 154,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 157,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\475",
+    "backgrounds": 6,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 154,
+        "scene": 12
+      },
+      {
+        "cut": 158,
+        "scene": 14
+      },
+      {
+        "cut": 158,
+        "scene": 7
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 158,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\478",
+    "backgrounds": 8,
+    "foregrounds": 18,
+    "exits": [
+      {
+        "cut": 157,
+        "scene": 15
+      },
+      {
+        "cut": 157,
+        "scene": 36
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 159,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\481",
+    "backgrounds": 8,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 158,
+        "scene": 35
+      },
+      {
+        "cut": 160,
+        "scene": 11
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 160,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\484",
+    "backgrounds": 3,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 159,
+        "scene": 44
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 161,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\487",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 162,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\490",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 153,
+        "scene": 4
+      },
+      {
+        "cut": 154,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 163,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\493",
+    "backgrounds": 6,
+    "foregrounds": 15,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 164,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\496",
+    "backgrounds": 8,
+    "foregrounds": 8,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 165,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\499",
+    "backgrounds": 3,
+    "foregrounds": 13,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 166,
+    "area": "Shirley's Shrine",
+    "area_id": 15,
+    "source": "files\\SECT\\DRGN21.BIN\\502",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 171,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\517",
+    "backgrounds": 6,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      },
+      {
+        "cut": 173,
+        "scene": 2
+      },
+      {
+        "cut": 172,
+        "scene": 17
+      },
+      {
+        "cut": 174,
+        "scene": 32
+      },
+      {
+        "cut": 175,
+        "scene": 3
+      },
+      {
+        "cut": 175,
+        "scene": 19
+      },
+      {
+        "cut": 176,
+        "scene": 0
+      },
+      {
+        "cut": 177,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 172,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\520",
+    "backgrounds": 6,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 171,
+        "scene": 14
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 173,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\523",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 171,
+        "scene": 7
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 174,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\526",
+    "backgrounds": 4,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 171,
+        "scene": 23
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 175,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\529",
+    "backgrounds": 8,
+    "foregrounds": 18,
+    "exits": [
+      {
+        "cut": 171,
+        "scene": 34
+      },
+      {
+        "cut": 171,
+        "scene": 25
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 176,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\532",
+    "backgrounds": 8,
+    "foregrounds": 13,
+    "exits": [
+      {
+        "cut": 171,
+        "scene": 37
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 177,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\535",
+    "backgrounds": 10,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 171,
+        "scene": 50
+      },
+      {
+        "cut": 190,
+        "scene": 23
+      },
+      {
+        "cut": 178,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 178,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\538",
+    "backgrounds": 6,
+    "foregrounds": 15,
+    "exits": [
+      {
+        "cut": 177,
+        "scene": 27
+      },
+      {
+        "cut": 180,
+        "scene": 46
+      },
+      {
+        "cut": 181,
+        "scene": 0
+      },
+      {
+        "cut": 180,
+        "scene": 0
+      },
+      {
+        "cut": 180,
+        "scene": 38
+      },
+      {
+        "cut": 179,
+        "scene": 0
+      },
+      {
+        "cut": 179,
+        "scene": 28
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 179,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\541",
+    "backgrounds": 10,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 178,
+        "scene": 37
+      },
+      {
+        "cut": 178,
+        "scene": 45
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 180,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\544",
+    "backgrounds": 8,
+    "foregrounds": 20,
+    "exits": [
+      {
+        "cut": 178,
+        "scene": 29
+      },
+      {
+        "cut": 178,
+        "scene": 8
+      },
+      {
+        "cut": 178,
+        "scene": 32
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 181,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\547",
+    "backgrounds": 8,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 178,
+        "scene": 36
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 182,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\550",
+    "backgrounds": 12,
+    "foregrounds": 16,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 183,
+    "area": "Kazas",
+    "area_id": 17,
+    "source": "files\\SECT\\DRGN21.BIN\\553",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 181,
+        "scene": 4
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 187,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\565",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 188,
+        "scene": 25
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 188,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\568",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 189,
+        "scene": 0
+      },
+      {
+        "cut": 187,
+        "scene": 1
+      },
+      {
+        "cut": 189,
+        "scene": 38
+      },
+      {
+        "cut": 190,
+        "scene": 4
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 189,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\571",
+    "backgrounds": 6,
+    "foregrounds": 11,
+    "exits": [
+      {
+        "cut": 188,
+        "scene": 1
+      },
+      {
+        "cut": 195,
+        "scene": 4
+      },
+      {
+        "cut": 188,
+        "scene": 19
+      },
+      {
+        "cut": 199,
+        "scene": 6
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 190,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\574",
+    "backgrounds": 8,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 177,
+        "scene": 24
+      },
+      {
+        "cut": 188,
+        "scene": 14
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 191,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\577",
+    "backgrounds": 4,
+    "foregrounds": 7,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 192,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\580",
+    "backgrounds": 6,
+    "foregrounds": 19,
+    "exits": [
+      {
+        "cut": 193,
+        "scene": 53
+      },
+      {
+        "cut": 194,
+        "scene": 0
+      },
+      {
+        "cut": 660,
+        "scene": 1
+      },
+      {
+        "cut": 193,
+        "scene": 19
+      },
+      {
+        "cut": 194,
+        "scene": 37
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 193,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\583",
+    "backgrounds": 6,
+    "foregrounds": 21,
+    "exits": [
+      {
+        "cut": 192,
+        "scene": 37
+      },
+      {
+        "cut": 194,
+        "scene": 23
+      },
+      {
+        "cut": 192,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 194,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\586",
+    "backgrounds": 6,
+    "foregrounds": 20,
+    "exits": [
+      {
+        "cut": 192,
+        "scene": 57
+      },
+      {
+        "cut": 193,
+        "scene": 40
+      },
+      {
+        "cut": 192,
+        "scene": 48
+      },
+      {
+        "cut": 658,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 195,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\589",
+    "backgrounds": 8,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 189,
+        "scene": 2
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 196,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\592",
+    "backgrounds": 6,
+    "foregrounds": 12,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 197,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\595",
+    "backgrounds": 4,
+    "foregrounds": 17,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 198,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\598",
+    "backgrounds": 8,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 199,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\601",
+    "backgrounds": 6,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 189,
+        "scene": 45
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 200,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\604",
+    "backgrounds": 6,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 623,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\607",
+    "backgrounds": 10,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 89,
+        "scene": 43
+      },
+      {
+        "cut": 67,
+        "scene": 17
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 624,
+    "area": "Forest",
+    "area_id": 2,
+    "source": "files\\SECT\\DRGN21.BIN\\610",
+    "backgrounds": 4,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 5,
+        "scene": 14
+      },
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 13
+  },
+  {
+    "cut": 625,
+    "area": "Forest",
+    "area_id": 2,
+    "source": "files\\SECT\\DRGN21.BIN\\613",
+    "backgrounds": 8,
+    "foregrounds": 10,
+    "exits": [
+      {
+        "cut": 6,
+        "scene": 17
+      },
+      {
+        "cut": 5,
+        "scene": 21
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 15
+  },
+  {
+    "cut": 626,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\616",
+    "backgrounds": 4,
+    "foregrounds": 15,
+    "exits": [
+      {
+        "cut": 97,
+        "scene": 8
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 627,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\619",
+    "backgrounds": 4,
+    "foregrounds": 16,
+    "exits": [
+      {
+        "cut": 97,
+        "scene": 25
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 628,
+    "area": "Indels Castle",
+    "area_id": 9,
+    "source": "files\\SECT\\DRGN21.BIN\\622",
+    "backgrounds": 3,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 88,
+        "scene": 1
+      },
+      {
+        "cut": 631,
+        "scene": 13
+      },
+      {
+        "cut": 92,
+        "scene": 23
+      },
+      {
+        "cut": 92,
+        "scene": 3
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 631,
+    "area": "Bale",
+    "area_id": 8,
+    "source": "files\\SECT\\DRGN21.BIN\\625",
+    "backgrounds": 10,
+    "foregrounds": 7,
+    "exits": [
+      {
+        "cut": 75,
+        "scene": 26
+      },
+      {
+        "cut": 89,
+        "scene": 3
+      },
+      {
+        "cut": 628,
+        "scene": 12
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 632,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\628",
+    "backgrounds": 3,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 97,
+        "scene": 31
+      },
+      {
+        "cut": 98,
+        "scene": 5
+      },
+      {
+        "cut": 97,
+        "scene": 37
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 633,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\631",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [
+      {
+        "cut": 97,
+        "scene": 17
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 634,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\634",
+    "backgrounds": 3,
+    "foregrounds": 3,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 636,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\640",
+    "backgrounds": 3,
+    "foregrounds": 17,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 637,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\643",
+    "backgrounds": 3,
+    "foregrounds": 9,
+    "exits": [
+      {
+        "cut": 151,
+        "scene": 17
+      },
+      {
+        "cut": 638,
+        "scene": 2
+      },
+      {
+        "cut": 638,
+        "scene": 3
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 638,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\646",
+    "backgrounds": 8,
+    "foregrounds": 4,
+    "exits": [
+      {
+        "cut": 637,
+        "scene": 28
+      },
+      {
+        "cut": 637,
+        "scene": 25
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 639,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\649",
+    "backgrounds": 12,
+    "foregrounds": 10,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 640,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\652",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 24,
+        "scene": 14
+      },
+      {
+        "cut": 24,
+        "scene": 14
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 41
+  },
+  {
+    "cut": 641,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\655",
+    "backgrounds": 3,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 26,
+        "scene": 0
+      },
+      {
+        "cut": 26,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 32
+  },
+  {
+    "cut": 642,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\658",
+    "backgrounds": 3,
+    "foregrounds": 5,
+    "exits": [
+      {
+        "cut": 26,
+        "scene": 15
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 31
+  },
+  {
+    "cut": 643,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\661",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 27,
+        "scene": 4
+      },
+      {
+        "cut": 27,
+        "scene": 4
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 38
+  },
+  {
+    "cut": 644,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\664",
+    "backgrounds": 3,
+    "foregrounds": 3,
+    "exits": [
+      {
+        "cut": 29,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 36
+  },
+  {
+    "cut": 645,
+    "area": "Hellena Prison",
+    "area_id": 4,
+    "source": "files\\SECT\\DRGN21.BIN\\667",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [
+      {
+        "cut": 27,
+        "scene": 39
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 40
+  },
+  {
+    "cut": 646,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\670",
+    "backgrounds": 4,
+    "foregrounds": 8,
+    "exits": [
+      {
+        "cut": 141,
+        "scene": 18
+      },
+      {
+        "cut": 149,
+        "scene": 1
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 647,
+    "area": "Lohan",
+    "area_id": 14,
+    "source": "files\\SECT\\DRGN21.BIN\\673",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 656,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\676",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 657,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\679",
+    "backgrounds": 3,
+    "foregrounds": 6,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 658,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\682",
+    "backgrounds": 6,
+    "foregrounds": 12,
+    "exits": [
+      {
+        "cut": 194,
+        "scene": 53
+      },
+      {
+        "cut": 659,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 659,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\685",
+    "backgrounds": 4,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 658,
+        "scene": 41
+      },
+      {
+        "cut": 660,
+        "scene": 2
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 660,
+    "area": "Black Castle",
+    "area_id": 18,
+    "source": "files\\SECT\\DRGN21.BIN\\688",
+    "backgrounds": 10,
+    "foregrounds": 6,
+    "exits": [
+      {
+        "cut": 659,
+        "scene": 9
+      },
+      {
+        "cut": 192,
+        "scene": 56
+      }
+    ],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 674,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\691",
+    "backgrounds": 4,
+    "foregrounds": 6,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 675,
+    "area": "Intro Forest",
+    "area_id": 57,
+    "source": "files\\SECT\\DRGN21.BIN\\694",
+    "backgrounds": 4,
+    "foregrounds": 7,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 1
+  },
+  {
+    "cut": 676,
+    "area": "Intro Forest",
+    "area_id": 57,
+    "source": "files\\SECT\\DRGN21.BIN\\697",
+    "backgrounds": 6,
+    "foregrounds": 3,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 2
+  },
+  {
+    "cut": 677,
+    "area": "Intro Forest",
+    "area_id": 57,
+    "source": "files\\SECT\\DRGN21.BIN\\700",
+    "backgrounds": 4,
+    "foregrounds": 3,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 3
+  },
+  {
+    "cut": 694,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\703",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 11
+  },
+  {
+    "cut": 695,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\706",
+    "backgrounds": 3,
+    "foregrounds": 17,
+    "exits": [
+      {
+        "cut": 0,
+        "scene": 0
+      }
+    ],
+    "status": "installed",
+    "chronological_order": 12
+  },
+  {
+    "cut": 696,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\709",
+    "backgrounds": 10,
+    "foregrounds": 6,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 697,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\712",
+    "backgrounds": 6,
+    "foregrounds": 2,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 703,
+    "area": "Intro Forest",
+    "area_id": 57,
+    "source": "files\\SECT\\DRGN21.BIN\\715",
+    "backgrounds": 6,
+    "foregrounds": 5,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 4
+  },
+  {
+    "cut": 704,
+    "area": "Intro Forest",
+    "area_id": 57,
+    "source": "files\\SECT\\DRGN21.BIN\\718",
+    "backgrounds": 6,
+    "foregrounds": 8,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 5
+  },
+  {
+    "cut": 716,
+    "area": "Nest of Dragon",
+    "area_id": 13,
+    "source": "files\\SECT\\DRGN21.BIN\\721",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 725,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\724",
+    "backgrounds": 4,
+    "foregrounds": 9,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 8
+  },
+  {
+    "cut": 726,
+    "area": "Town of Hoax",
+    "area_id": 10,
+    "source": "files\\SECT\\DRGN21.BIN\\727",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 740,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\730",
+    "backgrounds": 3,
+    "foregrounds": 2,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 741,
+    "area": "Prairie",
+    "area_id": 5,
+    "source": "files\\SECT\\DRGN21.BIN\\733",
+    "backgrounds": 4,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 742,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\736",
+    "backgrounds": 6,
+    "foregrounds": 4,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": 10
+  },
+  {
+    "cut": 743,
+    "area": "Seles",
+    "area_id": 3,
+    "source": "files\\SECT\\DRGN21.BIN\\739",
+    "backgrounds": 6,
+    "foregrounds": 9,
+    "exits": [],
+    "status": "installed",
+    "chronological_order": null,
+    "production_status": "artwork-preview-ready",
+    "gameplay_verification": "deferred"
+  },
+  {
+    "cut": 791,
+    "area": "",
+    "area_id": 0,
+    "source": "files\\SECT\\DRGN21.BIN\\4",
+    "backgrounds": 3,
+    "foregrounds": 1,
+    "exits": [],
+    "status": "excluded-debug-menu",
+    "chronological_order": null
+  }
+]

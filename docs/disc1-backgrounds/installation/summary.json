@@ -1,0 +1,376 @@
+{
+  "step": 3,
+  "complete": true,
+  "newRuntimePacks": 88,
+  "totalInstalledDisc1Packs": 153,
+  "previouslyGameplayVerified": 65,
+  "newGameplayVerifications": 0,
+  "unresolvedScreens": 64,
+  "texturePngs": 764,
+  "runtimeTextureBytes": 464417816,
+  "loadingSmokeCuts": [
+    78,
+    68,
+    101,
+    140,
+    171,
+    173
+  ],
+  "freshPassingTestCases": 22,
+  "protectedFilesUnchanged": 5549,
+  "scope": "Strict packaging, optimized textures, runtime registration, loading/fallback/restoration/cleanup checks. No full traversal comparison.",
+  "screens": [
+    {
+      "cut": 78,
+      "batch": 1
+    },
+    {
+      "cut": 79,
+      "batch": 1
+    },
+    {
+      "cut": 85,
+      "batch": 1
+    },
+    {
+      "cut": 76,
+      "batch": 1
+    },
+    {
+      "cut": 75,
+      "batch": 1
+    },
+    {
+      "cut": 83,
+      "batch": 1
+    },
+    {
+      "cut": 623,
+      "batch": 1
+    },
+    {
+      "cut": 87,
+      "batch": 1
+    },
+    {
+      "cut": 68,
+      "batch": 1
+    },
+    {
+      "cut": 72,
+      "batch": 1
+    },
+    {
+      "cut": 77,
+      "batch": 1
+    },
+    {
+      "cut": 82,
+      "batch": 1
+    },
+    {
+      "cut": 81,
+      "batch": 1
+    },
+    {
+      "cut": 73,
+      "batch": 1
+    },
+    {
+      "cut": 74,
+      "batch": 1
+    },
+    {
+      "cut": 84,
+      "batch": 1
+    },
+    {
+      "cut": 65,
+      "batch": 1
+    },
+    {
+      "cut": 98,
+      "batch": 1
+    },
+    {
+      "cut": 101,
+      "batch": 2
+    },
+    {
+      "cut": 105,
+      "batch": 2
+    },
+    {
+      "cut": 112,
+      "batch": 2
+    },
+    {
+      "cut": 113,
+      "batch": 2
+    },
+    {
+      "cut": 633,
+      "batch": 2
+    },
+    {
+      "cut": 657,
+      "batch": 2
+    },
+    {
+      "cut": 726,
+      "batch": 2
+    },
+    {
+      "cut": 106,
+      "batch": 2
+    },
+    {
+      "cut": 107,
+      "batch": 2
+    },
+    {
+      "cut": 108,
+      "batch": 2
+    },
+    {
+      "cut": 110,
+      "batch": 2
+    },
+    {
+      "cut": 114,
+      "batch": 2
+    },
+    {
+      "cut": 115,
+      "batch": 2
+    },
+    {
+      "cut": 116,
+      "batch": 2
+    },
+    {
+      "cut": 117,
+      "batch": 2
+    },
+    {
+      "cut": 118,
+      "batch": 2
+    },
+    {
+      "cut": 119,
+      "batch": 2
+    },
+    {
+      "cut": 122,
+      "batch": 2
+    },
+    {
+      "cut": 123,
+      "batch": 3
+    },
+    {
+      "cut": 130,
+      "batch": 3
+    },
+    {
+      "cut": 131,
+      "batch": 3
+    },
+    {
+      "cut": 132,
+      "batch": 3
+    },
+    {
+      "cut": 133,
+      "batch": 3
+    },
+    {
+      "cut": 135,
+      "batch": 3
+    },
+    {
+      "cut": 136,
+      "batch": 3
+    },
+    {
+      "cut": 656,
+      "batch": 3
+    },
+    {
+      "cut": 716,
+      "batch": 3
+    },
+    {
+      "cut": 140,
+      "batch": 3
+    },
+    {
+      "cut": 646,
+      "batch": 3
+    },
+    {
+      "cut": 638,
+      "batch": 3
+    },
+    {
+      "cut": 634,
+      "batch": 3
+    },
+    {
+      "cut": 639,
+      "batch": 3
+    },
+    {
+      "cut": 152,
+      "batch": 3
+    },
+    {
+      "cut": 153,
+      "batch": 3
+    },
+    {
+      "cut": 154,
+      "batch": 3
+    },
+    {
+      "cut": 156,
+      "batch": 3
+    },
+    {
+      "cut": 157,
+      "batch": 4
+    },
+    {
+      "cut": 160,
+      "batch": 4
+    },
+    {
+      "cut": 161,
+      "batch": 4
+    },
+    {
+      "cut": 162,
+      "batch": 4
+    },
+    {
+      "cut": 163,
+      "batch": 4
+    },
+    {
+      "cut": 164,
+      "batch": 4
+    },
+    {
+      "cut": 8,
+      "batch": 4
+    },
+    {
+      "cut": 11,
+      "batch": 4
+    },
+    {
+      "cut": 57,
+      "batch": 4
+    },
+    {
+      "cut": 740,
+      "batch": 4
+    },
+    {
+      "cut": 741,
+      "batch": 4
+    },
+    {
+      "cut": 697,
+      "batch": 4
+    },
+    {
+      "cut": 18,
+      "batch": 4
+    },
+    {
+      "cut": 33,
+      "batch": 4
+    },
+    {
+      "cut": 34,
+      "batch": 4
+    },
+    {
+      "cut": 35,
+      "batch": 4
+    },
+    {
+      "cut": 36,
+      "batch": 4
+    },
+    {
+      "cut": 171,
+      "batch": 4
+    },
+    {
+      "cut": 173,
+      "batch": 5
+    },
+    {
+      "cut": 174,
+      "batch": 5
+    },
+    {
+      "cut": 178,
+      "batch": 5
+    },
+    {
+      "cut": 179,
+      "batch": 5
+    },
+    {
+      "cut": 182,
+      "batch": 5
+    },
+    {
+      "cut": 183,
+      "batch": 5
+    },
+    {
+      "cut": 187,
+      "batch": 5
+    },
+    {
+      "cut": 188,
+      "batch": 5
+    },
+    {
+      "cut": 743,
+      "batch": 5
+    },
+    {
+      "cut": 189,
+      "batch": 5
+    },
+    {
+      "cut": 190,
+      "batch": 5
+    },
+    {
+      "cut": 191,
+      "batch": 5
+    },
+    {
+      "cut": 196,
+      "batch": 5
+    },
+    {
+      "cut": 199,
+      "batch": 5
+    },
+    {
+      "cut": 200,
+      "batch": 5
+    },
+    {
+      "cut": 696,
+      "batch": 5
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "tool": "builtin-imagegen",
+  "requests": [
+    {
+      "prompt": "Edit target: first image, the modern sewer machinery room. Supporting reference: second image shows four native animation phase panels labeled4,5,3,7. Produce an alternate animation frame of the modern room. Preserve camera, exact architecture, lighting and image framing. Only rotate the wooden slatted cylindrical rollers of the central eight-column, three-row waterwheel mechanism a quarter turn: the irregular wood knots and dark slots must visibly move vertically around each roller compared with the current image. Keep all metal frames, black iron brackets, axle, exact eight-column count and outer mechanism silhouette fixed. Do not add objects. No people or text. This is a game animation plate so fixed metal registration and clearly different wood phase are essential. Keep all eight wooden columns, do not simplify to six.",
+      "references": [
+        "gfx/backgrounds/disc1/cut-197/source/base.png",
+        "build/disc1/cut197-frame-analysis.png"
+      ],
+      "output": "exec-8270b456-b781-4541-8b45-27c95888821a.png",
+      "purpose": "Alternate wooden roller phase; pending endpoint registration review"
+    },
+    {
+      "references": [
+        "gfx/backgrounds/disc1/cut-197/source/base.png",
+        "build/disc1/cut197-lever-ladder-guide.png"
+      ],
+      "output": "exec-9633896e-8316-4d70-944c-9ef58e553867.png",
+      "purpose": "Lever pair used; lower-left ladder interpretation rejected after native composite review. Lower-right dark wood material supplies the original narrow upper-room occluding-panel mask."
+    }
+  ]
+}

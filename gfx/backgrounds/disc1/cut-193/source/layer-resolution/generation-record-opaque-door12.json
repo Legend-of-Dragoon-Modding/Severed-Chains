@@ -1,0 +1,9 @@
+{
+  "tool": "built-in imagegen",
+  "prompt": "Reconstruct image1 EXACTLY as an opaque rectangular game texture crop. It depicts a broad CLOSED round-topped reddish wooden door with THREE horizontal dark green-black iron straps, surrounded by small dark green STONE WALL CORNERS above its curved top and a narrow stone/ground fringe below. The green areas at the upper corners in image1 are IMPORTANT solid masonry background, NOT transparency. Preserve all placement/proportions, arc, exact canvas crop and three straps. High detailed wood grain and old iron rivets, green ambient light, dark mossy stone corners. Fill ENTIRE canvas edge-to-edge with opaque RGB texture, no transparent pixels, no extra margins, no stone arch/frame added, no handles or new props. The curved wooden top should stay below the uppermost canvas edge except at center; corners must be dark green stone, never extended wood smears.",
+  "inputs": [
+    "original-panel-12.png"
+  ],
+  "output": "generated-opaque-door12.png",
+  "generatedOutputHint": "Generated images are saved to C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde as C:\\Users\\20te\\.codex\\generated_images\\01a18f3f-1c1b-7be0-b1d0-e9ff8171efde\\exec-c17223bc-68f5-457b-95f6-6f86761e680e.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link."
+}

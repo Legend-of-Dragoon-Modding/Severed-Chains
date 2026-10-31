@@ -1,0 +1,15 @@
+{
+  "cut": 657,
+  "scope": "Exact parent ImageGen invocation code recovered from this project chat only; includes prompts and references. Code is retained verbatim, including prompt variables. Worker generation records are separate. Some calls share style references across cuts.",
+  "requests": [
+    {
+      "sessionLine": 4224,
+      "timestamp": "2026-10-30T19:36:01.010Z",
+      "referencedCuts": [
+        657
+      ],
+      "tool": "builtin-imagegen",
+      "exactRequestCode": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-657/source/base.png\"],transparent_background:false,prompt:\"Editthismedievalnightalleybackground intoCLEANOPENDOORUNDERLAY. Preserveentirecamera/framing/layout/materials/light,stairs,barrrels,woodenplatformrailings. ONLYremoveclosedwooddoorbeneathupperwoodplatform nearx.53..64,y.14..37normalized. Keepdoorjambandthresholdfixed. Revealemptydarkroom/passagebehinddoorandcontinuousstonethresholdfloor. No wooddoorleaf remains inopening; itwillberenderedbyseparategameforegroundplate. Don'taddswungdoorleafelsewhere,don'tmovebarrels/lantern/walls/rails. Noperson,text,newobjects. Fullsame3:2canvasdimensions/aspectunchanged.\"}); store(\"cut657underlayResult\",r); generatedImage(r);\n"
+    }
+  ]
+}

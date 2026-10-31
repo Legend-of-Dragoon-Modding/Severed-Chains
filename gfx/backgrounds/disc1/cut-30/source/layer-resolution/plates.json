@@ -1,0 +1,21 @@
+{
+  "background": "bounded-underlay.png",
+  "layers": {
+    "0": "../base.png",
+    "1": "../base.png",
+    "2": "../base.png",
+    "3": "../base.png",
+    "4": "../base.png",
+    "5": "../base.png"
+  },
+  "dynamicLayers": [
+    4
+  ],
+  "evidence": [
+    "Correct RetailSubmap script directory: environment source index+2. Detailed calls/tables and observed GPU/exportmatched states in gfx\\backgrounds\\disc1\\cut-30\\source\\layer-resolution/audit.json.",
+    "Raw generated base.png preserved. New built-in ImageGen underlay follows original retail background plus static foregrounds; changing objects excluded.",
+    "Independent source RGB uses original source master for dynamic layers and generated clean underlying plate for background/still layers. Exact retail alpha retained.",
+    "Underlay edit bounded to originalFG4 rectangle; unchanged staticFG5 overhang kept from rawmaster after endpoint review exposed a bright edge seam."
+  ],
+  "visualReview": true
+}

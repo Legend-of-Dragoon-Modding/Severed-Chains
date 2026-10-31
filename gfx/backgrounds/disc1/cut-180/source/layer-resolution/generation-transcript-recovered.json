@@ -1,0 +1,11 @@
+{
+  "tool": "built-in imagegen",
+  "provenance": "Exact imagegen invocation inputs recovered from this task session; includes rejected candidates as well as accepted outputs. See sibling generation records and plates.json for selected source filenames.",
+  "invocations": [
+    {
+      "timestamp": "2026-10-31T00:03:22.063Z",
+      "callId": "call_29907b5588914e56b9dfad30e1e4b07b",
+      "exactToolInput": "// @exec: {\"yield_time_ms\": 1000, \"max_output_tokens\": 300}\nconst r=await tools.image_gen__imagegen({referenced_image_paths:[\"C:/Users/20te/workspaces/Severed-Chains/gfx/backgrounds/disc1/cut-180/source/base.png\"],transparent_background:false,prompt:\"Edit this detailed cave tavern game background into a clean underlying scenery plate. Preserve EXACT camera, full4:3canvas, all platforms/stairs/railings/beds/rug/props/lighting/materials. Remove ONLY the hanging wooden crate near upper-middle-left at normalized x0.38..0.47,y0.0..0.33, including its suspension rope up to top edge. Reveal the dark rock wall, fixed wooden stair railing and floor behind it naturally; no hanging crate or rope ghost remains. Do not remove the fixed vertical support post immediately left of crate or staircase behind, or the chandelier atupperright. Do not move anything or invent scenery. The crate+rope will be separately rendered and moved vertically by game. No characters/text.\"});store(\"final180underlay\",r);generatedImage(r);\n"
+    }
+  ]
+}
