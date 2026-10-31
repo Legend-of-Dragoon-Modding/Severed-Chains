@@ -5968,9 +5968,6 @@ INIT_PLAYER:
 yield
 jmp_cmp !&, 0x8, var[58], inl[:INIT_PLAYER] ; operand, left, right, addr
 
-; clear dragoon space element
-call Battle::scriptSetDragoonSpaceElementIndex, 0xffffffff ; charId
-
 ; clear a bunch of mostly-unknown battle vars
 mov 0x0, var[45][246] ; attack targets
 mov 0x0, var[45][68] ; source, dest
@@ -5984,7 +5981,6 @@ mov 0x0, var[45][220] ; source, dest
 mov 0x0, var[45][221] ; source, dest
 mov 0x0, var[45][222] ; source, dest
 mov 0x0, var[45][223] ; source, dest
-mov 0xffffffff, var[45][76] ; special flag
 
 ; store my char slot in s8
 call Battle::scriptGetBentSlot, stor[0], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
