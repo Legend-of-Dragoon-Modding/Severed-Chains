@@ -6013,15 +6013,8 @@ mov stor[8], stor[9] ; source, dest
 ; set my status conditions _14 to 0x20
 mov 0x20, var[128 + stor[8]][5] ; source, dest
 
-; clear my shield/sig/charm/pan/charging turns
-mov 0x0, var[128 + stor[8]][7] ; source, dest
-
 ; clear my status conditions _10
 mov 0xffffffff, var[128 + stor[8]][4] ; source, dest
-
-; clear my status
-add 129, stor[8] ; amount, operand
-mov 0x0, var[45][stor[8]] ; source, dest
 
 ; clear my special weapon flags (destroyer mace, wargod, etc)
 add 189, stor[9] ; amount, operand
