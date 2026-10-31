@@ -3,6 +3,7 @@ package legend.game.combat.types;
 import legend.core.gpu.Gpu;
 import legend.core.memory.Method;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
@@ -53,6 +54,9 @@ public class CombatantStruct1a8 {
   public int _1a6;
 
   public PlayerBattleEntity playerBent;
+
+  /// Moved from BattleStateEf4#statusConditions_00
+  public final StatusConditions20 extendedConditions = new StatusConditions20();
 
   public boolean isPlayer() {
     return (this.flags_19e & 0x4) != 0;

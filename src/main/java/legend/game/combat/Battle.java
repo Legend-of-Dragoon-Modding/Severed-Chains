@@ -2086,7 +2086,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_801095a0
     for(final int enemyId : encounter.uniqueIds) {
       final int enemyIndex = enemyId & 0x1ff;
-      this.loadEnemyDropsAndScript((this.addCombatant(enemyIndex, -1) << 16) + enemyIndex);
+      this.loadEnemyDropsAndScript(this.addCombatant(enemyIndex, -1), enemyIndex);
     }
 
     //LAB_801095ec
@@ -2096,6 +2096,7 @@ public class Battle extends EngineState<Battle> {
       final int monsterId = encounterMonster.id & 0x1ff;
 
       final int combatantIndex = this.getCombatantIndex(monsterId);
+      final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
       final String name = "Enemy combatant index " + combatantIndex;
       final MonsterBattleEntity bent = new MonsterBattleEntity(this, name, monsterId);
       final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
@@ -2129,7 +2130,6 @@ public class Battle extends EngineState<Battle> {
     int scriptSlot = 6;
     for(int charSlot = 0; charSlot < charCount; charSlot++) {
       final int combatantIndex = this.addCombatant(gameState_800babc8.charIds_88.getInt(charSlot), charSlot);
-      battleState_8006e398.statusConditions_00[combatantIndex].menuBlockFlag_18 = 0;
 
       while(SCRIPTS.getState(scriptSlot) != null) {
         scriptSlot++;
@@ -9327,9 +9327,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x80109808L)
-  public void loadEnemyDropsAndScript(final int enemyAndCombatantId) {
-    final int enemyId = enemyAndCombatantId & 0xffff;
-    final int combatantIndex = enemyAndCombatantId >>> 16;
+  public void loadEnemyDropsAndScript(final int combatantIndex, final int enemyId) {
     final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
     final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
 
@@ -9349,11 +9347,6 @@ public class Battle extends EngineState<Battle> {
     EVENTS.postEvent(enemyEvent);
 
     enemyEvent.scriptFuture.thenAccept(script -> combatant.scriptPtr_10 = script);
-  }
-
-  @Method(0x8010989cL)
-  public void loadCombatantScript(final byte[] file, final int index) {
-    this.getCombatant(index).scriptPtr_10 = new ScriptFile("Combatant " + index, file);
   }
 
   @Method(0x801098f4L)
