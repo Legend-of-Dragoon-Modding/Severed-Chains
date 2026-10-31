@@ -90,7 +90,6 @@ import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CompressedAsset08;
-import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
@@ -469,8 +468,6 @@ public class Battle extends EngineState<Battle> {
 
   public static BattleStageDarkening1800 stageDarkening_800c6958;
   public static int stageDarkeningClutWidth_800c695c;
-
-  public final List<DragoonSpells09> dragoonSpells_800c6960 = new ArrayList<>();
 
   public final String[] currentEnemyNames_800c69d0 = new String[9];
 
@@ -8413,11 +8410,9 @@ public class Battle extends EngineState<Battle> {
   }
 
   public void initPlayerBattleEntityStats(final PlayerBattleEntity player) {
-    final DragoonSpells09 spells = new DragoonSpells09(player.character);
-    this.dragoonSpells_800c6960.add(spells);
-
+    player.spells.clear();
     for(final RegistryId spellId : player.character.getUnlockedSpells()) {
-      spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
+      player.spells.add(REGISTRIES.spells.getEntry(spellId).get());
     }
 
     //LAB_800ef400

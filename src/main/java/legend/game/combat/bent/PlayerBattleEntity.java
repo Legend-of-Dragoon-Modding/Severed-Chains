@@ -23,7 +23,9 @@ import legend.lodmod.LodMod;
 import legend.lodmod.LodSpells;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.round;
@@ -93,6 +95,9 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int revive_13a;
   public int hpMulti_13c;
   public int mpMulti_13e;
+
+  /// Replaces Battle#dragoonSpells_800c6960
+  public final List<SpellStats0c> spells = new ArrayList<>();
 
   public DetransformationMode detransformationMode = DetransformationMode.NOW;
 
