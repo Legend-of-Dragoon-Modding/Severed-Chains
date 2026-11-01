@@ -251,12 +251,15 @@ public class DebuggerController {
 
   @FXML
   private void startEncounter(final ActionEvent event) {
+    startEncounter(this.encounterId.getValue());
+  }
+
+  public static void startEncounter(final int encounterId) {
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
-      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[this.encounterId.getValue()]).get();
+      final Encounter encounter = REGISTRIES.encounters.getEntry(LodMod.MOD_ID, LodEncounters.LEGACY[encounterId]).get();
       smap.submap.prepareEncounter(encounter, false);
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
-      final int encounterId = this.encounterId.getValue();
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
       final int stageId;

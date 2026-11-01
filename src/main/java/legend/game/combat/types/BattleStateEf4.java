@@ -31,6 +31,8 @@ public class BattleStateEf4 {
 
   public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];
 
+  public boolean isPunchingBag;
+
   public int _180;
   /**
    * For cutscene DEFFs, combat vars 1 to 10 are used to store combatant indices.

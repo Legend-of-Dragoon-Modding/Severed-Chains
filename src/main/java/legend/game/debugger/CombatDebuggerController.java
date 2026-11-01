@@ -95,6 +95,7 @@ public class CombatDebuggerController {
   public Button punchingBagMode;
 
   public static boolean autoPunchingBagMode;
+  public static boolean nextEncounterPunchingBagMode;
 
   public void initialize() {
     for(int i = 0; i < battleState_8006e398.allBents_e0c.size(); i++) {
@@ -361,7 +362,7 @@ public class CombatDebuggerController {
   }
 
   public void punchingBagMode(final ActionEvent event) {
-    CombatDebuggerController.punchingBagMode();
+    CombatDebuggerController.punchingBagMode(false);
     final int selectedIndex = this.bentList.getSelectionModel().getSelectedIndex();
     for(int i = 0; i < this.bentList.getItems().size(); i++) {
       this.bentList.getItems().get(i).update();
@@ -371,9 +372,14 @@ public class CombatDebuggerController {
     }
   }
 
-  public static void punchingBagMode() {
-    if (battleState_8006e398 == null || battleState_8006e398.allBents_e0c.size() < 1) {
+  public static void punchingBagMode(final boolean isPractice) {
+    if (battleState_8006e398 == null || battleState_8006e398.allBents_e0c.isEmpty()) {
       return;
+    }
+
+    if(isPractice) {
+      battleState_8006e398.isPunchingBag = true;
+      nextEncounterPunchingBagMode = false;
     }
 
     for (int i = 0; i < battleState_8006e398.allBents_e0c.size(); i++) {
@@ -385,10 +391,12 @@ public class CombatDebuggerController {
 
       final BattleEntity27c bent = state.innerStruct_00;
       final VitalsStat hp = bent.stats.getStat(LodMod.HP_STAT.get());
-      hp.setCurrent(9999);
-      hp.setMaxRaw(9999);
 
-      if (bent instanceof final PlayerBattleEntity player) {
+      if(bent instanceof final PlayerBattleEntity player) {
+        if(!isPractice) {
+          hp.setCurrent(9999);
+          hp.setMaxRaw(9999);
+        }
         bent.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(0);
         bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(0);
         bent.tempAttackHit_bc = 9999;
@@ -396,6 +404,8 @@ public class CombatDebuggerController {
         bent.stats.getStat(LodMod.DEFENSE_STAT.get()).setRaw(9999);
         bent.stats.getStat(LodMod.MAGIC_DEFENSE_STAT.get()).setRaw(9999);
       } else {
+        hp.setCurrent(9999);
+        hp.setMaxRaw(9999);
         bent.stats.getStat(LodMod.SPEED_STAT.get()).setRaw(0);
         bent.stats.getStat(LodMod.ATTACK_STAT.get()).setRaw(0);
         bent.stats.getStat(LodMod.MAGIC_ATTACK_STAT.get()).setRaw(0);

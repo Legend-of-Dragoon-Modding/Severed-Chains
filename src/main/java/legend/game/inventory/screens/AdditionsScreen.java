@@ -1,14 +1,18 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.lang.I18nText;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.additions.Addition;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
+import legend.game.debugger.CombatDebuggerController;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.inventory.screens.controls.Glyph;
+import legend.game.types.MessageBoxResult;
+import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -28,6 +32,7 @@ import static legend.game.SItem.addLeftRightArrows;
 import static legend.game.SItem.additionGlyphs_801141e4;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.initHighlight;
+import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -40,6 +45,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_SORT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.types.Renderable58.FLAG_DELETE_AFTER_RENDER;
@@ -62,9 +68,13 @@ public class AdditionsScreen extends MenuScreen {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  /** Allows list wrapping, but only on new input */
+  /**
+   * Allows list wrapping, but only on new input
+   */
   private boolean allowWrapX = true;
   private boolean allowWrapY = true;
+
+  private int trainingHotkeyIndex;
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;
@@ -77,6 +87,12 @@ public class AdditionsScreen extends MenuScreen {
 
     this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.setPos(this.getWidth(), this.getHeight() - 45);
+
+    this.addTrainingHotkey();
+  }
+
+  private void addTrainingHotkey() {
+    this.addHotkey(new I18nText("lod_core.ui.additions.training"), INPUT_ACTION_MENU_SORT, this::startPunchingBagMode);
   }
 
   @Override
@@ -440,5 +456,14 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     return InputPropagation.PROPAGATE;
+  }
+
+  private void startPunchingBagMode() {
+    menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.additions.training_prompt"), MessageBoxType.CONFIRMATION, result -> {
+      if(result == MessageBoxResult.YES) {
+        CombatDebuggerController.nextEncounterPunchingBagMode = true;
+        this.menuEscape();
+      }
+    }));
   }
 }

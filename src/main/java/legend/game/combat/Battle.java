@@ -2166,8 +2166,8 @@ public class Battle extends EngineState<Battle> {
 
     this.initPlayerBattleEntityStats();
 
-    if (CombatDebuggerController.autoPunchingBagMode) {
-      CombatDebuggerController.punchingBagMode();
+    if (CombatDebuggerController.autoPunchingBagMode || CombatDebuggerController.nextEncounterPunchingBagMode) {
+      CombatDebuggerController.punchingBagMode(CombatDebuggerController.nextEncounterPunchingBagMode);
     }
 
     this.loadingStage++;
@@ -4387,7 +4387,7 @@ public class Battle extends EngineState<Battle> {
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-      if(charData.selectedAddition_19 == null) {
+      if(charData.selectedAddition_19 == null || battleState_8006e398.isPunchingBag) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
@@ -8708,6 +8708,10 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public FlowControl scriptGiveSp(final RunningScript<?> script) {
+    if(battleState_8006e398.isPunchingBag) {
+      return FlowControl.CONTINUE;
+    }
+
     //LAB_800f43f8
     //LAB_800f4410
     //LAB_800f4430

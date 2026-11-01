@@ -5,12 +5,14 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
 import legend.core.memory.Method;
 import legend.game.combat.Battle;
+import legend.game.debugger.CombatDebuggerController;
 import legend.game.modding.coremod.CorePostBattleActions;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.List;
 
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.sound.Audio.loadMusicPackage;
 
@@ -81,7 +83,7 @@ public class Encounter extends RegistryEntry {
   public int get(final int index) {
     return switch(index) {
       case 1 -> this.musicIndex;
-      case 2 -> this.escapeChance;
+      case 2 -> this.escapeChance + (battleState_8006e398.isPunchingBag ? 9999 : 0);
       case 3 -> this.postCombatSubmapScene;
       case 4 -> this.playerOpeningCamera;
       case 5 -> this.monsterOpeningCamera;
