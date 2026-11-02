@@ -4226,11 +4226,11 @@ public class Battle extends EngineState<Battle> {
   public FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-    final int value = this.adjustStatForPractice(stat, bent, script.params_20[1].get(), false);
 
     if(script.params_20[1].isRegistryId()) {
       bent.setStat(stat, script.params_20[1].getRegistryId());
     } else {
+      final int value = this.adjustStatForPractice(stat, bent, script.params_20[1].get(), false);
       final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, value));
       bent.setStat(stat, event.value);
     }
@@ -4245,9 +4245,6 @@ public class Battle extends EngineState<Battle> {
       }
       if(stat == BattleEntityStat.CURRENT_MP || stat == BattleEntityStat.MAX_MP) {
         return isForRender ? 0 : bent.stats.getStat(MP_STAT.get()).getCurrent();
-      }
-      if(stat == BattleEntityStat.CURRENT_SP) {
-        return isForRender ? 0 : bent.stats.getStat(SP_STAT.get()).getCurrent();
       }
     }
     return value;
