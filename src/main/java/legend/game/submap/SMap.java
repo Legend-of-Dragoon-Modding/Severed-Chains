@@ -731,6 +731,20 @@ public class SMap extends EngineState<SMap> {
     return this.getRunInput(this.inputHeld);
   }
 
+  /// This is some extreme jank to fix movement rotation smoothing blowing away scriptFacePoint calls that run in the same frame, after the movement code has
+  /// already run. In the movement code, it reads the analog magnitude and then runs scriptFacePoint, so we can check if a scriptFacePoint was called due to
+  /// the movement code by checking if the magnitude was checked in the same frame. We then clear analogMagnitudeRead in scriptFacePoint so subsequent calls
+  /// to scriptFacePoint will clear scriptFacePointWasFromPlayerMovement. Movement rotation smoothing is only performed if scriptFacePointWasFromPlayerMovement
+  /// is set. GH#2895
+  private boolean scriptFacePointWasFromPlayerMovement;
+  private boolean analogMagnitudeRead;
+
+  @Override
+  public float getAnalogueMagnitude() {
+    this.analogMagnitudeRead = true;
+    return super.getAnalogueMagnitude();
+  }
+
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
@@ -1817,6 +1831,8 @@ public class SMap extends EngineState<SMap> {
 
     if(!flEq(model.coord2_14.transforms.rotate.y, y)) {
       sobj.finishInterpolatedRotationY();
+      // GH#2895, broken in retail
+      this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c = 0;
 
       if((this.smapTicks_800c6ae0 - sobj.lastRotationTickY) >= 2 / vsyncMode_8007a3b8) {
         model.coord2_14.transforms.rotate.y = y;
@@ -2370,6 +2386,12 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e0018L)
   private FlowControl scriptFacePoint(final RunningScript<SubmapObject210> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+
+    if(sobj == this.sobjs_800c6880[0].innerStruct_00) {
+      this.scriptFacePointWasFromPlayerMovement = this.analogMagnitudeRead;
+      this.analogMagnitudeRead = false;
+    }
+
     final Model124 model = sobj.model_00;
 
     final float deltaX = script.params_20[1].getFloat() - model.coord2_14.coord.transfer.x;
@@ -2987,7 +3009,7 @@ public class SMap extends EngineState<SMap> {
         }
       }
 
-      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0) {
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0 && this.scriptFacePointWasFromPlayerMovement) {
         model.coord2_14.transforms.rotate.y = this.smoothPlayerRotation();
       }
 
@@ -4054,6 +4076,9 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e5914L)
   public void tick() {
     super.tick();
+
+    this.analogMagnitudeRead = false;
+    this.scriptFacePointWasFromPlayerMovement = false;
 
     //LAB_800e5a30
     //LAB_800e5a34
