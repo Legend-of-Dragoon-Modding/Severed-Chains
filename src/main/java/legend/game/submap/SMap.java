@@ -4156,7 +4156,7 @@ public class SMap extends EngineState<SMap> {
 
       case RENDER_SUBMAP_12 -> {
         if(CombatDebuggerController.nextEncounterPunchingBagMode) {
-          DebuggerController.startEncounter(0);
+          DebuggerController.startEncounter(2);
         } else {
           submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
