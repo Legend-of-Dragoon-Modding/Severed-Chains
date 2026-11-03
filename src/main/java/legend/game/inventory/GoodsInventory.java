@@ -1,6 +1,7 @@
 package legend.game.inventory;
 
 import legend.game.modding.events.inventory.GiveGoodsEvent;
+import legend.game.modding.events.inventory.NotifyGoodsUpdatedEvent;
 import legend.game.modding.events.inventory.TakeGoodsEvent;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
@@ -79,18 +80,25 @@ public class GoodsInventory implements Iterable<Good> {
    * Unpacks retail goods, leaving mod goods as-is
    */
   public void unpack(final int index, final int packed) {
-    for(int bit = 0; bit < 32 && index * 32 + bit < GOODS_IDS.length; bit++) {
-      final RegistryId id = id(GOODS_IDS[index * 32 + bit]);
-      final RegistryDelegate<Good> good = REGISTRIES.goods.getEntry(id);
-      final boolean set = (packed & 1 << bit) != 0;
-      final boolean has = this.has(good);
+    final int bit = Integer.numberOfTrailingZeros(packed);
+    final int itemIndex = (index * 32) + bit;
 
-      if(set && !has) {
-        this.give(good, GoodsSource.GAMEPLAY);
-      } else if(!set && has) {
-        this.take(good);
-      }
+    if (itemIndex >= GOODS_IDS.length) {
+      return;
     }
+
+    final RegistryId id = id(GOODS_IDS[itemIndex]);
+    final RegistryDelegate<Good> good = REGISTRIES.goods.getEntry(id);
+    final boolean set = (packed & 1 << bit) != 0;
+    final boolean has = this.has(good);
+
+    if(set && !has) {
+      this.give(good, GoodsSource.GAMEPLAY);
+    } else if(!set && has) {
+      this.take(good);
+    }
+
+    this.sendNotify(good, set);
   }
 
   /**
@@ -113,6 +121,15 @@ public class GoodsInventory implements Iterable<Good> {
     }
 
     return out;
+  }
+
+  public void sendNotify(final RegistryDelegate<Good> good, final boolean set) {
+    if(!good.isValid()) {
+      LOGGER.warn("Invalid good %s", good.getId());
+      return;
+    }
+
+    EVENTS.postEvent(new NotifyGoodsUpdatedEvent(good.get(), set, GoodsSource.GAMEPLAY));
   }
 
   public void set(final GoodsInventory other) {
