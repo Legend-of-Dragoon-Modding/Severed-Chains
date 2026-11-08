@@ -87,6 +87,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 import static legend.game.sound.Audio.playMenuSound;
 import static legend.lodmod.LodBattleActions.ADDITIONS;
+import static legend.lodmod.LodBattleActions.CHARACTERS;
 import static legend.lodmod.LodBattleActions.ESCAPE;
 import static legend.lodmod.LodBattleActions.GUARD;
 import static legend.lodmod.LodBattleActions.ITEMS;
@@ -95,6 +96,7 @@ import static legend.lodmod.LodBattleActions.SPELLS;
 import static legend.lodmod.LodBattleActions.TRANSFORM;
 import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ADDITIONS;
+import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_CHARACTERS;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ESCAPE;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_GUARD;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ITEMS;
@@ -324,6 +326,16 @@ public class BattleHud {
     RENDERER.queueOrthoModel(this.battleMenu_800c6c34.menuObj, this.battleMenu_800c6c34.transforms, QueuedModelStandard.class)
       .vertices(this.battleMenu_800c6c34.targetArrowsObjOffset + colour * 4, 4)
       .translucency(Translucency.HALF_B_PLUS_HALF_F);
+  }
+
+  public void clearNumbers(final int charSlot) {
+    final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c.get(charSlot);
+
+    for(int numberIndex = 0; numberIndex < displayStats.digits_04.length; numberIndex++) {
+      for(int i = 0; i < displayStats.digits_04[numberIndex].length; i++) {
+        displayStats.digits_04[numberIndex][i].digitValue_00 = -1;
+      }
+    }
   }
 
   @Method(0x800ef7c4L)
@@ -1332,6 +1344,7 @@ public class BattleHud {
       case 0 -> new ItemListMenu(this, player, lastPosition, this::onListClose);
       case 1 -> new SpellListMenu(this, player, lastPosition, this::onListClose);
       case 2 -> new AdditionListMenu(this, player, lastPosition, this::onListClose);
+      case 3 -> new CharSwapListMenu(this, player, lastPosition, this::onListClose);
       default -> throw new RuntimeException("Not implemented");
     };
 
@@ -1591,6 +1604,8 @@ public class BattleHud {
           selectedAction = this.useAction(ITEMS.get());
         } else if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_SPELLS.get())) {
           selectedAction = this.useAction(SPELLS.get());
+        } else if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_CHARACTERS.get())) {
+          selectedAction = this.useAction(CHARACTERS.get());
         } else if(PLATFORM.isActionPressed(INPUT_ACTION_BTTL_ADDITIONS.get())) {
           selectedAction = this.useAction(ADDITIONS.get());
         }
@@ -2153,7 +2168,7 @@ public class BattleHud {
     }
   }
 
-  private void deleteUiElements() {
+  public void deleteUiElements() {
     if(this.nameAndPortraitObj != null) {
       this.nameAndPortraitObj.delete();
       this.nameAndPortraitObj = null;

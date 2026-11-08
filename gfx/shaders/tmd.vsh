@@ -92,6 +92,7 @@ void main() {
     }
 
     vs_out.vertColour.rgb = clamp(clamp(l.lightColour * clamp(l.lightDirection * vec4(inNorm, 1.0), 0.0, 8.0).rgb + l.backgroundColour.rgb, 0.0, 8.0) * inColour.rgb, 0.0, range);
+    vs_out.vertColour.a = 1.0;
   } else if(coloured) {
     vs_out.vertColour = inColour;
   } else {

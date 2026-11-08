@@ -11,6 +11,8 @@ import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
 import legend.game.combat.Battle;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
 import legend.game.modding.events.RenderEvent;
 import legend.game.modding.events.inventory.ScriptFlags1ChangedEvent;
 import legend.game.modding.events.inventory.ScriptFlags2ChangedEvent;
@@ -36,6 +38,7 @@ import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.Registry;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -435,6 +438,8 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  public static RegistryDelegate<?> lastChestContents;
+
   @ScriptDescription("Gives the player chest contents")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID (0xfb = 20G, 0xfc = 50G, 0xfd = 100G, 0xfe = 200G, 0xff = nothing)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID if an item was given (0xff = unable to give, 0 = gave gold)")
@@ -450,9 +455,13 @@ public final class Scus94491BpeSegment {
         final int itemId = script.params_20[0].get();
 
         if(itemId < 0xc0) {
-          yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId])).get()) ? 0 : 0xff;
+          final RegistryDelegate<Equipment> equip = REGISTRIES.equipment.getEntry(LodMod.id(LodMod.EQUIPMENT_IDS[itemId]));
+          lastChestContents = equip;
+          yield giveEquipment(equip.get()) ? 0 : 0xff;
         }
-        yield gameState_800babc8.items_2e9.give(REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192])).get()).isEmpty() ? 0 : 0xff;
+        final RegistryDelegate<Item> item = REGISTRIES.items.getEntry(LodMod.id(LodMod.ITEM_IDS[itemId - 192]));
+        lastChestContents = item;
+        yield gameState_800babc8.items_2e9.give(item.get()).isEmpty() ? 0 : 0xff;
       }
     };
 

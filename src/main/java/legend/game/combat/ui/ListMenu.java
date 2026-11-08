@@ -123,7 +123,7 @@ public abstract class ListMenu {
 
   private void initObjs() {
     if(this.menuObj == null) {
-      final QuadBuilder builder = new QuadBuilder("Spell/item menu");
+      final QuadBuilder builder = new QuadBuilder("Battle list menu");
 
       this.arrowObjOffset = builder.currentQuadIndex() * 4;
       for(int i = 0; i < 8; i++) {

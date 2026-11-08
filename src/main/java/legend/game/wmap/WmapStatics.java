@@ -488,7 +488,7 @@ public final class WmapStatics {
     new Location14(   3,   1, 624, 11, 624, 10,    1,   Continent.SOUTH_SERDIO_0, false, 128),
     new Location14(  12,   2,   7, 16,   7, 14,    2,   Continent.SOUTH_SERDIO_0,  true, 128),
     new Location14(   2,   3,  11, 30,  12,  5, -  1,   Continent.SOUTH_SERDIO_0,  true, 136),
-    new Location14(   1,   4,   9,  9,   9,  6,    4,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(   1,   4,  10,  9,  10,  9,    4,   Continent.SOUTH_SERDIO_0,  true,   0),
     new Location14(   2,   3, 696, 13, 696, 13, -  1,   Continent.SOUTH_SERDIO_0,  true,   0),
     new Location14(   2,   3, 695,  4, 695,  4, -  1,   Continent.SOUTH_SERDIO_0,  true,   0),
     new Location14(   9,   5,  13, 17,  13, 16,    5,   Continent.SOUTH_SERDIO_0, false, 192),
