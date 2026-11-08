@@ -206,6 +206,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BACK = INPUT_ACTION_REGISTRAR.register("menu_back", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DELETE = INPUT_ACTION_REGISTRAR.register("menu_delete", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_FILTER = INPUT_ACTION_REGISTRAR.register("menu_filter", InputAction::hidden);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_ADVANCED = INPUT_ACTION_REGISTRAR.register("menu_advanced", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
@@ -318,8 +319,10 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_MODS.get(), new KeyInputActivation(InputKey.M))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new ButtonInputActivation(InputButton.A))
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
-      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.X))
-      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new KeyInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.SELECT))
+      .add(INPUT_ACTION_MENU_UNEQUIP.get(), new KeyInputActivation(InputKey.V))
+      .add(INPUT_ACTION_MENU_FILTER.get(), new ButtonInputActivation(InputButton.X))
+      .add(INPUT_ACTION_MENU_FILTER.get(), new KeyInputActivation(InputKey.Q))
 
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new KeyInputActivation(InputKey.U))
