@@ -3,8 +3,6 @@ package legend.game.combat;
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelBattleTmd;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.Random;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
@@ -16,8 +14,11 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.FloatRef;
-import legend.core.renderer.McqBuilder;
 import legend.core.platform.input.InputAction;
+import legend.core.renderer.McqBuilder;
+import legend.core.renderer.QueuedModelBattleTmd;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.core.tags.Tag;
 import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment;
@@ -89,7 +90,6 @@ import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CompressedAsset08;
-import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
@@ -144,7 +144,6 @@ import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
-import legend.core.renderer.Translucency;
 import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
@@ -167,7 +166,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -416,7 +417,7 @@ public class Battle extends EngineState<Battle> {
 
   private boolean stageHasModel_800c66b8;
   /** Character scripts deallocated? */
-  private boolean combatDisabled_800c66b9;
+  public boolean combatDisabled_800c66b9;
 
   public ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
 
@@ -468,8 +469,6 @@ public class Battle extends EngineState<Battle> {
 
   public static BattleStageDarkening1800 stageDarkening_800c6958;
   public static int stageDarkeningClutWidth_800c695c;
-
-  public final List<DragoonSpells09> dragoonSpells_800c6960 = new ArrayList<>();
 
   public final String[] currentEnemyNames_800c69d0 = new String[9];
 
@@ -607,6 +606,8 @@ public class Battle extends EngineState<Battle> {
   public final SoundFile deffSounds = addSoundFile("DEFF SFX");
   public final SoundFile cutsceneSounds = addSoundFile("Cutscene SFX");
   public final SoundFile attackSounds = addSoundFile("Attack SFX");
+
+  public final Map<CharacterData2c, PlayerBattleEntity> charSwapBentCache = new HashMap<>();
 
   public Battle() {
     super(LodEngineStateTypes.BATTLE.get());
@@ -2083,7 +2084,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_801095a0
     for(final int enemyId : encounter.uniqueIds) {
       final int enemyIndex = enemyId & 0x1ff;
-      this.loadEnemyDropsAndScript((this.addCombatant(enemyIndex, -1) << 16) + enemyIndex);
+      this.loadEnemyDropsAndScript(this.addCombatant(enemyIndex, -1), enemyIndex);
     }
 
     //LAB_801095ec
@@ -2093,6 +2094,7 @@ public class Battle extends EngineState<Battle> {
       final int monsterId = encounterMonster.id & 0x1ff;
 
       final int combatantIndex = this.getCombatantIndex(monsterId);
+      final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
       final String name = "Enemy combatant index " + combatantIndex;
       final MonsterBattleEntity bent = new MonsterBattleEntity(this, name, monsterId);
       final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
@@ -2133,35 +2135,8 @@ public class Battle extends EngineState<Battle> {
 
       final int charId = gameState_800babc8.charIds_88.getInt(charSlot);
       final CharacterData2c character = gameState_800babc8.charData_32c.get(charId);
-      final String name = character.getName().get();
-
-      final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charId, scriptSlot, this.playerBattleScript_800c66fc);
-      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, name, bent);
-      state.setTicker(bent::bentLoadingTicker);
-      state.setDestructor(bent::bentDestructor);
-      bent.element = character.getElement(bent);
-      bent.combatant_144 = this.getCombatant(combatantIndex);
-      bent.combatantIndex_26c = combatantIndex;
-      bent.combatant_144.playerBent = bent;
-
-      bent.model_148.coord2_14.coord.transfer.x = charCount > 2 && charSlot == 0 ? 0x900 : 0xa00;
-      // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
-      bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount % 2 - 1) * 0x400;
-      bent.model_148.coord2_14.coord.transfer.y = 0.0f;
-
-      bent.model_148.coord2_14.transforms.rotate.zero();
-      battleState_8006e398.addPlayer(state);
-
-      Loader
-        .loadDirectory(character.getBattleSoundsPath(bent))
-        .thenAccept(files -> {
-          this.charSoundEffectsLoaded(files, bent);
-
-          if(remaining.decrementAndGet() == 0) {
-            loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
-          }
-        })
-      ;
+      final ScriptState<PlayerBattleEntity> bent = this.allocatePlayerBattleEntity(character, charSlot, charId, scriptSlot, combatantIndex, remaining);
+      battleState_8006e398.addPlayer(bent);
     }
 
     this.initPlayerBattleEntityStats();
@@ -2171,6 +2146,47 @@ public class Battle extends EngineState<Battle> {
     }
 
     this.loadingStage++;
+  }
+
+  public ScriptState<PlayerBattleEntity> allocatePlayerBattleEntity(final CharacterData2c character, final int charSlot, final int charId, final int scriptSlot, final int combatantIndex, final AtomicInteger remaining) {
+    final String name = character.getName().get();
+
+    final PlayerBattleEntity bent = new PlayerBattleEntity(this, name, charId, scriptSlot, this.playerBattleScript_800c66fc);
+    final ScriptState<PlayerBattleEntity> state = this.initPlayerBattleEntity(bent, character, charSlot, scriptSlot, combatantIndex);
+
+    Loader
+      .loadDirectory(character.getBattleSoundsPath(bent))
+      .thenAccept(files -> {
+        this.charSoundEffectsLoaded(files, bent);
+
+        if(remaining.decrementAndGet() == 0) {
+          loadingAudioFiles_800bcf78.updateAndGet(val -> val & ~0x8);
+        }
+      })
+    ;
+
+    return state;
+  }
+
+  public ScriptState<PlayerBattleEntity> initPlayerBattleEntity(final PlayerBattleEntity bent, final CharacterData2c character, final int charSlot, final int scriptSlot, final int combatantIndex) {
+    final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(scriptSlot, bent.getName(), bent);
+
+    bent.setScriptIndex(scriptSlot);
+    state.setTicker(bent::bentLoadingTicker);
+    state.setDestructor(bent::bentDestructor);
+    bent.element = character.getElement(bent);
+    bent.combatant_144 = this.getCombatant(combatantIndex);
+    bent.combatantIndex_26c = combatantIndex;
+    bent.combatant_144.playerBent = bent;
+
+    bent.model_148.coord2_14.coord.transfer.x = gameState_800babc8.charIds_88.size() > 2 && charSlot == 0 ? 0x900 : 0xa00;
+    // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
+    bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (gameState_800babc8.charIds_88.size() % 2 - 1) * 0x400;
+    bent.model_148.coord2_14.coord.transfer.y = 0.0f;
+
+    bent.model_148.coord2_14.transforms.rotate.zero();
+
+    return state;
   }
 
   @Method(0x8001cae0L)
@@ -8319,6 +8335,7 @@ public class Battle extends EngineState<Battle> {
 
     this.usedRepeatItems_800c6c3c.clear();
     this.dragoonSpaceElement_800c6b64 = null;
+    battleState_8006e398.specialFlag_2b0 = 0;
 
     //LAB_800ee894
     spGained_800bc950.clear();
@@ -8374,8 +8391,13 @@ public class Battle extends EngineState<Battle> {
       }
 
       //LAB_800eecb8
-      bent.character.status_10 = bent.status_0e & 0xc8;
+      bent.character.status_10 = bent.status_0e;
       bent.character.stats.getStat(SP_STAT.get()).setCurrent(bent.stats.getStat(SP_STAT.get()).getCurrent());
+    }
+
+    // Clear out statuses that don't persist after battle
+    for(final CharacterData2c character : gameState_800babc8.charData_32c) {
+      character.status_10 &= 0xc8;
     }
 
     //LAB_800eed78
@@ -8400,84 +8422,86 @@ public class Battle extends EngineState<Battle> {
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
       final PlayerBattleEntity player = battleState_8006e398.playerBents_e40.get(charSlot).innerStruct_00;
-      final DragoonSpells09 spells = new DragoonSpells09(player.character);
-      this.dragoonSpells_800c6960.add(spells);
-
-      for(final RegistryId spellId : player.character.getUnlockedSpells()) {
-        spells.spells_01.add(REGISTRIES.spells.getEntry(spellId).get());
-      }
-
-      //LAB_800ef400
-      player.stats.set(player.character.stats);
-
-      final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
-      final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
-      final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
-      final UnaryStat magicDefense = player.stats.getStat(MAGIC_DEFENSE_STAT.get());
-      final UnaryStat attackHit = player.stats.getStat(ATTACK_HIT_STAT.get());
-      final UnaryStat magicHit = player.stats.getStat(MAGIC_HIT_STAT.get());
-      final UnaryStat attackAvoid = player.stats.getStat(ATTACK_AVOID_STAT.get());
-      final UnaryStat magicAvoid = player.stats.getStat(MAGIC_AVOID_STAT.get());
-      final UnaryStat guardHeal = player.stats.getStat(GUARD_HEAL_STAT.get());
-
-      player.level_04 = player.character.level_12;
-      player.dlevel_06 = player.character.dlevel_13;
-      player.status_0e = player.character.getStatusAndFlags();
-      player.selectedAddition_58 = player.character.selectedAddition_19;
-      player.addition = player.character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(player.character.selectedAddition_19).get() : null;
-
-      player.equipment_11e.clear();
-
-      for(final EquipmentSlot slot : EquipmentSlot.values()) {
-        final Equipment equipment = player.character.getEquipment(slot);
-
-        if(equipment != null) {
-          player.equipment_11e.put(slot, equipment);
-
-          player.specialEffectFlag_14 |= equipment.flags_00;
-          player.equipmentAttackElements_1c.addAll(equipment.attackElement_04);
-          player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
-          player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
-          player.equipmentStatusResist_24 |= equipment.statusResist_08;
-          player.equipmentAttack1_28 += equipment.attack_10;
-          attack.setRaw(attack.getRaw() + equipment.attack_10);
-          magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
-          defense.setRaw(defense.getRaw() + equipment.defence_12);
-          magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);
-          attackHit.setRaw(attackHit.getRaw() + equipment.attackHit_14);
-          magicHit.setRaw(magicHit.getRaw() + equipment.magicHit_15);
-          attackAvoid.setRaw(attackAvoid.getRaw() + equipment.attackAvoid_16);
-          magicAvoid.setRaw(magicAvoid.getRaw() + equipment.magicAvoid_17);
-          guardHeal.setRaw(guardHeal.getRaw() + equipment.getGuardHealBonus());
-          player.onHitStatusChance_44 += equipment.onHitStatusChance_18;
-          player.equipmentOnHitStatus_4a |= equipment.onHitStatus_1b;
-          player.physicalImmunity_110 |= equipment.physicalImmunity;
-          player.magicalImmunity_112 |= equipment.magicalImmunity;
-          player.physicalResistance_114 |= equipment.physicalResistance;
-          player.magicalResistance_116 |= equipment.magicalResistance;
-          player.spMultiplier_128 += equipment.spMultiplier;
-          player.spPerPhysicalHit_12a += equipment.spPerPhysicalHit;
-          player.mpPerPhysicalHit_12c += equipment.mpPerPhysicalHit;
-          player.spPerMagicalHit_12e += equipment.spPerMagicalHit;
-          player.mpPerMagicalHit_130 += equipment.mpPerMagicalHit;
-          player.escapeBonus_132 += equipment.escapeBonus;
-          player.hpRegen_134 += equipment.hpRegen;
-          player.mpRegen_136 += equipment.mpRegen;
-          player.spRegen_138 += equipment.spRegen;
-          player.revive_13a += equipment.revive;
-          player.hpMulti_13c += equipment.hpMultiplier;
-          player.mpMulti_13e += equipment.mpMultiplier;
-          player._142 |= equipment.onHitStatus_1b;
-        }
-      }
-
-      player.originalSpPerPhysicalHit += player.spPerPhysicalHit_12a;
-      player.originalMpPerPhysicalHit += player.mpPerPhysicalHit_12c;
-      player.originalSpPerMagicalHit += player.spPerMagicalHit_12e;
-      player.originalMpPerMagicalHit += player.mpPerMagicalHit_130;
+      this.initPlayerBattleEntityStats(player);
     }
 
     //LAB_800ef798
+  }
+
+  public void initPlayerBattleEntityStats(final PlayerBattleEntity player) {
+    player.spells.clear();
+    for(final RegistryId spellId : player.character.getUnlockedSpells()) {
+      player.spells.add(REGISTRIES.spells.getEntry(spellId).get());
+    }
+
+    //LAB_800ef400
+    player.stats.set(player.character.stats);
+
+    final UnaryStat attack = player.stats.getStat(ATTACK_STAT.get());
+    final UnaryStat magicAttack = player.stats.getStat(MAGIC_ATTACK_STAT.get());
+    final UnaryStat defense = player.stats.getStat(DEFENSE_STAT.get());
+    final UnaryStat magicDefense = player.stats.getStat(MAGIC_DEFENSE_STAT.get());
+    final UnaryStat attackHit = player.stats.getStat(ATTACK_HIT_STAT.get());
+    final UnaryStat magicHit = player.stats.getStat(MAGIC_HIT_STAT.get());
+    final UnaryStat attackAvoid = player.stats.getStat(ATTACK_AVOID_STAT.get());
+    final UnaryStat magicAvoid = player.stats.getStat(MAGIC_AVOID_STAT.get());
+    final UnaryStat guardHeal = player.stats.getStat(GUARD_HEAL_STAT.get());
+
+    player.level_04 = player.character.level_12;
+    player.dlevel_06 = player.character.dlevel_13;
+    player.status_0e = player.character.getStatusAndFlags();
+    player.selectedAddition_58 = player.character.selectedAddition_19;
+    player.addition = player.character.selectedAddition_19 != null ? REGISTRIES.additions.getEntry(player.character.selectedAddition_19).get() : null;
+
+    player.equipment_11e.clear();
+
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      final Equipment equipment = player.character.getEquipment(slot);
+
+      if(equipment != null) {
+        player.equipment_11e.put(slot, equipment);
+
+        player.specialEffectFlag_14 |= equipment.flags_00;
+        player.equipmentAttackElements_1c.addAll(equipment.attackElement_04);
+        player.equipmentElementalResistance_20.addAll(equipment.elementalResistance_06);
+        player.equipmentElementalImmunity_22.addAll(equipment.elementalImmunity_07);
+        player.equipmentStatusResist_24 |= equipment.statusResist_08;
+        player.equipmentAttack1_28 += equipment.attack_10;
+        attack.setRaw(attack.getRaw() + equipment.attack_10);
+        magicAttack.setRaw(magicAttack.getRaw() + equipment.magicAttack_11);
+        defense.setRaw(defense.getRaw() + equipment.defence_12);
+        magicDefense.setRaw(magicDefense.getRaw() + equipment.magicDefence_13);
+        attackHit.setRaw(attackHit.getRaw() + equipment.attackHit_14);
+        magicHit.setRaw(magicHit.getRaw() + equipment.magicHit_15);
+        attackAvoid.setRaw(attackAvoid.getRaw() + equipment.attackAvoid_16);
+        magicAvoid.setRaw(magicAvoid.getRaw() + equipment.magicAvoid_17);
+        guardHeal.setRaw(guardHeal.getRaw() + equipment.getGuardHealBonus());
+        player.onHitStatusChance_44 += equipment.onHitStatusChance_18;
+        player.equipmentOnHitStatus_4a |= equipment.onHitStatus_1b;
+        player.physicalImmunity_110 |= equipment.physicalImmunity;
+        player.magicalImmunity_112 |= equipment.magicalImmunity;
+        player.physicalResistance_114 |= equipment.physicalResistance;
+        player.magicalResistance_116 |= equipment.magicalResistance;
+        player.spMultiplier_128 += equipment.spMultiplier;
+        player.spPerPhysicalHit_12a += equipment.spPerPhysicalHit;
+        player.mpPerPhysicalHit_12c += equipment.mpPerPhysicalHit;
+        player.spPerMagicalHit_12e += equipment.spPerMagicalHit;
+        player.mpPerMagicalHit_130 += equipment.mpPerMagicalHit;
+        player.escapeBonus_132 += equipment.escapeBonus;
+        player.hpRegen_134 += equipment.hpRegen;
+        player.mpRegen_136 += equipment.mpRegen;
+        player.spRegen_138 += equipment.spRegen;
+        player.revive_13a += equipment.revive;
+        player.hpMulti_13c += equipment.hpMultiplier;
+        player.mpMulti_13e += equipment.mpMultiplier;
+        player._142 |= equipment.onHitStatus_1b;
+      }
+    }
+
+    player.originalSpPerPhysicalHit += player.spPerPhysicalHit_12a;
+    player.originalMpPerPhysicalHit += player.mpPerPhysicalHit_12c;
+    player.originalSpPerMagicalHit += player.spPerMagicalHit_12e;
+    player.originalMpPerMagicalHit += player.mpPerMagicalHit_130;
   }
 
   @Method(0x800f1aa8L)
@@ -9324,9 +9348,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x80109808L)
-  public void loadEnemyDropsAndScript(final int enemyAndCombatantId) {
-    final int enemyId = enemyAndCombatantId & 0xffff;
-    final int combatantIndex = enemyAndCombatantId >>> 16;
+  public void loadEnemyDropsAndScript(final int combatantIndex, final int enemyId) {
     final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
     final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
 
@@ -9346,11 +9368,6 @@ public class Battle extends EngineState<Battle> {
     EVENTS.postEvent(enemyEvent);
 
     enemyEvent.scriptFuture.thenAccept(script -> combatant.scriptPtr_10 = script);
-  }
-
-  @Method(0x8010989cL)
-  public void loadCombatantScript(final byte[] file, final int index) {
-    this.getCombatant(index).scriptPtr_10 = new ScriptFile("Combatant " + index, file);
   }
 
   @Method(0x801098f4L)
