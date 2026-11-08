@@ -11,14 +11,10 @@ public class SpellBattleAction extends RetailBattleAction {
 
   @Override
   public BattleActionUseFlowControl use(final Battle battle, final PlayerBattleEntity player) {
-    //LAB_800f67b8
-    //LAB_800f67d8
-    //LAB_800f67f4
-    if(!battle.dragoonSpells_800c6960.get(player.typeBentSlot_276).spells_01.isEmpty()) {
-      return super.use(battle, player);
+    if(player.spells.isEmpty()) {
+      return BattleActionUseFlowControl.FAIL;
     }
 
-    //LAB_800f681c
-    return BattleActionUseFlowControl.FAIL;
+    return super.use(battle, player);
   }
 }

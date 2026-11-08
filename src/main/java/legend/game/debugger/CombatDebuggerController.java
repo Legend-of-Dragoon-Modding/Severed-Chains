@@ -17,7 +17,6 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import legend.game.Scus94491BpeSegment_8006;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntity27c;
@@ -326,9 +325,7 @@ public class CombatDebuggerController {
   public void cureStatusCondition(final ActionEvent event) {
     final int index = this.bentList.getSelectionModel().getSelectedIndex();
     final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c.get(index);
-
-    final int arrIndex = state.innerStruct_00.combatantIndex_26c;
-    Scus94491BpeSegment_8006.battleState_8006e398.status_384[arrIndex].unpack(0);
+    state.innerStruct_00.status_384.unpack(0);
   }
 
   private int getStatusIndexFromFlags(final int flags) {
