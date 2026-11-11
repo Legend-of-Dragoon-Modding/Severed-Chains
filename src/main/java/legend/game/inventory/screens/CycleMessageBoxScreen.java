@@ -6,6 +6,7 @@ import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputMod;
 import legend.game.types.MessageBoxType;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -17,40 +18,63 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_RIGHT;
 import static legend.game.sound.Audio.playMenuSound;
 
 public class CycleMessageBoxScreen extends MessageBoxScreen {
-  private static final int ARROWS_MAX_TICKS = 90;
+  private static final int ARROWS_MAX_TICKS = 45;
 
-  private final String messageText;
-  private final int minValue;
-  private final int maxValue;
-  private int currentValue;
+  private final TextComponent[] texts;
+  private final FontOptions[] fonts;
+  private int currentTextIndex;
   private int arrowsTick;
 
-  private final FontOptions firstLineFont = new FontOptions().colour(TextColour.BROWN).shadowColour(TextColour.MIDDLE_BROWN).horizontalAlign(HorizontalAlign.CENTRE).size(0.95f);
-  private final FontOptions secondLineFont = new FontOptions().colour(TextColour.DARK_GREY_54).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE).size(0.85f);
+  private final FontOptions titleFont = new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.GREY_40).horizontalAlign(HorizontalAlign.CENTRE).size(0.9f);
 
-  public CycleMessageBoxScreen(final String text, final int minValue, final int maxValue, final MessageBoxType type, final Consumer<MessageBoxResults> onResult) {
-    this(text, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"), minValue, maxValue, type, onResult);
+  public CycleMessageBoxScreen(final TextComponent[] texts, final MessageBoxType type, final Consumer<MessageBoxResults> onResult) {
+    this(texts, null, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"), type, onResult);
   }
 
-  public CycleMessageBoxScreen(final String text, final TextComponent yes, final TextComponent no, final int minValue, final int maxValue, final MessageBoxType type, final Consumer<MessageBoxResults> onResult) {
-    super(text, yes, no, type, onResult);
-    this.messageText = text;
-    this.minValue = minValue;
-    this.maxValue = maxValue;
-    this.currentValue = 1;
+  public CycleMessageBoxScreen(final TextComponent[] texts, final TextComponent yes, final TextComponent no, final MessageBoxType type, final Consumer<MessageBoxResults> onResult) {
+    this(texts, null, yes, no, type, onResult);
+  }
+
+  public CycleMessageBoxScreen(final TextComponent[] texts, final FontOptions[] fonts, final MessageBoxType type, final Consumer<MessageBoxResults> onResult) {
+    this(texts, fonts, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"), type, onResult);
+  }
+
+  public CycleMessageBoxScreen(final TextComponent[] texts, @Nullable final FontOptions[] fonts, final TextComponent yes, final TextComponent no, final MessageBoxType type, final Consumer<MessageBoxResults> onResult) {
+    super("", yes, no, type, onResult);
+    this.texts = texts;
+    this.fonts = fonts;
+    this.currentTextIndex = 0;
     this.arrowsTick = 0;
     this.setText(true);
   }
 
-  private void setText(final boolean isFirstSet) {
-    setMessageBoxText(this.messageBox, this.getText(), this.messageBox.type_15, isFirstSet);
-    setMessageBoxFontOptions(this.messageBox, 0, this.firstLineFont);
-    setMessageBoxFontOptions(this.messageBox, 1, this.secondLineFont);
+  private void menuNavigateLeft() {
+    playMenuSound(1);
+    this.currentTextIndex = this.currentTextIndex - 2 < 0 ? this.texts.length - 2 : this.currentTextIndex - 2;
+    this.arrowsTick = 0;
+    this.setText(false);
   }
 
-  private String getText() {
+  private void menuNavigateRight() {
+    playMenuSound(1);
+    this.currentTextIndex = this.currentTextIndex + 2 > this.texts.length - 2 ? 0 : this.currentTextIndex + 2;
+    this.arrowsTick = 0;
+    this.setText(false);
+  }
+
+  private void setText(final boolean isFirstSet) {
+    setMessageBoxText(this.messageBox, this.getText(this.currentTextIndex), this.messageBox.type_15, isFirstSet);
+    if(this.fonts != null) {
+      setMessageBoxFontOptions(this.messageBox, 0, this.titleFont);
+      for(int i = 1; i < this.messageBox.text_00.length; i++) {
+        setMessageBoxFontOptions(this.messageBox, i, this.fonts[this.currentTextIndex / 2]);
+      }
+    }
+  }
+
+  private String getText(final int textIndex) {
     final boolean b = this.arrowsTick < (ARROWS_MAX_TICKS / 2);
-    return this.messageText + '\n' + (b ? "< " : "<< ") + '×' + this.currentValue + (b ? " >" : " >>");
+    return (b ? "< " : "<< ") + this.texts[textIndex] + (b ? " >" : " >>")  + '\n' + this.texts[textIndex + 1];
   }
 
   @Override
@@ -68,21 +92,7 @@ public class CycleMessageBoxScreen extends MessageBoxScreen {
 
   @Override
   protected void menuSelect() {
-    super.menuSelect(this.currentValue);
-  }
-
-  private void menuNavigateLeft() {
-    playMenuSound(1);
-    this.currentValue = this.currentValue - 1 < this.minValue ? this.maxValue : this.currentValue - 1;
-    this.arrowsTick = 0;
-    this.setText(false);
-  }
-
-  private void menuNavigateRight() {
-    playMenuSound(1);
-    this.currentValue = this.currentValue + 1 > this.maxValue ? this.minValue : this.currentValue + 1;
-    this.arrowsTick = 0;
-    this.setText(false);
+    super.menuSelect(this.currentTextIndex / 2);
   }
 
   @Override
@@ -117,6 +127,6 @@ public class CycleMessageBoxScreen extends MessageBoxScreen {
 
   @Override
   protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
-    return super.mouseClick(x, y, button, mods, this.currentValue);
+    return super.mouseClick(x, y, button, mods, this.currentTextIndex / 2);
   }
 }

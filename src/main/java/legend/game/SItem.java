@@ -1806,7 +1806,7 @@ public final class SItem {
   }
 
   @Method(0x8010f130L)
-  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type, boolean isFirstSet) {
+  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type, final boolean isFirstSet) {
     setMessageBoxOptions(messageBox, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"));
 
     if(text != null) {

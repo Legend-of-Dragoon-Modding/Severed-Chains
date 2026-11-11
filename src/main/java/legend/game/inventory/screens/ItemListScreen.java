@@ -159,7 +159,7 @@ public class ItemListScreen extends MenuScreen {
       final InventoryEntry<?> entry = list.getSelectedItem().item_00;
       final int maxQuantity = entry.getSize();
       final String itemText = I18n.translate(entry.getNameTranslationKey());
-      menuStack.pushScreen(new CycleMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 

@@ -2,8 +2,8 @@ package legend.game.modding.coremod.shops;
 
 import legend.game.i18n.I18n;
 import legend.game.inventory.ItemStack;
-import legend.game.inventory.screens.CycleMessageBoxScreen;
 import legend.game.inventory.screens.MessageBoxScreen;
+import legend.game.inventory.screens.QuantityMessageBoxScreen;
 import legend.game.inventory.screens.ShopExtension;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.modding.coremod.CoreMod;
@@ -60,7 +60,7 @@ public class ItemShopExtension extends ShopExtension<ItemStack> {
       int maxQuantity = CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()) - gameState_800babc8.items_2e9.getSize();
       maxQuantity = Math.min(maxQuantity, gameState_800babc8.gold_94 / entry.price);
       if(maxQuantity > 0) {
-        menuStack.pushScreen(new CycleMessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", itemText), 1 , maxQuantity, MessageBoxType.CONFIRMATION, result -> {
+        menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", itemText), 1 , maxQuantity, MessageBoxType.CONFIRMATION, result -> {
           if(result.messageBoxResult == MessageBoxResult.YES) {
             EVENTS.postEvent(new ShopBuyEvent(shop, entry.item));
 

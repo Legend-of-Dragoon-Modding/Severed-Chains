@@ -746,7 +746,7 @@ public class ShopScreen extends MenuScreen {
       final int maxQuantity = inv.getSize();
       final String itemText = I18n.translate(inv.getNameTranslationKey());
 
-      menuStack.pushScreen(new CycleMessageBoxScreen(I18n.translate("lod_core.ui.shop.sell", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> {
+      menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.shop.sell", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> {
         if(result.messageBoxResult == MessageBoxResult.YES) {
           final boolean taken;
           final int count;
