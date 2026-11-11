@@ -106,7 +106,7 @@ public class MessageBoxScreen extends MenuScreen {
 
     if(this.messageBox.type_15 == MessageBoxType.ALERT) {
       playMenuSound(2);
-      this.result = new MessageBoxResults(MessageBoxResult.YES);
+      this.result = new MessageBoxResults(MessageBoxResult.YES, intValue);
       this.messageBox.state_0c = 4;
     } else if(this.messageBox.type_15 == MessageBoxType.CONFIRMATION) {
       // Yes/no
@@ -120,7 +120,7 @@ public class MessageBoxScreen extends MenuScreen {
           this.messageBox.highlightRenderable_04.setY(selectionY - 2);
         }
 
-        this.result = new MessageBoxResults(MessageBoxResult.YES);
+        this.result = new MessageBoxResults(MessageBoxResult.YES, intValue);
         this.messageBox.state_0c = 4;
       } else if(MathHelper.inBox((int)x, (int)y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
         playMenuSound(2);
@@ -130,7 +130,7 @@ public class MessageBoxScreen extends MenuScreen {
           this.messageBox.highlightRenderable_04.setY(selectionY + 12);
         }
 
-        this.result = new MessageBoxResults(MessageBoxResult.NO);
+        this.result = new MessageBoxResults(MessageBoxResult.NO, intValue);
         this.messageBox.state_0c = 4;
       }
     }
