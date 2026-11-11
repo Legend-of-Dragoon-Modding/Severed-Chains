@@ -115,7 +115,7 @@ public class LoadGameScreen extends MenuScreen {
 
     if(save.isValid()) {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.load_confirm"), MessageBoxType.CONFIRMATION, result -> this.onMessageboxResult(result, save)));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.load_confirm"), MessageBoxType.CONFIRMATION, result -> this.onMessageboxResult(result.messageBoxResult, save)));
     } else {
       playMenuSound(4);
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.load_fail"), MessageBoxType.ALERT, result -> { }));
@@ -163,7 +163,7 @@ public class LoadGameScreen extends MenuScreen {
 
     if(this.saveList.getSelected() != null && this.saveList.getSelected().isDone()) {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.load_game.delete_confirm"), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           try {
             this.campaign.deleteSave(this.saveList.getSelected().resultNow().fileName);
             this.saveList.removeEntry(this.saveList.getSelected());

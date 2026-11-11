@@ -386,13 +386,13 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     playMenuSound(2);
 
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
-      if(result == MessageBoxResult.YES) {
+      if(result.messageBoxResult == MessageBoxResult.YES) {
         if(this.selectedCharSlot != -1) {
           final CharacterData2c character = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
           if(character.canEquip(this.entry.item.slot, this.entry.item)) {
             menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.equip", I18n.translate(this.entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result1 -> {
-              if(result1 == MessageBoxResult.YES) {
+              if(result1.messageBoxResult == MessageBoxResult.YES) {
                 final EquipItemResult equipResult = equipItem(this.entry.item, characterIndices_800bdbb8.getInt(this.selectedCharSlot));
 
                 if(!equipResult.success) {

@@ -150,7 +150,7 @@ public class SaveGameScreen extends MenuScreen {
     if(save == null) {
       menuStack.pushScreen(new InputBoxScreen(new I18nText("lod_core.ui.save_game.save_name"), SAVES.generateSaveName(this.saves, gameState_800babc8), this::onNewSaveResult));
     } else {
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.save_game.overwrite_confirm"), MessageBoxType.CONFIRMATION, result -> this.onOverwriteResult(result, save)));
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.save_game.overwrite_confirm"), MessageBoxType.CONFIRMATION, result -> this.onOverwriteResult(result.messageBoxResult, save)));
     }
   }
 
@@ -197,7 +197,7 @@ public class SaveGameScreen extends MenuScreen {
 
     if(this.saveList.getSelected() != null && this.saveList.getSelected().isDone()) {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.save_game.delete_confirm"), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           try {
             final SavedGame savedGame = this.saveList.getSelected().resultNow();
             savedGame.campaign.deleteSave(savedGame.fileName);

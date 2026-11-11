@@ -214,7 +214,7 @@ lod_core.ui.item_list.equipment=Equipment
 lod_core.ui.item_list.sort=Sort
 lod_core.ui.item_list.discard=Discard
 lod_core.ui.item_list.back=Back
-lod_core.ui.item_list.discard_confirm=Discard?
+lod_core.ui.item_list.discard_confirm=Discard %s?
 
 lod_core.ui.goods.goods=Goods
 

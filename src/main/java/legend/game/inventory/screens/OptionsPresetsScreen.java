@@ -115,8 +115,8 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
     this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.options_presets.delete_confirm"), MessageBoxType.CONFIRMATION, this::onDeleteResult)));
   }
 
-  private void onDeleteResult(final MessageBoxResult result) {
-    if(result == MessageBoxResult.YES && ConfigPresetManager.deletePreset(this.presetList.getSelectedOption())) {
+  private void onDeleteResult(final MessageBoxResults result) {
+    if(result.messageBoxResult == MessageBoxResult.YES && ConfigPresetManager.deletePreset(this.presetList.getSelectedOption())) {
       this.presetList.removeOption(this.presetList.getSelectedIndex());
       this.onPresetSelected(this.presetList.getSelectedIndex());
     }
@@ -152,7 +152,7 @@ public class OptionsPresetsScreen extends VerticalLayoutScreen {
   private void onOptionsClosed(final String name, final ConfigCollection config, @Nullable final ConfigCollection originalConfig) {
     startFadeEffect(2, 10);
     this.getStack().popScreen();
-    this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.options_presets.save_changes"), MessageBoxType.CONFIRMATION, result -> this.onSaveChangesResult(result, name, config, originalConfig)));
+    this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.options_presets.save_changes"), MessageBoxType.CONFIRMATION, result -> this.onSaveChangesResult(result.messageBoxResult, name, config, originalConfig)));
   }
 
   private void onSaveChangesResult(final MessageBoxResult result, final String name, final ConfigCollection config, @Nullable final ConfigCollection originalConfig) {

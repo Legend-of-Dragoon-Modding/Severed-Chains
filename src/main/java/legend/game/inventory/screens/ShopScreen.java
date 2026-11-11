@@ -500,7 +500,7 @@ public class ShopScreen extends MenuScreen {
 
       case 1 -> // Sell
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.what_do_you_want_to_sell"), new I18nText("lod_core.ui.shop.equipment"), new I18nText("lod_core.ui.shop.items"), MessageBoxType.CONFIRMATION, result -> {
-          switch(result) {
+          switch(result.messageBoxResult) {
             case YES -> {
               this.invIndex_8011e0e0 = 0;
               this.invScroll_8011e0e4 = 0;
@@ -743,12 +743,15 @@ public class ShopScreen extends MenuScreen {
         inv = gameState_800babc8.equipment_1e8.get(slot);
       }
 
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.sell", I18n.translate(inv.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+      final int maxQuantity = inv.getSize();
+      final String itemText = I18n.translate(inv.getNameTranslationKey());
+
+      menuStack.pushScreen(new CycleMessageBoxScreen(I18n.translate("lod_core.ui.shop.sell", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           final boolean taken;
           final int count;
           if(this.sellType != 0) {
-            taken = takeItemFromSlot(slot, 1);
+            taken = takeItemFromSlot(slot, result.cycleValue);
             count = gameState_800babc8.items_2e9.getSize();
           } else {
             taken = takeEquipment(slot);

@@ -44,7 +44,7 @@ public class GoodShopExtension extends ShopExtension<Good> {
       screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.not_enough_gold"), MessageBoxType.ALERT, result -> { })));
     } else {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.buy", I18n.translate(entry.item.getNameTranslationKey())), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           EVENTS.postEvent(new ShopBuyEvent(shop, entry.item));
           gameState.goods_19c.give(entry.item, GoodsSource.GAMEPLAY);
           gameState_800babc8.gold_94 -= entry.price;

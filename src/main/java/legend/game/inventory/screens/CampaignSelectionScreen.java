@@ -116,7 +116,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     if(!currentMods.equals(knownMods)) {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.installed_mods_changed"), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           this.changeMods(campaign, () -> this.bootModsAndLoadSaves(campaign));
         } else {
           this.bootModsAndLoadSaves(campaign);
@@ -141,7 +141,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       this.loadSaves(campaign);
     } else {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.missing_mods_confirm"), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           this.loadSaves(campaign);
         } else {
           this.selectLock = false;
@@ -209,7 +209,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     menuStack.pushScreen(new ModsScreen(modIds, () -> {
       if(!originalMods.equals(modIds)) {
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.change_mods_confirm"), MessageBoxType.CONFIRMATION, result -> {
-          if(result == MessageBoxResult.YES) {
+          if(result.messageBoxResult == MessageBoxResult.YES) {
             campaign.config.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), modIds.toArray(String[]::new));
             ConfigStorage.saveConfig(campaign.config, ConfigStorageLocation.CAMPAIGN, campaign.path.resolve("campaign_config.dcnf"));
             startFadeEffect(2, 10);
@@ -230,7 +230,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
     if(this.campaignList.getSelected() != null) {
       menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.campaign_selection.delete_campaign_confirm"), MessageBoxType.CONFIRMATION, result -> {
-        if(result == MessageBoxResult.YES) {
+        if(result.messageBoxResult == MessageBoxResult.YES) {
           try {
             this.campaignList.getSelected().delete();
             this.campaignList.removeEntry(this.campaignList.getSelected());
