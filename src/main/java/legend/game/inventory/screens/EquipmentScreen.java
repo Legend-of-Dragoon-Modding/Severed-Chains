@@ -67,7 +67,7 @@ public class EquipmentScreen extends MenuScreen {
   private int charSlot;
   private int equipmentCount;
   private int sort;
-  private int filter;
+  private EquipmentSlot filter;
   private Renderable58 itemHighlight;
   private Renderable58 upArrow_800bdb9c;
   private Renderable58 downArrow_800bdba0;
@@ -80,7 +80,7 @@ public class EquipmentScreen extends MenuScreen {
 
   public EquipmentScreen(final Runnable unload) {
     this.unload = unload;
-    this.filter = -1;
+    this.filter = null;
     this.sort = -1;
 
     this.characterCard = this.addControl(new CharacterCard());
@@ -169,7 +169,7 @@ public class EquipmentScreen extends MenuScreen {
         if(equipment != gameState_800babc8.charData_32c.get(charIndex).getEquipment(equipment.slot)) {
           final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
           menuEntry.itemSlot_01 = equipmentSlot;
-          if(this.filter == -1 || EquipmentSlot.fromLegacy(this.filter) == menuEntry.item_00.slot) {
+          if(this.filter == null || this.filter == menuEntry.item_00.slot) {
             this.menuItems.add(menuEntry);
           }
         }
@@ -187,7 +187,7 @@ public class EquipmentScreen extends MenuScreen {
     this.characterCard.setEquipmentComparison(selected == null ? null : selected.item_00);
 
     renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), selected == null ? null : selected.item_00);
-    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? (this.filter > -1 ? EquipmentSlot.fromLegacy(this.filter) : null) : selected.item_00.slot);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? (this.filter != null ? this.filter : null) : selected.item_00.slot);
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
@@ -438,7 +438,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuItemSort(final boolean silent) {
-    this.sort = this.sort + 1 <= 2 ? this.sort + 1 : 0;
+    this.sort = (this.sort + 1) % 3;
     sortEquipmentInventory(this.sort);
     this.getEquippableItemsForCharacter(characterIndices_800bdbb8.getInt(this.charSlot));
 
@@ -450,7 +450,15 @@ public class EquipmentScreen extends MenuScreen {
 
   private void menuItemFilter() {
     playMenuSound(2);
-    this.filter = this.filter + 1 < EquipmentSlot.values().length ? this.filter + 1 : -1;
+
+    if(this.filter == null) {
+      this.filter = EquipmentSlot.values()[0];
+    } else if(this.filter.ordinal() == EquipmentSlot.values().length - 1) {
+      this.filter = null;
+    } else {
+      this.filter = EquipmentSlot.values()[this.filter.ordinal() + 1];
+    }
+
     this.slotScroll = 0;
     this.selectedSlot = 0;
     this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);

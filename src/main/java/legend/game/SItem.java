@@ -688,14 +688,14 @@ public final class SItem {
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static List<Equipment> sortEquipmentByAlpha(final List<Equipment> list) {
+  public static void sortEquipmentByAlpha(final List<Equipment> list) {
     final Comparator<Equipment> comparator = Comparator
       .comparing((Equipment item) -> item.slot.ordinal())
       .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
-    return list.stream().sorted(comparator).collect(Collectors.toList());
+    list.sort(comparator);
   }
 
-  public static List<Equipment> sortEquipmentByPower(final List<Equipment> list) {
+  public static void sortEquipmentByPower(final List<Equipment> list) {
     final Comparator<Equipment> comparator = Comparator
       .comparing((Equipment item) -> item.slot.ordinal())
       .thenComparing(x -> {
@@ -705,14 +705,14 @@ public final class SItem {
         return x.defence_12 + x.magicDefence_13 + x.attackAvoid_16 + x.magicAvoid_17 + x.speed_0f;
       }, Comparator.reverseOrder())
       .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
-    return list.stream().sorted(comparator).collect(Collectors.toList());
+    list.sort(comparator);
   }
 
-  public static List<Equipment> sortEquipmentByIcon(final List<Equipment> list) {
+  public static void sortEquipmentByIcon(final List<Equipment> list) {
     final Comparator<Equipment> comparator = Comparator
       .comparing((Equipment item) -> item.getIcon().resolve().icon)
       .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
-    return list.stream().sorted(comparator).collect(Collectors.toList());
+    list.sort(comparator);
   }
 
   public static <T extends InventoryEntry<?>> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
@@ -765,13 +765,13 @@ public final class SItem {
   }
 
   public static void sortEquipmentInventory(final int sortType) {
-    final List<Equipment> list = switch(sortType) {
+    switch(sortType) {
       case 1 -> sortEquipmentByPower(gameState_800babc8.equipment_1e8);
       case 2 -> sortEquipmentByIcon(gameState_800babc8.equipment_1e8);
       default -> sortEquipmentByAlpha(gameState_800babc8.equipment_1e8);
     };
-    gameState_800babc8.equipment_1e8.clear();
-    gameState_800babc8.equipment_1e8.addAll(list);
+//    gameState_800babc8.equipment_1e8.clear();
+//    gameState_800babc8.equipment_1e8.addAll(list);
   }
 
   @Method(0x800fc814L)
