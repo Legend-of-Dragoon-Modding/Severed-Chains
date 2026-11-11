@@ -769,9 +769,7 @@ public final class SItem {
       case 1 -> sortEquipmentByPower(gameState_800babc8.equipment_1e8);
       case 2 -> sortEquipmentByIcon(gameState_800babc8.equipment_1e8);
       default -> sortEquipmentByAlpha(gameState_800babc8.equipment_1e8);
-    };
-//    gameState_800babc8.equipment_1e8.clear();
-//    gameState_800babc8.equipment_1e8.addAll(list);
+    }
   }
 
   @Method(0x800fc814L)
