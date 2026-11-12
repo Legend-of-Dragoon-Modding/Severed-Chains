@@ -24,6 +24,7 @@ lod_core.config_presets.vanilla=Vanilla
 lod_core.config_presets.speedrunner=Speedrunner
 
 # UI text
+lod_core.ui.infinity=∞
 lod_core.ui.hotkey=%s (%s)
 
 lod_core.ui.title.uncategorized_saves=Uncategorized saves found. Please enter a name for your campaign.
