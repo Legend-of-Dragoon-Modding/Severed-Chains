@@ -206,6 +206,8 @@ lod_core.ui.ingame_menu.save=Save
 lod_core.ui.additions.no_additions=No additions available
 
 lod_core.ui.equipment.unequip=Unequip
+lod_core.ui.equipment.sort=Sort
+lod_core.ui.equipment.filter=Filter
 
 lod_core.ui.post_battle.addition_unlocked=Addition Unlocked
 lod_core.ui.post_battle.spell_unlocked=Spell Unlocked
@@ -418,6 +420,7 @@ lod_core.input_actions.menu_back.name=Menu: back
 lod_core.input_actions.menu_delete.name=Menu: delete
 lod_core.input_actions.menu_advanced.name=Menu: advanced
 lod_core.input_actions.menu_sort.name=Menu: sort
+lod_core.input_actions.menu_filter.name=Menu: filter
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
 lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm

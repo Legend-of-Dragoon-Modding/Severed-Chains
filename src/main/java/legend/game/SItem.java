@@ -68,6 +68,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DEFAULT_FONT;
@@ -687,6 +688,33 @@ public final class SItem {
     setInventoryFromDisplay(display, items, count);
   }
 
+  public static void sortEquipmentByAlpha(final List<Equipment> list) {
+    final Comparator<Equipment> comparator = Comparator
+      .comparing((Equipment item) -> item.slot.ordinal())
+      .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+    list.sort(comparator);
+  }
+
+  public static void sortEquipmentByPower(final List<Equipment> list) {
+    final Comparator<Equipment> comparator = Comparator
+      .comparing((Equipment item) -> item.slot.ordinal())
+      .thenComparing(x -> {
+        if(x.slot == EquipmentSlot.WEAPON) {
+          return x.attack_10 + x.magicAttack_11 + x.attackHit_14 + x.magicHit_15 + x.speed_0f;
+        }
+        return x.defence_12 + x.magicDefence_13 + x.attackAvoid_16 + x.magicAvoid_17 + x.speed_0f;
+      }, Comparator.reverseOrder())
+      .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+    list.sort(comparator);
+  }
+
+  public static void sortEquipmentByIcon(final List<Equipment> list) {
+    final Comparator<Equipment> comparator = Comparator
+      .comparing((Equipment item) -> item.getIcon().resolve().icon)
+      .thenComparing(item -> I18n.translate(item.getNameTranslationKey()));
+    list.sort(comparator);
+  }
+
   public static <T extends InventoryEntry<?>> Comparator<MenuEntryStruct04<T>> menuItemIconComparator(final List<String> retailSorting, final Function<T, RegistryId> idExtractor) {
     final boolean retail = CONFIG.getConfig(ITEM_GROUP_SORT_MODE.get()) == ItemGroupSortMode.RETAIL;
 
@@ -734,6 +762,14 @@ public final class SItem {
     }
 
     sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.getSize(), List.of(LodMod.ITEM_IDS));
+  }
+
+  public static void sortEquipmentInventory(final int sortType) {
+    switch(sortType) {
+      case 1 -> sortEquipmentByPower(gameState_800babc8.equipment_1e8);
+      case 2 -> sortEquipmentByIcon(gameState_800babc8.equipment_1e8);
+      default -> sortEquipmentByAlpha(gameState_800babc8.equipment_1e8);
+    }
   }
 
   @Method(0x800fc814L)
