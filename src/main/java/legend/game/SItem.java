@@ -1801,17 +1801,6 @@ public final class SItem {
 
   @Method(0x8010f130L)
   public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type) {
-    setMessageBoxText(messageBox, text);
-
-    messageBox.x_1c = 120;
-    messageBox.y_1e = 100;
-    messageBox.type_15 = type;
-    messageBox.menuIndex_18 = 0;
-    messageBox.ticks_10 = 0;
-    messageBox.state_0c = 1;
-  }
-
-  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text) {
     setMessageBoxOptions(messageBox, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"));
 
     if(text != null) {
@@ -1819,5 +1808,12 @@ public final class SItem {
     } else {
       messageBox.text_00 = null;
     }
+
+    messageBox.x_1c = 120;
+    messageBox.y_1e = 100;
+    messageBox.type_15 = type;
+    messageBox.menuIndex_18 = 0;
+    messageBox.ticks_10 = 0;
+    messageBox.state_0c = 1;
   }
 }

@@ -16,6 +16,7 @@ import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Text.renderText;
+import static legend.game.Text.textZ_800bdf00;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
@@ -88,7 +89,7 @@ public class CycleMessageBoxScreen extends MenuScreen {
     if(isFirstSet) {
       setMessageBoxText(this.messageBox, text.toString(), this.messageBox.type_15);
     } else {
-      setMessageBoxText(this.messageBox, text.toString());
+      this.messageBox.text_00 = text.toString().split("\n");
     }
   }
 
@@ -106,13 +107,15 @@ public class CycleMessageBoxScreen extends MenuScreen {
       final int textOffset = this.messageBox.text_00.length * textHeight / 2;
       y -= textOffset;
 
+      textZ_800bdf00 = (int)this.messageBox.backgroundRenderable_08.z_3c - 1;
+
       for(int i = 0; i < entry.texts.length; i++) {
         if(i == this.arrowLineIndex) {
           final boolean b = this.arrowsTick < (this.arrowsMaxTicks / 2);
           final String text = (b ? "< " : "<< ") + entry.texts[i] + (b ? " >" : " >>");
-          renderText(text, x, y, 120, entry.fonts[Math.min(i, entry.fonts.length - 1)]);
+          renderText(text, x, y, entry.fonts[Math.min(i, entry.fonts.length - 1)]);
         } else {
-          renderText(entry.texts[i], x, y, 120, entry.fonts[Math.min(i, entry.fonts.length - 1)]);
+          renderText(entry.texts[i], x, y, entry.fonts[Math.min(i, entry.fonts.length - 1)]);
         }
         y += textHeight;
       }
