@@ -2,7 +2,6 @@ package legend.game.inventory.screens;
 
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
-import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
