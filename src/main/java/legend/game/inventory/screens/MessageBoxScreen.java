@@ -23,7 +23,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class MessageBoxScreen extends MenuScreen {
-  protected final MessageBox20 messageBox = new MessageBox20();
+  private final MessageBox20 messageBox = new MessageBox20();
   private final Consumer<MessageBoxResult> onResult;
   private MessageBoxResult result;
   /** Allows list wrapping, but only on new input */
@@ -90,12 +90,7 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods)
-  {
-    return this.mouseClick(x, y, button, mods, 0);
-  }
-
-  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods, final int intValue) {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
@@ -168,11 +163,7 @@ public class MessageBoxScreen extends MenuScreen {
     }
   }
 
-  protected void menuSelect() {
-    this.menuSelect(0);
-  }
-
-  protected void menuSelect(final int intValue) {
+  private void menuSelect() {
     playMenuSound(2);
 
     if(this.messageBox.menuIndex_18 == 0) {
@@ -192,7 +183,7 @@ public class MessageBoxScreen extends MenuScreen {
     this.messageBox.state_0c = 4;
   }
 
-  protected boolean skipInput() {
+  private boolean skipInput() {
     return this.messageBox.state_0c != 3;
   }
 
