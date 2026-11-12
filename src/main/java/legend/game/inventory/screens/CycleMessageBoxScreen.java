@@ -116,10 +116,6 @@ public class CycleMessageBoxScreen extends MenuScreen {
         }
         y += textHeight;
       }
-
-      if(this.messageBox.type_15 == MessageBoxType.CONFIRMATION) {
-        y -= (this.messageBox.text_00.length - 1) * 3;
-      }
     }
 
     if(this.messageBox.state_0c == 0) {
