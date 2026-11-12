@@ -187,7 +187,7 @@ public class EquipmentScreen extends MenuScreen {
     this.characterCard.setEquipmentComparison(selected == null ? null : selected.item_00);
 
     renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), selected == null ? null : selected.item_00);
-    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? (this.filter != null ? this.filter : null) : selected.item_00.slot);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? this.filter : selected.item_00.slot);
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
