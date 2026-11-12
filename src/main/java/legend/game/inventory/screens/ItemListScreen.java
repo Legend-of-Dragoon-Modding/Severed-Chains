@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
+import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
 import legend.game.i18n.I18n;
 import legend.game.inventory.Equipment;
@@ -159,12 +160,22 @@ public class ItemListScreen extends MenuScreen {
       final InventoryEntry<?> entry = list.getSelectedItem().item_00;
       final int maxQuantity = entry.getSize();
       final String itemText = I18n.translate(entry.getNameTranslationKey());
-      menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+
+      final FontOptions font1 = new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.GREY_40).horizontalAlign(HorizontalAlign.CENTRE).size(0.9f);
+      final FontOptions font2 = new FontOptions().colour(TextColour.GREY_54).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE).size(0.85f);
+      final String[] texts1 = { I18n.translate("Test 1"), I18n.translate("Some value 1") };
+      final String[] texts2 = { I18n.translate("Test 2"), I18n.translate("Some value 2") };
+      final FontOptions[] fonts = { font1, font2 };
+      final CycleMessageBoxEntry[] entries = { new CycleMessageBoxEntry(texts1, fonts), new CycleMessageBoxEntry(texts2, fonts) };
+
+      menuStack.pushScreen(new ChoiceMessageBoxScreen(entries, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+
+      //menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 
-  private <T extends InventoryEntry<?>> void discard(final MessageBoxResults result, final ItemList<T> list, final List<T> inv) {
-    if(result.messageBoxResult == MessageBoxResult.YES) {
+  private <T extends InventoryEntry<?>> void discard(final MessageBoxResult result, final ItemList<T> list, final List<T> inv) {
+    if(result == MessageBoxResult.YES) {
       list.remove(list.getSelectedItem());
       final List<MenuEntryStruct04<T>> items = list.getItems();
       setInventoryFromDisplay(items, inv, items.size());
@@ -172,7 +183,7 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private void discard(final MessageBoxResults result, final ItemList<ItemStack> list, final Inventory inv) {
+  private void discard(final CycleMessageBoxResult result, final ItemList<ItemStack> list, final Inventory inv) {
     if(result.messageBoxResult == MessageBoxResult.YES) {
       list.getSelectedItem().item_00.shrink(result.cycleValue);
       if(list.getSelectedItem().item_00.isEmpty()) {

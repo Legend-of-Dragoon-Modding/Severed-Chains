@@ -558,7 +558,7 @@ public class Ttle extends EngineState<Ttle> {
 
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.title.ps1_memcard_delete_confirm"), MessageBoxType.CONFIRMATION, result1 -> {
           try {
-            SAVES.splitMemcards(this.foundMemcards, name, result1.messageBoxResult == MessageBoxResult.YES);
+            SAVES.splitMemcards(this.foundMemcards, name, result1 == MessageBoxResult.YES);
             whichMenu_800bdc38 = WhichMenu.UNLOAD;
           } catch(final IOException | InvalidSaveException | SaveFailedException e) {
             LOGGER.error("Failed to convert memcard", e);

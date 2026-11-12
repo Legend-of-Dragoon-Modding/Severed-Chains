@@ -135,7 +135,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       case RENDER_4 -> {
-        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(TOO_MANY_ITEMS_CONFIRM), MessageBoxType.CONFIRMATION, result -> this.menuState = result.messageBoxResult == MessageBoxResult.YES ? MenuState.RENDER_6 : MenuState.DISCARD_10));
+        menuStack.pushScreen(new MessageBoxScreen(I18n.translate(TOO_MANY_ITEMS_CONFIRM), MessageBoxType.CONFIRMATION, result -> this.menuState = result == MessageBoxResult.YES ? MenuState.RENDER_6 : MenuState.DISCARD_10));
         this.menuState = MenuState.REPLACE_5;
       }
 
@@ -206,7 +206,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.renderItemLists(false, this.droppedItems.get(this.dropScroll + this.dropIndex).item_00, 0);
 
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate(DISCARD_ITEMS_CONFIRM), MessageBoxType.CONFIRMATION, result -> {
-          if(result.messageBoxResult == MessageBoxResult.YES) {
+          if(result == MessageBoxResult.YES) {
             for(final MenuEntryStruct04<InventoryEntry<?>> item : this.droppedItems) {
               if(item.item_00 instanceof final Equipment equipment && !equipment.canBeDiscarded()) {
                 menuStack.pushScreen(new MessageBoxScreen(I18n.translate(CANNOT_BE_THROWN_AWAY), MessageBoxType.ALERT, result1 -> this.menuState = MenuState.RENDER_6));

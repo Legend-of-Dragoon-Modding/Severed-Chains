@@ -500,7 +500,7 @@ public class ShopScreen extends MenuScreen {
 
       case 1 -> // Sell
         menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.what_do_you_want_to_sell"), new I18nText("lod_core.ui.shop.equipment"), new I18nText("lod_core.ui.shop.items"), MessageBoxType.CONFIRMATION, result -> {
-          switch(result.messageBoxResult) {
+          switch(result) {
             case YES -> {
               this.invIndex_8011e0e0 = 0;
               this.invScroll_8011e0e4 = 0;

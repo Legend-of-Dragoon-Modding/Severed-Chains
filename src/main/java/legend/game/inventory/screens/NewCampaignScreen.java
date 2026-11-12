@@ -188,7 +188,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private void onPresetSelected(final int index) {
     final ConfigPresetEntry preset = this.optionPresets.getOption(index);
     this.deferAction(() -> this.getStack().pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.new_campaign.load_preset_confirm", preset.getName()), MessageBoxType.CONFIRMATION, result -> {
-      if(result.messageBoxResult == MessageBoxResult.YES && this.applyPreset(preset)) {
+      if(result == MessageBoxResult.YES && this.applyPreset(preset)) {
         this.appliedPreset = IoHelper.slugName(preset.getName().get());
         Config.setLastConfigPreset(this.appliedPreset);
       } else {

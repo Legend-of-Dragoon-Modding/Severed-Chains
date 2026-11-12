@@ -104,7 +104,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton(new I18nText("lod_core.ui.ingame_menu.mogul_dabas"), this::showDabasScreen);
     this.addButton(RawText.BLANK, () -> { }).hide();
     this.addButton(new I18nText("lod_core.ui.ingame_menu.quit"), () -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.ingame_menu.quit_confirm"), MessageBoxType.CONFIRMATION, result -> {
-      if(result.messageBoxResult == MessageBoxResult.YES) {
+      if(result == MessageBoxResult.YES) {
         this.menuEscape();
         whichMenu_800bdc38 = WhichMenu.QUIT;
       }

@@ -1815,22 +1815,30 @@ public final class Text {
     renderText(text, originX, originY, options, null);
   }
 
+  public static void renderText(final String text, final float originX, final float originY, final float originZ, final FontOptions options) {
+    renderText(text, originX, originY, originZ, options, null);
+  }
+
   public interface QueueCallback {
     void run(final QueuedModelStandard model, final boolean shadow);
   }
 
   @Method(0x80029300L)
   public static void renderText(final String text, final float originX, final float originY, final FontOptions options, @Nullable final QueueCallback queueCallback) {
-    renderText(GameEngine.DEFAULT_FONT, text, originX, originY, options, queueCallback);
+    renderText(GameEngine.DEFAULT_FONT, text, originX, originY, -1, options, queueCallback);
+  }
+
+  public static void renderText(final String text, final float originX, final float originY, final float originZ, final FontOptions options, @Nullable final QueueCallback queueCallback) {
+    renderText(GameEngine.DEFAULT_FONT, text, originX, originY, originZ, options, queueCallback);
   }
 
   @Method(0x80029300L)
   public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options) {
-    renderText(font, text, originX, originY, options, null);
+    renderText(font, text, originX, originY, -1, options, null);
   }
 
   @Method(0x80029300L)
-  public static void renderText(final Font font, final String text, final float originX, final float originY, final FontOptions options, @Nullable final QueueCallback queueCallback) {
+  public static void renderText(final Font font, final String text, final float originX, final float originY, final float originZ, final FontOptions options, @Nullable final QueueCallback queueCallback) {
     font.init();
 
     final float height = 12.0f * options.getSize();
@@ -1866,7 +1874,7 @@ public final class Text {
             final float offsetX = (i & 1) * options.getSize();
             final float offsetY = (i >>> 1) * options.getSize();
 
-            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, textZ_800bdf00 * 4.0f + i * 0.1f);
+            textTransforms.transfer.set(x + glyphNudge + offsetX, y + offsetY, originZ > -1 ? originZ + (i > 0 ? 1 : 0) : textZ_800bdf00 * 4.0f + i * 0.1f);
 
             if(trim < 0) {
               textTransforms.transfer.y += trim;

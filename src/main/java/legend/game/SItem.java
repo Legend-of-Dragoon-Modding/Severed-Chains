@@ -1719,8 +1719,8 @@ public final class SItem {
           final int textOffset = messageBox.text_00.length * textHeight / 2;
           y -= textOffset;
 
-          for(int i = 0; i < messageBox.text_00.length; i ++) {
-            renderText(messageBox.text_00[i], x, y, messageBox.fonts[i]);
+          for(final String line : messageBox.text_00) {
+            renderText(line, x, y, UI_TEXT_CENTERED);
             y += textHeight;
           }
 
@@ -1802,34 +1802,23 @@ public final class SItem {
 
   @Method(0x8010f130L)
   public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type) {
-    setMessageBoxText(messageBox, text, type, true);
+    setMessageBoxText(messageBox, text);
+
+    messageBox.x_1c = 120;
+    messageBox.y_1e = 100;
+    messageBox.type_15 = type;
+    messageBox.menuIndex_18 = 0;
+    messageBox.ticks_10 = 0;
+    messageBox.state_0c = 1;
   }
 
-  @Method(0x8010f130L)
-  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text, final MessageBoxType type, final boolean isFirstSet) {
+  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final String text) {
     setMessageBoxOptions(messageBox, new I18nText("lod_core.ui.message_box.yes"), new I18nText("lod_core.ui.message_box.no"));
 
     if(text != null) {
       messageBox.text_00 = text.split("\n");
-      messageBox.fonts = new FontOptions[messageBox.text_00.length];
-      Arrays.fill(messageBox.fonts, UI_TEXT_CENTERED);
     } else {
       messageBox.text_00 = null;
-    }
-
-    if(isFirstSet) {
-      messageBox.x_1c = 120;
-      messageBox.y_1e = 100;
-      messageBox.type_15 = type;
-      messageBox.menuIndex_18 = 0;
-      messageBox.ticks_10 = 0;
-      messageBox.state_0c = 1;
-    }
-  }
-
-  public static void setMessageBoxFontOptions(final MessageBox20 messageBox, final int lineIndex, final FontOptions font) {
-    if(lineIndex < messageBox.text_00.length) {
-      messageBox.fonts[lineIndex] = font;
     }
   }
 }

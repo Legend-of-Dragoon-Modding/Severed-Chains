@@ -357,7 +357,7 @@ public class DabasScreen extends MenuScreen {
 
   private void confirmTakeItems() {
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod.ui.dabas.take_items_confirm"), MessageBoxType.CONFIRMATION, result -> {
-      if(result.messageBoxResult == MessageBoxResult.YES) {
+      if(result == MessageBoxResult.YES) {
         this.takeItems();
       }
     }));
@@ -432,7 +432,7 @@ public class DabasScreen extends MenuScreen {
 
   private void confirmDiscardItems() {
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod.ui.dabas.discard_items_confirm"), MessageBoxType.CONFIRMATION, result -> {
-      if(result.messageBoxResult == MessageBoxResult.YES) {
+      if(result == MessageBoxResult.YES) {
         this.discardItems();
       }
     }));
@@ -463,7 +463,7 @@ public class DabasScreen extends MenuScreen {
 
   private void confirmNextDig() {
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod.ui.dabas.next_dig_confirm"), MessageBoxType.CONFIRMATION, result -> {
-      if(result.messageBoxResult == MessageBoxResult.YES) {
+      if(result == MessageBoxResult.YES) {
         this.nextDig();
       }
     }));
