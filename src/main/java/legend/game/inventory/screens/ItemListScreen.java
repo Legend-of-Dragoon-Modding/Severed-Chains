@@ -161,16 +161,7 @@ public class ItemListScreen extends MenuScreen {
       final int maxQuantity = entry.getSize();
       final String itemText = I18n.translate(entry.getNameTranslationKey());
 
-      final FontOptions font1 = new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.GREY_40).horizontalAlign(HorizontalAlign.CENTRE).size(0.9f);
-      final FontOptions font2 = new FontOptions().colour(TextColour.GREY_54).shadowColour(TextColour.LIGHT_BROWN).horizontalAlign(HorizontalAlign.CENTRE).size(0.85f);
-      final String[] texts1 = { I18n.translate("Test 1"), I18n.translate("Some value 1") };
-      final String[] texts2 = { I18n.translate("Test 2"), I18n.translate("Some value 2") };
-      final FontOptions[] fonts = { font1, font2 };
-      final CycleMessageBoxEntry[] entries = { new CycleMessageBoxEntry(texts1, fonts), new CycleMessageBoxEntry(texts2, fonts) };
-
-      menuStack.pushScreen(new ChoiceMessageBoxScreen(entries, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
-
-      //menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+      menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 
