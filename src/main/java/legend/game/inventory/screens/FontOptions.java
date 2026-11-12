@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.renderer.Translucency;
 import org.joml.Vector3f;
 
 public class FontOptions {
@@ -13,6 +14,7 @@ public class FontOptions {
   private float shadowRed;
   private float shadowGreen;
   private float shadowBlue;
+  private Translucency translucency;
 
   public FontOptions() {
     this
@@ -106,6 +108,11 @@ public class FontOptions {
     return this;
   }
 
+  public FontOptions translucency(final Translucency translucency) {
+    this.translucency = translucency;
+    return this;
+  }
+
   public FontOptions shadowColour(final TextColour colour) {
     return this.shadowColour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
   }
@@ -124,5 +131,13 @@ public class FontOptions {
 
   public float getShadowBlue() {
     return this.shadowBlue;
+  }
+
+  public boolean hasTranslucency() {
+    return this.translucency != null;
+  }
+
+  public Translucency getTranslucency() {
+    return this.translucency;
   }
 }

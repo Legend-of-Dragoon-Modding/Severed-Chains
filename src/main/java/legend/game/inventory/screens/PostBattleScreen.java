@@ -74,8 +74,8 @@ import static legend.lodmod.LodConfig.MAX_DRAGOON_LEVEL;
 import static legend.lodmod.LodConfig.MAX_LEVEL;
 
 public class PostBattleScreen extends MenuScreen {
-  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
-  private final FontOptions nameFont = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).size(0.8f);
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE_246);
+  private final FontOptions nameFont = new FontOptions().colour(TextColour.WHITE_246).shadowColour(TextColour.BLACK_8).size(0.8f);
 
   private final Map<CharacterData2c, TextureAtlasIcon> portraits = new HashMap<>();
   private final MV transforms = new MV();
@@ -919,7 +919,7 @@ public class PostBattleScreen extends MenuScreen {
     y1 = 63;
     y2 = 64;
 
-    this.fontOptions.shadowColour(TextColour.BLACK);
+    this.fontOptions.shadowColour(TextColour.BLACK_8);
 
     //LAB_8010eae0
     for(final EnemyDrop enemyDrop : itemsDroppedByEnemies_800bc928) {

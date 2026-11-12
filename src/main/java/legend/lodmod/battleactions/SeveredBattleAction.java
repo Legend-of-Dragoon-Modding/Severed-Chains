@@ -16,7 +16,7 @@ import static legend.game.Text.textZ_800bdf00;
 import static legend.game.combat.ui.BattleHud.ICON_SIZE;
 
 public abstract class SeveredBattleAction extends BattleAction {
-  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.BLACK).horizontalAlign(HorizontalAlign.CENTRE);
+  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE_246).shadowColour(TextColour.BLACK_8).horizontalAlign(HorizontalAlign.CENTRE);
 
   private final int iconIndex;
   private final int frameCount;
