@@ -1362,6 +1362,10 @@ public class BattleHud {
       .toList()
     ;
 
+    if(battleState_8006e398.isPunchingBag) {
+      event.disabledActions.add(ITEMS.get());
+    }
+
     this.initializeMenuIcons(bentState, actions, event.disabledActions);
   }
 

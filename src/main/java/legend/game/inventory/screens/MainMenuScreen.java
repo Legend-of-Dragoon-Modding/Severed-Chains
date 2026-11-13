@@ -4,6 +4,7 @@ import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
+import legend.game.debugger.CombatDebuggerController;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -425,7 +426,13 @@ public class MainMenuScreen extends MenuScreen {
         this.loadingStage++;
       }
 
-      case 2 -> this.renderInventoryMenu(0);
+      case 2 -> {
+        if(CombatDebuggerController.nextEncounterPunchingBagMode) {
+          this.menuEscape();
+        } else {
+          this.renderInventoryMenu(0);
+        }
+      }
 
       // Fade out
       case 100 -> {

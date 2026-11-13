@@ -3,6 +3,7 @@ package legend.game.submap;
 import de.jcm.discordgamesdk.activity.Activity;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Transformations;
@@ -36,6 +37,8 @@ import legend.game.Menus;
 import legend.game.SItem;
 import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
+import legend.game.debugger.CombatDebuggerController;
+import legend.game.debugger.DebuggerController;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
@@ -83,6 +86,7 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.ui.GameOverlay;
 import legend.game.unpacker.Loader;
+import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.lodmod.LodCharacterTemplates;
 import legend.lodmod.LodConfig;
 import legend.lodmod.LodEncounters;
@@ -191,6 +195,8 @@ import static legend.game.Text.textboxMode_80052b88;
 import static legend.game.Text.textboxTextType_80052ba8;
 import static legend.game.Text.textboxText_800bdf38;
 import static legend.game.Text.textboxes_800be358;
+import static legend.game.combat.SBtld.startEncounter;
+import static legend.game.combat.SBtld.startLegacyEncounter;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RUN_BY_DEFAULT;
 import static legend.game.sound.Audio.addSoundFile;
@@ -200,6 +206,7 @@ import static legend.game.sound.Audio.playMenuSound;
 import static legend.game.sound.Audio.sssqResetStuff;
 import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
+import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 import static legend.lodmod.LodMod.HP_STAT;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_DOWN;
 import static legend.lodmod.LodMod.INPUT_ACTION_GENERAL_MOVE_LEFT;
@@ -4184,12 +4191,16 @@ public class SMap extends EngineState<SMap> {
       }
 
       case RENDER_SUBMAP_12 -> {
-        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
+        if(CombatDebuggerController.nextEncounterPunchingBagMode) {
+          DebuggerController.startEncounter(2);
+        } else {
+          submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
-        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
+          this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
-        if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
-          this.mapTransition(-1, 0x3ff); // Open inv
+          if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
+            this.mapTransition(-1, 0x3ff); // Open inv
+          }
         }
       }
 

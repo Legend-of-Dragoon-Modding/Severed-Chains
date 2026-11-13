@@ -98,6 +98,7 @@ import legend.game.combat.ui.BattleAction;
 import legend.game.combat.ui.BattleActionTickFlowControl;
 import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
+import legend.game.debugger.CombatDebuggerController;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentAttackType;
 import legend.game.inventory.ItemStack;
@@ -2139,6 +2140,10 @@ public class Battle extends EngineState<Battle> {
     }
 
     this.initPlayerBattleEntityStats();
+
+    if (CombatDebuggerController.autoPunchingBagMode || CombatDebuggerController.nextEncounterPunchingBagMode) {
+      CombatDebuggerController.punchingBagMode(CombatDebuggerController.nextEncounterPunchingBagMode);
+    }
 
     this.loadingStage++;
   }
@@ -4241,11 +4246,24 @@ public class Battle extends EngineState<Battle> {
     if(script.params_20[1].isRegistryId()) {
       bent.setStat(stat, script.params_20[1].getRegistryId());
     } else {
-      final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, script.params_20[1].get()));
+      final int value = this.adjustStatForPractice(stat, bent, script.params_20[1].get(), false);
+      final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, value));
       bent.setStat(stat, event.value);
     }
 
     return FlowControl.CONTINUE;
+  }
+
+  private int adjustStatForPractice(final BattleEntityStat stat, final BattleEntity27c bent, final int value, final boolean isForRender) {
+    if(battleState_8006e398.isPunchingBag && bent == this.currentTurnBent_800c66c8.innerStruct_00) {
+      if(stat == BattleEntityStat.CURRENT_HP || stat == BattleEntityStat.GUARD || stat == BattleEntityStat.MAX_HP) {
+        return isForRender ? 0 : bent.stats.getStat(HP_STAT.get()).getCurrent();
+      }
+      if(stat == BattleEntityStat.CURRENT_MP || stat == BattleEntityStat.MAX_MP) {
+        return isForRender ? 0 : bent.stats.getStat(MP_STAT.get()).getCurrent();
+      }
+    }
+    return value;
   }
 
   @ScriptDescription("Gets a stat value of a battle entity")
@@ -4398,7 +4416,7 @@ public class Battle extends EngineState<Battle> {
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-      if(charData.selectedAddition_19 == null) {
+      if(charData.selectedAddition_19 == null || battleState_8006e398.isPunchingBag) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
@@ -8727,6 +8745,10 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public FlowControl scriptGiveSp(final RunningScript<?> script) {
+    if(battleState_8006e398.isPunchingBag) {
+      return FlowControl.CONTINUE;
+    }
+
     //LAB_800f43f8
     //LAB_800f4410
     //LAB_800f4430
@@ -9094,7 +9116,10 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
+    final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
+    final int value = this.adjustStatForPractice(stat, bent, script.params_20[1].get(), true);
+    this.hud.addFloatingNumberForBent(script.params_20[0].get(), value, script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 

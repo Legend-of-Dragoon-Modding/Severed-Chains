@@ -27,6 +27,8 @@ public class BattleStateEf4 {
   private long turnOrderSeed;
   private final Random turnOrderRng = new Random();
 
+  public boolean isPunchingBag;
+
   public int _180;
   /**
    * For cutscene DEFFs, combat vars 1 to 10 are used to store combatant indices.
