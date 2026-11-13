@@ -167,8 +167,7 @@ public class CycleMessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods)
-  {
+  protected InputPropagation mouseClick(final double x, final double y, final int button, final Set<InputMod> mods) {
     return this.mouseClick(x, y, button, mods, 0);
   }
 
