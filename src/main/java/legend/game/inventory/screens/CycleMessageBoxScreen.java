@@ -97,7 +97,7 @@ public class CycleMessageBoxScreen extends MenuScreen {
   protected void render() {
     messageBox(this.messageBox);
 
-    if (this.messageBox.state_0c == 3) {
+    if(this.messageBox.state_0c == 3) {
       final CycleMessageBoxEntry entry = this.entries[Math.min(this.currentIndex, this.entries.length - 1)];
       final int leftPadding = 60;
       final int topPadding = this.messageBox.type_15 == MessageBoxType.CONFIRMATION ? 14 : 29;
