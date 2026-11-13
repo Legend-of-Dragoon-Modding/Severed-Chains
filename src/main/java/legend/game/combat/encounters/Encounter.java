@@ -83,7 +83,7 @@ public class Encounter extends RegistryEntry {
   public int get(final int index) {
     return switch(index) {
       case 1 -> this.musicIndex;
-      case 2 -> this.escapeChance + (battleState_8006e398.isPunchingBag ? 9999 : 0);
+      case 2 -> battleState_8006e398.isPunchingBag ? 9999 : this.escapeChance;
       case 3 -> this.postCombatSubmapScene;
       case 4 -> this.playerOpeningCamera;
       case 5 -> this.monsterOpeningCamera;
