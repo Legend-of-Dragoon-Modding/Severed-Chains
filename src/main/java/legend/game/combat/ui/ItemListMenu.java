@@ -66,10 +66,10 @@ public class ItemListMenu extends ListMenu {
     renderText("×", x + 143, y, this.fontOptions);
 
     if(stack.isRepeat()) {
-      renderText(I18n.translate("lod_core.ui.infinity"), x + 130, y, this.fontOptions);
+      renderText(I18n.translate("lod_core.ui.infinity"), x + 130, y, this.fontOptions.colour(TextColour.LIGHT_YELLOW));
     }
 
-    this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
+    this.fontOptions.colour(TextColour.WHITE).horizontalAlign(HorizontalAlign.RIGHT);
     renderText(String.valueOf(this.combatItems_800c6988.get(index).getSize()), x + 168, y, this.fontOptions);
   }
 
