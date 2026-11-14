@@ -360,13 +360,7 @@ public class CombatDebuggerController {
 
   public void punchingBagMode(final ActionEvent event) {
     CombatDebuggerController.punchingBagMode(false);
-    final int selectedIndex = this.bentList.getSelectionModel().getSelectedIndex();
-    for(int i = 0; i < this.bentList.getItems().size(); i++) {
-      this.bentList.getItems().get(i).update();
-      if(selectedIndex == i) {
-        this.displayStats(i);
-      }
-    }
+    this.refreshStats(event);
   }
 
   public static void punchingBagMode(final boolean isPractice) {
