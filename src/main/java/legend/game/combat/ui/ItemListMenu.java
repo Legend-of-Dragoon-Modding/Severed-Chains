@@ -11,8 +11,23 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.RunningScript;
 import legend.game.ui.UiBox;
+import legend.lodmod.items.AngelsPrayerItem;
+import legend.lodmod.items.AttackItem;
+import legend.lodmod.items.BattleItem;
+import legend.lodmod.items.BuffItem;
+import legend.lodmod.items.CauseStatusItem;
+import legend.lodmod.items.CharmPotionItem;
+import legend.lodmod.items.PandemoniumItem;
+import legend.lodmod.items.RecoverHpItem;
+import legend.lodmod.items.RecoverMpItem;
+import legend.lodmod.items.RecoverSpItem;
+import legend.lodmod.items.RecoverStatusItem;
+import legend.lodmod.items.SachetItem;
+import legend.lodmod.items.SignetStoneItem;
+import legend.lodmod.items.TotalVanishingItem;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
@@ -138,6 +153,26 @@ public class ItemListMenu extends ListMenu {
         this.combatItems_800c6988.add(new CombatItem02(stack));
       }
     }
+
+    final Comparator<CombatItem02> comparator = Comparator
+      .comparing((CombatItem02 x) -> x.getStack().getItem() instanceof RecoverHpItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof AngelsPrayerItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof RecoverMpItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof RecoverSpItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof RecoverStatusItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof final AttackItem attackItem && !attackItem.isTargetAll())
+      .thenComparing(x -> x.getStack().getItem() instanceof final AttackItem attackItem && attackItem.isTargetAll())
+      .thenComparing(x -> x.getStack().getItem() instanceof CauseStatusItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof final BattleItem battleItem && battleItem.isRepeat(x.getStack()))
+      .thenComparing(x -> x.getStack().getItem() instanceof BuffItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof SachetItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof SignetStoneItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof PandemoniumItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof TotalVanishingItem)
+      .thenComparing(x -> x.getStack().getItem() instanceof CharmPotionItem).reversed()
+      .thenComparing(x -> I18n.translate(x.getStack().getItem().getNameTranslationKey(x.getStack())));
+
+    this.combatItems_800c6988.sort(comparator);
   }
 
   @Override

@@ -56,6 +56,10 @@ public class AttackItem extends BattleItem {
     return 33;
   }
 
+  public boolean isTargetAll() {
+    return this.targetAll;
+  }
+
   @Override
   protected void useItemScriptLoaded(final ScriptState<BattleEntity27c> user, final int targetBentIndex) {
     user.setStor(28, targetBentIndex);
