@@ -68,13 +68,9 @@ public class AdditionsScreen extends MenuScreen {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  /**
-   * Allows list wrapping, but only on new input
-   */
+  /** Allows list wrapping, but only on new input */
   private boolean allowWrapX = true;
   private boolean allowWrapY = true;
-
-  private int trainingHotkeyIndex;
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;

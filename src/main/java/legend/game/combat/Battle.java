@@ -2084,7 +2084,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_801095a0
     for(final int enemyId : encounter.uniqueIds) {
       final int enemyIndex = enemyId & 0x1ff;
-      this.loadEnemyDropsAndScript(this.addCombatant(enemyIndex, -1), enemyIndex);
+      this.loadEnemyDropsAndScript(encounter, this.addCombatant(enemyIndex, -1), enemyIndex);
     }
 
     //LAB_801095ec
@@ -4246,24 +4246,11 @@ public class Battle extends EngineState<Battle> {
     if(script.params_20[1].isRegistryId()) {
       bent.setStat(stat, script.params_20[1].getRegistryId());
     } else {
-      final int value = this.adjustStatForPractice(stat, bent, script.params_20[1].get(), false);
-      final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, value));
+      final SetBattleEntityStatEvent event = EVENTS.postEvent(new SetBattleEntityStatEvent(this, bent, stat, script.params_20[1].get()));
       bent.setStat(stat, event.value);
     }
 
     return FlowControl.CONTINUE;
-  }
-
-  private int adjustStatForPractice(final BattleEntityStat stat, final BattleEntity27c bent, final int value, final boolean isForRender) {
-    if(battleState_8006e398.isPunchingBag && bent == this.currentTurnBent_800c66c8.innerStruct_00) {
-      if(stat == BattleEntityStat.CURRENT_HP || stat == BattleEntityStat.GUARD || stat == BattleEntityStat.MAX_HP) {
-        return isForRender ? 0 : bent.stats.getStat(HP_STAT.get()).getCurrent();
-      }
-      if(stat == BattleEntityStat.CURRENT_MP || stat == BattleEntityStat.MAX_MP) {
-        return isForRender ? 0 : bent.stats.getStat(MP_STAT.get()).getCurrent();
-      }
-    }
-    return value;
   }
 
   @ScriptDescription("Gets a stat value of a battle entity")
@@ -9116,10 +9103,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
-    final BattleEntityStat stat = BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get()));
-    final int value = this.adjustStatForPractice(stat, bent, script.params_20[1].get(), true);
-    this.hud.addFloatingNumberForBent(script.params_20[0].get(), value, script.params_20[2].get());
+    this.hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -9348,7 +9332,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x80109808L)
-  public void loadEnemyDropsAndScript(final int combatantIndex, final int enemyId) {
+  public void loadEnemyDropsAndScript(final Encounter encounter, final int combatantIndex, final int enemyId) {
     final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
     final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
 
@@ -9363,7 +9347,7 @@ public class Battle extends EngineState<Battle> {
     combatant.gold_196 = rewardsEvent.gold;
     combatant._19a = rewards._06;
 
-    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
+    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, encounter, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
     enemyEvent.scriptFuture = Loader.loadFile(enemyEvent.script).thenApply(data -> new ScriptFile("Combatant " + combatantIndex, data.getBytes()));
     EVENTS.postEvent(enemyEvent);
 

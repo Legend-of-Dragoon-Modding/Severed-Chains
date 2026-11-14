@@ -16,7 +16,6 @@ import legend.lodmod.LodMod;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Text.renderText;
 import static legend.lodmod.LodConfig.UI_BACKGROUND_COLOUR;
 
@@ -85,9 +84,7 @@ public class SpellListMenu extends ListMenu {
   @Override
   protected void onUse(final int index) {
     final VitalsStat mp = this.player_08.stats.getStat(LodMod.MP_STAT.get());
-    if(!battleState_8006e398.isPunchingBag) {
-      mp.setCurrent(mp.getCurrent() - this.player_08.spell_94.mp_06);
-    }
+    mp.setCurrent(mp.getCurrent() - this.player_08.spell_94.mp_06);
   }
 
   @Override
