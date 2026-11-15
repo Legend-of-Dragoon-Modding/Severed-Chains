@@ -5,11 +5,13 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEvent;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.encounters.Encounter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class GatherBattleActionsEvent extends BattleEvent {
+  public final Encounter encounter;
   public final PlayerBattleEntity player;
 
   /** Map of action -> sorting value, higher values sort the icon further to the right in the list */
@@ -18,8 +20,9 @@ public class GatherBattleActionsEvent extends BattleEvent {
   /** Any action in this set will be disabled if it is present in {@link #actions} */
   public final Set<BattleAction> disabledActions = new HashSet<>();
 
-  public GatherBattleActionsEvent(final Battle battle, final PlayerBattleEntity player) {
+  public GatherBattleActionsEvent(final Battle battle, final Encounter encounter, final PlayerBattleEntity player) {
     super(battle);
+    this.encounter = encounter;
     this.player = player;
   }
 }
