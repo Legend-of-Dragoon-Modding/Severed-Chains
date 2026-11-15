@@ -1,10 +1,11 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import legend.core.lang.I18nText;
 import legend.core.lang.RawText;
 import legend.core.lang.TextComponent;
 import legend.core.platform.input.InputAction;
-import legend.game.debugger.CombatDebuggerController;
+import legend.core.renderer.Translucency;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -16,7 +17,6 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
-import legend.core.renderer.Translucency;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -65,7 +65,7 @@ import static legend.game.sound.Audio.playMenuSound;
 
 public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
-  private final Runnable unload;
+  private final BooleanConsumer unload;
 
   private final CharacterCard[] charCards = new CharacterCard[3];
   private final List<Button> menuButtons = new ArrayList<>();
@@ -84,7 +84,9 @@ public class MainMenuScreen extends MenuScreen {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public MainMenuScreen(final Runnable unload) {
+  private boolean startingAdditionTrainer;
+
+  public MainMenuScreen(final BooleanConsumer unload) {
     this.unload = unload;
 
     loadingNewGameState_800bdc34 = false;
@@ -426,13 +428,7 @@ public class MainMenuScreen extends MenuScreen {
         this.loadingStage++;
       }
 
-      case 2 -> {
-        if(CombatDebuggerController.nextEncounterPunchingBagMode) {
-          this.menuEscape();
-        } else {
-          this.renderInventoryMenu(0);
-        }
-      }
+      case 2 -> this.renderInventoryMenu(0);
 
       // Fade out
       case 100 -> {
@@ -446,7 +442,7 @@ public class MainMenuScreen extends MenuScreen {
         this.renderInventoryMenu(0);
 
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
-          this.unload.run();
+          this.unload.accept(this.startingAdditionTrainer);
         }
       }
     }
@@ -541,7 +537,11 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private AdditionsScreen showAdditionsScreen() {
-    return this.showScreen(AdditionsScreen::new);
+    return menuStack.pushScreen(new AdditionsScreen(startingAdditionTrainer -> {
+      menuStack.popScreen();
+      this.loadingStage = startingAdditionTrainer ? 101 : 0;
+      this.startingAdditionTrainer = startingAdditionTrainer;
+    }));
   }
 
   private CharSwapScreen showCharSwapScreen() {

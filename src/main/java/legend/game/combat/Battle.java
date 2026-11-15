@@ -147,6 +147,7 @@ import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
@@ -4392,13 +4393,13 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "doIt", description = "If false, this method does nothing")
   @Method(0x800cd160L)
   public FlowControl scriptLevelUpAddition(final RunningScript<?> script) {
-    if(script.params_20[1].get() != 0) {
+    if(script.params_20[1].get() != 0 && encounter != LodEncounters.ENCOUNTER_TRAINING.get()) {
       final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-      if(charData.selectedAddition_19 == null || battleState_8006e398.isPunchingBag) {
+      if(charData.selectedAddition_19 == null) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
@@ -8727,7 +8728,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public FlowControl scriptGiveSp(final RunningScript<?> script) {
-    if(battleState_8006e398.isPunchingBag) {
+    if(encounter == LodEncounters.ENCOUNTER_TRAINING.get()) {
       return FlowControl.CONTINUE;
     }
 

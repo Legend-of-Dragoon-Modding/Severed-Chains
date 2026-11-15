@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import legend.core.MathHelper;
 import legend.core.lang.I18nText;
 import legend.core.platform.input.InputAction;
@@ -7,7 +8,6 @@ import legend.core.platform.input.InputMod;
 import legend.game.additions.Addition;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.characters.CharacterData2c;
-import legend.game.debugger.CombatDebuggerController;
 import legend.game.i18n.I18n;
 import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.inventory.screens.controls.Glyph;
@@ -22,6 +22,7 @@ import java.util.Set;
 
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.unloadRenderable;
@@ -55,7 +56,7 @@ public class AdditionsScreen extends MenuScreen {
 
   private int loadingStage;
   private double scrollAccumulator;
-  private final Runnable unload;
+  private final BooleanConsumer unload;
 
   private final CharacterCard characterCard;
   private int charSlot;
@@ -72,7 +73,9 @@ public class AdditionsScreen extends MenuScreen {
   private boolean allowWrapX = true;
   private boolean allowWrapY = true;
 
-  public AdditionsScreen(final Runnable unload) {
+  private boolean startingAdditionTrainer;
+
+  public AdditionsScreen(final BooleanConsumer unload) {
     this.unload = unload;
 
     this.characterCard = this.addControl(new CharacterCard());
@@ -84,11 +87,7 @@ public class AdditionsScreen extends MenuScreen {
     this.downArrow = this.addControl(Glyph.blueSpinnerDown());
     this.downArrow.setPos(this.getWidth(), this.getHeight() - 45);
 
-    this.addTrainingHotkey();
-  }
-
-  private void addTrainingHotkey() {
-    this.addHotkey(new I18nText("lod_core.ui.additions.training"), INPUT_ACTION_MENU_SORT, this::startPunchingBagMode);
+    this.addHotkey(new I18nText("lod_core.ui.additions.training"), INPUT_ACTION_MENU_SORT, this::startAdditionTrainer);
   }
 
   @Override
@@ -148,10 +147,26 @@ public class AdditionsScreen extends MenuScreen {
         }
       }
 
+      // Fade out for addition trainer
+      case 98 -> {
+        this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
+        startFadeEffect(1, 10);
+        this.loadingStage = 99;
+      }
+
+      // Fade out for addition trainer
+      case 99 -> {
+        this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
+
+        if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
+          this.loadingStage = 100;
+        }
+      }
+
       // Fade out
       case 100 -> {
         this.renderAdditions(this.charSlot, this.additionIds, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.getInt(this.charSlot)).selectedAddition_19, 0);
-        this.unload.run();
+        this.unload.accept(this.startingAdditionTrainer);
       }
     }
   }
@@ -454,11 +469,11 @@ public class AdditionsScreen extends MenuScreen {
     return InputPropagation.PROPAGATE;
   }
 
-  private void startPunchingBagMode() {
+  private void startAdditionTrainer() {
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.additions.training_prompt"), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
-        CombatDebuggerController.nextEncounterPunchingBagMode = true;
-        this.menuEscape();
+        this.startingAdditionTrainer = true;
+        this.loadingStage = 98;
       }
     }));
   }

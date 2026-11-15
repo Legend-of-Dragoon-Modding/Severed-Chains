@@ -36,7 +36,6 @@ import legend.game.Menus;
 import legend.game.SItem;
 import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
-import legend.game.debugger.CombatDebuggerController;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
@@ -270,6 +269,7 @@ public class SMap extends EngineState<SMap> {
   public SubmapState smapLoadingStage_800cb430 = SubmapState.INIT_0;
   public Runnable menuTransition;
 
+  private boolean startingAdditionTrainer;
   private boolean returnedToSameSubmapAfterBattle_800cb448;
 
   private final Vector2f screenOffset_800cb568 = new Vector2f();
@@ -4054,7 +4054,7 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newScene == 0x3ff) {
-      this.menuTransition = Menus::initInventoryMenu;
+      this.menuTransition = () -> Menus.initInventoryMenu(startingAdditionTrainer -> this.startingAdditionTrainer = startingAdditionTrainer);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -4185,7 +4185,7 @@ public class SMap extends EngineState<SMap> {
       }
 
       case RENDER_SUBMAP_12 -> {
-        if(CombatDebuggerController.nextEncounterPunchingBagMode) {
+        if(this.startingAdditionTrainer) {
           this.submap.prepareEncounter(LodEncounters.ENCOUNTER_TRAINING.get(), false);
           this.mapTransition(-1, 0);
         } else {
