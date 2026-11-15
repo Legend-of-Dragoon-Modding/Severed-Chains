@@ -528,7 +528,7 @@ public final class LodEncounters {
   public static final RegistryDelegate<Encounter> ENCOUNTER_SCISSORHANDS_129 = ENCOUNTER_REGISTRAR.register("scissorhands_129", () -> new Encounter(224, 10, 4, 4, 8, 8, 8, 8, 65535, 255, new Encounter.Monster(1, new Vector3f(-4480.000000f, 0.000000f, 128.000000f))));
   public static final RegistryDelegate<Encounter> ENCOUNTER_SCISSORHANDS_130 = ENCOUNTER_REGISTRAR.register("scissorhands_130", () -> new Encounter(224, 10, 4, 4, 8, 8, 8, 8, 65535, 255, new Encounter.Monster(1, new Vector3f(-4480.000000f, 0.000000f, 128.000000f))));
 
-  public static final RegistryDelegate<Encounter> ENCOUNTER_TRAINING = ENCOUNTER_REGISTRAR.register("training", () -> new Encounter(224, 9999, 1, 20, 8, 6, 21, 42, 0xffff, 0xff, new Encounter.Monster(24, new Vector3f(-3712.000000f, 0.000000f, 128.000000f))));
+  public static final RegistryDelegate<Encounter> ENCOUNTER_TRAINING = ENCOUNTER_REGISTRAR.register("training", () -> new Encounter(224, 9999, 1, 20, 8, 6, 21, 42, 0xffff, 0xff, new Encounter.Monster(38, new Vector3f(-3712.000000f, 0.000000f, 128.000000f))));
 
   public static final String[] LEGACY = {
     "berserk_mouse",
