@@ -147,6 +147,7 @@ import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
@@ -2083,7 +2084,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_801095a0
     for(final int enemyId : encounter.uniqueIds) {
       final int enemyIndex = enemyId & 0x1ff;
-      this.loadEnemyDropsAndScript(this.addCombatant(enemyIndex, -1), enemyIndex);
+      this.loadEnemyDropsAndScript(encounter, this.addCombatant(enemyIndex, -1), enemyIndex);
     }
 
     //LAB_801095ec
@@ -4392,7 +4393,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "doIt", description = "If false, this method does nothing")
   @Method(0x800cd160L)
   public FlowControl scriptLevelUpAddition(final RunningScript<?> script) {
-    if(script.params_20[1].get() != 0) {
+    if(script.params_20[1].get() != 0 && encounter != LodEncounters.ENCOUNTER_TRAINING.get()) {
       final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
       final int charIndex = bent.charId_272;
@@ -8727,6 +8728,10 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public FlowControl scriptGiveSp(final RunningScript<?> script) {
+    if(encounter == LodEncounters.ENCOUNTER_TRAINING.get()) {
+      return FlowControl.CONTINUE;
+    }
+
     //LAB_800f43f8
     //LAB_800f4410
     //LAB_800f4430
@@ -9323,7 +9328,7 @@ public class Battle extends EngineState<Battle> {
   }
 
   @Method(0x80109808L)
-  public void loadEnemyDropsAndScript(final int combatantIndex, final int enemyId) {
+  public void loadEnemyDropsAndScript(final Encounter encounter, final int combatantIndex, final int enemyId) {
     final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
     final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
 
@@ -9338,7 +9343,7 @@ public class Battle extends EngineState<Battle> {
     combatant.gold_196 = rewardsEvent.gold;
     combatant._19a = rewards._06;
 
-    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
+    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, encounter, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
     enemyEvent.scriptFuture = Loader.loadFile(enemyEvent.script).thenApply(data -> new ScriptFile("Combatant " + combatantIndex, data.getBytes()));
     EVENTS.postEvent(enemyEvent);
 

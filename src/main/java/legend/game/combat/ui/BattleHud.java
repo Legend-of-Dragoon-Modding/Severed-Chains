@@ -1354,7 +1354,7 @@ public class BattleHud {
   @Method(0x800f6134L)
   public void initializeMenuIcons(final ScriptState<PlayerBattleEntity> bentState) {
     //LAB_800f62a4
-    final GatherBattleActionsEvent event = EVENTS.postEvent(new GatherBattleActionsEvent(this.battle, bentState.innerStruct_00));
+    final GatherBattleActionsEvent event = EVENTS.postEvent(new GatherBattleActionsEvent(this.battle, encounter, bentState.innerStruct_00));
 
     final List<BattleAction> actions = event.actions.object2IntEntrySet().stream()
       .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))

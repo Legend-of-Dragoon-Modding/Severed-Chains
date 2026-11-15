@@ -1,0 +1,356 @@
+entrypoint :ENTRYPOINT_0
+entrypoint :ENTRYPOINT_1
+entrypoint :ENTRYPOINT_2
+entrypoint :ENTRYPOINT_3
+entrypoint :ENTRYPOINT_4
+entrypoint :ENTRYPOINT_5
+entrypoint :ENTRYPOINT_6
+entrypoint :ENTRYPOINT_7
+entrypoint :ENTRYPOINT_8
+entrypoint :ENTRYPOINT_9
+entrypoint :ENTRYPOINT_10
+entrypoint :ENTRYPOINT_11
+entrypoint :ENTRYPOINT_12
+entrypoint :ENTRYPOINT_13
+entrypoint :ENTRYPOINT_14
+entrypoint :ENTRYPOINT_15
+
+; SUBROUTINE
+LABEL_0:
+yield
+call Battle::scriptAnimationHasFinished, stor[0], stor[8] ; bentIndex, finished
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_0] ; operator, left, right, addr
+return
+
+; SUBROUTINE set which bent is being targeted
+LABEL_15:
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+mov 0x1, stor[9] ; source, dest
+shl stor[8], stor[9] ; shift, val
+or stor[9], var[45][246] ; or, operand
+return
+
+; SUBROUTINE
+LABEL_16:
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+mov 0x1, stor[9] ; source, dest
+shl stor[8], stor[9] ; shift, val
+neg stor[9] ; operand
+decr stor[9] ; operand
+and stor[9], var[45][246] ; and, operand
+return
+
+; SUBROUTINE
+LABEL_28:
+call Battle::scriptGetBentStat, stor[28], MIDDLE_OFFSET_X, stor[24] ; bentIndex, statIndex, value
+call Battle::scriptGetBentStat, stor[28], MIDDLE_OFFSET_Y, stor[25] ; bentIndex, statIndex, value
+mul 0x64, stor[24] ; amount, operand
+mul 0x64, stor[25] ; amount, operand
+neg stor[25] ; operand
+mov 0x0, stor[26] ; source, dest
+call Battle::scriptGetBentPos, stor[28], stor[14], stor[15], stor[16] ; bentIndex, x, y, z
+add stor[14], stor[24] ; amount, operand
+add stor[15], stor[25] ; amount, operand
+add stor[16], stor[26] ; amount, operand
+return
+
+; SUBROUTINE wake up from stunned?
+LABEL_29:
+jmp_cmp >, 0x0, var[45][224], inl[:LABEL_30] ; operator, left, right, addr
+call Battle::scriptGetBentStat, stor[0], STATUS, stor[8] ; bentIndex, statIndex, value
+jmp_cmp !&, 0x10, stor[8], inl[:LABEL_30] ; operator, left, right, addr
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+add 0x81, stor[8] ; amount, operand
+or 0xf00, var[45][stor[8]] ; or, operand
+LABEL_30:
+return
+
+; SUBROUTINE
+LABEL_34:
+call SEffe::scriptGetAdditionOverlayActiveStatus, 0x0, stor[8] ; type, state
+jmp_cmp ==, 0x0, stor[8], inl[:LABEL_35] ; operator, left, right, addr
+mov var[45][104], stor[8] ; source, dest
+return
+LABEL_35:
+mov 0xffffffff, stor[8] ; source, dest
+return
+
+; SUBROUTINE
+LABEL_40:
+yield
+jmp_cmp !&, 0x4, var[58], inl[:LABEL_40] ; operator, left, right, addr
+call Battle::scriptGetBentSlot, stor[0], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+mov 0xffffffff, var[128 + stor[8]][0] ; source, dest
+mov 0xffffffff, var[128 + stor[8]][1] ; source, dest
+mov 0xffffffff, var[128 + stor[8]][2] ; source, dest
+mov 0xffffffff, var[128 + stor[8]][3] ; source, dest
+mov 0xffffffff, var[128 + stor[8]][4] ; source, dest
+mov 0xffffffff, var[128 + stor[8]][5] ; source, dest
+mov 0x0, var[128 + stor[8]][6] ; source, dest
+mov 0x0, var[128 + stor[8]][7] ; source, dest
+return
+
+; SUBROUTINE
+LABEL_41:
+yield
+jmp_cmp !&, 0x10, var[58], inl[:LABEL_41] ; operator, left, right, addr
+return
+
+; SUBROUTINE
+LABEL_102:
+mov stor[0], stor[28] ; source, dest
+gosub inl[:LABEL_15] ; addr
+jmp inl[:LABEL_111] ; addr
+data 0x49
+
+; SUBROUTINE TABLE
+LABEL_103:
+rel :JMP_3e74_0
+rel :JMP_3e74_1
+rel :JMP_3e74_2
+rel :JMP_3e74_3
+rel :JMP_3e74_4
+
+; SUBROUTINE
+JMP_3e74_0:
+gosub inl[:LABEL_122] ; addr
+jmp_cmp !=, 0x1, stor[31], inl[:LABEL_104] ; operator, left, right, addr
+gosub inl[:LABEL_119] ; addr
+incr var[45][66] ; operand
+LABEL_104:
+return
+
+; SUBROUTINE
+JMP_3e74_1:
+return
+
+; SUBROUTINE
+JMP_3e74_2:
+return
+
+; SUBROUTINE
+JMP_3e74_3:
+jmp_cmp ==, 0x1, stor[31], inl[:LABEL_105] ; operator, left, right, addr
+jmp_cmp &, 0x10, var[45][105], inl[:LABEL_105] ; operator, left, right, addr
+mov 0x1, stor[27] ; source, dest
+call Battle::scriptSetInterpolationEnabled, stor[0], 0x1 ; bentIndex, set
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], stor[27] ; bentIndex, animIndex
+call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
+LABEL_105:
+return
+
+; SUBROUTINE
+JMP_3e74_4:
+return
+
+; SUBROUTINE
+LABEL_106:
+jmp_cmp ==, 0x0, stor[27], inl[:LABEL_108] ; operator, left, right, addr
+call Battle::scriptAnimationHasFinished, stor[0], stor[17] ; bentIndex, finished
+jmp_cmp ==, 0x0, stor[17], inl[:LABEL_108] ; operator, left, right, addr
+jmp_cmp !=, 0x19, stor[27], inl[:LABEL_107] ; operator, left, right, addr
+mov 0x2, stor[31] ; source, dest
+mov 0x1, stor[stor[stor[0], 32], 30] ; source, dest
+LABEL_107:
+mov 0x0, stor[27] ; source, dest
+call Battle::scriptSetInterpolationEnabled, stor[0], 0x1 ; bentIndex, set
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x0 ; bentIndex, animIndex
+LABEL_108:
+return
+
+; SUBROUTINE
+LABEL_109:
+jmp_cmp !&, 0x1, var[45][105], inl[:LABEL_110] ; operator, left, right, addr
+and 0xfffffffe, var[45][105] ; and, operand
+call Battle::scriptPauseAnimation, stor[0] ; bentIndex
+mov 0x10, stor[23] ; source, dest
+wait stor[23] ; frames
+call Battle::scriptResumeAnimation, stor[0] ; bentIndex
+LABEL_110:
+return
+LABEL_111:
+mov 0x0, stor[stor[stor[0], 32], 29] ; source, dest
+mov 0x0, stor[stor[stor[0], 32], 30] ; source, dest
+mov 0x0, var[45][66] ; source, dest
+LABEL_112:
+mov var[45][82], stor[8] ; source, dest
+gosub_table stor[8], inl[:LABEL_103] ; index, table
+gosub inl[:LABEL_106] ; addr
+gosub inl[:LABEL_109] ; addr
+jmp_cmp !=, 0x1, var[45][66], inl[:LABEL_113] ; operator, left, right, addr
+decr stor[16] ; operand
+jmp_cmp !=, 0x0, stor[16], inl[:LABEL_113] ; operator, left, right, addr
+mov 0x0, stor[15] ; source, dest
+mov 0x19, stor[27] ; source, dest
+call Battle::scriptSetInterpolationEnabled, stor[0], 0x0 ; bentIndex, set
+call Battle::scriptSetBentAnimationLoopState, stor[0], 0x0 ; bentIndex, loop
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], stor[27] ; bentIndex, animIndex
+incr var[45][66] ; operand
+LABEL_113:
+yield
+jmp_cmp !=, 0x5, var[45][82], inl[:LABEL_112] ; operator, left, right, addr
+jmp_cmp !=, 0x2, stor[31], inl[:LABEL_114] ; operator, left, right, addr
+mov 0x2, stor[stor[stor[0], 32], 30] ; source, dest
+call Battle::scriptPauseAnimation, stor[0] ; bentIndex
+mov 0x10, stor[23] ; source, dest
+wait stor[23] ; frames
+LABEL_114:
+mov 0x1, stor[23] ; source, dest
+jmp_cmp ==, 0x2, stor[31], inl[:LABEL_117] ; operator, left, right, addr
+gosub inl[:LABEL_0] ; addr
+LABEL_117:
+call Battle::scriptSetInterpolationEnabled, stor[0], 0x1 ; bentIndex, set
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x0 ; bentIndex, animIndex
+wait stor[23] ; frames
+gosub inl[:LABEL_29] ; addr
+mov 0x0, var[45][188] ; source, dest
+mov stor[0], stor[28] ; source, dest
+gosub inl[:LABEL_16] ; addr
+return
+
+; SUBROUTINE
+LABEL_119:
+gosub inl[:LABEL_34] ; addr
+jmp_cmp >, 0x0, stor[8], inl[:LABEL_120] ; operator, left, right, addr
+mov 0x1, stor[stor[stor[0], 8], 8] ; source, dest
+call Battle::scriptAllocateEmptyEffectManagerChild, stor[21] ; effectIndex
+mov stor[0], stor[stor[stor[0], 21], 28] ; source, dest
+mov stor[0], stor[stor[stor[0], 21], 30] ; source, dest
+call SEffe::scriptLoadSameScriptAndJump, stor[21], inl[:LABEL_121] ; scriptIndex, address
+LABEL_120:
+return
+
+; FORK JMP
+LABEL_121:
+call Audio::scriptPlaySound, 0x0, 0x25, 0x0, 0x0, 0x0, 0x0 ; soundFileIndex, soundIndex, unused1, unused2, initialDelay, repeatDelay
+gosub inl[:LABEL_28] ; addr
+call Battle::allocateBillboardSpriteEffect, stor[21], 0xfff26 ; effectIndex, flags
+call SEffe::scriptSetRelativePosition, stor[21], 0xffffffff, stor[24], stor[25], stor[26] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeScale, stor[21], 0xffffffff, 0x800, 0x800, 0x800 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeColour, stor[21], 0xffffffff, 0x60, 0x40, 0x60 ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetEffectTranslucencyModeFlag, stor[21], 0x1 ; effectIndex, mode
+call SEffe::scriptAddConstantColourScalerAttachment, stor[21], 0xffffffff, 0xc, 0x0, 0x0, 0x0 ; effectIndex, parentIndex, ticks, destR, destG, destB
+call SEffe::scriptAddLifespanAttachment, stor[21], 0xc ; effectIndex, ticks
+call SEffe::scriptAllocateElectricityEffect, stor[18], 0xffffffff, 0x3e8, 0x8, 0x100, 0x100, 0x161020, 0x2 ; effectIndex, parentIndex, boltAngleRangeCutoff, boltCount, maxSegmentLength, boltAngleStep, flags, type
+call SEffe::scriptSetRelativeColour, stor[18], 0xffffffff, 0xff, 0x0, 0xc0 ; bobjIndex1, bobjIndex2, r, g, b
+call SEffe::scriptSetRelativeScale, stor[18], 0xffffffff, 0x1000, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativeRotation, stor[18], 0xffffffff, 0x800, 0x0, 0x0 ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptSetRelativePosition, stor[18], 0xffffffff, stor[24], stor[25], stor[26] ; bobjIndex1, bobjIndex2, x, y, z
+call SEffe::scriptAddLifespanAttachment, stor[18], 0xc ; effectIndex, ticks
+mov 0xd, stor[23] ; source, dest
+wait stor[23] ; frames
+deallocate
+data 0x49
+
+; SUBROUTINE
+LABEL_122:
+mov 0x0, stor[31] ; source, dest
+mov 0x0, stor[16] ; source, dest
+call Battle::scriptGetBentSlot, stor[32], stor[8], 0x0 ; bentIndex, charOrBentSlot, mode
+add 0xbd, stor[8] ; amount, operand
+jmp_cmp &, 0x2, var[45][stor[8]], inl[:LABEL_123] ; operator, left, right, addr
+call Battle::scriptGetBentStat, stor[0], STATUS, stor[8] ; bentIndex, statIndex, value
+jmp_cmp &, 0x10, stor[8], inl[:LABEL_123] ; operator, left, right, addr
+mov var[45][89], stor[8] ; source, dest
+mov inl[:LABEL_124[stor[8]]], stor[8] ; source, dest
+rand 0x64, stor[9] ; bound, dest
+jmp_cmp <=, stor[8], stor[9], inl[:LABEL_123] ; operator, left, right, addr
+jmp_cmp ==, 0x0, var[45][83], inl[:LABEL_123] ; operator, left, right, addr
+mov var[45][83], stor[8] ; source, dest
+incr stor[8] ; operand
+incr stor[8] ; operand
+jmp_cmp >=, stor[8], var[45][89], inl[:LABEL_123] ; operator, left, right, addr
+decr stor[8] ; operand
+jmp_cmp !=, 0x0, var[45][66], inl[:LABEL_123] ; operator, left, right, addr
+call Battle::scriptGetHitProperty, stor[32], stor[8], 0x1, stor[9] ; bentIndex, hitNum, hitPropertyIndex, value
+call Battle::scriptGetBentStat, stor[0], HIT_COUNTER_FRAME_THRESHOLD, stor[27] ; bentIndex, statIndex, value
+call Battle::scriptGetBentStat, stor[0], _62, stor[11] ; bentIndex, statIndex, value
+jmp_cmp ==, 0x0, stor[27], inl[:LABEL_123] ; operator, left, right, addr
+incr stor[27] ; operand
+mov var[45][87], stor[8] ; source, dest
+add var[45][88], stor[8] ; amount, operand
+jmp_cmp >=, stor[27], stor[8], inl[:LABEL_123] ; operator, left, right, addr
+mov stor[9], stor[13] ; source, dest
+sub 0x3, stor[13] ; amount, operand
+jmp_cmp >=, stor[27], stor[13], inl[:LABEL_123] ; operator, left, right, addr
+sub stor[8], stor[13] ; amount, operand
+mov 0x1, stor[16] ; source, dest
+incr stor[31] ; operand
+LABEL_123:
+return
+LABEL_124:
+data 0x0
+data 0x0
+data 0x0
+data 0x0
+data 0x28
+data 0x25
+data 0x23
+data 0x20
+data 0x1e
+
+; SUBROUTINE
+LABEL_132:
+mov stor[0], stor[28] ; source, dest
+gosub inl[:LABEL_15] ; addr
+mov 0x1, stor[31] ; source, dest
+mov 0x0, var[45][188] ; source, dest
+return
+
+; SUBROUTINE
+LABEL_135:
+mov 0x19, stor[23]
+mov stor[0], stor[28] ; source, dest
+gosub inl[:LABEL_15] ; addr
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x1 ; bentIndex, animIndex
+LABEL_136:
+yield
+call Battle::scriptAnimationHasFinished, stor[0], stor[28] ; bentIndex, finished
+jmp_cmp ==, 0x0, stor[28], inl[:LABEL_136] ; operator, left, right, addr
+call Battle::scriptPauseAnimation, stor[0] ; bentIndex
+call Battle::scriptSetLoadingBentAnimationIndex, stor[0], 0x0 ; bentIndex, animIndex
+wait stor[23] ; frames
+mov 0x0, var[45][188] ; source, dest
+mov stor[0], stor[28] ; source, dest
+gosub inl[:LABEL_16] ; addr
+mov 0x0, stor[8] ; source, dest
+return
+
+ENTRYPOINT_10:
+consume
+
+ENTRYPOINT_11:
+consume
+
+ENTRYPOINT_0:
+gosub inl[:LABEL_40] ; addr
+call Battle::scriptAttachShadowToBentModelPart, stor[0], 0x2 ; bentIndex, modelPartAttachmentIndex
+call Battle::scriptSetBentShadowSize, stor[0], 0xc00, 0xc00 ; bentIndex, x, z
+gosub inl[:LABEL_41] ; addr
+LABEL_235:
+wait_cmp &, 0x8, stor[7] ; operand, left, right
+call Battle::scriptFinishBentTurn, stor[0] ; bentIndex
+and 0xfffffff7, stor[7] ; and, operand
+jmp inl[:LABEL_235] ; addr
+
+ENTRYPOINT_1:
+consume
+ENTRYPOINT_2:
+gosub inl[:LABEL_132] ; addr
+ENTRYPOINT_3:
+gosub inl[:LABEL_135] ; addr
+consume
+ENTRYPOINT_4:
+consume
+ENTRYPOINT_5:
+gosub inl[:LABEL_102] ; addr
+consume
+ENTRYPOINT_6:
+ENTRYPOINT_7:
+ENTRYPOINT_8:
+ENTRYPOINT_9:
+ENTRYPOINT_12:
+ENTRYPOINT_13:
+ENTRYPOINT_14:
+ENTRYPOINT_15:
+consume

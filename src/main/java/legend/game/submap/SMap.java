@@ -269,6 +269,7 @@ public class SMap extends EngineState<SMap> {
   public SubmapState smapLoadingStage_800cb430 = SubmapState.INIT_0;
   public Runnable menuTransition;
 
+  private boolean startingAdditionTrainer;
   private boolean returnedToSameSubmapAfterBattle_800cb448;
 
   private final Vector2f screenOffset_800cb568 = new Vector2f();
@@ -4053,7 +4054,7 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newScene == 0x3ff) {
-      this.menuTransition = Menus::initInventoryMenu;
+      this.menuTransition = () -> Menus.initInventoryMenu(startingAdditionTrainer -> this.startingAdditionTrainer = startingAdditionTrainer);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -4184,12 +4185,17 @@ public class SMap extends EngineState<SMap> {
       }
 
       case RENDER_SUBMAP_12 -> {
-        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
+        if(this.startingAdditionTrainer) {
+          this.submap.prepareEncounter(LodEncounters.ENCOUNTER_TRAINING.get(), false);
+          this.mapTransition(-1, 0);
+        } else {
+          submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
-        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
+          this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
-        if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
-          this.mapTransition(-1, 0x3ff); // Open inv
+          if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
+            this.mapTransition(-1, 0x3ff); // Open inv
+          }
         }
       }
 

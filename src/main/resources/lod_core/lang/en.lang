@@ -221,6 +221,9 @@ lod_core.ui.item_list.discard_confirm=Discard %s?
 
 lod_core.ui.goods.goods=Goods
 
+lod_core.ui.additions.training=Practice
+lod_core.ui.additions.training_prompt=Start Practice?
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
