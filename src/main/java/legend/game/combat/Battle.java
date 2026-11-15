@@ -8315,7 +8315,7 @@ public class Battle extends EngineState<Battle> {
 
     this.usedRepeatItems_800c6c3c.clear();
     this.dragoonSpaceElement_800c6b64 = null;
-    battleState_8006e398.specialFlag_2b0 = 0;
+    battleState_8006e398.specialFlag_2b0 = -1;
 
     //LAB_800ee894
     spGained_800bc950.clear();
