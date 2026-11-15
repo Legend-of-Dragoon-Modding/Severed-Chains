@@ -8643,10 +8643,6 @@ public class Battle extends EngineState<Battle> {
 
     script.params_20[2].set(damage);
     script.params_20[3].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
-
-    final boolean isDragoon = attacker instanceof final PlayerBattleEntity player && player.isDragoon();
-    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, !isDragoon);
-
     return FlowControl.CONTINUE;
   }
 
@@ -8683,9 +8679,6 @@ public class Battle extends EngineState<Battle> {
     //LAB_800f27ec
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
-
-    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, false);
-
     return FlowControl.CONTINUE;
   }
 
@@ -8722,8 +8715,6 @@ public class Battle extends EngineState<Battle> {
     script.params_20[3].set(damage);
     script.params_20[4].set(this.determineAttackSpecialEffects(attacker, defender, AttackType.ITEM_MAGIC));
     this.applyItemSpecialEffects(attacker, defender);
-    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud, false, false);
-
     return FlowControl.CONTINUE;
   }
 
@@ -9323,7 +9314,7 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    camera_800c67f0.trySetPreferredCameraAngle(this.hud, true, false);
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud);
     battleFlags_800bc960 |= 0x2;
   }
 
