@@ -470,6 +470,8 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   private void startAdditionTrainer() {
+    playMenuSound(2);
+
     menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.additions.training_prompt"), MessageBoxType.CONFIRMATION, result -> {
       if(result == MessageBoxResult.YES) {
         this.startingAdditionTrainer = true;
