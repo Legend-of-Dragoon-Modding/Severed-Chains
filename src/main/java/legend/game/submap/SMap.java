@@ -430,6 +430,7 @@ public class SMap extends EngineState<SMap> {
   public final SoundFile submapSounds = addSoundFile("Submap SFX");
 
   private EngineStateType<?> engineStateToTransitionTo;
+  private SubmapLoader<?> submapLoader = new RetailSubmapLoader();
 
   /** Used for restoring the primary party after forced party changes. Used as a FIFO queue by char_utils script lib. */
   public final IntList primaryPartyBackup = new IntArrayList();
@@ -3255,6 +3256,8 @@ public class SMap extends EngineState<SMap> {
       case FINALIZE_SUBMAP_LOADING_7 -> {
         FUN_800218f0();
 
+        this.resetTriangleIndicators();
+
         this.firstMovement = true;
 
         final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this, gameState_800babc8, this.submap, this.submap.script, this.submap.objects));
@@ -3340,7 +3343,6 @@ public class SMap extends EngineState<SMap> {
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
         new Tim(Loader.loadFileSync("SUBMAP/alert.tim")).uploadToGpu();
-        this.resetTriangleIndicators();
 
         //LAB_800e1ecc
         for(int i = 0; i < 32; i++) {
@@ -3943,6 +3945,11 @@ public class SMap extends EngineState<SMap> {
     return this.sobjs_800c6880[index] != null;
   }
 
+  public void mapTransition(final SubmapLoader<?> submapLoader) {
+    this.submapLoader = submapLoader;
+    this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
+  }
+
   /**
    * Also does things like open menus using special values. If cut >= 0x800, plays FMV (cut - 0x800) and transitions to engine state newScene once FMV is finished.
    *
@@ -4012,6 +4019,7 @@ public class SMap extends EngineState<SMap> {
     if(newCut > -1) {
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
+      this.submapLoader = new RetailSubmapLoader();
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
       EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, newCut));
       return;
@@ -4041,6 +4049,7 @@ public class SMap extends EngineState<SMap> {
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCut_80052c30 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      this.submapLoader = new RetailSubmapLoader();
       this.mapTransitionData_800cab24.clear();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20, true));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
@@ -4123,7 +4132,7 @@ public class SMap extends EngineState<SMap> {
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
-        this.submap = new RetailSubmap(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
+        this.submap = this.submapLoader.make(this, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
         this.submap.loadEnv().thenAccept(v -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
