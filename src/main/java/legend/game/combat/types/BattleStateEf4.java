@@ -276,7 +276,7 @@ public class BattleStateEf4 {
   public final int[] _460 = new int[3];
   /** Battle stage ID is stored here when player combat script is initialized, updated for special transformation stages */
   public int battleStage_46c;
-  /** Used in player combat script, one bit for each player bent slot */
+  /** Used in player combat script, one bit for each player bent slot. Set to 0 after a monster takes damage. */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];
   public int _494;
