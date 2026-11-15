@@ -55,7 +55,7 @@ public class LodTrainingHandler {
       for(final RegistryId id : REGISTRIES.battleActions) {
         final BattleAction action = REGISTRIES.battleActions.getEntry(id).get();
 
-        if(action != LodBattleActions.ATTACK.get() && action != LodBattleActions.ESCAPE.get()) {
+        if(action != LodBattleActions.ATTACK.get() && action != LodBattleActions.ADDITIONS.get() && action != LodBattleActions.ESCAPE.get()) {
           event.disabledActions.add(action);
         }
       }
