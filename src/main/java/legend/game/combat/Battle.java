@@ -448,9 +448,6 @@ public class Battle extends EngineState<Battle> {
   public int mcqOffsetX_800c6774;
   public int mcqOffsetY_800c6778;
 
-  /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
-  public int currentCameraIndex_800c6780;
-
   public int _800c67c8;
   public int _800c67cc;
   public int _800c67d0;
@@ -9322,8 +9319,7 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
-    this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud);
     battleFlags_800bc960 |= 0x2;
   }
 
