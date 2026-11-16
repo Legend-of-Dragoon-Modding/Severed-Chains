@@ -37,7 +37,7 @@ import static org.lwjgl.sdl.SDLMouse.SDL_SYSTEM_CURSOR_POINTER;
 import static org.lwjgl.sdl.SDLMouse.SDL_SetCursor;
 import static org.lwjgl.sdl.SDLMouse.SDL_SetWindowRelativeMouseMode;
 import static org.lwjgl.sdl.SDLMouse.SDL_ShowCursor;
-import static org.lwjgl.sdl.SDLPixels.SDL_PIXELFORMAT_ARGB8888;
+import static org.lwjgl.sdl.SDLPixels.SDL_PIXELFORMAT_ABGR8888;
 import static org.lwjgl.sdl.SDLSurface.SDL_CreateSurfaceFrom;
 import static org.lwjgl.sdl.SDLSurface.SDL_DestroySurface;
 import static org.lwjgl.sdl.SDLVideo.SDL_CreateWindow;
@@ -425,7 +425,7 @@ public class SdlWindow extends Window {
         return;
       }
 
-      final SDL_Surface surface = SDL_CreateSurfaceFrom(w.get(0), h.get(0), SDL_PIXELFORMAT_ARGB8888, data, w.get(0) * 4);
+      final SDL_Surface surface = SDL_CreateSurfaceFrom(w.get(0), h.get(0), SDL_PIXELFORMAT_ABGR8888, data, w.get(0) * 4);
 
       if(surface != null) {
         SDL_SetWindowIcon(this.window, surface);
