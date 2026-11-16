@@ -70,12 +70,8 @@ public class AdditionFeedbackText {
       this.text = I18n.translate("lod.addition_feedback." + this.value.toString().toLowerCase());
     }
 
-    public boolean hasRemainingFrames() {
+    private boolean hasRemainingFrames() {
       return this.currentFrame < this.frames.length;
-    }
-
-    public FeedbackTextFrameData getFrame() {
-      return this.frames[this.currentFrame++];
     }
 
     private void setAnimationFrames() {
@@ -126,7 +122,7 @@ public class AdditionFeedbackText {
     for (int i = 0; i < this.feedbackTextElements.length; i++) {
       final FeedbackTextElement element = this.feedbackTextElements[i];
       if (element != null && element.hasRemainingFrames()) {
-        final FeedbackTextFrameData frame = element.getFrame();
+        final FeedbackTextFrameData frame = element.frames[element.currentFrame++];
         if (frame != null) {
           renderText(element.text, frame.x, frame.y, element.font.translucency(frame.translucency));
         }
