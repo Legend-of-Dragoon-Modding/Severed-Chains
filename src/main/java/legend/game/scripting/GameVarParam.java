@@ -22,6 +22,8 @@ import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 import legend.lodmod.LodMod;
 import legend.lodmod.LodPostBattleActions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.core.GameEngine.CONFIG;
@@ -39,6 +41,8 @@ import static legend.game.combat.SBtld.startEncounter;
 import static legend.game.combat.SBtld.startLegacyEncounter;
 
 public class GameVarParam extends Param {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GameVarParam.class);
+
   private final int index;
 
   public GameVarParam(final int index) {
@@ -168,7 +172,7 @@ public class GameVarParam extends Param {
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc;
       case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0;
       case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710;
-      case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780;
+      case 86 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraIndex_800c6780;
       case 87 -> ((Battle)currentEngineState_8004dd04).battleInitialCameraMovementFinished_800c66a8 ? 1 : 0;
       case 88 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6700;
       case 89 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6704;
@@ -316,11 +320,17 @@ public class GameVarParam extends Param {
       case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc = val;
       case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0 = val;
       case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710 = val;
-      case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780 = val;
+      case 86 -> {
+        LOGGER.info("Ignoring currentCameraIndex %d", val);
+//        ((Battle)currentEngineState_8004dd04).hud.currentCameraIndex_800c6780 = val;
+      }
       case 87 -> ((Battle)currentEngineState_8004dd04).battleInitialCameraMovementFinished_800c66a8 = val != 0;
       case 88 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6700 = val;
       case 89 -> ((Battle)currentEngineState_8004dd04).cameraScriptSubtableJumpIndex_800c6704 = val;
-      case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0 = val;
+      case 90 -> {
+        LOGGER.info("Ignoring currentCameraPositionIndicesIndex %s", val);
+//        ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0 = val;
+      }
 
       case 96 -> ((Battle)currentEngineState_8004dd04).shouldRenderStage_800c6754 = val != 0;
       case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4 = val;

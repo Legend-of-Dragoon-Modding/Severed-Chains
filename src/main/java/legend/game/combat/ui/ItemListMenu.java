@@ -42,10 +42,17 @@ public class ItemListMenu extends ListMenu {
 
   @Override
   protected void drawListEntry(final int index, final int x, final int y, final int trim) {
+    final ItemStack stack = this.combatItems_800c6988.get(index).getStack();
+
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
+
     renderText(I18n.translate(this.combatItems_800c6988.get(index).getStack().getNameTranslationKey()), x, y, this.fontOptions);
     renderText("×", x + 143, y, this.fontOptions);
+
+    if(stack.isRepeat()) {
+      renderText(I18n.translate("lod_core.ui.infinity"), x + 130, y, this.fontOptions);
+    }
 
     this.fontOptions.horizontalAlign(HorizontalAlign.RIGHT);
     renderText(String.valueOf(this.combatItems_800c6988.get(index).getSize()), x + 168, y, this.fontOptions);

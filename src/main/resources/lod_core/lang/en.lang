@@ -24,6 +24,7 @@ lod_core.config_presets.vanilla=Vanilla
 lod_core.config_presets.speedrunner=Speedrunner
 
 # UI text
+lod_core.ui.infinity=∞
 lod_core.ui.hotkey=%s (%s)
 
 lod_core.ui.title.uncategorized_saves=Uncategorized saves found. Please enter a name for your campaign.
@@ -205,6 +206,8 @@ lod_core.ui.ingame_menu.save=Save
 lod_core.ui.additions.no_additions=No additions available
 
 lod_core.ui.equipment.unequip=Unequip
+lod_core.ui.equipment.sort=Sort
+lod_core.ui.equipment.filter=Filter
 
 lod_core.ui.post_battle.addition_unlocked=Addition Unlocked
 lod_core.ui.post_battle.spell_unlocked=Spell Unlocked
@@ -214,9 +217,12 @@ lod_core.ui.item_list.equipment=Equipment
 lod_core.ui.item_list.sort=Sort
 lod_core.ui.item_list.discard=Discard
 lod_core.ui.item_list.back=Back
-lod_core.ui.item_list.discard_confirm=Discard?
+lod_core.ui.item_list.discard_confirm=Discard %s?
 
 lod_core.ui.goods.goods=Goods
+
+lod_core.ui.additions.training=Practice
+lod_core.ui.additions.training_prompt=Start Practice?
 
 # Core items
 lod_core.items.nothing.name=Nothing
@@ -403,6 +409,12 @@ lod_core.config.addition_feedback.label=Addition Feedback
 lod_core.config.addition_feedback.help=Enable addition feedback to tell you whether you pressed early, late or on time
 lod_core.config.addition_feedback.NONE=Off
 lod_core.config.addition_feedback.FEEDBACK=On
+lod_core.config.preferred_battle_camera_angle.label=Battle Camera Angle
+lod_core.config.preferred_battle_camera_angle.help=Controls the camera angle when starting battles\n[Random] Picks a random angle\n[Player] Starts on the player side of the field looking towards the enemies\n[Side] Starts with a side view of the field\n[Enemy] Starts on the enemy side of the field looking towards the players
+lod_core.config.preferred_battle_camera_angle.NORMAL=Random
+lod_core.config.preferred_battle_camera_angle.PLAYER=Player
+lod_core.config.preferred_battle_camera_angle.SIDE=Side
+lod_core.config.preferred_battle_camera_angle.ENEMY=Enemy
 lod_core.config.addition_counter_amount.label=Addition Counter Amount
 lod_core.config.addition_counter_amount.help=Setting for the amount of counters that happen during additions\n[None] No counter\n[Normal] Normal amount of counters (retail)
 lod_core.config.addition_counter_amount.NONE=None
@@ -423,6 +435,7 @@ lod_core.input_actions.menu_back.name=Menu: back
 lod_core.input_actions.menu_delete.name=Menu: delete
 lod_core.input_actions.menu_advanced.name=Menu: advanced
 lod_core.input_actions.menu_sort.name=Menu: sort
+lod_core.input_actions.menu_filter.name=Menu: filter
 lod_core.input_actions.menu_help.name=Menu: help
 lod_core.input_actions.menu_mods.name=Menu: mods
 lod_core.input_actions.menu_textbox_confirm.name=Menu: textbox confirm

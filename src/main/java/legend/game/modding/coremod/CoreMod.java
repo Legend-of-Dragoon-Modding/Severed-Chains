@@ -59,6 +59,7 @@ import legend.game.modding.coremod.config.MusicInterpolationPrecisionConfigEntry
 import legend.game.modding.coremod.config.MusicPitchResolutionConfigEntry;
 import legend.game.modding.coremod.config.MusicVolumeConfigEntry;
 import legend.game.modding.coremod.config.PixelateModeConfigEntry;
+import legend.game.modding.coremod.config.PreferredBattleCameraAngleConfigEntry;
 import legend.game.modding.coremod.config.QuickTextModeConfigEntry;
 import legend.game.modding.coremod.config.ReduceMotionFlashingConfigEntry;
 import legend.game.modding.coremod.config.ResolutionConfig;
@@ -183,6 +184,7 @@ public class CoreMod {
   public static final RegistryDelegate<MashModeConfigEntry> MASH_MODE_CONFIG = CONFIG_REGISTRAR.register("mash_mode", MashModeConfigEntry::new);
   public static final RegistryDelegate<SecondaryCharacterXpMultiplierConfigEntry> SECONDARY_CHARACTER_XP_MULTIPLIER_CONFIG = CONFIG_REGISTRAR.register("secondary_character_xp_multiplier", SecondaryCharacterXpMultiplierConfigEntry::new);
   public static final RegistryDelegate<BattleTransitionModeConfigEntry> BATTLE_TRANSITION_MODE_CONFIG = CONFIG_REGISTRAR.register("battle_transition_mode", BattleTransitionModeConfigEntry::new);
+  public static final RegistryDelegate<PreferredBattleCameraAngleConfigEntry> PREFERRED_BATTLE_CAMERA_ANGLE = CONFIG_REGISTRAR.register("preferred_battle_camera_angle", PreferredBattleCameraAngleConfigEntry::new);
   public static final RegistryDelegate<UnlockPartyConfig> UNLOCK_PARTY_CONFIG = CONFIG_REGISTRAR.register("unlock_party", UnlockPartyConfig::new);
   public static final RegistryDelegate<IconSetConfigEntry> ICON_SET = CONFIG_REGISTRAR.register("icon_set", IconSetConfigEntry::new);
   public static final RegistryDelegate<RunByDefaultConfig> RUN_BY_DEFAULT = CONFIG_REGISTRAR.register("run_by_default", RunByDefaultConfig::new);
@@ -210,6 +212,7 @@ public class CoreMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_BACK = INPUT_ACTION_REGISTRAR.register("menu_back", InputAction::fixed);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_DELETE = INPUT_ACTION_REGISTRAR.register("menu_delete", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_SORT = INPUT_ACTION_REGISTRAR.register("menu_sort", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_FILTER = INPUT_ACTION_REGISTRAR.register("menu_filter", InputAction::hidden);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_ADVANCED = INPUT_ACTION_REGISTRAR.register("menu_advanced", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_HELP = INPUT_ACTION_REGISTRAR.register("menu_help", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_MENU_MODS = INPUT_ACTION_REGISTRAR.register("menu_mods", InputAction::editable);
@@ -325,6 +328,8 @@ public class CoreMod {
       .add(INPUT_ACTION_MENU_TEXTBOX_CONFIRM.get(), new KeyInputActivation(InputKey.RETURN))
       .add(INPUT_ACTION_MENU_UNEQUIP.get(), new ButtonInputActivation(InputButton.X))
       .add(INPUT_ACTION_MENU_UNEQUIP.get(), new KeyInputActivation(InputKey.Q))
+      .add(INPUT_ACTION_MENU_FILTER.get(), new ButtonInputActivation(InputButton.SELECT))
+      .add(INPUT_ACTION_MENU_FILTER.get(), new KeyInputActivation(InputKey.V))
 
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_TITLE_UPDATE.get(), new KeyInputActivation(InputKey.U))

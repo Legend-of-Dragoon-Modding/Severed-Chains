@@ -179,6 +179,7 @@ public class BattleHud {
   public ListMenu listMenu_800c6b60;
   private final Int2ObjectMap<ListPosition> lastListPositions = new Int2ObjectOpenHashMap<>();
 
+  public int currentCameraIndex_800c6780;
   public int currentCameraPositionIndicesIndex_800c66b0;
 
   private final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
@@ -1354,7 +1355,7 @@ public class BattleHud {
   @Method(0x800f6134L)
   public void initializeMenuIcons(final ScriptState<PlayerBattleEntity> bentState) {
     //LAB_800f62a4
-    final GatherBattleActionsEvent event = EVENTS.postEvent(new GatherBattleActionsEvent(this.battle, bentState.innerStruct_00));
+    final GatherBattleActionsEvent event = EVENTS.postEvent(new GatherBattleActionsEvent(this.battle, encounter, bentState.innerStruct_00));
 
     final List<BattleAction> actions = event.actions.object2IntEntrySet().stream()
       .sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))

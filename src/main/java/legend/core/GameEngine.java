@@ -258,6 +258,7 @@ public final class GameEngine {
     SPU.init();
     RENDERER.init();
     RENDERER.events().onClose(Async::shutdown);
+    RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
     GPU.init();
     DISCORD.init();
     openalThread.start();
@@ -460,8 +461,6 @@ public final class GameEngine {
       .size(1.0f, 1.0f)
       .uvSize(1.0f, 1.0f)
       .build();
-
-    RENDERER.window().setWindowIcon(Path.of("gfx/textures/icon.png"));
 
     try {
       VideoPlayer.play(Path.of("gfx/intro.mp4"), GameEngine::renderIntro, () -> {

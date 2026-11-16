@@ -2091,6 +2091,17 @@
       "texV": 432,
       "y": 0
     },
+	"∞": {
+      "colour": true,
+      "texW": 30,
+      "texH": 48,
+      "w": 8,
+      "texU": 45,
+      "x": 0,
+      "h": 16,
+      "texV": 432,
+      "y": 1
+    },
     "¬": {
       "colour": true,
       "texW": 8,

@@ -28,14 +28,13 @@ import static legend.game.SItem.equipItem;
 import static legend.game.SItem.equipmentGlyphs_80114180;
 import static legend.game.SItem.giveEquipment;
 import static legend.game.SItem.initHighlight;
-import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
-import static legend.game.SItem.menuEquipmentSlotComparator;
 import static legend.game.SItem.renderCharacterEquipment;
 import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.setInventoryFromDisplay;
+import static legend.game.SItem.sortEquipmentInventory;
 import static legend.game.SItem.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -44,6 +43,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BOTTOM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_END;
+import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_FILTER;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_HOME;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_PAGE_DOWN;
@@ -66,6 +66,8 @@ public class EquipmentScreen extends MenuScreen {
   private int selectedSlot;
   private int charSlot;
   private int equipmentCount;
+  private int sort;
+  private EquipmentSlot filter;
   private Renderable58 itemHighlight;
   private Renderable58 upArrow_800bdb9c;
   private Renderable58 downArrow_800bdba0;
@@ -78,11 +80,15 @@ public class EquipmentScreen extends MenuScreen {
 
   public EquipmentScreen(final Runnable unload) {
     this.unload = unload;
+    this.filter = null;
+    this.sort = -1;
 
     this.characterCard = this.addControl(new CharacterCard());
     this.characterCard.setPos(8, 20);
 
     this.addHotkey(new I18nText("lod_core.ui.equipment.unequip"), INPUT_ACTION_MENU_UNEQUIP, this::menuUnequip);
+    this.addHotkey(new I18nText("lod_core.ui.equipment.sort"), INPUT_ACTION_MENU_SORT, this::menuItemSort);
+    this.addHotkey(new I18nText("lod_core.ui.equipment.filter"), INPUT_ACTION_MENU_FILTER, this::menuItemFilter);
   }
 
   @Override
@@ -98,6 +104,7 @@ public class EquipmentScreen extends MenuScreen {
         this.slotScroll = 0;
         this.selectedSlot = 0;
         this.loadingStage++;
+        this.menuItemSort(true);
 
       case 2:
         deallocateRenderables(0);
@@ -162,7 +169,9 @@ public class EquipmentScreen extends MenuScreen {
         if(equipment != gameState_800babc8.charData_32c.get(charIndex).getEquipment(equipment.slot)) {
           final MenuEntryStruct04<Equipment> menuEntry = new MenuEntryStruct04<>(equipment);
           menuEntry.itemSlot_01 = equipmentSlot;
-          this.menuItems.add(menuEntry);
+          if(this.filter == null || this.filter == menuEntry.item_00.slot) {
+            this.menuItems.add(menuEntry);
+          }
         }
       }
     }
@@ -178,7 +187,7 @@ public class EquipmentScreen extends MenuScreen {
     this.characterCard.setEquipmentComparison(selected == null ? null : selected.item_00);
 
     renderCharacterStats(characterIndices_800bdbb8.getInt(charSlot), selected == null ? null : selected.item_00);
-    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? null : selected.item_00.slot);
+    renderCharacterEquipment(characterIndices_800bdbb8.getInt(charSlot), allocate, selected == null ? this.filter : selected.item_00.slot);
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
@@ -413,6 +422,11 @@ public class EquipmentScreen extends MenuScreen {
       playMenuSound(2);
       addHp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
       addMp(characterIndices_800bdbb8.getInt(this.charSlot), 0);
+
+      if(this.sort > -1) {
+        sortEquipmentInventory(this.sort);
+      }
+
       this.loadingStage = 2;
     } else {
       playMenuSound(40);
@@ -420,12 +434,36 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuItemSort() {
+    this.menuItemSort(false);
+  }
+
+  private void menuItemSort(final boolean silent) {
+    this.sort = (this.sort + 1) % 3;
+    sortEquipmentInventory(this.sort);
+    this.getEquippableItemsForCharacter(characterIndices_800bdbb8.getInt(this.charSlot));
+
+    if(!silent) {
+      playMenuSound(2);
+      this.loadingStage = 2;
+    }
+  }
+
+  private void menuItemFilter() {
     playMenuSound(2);
-    final MenuEntries<Equipment> equipment = new MenuEntries<>();
-    loadItemsAndEquipmentForDisplay(equipment, null, 1);
-    equipment.sort(menuEquipmentSlotComparator());
-    setInventoryFromDisplay(equipment, gameState_800babc8.equipment_1e8, equipment.size());
-    this.loadingStage = 2;
+
+    if(this.filter == null) {
+      this.filter = EquipmentSlot.values()[0];
+    } else if(this.filter.ordinal() == EquipmentSlot.values().length - 1) {
+      this.filter = null;
+    } else {
+      this.filter = EquipmentSlot.values()[this.filter.ordinal() + 1];
+    }
+
+    this.slotScroll = 0;
+    this.selectedSlot = 0;
+    this.itemHighlight.y_44 = this.menuHighlightPositionY(this.selectedSlot);
+    this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8.getInt(this.charSlot));
+    this.slotScroll = Math.clamp(this.slotScroll, 0, Math.max(0, this.equipmentCount - 4));
   }
 
   private void menuUnequip() {
@@ -515,11 +553,6 @@ public class EquipmentScreen extends MenuScreen {
 
     if(action == INPUT_ACTION_MENU_CONFIRM.get() && !repeat) {
       this.menuSelect();
-      return InputPropagation.HANDLED;
-    }
-
-    if(action == INPUT_ACTION_MENU_SORT.get()) {
-      this.menuItemSort();
       return InputPropagation.HANDLED;
     }
 

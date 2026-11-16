@@ -688,6 +688,8 @@ lod.battle_actions.special.name=Special
 lod.battle_actions.d_attack.name=Attack
 lod.battle_actions.characters.name=Change Character
 lod.battle_actions.additions.name=Change Addition
+lod.battle_actions.additions.description=Hits: %d, damage: %d, SP: %d
+
 lod.battle_actions.characters.level=Level %d
 lod.battle_actions.characters.hp=HP: %d/%d
 lod.battle_actions.characters.mp=MP: %d/%d

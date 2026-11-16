@@ -1,5 +1,6 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import legend.core.MathHelper;
 import legend.core.renderer.QueuedModelStandard;
 import legend.core.gpu.Rect4i;
@@ -78,10 +79,11 @@ public final class Menus {
     }
   }
 
-  public static void initInventoryMenu() {
-    initMenu(WhichMenu.RENDER_NEW_MENU, () -> new MainMenuScreen(() -> {
+  public static void initInventoryMenu(final BooleanConsumer onClose) {
+    initMenu(WhichMenu.RENDER_NEW_MENU, () -> new MainMenuScreen(startingAdditionTrainer -> {
       menuStack.popScreen();
       whichMenu_800bdc38 = WhichMenu.UNLOAD;
+      onClose.accept(startingAdditionTrainer);
     }));
   }
 

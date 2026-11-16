@@ -3,6 +3,7 @@ package legend.game.combat.ui;
 import legend.game.additions.Addition;
 import legend.game.characters.CharacterAdditionInfo;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.i18n.I18n;
 import legend.game.inventory.screens.FontOptions;
 import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
@@ -129,7 +130,7 @@ public class AdditionListMenu extends ListMenu {
 
         this.fontOptions.trim(0);
         this.fontOptions.horizontalAlign(HorizontalAlign.CENTRE);
-        renderText("Hits: " + addition.getHitCount(this.player_08.character, additionInfo) + ", damage: " + damage + ", SP: " + sp, 160, 157, this.fontOptions);
+        renderText(I18n.translate("lod.battle_actions.additions.description", addition.getHitCount(this.player_08.character, additionInfo), damage, sp), 160, 157, this.fontOptions);
       }
     }
   }

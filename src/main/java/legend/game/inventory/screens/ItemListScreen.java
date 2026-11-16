@@ -145,7 +145,9 @@ public class ItemListScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm"), MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+      final InventoryEntry<?> entry = list.getSelectedItem().item_00;
+      final String itemText = I18n.translate(entry.getNameTranslationKey());
+      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 
@@ -154,7 +156,11 @@ public class ItemListScreen extends MenuScreen {
       playMenuSound(40);
     } else {
       playMenuSound(2);
-      menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm"), MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
+      final InventoryEntry<?> entry = list.getSelectedItem().item_00;
+      final int maxQuantity = entry.getSize();
+      final String itemText = I18n.translate(entry.getNameTranslationKey());
+
+      menuStack.pushScreen(new QuantityMessageBoxScreen(I18n.translate("lod_core.ui.item_list.discard_confirm", itemText), 1, maxQuantity, MessageBoxType.CONFIRMATION, result -> this.discard(result, list, inv)));
     }
   }
 
@@ -167,9 +173,12 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private void discard(final MessageBoxResult result, final ItemList<ItemStack> list, final Inventory inv) {
-    if(result == MessageBoxResult.YES) {
-      list.remove(list.getSelectedItem());
+  private void discard(final CycleMessageBoxResult result, final ItemList<ItemStack> list, final Inventory inv) {
+    if(result.messageBoxResult == MessageBoxResult.YES) {
+      list.getSelectedItem().item_00.shrink(result.cycleValue);
+      if(list.getSelectedItem().item_00.isEmpty()) {
+        list.remove(list.getSelectedItem());
+      }
       final List<MenuEntryStruct04<ItemStack>> items = list.getItems();
       setInventoryFromDisplay(items, inv, items.size());
       this.updateDescription(list.getSelectedItem());
