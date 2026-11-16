@@ -7,8 +7,6 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.types.battlestate.AdditionExtra04;
-import legend.game.combat.types.battlestate.Status04;
-import legend.game.combat.types.battlestate.StatusConditions20;
 import legend.game.scripting.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
@@ -28,8 +26,6 @@ import static legend.game.combat.bent.BattleEntity27c.FLAG_TAKE_FORCED_TURN;
 public class BattleStateEf4 {
   private long turnOrderSeed;
   private final Random turnOrderRng = new Random();
-
-  public final StatusConditions20[] statusConditions_00 = new StatusConditions20[10];
 
   public int _180;
   /**
@@ -224,7 +220,8 @@ public class BattleStateEf4 {
   public int _378;
   public int _37c;
   public int scriptEffectTableJumpIndex_380;
-  public final Status04[] status_384 = new Status04[8];
+  /// Moved to {@link BattleEntity27c}
+//  public final Status04[] status_384 = new Status04[8];
   public int _3a4;
   public int _3a8;
   public int _3ac;
@@ -279,7 +276,7 @@ public class BattleStateEf4 {
   public final int[] _460 = new int[3];
   /** Battle stage ID is stored here when player combat script is initialized, updated for special transformation stages */
   public int battleStage_46c;
-  /** Used in player combat script, one bit for each player bent slot */
+  /** Used in player combat script, one bit for each player bent slot. Set to 0 after a monster takes damage. */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];
   public int _494;
@@ -391,8 +388,6 @@ public class BattleStateEf4 {
   private int monsterCount_800c6768;
 
   public BattleStateEf4() {
-    Arrays.setAll(this.statusConditions_00, i -> new StatusConditions20());
-    Arrays.setAll(this.status_384, i -> new Status04());
     Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
     Arrays.setAll(this.compressedAssets_d8c, i -> new CompressedAsset08());
     Arrays.setAll(this.assets_580, i -> new BattleAsset08());

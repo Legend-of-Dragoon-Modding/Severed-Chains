@@ -37,6 +37,7 @@ import legend.game.SItem;
 import legend.game.characters.CharacterData2c;
 import legend.game.combat.encounters.Encounter;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.I18n;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.SaveGameScreen;
@@ -159,6 +160,7 @@ import static legend.game.Models.prepareObjTable2;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.shopId_8007a3b4;
 import static legend.game.SItem.submapNames_8011c108;
+import static legend.game.Scus94491BpeSegment.lastChestContents;
 import static legend.game.Scus94491BpeSegment.resetSubmapToNewGame;
 import static legend.game.Scus94491BpeSegment.srand;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
@@ -267,6 +269,7 @@ public class SMap extends EngineState<SMap> {
   public SubmapState smapLoadingStage_800cb430 = SubmapState.INIT_0;
   public Runnable menuTransition;
 
+  private boolean startingAdditionTrainer;
   private boolean returnedToSameSubmapAfterBattle_800cb448;
 
   private final Vector2f screenOffset_800cb568 = new Vector2f();
@@ -427,6 +430,7 @@ public class SMap extends EngineState<SMap> {
   public final SoundFile submapSounds = addSoundFile("Submap SFX");
 
   private EngineStateType<?> engineStateToTransitionTo;
+  private SubmapLoader<?> submapLoader = new RetailSubmapLoader();
 
   /** Used for restoring the primary party after forced party changes. Used as a FIFO queue by char_utils script lib. */
   public final IntList primaryPartyBackup = new IntArrayList();
@@ -729,6 +733,20 @@ public class SMap extends EngineState<SMap> {
     return this.getRunInput(this.inputHeld);
   }
 
+  /// This is some extreme jank to fix movement rotation smoothing blowing away scriptFacePoint calls that run in the same frame, after the movement code has
+  /// already run. In the movement code, it reads the analog magnitude and then runs scriptFacePoint, so we can check if a scriptFacePoint was called due to
+  /// the movement code by checking if the magnitude was checked in the same frame. We then clear analogMagnitudeRead in scriptFacePoint so subsequent calls
+  /// to scriptFacePoint will clear scriptFacePointWasFromPlayerMovement. Movement rotation smoothing is only performed if scriptFacePointWasFromPlayerMovement
+  /// is set. GH#2895
+  private boolean scriptFacePointWasFromPlayerMovement;
+  private boolean analogMagnitudeRead;
+
+  @Override
+  public float getAnalogueMagnitude() {
+    this.analogMagnitudeRead = true;
+    return super.getAnalogueMagnitude();
+  }
+
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
@@ -921,6 +939,15 @@ public class SMap extends EngineState<SMap> {
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
       textboxText.type_04 = textType;
       textboxText.str_24 = LodString.fromParam(script.params_20[5]);
+
+      if(textboxText.str_24.get().startsWith("?Cannot carry any more ")) {
+        // One padding space to be replaced with 0xb000
+        final String str = ' ' + I18n.translate("lod.chests.no_room", I18n.translate(lastChestContents));
+        textboxText.str_24 = new LodString(str);
+        textboxText.str_24.charAt(0, 0xb000);
+        textbox.lines_1a++;
+        textboxText.lines_1e++;
+      }
 
       if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
         textboxText.flags_08 |= TextboxText84.NO_INPUT;
@@ -1806,6 +1833,8 @@ public class SMap extends EngineState<SMap> {
 
     if(!flEq(model.coord2_14.transforms.rotate.y, y)) {
       sobj.finishInterpolatedRotationY();
+      // GH#2895, broken in retail
+      this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c = 0;
 
       if((this.smapTicks_800c6ae0 - sobj.lastRotationTickY) >= 2 / vsyncMode_8007a3b8) {
         model.coord2_14.transforms.rotate.y = y;
@@ -2359,6 +2388,12 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e0018L)
   private FlowControl scriptFacePoint(final RunningScript<SubmapObject210> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+
+    if(sobj == this.sobjs_800c6880[0].innerStruct_00) {
+      this.scriptFacePointWasFromPlayerMovement = this.analogMagnitudeRead;
+      this.analogMagnitudeRead = false;
+    }
+
     final Model124 model = sobj.model_00;
 
     final float deltaX = script.params_20[1].getFloat() - model.coord2_14.coord.transfer.x;
@@ -2976,7 +3011,7 @@ public class SMap extends EngineState<SMap> {
         }
       }
 
-      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0) {
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.playerRotationWasUpdated_800d1a8c > 0 && this.scriptFacePointWasFromPlayerMovement) {
         model.coord2_14.transforms.rotate.y = this.smoothPlayerRotation();
       }
 
@@ -3221,6 +3256,8 @@ public class SMap extends EngineState<SMap> {
       case FINALIZE_SUBMAP_LOADING_7 -> {
         FUN_800218f0();
 
+        this.resetTriangleIndicators();
+
         this.firstMovement = true;
 
         final SubmapLoadEvent loadedEvent = EVENTS.postEvent(new SubmapLoadEvent(this, gameState_800babc8, this.submap, this.submap.script, this.submap.objects));
@@ -3306,7 +3343,6 @@ public class SMap extends EngineState<SMap> {
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
         new Tim(Loader.loadFileSync("SUBMAP/alert.tim")).uploadToGpu();
-        this.resetTriangleIndicators();
 
         //LAB_800e1ecc
         for(int i = 0; i < 32; i++) {
@@ -3909,6 +3945,11 @@ public class SMap extends EngineState<SMap> {
     return this.sobjs_800c6880[index] != null;
   }
 
+  public void mapTransition(final SubmapLoader<?> submapLoader) {
+    this.submapLoader = submapLoader;
+    this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
+  }
+
   /**
    * Also does things like open menus using special values. If cut >= 0x800, plays FMV (cut - 0x800) and transitions to engine state newScene once FMV is finished.
    *
@@ -3978,6 +4019,7 @@ public class SMap extends EngineState<SMap> {
     if(newCut > -1) {
       submapCut_80052c30 = newCut;
       submapScene_80052c34 = newScene;
+      this.submapLoader = new RetailSubmapLoader();
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
       EVENTS.postEvent(new SubmapWarpEvent(this, gameState_800babc8, this.submap, newCut));
       return;
@@ -4007,6 +4049,7 @@ public class SMap extends EngineState<SMap> {
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCut_80052c30 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      this.submapLoader = new RetailSubmapLoader();
       this.mapTransitionData_800cab24.clear();
       this.menuTransition = () -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20, true));
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
@@ -4020,7 +4063,7 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(newScene == 0x3ff) {
-      this.menuTransition = Menus::initInventoryMenu;
+      this.menuTransition = () -> Menus.initInventoryMenu(startingAdditionTrainer -> this.startingAdditionTrainer = startingAdditionTrainer);
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       return;
     }
@@ -4043,6 +4086,9 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e5914L)
   public void tick() {
     super.tick();
+
+    this.analogMagnitudeRead = false;
+    this.scriptFacePointWasFromPlayerMovement = false;
 
     //LAB_800e5a30
     //LAB_800e5a34
@@ -4086,7 +4132,7 @@ public class SMap extends EngineState<SMap> {
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
-        this.submap = new RetailSubmap(this, submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
+        this.submap = this.submapLoader.make(this, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
 
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
         this.submap.loadEnv().thenAccept(v -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
@@ -4148,12 +4194,17 @@ public class SMap extends EngineState<SMap> {
       }
 
       case RENDER_SUBMAP_12 -> {
-        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
+        if(this.startingAdditionTrainer) {
+          this.submap.prepareEncounter(LodEncounters.ENCOUNTER_TRAINING.get(), false);
+          this.mapTransition(-1, 0);
+        } else {
+          submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
-        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
+          this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
-        if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
-          this.mapTransition(-1, 0x3ff); // Open inv
+          if(PLATFORM.isActionPressed(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get()) && !gameState_800babc8.indicatorsDisabled_4e3) {
+            this.mapTransition(-1, 0x3ff); // Open inv
+          }
         }
       }
 

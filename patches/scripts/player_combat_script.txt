@@ -5968,9 +5968,6 @@ INIT_PLAYER:
 yield
 jmp_cmp !&, 0x8, var[58], inl[:INIT_PLAYER] ; operand, left, right, addr
 
-; clear dragoon space element
-call Battle::scriptSetDragoonSpaceElementIndex, 0xffffffff ; charId
-
 ; clear a bunch of mostly-unknown battle vars
 mov 0x0, var[45][246] ; attack targets
 mov 0x0, var[45][68] ; source, dest
@@ -5984,7 +5981,6 @@ mov 0x0, var[45][220] ; source, dest
 mov 0x0, var[45][221] ; source, dest
 mov 0x0, var[45][222] ; source, dest
 mov 0x0, var[45][223] ; source, dest
-mov 0xffffffff, var[45][76] ; special flag
 
 ; store my char slot in s8
 call Battle::scriptGetBentSlot, stor[0], stor[8], 0x1 ; bentIndex, charOrBentSlot, mode
@@ -6013,18 +6009,8 @@ mov stor[8], stor[9] ; source, dest
 ; set my status conditions _14 to 0x20
 mov 0x20, var[128 + stor[8]][5] ; source, dest
 
-; clear my shield/sig/charm/pan/charging turns
-mov 0x0, var[128 + stor[8]][7] ; source, dest
-
-; clear my menu block flag
-mov 0x0, var[128 + stor[8]][6] ; source, dest
-
 ; clear my status conditions _10
 mov 0xffffffff, var[128 + stor[8]][4] ; source, dest
-
-; clear my status
-add 129, stor[8] ; amount, operand
-mov 0x0, var[45][stor[8]] ; source, dest
 
 ; clear my special weapon flags (destroyer mace, wargod, etc)
 add 189, stor[9] ; amount, operand

@@ -1,0 +1,445 @@
+# Mod metadata
+lod_core.name=Legend of Dragoon (rdzeń)
+
+# Config categories
+lod_core.config.category.configure=Konfiguruj
+lod_core.config.category.gameplay.label=Rozgrywka
+lod_core.config.category.graphics.label=Grafika
+lod_core.config.category.postprocessing.label=Postprocessing
+lod_core.config.category.user_interface.label=Interfejs użytkownika
+lod_core.config.category.audio.label=Dźwięk
+lod_core.config.category.controls.label=Sterowanie
+lod_core.config.category.other.label=Inne
+
+# Font names
+lod_core.font.original.name=Oryginalna
+lod_core.font.smooth.name=Wygładzona
+lod_core.font.invalid.name=<NIEPRAWIDŁOWA>
+
+# Config presets
+lod_core.config_presets.severed_chains=Severed Chains
+lod_core.config_presets.modified=%s (zmieniony)
+lod_core.config_presets.custom=Własna konfiguracja
+lod_core.config_presets.vanilla=Oryginalny
+lod_core.config_presets.speedrunner=Szybkie przejście
+
+# UI text
+lod_core.ui.hotkey=%s (%s)
+
+lod_core.ui.title.uncategorized_saves=Znaleziono zapisy bez kategorii. Wpisz nazwę kampanii.
+lod_core.ui.title.campaign_name=Nazwa kampanii:
+lod_core.ui.title.campaign_name_in_use=Ta nazwa kampanii jest już\nużywana
+lod_core.ui.title.ps1_memcard=Znaleziono kartę pamięci PS1. Wpisz nazwę kampanii.
+lod_core.ui.title.ps1_memcard_delete_confirm=Usunąć plik karty pamięci?
+lod_core.ui.title.ps1_memcard_convert_failed=Nie udało się przekonwertować karty pamięci
+lod_core.ui.title.launching_updater=Uruchamianie aktualizatora...
+lod_core.ui.title.hotkey=(%s)
+lod_core.ui.fps=%.2f/%d FPS
+
+lod_core.ui.updater.updater_not_found=Nie znaleziono updater.jar. Pobierz ponownie Severed Chains.
+lod_core.ui.updater.java_not_found=Nie znaleziono Javy. Nie można uruchomić aktualizatora.
+lod_core.ui.updater.launching_updater=Uruchamianie aktualizatora...
+lod_core.ui.updater.updater_launched=Uruchomiono aktualizator. Gra zostanie zamknięta.
+lod_core.ui.updater.updater_launch_failed=Nie udało się uruchomić aktualizatora.
+
+lod_core.ui.message_box.yes=Tak
+lod_core.ui.message_box.no=Nie
+
+lod_core.ui.input_box.accept=Akceptuj
+lod_core.ui.input_box.cancel=Anuluj
+
+lod_core.ui.new_campaign.campaign_name=Nazwa kampanii
+lod_core.ui.new_campaign.campaign_name_in_use=Ta nazwa kampanii jest już\nużywana
+lod_core.ui.new_campaign.campaign=Kampania
+lod_core.ui.new_campaign.options=Edytuj opcje
+lod_core.ui.new_campaign.options_presets=Zestawy opcji
+lod_core.ui.new_campaign.edit_presets=Edytuj zestawy
+lod_core.ui.new_campaign.load_preset_confirm=Wczytać ten zestaw?\n%s
+lod_core.ui.new_campaign.mods=Mody
+lod_core.ui.new_campaign.start_game=Rozpocznij grę
+lod_core.ui.new_campaign.unlimited_saves=Severed Chains ma nieograniczoną liczbę miejsc na zapis.\nZalecamy za każdym razem zapisywać grę w nowym miejscu.
+
+lod_core.ui.campaign_selection.title=Kampanie
+lod_core.ui.campaign_selection.mods=Mody
+lod_core.ui.campaign_selection.delete=Usuń
+lod_core.ui.campaign_selection.back=Wstecz
+lod_core.ui.campaign_selection.change_mods_confirm=Zmiana modów może powodować\nproblemy. Kontynuować?
+lod_core.ui.campaign_selection.delete_campaign_confirm=Czy na pewno chcesz usunąć\ntę kampanię?
+lod_core.ui.campaign_selection.missing_mods_confirm=Brakuje modów. Kontynuować?
+lod_core.ui.campaign_selection.installed_mods_changed=Zainstalowane mody uległy zmianie.\nCzy je włączyć?
+lod_core.ui.campaign_selection.failed_to_delete_campaign=Nie udało się usunąć kampanii
+
+lod_core.ui.load_game.loading=Wczytywanie...
+lod_core.ui.load_game.load_confirm=Wczytać ten zapis?
+lod_core.ui.load_game.load_fail=Nie można wczytać tego zapisu
+lod_core.ui.load_game.cannot_delete_last_save=Nie można usunąć ostatniego zapisu
+lod_core.ui.load_game.delete_confirm=Czy na pewno chcesz\nusunąć ten zapis?
+lod_core.ui.load_game.delete_fail=Nie udało się usunąć zapisu
+lod_core.ui.load_game.delete=Usuń
+lod_core.ui.load_game.back=Wstecz
+lod_core.ui.load_game.invalid_save=Nieprawidłowy zapis
+
+lod_core.ui.save_game.save_game=Zapisz grę
+lod_core.ui.save_game.loading=Wczytywanie...
+lod_core.ui.save_game.new_save=<nowy zapis>
+lod_core.ui.save_game.save_name=Nazwa zapisu:
+lod_core.ui.save_game.save_name_in_use=Ta nazwa zapisu jest już\nużywana
+lod_core.ui.save_game.saved=Gra zapisana
+lod_core.ui.save_game.save_failed=Nie udało się zapisać gry
+lod_core.ui.save_game.overwrite_confirm=Nadpisać stan gry?
+lod_core.ui.save_game.cannot_delete_last_save=Nie można usunąć ostatniego zapisu
+lod_core.ui.save_game.delete_confirm=Czy na pewno chcesz usunąć\nten zapis?
+lod_core.ui.save_game.delete_fail=Nie udało się usunąć zapisu
+lod_core.ui.save_game.delete=Usuń
+lod_core.ui.save_game.back=Wstecz
+
+lod_core.ui.mods.required=Wymagany mod
+lod_core.ui.mods.tooltip=?
+lod_core.ui.mods.error=Awaria: %s
+lod_core.ui.mods.wrong_version=Błędna wersja: %s
+lod_core.ui.mods.help=Pomoc
+lod_core.ui.mods.back=Wstecz
+
+lod_core.ui.options_presets.list=Wybierz zestaw ustawień
+lod_core.ui.options_presets.edit=Edytuj wybrany
+lod_core.ui.options_presets.delete=Usuń wybrany
+lod_core.ui.options_presets.delete_confirm=Czy na pewno chcesz\nusunąć ten zestaw?
+lod_core.ui.options_presets.delete_failed=Nie udało się usunąć zestawu ustawień
+lod_core.ui.options_presets.add=Utwórz nowy zestaw
+lod_core.ui.options_presets.add_name=Nazwa zestawu:
+lod_core.ui.options_presets.add_exists=Ta nazwa jest już\nużywana
+lod_core.ui.options_presets.edit_global=Edytuj
+lod_core.ui_options_presets.global_options=Opcje globalne
+lod_core.ui.options_presets.failed_to_save_preset=Nie udało się zapisać zestawu ustawień
+lod_core.ui.options_presets.failed_to_load_preset=Nie udało się wczytać zestawu ustawień
+lod_core.ui.options_presets.failed_to_load_presets=Nie udało się wczytać zestawów ustawień
+lod_core.ui.options_presets.save_changes=Czy chcesz zapisać\nzmiany?
+lod_core.ui.options_presets.invalid_preset=Ten zestaw ustawień\njest nieprawidłowy
+lod_core.ui.options_presets.back=Wstecz
+lod_core.ui.options_presets.skipped_settings=Pominięto %d nieprawidłowych lub niedostępnych ustawień zestawu; szczegóły w logu
+
+lod_core.ui.options.advanced=Zaawansowane
+lod_core.ui.options.help=Pomoc
+lod_core.ui.options.back=Wstecz
+lod_core.ui.options.error=Błąd
+lod_core.ui.options.locked=Zablokowane
+lod_core.ui.options.locked_by=Zablokowane przez %s
+lod_core.ui.options.tooltip=?
+lod_core.ui.options.colour_random=Losowy
+lod_core.ui.options.colour_preview=Podgląd koloru interfejsu
+lod_core.ui.options.colour_preview_first=Pierwszy wybór
+lod_core.ui.options.colour_preview_second=Drugi wybór
+
+lod_core.ui.options_category.back=Wstecz
+lod_core.ui.options_category.some_options_not_available=Uwaga: wiele opcji pojawi się tylko\nw zestawach lub podczas gry
+
+lod_core.ui.about.click_on_any_link_to_open=Kliknij dowolny link, aby go otworzyć
+lod_core.ui.about.view_link=Pokaż link
+lod_core.ui.about.open_link=Otwórz link
+lod_core.ui.about.back=Wstecz
+lod_core.ui.about.tooltip=?
+lod_core.ui.about.discord=Społeczność Legend of Dragoon i Severed Chains na Discordzie
+lod_core.ui.about.youtube=Legend of Dragoon i Severed Chains na YouTube
+lod_core.ui.about.fandom=Globalny serwis fanowski Legend of Dragoon
+lod_core.ui.about.wiki=Wiki Legend of Dragoon
+lod_core.ui.about.project=Strona projektu Severed Chains
+lod_core.ui.about.github=Strona Severed Chains na GitHubie
+lod_core.ui.about.issue=Zgłoś problem
+lod_core.ui.about.lod_credits=Twórcy The Legend of Dragoon
+lod_core.ui.about.sc_credits=Twórcy Severed Chains
+lod_core.ui.about.sc_credits_creator=Twórca
+lod_core.ui.about.sc_credits_lead_developer=Główny programista
+lod_core.ui.about.sc_credits_developer=Programiści
+lod_core.ui.about.sc_credits_contributor=Współtwórcy
+lod_core.ui.about.sc_credits_community=Menedżer społeczności
+lod_core.ui.about.sc_credits_tester=Wyróżnieni testerzy
+lod_core.ui.about.sc_credits_helpers=Pomocnicy społeczności
+lod_core.ui.about.sc_credits_canadians=Kanadyjczycy
+lod_core.ui.about.sc_credits_honourary_canadians=Honorowi Kanadyjczycy
+lod_core.ui.about.sc_credits_thanks=Specjalne podziękowania
+lod_core.ui.about.sc_credits_thirdparty=Zasoby stron trzecich
+
+lod_core.ui.too_many_items.too_many_items_confirm=Ekwipunek jest pełny.\nChcesz zamienić?
+lod_core.ui.too_many_items.discard_items_confirm=Wyrzucić te przedmioty?
+lod_core.ui.too_many_items.cannot_be_discarded=Nie można wyrzucić\ntego przedmiotu
+lod_core.ui.too_many_items.overflow=Nadmiar
+lod_core.ui.too_many_items.items=Przedmioty
+lod_core.ui.too_many_items.equipment=Wyposażenie
+lod_core.ui.too_many_items.sort=Sortuj
+
+lod_core.ui.shop.category_buy=Kup
+lod_core.ui.shop.category_sell=Sprzedaj
+lod_core.ui.shop.category_carried=Ekwipunek
+lod_core.ui.shop.category_leave=Odejdź
+lod_core.ui.shop.items=Przedmioty
+lod_core.ui.shop.equipment=Wyposażenie
+lod_core.ui.shop.goods=Ważne przedmioty
+lod_core.ui.shop.gold=Złoto
+lod_core.ui.shop.not_enough_gold=Za mało złota
+lod_core.ui.shop.carrying=Posiadasz: %d
+lod_core.ui.shop.buy=Kupić %s?
+lod_core.ui.shop.equip=Założyć %s?
+lod_core.ui.shop.sell=Sprzedać %s?
+lod_core.ui.shop.inventory_full=Ekwipunek pełny
+lod_core.ui.shop.cannot_equip=Nie można wyposażyć
+lod_core.ui.shop.failed_to_equip=Nie udało się wyposażyć\nw %s
+lod_core.ui.shop.already_have_good=Masz już\n%s
+lod_core.ui.shop.shop_empty=W tym sklepie nie ma\nnic do kupienia
+lod_core.ui.shop.what_do_you_want_to_sell=Co chcesz\nsprzedać?
+lod_core.ui.shop.you_have_nothing_to_sell=Nie masz nic\ndo sprzedania
+
+lod_core.ui.ingame_menu.use_item=Użyj
+lod_core.ui.ingame_menu.equipment=Wyposaż
+lod_core.ui.ingame_menu.inventory=Ekwipunek
+lod_core.ui.ingame_menu.goods=Ważne
+lod_core.ui.ingame_menu.mogul_dabas=Wykopki
+lod_core.ui.ingame_menu.quit=Wyjdź
+lod_core.ui.ingame_menu.quit_confirm=Wyjść do menu głównego?
+lod_core.ui.ingame_menu.status=Status
+lod_core.ui.ingame_menu.additions=Kombinacje
+lod_core.ui.ingame_menu.replace=Zamień
+lod_core.ui.ingame_menu.options=Opcje
+lod_core.ui.ingame_menu.load=Wczytaj
+lod_core.ui.ingame_menu.save=Zapisz
+
+lod_core.ui.additions.no_additions=Brak dostępnych Kombinacji
+
+lod_core.ui.equipment.unequip=Zdejmij
+
+lod_core.ui.post_battle.addition_unlocked=Nowa kombinacja!
+lod_core.ui.post_battle.spell_unlocked=Odblokowano czar
+
+lod_core.ui.item_list.items=Przedmioty
+lod_core.ui.item_list.equipment=Wyposażenie
+lod_core.ui.item_list.sort=Sortuj
+lod_core.ui.item_list.discard=Odrzuć
+lod_core.ui.item_list.back=Wstecz
+lod_core.ui.item_list.discard_confirm=Odrzucić?
+
+lod_core.ui.goods.goods=Ważne przedmioty
+
+# Core items
+lod_core.items.nothing.name=Nic
+lod_core.items.nothing.description=Nic
+lod_core.items.nothing.battle_description=Nic
+
+# Global config
+lod_core.config.controller_keybinds.label=Sterowanie
+lod_core.config.controller_keybinds.configure=Konfiguruj...
+lod_core.config.menu_inner_deadzone.label=Martwa strefa menu (wewnętrzna)
+lod_core.config.menu_outer_deadzone.label=Martwa strefa menu (zewnętrzna)
+lod_core.config.movement_inner_deadzone.label=Martwa strefa ruchu (wewnętrzna)
+lod_core.config.movement_outer_deadzone.label=Martwa strefa ruchu (zewnętrzna)
+lod_core.config.disable_mouse_input.label=Wyłącz obsługę myszy
+lod_core.config.receive_input_on_inactive_window.label=Sterowanie w nieaktywnym oknie
+lod_core.config.rumble.label=Wibracje
+lod_core.config.rumble_intensity.label=Intensywność wibracji
+lod_core.config.allow_widescreen.label=Panoramiczny obraz 3D
+lod_core.config.allow_widescreen.help=Używa trybu panoramicznego w obszarach 3D (mapa świata, walka)
+lod_core.config.submap_widescreen_mode.label=Tryb panoramiczny 2D
+lod_core.config.submap_widescreen_mode.help=Tryb panoramiczny w obszarach 2D (miastach, lochach itd.)\nTryb rozszerzony pokazuje więcej, ale przy krawędziach ekranu mogą pojawić się dziwne elementy.
+lod_core.config.submap_widescreen_mode.EXPANDED=Rozszerzony
+lod_core.config.submap_widescreen_mode.FORCED_4_3=Wymuszone 4:3
+lod_core.config.submap_widescreen_mode.STRETCHED=Rozciągnięty
+lod_core.config.fullscreen.label=Pełny ekran
+lod_core.config.resolution.label=Rozdzielczość
+lod_core.config.resolution.help=Zalecana jest rozdzielczość natywna, która odpowiada dokładnemu rozmiarowi okna gry.\nRozdzielczość wyższa niż rozmiar okna może poprawić jakość obrazu dzięki wygładzaniu krawędzi (SSAA).
+lod_core.config.resolution.ORIGINAL=240p (oryginalna)
+lod_core.config.resolution._480=480p
+lod_core.config.resolution._720=720p
+lod_core.config.resolution._1080=1080p
+lod_core.config.resolution._1440=1440p
+lod_core.config.resolution._4K=4K
+lod_core.config.resolution._8K=8K
+lod_core.config.resolution.NATIVE=Natywna (rozmiar okna)
+lod_core.config.monitor.label=Monitor
+lod_core.config.reduce_motion_flashing.label=Ograniczenie ruchu/migotania
+lod_core.config.reduce_motion_flashing.help=Ogranicza niektóre szybkie ruchy i migotanie. Może pomóc osobom\nwrażliwym na szybki ruch oraz migające światła i kolory.\n\nOSTRZEŻENIE: używasz tej funkcji na własne ryzyko. Nie możemy zagwarantować,\nże dzięki niej gra będzie bezpieczna dla kogokolwiek.
+lod_core.config.frame_skip.label=Pomijanie klatek
+lod_core.config.frame_skip.help=Pomija klatki, aby zwiększyć wydajność, gdy prędkość gry przekracza 1x.
+lod_core.config.audio_device.label=Urządzenie audio
+lod_core.config.master_volume.label=Głośność - wszystko
+lod_core.config.music_volume.label=Głośność - muzyka
+lod_core.config.sfx_volume.label=Głośność - efekty dźwiękowe
+lod_core.config.fmv_volume.label=Głośność - FMV
+lod_core.config.music_interpolation_precision.label = Dokładność interpolacji
+lod_core.config.music_interpolation_precision.Quarter = Jedna czwarta
+lod_core.config.music_interpolation_precision.Half = Połowa
+lod_core.config.music_interpolation_precision.Retail = Oryginał
+lod_core.config.music_interpolation_precision.Double = Podwójna
+lod_core.config.music_interpolation_precision.Quadruple = Poczwórna
+lod_core.config.music_pitch_resolution.label = Rozdzielczość tonacji
+lod_core.config.music_pitch_resolution.Quarter = Jedna czwarta
+lod_core.config.music_pitch_resolution.Half = Połowa
+lod_core.config.music_pitch_resolution.Retail = Oryginał
+lod_core.config.music_pitch_resolution.Double = Podwójna
+lod_core.config.music_pitch_resolution.Quadruple = Poczwórna
+lod_core.config.music_pitch_resolution.Octuple = Ośmiokrotna
+lod_core.config.music_effects_over_time_granularity.label = Szczegółowość efektów
+lod_core.config.music_effects_over_time_granularity.Retail = Oryginał
+lod_core.config.music_effects_over_time_granularity.Double = Dwukrotna
+lod_core.config.music_effects_over_time_granularity.Quadruple = Czterokrotna
+lod_core.config.music_effects_over_time_granularity.Octuple = Ośmiokrotna
+lod_core.config.music_effects_over_time_granularity.Sexdecuple = 16-krotna
+lod_core.config.music_effects_over_time_granularity.Duotrigintuple = 32-krotna
+lod_core.config.create_crash_save.label=Autozapis po awarii
+lod_core.config.create_crash_save.help=W razie awarii gra podejmie próbę automatycznego\nzapisu (nie nadpisze istniejącego zapisu)
+lod_core.config.ignore_steam_input_mode.label=Poprawka Steam Input
+lod_core.config.ignore_steam_input_mode.help=Naprawia powielanie sygnałów z klawiatury, gdy działa Steam i funkcja Steam Input jest\nwłączona. Zmień to tylko wtedy, gdy klawiatura nie działa.\n\nIgnoruj przy użyciu kontrolera - ignoruje klawiaturę po naciśnięciu przycisków kontrolera\nWył. - zezwala na powielanie sygnałów przez Steam Input
+lod_core.config.ignore_steam_input_mode.VIRTUAL_KEYBOARD_ID=Ignoruj wirtualną klawiaturę (zalecane)
+lod_core.config.ignore_steam_input_mode.IGNORE_WHEN_GAMEPAD_USED=Ignoruj przy użyciu kontrolera
+lod_core.config.ignore_steam_input_mode.NONE=Wył. (zezwól na Steam Input)
+lod_core.config.retail_font.label=Czcionka
+lod_core.config.language.label=Język (w rozwoju, tylko menu)
+lod_core.config.language.help=Obsługa języków jest nadal rozwijana, więc większość gry będzie wyświetlana po angielsku
+lod_core.config.show_fps.label=Pokaż FPS
+
+# Shader config
+lod_core.config.shader_enable_crt.label=Włącz CRT
+lod_core.config.shader_scanlines_opacity.label=CRT: krycie linii skanowania
+lod_core.config.shader_grille_opacity.label=CRT: krycie maskownicy
+lod_core.config.shader_pixelate.label=CRT: pikselizacja
+lod_core.config.shader_pixelate.NONE=Brak
+lod_core.config.shader_pixelate.P240=240p (Oryginał)
+lod_core.config.shader_pixelate.P480=480p
+lod_core.config.shader_pixelate.P720=720p
+lod_core.config.shader_pixelate.NATIVE_1_4=1/4 rozdzielczości natywnej
+lod_core.config.shader_pixelate.NATIVE_1_3=1/3 rozdzielczości natywnej
+lod_core.config.shader_pixelate.NATIVE_1_2=1/2 rozdzielczości natywnej
+lod_core.config.shader_roll.label=CRT: przewijanie obrazu
+lod_core.config.shader_roll_speed.label=CRT: szybkość przewijania
+lod_core.config.shader_roll_size.label=CRT: rozmiar przewijania
+lod_core.config.shader_roll_variation.label=CRT: zmienność przewijania
+lod_core.config.shader_roll_intensity.label=CRT: intensywność przewijania
+lod_core.config.shader_noise_opacity.label=CRT: krycie szumu
+lod_core.config.shader_noise_speed.label=CRT: szybkość szumu
+lod_core.config.shader_static_intensity.label=CRT: intensywność zakłóceń
+lod_core.config.shader_aberration.label=CRT: aberracja
+lod_core.config.shader_brightness.label=CRT: jasność
+lod_core.config.shader_discolour.label=CRT: odbarwienie
+lod_core.config.shader_edge_warp.label=CRT: intensywność zakrzywienia krawędzi
+lod_core.config.shader_vignette_intensity.label=CRT: intensywność winiety
+lod_core.config.shader_vignette_opacity.label=CRT: krycie winiety
+lod_core.config.shader_bloom_intensity.label=CRT: intensywność poświaty
+lod_core.config.shader_bloom_threshold.label=CRT: próg poświaty
+lod_core.config.shader_bloom_radius.label=CRT: promień poświaty
+
+# FMV config
+lod_core.config.fmv.skip_keyboard = Naciśnij %s, aby pominąć
+lod_core.config.fmv.skip_controller = Naciśnij %s, aby pominąć
+lod_core.config.fmv.skip_mouse = Kliknij ponownie, aby pominąć
+
+# Campaign config
+lod_core.config.indicator_mode.label=Tryb wskaźników
+lod_core.config.indicator_mode.help=Wskaźniki na mapie, na przykład drzwi. Opcja chwilowa wyświetla je krótko, a potem ukrywa.
+lod_core.config.indicator_mode.OFF=Wył.
+lod_core.config.indicator_mode.MOMENTARY=Chwilowo
+lod_core.config.indicator_mode.ON=Wł.
+lod_core.config.inventory_size.label=Rozmiar ekwipunku
+lod_core.config.encounter_rate.label=Częstotliwość spotkań
+lod_core.config.encounter_rate.help=Oryginał: jak w oryginale (z błędem). O 75%% mniej spotkań niż zamierzono podczas chodzenia w 2 z 4 kierunków.\nZamierzona: zgodna z zamysłem twórców. Dużo spotkań.\nŚrednia: zalecana. Tyle samo spotkań co w oryginale, ale równomiernie we wszystkich kierunkach.
+lod_core.config.encounter_rate.RETAIL=Oryginał
+lod_core.config.encounter_rate.AVERAGE=Średnia
+lod_core.config.encounter_rate.INTENDED=Zamierzona
+lod_core.config.encounter_rate.NONE=Brak
+lod_core.config.addition_mode.label=Tryb Kombinacji
+lod_core.config.addition_mode.NORMAL=Zwykły
+lod_core.config.addition_mode.AUTOMATIC=Automatyczny
+lod_core.config.auto_dragoon_addition.label=Automatyczna Kombinacja Dragoona
+lod_core.config.addition_overlay_mode.label=Tryb nakładki Kombinacji
+lod_core.config.addition_overlay_mode.help=Bez celownika: pokazuje tylko środkowy kwadrat\nBez interfejsu: całkowicie ukrywa interfejs Kombinacji
+lod_core.config.addition_overlay_mode.FULL=Zwykły
+lod_core.config.addition_overlay_mode.PARTIAL=Bez celownika
+lod_core.config.addition_overlay_mode.OFF=Bez interfejsu
+lod_core.config.addition_overlay_size.label=Rozmiar nakładki Kombinacji
+lod_core.config.addition_overlay_size.help=Dostosowuje rozmiar celownika sekwencji zręcznościowej ataku.\nUwaga: większy celownik zwykle ułatwia wykonywanie Kombinacji.
+lod_core.config.addition_timing_window.label=Okno czasowe Kombinacji
+lod_core.config.addition_timing_window.help=Dostosowuje okno czasowe naciśnięć przycisków w Kombinacjach.\n100%% = oryginalna trudność, 200%% = dwukrotnie większe okno (łatwiej) itd.
+lod_core.config.transformation_mode.label=Tryb przemiany w Dragoona
+lod_core.config.transformation_mode.NORMAL=Zwykły
+lod_core.config.transformation_mode.SHORT=Krótki
+lod_core.config.quick_text.label=Szybki tekst
+lod_core.config.quick_text.help=Określa szybkość pojawiania się tekstu w oknach dialogowych.\nPrzytrzymanie: przytrzymaj przycisk potwierdzenia, aby przyspieszyć tekst\nZawsze: tekst jest zawsze przyspieszony\nNatychmiast: okna dialogowe i tekst pojawiają się natychmiast
+lod_core.config.quick_text.HOLD=Przytrzymanie
+lod_core.config.quick_text.ALWAYS=Zawsze
+lod_core.config.quick_text.INSTANT=Natychmiast
+lod_core.config.auto_text.label=Automatyczne przewijanie tekstu
+lod_core.config.auto_text_delay.label=Opóźnienie automatycznego przewijania tekstu (sekundy)
+lod_core.config.save_anywhere.label=Zapis w dowolnym miejscu
+lod_core.config.save_anywhere.help=OSTRZEŻENIE: nie zapisuj gry podczas wydarzeń fabularnych, przechodzenia po kamieniach itp.
+lod_core.config.auto_save_after_battle.label=Zapis w dowolnym miejscu: autozapis po walce
+lod_core.config.auto_save_after_battle.help=Automatycznie tworzy nowy zapis po powrocie z walki na obszar, na którym można zapisać grę.
+lod_core.config.disable_status_effects.label=Wyłącz efekty statusu
+lod_core.config.enemy_hp_bars.label=Paski PŻ wrogów
+lod_core.config.mash_mode.label=Tryb szybkiego naciskania
+lod_core.config.mash_mode.MASH=Naciskaj
+lod_core.config.mash_mode.HOLD=Przytrzymaj
+lod_core.config.mash_mode.AUTO=Automatycznie
+lod_core.config.secondary_character_xp_multiplier.label=Przyrost PD postaci rezerwowych
+lod_core.config.secondary_character_xp_multiplier.help=Procent PD otrzymywanych przez postacie spoza aktywnej drużyny
+lod_core.config.battle_transition_mode.label=Przejście do walki
+lod_core.config.battle_transition_mode.NORMAL=Zwykłe
+lod_core.config.battle_transition_mode.FAST=Szybkie
+lod_core.config.battle_transition_mode.INSTANT=Natychmiastowe
+lod_core.config.unlock_party.label=Odblokuj skład drużyny
+lod_core.config.unlock_party.help=Pozwala usunąć Darta z drużyny i grać 1 lub 2 postaciami
+lod_core.config.icon_set.label=Zestaw ikon
+lod_core.config.icon_set.help=Ulepszony zestaw zastępuje niektóre ikony przedmiotów i wyposażenia ikonami wyciętymi z gry
+lod_core.config.icon_set.ENHANCED=Ulepszony
+lod_core.config.icon_set.RETAIL=Oryginał
+lod_core.config.run_by_default.label=Domyślny bieg
+lod_core.config.run_by_default.help=Po włączeniu postać domyślnie biegnie, a chodzi podczas przytrzymywania przycisku biegu
+lod_core.config.item_group_sort_mode.label=Sortowanie grup przedmiotów
+lod_core.config.item_group_sort_mode.help=Określa sortowanie przedmiotów w grupach, na przykład mikstur i zaklęć
+lod_core.config.item_group_sort_mode.ALPHABETICAL=Alfabetycznie
+lod_core.config.item_group_sort_mode.RETAIL=Oryginał
+lod_core.config.element_icon_config.label=Ikony żywiołów
+lod_core.config.element_icon_config.help=Wyświetla obok wartości obrażeń ikonę wskazującą ich typ.
+lod_core.config.equip_effects_in_dragoon.label=Efekty wyposażenia w formie Dragoona
+lod_core.config.equip_effects_in_dragoon.help=Włącza regenerację i efekty przy trafieniu z wyposażenia w formie Dragoona
+
+lod_core.input_actions.menu_up.name=Menu: w górę
+lod_core.input_actions.menu_down.name=Menu: w dół
+lod_core.input_actions.menu_left.name=Menu: w lewo
+lod_core.input_actions.menu_right.name=Menu: w prawo
+lod_core.input_actions.menu_top.name=Menu: na górę
+lod_core.input_actions.menu_bottom.name=Menu: na dół
+lod_core.input_actions.menu_home.name=Menu: początek
+lod_core.input_actions.menu_end.name=Menu: koniec
+lod_core.input_actions.menu_page_up.name=Menu: strona w górę
+lod_core.input_actions.menu_page_down.name=Menu: strona w dół
+lod_core.input_actions.menu_confirm.name=Menu: zatwierdź
+lod_core.input_actions.menu_back.name=Menu: wstecz
+lod_core.input_actions.menu_delete.name=Menu: usuń
+lod_core.input_actions.menu_advanced.name=Menu: zaawansowane
+lod_core.input_actions.menu_sort.name=Menu: sortuj
+lod_core.input_actions.menu_help.name=Menu: pomoc
+lod_core.input_actions.menu_mods.name=Menu: mody
+lod_core.input_actions.menu_textbox_confirm.name=Menu: zatwierdź pole tekstowe
+lod_core.input_actions.menu_unequip.name=Menu: zdejmij
+
+lod_core.input_actions.title_update.name=Ekran tytułowy: pobierz aktualizację
+lod_core.input_actions.title_convert_memcard.name=Ekran tytułowy: konwertuj kartę pamięci
+
+lod_core.input_actions.fmv_skip.name=FMV: pomiń
+
+lod_core.input_actions.general_toggle_fullscreen.name=Ogólne: przełącz pełny ekran
+lod_core.input_actions.general_speed_up.name=Ogólne: przyspiesz
+lod_core.input_actions.general_slow_down.name=Ogólne: zwolnij
+lod_core.input_actions.general_toggle_speed.name=Ogólne: przełącz prędkość
+lod_core.input_actions.general_turbo.name=Ogólne: turbo
+
+lod_core.input_actions.freecam_toggle.name=Swobodna kamera: przełącz
+lod_core.input_actions.freecam_forward.name=Swobodna kamera: do przodu
+lod_core.input_actions.freecam_backward.name=Swobodna kamera: do tyłu
+lod_core.input_actions.freecam_left.name=Swobodna kamera: w lewo
+lod_core.input_actions.freecam_right.name=Swobodna kamera: w prawo
+lod_core.input_actions.freecam_up.name=Swobodna kamera: w górę
+lod_core.input_actions.freecam_down.name=Swobodna kamera: w dół
+
+lod_core.input_actions.debug_open_debugger.name=Debugowanie: otwórz debuger
+lod_core.input_actions.debug_pause.name=Debugowanie: pauza
+lod_core.input_actions.debug_frame_advance.name=Debugowanie: następna klatka
+lod_core.input_actions.debug_frame_advance_hold.name=Debugowanie: następna klatka (przytrzymaj)
+lod_core.input_actions.debug_toggle_wireframe.name=Debugowanie: przełącz widok siatki
+lod_core.input_actions.debug_reload_shaders.name=Debugowanie: przeładuj shadery

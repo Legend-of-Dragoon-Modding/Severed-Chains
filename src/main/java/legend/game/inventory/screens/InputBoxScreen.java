@@ -53,7 +53,7 @@ public class InputBoxScreen extends MenuScreen {
     this.text.setPos(25, 28);
     this.text.setZ(3);
     this.text.setText(defaultText);
-    this.text.setMaxLength(15);
+    this.text.setMaxLength(20);
 
     this.accept = panel.addControl(new Button(new I18nText("lod_core.ui.input_box.accept")));
     this.accept.setSize(112, 14);

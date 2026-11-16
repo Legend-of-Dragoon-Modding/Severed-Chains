@@ -3,7 +3,6 @@ package legend.game.combat.ui;
 import legend.core.renderer.QueuedModelStandard;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.types.DragoonSpells09;
 import legend.game.i18n.I18n;
 import legend.game.inventory.SpellStats0c;
 import legend.game.inventory.screens.FontOptions;
@@ -25,11 +24,8 @@ public class SpellListMenu extends ListMenu {
 
   private UiBox description;
 
-  private final DragoonSpells09 spells;
-
   public SpellListMenu(final BattleHud hud, final PlayerBattleEntity activePlayer, final ListPosition lastPosition, final Runnable onClose) {
     super(hud, activePlayer, 186, modifyLastPosition(lastPosition), onClose);
-    this.spells = this.hud.battle.dragoonSpells_800c6960.get(activePlayer.typeBentSlot_276);
   }
 
   private static ListPosition modifyLastPosition(final ListPosition lastPosition) {
@@ -40,7 +36,7 @@ public class SpellListMenu extends ListMenu {
 
   @Override
   protected int getListCount() {
-    return this.spells.spells_01.size();
+    return this.player_08.spells.size();
   }
 
   @Override
@@ -53,7 +49,7 @@ public class SpellListMenu extends ListMenu {
       textColour = TextColour.WHITE;
     }
 
-    final SpellStats0c spell = this.spells.spells_01.get(index);
+    final SpellStats0c spell = this.player_08.spells.get(index);
 
     this.fontOptions.trim(trim);
     this.fontOptions.horizontalAlign(HorizontalAlign.LEFT);
@@ -82,7 +78,7 @@ public class SpellListMenu extends ListMenu {
   }
 
   private void setActiveSpell(final int index) {
-    this.player_08.spell_94 = this.spells.spells_01.get(index);
+    this.player_08.spell_94 = this.player_08.spells.get(index);
   }
 
   @Override
@@ -118,7 +114,7 @@ public class SpellListMenu extends ListMenu {
     if(this.menuState_00 != 0 && (this.flags_02 & 0x1) != 0) {
       //LAB_800f5f50
       if((this.flags_02 & 0x40) != 0) {
-        final SpellStats0c spell = EVENTS.postEvent(new SpellStatsEvent(this.spells.character_00, this.spells.spells_01.get(this.listScroll_1e + this.listIndex_24))).spell;
+        final SpellStats0c spell = EVENTS.postEvent(new SpellStatsEvent(this.player_08.character, this.player_08.spells.get(this.listScroll_1e + this.listIndex_24))).spell;
 
         //Selected item description
         if(this.description == null) {

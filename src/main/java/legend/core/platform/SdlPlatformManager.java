@@ -72,6 +72,8 @@ import static legend.game.modding.coremod.CoreMod.MENU_OUTER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MOVEMENT_INNER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.MOVEMENT_OUTER_DEADZONE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG;
+import static org.lwjgl.sdl.SDLClipboard.SDL_GetClipboardText;
+import static org.lwjgl.sdl.SDLClipboard.SDL_HasClipboardText;
 import static org.lwjgl.sdl.SDLError.SDL_GetError;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_ADDED;
 import static org.lwjgl.sdl.SDLEvents.SDL_EVENT_GAMEPAD_AXIS_MOTION;
@@ -874,6 +876,15 @@ public class SdlPlatformManager extends PlatformManager {
     if(!SDL_OpenURL(url)) {
       this.logLastError();
     }
+  }
+
+  @Override
+  public String getPasteText() {
+    if(!SDL_HasClipboardText()) {
+      return "";
+    }
+
+    return SDL_GetClipboardText();
   }
 
   private void logLastError() {

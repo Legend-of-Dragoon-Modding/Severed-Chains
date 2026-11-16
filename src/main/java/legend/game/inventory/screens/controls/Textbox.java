@@ -14,6 +14,7 @@ import legend.game.inventory.screens.TextColour;
 
 import java.util.Set;
 
+import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
@@ -185,6 +186,20 @@ public class Textbox extends Control {
 
     if(key == InputKey.DOWN && mods.isEmpty()) {
       this.setCaretIndex(this.text.length());
+    }
+
+    if(key == InputKey.V && mods.contains(InputMod.CTRL)) {
+      String pasted = PLATFORM.getPasteText();
+
+      if(!pasted.isEmpty()) {
+        if(this.text.length() + pasted.length() > this.getMaxLength()) {
+          pasted = pasted.substring(0, this.getMaxLength() - this.text.length());
+        }
+
+        final int caretIndex = this.caretIndex;
+        this.updateText(this.text.substring(0, this.caretIndex) + pasted + this.text.substring(this.caretIndex));
+        this.setCaretIndex(caretIndex + pasted.length());
+      }
     }
 
     return InputPropagation.HANDLED;

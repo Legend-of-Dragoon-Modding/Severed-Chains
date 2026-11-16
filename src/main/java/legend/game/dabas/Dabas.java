@@ -3,6 +3,7 @@ package legend.game.dabas;
 import legend.core.audio.GenericSource;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
+import legend.core.lang.I18nText;
 import legend.core.platform.WindowEvents;
 import legend.core.renderer.Obj;
 import legend.core.renderer.QuadBuilder;
@@ -10,7 +11,10 @@ import legend.core.renderer.QueuedModelStandard;
 import legend.core.renderer.Texture;
 import legend.core.renderer.TextureDataType;
 import legend.game.EngineState;
+import legend.game.ui.GameOverlay;
 import legend.game.unpacker.Loader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 import org.legendofdragoon.dabas.core.FileData;
@@ -41,6 +45,8 @@ import static org.legendofdragoon.dabas.core.sound.Spu.SAMPLE_RATE;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO8;
 
 public class Dabas implements DabasInterface {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Dabas.class);
+
   private final int[] pixels = new int[32];
   private final ByteBuffer pixelBuffer = BufferUtils.createByteBuffer(32 * 32 * 4);
   private final Hardware dabas = new Hardware(this, this.pixels);
@@ -144,7 +150,14 @@ public class Dabas implements DabasInterface {
         .build();
     }
 
-    this.ticker.run();
+    try {
+      this.ticker.run();
+    } catch(final Throwable e) {
+      LOGGER.error("Mogul Dabas crashed :(", e);
+      GameOverlay.addNotification(5, new I18nText("lod.ui.dabas.crashed"));
+      this.shutdown();
+      return;
+    }
 
     int pixelIndex = 0;
     for(int i = 0; i < 32 * 32; i++) {

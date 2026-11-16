@@ -1,6 +1,7 @@
 package legend.game.wmap;
 
 import de.jcm.discordgamesdk.activity.Activity;
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
@@ -664,7 +665,23 @@ public class WMap extends EngineState<WMap> {
     this.tickMainMenuOpenTransition_800c6690++;
     if(this.tickMainMenuOpenTransition_800c6690 >= 45.0f / vsyncMode_8007a3b8) {
       this.wmapState_800bb10c = WmapState.TRANSITION_TO_SCREENS;
-      initInventoryMenu();
+      initInventoryMenu(startingAdditionTrainer -> {
+        if(startingAdditionTrainer) {
+          final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
+
+          final int stageId;
+          if(Config.combatStage()) {
+            stageId = Config.getCombatStage();
+          } else if(directionalPathSegment.battleStage_04 == -1) {
+            stageId = 1;
+          } else {
+            stageId = directionalPathSegment.battleStage_04;
+          }
+
+          startEncounter(LodEncounters.ENCOUNTER_TRAINING.get(), stageId);
+          this.transitionToEngineState(LodEngineStateTypes.BATTLE.get());
+        }
+      });
 
       this.modelAndAnimData_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
       this.modelAndAnimData_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);

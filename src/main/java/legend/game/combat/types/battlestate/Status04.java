@@ -17,7 +17,11 @@ public class Status04 {
    */
   public int statusTurns_01;
 
-  /** Possibly bool has status */
+  /**
+   * Possibly bool has status
+   *
+   * Looks like this is set to 0xf if a monster is attacked while stunned?
+   */
   public int unknown_02;
 
   public int pack() {

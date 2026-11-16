@@ -45,6 +45,7 @@ import legend.game.combat.deff.RegisterDeffsEvent;
 import legend.game.combat.encounters.EncounterRegistryEvent;
 import legend.game.combat.postbattleactions.RegisterPostBattleActionsEvent;
 import legend.game.combat.ui.BattleAction;
+import legend.game.combat.ui.CharSwapListMenu;
 import legend.game.combat.ui.GatherBattleActionsEvent;
 import legend.game.combat.ui.RegisterBattleActionsEvent;
 import legend.game.inventory.EquipmentRegistryEvent;
@@ -100,6 +101,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.submapNames_8011c108;
@@ -110,13 +112,14 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID, version = "^3.0.0")
-@EventListener
 public class LodMod {
   public static final String MOD_ID = "lod";
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
   }
+
+  private final LodTrainingHandler trainingHandler = new LodTrainingHandler();
 
   private static final Registrar<CampaignType, RegisterCampaignTypesEvent> CAMPAIGN_TYPE_REGISTRAR = new Registrar<>(REGISTRIES.campaignTypes, MOD_ID);
 
@@ -147,6 +150,7 @@ public class LodMod {
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ATTACK = INPUT_ACTION_REGISTRAR.register("bttl_attack", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_COUNTER = INPUT_ACTION_REGISTRAR.register("bttl_counter", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ROTATE_CAMERA = INPUT_ACTION_REGISTRAR.register("bttl_rotate_camera", InputAction::editable);
+  public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_CHARACTERS = INPUT_ACTION_REGISTRAR.register("bttl_characters", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_ADDITIONS = INPUT_ACTION_REGISTRAR.register("bttl_additions", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_TRANSFORM = INPUT_ACTION_REGISTRAR.register("bttl_transform", InputAction::editable);
   public static final RegistryDelegate<InputAction> INPUT_ACTION_BTTL_SPECIAL = INPUT_ACTION_REGISTRAR.register("bttl_special", InputAction::editable);
@@ -303,6 +307,11 @@ public class LodMod {
     LodBattleActions.SPECIAL,
   };
 
+  public LodMod() {
+    EVENTS.register(this);
+    EVENTS.register(this.trainingHandler);
+  }
+
   public static int getShopIndex(final RegistryId shop) {
     for(int i = 0; i < SHOP_IDS.length; i++) {
       if(SHOP_IDS[i].equals(shop.entryId())) {
@@ -335,22 +344,22 @@ public class LodMod {
   }
 
   @EventListener
-  public static void registerCampaignTypes(final RegisterCampaignTypesEvent event) {
+  public void registerCampaignTypes(final RegisterCampaignTypesEvent event) {
     CAMPAIGN_TYPE_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerEngineStates(final RegisterEngineStateTypesEvent event) {
+  public void registerEngineStates(final RegisterEngineStateTypesEvent event) {
     LodEngineStateTypes.register(event);
   }
 
   @EventListener
-  public static void registerInputActions(final InputActionRegistryEvent event) {
+  public void registerInputActions(final InputActionRegistryEvent event) {
     INPUT_ACTION_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerDefaultInputBindings(final RegisterDefaultInputBindingsEvent event) {
+  public void registerDefaultInputBindings(final RegisterDefaultInputBindingsEvent event) {
     event
       .add(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get(), new ScancodeInputActivation(InputKey.E))
       .add(INPUT_ACTION_GENERAL_OPEN_INVENTORY.get(), new ButtonInputActivation(InputButton.Y))
@@ -402,6 +411,8 @@ public class LodMod {
       .add(INPUT_ACTION_BTTL_COUNTER.get(), new ButtonInputActivation(InputButton.B))
       .add(INPUT_ACTION_BTTL_ROTATE_CAMERA.get(), new ScancodeInputActivation(InputKey.Q))
       .add(INPUT_ACTION_BTTL_ROTATE_CAMERA.get(), new ButtonInputActivation(InputButton.RIGHT_BUMPER))
+      .add(INPUT_ACTION_BTTL_CHARACTERS.get(), new ScancodeInputActivation(InputKey.C))
+      .add(INPUT_ACTION_BTTL_CHARACTERS.get(), new ButtonInputActivation(InputButton.SELECT))
       .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ScancodeInputActivation(InputKey.E))
       .add(INPUT_ACTION_BTTL_ADDITIONS.get(), new ButtonInputActivation(InputButton.Y))
       .add(INPUT_ACTION_BTTL_OPTIONS.get(), new ScancodeInputActivation(InputKey.ESCAPE))
@@ -411,77 +422,77 @@ public class LodMod {
   }
 
   @EventListener
-  public static void registerConfig(final ConfigRegistryEvent event) {
+  public void registerConfig(final ConfigRegistryEvent event) {
     LodConfig.register(event);
   }
 
   @EventListener
-  public static void registerCharacterTemplates(final RegisterCharacterTemplatesEvent event) {
+  public void registerCharacterTemplates(final RegisterCharacterTemplatesEvent event) {
     LodCharacterTemplates.register(event);
   }
 
   @EventListener
-  public static void registerLevelUpActions(final RegisterLevelUpActionsEvent event) {
+  public void registerLevelUpActions(final RegisterLevelUpActionsEvent event) {
     LodLevelUpActions.register(event);
   }
 
   @EventListener
-  public static void registerItems(final ItemRegistryEvent event) {
+  public void registerItems(final ItemRegistryEvent event) {
     LodItems.register(event);
   }
 
   @EventListener
-  public static void registerEquipment(final EquipmentRegistryEvent event) {
+  public void registerEquipment(final EquipmentRegistryEvent event) {
     LodEquipment.register(event);
   }
 
   @EventListener
-  public static void registerGoods(final GoodsRegistryEvent event) {
+  public void registerGoods(final GoodsRegistryEvent event) {
     LodGoods.register(event);
   }
 
   @EventListener
-  public static void registerShops(final ShopRegistryEvent event) {
+  public void registerShops(final ShopRegistryEvent event) {
     LodShops.register(event);
   }
 
   @EventListener
-  public static void registerEncounters(final EncounterRegistryEvent event) {
+  public void registerEncounters(final EncounterRegistryEvent event) {
     LodEncounters.register(event);
   }
 
   @EventListener
-  public static void registerSpells(final SpellRegistryEvent event) {
+  public void registerSpells(final SpellRegistryEvent event) {
     LodSpells.register(event);
   }
 
   @EventListener
-  public static void registerStatTypes(final StatTypeRegistryEvent event) {
+  public void registerStatTypes(final StatTypeRegistryEvent event) {
     STAT_TYPE_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerStatModTypes(final StatModTypeRegistryEvent event) {
+  public void registerStatModTypes(final StatModTypeRegistryEvent event) {
     STAT_MOD_TYPE_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerElements(final ElementRegistryEvent event) {
+  public void registerElements(final ElementRegistryEvent event) {
     ELEMENT_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerElementIcons(final ElementIconRegistryEvent event) {
+  public void registerElementIcons(final ElementIconRegistryEvent event) {
     ELEMENT_ICONS_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerBentTypes(final BattleEntityTypeRegistryEvent event) {
+  public void registerBentTypes(final BattleEntityTypeRegistryEvent event) {
     BENT_TYPE_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerBentStats(final RegisterBattleEntityStatsEvent event) {
+  public void registerBentStats(final RegisterBattleEntityStatsEvent event) {
     event.addStat(HP_STAT.get());
 
     if(event.type == PLAYER_TYPE.get()) {
@@ -500,27 +511,27 @@ public class LodMod {
   }
 
   @EventListener
-  public static void registerDeffs(final RegisterDeffsEvent event) {
+  public void registerDeffs(final RegisterDeffsEvent event) {
     LodDeffs.register(event);
   }
 
   @EventListener
-  public static void registerAdditions(final AdditionRegistryEvent event) {
+  public void registerAdditions(final AdditionRegistryEvent event) {
     LodAdditions.register(event);
   }
 
   @EventListener
-  public static void registerBattleActions(final RegisterBattleActionsEvent event) {
+  public void registerBattleActions(final RegisterBattleActionsEvent event) {
     LodBattleActions.register(event);
   }
 
   @EventListener
-  public static void registerPostBattleActions(final RegisterPostBattleActionsEvent event) {
+  public void registerPostBattleActions(final RegisterPostBattleActionsEvent event) {
     LodPostBattleActions.register(event);
   }
 
   @EventListener
-  public static void gatherEquipmentTypes(final GatherEquipmentTypesEvent event) {
+  public void gatherEquipmentTypes(final GatherEquipmentTypesEvent event) {
     event.add(LodEquipment.ACTIVE_RING.get(), EquipmentTypes.NEUTRAL);
     event.add(LodEquipment.AMULET.get(), EquipmentTypes.NEUTRAL);
     event.add(LodEquipment.ANGEL_ROBE.get(), EquipmentTypes.LIGHT);
@@ -672,7 +683,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void gatherCharacterEquipmentTypes(final GatherCharacterEquipmentTypesEvent event) {
+  public void gatherCharacterEquipmentTypes(final GatherCharacterEquipmentTypesEvent event) {
     event.add(LodCharacterTemplates.DART.get(), EquipmentTypes.DART, EquipmentTypes.LONGSWORD, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS, EquipmentTypes.HEAVY, EquipmentTypes.ARMOR_OF_YORE);
     event.add(LodCharacterTemplates.LAVITZ.get(), EquipmentTypes.LAVITZ, EquipmentTypes.POLEARM, EquipmentTypes.NEUTRAL, EquipmentTypes.MALE, EquipmentTypes.ADDITIONS, EquipmentTypes.HEAVY, EquipmentTypes.ARMOR_OF_YORE);
     event.add(LodCharacterTemplates.SHANA.get(), EquipmentTypes.SHANA, EquipmentTypes.BOW, EquipmentTypes.NEUTRAL, EquipmentTypes.FEMALE, EquipmentTypes.MEDIUM, EquipmentTypes.LIGHT);
@@ -685,7 +696,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void gatherBattleActions(final GatherBattleActionsEvent event) {
+  public void gatherBattleActions(final GatherBattleActionsEvent event) {
     final PlayerBattleEntity player = event.player;
     int sort = 100;
 
@@ -705,6 +716,13 @@ public class LodMod {
 
       if(!player.character.getUnlockedAdditions().isEmpty()) {
         event.actions.put(LodBattleActions.ADDITIONS.get(), sort);
+        sort += 100;
+      }
+    }
+
+    if(!player.isDragoon()) {
+      if(CharSwapListMenu.canUseCharSwap(player)) {
+        event.actions.put(LodBattleActions.CHARACTERS.get(), sort);
         sort += 100;
       }
     }
@@ -733,7 +751,7 @@ public class LodMod {
       }
     }
 
-    final int legacyFlags = battleState_8006e398.statusConditions_00[player.allBentSlot_274].menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
+    final int legacyFlags = player.extendedConditions.menuBlockFlag_18 | battleState_8006e398.globalMenuBlocks_510;
     disableRetailBattleActions(legacyFlags, event.disabledActions);
 
     if((player.status_0e & 0x20) != 0) {
@@ -826,7 +844,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void gatherAttackItems(final GatherAttackItemsEvent event) {
+  public void gatherAttackItems(final GatherAttackItemsEvent event) {
     event.add(new ItemStack(LodItems.SPARK_NET.get()));
     event.add(new ItemStack(LodItems.BURN_OUT.get()));
     event.add(new ItemStack(LodItems.PELLET.get()));
@@ -855,7 +873,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void gatherRecoveryItems(final GatherRecoveryItemsEvent event) {
+  public void gatherRecoveryItems(final GatherRecoveryItemsEvent event) {
     event.add(new ItemStack(LodItems.SPIRIT_POTION.get()));
     event.add(new ItemStack(LodItems.SUN_RHAPSODY.get()));
     event.add(new ItemStack(LodItems.HEALING_POTION.get()));
@@ -877,7 +895,7 @@ public class LodMod {
   };
 
   @EventListener
-  public static void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
+  public void registerAtlasIcons(final RegisterAtlasTexturesEvent event) {
     // Dragoon spirit icons
     final List<FileData> files = Loader.loadDirectorySync("SECT/DRGN0.BIN/4113");
     final Tim tim0 = new Tim(files.get(0));
@@ -928,7 +946,7 @@ public class LodMod {
   }
 
   @EventListener
-  public static void createIconMapping(final IconMapEvent event) {
+  public void createIconMapping(final IconMapEvent event) {
     if(CONFIG.getConfig(CoreMod.ICON_SET.get()) == IconSet.RETAIL) {
       // Remap all the expanded icons to retail icons
       event.addMapping(ItemIcon.AXE, ItemIcon.SWORD);

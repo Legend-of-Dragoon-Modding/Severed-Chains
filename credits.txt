@@ -31,6 +31,8 @@ Mr.Scentless
 Senerio
 @ Turn Order UI
 @ The credits you are watching
+SafiSphaera
+@ Icon
 
 ## lod_core.ui.about.sc_credits_thirdparty
 https://arks.itch.io/

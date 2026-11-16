@@ -1,6 +1,5 @@
 package legend.game.combat.bent;
 
-import legend.core.Latch;
 import legend.core.memory.Method;
 import legend.game.additions.Addition;
 import legend.game.characters.CharacterData2c;
@@ -24,7 +23,9 @@ import legend.lodmod.LodMod;
 import legend.lodmod.LodSpells;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.round;
@@ -46,7 +47,7 @@ import static legend.lodmod.LodMod.PLAYER_TYPE;
 import static legend.lodmod.LodMod.SP_STAT;
 
 public class PlayerBattleEntity extends BattleEntity27c {
-  private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
+  private int scriptIndex;
 
   public final CharacterData2c character;
 
@@ -95,6 +96,9 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int hpMulti_13c;
   public int mpMulti_13e;
 
+  /// Replaces Battle#dragoonSpells_800c6960
+  public final List<SpellStats0c> spells = new ArrayList<>();
+
   public DetransformationMode detransformationMode = DetransformationMode.NOW;
 
   /** Regular combat sounds retained while Dragoon attack sounds are active. */
@@ -105,7 +109,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public PlayerBattleEntity(final Battle battle, final String name, final int charId, final int scriptIndex, final ScriptFile script) {
     super(PLAYER_TYPE.get(), battle, name, charId);
 
-    this.scriptState = new Latch<>(() -> SCRIPTS.getState(scriptIndex, PlayerBattleEntity.class));
+    this.scriptIndex = scriptIndex;
     this.script = script;
     this.character = gameState_800babc8.charData_32c.get(charId);
   }
@@ -135,7 +139,12 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public ScriptState<PlayerBattleEntity> getState() {
-    return this.scriptState.get();
+    //noinspection unchecked
+    return (ScriptState<PlayerBattleEntity>)SCRIPTS.getState(this.scriptIndex, this.getClass());
+  }
+
+  public void setScriptIndex(final int index) {
+    this.scriptIndex = index;
   }
 
   @Override
@@ -144,7 +153,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   public boolean isDragoon() {
-    return this.scriptState.get().hasFlag(FLAG_DRAGOON);
+    return this.getState().hasFlag(FLAG_DRAGOON);
   }
 
   public boolean canBecomeDragoon() {
