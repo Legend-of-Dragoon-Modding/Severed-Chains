@@ -527,7 +527,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
               this.propagateFailedAdditionHitFlag(hitArray, hitNum);
             }
             currentInputStatus = AdditionFeedbackValue.NO_PRESS;
-            if (SEffe.additionFeedbackText != null) {
+            if(SEffe.additionFeedbackText != null) {
               SEffe.additionFeedbackText.setFeedbackTextElement(hitNum, currentInputStatus);
             }
             //LAB_80107478
@@ -540,7 +540,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       }
 
       //LAB_801074a8
-      if(hitFailed != 0 && (!allowMisinput || this.lastCompletedHit_39 < this.count_30)) {
+      if(hitFailed != 0) {
         this.propagateFailedAdditionHitFlag(hitArray, hitNum);
       }
 
@@ -617,8 +617,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     int perfectLowerBound = hitOverlay.frameSuccessLowerBound_10;
                     int perfectUpperBound = hitOverlay.frameSuccessLowerBound_10;
 
-                    switch (hitOverlay.numSuccessFrames_0e)
-                    {
+                    switch(hitOverlay.numSuccessFrames_0e) {
                       case 2:
                       case 3:
                         perfectLowerBound = hitOverlay.frameSuccessLowerBound_10 + 1;
@@ -635,24 +634,22 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
                     }
 
                     currentInputStatus = this.currentFrame_34 >= perfectLowerBound && this.currentFrame_34 <= perfectUpperBound ? AdditionFeedbackValue.PERFECT : (this.currentFrame_34 < perfectLowerBound ? AdditionFeedbackValue.GOOD_MINUS : AdditionFeedbackValue.GOOD_PLUS);
-                    if (this.flawlessAddition && currentInputStatus != AdditionFeedbackValue.PERFECT) {
+                    if(this.flawlessAddition && currentInputStatus != AdditionFeedbackValue.PERFECT) {
                       this.flawlessAddition = false;
                     }
-                  }
-                  else { // Late/Early Input
+                  } else { // Late/Early Input
                     currentInputStatus = this.currentFrame_34 < hitOverlay.frameSuccessLowerBound_10 ? AdditionFeedbackValue.EARLY : AdditionFeedbackValue.LATE;
                     this.flawlessAddition = false;
                   }
 
-                  if (hitNum == hitArray.length - 1) {
+                  if(hitNum == hitArray.length - 1) {
                     additionResults.flawless = this.flawlessAddition;
 
-                    if (SEffe.additionFeedbackText != null) {
+                    if(SEffe.additionFeedbackText != null) {
                       SEffe.additionFeedbackText.setFeedbackTextElement(hitNum, this.flawlessAddition ? AdditionFeedbackValue.FLAWLESS : currentInputStatus);
                     }
-                  }
-                  else {
-                    if (SEffe.additionFeedbackText != null) {
+                  } else {
+                    if(SEffe.additionFeedbackText != null) {
                       SEffe.additionFeedbackText.setFeedbackTextElement(hitNum, currentInputStatus);
                     }
                   }

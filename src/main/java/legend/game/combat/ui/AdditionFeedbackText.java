@@ -20,6 +20,7 @@ public class AdditionFeedbackText {
     public float x;
     public float y;
     public Translucency translucency;
+
     public FeedbackTextFrameData(final float x, final float y, final Translucency translucency) {
       this.x = x;
       this.y = y;
@@ -42,8 +43,7 @@ public class AdditionFeedbackText {
       this.setText();
     }
 
-    private void setText()
-    {
+    private void setText() {
       switch(this.value) {
         case AdditionFeedbackValue.GOOD, AdditionFeedbackValue.GOOD_MINUS, AdditionFeedbackValue.GOOD_PLUS:
           this.font = defaultFont.colour(TextColour.NEON_GREEN).shadowColour(TextColour.BLACK_0);
@@ -77,15 +77,15 @@ public class AdditionFeedbackText {
     private void setAnimationFrames() {
       this.frames = new FeedbackTextFrameData[this.value == AdditionFeedbackValue.FLAWLESS ? 45 : 35];
 
-      for (int i = 0; i < 10; i++) {
+      for(int i = 0; i < 10; i++) {
         this.frames[this.currentFrame++] = new FeedbackTextFrameData(TEXT_POSITION_X, Math.max(TEXT_POSITION_Y, TEXT_POSITION_Y + 15 - i * 3), i < 3 ? Translucency.B_PLUS_QUARTER_F : this.getTranslucency());
       }
 
-      for (int i = 0; i < (this.value == AdditionFeedbackValue.FLAWLESS ? 30 : 20); i++) {
+      for(int i = 0; i < (this.value == AdditionFeedbackValue.FLAWLESS ? 30 : 20); i++) {
         this.frames[this.currentFrame++] = new FeedbackTextFrameData(TEXT_POSITION_X, TEXT_POSITION_Y, this.getTranslucency());
       }
 
-      for (int i = 0; i < 5; i++) {
+      for(int i = 0; i < 5; i++) {
         this.frames[this.currentFrame++] = new FeedbackTextFrameData(TEXT_POSITION_X, TEXT_POSITION_Y - i * 6, i > 2 ? Translucency.B_PLUS_QUARTER_F : Translucency.B_PLUS_F);
       }
 
@@ -94,7 +94,7 @@ public class AdditionFeedbackText {
 
     private Translucency getTranslucency() {
       Translucency t = Translucency.B_PLUS_F;
-      if (this.value == AdditionFeedbackValue.FLAWLESS) {
+      if(this.value == AdditionFeedbackValue.FLAWLESS) {
         t = this.translucentFrameCount >= 2 ? Translucency.B_PLUS_QUARTER_F : Translucency.B_PLUS_F;
         this.translucentFrameCount = this.translucentFrameCount > 2 ? 0 : this.translucentFrameCount + 1;
       }
@@ -113,17 +113,17 @@ public class AdditionFeedbackText {
   public void setFeedbackTextElement(final int frame, final AdditionFeedbackValue feedback) {
     this.feedbackTextElements[frame] = new FeedbackTextElement(feedback);
 
-    if (frame > 0 && this.feedbackTextElements[frame - 1].currentFrame < DECAY_FRAME) {
+    if(frame > 0 && this.feedbackTextElements[frame - 1].currentFrame < DECAY_FRAME) {
       this.feedbackTextElements[frame - 1].currentFrame = DECAY_FRAME;
     }
   }
 
   public void renderAdditionFeedbackText() {
-    for (int i = 0; i < this.feedbackTextElements.length; i++) {
+    for(int i = 0; i < this.feedbackTextElements.length; i++) {
       final FeedbackTextElement element = this.feedbackTextElements[i];
-      if (element != null && element.hasRemainingFrames()) {
+      if(element != null && element.hasRemainingFrames()) {
         final FeedbackTextFrameData frame = element.frames[element.currentFrame++];
-        if (frame != null) {
+        if(frame != null) {
           renderText(element.text, frame.x, frame.y, element.font.translucency(frame.translucency));
         }
       }
