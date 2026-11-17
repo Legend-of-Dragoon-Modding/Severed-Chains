@@ -2,8 +2,10 @@ package legend.core.platform.input;
 
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.PLATFORM;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.modding.coremod.CoreMod.SWAP_CONFIRM_CANCEL_CONFIG;
 
 /** Uses the first Unicode private area */
 public final class InputCodepoints {
@@ -64,7 +66,13 @@ public final class InputCodepoints {
   }
 
   /** Adjusts codepoints for the given controller (e.g. converts A->cross for PS controllers) */
-  public static char getCodepoint(final InputGamepadType type, final char codepoint) {
+  public static char getCodepoint(final InputGamepadType type, char codepoint) {
+    if(codepoint == A && CONFIG.getConfig(SWAP_CONFIRM_CANCEL_CONFIG.get())) {
+      codepoint = B;
+    } else if(codepoint == B && CONFIG.getConfig(SWAP_CONFIRM_CANCEL_CONFIG.get())) {
+      codepoint = A;
+    }
+
     switch(type) {
       case XBOX_360 -> {
         switch(codepoint) {
