@@ -8,4 +8,9 @@ public class AdditionAllowMisinputConfigEntry extends BoolConfigEntry {
   public AdditionAllowMisinputConfigEntry() {
     super(false, ConfigStorageLocation.CAMPAIGN, ConfigCategory.GAMEPLAY);
   }
+
+  @Override
+  public boolean hasHelp() {
+    return true;
+  }
 }
