@@ -617,7 +617,7 @@ public class SdlPlatformManager extends PlatformManager {
               for(int i = 0; i < bindings.size(); i++) {
                 final InputBinding<ButtonInputActivation> binding = bindings.get(i);
 
-                if(getButtonCode(binding.activation.button) == button.button() && this.pressed.contains(binding.action)) {
+                if(getButtonCode(binding.activation.button) == button.button()) {
                   LOGGER.info(ACTIONS_MARKER, "Triggering release input action button gamepad %d button %d -> %s", button.which(), button.button(), binding.action);
                   this.triggerBindingRelease(binding);
                 }
