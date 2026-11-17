@@ -1,14 +1,14 @@
 package legend.game.combat.effects;
 
-import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.renderer.Obj;
-import legend.core.renderer.QuadBuilder;
 import legend.core.platform.input.InputAction;
 import legend.core.platform.input.InputCodepoints;
+import legend.core.renderer.Obj;
+import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.game.additions.AdditionHitProperties10;
 import legend.game.additions.AdditionSound;
 import legend.game.combat.AdditionCounterAmount;
@@ -19,10 +19,10 @@ import legend.game.inventory.screens.HorizontalAlign;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
-import legend.core.renderer.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -33,12 +33,13 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Text.renderText;
-import static legend.game.combat.SEffe.additionBorderColours_800fb7f0;
 import static legend.game.combat.SEffe.additionHitCompletionState_8011a014;
 import static legend.game.combat.SEffe.additionOverlayActive_80119f41;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.modding.coremod.CoreMod.ADDITION_TIMING_WINDOW_CONFIG;
 import static legend.game.modding.coremod.CoreMod.REDUCE_MOTION_FLASHING_CONFIG;
+import static legend.lodmod.LodConfig.ADDITION_COUNTER_ATTACK_GUIDE_COLOUR;
+import static legend.lodmod.LodConfig.ADDITION_GUIDE_COLOUR;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_ATTACK;
 import static legend.lodmod.LodMod.INPUT_ACTION_BTTL_COUNTER;
 
@@ -110,11 +111,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     //LAB_801063f0
     for(int hitNum = 0; hitNum < this.count_30; hitNum++) {
       final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
-      hitOverlay.unused_00 = 1;
       hitOverlay.hitSuccessful_01 = false;
       hitOverlay.shadowColour_08 = (short)0;
       hitOverlay.frameSuccessLowerBound_10 = (short)(overlayDisplayDelay + 2);
-      hitOverlay.borderColoursArrayIndex_02 = 3;
       hitOverlay.isCounter_1c = false;
       additionHitCompletionState_8011a014[hitNum] = 0;
       int hitProperty = this.getHitProperty(s5.typeBentSlot_276, hitNum, 1, autoCompleteType) & 0xff;
@@ -131,18 +130,8 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
       final AdditionOverlaysBorder0e[] borderArray = hitOverlay.borderArray_18;
 
       //LAB_8010652c
-      if(Config.changeAdditionOverlayRgb()) {
-        final int counterRgb = Config.getCounterOverlayRgb();
-        final int additionRgb = Config.getAdditionOverlayRgb();
-        additionBorderColours_800fb7f0[6] = counterRgb & 0xff;
-        additionBorderColours_800fb7f0[7] = counterRgb >> 8 & 0xff;
-        additionBorderColours_800fb7f0[8] = counterRgb >> 16 & 0xff;
-        additionBorderColours_800fb7f0[9] = additionRgb & 0xff;
-        additionBorderColours_800fb7f0[10] = additionRgb >> 8 & 0xff;
-        additionBorderColours_800fb7f0[11] = additionRgb >> 16 & 0xff;
-      }
-
       final float scale = CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_SIZE_CONFIG.get());
+      final Vector3f colour = CONFIG.getConfig(ADDITION_GUIDE_COLOUR.get());
 
       int val = 16;
       for(int borderNum = 0; borderNum < 17; borderNum++) {
@@ -158,9 +147,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
         borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);
-        borderOverlay.r_04 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3];
-        borderOverlay.g_05 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3 + 1];
-        borderOverlay.b_06 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3 + 2];
+        borderOverlay.r_04 = (int)(colour.x * 255.0f);
+        borderOverlay.g_05 = (int)(colour.y * 255.0f);
+        borderOverlay.b_06 = (int)(colour.z * 255.0f);
 
         val--;
       }
@@ -315,11 +304,7 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         } else if(completionState != -2) {  // Too early
           model.monochrome(0x30 / 255.0f);
         } else if(hitOverlay.isCounter_1c) {  // Counter-attack too late
-          if(Config.changeAdditionOverlayRgb()) {
-            model.colour(additionBorderColours_800fb7f0[6] / 255.0f, additionBorderColours_800fb7f0[7] / 255.0f, (additionBorderColours_800fb7f0[8] * 8 - 2) * 8 / 255.0f);
-          } else {
-            model.colour(targetBorderArray[15].r_04 * 3 / 255.0f, targetBorderArray[15].g_05 / 255.0f, (targetBorderArray[15].b_06 - 1) * 8 / 255.0f);
-          }
+          model.colour(targetBorderArray[15].r_04 * 3 / 255.0f, targetBorderArray[15].g_05 / 255.0f, (targetBorderArray[15].b_06 - 1) * 8 / 255.0f);
         } else {  // Too late
           model.colour(targetBorderArray[15].r_04 / 255.0f, targetBorderArray[15].g_05 / 255.0f, targetBorderArray[15].b_06 / 255.0f);
         }
@@ -354,6 +339,9 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
     final AdditionOverlaysBorder0e[] borderArray = hitArray[hitNum].borderArray_18;
     final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
 
+    final Vector3f colour = CONFIG.getConfig(ADDITION_GUIDE_COLOUR.get());
+    final Vector3f counter = CONFIG.getConfig(ADDITION_COUNTER_ATTACK_GUIDE_COLOUR.get());
+
     //LAB_80106d18
     for(int borderNum = 0; borderNum < 17; borderNum++) {
       final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
@@ -377,18 +365,11 @@ public class AdditionOverlaysEffect44 implements Effect<EffectManagerParams.Void
         }
 
         if(hitArray[hitNum].isCounter_1c && borderNum != 16) {
-          if(Config.changeAdditionOverlayRgb()) {
-            final int rgb = Config.getCounterOverlayRgb();
+          final float rFactor = borderOverlay.r_04 / (colour.x * 255.0f);
+          final float gFactor = borderOverlay.g_05 / (colour.y * 255.0f);
+          final float bFactor = borderOverlay.b_06 / (colour.z * 255.0f);
 
-            // Hack to get around lack of separate counterattack color field until full dememulation
-            final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0[9];
-            final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0[10];
-            final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0[11];
-
-            model.colour((rgb & 0xff) * rFactor / 255.0f, (rgb >> 8 & 0xff) * gFactor / 255.0f, (rgb >> 16 & 0xff) * bFactor / 255.0f);
-          } else {
-            model.colour(borderOverlay.r_04 * 3 / 255.0f, borderOverlay.g_05 / 255.0f, (borderOverlay.b_06 + 1) / 8.0f / 255.0f);
-          }
+          model.colour(counter.x * rFactor, counter.y * gFactor, counter.z * bFactor);
         } else {
           //LAB_80106e58
           model.colour(borderOverlay.r_04 / 255.0f, borderOverlay.g_05 / 255.0f, borderOverlay.b_06 / 255.0f);

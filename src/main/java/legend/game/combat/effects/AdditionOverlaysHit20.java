@@ -5,11 +5,11 @@ import java.util.Arrays;
 public class AdditionOverlaysHit20 {
   public final int index;
 
-  /** ubytes */
-  public int unused_00;
+//  /** ubytes */
+//  public int unused_00;
   public boolean hitSuccessful_01;
-  /** Only ever set to 3 */
-  public int borderColoursArrayIndex_02;
+//  /** Only ever set to 3 */
+//  public int borderColoursArrayIndex_02;
 
   /** shorts */
   public int shadowColour_08;

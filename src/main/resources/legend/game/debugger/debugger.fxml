@@ -86,53 +86,27 @@
          </VBox>
          <VBox prefHeight="400.0" prefWidth="300.0">
             <children>
-               <Label text="UI" textFill="RED" />
-               <CheckBox fx:id="additionOverlayColour" mnemonicParsing="false" onAction="#toggleAdditionOverlayColour" text="Addition Overlay Colour" />
-               <Label text="Normal" />
+               <Label text="Camera" textFill="RED" />
+               <Label text="Viewpoint" />
                <HBox>
                   <children>
-                     <Spinner fx:id="additionOverlayR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="additionOverlayG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="additionOverlayB" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Button mnemonicParsing="false" onAction="#getAdditionOverlayRgb" text="Get" />
-                     <Button mnemonicParsing="false" onAction="#setAdditionOverlayRgb" text="Set" />
+                     <Spinner fx:id="viewpointX" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="viewpointY" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="viewpointZ" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Button mnemonicParsing="false" onAction="#getViewpoint" text="Get" />
+                     <Button mnemonicParsing="false" onAction="#setViewpoint" text="Set" />
                   </children>
                </HBox>
-               <Label text="Counterattack" />
+               <Label text="Refpoint" />
                <HBox>
                   <children>
-                     <Spinner fx:id="counterOverlayR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="counterOverlayG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="counterOverlayB" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Button mnemonicParsing="false" onAction="#getCounterOverlayRgb" text="Get" />
-                     <Button mnemonicParsing="false" onAction="#setCounterOverlayRgb" text="Set" />
+                     <Spinner fx:id="refpointX" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="refpointY" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="refpointZ" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Button mnemonicParsing="false" onAction="#getRefpoint" text="Get" />
+                     <Button mnemonicParsing="false" onAction="#setRefpoint" text="Set" />
                   </children>
                </HBox>
-               <VBox prefHeight="200.0" prefWidth="100.0">
-                  <children>
-                     <Label text="Camera" textFill="RED" />
-                     <Label text="Viewpoint" />
-                     <HBox>
-                        <children>
-                           <Spinner fx:id="viewpointX" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                           <Spinner fx:id="viewpointY" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                           <Spinner fx:id="viewpointZ" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                           <Button mnemonicParsing="false" onAction="#getViewpoint" text="Get" />
-                           <Button mnemonicParsing="false" onAction="#setViewpoint" text="Set" />
-                        </children>
-                     </HBox>
-                     <Label text="Refpoint" />
-                     <HBox>
-                        <children>
-                           <Spinner fx:id="refpointX" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                           <Spinner fx:id="refpointY" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                           <Spinner fx:id="refpointZ" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                           <Button mnemonicParsing="false" onAction="#getRefpoint" text="Get" />
-                           <Button mnemonicParsing="false" onAction="#setRefpoint" text="Set" />
-                        </children>
-                     </HBox>
-                  </children>
-               </VBox>
             </children>
             <HBox.margin>
                <Insets right="4.0" />
@@ -149,7 +123,7 @@
                   </children>
                </HBox>
                <Label text="Scripts" />
-               <Button mnemonicParsing="false" text="Disassemble Submap Scripts" onAction="#disassembleSubmapScripts" />
+               <Button mnemonicParsing="false" onAction="#disassembleSubmapScripts" text="Disassemble Submap Scripts" />
             </children>
          </VBox>
       </HBox>
