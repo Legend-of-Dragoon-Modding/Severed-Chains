@@ -262,6 +262,7 @@ public class SMap extends EngineState<SMap> {
   private int currentSubmapScene_800caaf8;
 
   private NewRootStruct newrootPtr_800cab04;
+  private final Object newrootLock = new Object();
 
   private final MapTransitionData4c mapTransitionData_800cab24 = new MapTransitionData4c();
   private int mapTransitionTicks_800cab28;
@@ -4109,7 +4110,11 @@ public class SMap extends EngineState<SMap> {
       }
 
       case LOAD_NEWROOT_1 -> {
-        loadFile("\\SUBMAP\\NEWROOT.RDT").thenAccept(data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
+        loadFile("\\SUBMAP\\NEWROOT.RDT").thenAccept(data -> {
+          synchronized(this.newrootLock) {
+            this.newrootPtr_800cab04 = new NewRootStruct(data);
+          }
+        });
         loadDir("\\SUBMAP\\savepoint").thenAccept(files -> {
           this.savepointAnm1 = new AnmFile(files.get(0));
           this.savepointAnm2 = new AnmFile(files.get(1));
@@ -4122,8 +4127,10 @@ public class SMap extends EngineState<SMap> {
       }
 
       case WAIT_FOR_NEWROOT_2 -> {
-        if(Loader.getLoadingFileCount() == 0) {
-          this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
+        synchronized(this.newrootLock) {
+          if(Loader.getLoadingFileCount() == 0 && this.newrootPtr_800cab04 != null) {
+            this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
+          }
         }
       }
 
