@@ -18,6 +18,7 @@ public class SwapConfirmCancelConfigEntry extends BoolConfigEntry {
       checkbox.setChecked(current);
       checkbox.onToggled(val -> {
         PLATFORM.resetActionStates();
+        PLATFORM.clearPressed();
         config.setConfig(this, val);
       });
       return checkbox;
