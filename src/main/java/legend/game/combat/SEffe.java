@@ -159,8 +159,6 @@ public final class SEffe {
 
   private static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
 
-  /** Four sets of color values used for addition overlay borders; only last actually used */
-  public static final int[] additionBorderColours_800fb7f0 = {0x70, 0xc0, 0x75, 0xc0, 0xa8, 0x70, 0x70, 0xb5, 0xc0, 0x48, 0x60, 0xff};
   public static final int[][] daddyHudEyeTranslucencyModes_800fb7fc = {{3, 0}, {1, 1}, {1, 1}, {0, 0}};
   public static final int[][] daddyHudMeterOffsets_800fb804 = {{49, 32}, {46, 49}, {38, 56}, {35, 60}, {31, 60}};
   public static final int[][] daddyHudMeterUvs_800fb818 = {{128, 112}, {128, 80}, {128, 96}, {216, 8}, {216, 16}};

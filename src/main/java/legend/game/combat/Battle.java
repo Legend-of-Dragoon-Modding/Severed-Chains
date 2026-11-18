@@ -1,7 +1,6 @@
 package legend.game.combat;
 
 import de.jcm.discordgamesdk.activity.Activity;
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.Random;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
@@ -312,6 +311,7 @@ import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.stopSoundSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.sound.Audio.victoryMusic;
+import static legend.lodmod.LodConfig.ADDITION_COUNTER_ATTACK_SHIELD_COLOUR;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
@@ -5116,14 +5116,8 @@ public class Battle extends EngineState<Battle> {
     final GuardEffect06 effect = new GuardEffect06();
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GuardEffect06", script.scriptState_04, effect);
 
-    // Hack to make shield color default if counter overlay color is default
-    // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
-    final int rgb = Config.getCounterOverlayRgb();
-    if(Config.changeAdditionOverlayRgb() && rgb != 0x2060d8) {
-      state.innerStruct_00.params_10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
-    } else {
-      state.innerStruct_00.params_10.colour_1c.set(255, 0, 0);
-    }
+    final Vector3f colour = CONFIG.getConfig(ADDITION_COUNTER_ATTACK_SHIELD_COLOUR.get());
+    state.innerStruct_00.params_10.colour_1c.set((int)(colour.x * 255.0f), (int)(colour.y * 255.0f), (int)(colour.z * 255.0f));
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
