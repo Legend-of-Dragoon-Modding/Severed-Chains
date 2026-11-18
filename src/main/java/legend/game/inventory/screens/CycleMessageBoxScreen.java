@@ -107,6 +107,7 @@ public class CycleMessageBoxScreen extends MenuScreen {
       final int textOffset = this.messageBox.text_00.length * textHeight / 2;
       y -= textOffset;
 
+      final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = (int)this.messageBox.backgroundRenderable_08.z_3c - 1;
 
       for(int i = 0; i < entry.texts.length; i++) {
@@ -119,6 +120,8 @@ public class CycleMessageBoxScreen extends MenuScreen {
         }
         y += textHeight;
       }
+
+      textZ_800bdf00 = oldZ;
     }
 
     if(this.messageBox.state_0c == 0) {
