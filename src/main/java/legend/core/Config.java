@@ -34,17 +34,6 @@ public final class Config {
     properties.setProperty("last_config_preset", "");
     properties.setProperty("window_width", "960");
     properties.setProperty("window_height", "720");
-    properties.setProperty("battle_ui_colour_change", "false");
-    properties.setProperty("battle_ui_r", "0");
-    properties.setProperty("battle_ui_g", "41");
-    properties.setProperty("battle_ui_b", "159");
-    properties.setProperty("addition_overlay_colour_change", "false");
-    properties.setProperty("addition_overlay_r", "72");
-    properties.setProperty("addition_overlay_g", "96");
-    properties.setProperty("addition_overlay_b", "255");
-    properties.setProperty("counter_overlay_r", "216");
-    properties.setProperty("counter_overlay_g", "96");
-    properties.setProperty("counter_overlay_b", "32");
     properties.setProperty("game_speed_multiplier", "1");
     properties.setProperty("combat_stage", "false");
     properties.setProperty("combat_stage_id", "0");
@@ -75,14 +64,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 480, 1, Integer.MAX_VALUE);
-  }
-
-  public static boolean changeAdditionOverlayRgb() {
-    return readBool("addition_overlay_colour_change", false);
-  }
-
-  public static void toggleAdditionOverlayColour() {
-    properties.setProperty("addition_overlay_colour_change", String.valueOf(!changeAdditionOverlayRgb()));
   }
 
   public static boolean combatStage() {
@@ -116,66 +97,6 @@ public final class Config {
 
   public static void setLoadedGameSpeedMultiplier(final int multiplier) {
     loadedGameSpeedMultiplier = multiplier;
-  }
-
-  public static int getAdditionOverlayRgb() {
-    final int[] rgbArray = {
-      readInt("addition_overlay_r", 72, 0, 255),
-      readInt("addition_overlay_g", 96, 0, 255),
-      readInt("addition_overlay_b", 255, 0, 255),
-      0x00,
-    };
-
-    return (
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0]
-    );
-  }
-
-  public static void setAdditionOverlayRgb(final int rgb) {
-    final int[] rgbArray = {
-      ((rgb >> 24) & 0xff),
-      ((rgb >> 16) & 0xff),
-      ((rgb >> 8) & 0xff),
-      (rgb & 0xff)
-    };
-
-    properties.setProperty("addition_overlay_r", String.valueOf(rgbArray[3]));
-    properties.setProperty("addition_overlay_g", String.valueOf(rgbArray[2]));
-    properties.setProperty("addition_overlay_b", String.valueOf(rgbArray[1]));
-    properties.setProperty("addition_overlay_colour_change", "true");
-  }
-
-  public static int getCounterOverlayRgb() {
-    final int[] rgbArray = {
-      readInt("counter_overlay_r", 216, 0, 255),
-      readInt("counter_overlay_g", 96, 0, 255),
-      readInt("counter_overlay_b", 32, 0, 255),
-      0x00,
-    };
-
-    return (
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0]
-    );
-  }
-
-  public static void setCounterOverlayRgb(final int rgb) {
-    final int[] rgbArray = {
-      ((rgb >> 24) & 0xff),
-      ((rgb >> 16) & 0xff),
-      ((rgb >> 8) & 0xff),
-      (rgb & 0xff)
-    };
-
-    properties.setProperty("counter_overlay_r", String.valueOf(rgbArray[3]));
-    properties.setProperty("counter_overlay_g", String.valueOf(rgbArray[2]));
-    properties.setProperty("counter_overlay_b", String.valueOf(rgbArray[1]));
-    properties.setProperty("addition_overlay_colour_change", "true");
   }
 
   public static void switchFullScreen() {

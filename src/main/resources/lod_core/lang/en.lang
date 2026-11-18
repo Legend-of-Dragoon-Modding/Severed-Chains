@@ -221,6 +221,9 @@ lod_core.ui.item_list.discard_confirm=Discard %s?
 
 lod_core.ui.goods.goods=Goods
 
+lod_core.ui.additions.training=Practice
+lod_core.ui.additions.training_prompt=Start Practice?
+
 # Core items
 lod_core.items.nothing.name=Nothing
 lod_core.items.nothing.description=Nothing
@@ -229,6 +232,8 @@ lod_core.items.nothing.battle_description=Nothing
 # Global config
 lod_core.config.controller_keybinds.label=Controls
 lod_core.config.controller_keybinds.configure=Configure...
+lod_core.config.swap_confirm_cancel.label=Swap Confirm/Cancel
+lod_core.config.swap_confirm_cancel.help=The Japanese version of the game has the Cross/Circle buttons swapped
 lod_core.config.menu_inner_deadzone.label=Menu Deadzone (Inner)
 lod_core.config.menu_outer_deadzone.label=Menu Deadzone (Outer)
 lod_core.config.movement_inner_deadzone.label=Movement Deadzone (Inner)
@@ -338,7 +343,8 @@ lod_core.config.indicator_mode.help=Map indicators such as doors. Momentary show
 lod_core.config.indicator_mode.OFF=Off
 lod_core.config.indicator_mode.MOMENTARY=Momentary
 lod_core.config.indicator_mode.ON=On
-lod_core.config.inventory_size.label=Inventory Size
+lod_core.config.inventory_size.label=Inventory Size (Items)
+lod_core.config.equipment_size.label=Inventory Size (Equipment)
 lod_core.config.encounter_rate.label=Encounter Rate
 lod_core.config.encounter_rate.help=Retail: original experience (bugged). 75%% fewer encounters than intended when walking in 2/4 directions.\nIntended: what the devs intended. Lots of encounters.\nAverage: recommended. Same number of encounters as retail but averaged in all directions.
 lod_core.config.encounter_rate.RETAIL=Retail
@@ -400,6 +406,12 @@ lod_core.config.element_icon_config.label=Elemental Icon Display
 lod_core.config.element_icon_config.help=Displays an icon beside damage numbers that will indicate the types of damage.
 lod_core.config.equip_effects_in_dragoon.label=Enable Equip Effects in Dragoon
 lod_core.config.equip_effects_in_dragoon.help=Enables regen and on hit effects from equips in Dragoon form
+lod_core.config.preferred_battle_camera_angle.label=Battle Camera Angle
+lod_core.config.preferred_battle_camera_angle.help=Controls the camera angle when starting battles\n[Random] Picks a random angle\n[Player] Starts on the player side of the field looking towards the enemies\n[Side] Starts with a side view of the field\n[Enemy] Starts on the enemy side of the field looking towards the players
+lod_core.config.preferred_battle_camera_angle.NORMAL=Random
+lod_core.config.preferred_battle_camera_angle.PLAYER=Player
+lod_core.config.preferred_battle_camera_angle.SIDE=Side
+lod_core.config.preferred_battle_camera_angle.ENEMY=Enemy
 lod_core.config.addition_counter_amount.label=Addition Counter Amount
 lod_core.config.addition_counter_amount.help=Setting for the amount of counters that happen during additions\n[None] No counter\n[Normal] Normal amount of counters (retail)
 lod_core.config.addition_counter_amount.NONE=None

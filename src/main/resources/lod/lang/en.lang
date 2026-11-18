@@ -12,6 +12,9 @@ lod.config.extended_dragoon_actions.label=Extended Dragoon Actions
 lod.config.extended_dragoon_actions.help=When enabled, allows the player to guard, use items, and run while in dragoon form
 lod.config.ui_background_colour.label=UI Background Colour
 lod.config.ui_selection_colour.label=UI Selection Colour
+lod.config.addition_guide_colour.label=Addition Guide Colour
+lod.config.addition_counter_attack_guide_colour.label=Addition Counter Attack Guide Colour
+lod.config.addition_counter_attack_shield_colour.label=Addition Counter Attack Shield Colour
 
 # Characters
 lod.character_templates.dart.name=Dart
@@ -688,6 +691,8 @@ lod.battle_actions.special.name=Special
 lod.battle_actions.d_attack.name=Attack
 lod.battle_actions.characters.name=Change Character
 lod.battle_actions.additions.name=Change Addition
+
+lod.battle_actions.additions.description=Hits: %d, damage: %d, SP: %d
 
 lod.battle_actions.characters.level=Level %d
 lod.battle_actions.characters.hp=HP: %d/%d

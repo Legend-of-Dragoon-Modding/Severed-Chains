@@ -57,7 +57,7 @@ public class ItemListScreen extends MenuScreen {
 
     this.equipmentList.setPos(188, 15);
     this.equipmentList.setTitle(new I18nText("lod_core.ui.item_list.equipment"));
-    this.equipmentList.setMax(255);
+    this.equipmentList.setMax(CONFIG.getConfig(CoreMod.EQUIPMENT_SIZE_CONFIG.get()));
 
     this.itemList.onHoverIn(() -> this.setFocus(this.itemList));
     this.itemList.onGotFocus(() -> {

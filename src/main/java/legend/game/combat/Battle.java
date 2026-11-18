@@ -1,7 +1,6 @@
 package legend.game.combat;
 
 import de.jcm.discordgamesdk.activity.Activity;
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.Random;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
@@ -147,6 +146,7 @@ import legend.game.ui.UiBox;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Loader;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodEncounters;
 import legend.lodmod.LodEngineStateTypes;
 import legend.lodmod.LodPostBattleActions;
 import org.apache.logging.log4j.LogManager;
@@ -307,6 +307,7 @@ import static legend.game.sound.Audio.stopMusicSequence;
 import static legend.game.sound.Audio.stopSoundSequence;
 import static legend.game.sound.Audio.unloadSoundFile;
 import static legend.game.sound.Audio.victoryMusic;
+import static legend.lodmod.LodConfig.ADDITION_COUNTER_ATTACK_SHIELD_COLOUR;
 import static legend.lodmod.LodMod.ATTACK_AVOID_STAT;
 import static legend.lodmod.LodMod.ATTACK_HIT_STAT;
 import static legend.lodmod.LodMod.ATTACK_STAT;
@@ -446,9 +447,6 @@ public class Battle extends EngineState<Battle> {
   public int mcqStepY_800c6770;
   public int mcqOffsetX_800c6774;
   public int mcqOffsetY_800c6778;
-
-  /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
-  public int currentCameraIndex_800c6780;
 
   public int _800c67c8;
   public int _800c67cc;
@@ -2083,7 +2081,7 @@ public class Battle extends EngineState<Battle> {
     //LAB_801095a0
     for(final int enemyId : encounter.uniqueIds) {
       final int enemyIndex = enemyId & 0x1ff;
-      this.loadEnemyDropsAndScript(this.addCombatant(enemyIndex, -1), enemyIndex);
+      this.loadEnemyDropsAndScript(encounter, this.addCombatant(enemyIndex, -1), enemyIndex);
     }
 
     //LAB_801095ec
@@ -4392,7 +4390,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "doIt", description = "If false, this method does nothing")
   @Method(0x800cd160L)
   public FlowControl scriptLevelUpAddition(final RunningScript<?> script) {
-    if(script.params_20[1].get() != 0) {
+    if(script.params_20[1].get() != 0 && encounter != LodEncounters.ENCOUNTER_TRAINING.get()) {
       final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
 
       final int charIndex = bent.charId_272;
@@ -5103,14 +5101,8 @@ public class Battle extends EngineState<Battle> {
     final GuardEffect06 effect = new GuardEffect06();
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager("GuardEffect06", script.scriptState_04, effect);
 
-    // Hack to make shield color default if counter overlay color is default
-    // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
-    final int rgb = Config.getCounterOverlayRgb();
-    if(Config.changeAdditionOverlayRgb() && rgb != 0x2060d8) {
-      state.innerStruct_00.params_10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
-    } else {
-      state.innerStruct_00.params_10.colour_1c.set(255, 0, 0);
-    }
+    final Vector3f colour = CONFIG.getConfig(ADDITION_COUNTER_ATTACK_SHIELD_COLOUR.get());
+    state.innerStruct_00.params_10.colour_1c.set((int)(colour.x * 255.0f), (int)(colour.y * 255.0f), (int)(colour.z * 255.0f));
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -8317,7 +8309,7 @@ public class Battle extends EngineState<Battle> {
 
     this.usedRepeatItems_800c6c3c.clear();
     this.dragoonSpaceElement_800c6b64 = null;
-    battleState_8006e398.specialFlag_2b0 = 0;
+    battleState_8006e398.specialFlag_2b0 = -1;
 
     //LAB_800ee894
     spGained_800bc950.clear();
@@ -8727,6 +8719,10 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public FlowControl scriptGiveSp(final RunningScript<?> script) {
+    if(encounter == LodEncounters.ENCOUNTER_TRAINING.get()) {
+      return FlowControl.CONTINUE;
+    }
+
     //LAB_800f43f8
     //LAB_800f4410
     //LAB_800f4430
@@ -9317,13 +9313,12 @@ public class Battle extends EngineState<Battle> {
 
     //LAB_801091dc
     this.cameraScriptMainTableJumpIndex_800c6748 = openingCamera + 1;
-    this.hud.currentCameraPositionIndicesIndex_800c66b0 = simpleRand() & 3;
-    this.currentCameraIndex_800c6780 = encounter.cameraPosIndices[this.hud.currentCameraPositionIndicesIndex_800c66b0];
+    this.camera_800c67f0.trySetPreferredCameraAngle(this.hud);
     battleFlags_800bc960 |= 0x2;
   }
 
   @Method(0x80109808L)
-  public void loadEnemyDropsAndScript(final int combatantIndex, final int enemyId) {
+  public void loadEnemyDropsAndScript(final Encounter encounter, final int combatantIndex, final int enemyId) {
     final CombatantStruct1a8 combatant = this.getCombatant(combatantIndex);
     final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
 
@@ -9338,7 +9333,7 @@ public class Battle extends EngineState<Battle> {
     combatant.gold_196 = rewardsEvent.gold;
     combatant._19a = rewards._06;
 
-    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
+    final LoadEnemyEvent enemyEvent = new LoadEnemyEvent(this, encounter, enemyId, combatant, Loader.resolve("SECT/DRGN1.BIN/" + (enemyId + 1)));
     enemyEvent.scriptFuture = Loader.loadFile(enemyEvent.script).thenApply(data -> new ScriptFile("Combatant " + combatantIndex, data.getBytes()));
     EVENTS.postEvent(enemyEvent);
 

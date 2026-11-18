@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.font.Font;
 import legend.core.gpu.Bpp;
@@ -11,6 +10,8 @@ import legend.core.lang.TextComponent;
 import legend.core.memory.Method;
 import legend.core.renderer.Obj;
 import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.game.characters.CharacterData2c;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
@@ -49,7 +50,6 @@ import legend.game.types.MessageBoxResult;
 import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.core.renderer.Translucency;
 import legend.game.types.UiFile;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -68,7 +68,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.DEFAULT_FONT;
@@ -97,6 +96,7 @@ import static legend.game.Text.renderText;
 import static legend.game.Text.textZ_800bdf00;
 import static legend.game.characters.CharacterData2c.IN_PARTY;
 import static legend.game.combat.Battle.seed_800fa754;
+import static legend.game.modding.coremod.CoreMod.EQUIPMENT_SIZE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.ITEM_GROUP_SORT_MODE;
@@ -271,7 +271,7 @@ public final class SItem {
   @ScriptDescription("Gets the maximum number of equipment a player can carry")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size")
   public static FlowControl scriptGetMaxEquipmentCount(final RunningScript<?> script) {
-    script.params_20[0].set(255);
+    script.params_20[0].set(CONFIG.getConfig(EQUIPMENT_SIZE_CONFIG.get()));
     return FlowControl.CONTINUE;
   }
 
@@ -561,7 +561,7 @@ public final class SItem {
 
   @Method(0x80023484L)
   public static boolean giveEquipment(final Equipment equipment) {
-    final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment, Collections.unmodifiableList(gameState_800babc8.equipment_1e8), 255));
+    final GiveEquipmentEvent event = EVENTS.postEvent(new GiveEquipmentEvent(equipment, Collections.unmodifiableList(gameState_800babc8.equipment_1e8), CONFIG.getConfig(EQUIPMENT_SIZE_CONFIG.get())));
 
     if(event.isCanceled() || event.givenEquipment.isEmpty()) {
       return false;
@@ -1626,7 +1626,7 @@ public final class SItem {
   }
 
   @Method(0x80109074L)
-  public static void renderString(final int x, final int y, final String string, final boolean allocate) {
+  public static void renderString(final int x, final int y, @Nullable final String string, final boolean allocate) {
     if(allocate) {
       allocateUiElement(0x5b, 0x5b, x, y);
     }
@@ -1637,7 +1637,9 @@ public final class SItem {
 //        nextNewLine = string.length();
 //      }
 
+    if(string != null) {
       renderText(string, x + 2, y + 4, UI_TEXT);
+    }
 //      pos = nextNewLine;
 //    }
   }

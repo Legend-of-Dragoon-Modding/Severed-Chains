@@ -14,7 +14,6 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
 import legend.game.combat.AdditionMode;
-import legend.game.combat.SEffe;
 import legend.game.combat.encounters.Encounter;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.config.QuickTextMode;
@@ -102,20 +101,6 @@ public class DebuggerController {
   public Button setGameSpeedMultiplier;
 
   @FXML
-  public CheckBox additionOverlayColour;
-  @FXML
-  public Spinner<Integer> additionOverlayR;
-  @FXML
-  public Spinner<Integer> additionOverlayG;
-  @FXML
-  public Spinner<Integer> additionOverlayB;
-  @FXML
-  public Spinner<Integer> counterOverlayR;
-  @FXML
-  public Spinner<Integer> counterOverlayG;
-  @FXML
-  public Spinner<Integer> counterOverlayB;
-  @FXML
   public Spinner<Integer> combatStageId;
   @FXML
   public CheckBox saveAnywhere;
@@ -154,13 +139,6 @@ public class DebuggerController {
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-    this.additionOverlayColour.setSelected(Config.changeAdditionOverlayRgb());
-    this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRgb() & 0xff)));
-    this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 8) & 0xff)));
-    this.additionOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 16) & 0xff)));
-    this.counterOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getCounterOverlayRgb() & 0xff)));
-    this.counterOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 8) & 0xff)));
-    this.counterOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 16) & 0xff)));
     this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC);
     this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
     this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
@@ -307,65 +285,6 @@ public class DebuggerController {
   @FXML
   private void toggleSaveAnywhere(final ActionEvent event) {
     CONFIG.setConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get(), !CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-  }
-
-  @FXML
-  private void toggleAdditionOverlayColour() {
-    Config.toggleAdditionOverlayColour();
-  }
-
-  @FXML
-  private void getAdditionOverlayRgb(final ActionEvent event) {
-    this.additionOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[9]);
-    this.additionOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[10]);
-    this.additionOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[11]);
-  }
-
-  @FXML
-  private void setAdditionOverlayRgb(final ActionEvent event) {
-    final byte[] rgbArray = {
-      this.additionOverlayR.getValueFactory().getValue().byteValue(),
-      this.additionOverlayG.getValueFactory().getValue().byteValue(),
-      this.additionOverlayB.getValueFactory().getValue().byteValue(),
-    };
-
-    final int rgb =
-      (0xff & rgbArray[2]) << 16 |
-      (0xff & rgbArray[1]) << 8 |
-      0xff & rgbArray[0];
-
-    Config.setAdditionOverlayRgb(rgb);
-    SEffe.additionBorderColours_800fb7f0[9] = rgbArray[0] & 0xff;
-    SEffe.additionBorderColours_800fb7f0[10] = rgbArray[1] & 0xff;
-    SEffe.additionBorderColours_800fb7f0[11] = rgbArray[2] & 0xff;
-    this.additionOverlayColour.setSelected(true);
-  }
-
-  @FXML
-  private void getCounterOverlayRgb(final ActionEvent event) {
-    this.counterOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[6]);
-    this.counterOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[7]);
-    this.counterOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[8]);
-  }
-
-  @FXML
-  private void setCounterOverlayRgb(final ActionEvent event) {
-    final byte[] rgbArray = {
-      this.counterOverlayR.getValueFactory().getValue().byteValue(),
-      this.counterOverlayG.getValueFactory().getValue().byteValue(),
-      this.counterOverlayB.getValueFactory().getValue().byteValue(),
-    };
-
-    final int rgb =
-      (0xff & rgbArray[2]) << 16 |
-      (0xff & rgbArray[1]) << 8 |
-      0xff & rgbArray[0];
-
-    Config.setCounterOverlayRgb(rgb);
-    SEffe.additionBorderColours_800fb7f0[6] = rgbArray[0] & 0xff;
-    SEffe.additionBorderColours_800fb7f0[7] = rgbArray[1] & 0xff;
-    SEffe.additionBorderColours_800fb7f0[8] = rgbArray[2] & 0xff;
-    this.additionOverlayColour.setSelected(true);
   }
 
   @FXML
