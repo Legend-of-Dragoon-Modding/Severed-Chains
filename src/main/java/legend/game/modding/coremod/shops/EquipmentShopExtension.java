@@ -19,6 +19,7 @@ import legend.game.types.MessageBoxType;
 import legend.game.types.Renderable58;
 import legend.game.types.Shop;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.UI_TEXT;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
@@ -35,6 +36,7 @@ import static legend.game.SItem.setRandomRepeatGlyph;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Text.renderText;
+import static legend.game.modding.coremod.CoreMod.EQUIPMENT_SIZE_CONFIG;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_BACK;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_CONFIRM;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_LEFT;
@@ -43,6 +45,8 @@ import static legend.game.sound.Audio.playMenuSound;
 
 public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private static final int PORTRAIT_COUNT = 7;
+
+  private final int maxSize;
 
   private final AtlasIcon[] portraits;
 
@@ -59,6 +63,8 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   private boolean returnControl;
 
   public EquipmentShopExtension() {
+    this.maxSize = CONFIG.getConfig(EQUIPMENT_SIZE_CONFIG.get());
+
     initHighlight(this.charHighlight.getRenderable());
     this.charHighlight.hide();
 
@@ -150,7 +156,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
   @Override
   public void drawShopHeader(final ShopScreen screen, final Shop shop, final GameState52c gameState, final ShopScreen.ShopEntry<Equipment> entry, final int x, final int y) {
     super.drawShopHeader(screen, shop, gameState, entry, x, y);
-    renderFraction(x + 120, y + 8, gameState.equipment_1e8.size(), 255);
+    renderFraction(x + 120, y + 8, gameState.equipment_1e8.size(), this.maxSize);
   }
 
   @Override
@@ -267,7 +273,7 @@ public class EquipmentShopExtension extends ShopExtension<Equipment> {
     this.charScroll = Math.max(0, this.selectedCharSlot - PORTRAIT_COUNT);
     this.returnControl = false;
 
-    if(gameState_800babc8.equipment_1e8.size() >= 255) {
+    if(gameState_800babc8.equipment_1e8.size() >= this.maxSize) {
       screen.deferAction(() -> menuStack.pushScreen(new MessageBoxScreen(I18n.translate("lod_core.ui.shop.inventory_full"), MessageBoxType.ALERT, result -> { })));
       return false;
     }

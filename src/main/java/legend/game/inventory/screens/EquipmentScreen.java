@@ -33,7 +33,6 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.SItem.setInventoryFromDisplay;
 import static legend.game.SItem.sortEquipmentInventory;
 import static legend.game.SItem.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -202,10 +201,7 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this.upArrow_800bdb9c, this.downArrow_800bdba0);
-
-    if(selected != null) {
-      renderString(194, 178, I18n.translate(selected.item_00.getDescriptionTranslationKey()), allocate);
-    }
+    renderString(194, 178, selected != null ? I18n.translate(selected.item_00.getDescriptionTranslationKey()) : null, allocate);
   }
 
   private int menuHighlightPositionY(final int slot) {
@@ -474,8 +470,9 @@ public class EquipmentScreen extends MenuScreen {
     for(final EquipmentSlot slot : EquipmentSlot.values()) {
       final Equipment old = character.equip(slot, null);
 
-      if(old != null) {
-        giveEquipment(old);
+      if(old != null && !giveEquipment(old)) {
+        // If we failed to put the equipment back into the inventory, re-equip it so it isn't lost (e.g. max capacity reached)
+        character.equip(slot, old);
       }
     }
 
