@@ -33,7 +33,7 @@ import static legend.lodmod.LodMod.MP_STAT;
 import static legend.lodmod.LodMod.SP_STAT;
 
 public class CharSwapListMenu extends ListMenu {
-  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE);
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE_246);
 
   private UiBox description;
 

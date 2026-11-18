@@ -3,13 +3,20 @@ package legend.game.saves;
 import legend.core.IoHelper;
 import legend.core.lang.I18nText;
 import legend.core.lang.TextComponent;
+import legend.core.platform.Action;
 import legend.game.inventory.screens.controls.Dropdown;
+
+import javax.annotation.Nullable;
 
 /** Convenience class for simple enum-backed configs */
 public class EnumConfigEntry<T extends Enum<T>> extends ConfigEntry<T> {
   private final Class<T> cls;
 
   public EnumConfigEntry(final Class<T> cls, final T defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category) {
+    this(cls, defaultValue, storageLocation, category, null);
+  }
+
+  public EnumConfigEntry(final Class<T> cls, final T defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category, @Nullable final Runnable optionCallback) {
     super(
       defaultValue,
       storageLocation,
@@ -22,7 +29,12 @@ public class EnumConfigEntry<T extends Enum<T>> extends ConfigEntry<T> {
 
     this.setEditControl((current, gameState) -> {
       final Dropdown<TextComponent> dropdown = new Dropdown<>((index, e) -> e);
-      dropdown.onSelection(index -> gameState.setConfig(this, this.cls.getEnumConstants()[index]));
+      dropdown.onSelection(index -> {
+          gameState.setConfig(this, this.cls.getEnumConstants()[index]);
+          if(optionCallback != null) {
+            optionCallback.run();
+          }
+        });
 
       for(final T mode : this.cls.getEnumConstants()) {
         dropdown.addOption(new I18nText(this.getRegistryId().modId() + ".config." + this.getRegistryId().entryId() + '.' + mode.name()));
