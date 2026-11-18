@@ -199,16 +199,8 @@ public class Equipment extends RegistryEntry implements InventoryEntry<Equipment
 
   /** Called when this equipment is removed from a character */
   public void onUnequip(final CharacterData2c character) {
-    if(this.hpMultiplier != 0) {
-      character.stats.getStat(HP_STAT.get()).removeMod(this.getRegistryId());
-    }
-
-    if(this.mpMultiplier != 0) {
-      character.stats.getStat(MP_STAT.get()).removeMod(this.getRegistryId());
-    }
-
-    if(this.speed_0f != 0) {
-      character.stats.getStat(SPEED_STAT.get()).removeMod(this.getRegistryId());
-    }
+    character.stats.getStat(HP_STAT.get()).removeMod(this.getRegistryId());
+    character.stats.getStat(MP_STAT.get()).removeMod(this.getRegistryId());
+    character.stats.getStat(SPEED_STAT.get()).removeMod(this.getRegistryId());
   }
 }
