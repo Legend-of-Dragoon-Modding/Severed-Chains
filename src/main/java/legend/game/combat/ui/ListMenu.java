@@ -169,121 +169,37 @@ public abstract class ListMenu {
         this.flags_02 &= ~(0x100 | 0x200);
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_PAGE_UP.get())) {
-          if(this.listIndex_24 != 0) {
-            this.listIndex_24 = 0;
-            this.menuState_00 = 5;
-            playMenuSound(1);
-          }
-
+          this.pressPageUp();
           break;
         }
 
         //LAB_800f4d54
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_PAGE_DOWN.get())) {
-          final int oldScroll = this.listIndex_24;
-
-          if(this.getListCount() - 1 >= this.listScroll_1e + 6) {
-            this.listIndex_24 = 6;
-          } else {
-            //LAB_800f4d8c
-            this.listIndex_24 = this.getListCount() - (this.listScroll_1e + 1);
-          }
-
-          //LAB_800f4d90
-          this.menuState_00 = 5;
-
-          if(oldScroll != this.listIndex_24) {
-            playMenuSound(1);
-          }
-
+          this.pressPageDown();
           break;
         }
 
         //LAB_800f4dc4
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_HOME.get())) {
-          if(this.listScroll_1e == 0) {
-            break;
-          }
-
-          if(this.listScroll_1e < 7) {
-            this.listIndex_24 = 0;
-            this.listScroll_1e = 0;
-            this.listOffsetY_20 = this.listStartY_1a;
-          } else {
-            //LAB_800f4df4
-            this.listScroll_1e -= 7;
-            this.listOffsetY_20 += 98;
-          }
-
-          //LAB_800f4e00
-          this.menuState_00 = 5;
-          playMenuSound(1);
+          this.pressHome();
           break;
         }
 
         //LAB_800f4e40
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_END.get())) {
-          if(this.listScroll_1e + 6 >= this.getListCount() - 1) {
-            break;
-          }
-
-          this.listScroll_1e += 7;
-          this.listOffsetY_20 -= 98;
-
-          if(this.listScroll_1e + 6 >= this.getListCount() - 1) {
-            this.listIndex_24 = 0;
-          }
-
-          //LAB_800f4e98
-          this.menuState_00 = 5;
-          playMenuSound(1);
+          this.pressEnd();
           break;
         }
 
         //LAB_800f4ecc
         if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_UP.get())) {
-          if(this.listIndex_24 != 0) {
-            this.menuState_00 = 5;
-            this.listIndex_24--;
-          } else {
-            //LAB_800f4f18
-            if(this.listScroll_1e == 0) {
-              break;
-            }
-
-            this.menuState_00 = 3;
-            this.flags_02 |= 0x200;
-            this.scrollAmount_80 = 5;
-            this.lastListOffset_7c = this.listOffsetY_20;
-            this.listOffsetY_20 += 5;
-            this.listScroll_1e--;
-          }
-
-          playMenuSound(1);
+          this.pressUp();
           break;
         }
 
         //LAB_800f4f74
         if(PLATFORM.isActionHeld(INPUT_ACTION_MENU_DOWN.get())) {
-          if(this.listIndex_24 != this.getListCount() - 1) {
-            if(this.listScroll_1e + this.listIndex_24 + 1 < this.getListCount()) {
-              playMenuSound(1);
-
-              if(this.listIndex_24 != 6) {
-                this.listIndex_24++;
-                this.menuState_00 = 5;
-              } else {
-                //LAB_800f4ff8
-                this.scrollAmount_80 = -5;
-                this.menuState_00 = 4;
-                this.lastListOffset_7c = this.listOffsetY_20;
-                this.listOffsetY_20 -= 5;
-                this.listScroll_1e++;
-                this.flags_02 |= 0x100;
-              }
-            }
-          }
-
+          this.pressDown();
           break;
         }
 
@@ -526,6 +442,115 @@ public abstract class ListMenu {
     }
 
     //LAB_800f5c64
+  }
+
+  private void pressUp() {
+    if(this.listIndex_24 != 0) {
+      this.menuState_00 = 5;
+      this.listIndex_24--;
+    } else {
+      //LAB_800f4f18
+      if(this.listScroll_1e == 0) {
+        return;
+      }
+
+      this.menuState_00 = 3;
+      this.flags_02 |= 0x200;
+      this.scrollAmount_80 = 5;
+      this.lastListOffset_7c = this.listOffsetY_20;
+      this.listOffsetY_20 += 5;
+      this.listScroll_1e--;
+    }
+
+    playMenuSound(1);
+  }
+
+  private void pressDown() {
+    if(this.listIndex_24 != this.getListCount() - 1) {
+      if(this.listScroll_1e + this.listIndex_24 + 1 < this.getListCount()) {
+        playMenuSound(1);
+
+        if(this.listIndex_24 != 6) {
+          this.listIndex_24++;
+          this.menuState_00 = 5;
+        } else {
+          //LAB_800f4ff8
+          this.scrollAmount_80 = -5;
+          this.menuState_00 = 4;
+          this.lastListOffset_7c = this.listOffsetY_20;
+          this.listOffsetY_20 -= 5;
+          this.listScroll_1e++;
+          this.flags_02 |= 0x100;
+        }
+      }
+    }
+  }
+
+  private void pressHome() {
+    if(this.listScroll_1e == 0 && this.listIndex_24 == 0) {
+      return;
+    }
+
+    this.listIndex_24 = 0;
+    this.listScroll_1e = 0;
+    this.listOffsetY_20 = this.listStartY_1a;
+
+    //LAB_800f4e00
+    this.menuState_00 = 5;
+    playMenuSound(1);
+  }
+
+  private void pressEnd() {
+    final int count = this.getListCount();
+    if(this.listScroll_1e + this.listIndex_24 + 1 >= count) {
+      return;
+    }
+
+    this.listScroll_1e = count - (count % 7);
+    this.listOffsetY_20 = this.listStartY_1a - (98 * (this.listScroll_1e / 7));
+    this.listIndex_24 = Math.min((count % 7) - 1, 6);
+
+    //LAB_800f4e98
+    this.menuState_00 = 5;
+    playMenuSound(1);
+  }
+
+  private void pressPageUp() {
+    if(this.listScroll_1e == 0) {
+      return;
+    }
+
+    if(this.listScroll_1e < 7) {
+      this.listIndex_24 = 0;
+      this.listScroll_1e = 0;
+      this.listOffsetY_20 = this.listStartY_1a;
+    } else {
+      //LAB_800f4df4
+      this.listIndex_24 = 0;
+      this.listScroll_1e -= 7;
+      this.listOffsetY_20 += 98;
+    }
+
+    //LAB_800f4e00
+    this.menuState_00 = 5;
+    playMenuSound(1);
+  }
+
+  private void pressPageDown() {
+    if(this.listScroll_1e + 6 >= this.getListCount() - 1) {
+      return;
+    }
+
+    this.listScroll_1e += 7;
+    this.listOffsetY_20 -= 98;
+
+    if(this.listScroll_1e + 6 >= this.getListCount() - 1) {
+      this.listIndex_24 = 0;
+    }
+
+    //LAB_800f4e98
+    this.menuState_00 = 5;
+    playMenuSound(1);
   }
 
   public void delete() {
