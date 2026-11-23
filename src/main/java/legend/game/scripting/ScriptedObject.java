@@ -17,7 +17,7 @@ public interface ScriptedObject {
   Vector3f getPosition();
 
   Vector3i GREY = new Vector3i(0x80, 0x80, 0x80);
-  FontOptions FONT = new FontOptions().colour(TextColour.WHITE).shadowColour(TextColour.BLACK).size(0.2f);
+  FontOptions FONT = new FontOptions().colour(TextColour.WHITE_246).shadowColour(TextColour.BLACK_8).size(0.2f);
 
   default Vector3i getColour() {
     return GREY;

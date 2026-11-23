@@ -19,7 +19,7 @@ import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_DOWN;
 import static legend.game.modding.coremod.CoreMod.INPUT_ACTION_MENU_UP;
 
 public class TransformAction extends RetailBattleAction {
-  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE).shadowColour(TextColour.WHITE).horizontalAlign(HorizontalAlign.CENTRE);
+  private static final FontOptions FONT = new FontOptions().size(0.67f).colour(TextColour.WHITE_246).shadowColour(TextColour.WHITE_246).horizontalAlign(HorizontalAlign.CENTRE);
 
   public TransformAction() {
     super(2);
@@ -52,9 +52,9 @@ public class TransformAction extends RetailBattleAction {
 
       final float brightness = MathHelper.brightness(menu.player_04.getElement().colour);
       if(brightness > 0.5f) {
-        FONT.shadowColour(TextColour.BLACK);
+        FONT.shadowColour(TextColour.BLACK_8);
       } else {
-        FONT.shadowColour(TextColour.WHITE);
+        FONT.shadowColour(TextColour.WHITE_246);
       }
 
       final String translationKey;

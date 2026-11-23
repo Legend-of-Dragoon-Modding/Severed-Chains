@@ -102,11 +102,11 @@ public class CreditsScreen extends MenuScreen {
 
   private void setFonts() {
     this.fonts.clear();
-    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.DARK_GREY).size(1.4f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
-    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.DARK_GREY).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
-    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.DARK_GREY).size(1.4f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
-    this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE).size(1).horizontalAlign(HorizontalAlign.CENTRE), 0, 2));
-    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0, 0));
+    this.fonts.put(CreditsType.DIRECTOR_3, new CreditFontProperties(new FontOptions().colour(TextColour.GOLD).shadowColour(TextColour.GREY_25).size(1.4f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
+    this.fonts.put(CreditsType.MAJOR_HEADER_0, new CreditFontProperties(new FontOptions().colour(TextColour.RED).shadowColour(TextColour.GREY_25).size(1.2f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
+    this.fonts.put(CreditsType.MINOR_HEADER_1, new CreditFontProperties(new FontOptions().colour(TextColour.CYAN).shadowColour(TextColour.GREY_25).size(1.4f).horizontalAlign(HorizontalAlign.CENTRE), 25, 8));
+    this.fonts.put(CreditsType.NAME_2, new CreditFontProperties(new FontOptions().colour(TextColour.WHITE_246).size(1).horizontalAlign(HorizontalAlign.CENTRE), 0, 2));
+    this.fonts.put(CreditsType.LINK_5, new CreditFontProperties(new FontOptions().colour(TextColour.GREY_120).size(0.8f).horizontalAlign(HorizontalAlign.CENTRE), 0, 0));
   }
 
   private void loadCredits() {

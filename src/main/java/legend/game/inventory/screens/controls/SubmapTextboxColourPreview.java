@@ -37,7 +37,7 @@ public class SubmapTextboxColourPreview extends Control {
   private final ConfigCollection configCollection;
 
   private final Textbox4c textbox = new Textbox4c();
-  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE).noShadow();
+  private final FontOptions fontOptions = new FontOptions().colour(TextColour.WHITE_246).noShadow();
 
   private int selectionLine = FIRST_SELECTION_LINE;
   private boolean closing;
