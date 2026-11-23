@@ -411,18 +411,6 @@ public class WMap extends EngineState<WMap> {
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
   private final Matrix4f fastTravelTransforms = new Matrix4f();
-  /** Temporary solution until text refactoring */
-  private final String[] startLabelNames = new String[8];
-  private final float[] startLabelXs = new float[8];
-  private final float[] startLabelYs = new float[8];
-  private String destLabelName;
-  private int destLabelX;
-  private int destLabelY;
-  private boolean shouldSetDestLabelMetrics;
-  private String coolonWarpDestLabelName;
-  private int coolonWarpDestLabelX;
-  private int coolonWarpDestLabelY;
-  private boolean shouldSetCoolonWarpDestLabelMetrics;
 
   public final SoundFile soundFile = addSoundFile("WMAP SFX");
 
@@ -591,36 +579,6 @@ public class WMap extends EngineState<WMap> {
     super.tick();
 
     this.wmapStates_800ef000[this.wmapState_800bb10c.state].run();
-  }
-
-  @Override
-  public void overlayTick() {
-    if(this.wmapState_800bb10c == WmapState.PLAY) {
-      if(this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
-        if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.PROMPT_LOOP_5) {
-          this.coolonPromptPopup.render();
-        }
-
-        if(this.startLocationLabelsActive_800c68a8 && this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.WORLD_3) {
-          for(int i = 0; i < 8; i++) {
-            if(this.startLabelNames[i] != null) {
-              textZ_800bdf00 = (int)(textboxes_800be358[i].z_0c - 1);
-              renderText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], UI_WHITE_SHADOWED);
-            }
-          }
-        }
-
-        if(this.destLabelName != null) {
-          textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
-          renderText(this.destLabelName, this.destLabelX, this.destLabelY, UI_WHITE_SHADOWED);
-        }
-
-        if(this.coolonWarpDestLabelName != null && this.destinationLabelStage_800c86f0 != 0) {
-          textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
-          renderText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, UI_WHITE_SHADOWED);
-        }
-      }
-    }
   }
 
   /** Just the inventory menu right now, but we might add more later */
@@ -1498,8 +1456,6 @@ public class WMap extends EngineState<WMap> {
       //LAB_800d4170
       if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_IN.get())) {
         setTextAndTextboxesToUninitialized(7, 0);
-        this.shouldSetDestLabelMetrics = false;
-        this.destLabelName = null;
       }
       //LAB_800d4198
       //LAB_800d40e8
@@ -1593,12 +1549,8 @@ public class WMap extends EngineState<WMap> {
           //LAB_800d4aec
           textbox.z_0c = 27;
 
-          if(this.shouldSetDestLabelMetrics) {
-            this.shouldSetDestLabelMetrics = false;
-            this.destLabelName = placeName;
-            this.destLabelX = textboxX;
-            this.destLabelY = textboxY - lines.get() * 7 - 3;
-          }
+          textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
+          renderText(placeName, textboxX, textboxY - lines.get() * 7 - 3, UI_WHITE_SHADOWED);
         }
       }
     }
@@ -2299,7 +2251,6 @@ public class WMap extends EngineState<WMap> {
       case CONTINENT_1:
         if(PLATFORM.isActionPressed(INPUT_ACTION_WMAP_ZOOM_OUT.get())) {
           playMenuSound(4);
-          this.shouldSetDestLabelMetrics = true;
 
           this.modelAndAnimData_800c66a8.mapPosition_1e8.set(cameraAndLights.coord2_20.coord.transfer);
 
@@ -2653,14 +2604,10 @@ public class WMap extends EngineState<WMap> {
         modelAndAnimData.coolonDestIndex_222 = coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].defaultDestLocationIndex_14;
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP_3;
         modelAndAnimData.currPlayerPos_94.set(coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].destPosition_00);
-        this.shouldSetCoolonWarpDestLabelMetrics = true;
         break;
 
       case MAIN_LOOP_3:
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get()) || PLATFORM.isActionPressed(INPUT_ACTION_WMAP_QUEEN_FURY_COOLON.get())) {
-          this.shouldSetCoolonWarpDestLabelMetrics = false;
-          this.coolonWarpDestLabelName = null;
-
           playMenuSound(3);
 
           //LAB_800daef8
@@ -2726,6 +2673,7 @@ public class WMap extends EngineState<WMap> {
         textboxes_800be358[6].z_0c = 18;
 
         this.renderCoolonMapSymbols(false, true);
+        this.coolonPromptPopup.render();
 
         if(PLATFORM.isActionPressed(INPUT_ACTION_MENU_BACK.get())) {
           playMenuSound(3);
@@ -2800,7 +2748,6 @@ public class WMap extends EngineState<WMap> {
           collidedPrimitiveIndex_80052c38 = this.mapState_800c6798.submapSceneTo_ca;
           modelAndAnimData.fastTravelTransitionMode_250 = FastTravelTransitionMode.COOLON_ARRIVAL_3;
           previousEngineState_8004dd28 = null;
-          this.coolonWarpDestLabelName = null;
         }
 
         //LAB_800dba98
@@ -3011,11 +2958,8 @@ public class WMap extends EngineState<WMap> {
       //LAB_800dcb48
       textbox.z_0c = 19;
 
-      if(this.shouldSetCoolonWarpDestLabelMetrics) {
-        this.coolonWarpDestLabelName = coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].placeName_1c;
-        this.coolonWarpDestLabelX = x;
-        this.coolonWarpDestLabelY = y - lines * 7 - 3;
-      }
+      textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
+      renderText(coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].placeName_1c, x, y - lines * 7 - 3, UI_WHITE_SHADOWED);
     }
     //LAB_800dcc0c
   }
@@ -4475,8 +4419,6 @@ public class WMap extends EngineState<WMap> {
     //LAB_800e6a50
     // World Map Name Info
     if(this.startLocationLabelsActive_800c68a8) {
-      Arrays.fill(this.startLabelNames, null);
-
       //LAB_800e6b04
       if(!PLATFORM.isActionHeld(INPUT_ACTION_WMAP_DESTINATIONS.get())) {
         //LAB_800e6b20
@@ -4610,12 +4552,9 @@ public class WMap extends EngineState<WMap> {
         //LAB_800e74d8
         textbox.z_0c = i + 120;
 
-        if(this.startLocationLabelsActive_800c68a8) {
-          this.startLabelNames[i] = placeName;
-          this.startLabelXs[i] = x;
-          this.startLabelYs[i] = y - lines.get() * 7 - 1;
-        }
-      }
+        textZ_800bdf00 = (int)(textboxes_800be358[i].z_0c - 1);
+        renderText(placeName, x, y - lines.get() * 7 - 1, UI_WHITE_SHADOWED);
+     }
       //LAB_800e7590
     }
 

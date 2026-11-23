@@ -181,10 +181,6 @@ public final class Scus94491BpeSegment {
     handleTextboxAndText();
     renderTextboxes();
 
-    if(currentEngineState_8004dd04 != null) {
-      currentEngineState_8004dd04.overlayTick();
-    }
-
     FUN_80020ed8();
     tickCount_800bb0fc++;
 
