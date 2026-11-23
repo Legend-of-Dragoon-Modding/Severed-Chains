@@ -30,10 +30,8 @@ public class Gte {
   //Data Registers
   private final Vector3f[] V = {new Vector3f(), new Vector3f(), new Vector3f()};   //R0-1 R2-3 R4-5 s16
   private final Color RGBC = new Color();                     //R6
-  private float OTZ;                     //R7
   private final Vector2f[] SXY = {new Vector2f(), new Vector2f(), new Vector2f(), new Vector2f()}; //R12-15 FIFO
   private final float[] SZ = new float[4];    //R16-19 FIFO
-  private int MAC0;                       //R24
 
   //Control Registers
   private final Matrix3f RT = new Matrix3f();        //R32-36 R40-44 R48-52
@@ -44,19 +42,6 @@ public class Gte {
   private final Vector2f screenOffset = new Vector2f();          //R56 57 60
   private float H;                   //R58
   private long FLAG;                  //R63
-
-  private void AVSZ3() {
-    this.OTZ = this.setSZ3((this.SZ[1] + this.SZ[2] + this.SZ[3]) / 3);
-  }
-
-  private void AVSZ4() {
-    this.OTZ = this.setSZ3((this.SZ[0] + this.SZ[1] + this.SZ[2] + this.SZ[3]) / 4);
-  }
-
-  private void NCLIP() { //Normal clipping
-    // MAC0 = SX0*SY1 + SX1*SY2 + SX2*SY0 - SX0*SY2 - SX1*SY0 - SX2*SY1
-    this.MAC0 = (int)this.setMAC0((long)(this.SXY[0].x * (this.SXY[1].y - this.SXY[2].y) + this.SXY[1].x * (this.SXY[2].y - this.SXY[0].y) + this.SXY[2].x * (this.SXY[0].y - this.SXY[1].y)));
-  }
 
   private void RTPT() { //Perspective Transformation Triple
     this.RTPS(0, false);
@@ -100,7 +85,6 @@ public class Gte {
 
     if(setMac0) {
       final long mac0 = this.setMAC0((long)(n * 0xffffef9e + 0x1400000));
-      this.MAC0 = (int)mac0;
       final long IR0 = mac0 >> 12;
 
       if(IR0 < 0) {
@@ -127,20 +111,6 @@ public class Gte {
     return value;
   }
 
-  private float setSZ3(final float value) {
-    if(value < 0.0f) {
-      this.FLAG |= 0x4_0000L; // SZ3 or OTZ saturated to +0000h..+FFFFh
-      return 0;
-    }
-
-    if(value > 0xffff) {
-      this.FLAG |= 0x4_0000L; // SZ3 or OTZ saturated to +0000h..+FFFFh
-      return 0xffff;
-    }
-
-    return value;
-  }
-
   private long setMAC0(final long value) {
     if(value < -0x8000_0000) {
       this.FLAG |= 0x8000L;
@@ -149,13 +119,6 @@ public class Gte {
     }
 
     return value;
-  }
-
-  /** Data register 0/1, 2/3, 4/5 */
-  public void setVertex(final int index, final int x, final int y, final int z) {
-    this.V[index].x = x;
-    this.V[index].y = y;
-    this.V[index].z = z;
   }
 
   /** Data register 0/1, 2/3, 4/5 */
@@ -168,11 +131,6 @@ public class Gte {
   /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final Vector3f vert) {
     this.setVertex(index, vert.x, vert.y, vert.z);
-  }
-
-  /** Data register 7 OTZ */
-  public float getAverageZ() {
-    return this.OTZ / 4.0f;
   }
 
   /** Data register 12, 13, 14, 15 */
@@ -188,11 +146,6 @@ public class Gte {
   /** Data register 16, 17, 18, 19 */
   public float getScreenZ(final int index) {
     return this.SZ[index];
-  }
-
-  /** Data register 24 */
-  public int getMac0() {
-    return this.MAC0;
   }
 
   public void getTransforms(final MV mv) {
@@ -272,16 +225,6 @@ public class Gte {
     this.H = distance;
   }
 
-  /** Control register 31 */
-  public int getFlags() {
-    return (int)this.FLAG;
-  }
-
-  /** Control register 31 bit 31 is set */
-  public boolean hasError() {
-    return this.getFlags() < 0;
-  }
-
   private void startCommand() {
     this.FLAG = 0;
   }
@@ -312,18 +255,6 @@ public class Gte {
     this.perspectiveTransform();
   }
 
-  /**
-   * 0x6 NCLIP - normal clipping
-   *
-   * @return vertex winding
-   */
-  public int normalClipping() {
-    this.startCommand();
-    this.NCLIP();
-    this.endCommand();
-    return this.getMac0();
-  }
-
   private final Vector3f colourTemp = new Vector3f();
 
   /**
@@ -349,41 +280,6 @@ public class Gte {
     }
 
     return this.RGBC.val();
-  }
-
-  public int normalColour(final Vector3f normal, final int colour) {
-    return this.normalColour(normal, colour, null);
-  }
-
-  /**
-   * 0x2d AVSZ3 - average Z (triangle), 12-bit fraction
-   *
-   * @return average Z
-   */
-  public float averageZ3() {
-    this.startCommand();
-    this.AVSZ3();
-    this.endCommand();
-    return this.getAverageZ();
-  }
-
-  /**
-   * 0x2e AVSZ4 - average Z (quad), 12-bit fraction
-   *
-   * @return average Z
-   */
-  public float averageZ4() {
-    this.startCommand();
-    this.AVSZ4();
-    this.endCommand();
-    return this.getAverageZ();
-  }
-
-  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
-  public void perspectiveTransformTriangle() {
-    this.startCommand();
-    this.RTPT();
-    this.endCommand();
   }
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */

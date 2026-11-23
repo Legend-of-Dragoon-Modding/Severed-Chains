@@ -1,14 +1,11 @@
 package legend.game.combat.effects;
 
-import legend.core.renderer.QueuedModelBattleTmd;
-import legend.core.renderer.RenderEngine;
 import legend.core.gte.MV;
-import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.renderer.QueuedModelBattleTmd;
 import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.TmdObjTable1c;
 import org.joml.Matrix4f;
 
@@ -48,7 +45,7 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
 
   }
 
-  /** TODO renders other effects too? Burnout, more? Uses CTMD render pipeline */
+  /** Burnout, etc. Uses CTMD render pipeline */
   @Override
   @Method(0x8011826cL)
   public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state) {
@@ -80,16 +77,9 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
 
         //LAB_8011833c
         GsSetLightMatrix(this.transforms);
-        GTE.setTransforms(this.transforms);
 
-        if(RenderEngine.legacyMode == 0) {
-          this.glTransforms.set(this.transforms).setTranslation(this.transforms.transfer);
-          this.glTransforms.mulLocal(inverseWorldToScreenMatrix);
-        }
-
-        final ModelPart10 dobj2 = new ModelPart10();
-        dobj2.attribute_00 = manager.params_10.flags_00;
-        dobj2.tmd_08 = this.tmd_08;
+        this.glTransforms.set(this.transforms).setTranslation(this.transforms.transfer);
+        this.glTransforms.mulLocal(inverseWorldToScreenMatrix);
 
         final int oldZShift = zShift_1f8003c4;
         final int oldZMax = zMax_1f8003cc;
@@ -97,22 +87,22 @@ public class DeffTmdRenderer14 implements Effect<EffectManagerParams.AnimType> {
         zShift_1f8003c4 = 2;
         zMax_1f8003cc = 0xffe;
         zMin = 0xb;
-        Renderer.renderDobj2(dobj2, false, 0x20);
-        zShift_1f8003c4 = oldZShift;
-        zMax_1f8003cc = oldZMax;
-        zMin = oldZMin;
 
         RENDERER.queueModel(this.tmd_08.getObj(), this.glTransforms, QueuedModelBattleTmd.class)
           .depthOffset(manager.params_10.z_22 * 4)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
-          .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+          .ctmdFlags(0x20 | ((manager.params_10.flags_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+        zShift_1f8003c4 = oldZShift;
+        zMax_1f8003cc = oldZMax;
+        zMin = oldZMin;
       } else {
         //LAB_80118370
-        renderTmdSpriteEffect(this.tmd_08, this.tmd_08.getObj(), manager.params_10, this.transforms);
+        renderTmdSpriteEffect(this.tmd_08.getObj(), manager.params_10, this.transforms);
       }
 
       //LAB_80118380

@@ -1,19 +1,19 @@
 package legend.game;
 
-import legend.core.renderer.QueuedModelStandard;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
+import legend.core.renderer.BufferUsage;
+import legend.core.renderer.Obj;
+import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
+import legend.core.renderer.VertexOrder;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.types.FullScreenEffect;
-import legend.core.renderer.Translucency;
 
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Graphics.centreScreenX_1f8003dc;
-import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -25,9 +25,12 @@ public final class FullScreenEffects {
 
   public static final FullScreenEffect fullScreenEffect_800bb140 = new FullScreenEffect();
 
-  /**
-   * @param effectType 1 - fade out, 2 - fade in
-   */
+  /// @param effectType - 1: fade out (black)
+  ///                   - 2: fade in (black)
+  ///                   - 3: fade out (white)
+  ///                   - 4: fade int (white)
+  ///                   - 5: boxagon out
+  ///                   - 6: boxagon in
   @Method(0x800136dcL)
   public static void startFadeEffect(final int effectType, final int frames) {
     //LAB_800136f4
@@ -127,19 +130,21 @@ public final class FullScreenEffects {
         case 3, 4 -> drawFullScreenRect(colour, Translucency.B_PLUS_F);
 
         case 5 -> {
-          for(int s1 = 0; s1 < 8; s1++) {
+          final int maxX = (int)((Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4) + 39) / 40);
+          for(int x = 0; x < maxX; x++) {
             //LAB_800138f8
-            for(int s0 = 0; s0 < 6; s0++) {
-              drawBoxagonEffect(colour - (12 - (s0 + s1)) * 11, s1, s0);
+            for(int y = 0; y < 6; y++) {
+              drawBoxagonEffect(colour - (12 - (x + y)) * 11, x, y);
             }
           }
         }
 
         case 6 -> {
-          for(int s1 = 0; s1 < 8; s1++) {
+          final int maxX = (int)((Math.max(RENDERER.getNativeWidth(), (float)RENDERER.getRenderWidth() / RENDERER.getRenderHeight() * displayHeight_1f8003e4) + 39) / 40);
+          for(int x = 0; x < maxX; x++) {
             //LAB_80013950
-            for(int s0 = 0; s0 < 6; s0++) {
-              drawBoxagonEffect(colour - (s1 + s0) * 11, s1, s0);
+            for(int y = 0; y < 6; y++) {
+              drawBoxagonEffect(colour - (x + y) * 11, x, y);
             }
           }
         }
@@ -168,7 +173,7 @@ public final class FullScreenEffects {
     if(angle > 0) {
       final int sin;
       final int cos;
-      if(angle >= 124) {
+      if(angle > 123) {
         sin = 20;
         cos = 0;
       } else {
@@ -181,13 +186,23 @@ public final class FullScreenEffects {
       final int x0 = x * 40;
       final int y0 = y * 40;
 
-      GPU.queueCommand(30, new GpuCommandPoly(4)
-        .rgb(cos, cos, cos)
-        .pos(0, x0 - (sin - 20) - centreScreenX_1f8003dc, y0 - (sin - 20) - centreScreenY_1f8003de)
-        .pos(1, x0 - (centreScreenX_1f8003dc - 40), y0 - centreScreenY_1f8003de)
-        .pos(2, x0 - centreScreenX_1f8003dc, y0 - (centreScreenY_1f8003de - 40))
-        .pos(3, x0 + sin + 20 - centreScreenX_1f8003dc, y0 + sin + 20 - centreScreenY_1f8003de)
-      );
+      fullScreenEffect_800bb140.transforms.identity().setTranslation(x0, y0, 120.0f);
+
+      final Obj obj = new PolyBuilder("Boxagon", VertexOrder.TRIANGLE_STRIP)
+        .bufferUsage(BufferUsage.STREAMING)
+        .addVertex(-sin + 20, -sin + 20, 0.0f)
+        .monochrome(cos / 255.0f)
+        .addVertex(40, 0, 0.0f)
+        .monochrome(cos / 255.0f)
+        .addVertex(0, 40, 0.0f)
+        .monochrome(cos / 255.0f)
+        .addVertex(sin + 20, sin + 20, 0.0f)
+        .monochrome(cos / 255.0f)
+        .build()
+      ;
+
+      obj.delete();
+      RENDERER.queueOrthoModel(obj, fullScreenEffect_800bb140.transforms, QueuedModelStandard.class);
     }
 
     //LAB_80013f1c

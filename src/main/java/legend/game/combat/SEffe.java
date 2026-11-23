@@ -2,21 +2,20 @@ package legend.game.combat;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.renderer.BufferUsage;
-import legend.core.renderer.QueuedModelBattleTmd;
-import legend.core.renderer.QueuedModelStandard;
-import legend.core.renderer.QueuedModelTmd;
-import legend.core.renderer.RenderEngine;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.platform.input.InputCodepoints;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
 import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelBattleTmd;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
+import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
@@ -82,14 +81,12 @@ import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.Tmd;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdObjTable1c;
 import legend.game.tmd.TmdWithId;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.Model124;
-import legend.core.renderer.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -309,7 +306,7 @@ public final class SEffe {
 
   /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
+  public static void renderTmdSpriteEffect(final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
     if((effectParams.flags_00 & 0x8) != 0) {
       //TODO pretty sure this isn't equivalent to MATRIX#normalize
       transforms.normal(seffeTransforms);
@@ -320,49 +317,37 @@ public final class SEffe {
     }
 
     //LAB_800de45c
-    if(RenderEngine.legacyMode != 0) {
-      transforms.compose(worldToScreenMatrix_800c3548, seffeTransforms);
-    } else {
-      seffeTransforms.set(transforms);
-    }
+    seffeTransforms.set(transforms);
 
     if((effectParams.flags_00 & 0x400_0000) == 0) {
       seffeTransforms.rotationXYZ(effectParams.rot_10);
       seffeTransforms.scale(effectParams.scale_16);
 
       // Transform override is already in screenspace, so we need to un-transform it
-      if(RenderEngine.legacyMode == 0) {
-        seffeTransforms.mulLocal(inverseWorldToScreenMatrix.get3x3(new Matrix3f()));
-      }
+      seffeTransforms.mulLocal(inverseWorldToScreenMatrix.get3x3(new Matrix3f()));
     }
 
     //LAB_800de4a8
     //LAB_800de50c
-    GTE.setTransforms(seffeTransforms);
-
-    final ModelPart10 dobj2 = new ModelPart10();
-    dobj2.attribute_00 = effectParams.flags_00;
-    dobj2.tmd_08 = objTable;
-
     final int oldZShift = zShift_1f8003c4;
     final int oldZMax = zMax_1f8003cc;
     final int oldZMin = zMin;
     zShift_1f8003c4 = 2;
     zMax_1f8003cc = 0xffe;
     zMin = 0xb;
-    Renderer.renderDobj2(dobj2, false, 0x20);
-    zShift_1f8003c4 = oldZShift;
-    zMax_1f8003cc = oldZMax;
-    zMin = oldZMin;
 
     RENDERER.queueModel(obj, seffeTransforms, QueuedModelBattleTmd.class)
       .depthOffset(effectParams.z_22 * 4)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
-      .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+      .ctmdFlags(0x20 | ((effectParams.flags_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
       .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
       .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+    zShift_1f8003c4 = oldZShift;
+    zMax_1f8003cc = oldZMax;
+    zMin = oldZMin;
 
     //LAB_800de528
   }

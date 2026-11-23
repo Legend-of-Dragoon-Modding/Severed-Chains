@@ -2,7 +2,6 @@ package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import legend.core.renderer.SubmapWidescreenMode;
 import legend.core.platform.Window;
 import legend.core.platform.WindowEvents;
 import legend.core.platform.input.InputAction;
@@ -12,6 +11,7 @@ import legend.core.platform.input.InputButton;
 import legend.core.platform.input.InputClass;
 import legend.core.platform.input.InputKey;
 import legend.core.platform.input.InputMod;
+import legend.core.renderer.SubmapWidescreenMode;
 import legend.game.modding.coremod.CoreMod;
 
 import java.util.Deque;
@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 
 public class MenuStack {
@@ -207,8 +206,8 @@ public class MenuStack {
       final float left = (window.getWidth() - w) / 2;
       final float top = (window.getHeight() - h) / 2;
 
-      final float scaleX = w / GPU.getDisplayTextureWidth();
-      final float scaleY = h / GPU.getDisplayTextureHeight();
+      final float scaleX = w / RENDERER.getNativeWidth();
+      final float scaleY = h / RENDERER.getNativeHeight();
 
       clickX = (x - left) / scaleX;
       clickY = (y - top) / scaleY;

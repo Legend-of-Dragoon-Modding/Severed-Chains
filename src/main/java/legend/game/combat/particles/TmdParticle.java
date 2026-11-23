@@ -1,18 +1,15 @@
 package legend.game.combat.particles;
 
-import legend.core.renderer.QueuedModelBattleTmd;
-import legend.core.renderer.RenderEngine;
 import legend.core.gte.MV;
-import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.renderer.Obj;
+import legend.core.renderer.QueuedModelBattleTmd;
 import legend.game.combat.Battle;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdObjTable1c;
 import legend.game.tmd.TmdWithId;
@@ -31,7 +28,6 @@ import static legend.game.Graphics.inverseWorldToScreenMatrix;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
-import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zMin;
 import static legend.game.Graphics.zOffset_1f8003e8;
@@ -103,7 +99,7 @@ public class TmdParticle extends ParticleEffectData98 {
    * Seems to involve lit TMDs.
    */
   @Method(0x800fcf20L)
-  private void renderTmdParticle(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final TmdObjTable1c tmd, final Obj obj, final ParticleMetrics48 particleMetrics, final int tpage) {
+  private void renderTmdParticle(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final Obj obj, final ParticleMetrics48 particleMetrics, final int tpage) {
     if(particleMetrics.flags_00 >= 0) {
       this.initParticleTransforms(this.particleTransforms, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
@@ -113,12 +109,8 @@ public class TmdParticle extends ParticleEffectData98 {
       //LAB_800fcf94
       GsSetLightMatrix(this.particleTransforms);
 
-      if(RenderEngine.legacyMode != 0) {
-        this.particleTransforms.compose(worldToScreenMatrix_800c3548, this.gteTransforms);
-      } else {
-        this.gteTransforms.set(this.particleTransforms);
-        this.glTransforms.set(this.particleTransforms).setTranslation(this.particleTransforms.transfer);
-      }
+      this.gteTransforms.set(this.particleTransforms);
+      this.glTransforms.set(this.particleTransforms).setTranslation(this.particleTransforms.transfer);
 
       if((particleMetrics.flags_00 & 0x400_0000) == 0) {
         this.gteTransforms.rotationXYZ(manager.params_10.rot_10);
@@ -139,28 +131,24 @@ public class TmdParticle extends ParticleEffectData98 {
       }
 
       //LAB_800fd040
-      final ModelPart10 dobj = new ModelPart10();
-      dobj.attribute_00 = particleMetrics.flags_00;
-      dobj.tmd_08 = tmd;
-
       final int oldZShift = zShift_1f8003c4;
       final int oldZMax = zMax_1f8003cc;
       final int oldZMin = zMin;
       zShift_1f8003c4 = 2;
       zMax_1f8003cc = 0xffe;
       zMin = 0xb;
-      Renderer.renderDobj2(dobj, false, 0x20);
-      zShift_1f8003c4 = oldZShift;
-      zMax_1f8003cc = oldZMax;
-      zMin = oldZMin;
 
       RENDERER.queueModel(obj, this.glTransforms, QueuedModelBattleTmd.class)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
-        .ctmdFlags((dobj.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+        .ctmdFlags((particleMetrics.flags_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
         .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
         .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+      zShift_1f8003c4 = oldZShift;
+      zMax_1f8003cc = oldZMax;
+      zMin = oldZMin;
 
       if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
@@ -203,7 +191,7 @@ public class TmdParticle extends ParticleEffectData98 {
         particleMetrics.rotation_38.set(inst.spriteRotation_70).add(inst.managerRotation_68);
         particleMetrics.colour0_40.set(colour.x, colour.y, colour.z);
         particleMetrics.colour1_44.set(0, 0, 0);
-        this.renderTmdParticle(manager, this.tmd_30, this.obj, particleMetrics, this.tpage_56);
+        this.renderTmdParticle(manager, this.obj, particleMetrics, this.tpage_56);
       }
       //LAB_800fd7e0
     }

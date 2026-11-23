@@ -128,7 +128,6 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.Tmd;
 import legend.game.tmd.TmdObjLoader;
 import legend.game.tmd.TmdWithId;
@@ -8029,8 +8028,6 @@ public class Battle extends EngineState<Battle> {
         final MV lw = new MV();
         GsGetLws(part.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(part, true, 0);
 
         RENDERER.queueModel(part.tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
           .depthOffset(stage.z_5e8 * 4)

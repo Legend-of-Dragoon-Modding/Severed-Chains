@@ -27,7 +27,6 @@ import legend.game.scripting.Param;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.SoundFile;
-import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
 import legend.lodmod.LodMod;
 import org.joml.Vector3f;
@@ -43,7 +42,7 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsGetLw;
 import static legend.game.Graphics.GsSetLightMatrix;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
@@ -748,7 +747,6 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   private final MV lw = new MV();
-  private final MV ls = new MV();
 
   @Method(0x800ec974L)
   private void renderBttlModel(final Model124 model, final CombatantStruct1a8 combatant) {
@@ -780,10 +778,8 @@ public abstract class BattleEntity27c extends BattleObject {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 part = model.modelParts_00[i];
 
-        GsGetLws(part.coord2_04, this.lw, this.ls);
+        GsGetLw(part.coord2_04, this.lw);
         GsSetLightMatrix(this.lw);
-        GTE.setTransforms(this.ls);
-        Renderer.renderDobj2(part, true, 0);
 
         final QueuedModelBattleTmd queue = RENDERER.queueModel(model.modelParts_00[i].tmd_08.getObj(), this.lw, QueuedModelBattleTmd.class)
           .depthOffset(model.zOffset_a0 * 4)

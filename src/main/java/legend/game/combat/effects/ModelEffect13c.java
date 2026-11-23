@@ -1,21 +1,20 @@
 package legend.game.combat.effects;
 
-import legend.core.renderer.QueuedModelBattleTmd;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.renderer.QueuedModelBattleTmd;
 import legend.game.combat.Battle;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.EngineStates.currentEngineState_8004dd04;
-import static legend.game.Graphics.GsGetLws;
+import static legend.game.Graphics.GsGetLw;
 import static legend.game.Graphics.GsSetLightMatrix;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
@@ -54,7 +53,6 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     final MV lw = new MV();
-    final MV ls = new MV();
 
     //LAB_800dd928
     for(int i = 0; i < model.modelParts_00.length; i++) {
@@ -62,7 +60,7 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
 
       //LAB_800dd940
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        GsGetLws(part.coord2_04, lw, ls);
+        GsGetLw(part.coord2_04, lw);
 
         //LAB_800dd9bc
         if((newAttribute & 0x8) != 0) {
@@ -72,10 +70,6 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
 
         //LAB_800dd9d8
         GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-
-        final int oldAttrib = part.attribute_00;
-        part.attribute_00 = newAttribute;
 
         final int oldZShift = zShift_1f8003c4;
         final int oldZMax = zMax_1f8003cc;
@@ -83,10 +77,6 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
         zShift_1f8003c4 = 2;
         zMax_1f8003cc = 0xffe;
         zMin = 0xb;
-        Renderer.renderDobj2(part, false, 0x20);
-        zShift_1f8003c4 = oldZShift;
-        zMax_1f8003cc = oldZMax;
-        zMin = oldZMin;
 
         RENDERER.queueModel(part.tmd_08.getObj(), lw, QueuedModelBattleTmd.class)
           .depthOffset(model.zOffset_a0 * 4)
@@ -94,11 +84,13 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
-          .ctmdFlags(0x20 | ((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+          .ctmdFlags(0x20 | ((newAttribute & 0x4000_0000) != 0 ? 0x12 : 0x0))
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-        part.attribute_00 = oldAttrib;
+        zShift_1f8003c4 = oldZShift;
+        zMax_1f8003cc = oldZMax;
+        zMin = oldZMin;
       }
     }
 

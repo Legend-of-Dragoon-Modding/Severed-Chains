@@ -99,7 +99,7 @@ import static legend.game.modding.coremod.CoreMod.SHADER_VIGNETTE_OPACITY_CONFIG
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
 
-  public static int legacyMode;
+  public static boolean vramViewer;
 
   private final List<RenderBatch> batches = new ArrayList<>();
   private final RenderBatch mainBatch;
@@ -661,7 +661,7 @@ public class RenderEngine {
         GameOverlay.drawFps();
       }
 
-      if(legacyMode == 0) {
+      if(!vramViewer) {
         // Gross hack bro
         if(currentEngineState_8004dd04 instanceof final Battle battle && battle._800c6930 != null) {
           this.battleTmdShader.use();
@@ -1344,18 +1344,14 @@ public class RenderEngine {
   private void onKeyPress(final Window window, final InputKey key, final InputKey scancode, final Set<InputMod> mods, final boolean repeat) {
     if(!Version.isRelease() && !this.allowMovement) {
       if(key == InputKey.TAB) {
-        if(mods.contains(InputMod.SHIFT)) {
-          legacyMode = Math.floorMod(legacyMode - 1, 3);
-        } else {
-          legacyMode = (legacyMode + 1) % 3;
-        }
+        vramViewer = !vramViewer;
 
         this.updateProjections();
 
-        switch(legacyMode) {
-          case 0 -> GameOverlay.addNotification(3, new RawText("Switched to OpenGL rendering"));
-          case 1 -> GameOverlay.addNotification(3, new RawText("Switched to legacy rendering"));
-          case 2 -> GameOverlay.addNotification(3, new RawText("Switched to VRAM rendering"));
+        if(vramViewer) {
+          GameOverlay.addNotification(3, new RawText("Switched to VRAM rendering"));
+        } else {
+          GameOverlay.addNotification(3, new RawText("Switched to OpenGL rendering"));
         }
       } else if(key == InputKey.F4 && mods.contains(InputMod.CTRL) && mods.contains(InputMod.SHIFT)) {
         throw new RuntimeException("Can't say I didn't warn you");

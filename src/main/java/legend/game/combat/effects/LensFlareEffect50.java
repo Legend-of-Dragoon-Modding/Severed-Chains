@@ -2,18 +2,17 @@ package legend.game.combat.effects;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.core.renderer.BufferUsage;
-import legend.core.renderer.QueuedModelStandard;
 import legend.core.Transformations;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.scripting.ScriptState;
-import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -146,20 +145,6 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
               flareVertexPositions[3][0] = inst.x_04 - halfW + x + (w * inst.widthScale_2e);
               flareVertexPositions[3][1] = inst.y_06 - halfH + y + (h * inst.heightScale_30);
 
-              final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                .bpp(Bpp.BITS_4)
-                .clut(clutX, clutY)
-                .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-                .rgb(r, g, b)
-                .pos(0, flareVertexPositions[lensFlareVertexIndices_800fb930[j][0]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][0]][1])
-                .pos(1, flareVertexPositions[lensFlareVertexIndices_800fb930[j][1]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][1]][1])
-                .pos(2, flareVertexPositions[lensFlareVertexIndices_800fb930[j][2]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][2]][1])
-                .pos(3, flareVertexPositions[lensFlareVertexIndices_800fb930[j][3]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][3]][1])
-                .uv(0, u, v)
-                .uv(1, u + w - 1, v)
-                .uv(2, u, v + h - 1)
-                .uv(3, u + w - 1, v + h - 1);
-
               builder
                 .addVertex(flareVertexPositions[lensFlareVertexIndices_800fb930[j][0]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][0]][1], 0)
                 .clut(clutX, clutY)
@@ -176,12 +161,6 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
                 .uv(u + w - 1, v)
                 .addVertex(flareVertexPositions[lensFlareVertexIndices_800fb930[j][3]][0], flareVertexPositions[lensFlareVertexIndices_800fb930[j][3]][1], 0)
                 .uv(u + w - 1, v + h - 1);
-
-              if((flags >>> 30 & 1) != 0) {
-                cmd.translucent(Translucency.of(flags >>> 28 & 0b11));
-              }
-
-              GPU.queueCommand(30, cmd);
             }
           } else {
             //LAB_8010ceec
@@ -191,20 +170,6 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
             final float y = inst.y_06 - halfH - (inst.heightScale_30 * h) / 2.0f;
             final float w2 = w * inst.widthScale_2e;
             final float h2 = h * inst.heightScale_30;
-
-            final GpuCommandPoly cmd = new GpuCommandPoly(4)
-              .bpp(Bpp.BITS_4)
-              .clut(clutX, clutY)
-              .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-              .rgb(r, g, b)
-              .pos(0, x, y)
-              .pos(1, x + w2, y)
-              .pos(2, x, y + h2)
-              .pos(3, x + w2, y + h2)
-              .uv(0, u, v)
-              .uv(1, u + w - 1, v)
-              .uv(2, u, v + h - 1)
-              .uv(3, u + w - 1, v + h - 1);
 
             builder
               .addVertex(x, y, 0)
@@ -222,19 +187,13 @@ public class LensFlareEffect50 implements Effect<EffectManagerParams.VoidType> {
               .uv(u + w - 1, v)
               .addVertex(x + w2, y + h2, 0)
               .uv(u + w - 1, v + h - 1);
-
-            if((flags >>> 30 & 1) != 0) {
-              cmd.translucent(Translucency.of(flags >>> 28 & 0b11));
-            }
-
-            GPU.queueCommand(30, cmd);
           }
         }
         //LAB_8010d198
         //LAB_8010d19c
       }
 
-      if((flags >>> 30 & 1) != 0 && builder != null) {
+      if((flags >>> 30 & 1) != 0) {
         builder.translucency(Translucency.of(flags >>> 28 & 0b11));
       }
 

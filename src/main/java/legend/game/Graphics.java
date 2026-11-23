@@ -2,18 +2,13 @@ package legend.game;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.renderer.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.Gpu;
-import legend.core.gpu.GpuCommandFillVram;
-import legend.core.gpu.GpuCommandSetMaskBit;
-import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.renderer.Translucency;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
-import legend.core.renderer.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -75,7 +70,6 @@ public final class Graphics {
   public static int clearGreen_800bb104;
   public static int clearBlue_800babc0;
 
-  public static final Rect4i displayRect_800c34c8 = new Rect4i();
   /** Incremented with each frame - overflows to 1 */
   public static int PSDCNT_800c34d0;
 
@@ -91,9 +85,6 @@ public final class Graphics {
 
   @Method(0x80012df8L)
   public static void endFrame() {
-    GPU.queueCommand(3, new GpuCommandSetMaskBit(false, Gpu.DRAW_PIXELS.ALWAYS));
-    GPU.queueCommand(orderingTableSize_1f8003c8 - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
-
     //LAB_80012e8c
     syncFrame_8004dd3c.run();
     swapDisplayBuffer_8004dd40.run();
@@ -123,7 +114,6 @@ public final class Graphics {
     GPU.updateOrderingTableSize(orderingTableSize_1f8003c8);
 
     //LAB_80013040
-    GsSetDrawBuffClip();
     GsSetDrawBuffOffset();
 
     //LAB_80013060
@@ -141,11 +131,6 @@ public final class Graphics {
   @Method(0x80013148L)
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
-
-    if(RenderEngine.legacyMode == 1) {
-      GsSortClear(clearRed_8007a3a8, clearGreen_800bb104, clearBlue_800babc0);
-    }
-
     RENDERER.api().clearColour(clearRed_8007a3a8 / 255.0f, clearGreen_800bb104 / 255.0f, clearBlue_800babc0 / 255.0f);
   }
 
@@ -238,7 +223,6 @@ public final class Graphics {
     GsInit3D();
 
     initDisplay(displayWidth, displayHeight);
-    GsSetDrawBuffClip();
     GsSetDrawBuffOffset();
   }
 
@@ -253,7 +237,7 @@ public final class Graphics {
     ResetGraph();
 
     GPU.drawingOffset(0, 0);
-    GPU.displayMode(displayWidth, displayHeight);
+    RENDERER.setProjectionSize(displayWidth == 384 ? 368 : displayWidth, displayHeight);
   }
 
   @Method(0x8003be28L)
@@ -273,38 +257,12 @@ public final class Graphics {
     centreScreenX_1f8003dc = 0;
     centreScreenY_1f8003de = 0;
 
-    displayRect_800c34c8.set(0, 0, displayWidth, displayHeight);
-
     PSDCNT_800c34d0 = 1;
-  }
-
-  /**
-   * <p>Register a screen clear command in the OT.</p>
-   *
-   * <p>Sets a screen clear command at the start of the OT indicated by otp. Should be called after
-   * GsSwapDispBuff(). Note: Actual clearing isn’t executed until GsDrawOt() is used to start drawing.</p>
-   */
-  @Method(0x8003c048L)
-  public static void GsSortClear(final int r, final int g, final int b) {
-    GPU.queueCommand(orderingTableSize_1f8003c8 - 1, new GpuCommandFillVram(r, g, b));
   }
 
   @Method(0x8003c1c0L)
   public static void GsSetDrawBuffOffset() {
     GPU.drawingOffset(centreScreenX_1f8003dc, centreScreenY_1f8003de);
-  }
-
-  /**
-   * Set drawing clipping area.<p>
-   * Sets clipping for drawing. The clipping value set by GsSetClip2D() is set in libgs.<p>
-   * This value is a relative one within the double buffers, so the clipping position does not change when buffers
-   * are swapped.<p>
-   * This function does not execute correctly if GPU drawing is in progress. Use ResetGraph(1) to terminate any
-   * current drawing process or DrawSync() to wait until the process is completed.
-   */
-  @Method(0x8003c2d0L)
-  public static void GsSetDrawBuffClip() {
-    GPU.drawingArea(displayRect_800c34c8.x, displayRect_800c34c8.y, displayRect_800c34c8.w, displayRect_800c34c8.h);
   }
 
   /**

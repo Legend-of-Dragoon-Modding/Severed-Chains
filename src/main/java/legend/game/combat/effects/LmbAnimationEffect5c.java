@@ -3,14 +3,14 @@ package legend.game.combat.effects;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
 import it.unimi.dsi.fastutil.floats.FloatList;
 import legend.core.MathHelper;
-import legend.core.renderer.BufferUsage;
-import legend.core.renderer.QueuedModelStandard;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
@@ -19,7 +19,6 @@ import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.TmdObjTable1c;
-import legend.core.renderer.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -27,13 +26,11 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Graphics.perspectiveTransform;
 import static legend.game.Graphics.projectionPlaneDistance_1f8003f8;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
-import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.combat.Battle.deffManager_800c693c;
@@ -59,7 +56,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
   private final FloatList zDepths = new FloatArrayList();
   private final Vector3f worldCoords = new Vector3f();
   private final Vector2f screenCoords = new Vector2f();
-  private final MV w2sTransform = new MV();
   private final MV transforms = new MV();
   private PolyBuilder builder;
 
@@ -118,27 +114,23 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
 
   private static void renderLmbTmd(final LmbAnimationEffect5c effect, final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int deffFlags, final int objectIndex) {
     //LAB_80116708
-    final TmdObjTable1c tmdObjTable;
     // If we already have it cached
-    if(effect.deffTmdFlags_48 == deffFlags) {
-      tmdObjTable = effect.deffTmdObjTable_4c;
-    } else {
+    if(effect.deffTmdFlags_48 != deffFlags) {
       //LAB_80116724
       if((deffFlags & 0xf_ff00) == 0xf_ff00) {
-        tmdObjTable = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
+        effect.deffTmdObjTable_4c = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
       } else {
         //LAB_80116750
-        tmdObjTable = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+        effect.deffTmdObjTable_4c = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
       //LAB_8011676c
       // Cache it
       effect.deffTmdFlags_48 = deffFlags;
-      effect.deffTmdObjTable_4c = tmdObjTable;
     }
 
     //LAB_80116778
-    renderTmdSpriteEffect(tmdObjTable, effect.deffTmdObjTable_4c.getObj(), manager.params_10, effect.transforms);
+    renderTmdSpriteEffect(effect.deffTmdObjTable_4c.getObj(), manager.params_10, effect.transforms);
   }
 
   /**
@@ -166,9 +158,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     final int clut = effect.metrics_54.clut_06;
 
     //LAB_8011633c
-    effect.transforms.compose(worldToScreenMatrix_800c3548, effect.w2sTransform);
-    GTE.setTransforms(effect.w2sTransform);
-
     final float z = perspectiveTransform(effect.worldCoords, effect.screenCoords);
     if(z >= 80) {
       effect.zDepths.add(z * 4.0f);
@@ -201,19 +190,6 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
       final int sinB = b * sin / 0x1000;
       final int cosB = b * cos / 0x1000;
 
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .clut((clut & 0b111111) * 16, clut >>> 6)
-        .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
-        .rgb(manager.params_10.colour_1c)
-        .pos(0, effect.screenCoords.x + cosL - sinT, effect.screenCoords.y + sinL + cosT)
-        .pos(1, effect.screenCoords.x + cosR - sinT, effect.screenCoords.y + sinR + cosT)
-        .pos(2, effect.screenCoords.x + cosL - sinB, effect.screenCoords.y + sinL + cosB)
-        .pos(3, effect.screenCoords.x + cosR - sinB, effect.screenCoords.y + sinR + cosB)
-        .uv(0, u, v)
-        .uv(1, u + w - 1, v)
-        .uv(2, u, v + h - 1)
-        .uv(3, u + w - 1, v + h - 1);
-
       final Vector3f colour = new Vector3f(manager.params_10.colour_1c).div(255.0f);
       effect.builder
         .addVertex(effect.screenCoords.x + cosL - sinT, effect.screenCoords.y + sinL + cosT, 0)
@@ -233,11 +209,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
         .uv(u + w - 1, v + h - 1);
 
       if((manager.params_10.flags_00 >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
         effect.builder.translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
       }
-
-      GPU.queueCommand(z / 4.0f, cmd);
     }
   }
 

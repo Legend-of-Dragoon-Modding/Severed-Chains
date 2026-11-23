@@ -1,13 +1,11 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.renderer.QueuedModelBattleTmd;
 import legend.core.gte.MV;
-import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.renderer.Obj;
+import legend.core.renderer.QueuedModelBattleTmd;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.TmdObjLoader;
 import org.joml.Math;
 import org.joml.Vector3f;
@@ -122,8 +120,6 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
     if(manager.params_10.flags_00 >= 0) {
-      final ModelPart10 dobj = new ModelPart10();
-
       //LAB_8010f3a4
       for(int i = 0; i < this.impactArray_08.length; i++) {
         final StarChildrenImpactEffectInstancea8 impact = this.impactArray_08[i];
@@ -148,7 +144,6 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           this.modelTransforms.transfer.set(impact.translation_0c[stageNum]).add(manager.params_10.trans_04);
           this.scale.set(scaleX, scaleY, scaleZ);
           this.modelTransforms.scale(this.scale);
-          dobj.attribute_00 = manager.params_10.flags_00;
           this.modelTransforms.compose(worldToScreenMatrix_800c3548, this.w2sModelTransforms);
           GTE.setTransforms(this.w2sModelTransforms);
           zOffset_1f8003e8 = 0;
@@ -162,32 +157,35 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           zMin = 0xb;
 
           if(impact.renderShockwave_01) {
-            dobj.tmd_08 = impact.shockwaveObjTable_98;
-            Renderer.renderDobj2(dobj, false, 0x20);
-
             if(this.shockwaveObj == null) {
-              this.shockwaveObj = TmdObjLoader.fromObjTable("Star Children shockwave" + i + ')', dobj.tmd_08);
+              this.shockwaveObj = TmdObjLoader.fromObjTable("Star Children shockwave" + i + ')', impact.shockwaveObjTable_98);
             }
-            RENDERER.queueModel(this.shockwaveObj, this.modelTransforms, QueuedModelBattleTmd.class);
+
+            RENDERER.queueModel(this.shockwaveObj, this.modelTransforms, QueuedModelBattleTmd.class)
+              .ctmdFlags(0x20 | ((manager.params_10.flags_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+              .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            ;
           }
 
           //LAB_8010f5d0
           if(impact.animationFrame_a2 < 9) {
-            dobj.tmd_08 = impact.explosionObjTable_94;
-            Renderer.renderDobj2(dobj, false, 0x20);
-
             if(this.explosionObj == null) {
-              this.explosionObj = TmdObjLoader.fromObjTable("Star Children explosion" + i + ')', dobj.tmd_08);
+              this.explosionObj = TmdObjLoader.fromObjTable("Star Children explosion" + i + ')', impact.explosionObjTable_94);
             }
-            RENDERER.queueModel(this.explosionObj, this.modelTransforms, QueuedModelBattleTmd.class);
-          } else if(impact.animationFrame_a2 >= 11) {
-            dobj.tmd_08 = impact.plumeObjTable_9c;
-            Renderer.renderDobj2(dobj, false, 0x20);
 
+            RENDERER.queueModel(this.explosionObj, this.modelTransforms, QueuedModelBattleTmd.class)
+              .ctmdFlags(0x20 | ((manager.params_10.flags_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+              .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            ;
+          } else if(impact.animationFrame_a2 >= 11) {
             if(this.plumeObj == null) {
-              this.plumeObj = TmdObjLoader.fromObjTable("Star Children plume" + i + ')', dobj.tmd_08);
+              this.plumeObj = TmdObjLoader.fromObjTable("Star Children plume" + i + ')', impact.plumeObjTable_9c);
             }
-            RENDERER.queueModel(this.plumeObj, this.modelTransforms, QueuedModelBattleTmd.class);
+
+            RENDERER.queueModel(this.plumeObj, this.modelTransforms, QueuedModelBattleTmd.class)
+              .ctmdFlags(0x20 | ((manager.params_10.flags_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+              .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            ;
           }
 
           zShift_1f8003c4 = oldZShift;

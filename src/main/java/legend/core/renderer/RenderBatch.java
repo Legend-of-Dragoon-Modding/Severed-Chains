@@ -114,7 +114,7 @@ public class RenderBatch {
   public void updateProjections() {
     this.expectedWidth = 320;
 
-    if(RenderEngine.legacyMode != 0) {
+    if(RenderEngine.vramViewer) {
       this.perspectiveProjection.setPerspectiveLH(PI / 4.0f, (float)this.engine.getRenderWidth() / this.engine.getRenderHeight(), 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.engine.getRenderWidth(), this.engine.getRenderHeight(), 0.0f);
       return;

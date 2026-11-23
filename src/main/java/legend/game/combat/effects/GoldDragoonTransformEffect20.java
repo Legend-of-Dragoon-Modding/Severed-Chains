@@ -1,12 +1,10 @@
 package legend.game.combat.effects;
 
-import legend.core.renderer.QueuedModelTmd;
 import legend.core.gte.MV;
-import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.core.renderer.Obj;
+import legend.core.renderer.QueuedModelTmd;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
 
 import java.util.Arrays;
 
@@ -90,8 +88,6 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
   public void render(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
 
-    final ModelPart10 dobj2 = new ModelPart10();
-
     //LAB_8010ded8
     for(int i = 0; i < this.parts_08.length; i++) {
       final GoldDragoonTransformEffectInstance84 instance = this.parts_08[i];
@@ -100,15 +96,11 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
         this.transforms.transfer.set(instance.trans_08).add(manager.params_10.trans_04);
         this.transforms.scale(manager.params_10.scale_16);
 
-        dobj2.tmd_08 = instance.tmd_70;
-
         this.transforms.compose(worldToScreenMatrix_800c3548, this.w2sTransforms);
         GTE.setTransforms(this.w2sTransforms);
 
         zOffset_1f8003e8 = 0;
         tmdGp0Tpage_1f8003ec = 2;
-
-        Renderer.renderDobj2(dobj2, false, 0);
 
         RENDERER.queueModel(this.rockObjster, this.transforms, QueuedModelTmd.class);
       }
