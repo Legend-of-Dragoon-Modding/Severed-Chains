@@ -74,7 +74,6 @@ import static legend.game.Graphics.setDrawOffset;
 import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Graphics.zMax_1f8003cc;
-import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Menus.clearRenderables;
 import static legend.game.Menus.deallocateRenderables;
 import static legend.game.Menus.loadAndRenderMenus;
@@ -602,10 +601,8 @@ public final class Scus94491BpeSegment {
     ResetGraph();
 
     orderingTableBits_1f8003c0 = 14;
-    zShift_1f8003c4 = 0;
     orderingTableSize_1f8003c8 = 0x4000;
     zMax_1f8003cc = 0x3ffe;
-    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8);
 
     setDrawOffset();
 

@@ -122,7 +122,6 @@ import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zMin;
-import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Models.applyModelRotationAndScale;
 import static legend.game.SItem.UI_WHITE_SHADOWED;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -329,10 +328,8 @@ public final class SEffe {
 
     //LAB_800de4a8
     //LAB_800de50c
-    final int oldZShift = zShift_1f8003c4;
     final int oldZMax = zMax_1f8003cc;
     final int oldZMin = zMin;
-    zShift_1f8003c4 = 2;
     zMax_1f8003cc = 0xffe;
     zMin = 0xb;
 
@@ -345,7 +342,6 @@ public final class SEffe {
       .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
       .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-    zShift_1f8003c4 = oldZShift;
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 

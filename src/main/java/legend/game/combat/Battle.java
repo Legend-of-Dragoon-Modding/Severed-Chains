@@ -7595,9 +7595,9 @@ public class Battle extends EngineState<Battle> {
 
   @Method(0x800ead44L)
   public void applyTextureAnimation(final Rect4i rect, final int h) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, rect.x, rect.y + rect.h - h, rect.w, h));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x, rect.y + h, rect.x, rect.y, rect.w, rect.h - h));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x, rect.y, 960, 256, rect.w, h));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(960, 256, rect.x, rect.y + rect.h - h, rect.w, h));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(rect.x, rect.y + h, rect.x, rect.y, rect.w, rect.h - h));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(rect.x, rect.y, 960, 256, rect.w, h));
   }
 
   @Method(0x800eaec8L)
@@ -7812,11 +7812,11 @@ public class Battle extends EngineState<Battle> {
   /** Used in Dart transform */
   @Method(0x800eb554L)
   public void applyRedEyeDragoonTransformationFlameArmorEffectTextureAnimations(final Rect4i a0, final Vector2i a1, final int height) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.x, a1.y + a0.h - height, a0.w, height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y + height, a1.x, a1.y, a0.w, a0.h - height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y, a0.x, a0.y + a0.h - height, a0.w, height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x, a0.y + height, a0.x, a0.y, a0.w, a0.h - height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x, a0.y, 960, 256, a0.w, height));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(960, 256, a1.x, a1.y + a0.h - height, a0.w, height));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(a1.x, a1.y + height, a1.x, a1.y, a0.w, a0.h - height));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(a1.x, a1.y, a0.x, a0.y + a0.h - height, a0.w, height));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(a0.x, a0.y + height, a0.x, a0.y, a0.w, a0.h - height));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(a0.x, a0.y, 960, 256, a0.w, height));
   }
 
   @Method(0x800eb7c4L)
@@ -7978,16 +7978,16 @@ public class Battle extends EngineState<Battle> {
       if(t1 == 0) {
         s6 = 256 + s1;
 
-        GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, x, y, w, h));
-        GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + s4, 960, 256, w, s1));
-        GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, s6, w, s4));
+        GPU.queueVramCopy(new GpuCommandCopyVramToVram(960, 256, x, y, w, h));
+        GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y + s4, 960, 256, w, s1));
+        GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y, 960, s6, w, s4));
       } else {
         //LAB_800ebf88
         s6 = 256 + s4;
 
-        GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, x, y, w, h));
-        GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, s6, w, s1));
-        GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + s1, 960, 256, w, s4));
+        GPU.queueVramCopy(new GpuCommandCopyVramToVram(960, 256, x, y, w, h));
+        GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y, 960, s6, w, s1));
+        GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y + s1, 960, 256, w, s4));
       }
     }
 
@@ -8136,7 +8136,7 @@ public class Battle extends EngineState<Battle> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sourceY", description = "The source Y coordinate")
   @Method(0x800ee210L)
   public FlowControl scriptCopyVram(final RunningScript<?> script) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20[4].get(), script.params_20[5].get(), script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get() / 4, (short)script.params_20[3].get()));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(script.params_20[4].get(), script.params_20[5].get(), script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get() / 4, (short)script.params_20[3].get()));
     return FlowControl.CONTINUE;
   }
 

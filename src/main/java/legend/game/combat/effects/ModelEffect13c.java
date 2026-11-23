@@ -22,7 +22,6 @@ import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zMin;
 import static legend.game.Graphics.zOffset_1f8003e8;
-import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.Models.animateModelTextures;
 import static legend.game.combat.SEffe.FUN_800e60e0;
 import static legend.game.combat.SEffe.FUN_800e6170;
@@ -71,10 +70,8 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
         //LAB_800dd9d8
         GsSetLightMatrix(lw);
 
-        final int oldZShift = zShift_1f8003c4;
         final int oldZMax = zMax_1f8003cc;
         final int oldZMin = zMin;
-        zShift_1f8003c4 = 2;
         zMax_1f8003cc = 0xffe;
         zMin = 0xb;
 
@@ -88,7 +85,6 @@ public class ModelEffect13c implements Effect<EffectManagerParams.AnimType> {
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
-        zShift_1f8003c4 = oldZShift;
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
       }

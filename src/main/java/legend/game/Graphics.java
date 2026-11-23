@@ -31,7 +31,6 @@ public final class Graphics {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Graphics.class);
 
   public static int orderingTableBits_1f8003c0;
-  public static int zShift_1f8003c4;
   public static int orderingTableSize_1f8003c8;
   public static int zMax_1f8003cc;
   public static int zMin;
@@ -108,10 +107,8 @@ public final class Graphics {
     clearRed_8007a3a8 = 0;
 
     orderingTableBits_1f8003c0 = orderingTableBits;
-    zShift_1f8003c4 = 14 - orderingTableBits;
     orderingTableSize_1f8003c8 = 1 << orderingTableBits;
-    zMax_1f8003cc = (1 << orderingTableBits) - 2;
-    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8);
+    zMax_1f8003cc = orderingTableSize_1f8003c8 - 2;
 
     //LAB_80013040
     GsSetDrawBuffOffset();

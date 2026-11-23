@@ -403,7 +403,7 @@ public final class Models {
       final short x2 = (short)(model.animationMetrics_d0[index][metricsIndex++] + vramX);
       final short y2 = (short)(model.animationMetrics_d0[index][metricsIndex++] + vramY);
 
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
+      GPU.queueVramCopy(new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
 
       model.usArr_ac[index]++;
 
@@ -447,18 +447,18 @@ public final class Models {
       return;
     }
 
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, x & 0xffff, y & 0xffff, w, h));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(960, 256, x & 0xffff, y & 0xffff, w, h));
 
     secondaryYOffsetH /= 16;
     h -= secondaryYOffsetH;
 
     if((short)copyMode == 0) {
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + h, 960, 256, w, secondaryYOffsetH));
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, secondaryYOffsetH + 256, w, h));
+      GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y + h, 960, 256, w, secondaryYOffsetH));
+      GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y, 960, secondaryYOffsetH + 256, w, h));
     } else {
       //LAB_80022358
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, h + 256, w, secondaryYOffsetH));
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + secondaryYOffsetH, 960, 256, w, h));
+      GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y, 960, h + 256, w, secondaryYOffsetH));
+      GPU.queueVramCopy(new GpuCommandCopyVramToVram(x, y + secondaryYOffsetH, 960, 256, w, h));
     }
     //LAB_80022440
   }

@@ -20,7 +20,6 @@ import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zMin;
 import static legend.game.Graphics.zOffset_1f8003e8;
-import static legend.game.Graphics.zShift_1f8003c4;
 import static legend.game.combat.SEffe.FUN_800e61e4;
 import static legend.game.combat.SEffe.FUN_800e62a8;
 import static legend.game.combat.SEffe.calculateEffectTransforms;
@@ -149,10 +148,8 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           zOffset_1f8003e8 = 0;
           tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
 
-          final int oldZShift = zShift_1f8003c4;
           final int oldZMax = zMax_1f8003cc;
           final int oldZMin = zMin;
-          zShift_1f8003c4 = 2;
           zMax_1f8003cc = 0xffe;
           zMin = 0xb;
 
@@ -188,7 +185,6 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
             ;
           }
 
-          zShift_1f8003c4 = oldZShift;
           zMax_1f8003cc = oldZMax;
           zMin = oldZMin;
 

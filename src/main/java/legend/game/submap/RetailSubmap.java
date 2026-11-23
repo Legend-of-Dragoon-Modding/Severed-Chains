@@ -77,6 +77,7 @@ import static legend.game.Graphics.GsSetSmapRefView2L;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.orderingTableBits_1f8003c0;
+import static legend.game.Graphics.orderingTableSize_1f8003c8;
 import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
@@ -997,7 +998,7 @@ public class RetailSubmap extends Submap {
       float z;
       if(envTexture.tileType_06 == 0x4e) {
         //LAB_800e7148
-        z = (0x1 << orderingTableBits_1f8003c0) - 1;
+        z = orderingTableSize_1f8003c8 - 1;
       } else if(envTexture.tileType_06 == 0x4f) {
         z = 40;
       } else {
@@ -1155,7 +1156,7 @@ public class RetailSubmap extends Submap {
    * </ul>
    */
   @Method(0x800e7728L)
-  public int setEnvironmentOverlayDepthModeAndZ(final int mode, final int foregroundTextureIndex, int z) {
+  public int setEnvironmentOverlayDepthModeAndZ(final int mode, final int foregroundTextureIndex, final int z) {
     final int textureIndex = this.envBackgroundTextureCount_800cb57c + foregroundTextureIndex;
 
     if(mode == 1 && foregroundTextureIndex == -1) {
@@ -1187,17 +1188,8 @@ public class RetailSubmap extends Submap {
       //LAB_800e788c
       this.envRenderMetrics_800cb710[textureIndex].zFlags_22 &= 0x3fff;
       this.envRenderMetrics_800cb710[textureIndex].zFlags_22 |= 0x8000;
-
-      if(z < 40) {
-        //LAB_800e78fc
-        z = 40;
-      } else if((0x1 << orderingTableBits_1f8003c0) - 1 < z) {
-        z = (0x1 << orderingTableBits_1f8003c0) - 1;
-      }
-
-      //LAB_800e7900
       this.envRenderMetrics_800cb710[textureIndex].zFlags_22 &= 0xc000;
-      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 |= z & 0x3fff;
+      this.envRenderMetrics_800cb710[textureIndex].zFlags_22 |= Math.clamp(40, orderingTableSize_1f8003c8 - 1, z) & 0x3fff;
     } else if(mode == 5) {
       this.minSobj_800cbd60 = foregroundTextureIndex;
       this.maxSobj_800cbd64 = z + 1;
@@ -1228,7 +1220,7 @@ public class RetailSubmap extends Submap {
     if(this.backgroundObj == null) {
       this.backgroundObj = new QuadBuilder("Submap background")
         .bpp(Bpp.BITS_24)
-        .pos(this.backgroundRect.x, this.backgroundRect.y, ((0x1 << orderingTableBits_1f8003c0) - 1) * 4.0f)
+        .pos(this.backgroundRect.x, this.backgroundRect.y, (orderingTableSize_1f8003c8 - 1) * 4.0f)
         .posSize(this.backgroundRect.w, this.backgroundRect.h)
         .uvSize(1.0f, 1.0f)
         .build();
@@ -1311,7 +1303,7 @@ public class RetailSubmap extends Submap {
         //LAB_800e7d00
         if(negativeZCount == 0) {
           //LAB_800e7d3c
-          envZs[i] = Math.min(maxZ + 50, (1 << orderingTableBits_1f8003c0) - 1);
+          envZs[i] = Math.min(maxZ + 50, orderingTableSize_1f8003c8 - 1);
           continue;
         }
 

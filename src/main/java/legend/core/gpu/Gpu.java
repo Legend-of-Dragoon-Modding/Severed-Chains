@@ -21,12 +21,10 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
-import static legend.game.Graphics.orderingTableSize_1f8003c8;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
@@ -49,19 +47,16 @@ public class Gpu {
   private SimpleShaderOptions vramShaderOptions;
   private ShaderUniformBuffer transforms2Uniform;
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
-  private final Matrix4f identity = new Matrix4f();
+  private final Matrix4f transforms = new Matrix4f();
 
   private Mesh displayMesh;
 
   private short offsetX;
   private short offsetY;
 
-  private int zMax;
-  private List<GpuCommand>[] zQueues;
+  private final List<GpuCommandCopyVramToVram> vramCopyQueue = new ArrayList<>();
 
   public void init() {
-    RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture(width, height));
-
     this.vramShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     this.vramShaderOptions = this.vramShader.makeOptions();
 
@@ -76,6 +71,15 @@ public class Gpu {
       builder.dataType(TextureDataType.UBYTE);
     });
     this.vramTexture24.persistent = true;
+
+    this.displayMesh = RENDERER.api().makeMesh("GPU display mesh", VertexOrder.TRIANGLE_STRIP, new float[] {
+      0.0f, 0.0f, 1.0f, 0, 0,
+      0.0f, 1.0f, 1.0f, 0, 1,
+      1.0f, 0.0f, 1.0f, 1, 0,
+      1.0f, 1.0f, 1.0f, 1, 1,
+    }, 4);
+    this.displayMesh.attribute(0, 0L, 3, 5);
+    this.displayMesh.attribute(1, 3L, 2, 5);
   }
 
   public void initVram() {
@@ -99,66 +103,23 @@ public class Gpu {
 
   public void startFrame() {
     this.updateVramTexture();
-
-    if(this.zMax != orderingTableSize_1f8003c8) {
-      this.updateOrderingTableSize(orderingTableSize_1f8003c8);
-    }
   }
 
   public void endFrame() {
-    this.tick();
-  }
-
-  public void useVramTexture() {
-    this.vramTexture15.use(1);
-  }
-
-  private void updateDisplayTexture(final int width, final int height) {
-    if(this.displayMesh != null) {
-      this.displayMesh.delete();
-    }
-
-    final float aspect = 4.0f / 3.0f;
-
-    float w = width;
-    float h = w / aspect;
-
-    if(h > height) {
-      h = height;
-      w = h * aspect;
-    }
-
-    final float l = (width - w) / 2;
-    final float t = (height - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
-    this.displayMesh = RENDERER.api().makeMesh("GPU display mesh", VertexOrder.TRIANGLE_STRIP, new float[] {
-      l, t, 1.0f, 0, 0,
-      l, b, 1.0f, 0, 1,
-      r, t, 1.0f, 1, 0,
-      r, b, 1.0f, 1, 1,
-    }, 4);
-    this.displayMesh.attribute(0, 0L, 3, 5);
-    this.displayMesh.attribute(1, 3L, 2, 5);
-  }
-
-  private void tick() {
     if(RenderEngine.vramViewer) {
       this.drawVram();
     }
 
-    if(this.zQueues != null) {
-      for(int z = this.zQueues.length - 1; z >= 0; z--) {
-        final List<GpuCommand> queue = this.zQueues[z];
-
-        for(int i = queue.size() - 1; i >= 0; i--) {
-          queue.get(i).render(this);
-        }
-
-        queue.clear();
-      }
+    for(int i = this.vramCopyQueue.size() - 1; i >= 0; i--) {
+      final GpuCommandCopyVramToVram copy = this.vramCopyQueue.get(i);
+      this.copyVramToVram(copy.sourceX, copy.sourceY, copy.destX, copy.destY, copy.width, copy.height);
     }
+
+    this.vramCopyQueue.clear();
+  }
+
+  public void useVramTexture() {
+    this.vramTexture15.use(1);
   }
 
   public void uploadData15(final Rect4i rect, final FileData data) {
@@ -289,19 +250,15 @@ public class Gpu {
     }
   }
 
-  public void queueCommand(final int z, final GpuCommand command) {
-    this.zQueues[z].add(command);
+  public void queueVramCopy(final GpuCommandCopyVramToVram command) {
+    this.vramCopyQueue.add(command);
   }
 
   /**
    * GP1(01h) - Reset Command Buffer
    */
   public void resetCommandBuffer() {
-    if(this.zQueues != null) {
-      for(int z = this.zQueues.length - 1; z >= 0; z--) {
-        this.zQueues[z].clear();
-      }
-    }
+    this.vramCopyQueue.clear();
   }
 
   public void drawingOffset(final int x, final int y) {
@@ -309,19 +266,12 @@ public class Gpu {
     this.offsetY = (short)y;
   }
 
-  public void updateOrderingTableSize(final int size) {
-    final List<GpuCommand>[] list = new ArrayList[size];
-    Arrays.setAll(list, key -> new ArrayList<>());
-
-    this.zMax = size;
-    this.zQueues = list;
-  }
-
   public void drawVram() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
     RENDERER.api().translucency(null);
 
-    this.identity.get(this.transforms2Buffer);
+    this.transforms.scaling(1024.0f, 512.0f, 1.0f);
+    this.transforms.get(this.transforms2Buffer);
     this.transforms2Uniform.set(this.transforms2Buffer);
 
     this.vramShader.use();

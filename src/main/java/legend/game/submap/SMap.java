@@ -5337,8 +5337,8 @@ public class SMap extends EngineState<SMap> {
     animateModel(model, 4 / vsyncMode_8007a3b8);
     this.renderSmapModel(model, null);
 
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288 + this._800f9ea0, 992, 288, 8, 64 - this._800f9ea0));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288, 992, 352 - this._800f9ea0, 8, this._800f9ea0));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(984, 288 + this._800f9ea0, 992, 288, 8, 64 - this._800f9ea0));
+    GPU.queueVramCopy(new GpuCommandCopyVramToVram(984, 288, 992, 352 - this._800f9ea0, 8, this._800f9ea0));
 
     this._800f9ea0 = this._800f9ea0 + 1 & 0x3f;
 
@@ -5752,7 +5752,7 @@ public class SMap extends EngineState<SMap> {
     if(loadMode == 0) {
       //LAB_800f4660
       this.loadMiscTextures(11);
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(992, 288, 984, 288, 8, 64)); // Copies the save point texture beside itself
+      GPU.queueVramCopy(new GpuCommandCopyVramToVram(992, 288, 984, 288, 8, 64)); // Copies the save point texture beside itself
       this.submapEffectsLoadMode_800f9ea8++;
       this.submapEffectsState_800f9eac = 1;
     } else if(loadMode == 1) {
