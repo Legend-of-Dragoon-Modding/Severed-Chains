@@ -619,10 +619,6 @@ public class WMap extends EngineState<WMap> {
           textZ_800bdf00 = (int)(textboxes_800be358[7].z_0c - 1);
           renderText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, UI_WHITE_SHADOWED);
         }
-
-        if(this.modelAndAnimData_800c66a8.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
-          this.handleMapTransitions();
-        }
       }
     }
   }
@@ -4888,6 +4884,7 @@ public class WMap extends EngineState<WMap> {
       this.handleTravelAlongPathSegment();
       this.checkAndInitPathSegmentChange();
       this.selectNewPathAtIntersection();
+      this.handleMapTransitions();
       this.updatePlayer();
     }
     //LAB_800e8a80
