@@ -7,12 +7,17 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class Shop extends RegistryEntry {
-  public final int shopType_00;
+//  public final int shopType_00;
   private final Supplier<InventoryEntry<?>>[] items_00;
 
+  @Deprecated // use version without shopType param
   @SafeVarargs
   public Shop(final int shopType, final Supplier<InventoryEntry<?>>... items) {
-    this.shopType_00 = shopType;
+    this(items);
+  }
+
+  @SafeVarargs
+  public Shop(final Supplier<InventoryEntry<?>>... items) {
     this.items_00 = Arrays.copyOf(items, items.length);
   }
 
