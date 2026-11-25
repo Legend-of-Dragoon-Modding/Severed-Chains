@@ -4715,6 +4715,8 @@ public class SMap extends EngineState<SMap> {
     this.screenOffsetLatch_800cbd38 = this.addLatch();
     this.geomOffsetLatch_800cbd3c = this.addLatch();
 
+    GTE.setTransforms(worldToScreenMatrix_800c3548);
+
     final Vector3f pos = new Vector3f();
     this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(cameraCollisionPrimitiveIndex, pos);
     this.setCameraPos(1, pos);
