@@ -150,15 +150,14 @@ public class GradientRaysEffect24 implements Effect<EffectManagerParams.VoidType
       this.managerTransforms.compose(worldToScreenMatrix_800c3548, this.tempTransforms);
       this.tempTransforms.rotationXYZ(manager.params_10.rot_10);
       this.instanceTransforms.compose(this.tempTransforms, this.finalTransforms);
-      GTE.setTransforms(this.finalTransforms);
     } else { // Transform to screenspace after performing instance transforms
       //LAB_8010ab10
       this.instanceTransforms.compose(this.managerTransforms, this.tempTransforms);
       this.tempTransforms.compose(worldToScreenMatrix_800c3548, this.finalTransforms);
-      GTE.setTransforms(this.finalTransforms);
     }
 
     //LAB_8010ab34
+    GTE.setTransforms(this.finalTransforms);
     final float z = RotTransPers4(this.vert0, this.vert1, this.vert2, this.vert3, this.sxy0, this.sxy1, this.sxy2, this.sxy3);
     if(z >= effect.projectionPlaneDistanceDiv4_20) {
       final float r, g, b;

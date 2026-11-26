@@ -8,10 +8,8 @@ import legend.game.scripting.ScriptState;
 
 import java.util.Arrays;
 
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
-import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Graphics.zOffset_1f8003e8;
 
 public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.VoidType> {
@@ -21,7 +19,6 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
   public final GoldDragoonTransformEffectInstance84[] parts_08;
 
   private final MV transforms = new MV();
-  private final MV w2sTransforms = new MV();
 
   public Obj rockObjster;
 
@@ -95,9 +92,6 @@ public class GoldDragoonTransformEffect20 implements Effect<EffectManagerParams.
         this.transforms.rotationXYZ(instance.rot_38);
         this.transforms.transfer.set(instance.trans_08).add(manager.params_10.trans_04);
         this.transforms.scale(manager.params_10.scale_16);
-
-        this.transforms.compose(worldToScreenMatrix_800c3548, this.w2sTransforms);
-        GTE.setTransforms(this.w2sTransforms);
 
         zOffset_1f8003e8 = 0;
         tmdGp0Tpage_1f8003ec = 2;

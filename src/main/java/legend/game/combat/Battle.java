@@ -195,7 +195,6 @@ import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GetTPage;
 import static legend.game.Graphics.GsGetLw;
-import static legend.game.Graphics.GsGetLws;
 import static legend.game.Graphics.GsInitCoordinate2;
 import static legend.game.Graphics.GsSetFlatLight;
 import static legend.game.Graphics.GsSetLightMatrix;
@@ -8019,14 +8018,13 @@ public class Battle extends EngineState<Battle> {
     zOffset_1f8003e8 = stage.z_5e8;
 
     //LAB_800ec5a0
+    final MV lw = new MV();
     int partBit = 0x1;
     for(int i = 0; i < stage.dobj2s_00.length; i++) {
       final ModelPart10 part = stage.dobj2s_00[i];
 
       if((partBit & stage.flags_5e4) == 0) {
-        final MV ls = new MV();
-        final MV lw = new MV();
-        GsGetLws(part.coord2_04, lw, ls);
+        GsGetLw(part.coord2_04, lw);
         GsSetLightMatrix(lw);
 
         RENDERER.queueModel(part.tmd_08.getObj(), lw, QueuedModelBattleTmd.class)

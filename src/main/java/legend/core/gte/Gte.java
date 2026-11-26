@@ -149,33 +149,13 @@ public class Gte {
   }
 
   public void getTransforms(final MV mv) {
-    this.getRotationMatrix(mv);
-    this.getTranslationVector(mv.transfer);
-  }
-
-  /** Control register 0-4 */
-  public void getRotationMatrix(final Matrix3f matrix) {
-    matrix.set(this.RT);
-  }
-
-  /** Control register 0-4 */
-  public void setRotationMatrix(final Matrix3f matrix) {
-    this.RT.set(matrix);
+    mv.set(this.RT);
+    mv.transfer.set(this.translation);
   }
 
   public void setTransforms(final MV mv) {
-    this.setRotationMatrix(mv);
-    this.setTranslationVector(mv.transfer);
-  }
-
-  /** Control register 5-7 */
-  public void getTranslationVector(final Vector3f vector) {
-    vector.set(this.translation);
-  }
-
-  /** Control register 5-7 */
-  public void setTranslationVector(final Vector3f vector) {
-    this.translation.set(vector);
+    this.RT.set(mv);
+    this.translation.set(mv.transfer);
   }
 
   /** Control register 8-12 light source/position matrix */

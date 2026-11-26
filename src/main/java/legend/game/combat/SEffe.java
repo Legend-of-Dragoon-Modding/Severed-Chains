@@ -259,17 +259,12 @@ public final class SEffe {
     final Vector3f sp0x10 = new Vector3f(translation1);
     sp0x10.mul(worldToScreenMatrix_800c3548);
 
-    GTE.setTransforms(worldToScreenMatrix_800c3548);
+    final MV rotationMatrix = new MV().rotationXYZ(rotation);
+    final MV transforms = new MV(worldToScreenMatrix_800c3548);
+    transforms.mul(rotationMatrix);
+    transforms.transfer.add(sp0x10);
 
-    final MV oldTransforms = new MV();
-    GTE.getTransforms(oldTransforms);
-
-    final MV sp0x58 = new MV();
-    sp0x58.rotationXYZ(rotation);
-    oldTransforms.mul(sp0x58);
-    oldTransforms.transfer.add(sp0x10);
-
-    GTE.setTransforms(oldTransforms);
+    GTE.setTransforms(transforms);
     GTE.perspectiveTransform(translation2);
 
     out.set(GTE.getScreenX(2), GTE.getScreenY(2));

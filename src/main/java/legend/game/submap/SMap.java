@@ -129,20 +129,14 @@ import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.fullScreenEffect_800bb140;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GetTPage;
-import static legend.game.Graphics.GsGetLs;
 import static legend.game.Graphics.GsGetLw;
-import static legend.game.Graphics.GsGetLws;
 import static legend.game.Graphics.GsInitCoordinate2;
 import static legend.game.Graphics.GsSetFlatLight;
-import static legend.game.Graphics.PopMatrix;
-import static legend.game.Graphics.PushMatrix;
-import static legend.game.Graphics.RotTransPers4;
 import static legend.game.Graphics.centreScreenX_1f8003dc;
 import static legend.game.Graphics.centreScreenY_1f8003de;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.orderingTableBits_1f8003c0;
-import static legend.game.Graphics.perspectiveTransform;
 import static legend.game.Graphics.resizeDisplay;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
@@ -1412,7 +1406,6 @@ public class SMap extends EngineState<SMap> {
       final Model124 playerModel = player.model_00;
 
       deltaMovement.set(deltaX, deltaY, deltaZ);
-      GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.checkCollision(player.sobjIndex_12e != 0, playerModel.coord2_14, worldspaceDeltaMovement, true);
@@ -1644,7 +1637,6 @@ public class SMap extends EngineState<SMap> {
       //LAB_800dee9c
       //LAB_800deea0
       deltaMovement.set(deltaX, deltaY, deltaZ);
-      GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
       this.collisionGeometry_800cbe08.checkCollision(sobj.sobjIndex_12e != 0, model.coord2_14, movement, true);
@@ -2025,7 +2017,6 @@ public class SMap extends EngineState<SMap> {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new camera Z position")
   @Method(0x800df6a4L)
   private FlowControl scriptSetCameraPos(final RunningScript<?> script) {
-    GTE.setTransforms(worldToScreenMatrix_800c3548);
     this.setCameraPos(3 - vsyncMode_8007a3b8, new Vector3f().set(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())); // Retail bugfix - these were all 0
 
     //LAB_800df744
@@ -2136,17 +2127,15 @@ public class SMap extends EngineState<SMap> {
   private FlowControl FUN_800df9a8(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
 
-    final MV ls = new MV();
-    GsGetLs(sobj.model_00.coord2_14, ls);
+    final Vector2f screenspace = new Vector2f();
 
-    GTE.setTransforms(ls);
-    GTE.perspectiveTransform(0, 0, 0);
-    script.params_20[1].set(Math.round(GTE.getScreenX(2) + 192));
-    script.params_20[2].set(Math.round(GTE.getScreenY(2) + 128));
+    Transformations.toScreenspace(0.0f, 0.0f, 0.0f, sobj.model_00.coord2_14, screenspace);
+    script.params_20[1].set(Math.round(screenspace.x + 192));
+    script.params_20[2].set(Math.round(screenspace.y + 128));
 
-    GTE.perspectiveTransform(0, -130, 0);
-    script.params_20[3].set(Math.round(GTE.getScreenX(2) + 192));
-    script.params_20[4].set(Math.round(GTE.getScreenY(2) + 128));
+    Transformations.toScreenspace(0.0f, -130.0f, 0.0f, sobj.model_00.coord2_14, screenspace);
+    script.params_20[3].set(Math.round(screenspace.x + 192));
+    script.params_20[4].set(Math.round(screenspace.y + 128));
     return FlowControl.CONTINUE;
   }
 
@@ -2960,7 +2949,6 @@ public class SMap extends EngineState<SMap> {
     final Model124 model = sobj.model_00;
 
     if(sobj.cameraAttached_178) {
-      GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.setCameraPos(1, model.coord2_14.coord.transfer);
     }
 
@@ -3069,8 +3057,6 @@ public class SMap extends EngineState<SMap> {
   private void renderCollisionDebug(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
-    GTE.setTransforms(worldToScreenMatrix_800c3548);
-
     final Vector2f v0 = new Vector2f();
     final Vector2f v1 = new Vector2f();
 
@@ -3090,8 +3076,8 @@ public class SMap extends EngineState<SMap> {
     }
 
     if(sobj.movementType_170 != 0) {
-      this.transformVertex(v0, sobj.model_00.coord2_14.coord.transfer);
-      this.transformVertex(v1, sobj.movementDestination_138);
+      Transformations.toScreenspace(sobj.model_00.coord2_14.coord.transfer, worldToScreenMatrix_800c3548, v0);
+      Transformations.toScreenspace(sobj.movementDestination_138, worldToScreenMatrix_800c3548, v1);
       this.queueMovementLinePacket(v0, v1, 0.5f, 0.0f, 0.5f);
     }
   }
@@ -3108,8 +3094,8 @@ public class SMap extends EngineState<SMap> {
     }
 
     final Vector3f coord = new Vector3f().set(model.coord2_14.coord.transfer).add(reachX, 0.0f, reachZ);
-    this.transformVertex(v0, coord.sub(size / 2.0f, 0.0f, size / 2.0f));
-    this.transformVertex(v1, coord.add(size, 0.0f, size));
+    Transformations.toScreenspace(coord.sub(size / 2.0f, 0.0f, size / 2.0f), worldToScreenMatrix_800c3548, v0);
+    Transformations.toScreenspace(coord.add(size, 0.0f, size), worldToScreenMatrix_800c3548, v1);
   }
 
   private void queueCollisionRectPacket(final Vector2f v0, final Vector2f v1, final float r, final float g, final float b) {
@@ -3381,7 +3367,6 @@ public class SMap extends EngineState<SMap> {
       if((sobj.flags_190 & 0x1) != 0) { // Is player
         final Vector3f sp0x18 = new Vector3f();
         sp0x18.set(sobj.movementStep_148).mul(2.0f / vsyncMode_8007a3b8);
-        GTE.setTransforms(worldToScreenMatrix_800c3548);
         this.transformToWorldspace(movement, sp0x18);
       } else {
         //LAB_800e2134
@@ -3469,24 +3454,21 @@ public class SMap extends EngineState<SMap> {
 
   @Method(0x800e2428L)
   private void cacheSobjScreenBounds(final int sobjIndex) {
-    final MV ls = new MV();
+    final SubmapObject210 sobj = SCRIPTS.getObject(sobjIndex, SubmapObject210.class);
 
-    final SubmapCaches80 caches = this.caches_800c68e8;
+    final Vector2f screenspace = new Vector2f();
 
-    GsGetLs(SCRIPTS.getObject(sobjIndex, SubmapObject210.class).model_00.coord2_14, ls);
-    GTE.setTransforms(ls);
+    Transformations.toScreenspace(0.0f, 0.0f, 0.0f, sobj.model_00.coord2_14, screenspace);
+    this.caches_800c68e8.bottomMiddle_70.set(screenspace.x + 192, screenspace.y + 128);
 
-    GTE.perspectiveTransform(0, 0, 0);
-    caches.bottomMiddle_70.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
+    Transformations.toScreenspace(0.0f, -130.0f, 0.0f, sobj.model_00.coord2_14, screenspace);
+    this.caches_800c68e8.topMiddle_78.set(screenspace.x + 192, screenspace.y + 128);
 
-    GTE.perspectiveTransform(0, -130, 0);
-    caches.topMiddle_78.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
+    Transformations.toScreenspace(-20.0f, 0.0f, 0.0f, sobj.model_00.coord2_14, screenspace);
+    this.caches_800c68e8.bottomLeft_68.set(screenspace.x + 192, screenspace.y + 128);
 
-    GTE.perspectiveTransform(-20, 0, 0);
-    caches.bottomLeft_68.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
-
-    GTE.perspectiveTransform(20, 0, 0);
-    caches.bottomRight_60.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
+    Transformations.toScreenspace(20.0f, 0.0f, 0.0f, sobj.model_00.coord2_14, screenspace);
+    this.caches_800c68e8.bottomRight_60.set(screenspace.x + 192, screenspace.y + 128);
   }
 
   @Method(0x800e3df4L)
@@ -3639,14 +3621,15 @@ public class SMap extends EngineState<SMap> {
    */
   @Method(0x800e4774L)
   private void renderAlertIndicator(final Model124 parent, final int y) {
-    final MV ls = new MV();
-    GsGetLs(parent.coord2_14, ls);
-    GTE.setTransforms(ls);
-    GTE.perspectiveTransform(0, y - 64, 0);
-    final float sx = GTE.getScreenX(2);
-    final float sy = GTE.getScreenY(2);
+    final Vector2f screenspace = new Vector2f();
+    Transformations.toScreenspace(0.0f, y - 64.0f, 0.0f, parent.coord2_14, screenspace);
 
-    this.mapIndicator.renderAlertIndicator(GPU.getOffsetX() + this.alertIndicatorMetrics_800f64b0.x0_00 + sx, GPU.getOffsetY() + this.alertIndicatorMetrics_800f64b0.y0_04 + sy, 37, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c);
+    this.mapIndicator.renderAlertIndicator(
+      GPU.getOffsetX() + this.alertIndicatorMetrics_800f64b0.x0_00 + screenspace.x,
+      GPU.getOffsetY() + this.alertIndicatorMetrics_800f64b0.y0_04 + screenspace.y,
+      37,
+      this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c
+    );
   }
 
   @Method(0x800e49f0L)
@@ -3843,9 +3826,7 @@ public class SMap extends EngineState<SMap> {
       final Vector3f middle = new Vector3f();
 
       final MV lw = new MV();
-      final MV ls = new MV();
-      GsGetLws(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw, ls);
-      GTE.setTransforms(ls);
+      GsGetLw(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw);
 
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
@@ -3854,7 +3835,7 @@ public class SMap extends EngineState<SMap> {
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
-          ;
+        ;
 
         if(!primitiveInfo.flatEnoughToWalkOn_01) {
           model.colour(0.5f, 0.0f, 0.0f);
@@ -3893,7 +3874,7 @@ public class SMap extends EngineState<SMap> {
         this.submap.applyCollisionDebugColour(i, model);
 
         this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
-        this.transformVertex(transformed, middle);
+        Transformations.toScreenspace(middle, worldToScreenMatrix_800c3548, transformed);
         final String text = Integer.toString(i);
         renderText(text, transformed.x + centreScreenX_1f8003dc - DEFAULT_FONT.textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, SItem.UI_WHITE_SMALL);
       }
@@ -3905,7 +3886,8 @@ public class SMap extends EngineState<SMap> {
           .colour(1.0f, 0.0f, 0.0f)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
-          .depthOffset(-1.0f);
+          .depthOffset(-1.0f)
+        ;
       }
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
@@ -4669,12 +4651,6 @@ public class SMap extends EngineState<SMap> {
     }
   }
 
-  @Method(0x800e7f00L)
-  private void transformVertex(final Vector2f out, final Vector3f v0) {
-    GTE.perspectiveTransform(v0);
-    out.set(GTE.getScreenX(2), GTE.getScreenY(2));
-  }
-
   @ScriptDescription("Sets collision metrics for a submap object (collision type unknown)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalSize", description = "The horizontal collision size")
@@ -4702,7 +4678,7 @@ public class SMap extends EngineState<SMap> {
   @Method(0x800e8104L)
   private void setCameraPos(final int latchTicks, final Vector3f cameraPos) {
     this.offset.set(this.screenOffsetDest);
-    this.transformVertex(this.transformed, cameraPos);
+    Transformations.toScreenspace(cameraPos, this.transformed);
     this.submap.calcGoodScreenOffset(this.transformed.x, this.transformed.y, this.offset);
 
     //LAB_800e8164
@@ -4714,8 +4690,6 @@ public class SMap extends EngineState<SMap> {
   private void initCamera(final int cameraCollisionPrimitiveIndex) {
     this.screenOffsetLatch_800cbd38 = this.addLatch();
     this.geomOffsetLatch_800cbd3c = this.addLatch();
-
-    GTE.setTransforms(worldToScreenMatrix_800c3548);
 
     final Vector3f pos = new Vector3f();
     this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(cameraCollisionPrimitiveIndex, pos);
@@ -4890,21 +4864,18 @@ public class SMap extends EngineState<SMap> {
     coord2.coord.transfer.set(script.params_20[1].getFloat(), script.params_20[2].getFloat(), script.params_20[3].getFloat());
     this.savePointPos_800d5622.set(coord2.coord.transfer);
 
-    final MV screenMatrix = new MV();
-    GsGetLs(coord2, screenMatrix);
-    PushMatrix();
-
-    GTE.setTransforms(screenMatrix);
-
     //LAB_800f195c
     for(int s3 = 0; s3 < 2; s3++) {
       final SavePointRenderData44 struct = this.savePoint_800d5598[s3];
 
-      struct.z_40 = RotTransPers4(this.savePointV0_800d6c28, this.savePointV1_800d6c30, this.savePointV2_800d6c38, this.savePointV3_800d6c40, struct.vert0_00, struct.vert1_08, struct.vert2_10, struct.vert3_18);
+      Transformations.toScreenspace(this.savePointV0_800d6c28, coord2, struct.vert0_00);
+      Transformations.toScreenspace(this.savePointV1_800d6c30, coord2, struct.vert1_08);
+      Transformations.toScreenspace(this.savePointV2_800d6c38, coord2, struct.vert2_10);
+      struct.z_40 = Transformations.toScreenspace(this.savePointV3_800d6c40, coord2, struct.vert3_18);
 
       if(s3 == 0) {
-        perspectiveTransform(this._800d6c48, sp0x48);
-        perspectiveTransform(this._800d6c50, sp0x50);
+        Transformations.toScreenspace(this._800d6c48, coord2, sp0x48);
+        Transformations.toScreenspace(this._800d6c50, coord2, sp0x50);
 
         sp0x48.x = sp0x50.y - sp0x48.y;
       }
@@ -4941,8 +4912,6 @@ public class SMap extends EngineState<SMap> {
         .uvSize(31, 31)
         .uv(160, 64);
     }
-
-    PopMatrix();
 
     builder
       .add()
@@ -5453,7 +5422,7 @@ public class SMap extends EngineState<SMap> {
     }
   }
 
-  private final MV indicatorLs = new MV();
+  private final Vector2f triangleIndicatorScreenspace = new Vector2f();
 
   @Method(0x800f31bcL)
   private void handleTriangleIndicators() {
@@ -5486,22 +5455,15 @@ public class SMap extends EngineState<SMap> {
       return;
     }
 
-    GsGetLs(this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, this.indicatorLs);
+    Transformations.toScreenspace(this.bottom_800d6cb8, this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, this.triangleIndicatorScreenspace);
+    final float bottomY = this.triangleIndicatorScreenspace.y;
 
-    PushMatrix();
-    GTE.setTransforms(this.indicatorLs);
+    Transformations.toScreenspace(this.top_800d6cc0, this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, this.triangleIndicatorScreenspace);
+    final float topY = this.triangleIndicatorScreenspace.y;
 
-    GTE.perspectiveTransform(this.bottom_800d6cb8);
-    final float bottomY = GTE.getScreenY(2);
-
-    GTE.perspectiveTransform(this.top_800d6cc0);
-    final float topY = GTE.getScreenY(2);
-
-    GTE.perspectiveTransform(0, -(topY - bottomY) - 48, 0);
-    this.triangleIndicators_800c69fc.playerX_08 = GTE.getScreenX(2);
-    this.triangleIndicators_800c69fc.playerY_0c = GTE.getScreenY(2);
-
-    PopMatrix();
+    Transformations.toScreenspace(0, -(topY - bottomY) - 48, 0, this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, this.triangleIndicatorScreenspace);
+    this.triangleIndicators_800c69fc.playerX_08 = this.triangleIndicatorScreenspace.x;
+    this.triangleIndicators_800c69fc.playerY_0c = this.triangleIndicatorScreenspace.y;
 
     if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
       if(this.momentaryIndicatorTicks_800f9e9c < 33 * (2 / vsyncMode_8007a3b8)) {

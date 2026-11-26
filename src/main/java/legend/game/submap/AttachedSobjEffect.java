@@ -1,14 +1,15 @@
 package legend.game.submap;
 
-import legend.core.renderer.BufferUsage;
-import legend.core.renderer.QueuedModelStandard;
-import legend.core.renderer.QueuedModelTmd;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.renderer.BufferUsage;
 import legend.core.renderer.Obj;
 import legend.core.renderer.PolyBuilder;
 import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.QueuedModelTmd;
 import legend.core.renderer.Translucency;
 import legend.core.renderer.VertexOrder;
 import legend.game.PoolList;
@@ -27,11 +28,7 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Graphics.GetTPage;
-import static legend.game.Graphics.GsGetLs;
 import static legend.game.Graphics.GsGetLw;
-import static legend.game.Graphics.PopMatrix;
-import static legend.game.Graphics.PushMatrix;
-import static legend.game.Graphics.RotTransPers4;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
@@ -229,14 +226,10 @@ public class AttachedSobjEffect {
           inst.tick_04 = 0;
           inst.maxTicks_06 = data.maxTicks_38;
 
-          GsGetLs(model.coord2_14, inst.transforms);
-          GTE.setTransforms(inst.transforms);
-
-          final Vector3f vert0 = new Vector3f(-data.size_28, 0.0f, -data.size_28);
-          final Vector3f vert1 = new Vector3f( data.size_28, 0.0f, -data.size_28);
-          final Vector3f vert2 = new Vector3f(-data.size_28, 0.0f,  data.size_28);
-          final Vector3f vert3 = new Vector3f( data.size_28, 0.0f,  data.size_28);
-          inst.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
+          Transformations.toScreenspace(-data.size_28, 0.0f, -data.size_28, model.coord2_14, inst.sxy0_20);
+          Transformations.toScreenspace( data.size_28, 0.0f, -data.size_28, model.coord2_14, inst.sxy1_28);
+          Transformations.toScreenspace(-data.size_28, 0.0f,  data.size_28, model.coord2_14, inst.sxy2_30);
+          inst.z_4c = Transformations.toScreenspace( data.size_28, 0.0f,  data.size_28, model.coord2_14, inst.sxy3_38);
 
           if(inst.z_4c < 41) {
             inst.z_4c = 41;
@@ -268,6 +261,8 @@ public class AttachedSobjEffect {
     data.tick_00++;
   }
 
+  private final Vector2f lawPodScreenspace = new Vector2f();
+
   @Method(0x800f0644L)
   private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data, final float screenOffsetX, final float screenOffsetY) {
     if((data.tick_00 % (3 - vsyncMode_8007a3b8)) == 0) {
@@ -277,21 +272,15 @@ public class AttachedSobjEffect {
         final LawPodTrailSegment34 segment = this.lawPodTrail_800d4f90.get();
         TrailSegmentVertices14 newVerts = segment.endpointVerts23_28;
 
-        final MV transforms = new MV();
-        GsGetLs(model.coord2_14, transforms);
+        final float z0 = Transformations.toScreenspace(-trailData.width_08, 0.0f, 0.0f, model.coord2_14, this.lawPodScreenspace);
+        newVerts.vert0_00.x = this.lawPodScreenspace.x;
+        newVerts.vert0_00.y = this.lawPodScreenspace.y;
+        segment.z_20 = z0;
 
-        PushMatrix();
-        GTE.setTransforms(transforms);
-        GTE.perspectiveTransform(-trailData.width_08, 0.0f, 0.0f);
-        newVerts.vert0_00.x = GTE.getScreenX(2);
-        newVerts.vert0_00.y = GTE.getScreenY(2);
-        segment.z_20 = GTE.getScreenZ(3);
-
-        GTE.perspectiveTransform(trailData.width_08, 0.0f, 0.0f);
-        newVerts.vert1_08.x = GTE.getScreenX(2);
-        newVerts.vert1_08.y = GTE.getScreenY(2);
-        segment.z_20 = GTE.getScreenZ(3);
-        PopMatrix();
+        final float z1 = Transformations.toScreenspace(trailData.width_08, 0.0f, 0.0f, model.coord2_14, this.lawPodScreenspace);
+        newVerts.vert1_08.x = this.lawPodScreenspace.x;
+        newVerts.vert1_08.y = this.lawPodScreenspace.y;
+        segment.z_20 = z1;
 
         segment.tick_00 = 0;
         segment.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(trailData.translucency_0c), 972, 320);
@@ -366,7 +355,7 @@ public class AttachedSobjEffect {
 
         RENDERER.queueModel(this.tmdDust, inst.transforms, QueuedModelTmd.class)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-          .depthOffset(this.tmdDustModel_800d4d40.zOffset_a0)
+          .depthOffset(this.tmdDustModel_800d4d40.zOffset_a0 * 4)
           .usePs1Depth(this.tmdDustModel_800d4d40.usePs1Depth)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)

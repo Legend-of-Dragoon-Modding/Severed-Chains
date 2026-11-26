@@ -394,7 +394,8 @@ public class LmbAnimationEffect5c implements Effect<EffectManagerParams.AnimType
     this.transforms.compose(managerTransforms, this.transforms);
     final float scale = manager.params_10.scale_28 / (float)0x1000;
     this.transforms.scaleLocal(scale, scale, scale);
-    manager.params_10.scale_16.mul(scale);}
+    manager.params_10.scale_16.mul(scale);
+  }
 
   @Method(0x801168e8L)
   private void processLmbType0(final EffectManagerData6c<EffectManagerParams.AnimType> manager, final int tickFip12, final MV managerTransforms) {

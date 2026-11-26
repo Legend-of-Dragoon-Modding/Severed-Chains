@@ -12,11 +12,9 @@ import org.joml.Vector3f;
 
 import java.util.Arrays;
 
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Graphics.GsSetLightMatrix;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
-import static legend.game.Graphics.worldToScreenMatrix_800c3548;
 import static legend.game.Graphics.zMax_1f8003cc;
 import static legend.game.Graphics.zMin;
 import static legend.game.Graphics.zOffset_1f8003e8;
@@ -30,7 +28,6 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
   public final StarChildrenImpactEffectInstancea8[] impactArray_08;
 
   private final MV modelTransforms = new MV();
-  private final MV w2sModelTransforms = new MV();
   private final Vector3f scale = new Vector3f();
   private final MV lightingTransforms = new MV();
 
@@ -143,8 +140,6 @@ public class StarChildrenImpactEffect20 implements Effect<EffectManagerParams.Vo
           this.modelTransforms.transfer.set(impact.translation_0c[stageNum]).add(manager.params_10.trans_04);
           this.scale.set(scaleX, scaleY, scaleZ);
           this.modelTransforms.scale(this.scale);
-          this.modelTransforms.compose(worldToScreenMatrix_800c3548, this.w2sModelTransforms);
-          GTE.setTransforms(this.w2sModelTransforms);
           zOffset_1f8003e8 = 0;
           tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
 

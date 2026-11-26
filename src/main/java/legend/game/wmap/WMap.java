@@ -3,6 +3,7 @@ package legend.game.wmap;
 import de.jcm.discordgamesdk.activity.Activity;
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -92,7 +93,6 @@ import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.startFadeEffect;
 import static legend.game.Graphics.GsGetLs;
 import static legend.game.Graphics.GsGetLw;
-import static legend.game.Graphics.GsGetLws;
 import static legend.game.Graphics.GsInitCoordinate2;
 import static legend.game.Graphics.GsSetFlatLight;
 import static legend.game.Graphics.GsSetRefView2L;
@@ -103,7 +103,6 @@ import static legend.game.Graphics.clearRed_8007a3a8;
 import static legend.game.Graphics.lightColourMatrix_800c3508;
 import static legend.game.Graphics.lightDirectionMatrix_800c34e8;
 import static legend.game.Graphics.orderingTableSize_1f8003c8;
-import static legend.game.Graphics.perspectiveTransform;
 import static legend.game.Graphics.resizeDisplay;
 import static legend.game.Graphics.setProjectionPlaneDistance;
 import static legend.game.Graphics.tmdGp0Tpage_1f8003ec;
@@ -1474,13 +1473,9 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800d41f8
-    final MV wmapRotation = new MV();
-    this.rotateCoord2(modelAndAnimData.tmdRendering_08.rotations_08[0], modelAndAnimData.tmdRendering_08.coord2s_04[0]);
-    GsGetLs(modelAndAnimData.tmdRendering_08.coord2s_04[0], wmapRotation);
-    GTE.setTransforms(wmapRotation);
-
     final Vector2f playerArrowXy = new Vector2f(); // sxy2
-    perspectiveTransform(modelAndAnimData.coord2_34.coord.transfer, playerArrowXy);
+    this.rotateCoord2(modelAndAnimData.tmdRendering_08.rotations_08[0], modelAndAnimData.tmdRendering_08.coord2s_04[0]);
+    Transformations.toScreenspace(modelAndAnimData.coord2_34.coord.transfer, modelAndAnimData.tmdRendering_08.coord2s_04[0], playerArrowXy);
 
     // Player arrow on map
     final int u = (int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x7;
@@ -1966,7 +1961,6 @@ public class WMap extends EngineState<WMap> {
 
   private final boolean[] pathSegmentsRendered = new boolean[0xff];
   private final MV pathLw = new MV();
-  private final MV pathLs = new MV();
 
   @Method(0x800d7a34L)
   private void renderPath() {
@@ -2004,8 +1998,7 @@ public class WMap extends EngineState<WMap> {
 
     this.rotateCoord2(this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[0], this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0]);
 
-    GsGetLws(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], this.pathLw, this.pathLs);
-    GTE.setTransforms(this.pathLs);
+    GsGetLw(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], this.pathLw);
 
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {

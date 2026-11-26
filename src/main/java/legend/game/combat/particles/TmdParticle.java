@@ -120,7 +120,6 @@ public class TmdParticle extends ParticleEffectData98 {
       }
 
       //LAB_800fcff8
-      GTE.setTransforms(this.gteTransforms);
       zOffset_1f8003e8 = 0;
       if((manager.params_10.flags_00 & 0x4000_0000) != 0) {
         tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
