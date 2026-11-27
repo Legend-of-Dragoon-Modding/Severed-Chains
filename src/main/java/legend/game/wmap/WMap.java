@@ -91,12 +91,10 @@ import static legend.game.EngineStates.engineStateOnceLoaded_8004dd24;
 import static legend.game.EngineStates.lastSavableEngineState;
 import static legend.game.EngineStates.previousEngineState_8004dd28;
 import static legend.game.FullScreenEffects.startFadeEffect;
-import static legend.game.Graphics.GsGetLs;
 import static legend.game.Graphics.GsGetLw;
 import static legend.game.Graphics.GsInitCoordinate2;
 import static legend.game.Graphics.GsSetFlatLight;
 import static legend.game.Graphics.GsSetRefView2L;
-import static legend.game.Graphics.RotTransPers4;
 import static legend.game.Graphics.clearBlue_800babc0;
 import static legend.game.Graphics.clearGreen_800bb104;
 import static legend.game.Graphics.clearRed_8007a3a8;
@@ -3370,6 +3368,11 @@ public class WMap extends EngineState<WMap> {
     final Vector3f vertex2 = new Vector3f();
     final Vector3f vertex3 = new Vector3f();
 
+    final Vector2f sxy0 = new Vector2f();
+    final Vector2f sxy1 = new Vector2f();
+    final Vector2f sxy2 = new Vector2f();
+    final Vector2f sxy3 = new Vector2f();
+
     final FloatRef deltaScaleFactor = new FloatRef();
     final FloatRef colourScaleFactor = new FloatRef();
 
@@ -3389,9 +3392,9 @@ public class WMap extends EngineState<WMap> {
     }
 
     this.updateQueenFuryWakePositionAndSpread(wakeSpread, modelAndAnimData.currPlayerPos_94);
-    this.rotateCoord2(modelAndAnimData.tmdRendering_08.rotations_08[0], modelAndAnimData.tmdRendering_08.coord2s_04[0]);
-    GsGetLs(modelAndAnimData.tmdRendering_08.coord2s_04[0], transforms);
-    GTE.setTransforms(transforms);
+
+    final GsCOORDINATE2 coord2 = modelAndAnimData.tmdRendering_08.coord2s_04[0];
+    this.rotateCoord2(modelAndAnimData.tmdRendering_08.rotations_08[0], coord2);
 
     final PolyBuilder builder = new PolyBuilder("Queen Fury wake", VertexOrder.TRIANGLES)
       .bufferUsage(BufferUsage.STREAMING)
@@ -3427,34 +3430,32 @@ public class WMap extends EngineState<WMap> {
       final float g3 = baseColour / 8.0f;
       final float b3 = baseColour * 96 / 255.0f;
 
-      final Vector2f sxyz0 = new Vector2f();
-      final Vector2f sxyz1 = new Vector2f();
-      final Vector2f sxyz2 = new Vector2f();
-      final Vector2f sxyz3 = new Vector2f();
-
-      float z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
+      Transformations.toScreenspace(vertex0, coord2, sxy0);
+      Transformations.toScreenspace(vertex1, coord2, sxy1);
+      Transformations.toScreenspace(vertex2, coord2, sxy2);
+      float z = Transformations.toScreenspace(vertex3, coord2, sxy3);
 
       // ship starboard wake
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
-          .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
+          .addVertex(sxy0.x, sxy0.y, z)
           .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
           .vramPos(448, 0)
           .uv(0, 0)
           .rgb(r0, g0, b0)
-          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .addVertex(sxy1.x, sxy1.y, z)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .addVertex(sxy2.x, sxy2.y, z)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .addVertex(sxy1.x, sxy1.y, z)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .addVertex(sxy2.x, sxy2.y, z)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
+          .addVertex(sxy3.x, sxy3.y, z)
           .uv(64, 64)
           .rgb(r3, g3, b3);
       }
@@ -3462,27 +3463,31 @@ public class WMap extends EngineState<WMap> {
       //LAB_800e2440
       vertex0.set(pos0).sub(spread0);
       vertex2.set(pos1).sub(spread1);
-      z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
+
+      Transformations.toScreenspace(vertex0, coord2, sxy0);
+      Transformations.toScreenspace(vertex1, coord2, sxy1);
+      Transformations.toScreenspace(vertex2, coord2, sxy2);
+      z = Transformations.toScreenspace(vertex3, coord2, sxy3);
 
       // ship port wake
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
-          .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
+          .addVertex(sxy0.x, sxy0.y, z)
           .uv(0, 0)
           .rgb(r0, g0, b0)
-          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .addVertex(sxy1.x, sxy1.y, z)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .addVertex(sxy2.x, sxy2.y, z)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
+          .addVertex(sxy1.x, sxy1.y, z)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
+          .addVertex(sxy2.x, sxy2.y, z)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
+          .addVertex(sxy3.x, sxy3.y, z)
           .uv(64, 64)
           .rgb(r3, g3, b3);
       }
@@ -3491,7 +3496,6 @@ public class WMap extends EngineState<WMap> {
     final Obj obj = builder.build();
     obj.delete();
 
-    transforms.identity();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 400.0f);
     RENDERER.queueOrthoModel(obj, transforms, QueuedModelStandard.class);
 
@@ -4455,25 +4459,20 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800e6c00
-    this.rotateCoord2(this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[0], this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0]);
+    final GsCOORDINATE2 coord2 = this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0];
+    this.rotateCoord2(this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[0], coord2);
 
     final List<WmapLocationLabelMetrics0c> labelList = new ArrayList<>();
 
     //LAB_800e6c38
-    final MV transforms = new MV();
+    final Vector2f screenspace = new Vector2f();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
       if(places_800f0234[locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 != null) {
         //LAB_800e6ccc
-        GsGetLs(this.modelAndAnimData_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
-        GTE.setTransforms(transforms);
-
-        GTE.perspectiveTransform(placePositionVectors_800c74b8[i]);
-        final float sx = GTE.getScreenX(2);
-        final float sy = GTE.getScreenY(2);
-        final float z = GTE.getScreenZ(3) / 4.0f;
-        final float x = sx + 160;
-        final float y = sy + 104;
+        final float z = Transformations.toScreenspace(placePositionVectors_800c74b8[i], coord2, screenspace) / 4.0f;
+        final float x = screenspace.x + 160;
+        final float y = screenspace.y + 104;
 
         //LAB_800e6e24
         if(x >= -32 && x < 353) {
@@ -4485,7 +4484,7 @@ public class WMap extends EngineState<WMap> {
               final WmapLocationLabelMetrics0c label = new WmapLocationLabelMetrics0c();
               label.z_00 = z;
               label.locationIndex_04 = placeIndices_800c84c8[i];
-              label.xy_08.set(sx, sy);
+              label.xy_08.set(screenspace);
               labelList.add(label);
             }
           }
@@ -5596,8 +5595,6 @@ public class WMap extends EngineState<WMap> {
       final WmapSmokeInstance60 smoke = this.smokeInstances_800c86f8[i];
 
       //LAB_800eb9d4
-      GsInitCoordinate2(null, smoke.coord2_00);
-
       //LAB_800eba0c
       //LAB_800ebaa0
       smoke.translationOffset_54.x =  rand() % 8 - 4;
@@ -5634,8 +5631,6 @@ public class WMap extends EngineState<WMap> {
       modelAndAnimData.atmosphericEffectInstances_24[i] = cloud;
 
       //LAB_800ebbd0
-      GsInitCoordinate2(null, cloud.coord2_00);
-
       if((i & 0x1) == 0) {
         translation.set(
           700 - rand() % 1400,
@@ -5643,10 +5638,10 @@ public class WMap extends EngineState<WMap> {
           700 - rand() % 1400
         );
 
-        cloud.coord2_00.coord.transfer.set(translation);
+        cloud.pos_00.transfer.set(translation);
       } else {
         //LAB_800ebd18
-        cloud.coord2_00.coord.transfer.set(translation).sub(
+        cloud.pos_00.transfer.set(translation).sub(
           rand() % 200 - 100,
           rand() %  80 -  40,
           rand() %  50 -  25
@@ -5665,15 +5660,14 @@ public class WMap extends EngineState<WMap> {
       final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
       modelAndAnimData.atmosphericEffectInstances_24[i + 12] = cloud;
       cloud.set(modelAndAnimData.atmosphericEffectInstances_24[i]);
-      cloud.coord2_00.coord.transfer.y = 0.0f;
+      cloud.pos_00.transfer.y = 0.0f;
     }
   }
 
   @Method(0x800ebfc0L)
   private void renderClouds() {
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    final WMapAtmosphericEffectInstance60 cloud0 = modelAndAnimData.atmosphericEffectInstances_24[0];
-    cloud0.coord2_00.flg = 0;
+    final Vector2f screenspace = new Vector2f();
 
     //LAB_800ec028
     for(int i = 0; i < 24; i++) {
@@ -5682,13 +5676,13 @@ public class WMap extends EngineState<WMap> {
       //LAB_800ec044
       cloud.translation_58.z += 1.0f / (3.0f / vsyncMode_8007a3b8);
       if((int)cloud.translation_58.z >> i % 3 + 4 != 0) {
-        cloud.coord2_00.coord.transfer.x += 1.0f / (3.0f / vsyncMode_8007a3b8);
+        cloud.pos_00.transfer.x += 1.0f / (3.0f / vsyncMode_8007a3b8);
         cloud.translation_58.z = 0.0f;
       }
 
       //LAB_800ec288
-      if(cloud.coord2_00.coord.transfer.x > 700) {
-        cloud.coord2_00.coord.transfer.x = -700;
+      if(cloud.pos_00.transfer.x > 700) {
+        cloud.pos_00.transfer.x = -700;
       }
 
       //LAB_800ec2b0
@@ -5719,27 +5713,21 @@ public class WMap extends EngineState<WMap> {
       //LAB_800ec3a8
       if(!flEq(cloud.brightness_5c, 0.0f)) {
         //LAB_800ec3c8
-        GsGetLs(cloud.coord2_00, cloud.transforms);
-        cloud.transforms.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(cloud.transforms);
-        GTE.perspectiveTransform(-cloud.translation_58.x, -cloud.translation_58.y, 0.0f);
-        final float sx0 = GTE.getScreenX(2);
-        final float sy0 = GTE.getScreenY(2);
-        float z = GTE.getScreenZ(3) / 4.0f;
+        float z = Transformations.toScreenspace(-cloud.translation_58.x, -cloud.translation_58.y, 0.0f, cloud.pos_00, screenspace) / 4.0f;
+        final float sx0 = screenspace.x;
+        final float sy0 = screenspace.y;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8 - 3) {
           //LAB_800ec534
-          GTE.perspectiveTransform(cloud.translation_58.x, -cloud.translation_58.y, 0.0f);
-          final float sx1 = GTE.getScreenX(2);
-          final float sy1 = GTE.getScreenY(2);
-          z = GTE.getScreenZ(3) / 4.0f;
+          z = Transformations.toScreenspace(cloud.translation_58.x, -cloud.translation_58.y, 0.0f, cloud.pos_00, screenspace) / 4.0f;
+          final float sx1 = screenspace.x;
+          final float sy1 = screenspace.y;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
             //LAB_800ec5ec
-            GTE.perspectiveTransform(-cloud.translation_58.x, cloud.translation_58.y, 0.0f);
-            final float sx2 = GTE.getScreenX(2);
-            final float sy2 = GTE.getScreenY(2);
-            z = GTE.getScreenZ(3) / 4.0f;
+            z = Transformations.toScreenspace(-cloud.translation_58.x, cloud.translation_58.y, 0.0f, cloud.pos_00, screenspace) / 4.0f;
+            final float sx2 = screenspace.x;
+            final float sy2 = screenspace.y;
 
             if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sy2 - sy0 <= 0x200) {
               //LAB_800ec670
@@ -5771,9 +5759,9 @@ public class WMap extends EngineState<WMap> {
               if(!flEq(cloud.brightness_5c, 0.0f)) {
                 //LAB_800ec7b8
                 GTE.perspectiveTransform(cloud.translation_58.x, cloud.translation_58.y, 0.0f);
-                final float sx3 = GTE.getScreenX(2);
-                final float sy3 = GTE.getScreenY(2);
-                z = GTE.getScreenZ(3) / 4.0f;
+                z = Transformations.toScreenspace(cloud.translation_58.x, cloud.translation_58.y, 0.0f, cloud.pos_00, screenspace) / 4.0f;
+                final float sx3 = screenspace.x;
+                final float sy3 = screenspace.y;
 
                 if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
                   //LAB_800ec83c
@@ -5807,10 +5795,9 @@ public class WMap extends EngineState<WMap> {
       modelAndAnimData.atmosphericEffectInstances_24[i] = snowflake;
 
       //LAB_800ecab0
-      GsInitCoordinate2(null, snowflake.coord2_00);
-      snowflake.coord2_00.coord.transfer.x = 500 - rand() % 1000;
-      snowflake.coord2_00.coord.transfer.y =     - rand() %  200;
-      snowflake.coord2_00.coord.transfer.z = 500 - rand() % 1000;
+      snowflake.pos_00.transfer.x = 500 - rand() % 1000;
+      snowflake.pos_00.transfer.y =     - rand() %  200;
+      snowflake.pos_00.transfer.z = 500 - rand() % 1000;
       snowflake.snowTick_50 = rand() % 12;
       snowflake.translation_58.set(rand() % 2 - 1, rand() % 2 + 1, rand() % 2 - 1);
       snowflake.brightness_5c = 0.0f;
@@ -5820,6 +5807,8 @@ public class WMap extends EngineState<WMap> {
 
   @Method(0x800ecd10L)
   private void renderSnow() {
+    final Vector2f screenspace = new Vector2f();
+
     //LAB_800ecdb4
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
     for(int i = 0; i < 64; i++) {
@@ -5853,52 +5842,40 @@ public class WMap extends EngineState<WMap> {
       //LAB_800ed164
       if(!flEq(snowflake.brightness_5c, 0.0f)) {
         //LAB_800ed184
-        snowflake.coord2_00.coord.transfer.x += snowflake.translation_58.x / (3.0f / vsyncMode_8007a3b8);
-        snowflake.coord2_00.coord.transfer.y += snowflake.translation_58.y / (3.0f / vsyncMode_8007a3b8);
-        snowflake.coord2_00.coord.transfer.z += snowflake.translation_58.z / (3.0f / vsyncMode_8007a3b8);
+        snowflake.pos_00.transfer.x += snowflake.translation_58.x / (3.0f / vsyncMode_8007a3b8);
+        snowflake.pos_00.transfer.y += snowflake.translation_58.y / (3.0f / vsyncMode_8007a3b8);
+        snowflake.pos_00.transfer.z += snowflake.translation_58.z / (3.0f / vsyncMode_8007a3b8);
 
-        if(snowflake.coord2_00.coord.transfer.y > 0.0f) {
-          snowflake.coord2_00.coord.transfer.x =  500 - rand() % 1000;
-          snowflake.coord2_00.coord.transfer.y = -200;
-          snowflake.coord2_00.coord.transfer.z =  500 - rand() % 1000;
+        if(snowflake.pos_00.transfer.y > 0.0f) {
+          snowflake.pos_00.transfer.x =  500 - rand() % 1000;
+          snowflake.pos_00.transfer.y = -200;
+          snowflake.pos_00.transfer.z =  500 - rand() % 1000;
         }
 
         //LAB_800ed2bc
-        snowflake.coord2_00.flg = 0;
-        GsGetLs(snowflake.coord2_00, snowflake.transforms);
-        snowflake.transforms.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(snowflake.transforms);
-        GTE.perspectiveTransform(-2, -2, 0);
-
-        final float sx0 = GTE.getScreenX(2);
-        final float sy0 = GTE.getScreenY(2);
-        float z = GTE.getScreenZ(3) / 4.0f;
+        float z = Transformations.toScreenspace(-2.0f, -2.0f, 0.0f, snowflake.pos_00, screenspace) / 4.0f;
+        final float sx0 = screenspace.x;
+        final float sy0 = screenspace.y;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8 - 3) {
           //LAB_800ed37c
-          GTE.perspectiveTransform(2, -2, 0);
-
-          final float sx1 = GTE.getScreenX(2);
-          final float sy1 = GTE.getScreenY(2);
-          z = GTE.getScreenZ(3) / 4.0f;
+          z = Transformations.toScreenspace(2.0f, -2.0f, 0.0f, snowflake.pos_00, screenspace) / 4.0f;
+          final float sx1 = screenspace.x;
+          final float sy1 = screenspace.y;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
             //LAB_800ed400
             //LAB_800ed434
-            GTE.perspectiveTransform(-2, 2, 0);
-
-            final float sx2 = GTE.getScreenX(2);
-            final float sy2 = GTE.getScreenY(2);
-            z = GTE.getScreenZ(3) / 4.0f;
+            z = Transformations.toScreenspace(-2.0f, 2.0f, 0.0f, snowflake.pos_00, screenspace) / 4.0f;
+            final float sx2 = screenspace.x;
+            final float sy2 = screenspace.y;
 
             if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sy2 - sy0 <= 0x200) {
               //LAB_800ed4b8
               //LAB_800ed4ec
-              GTE.perspectiveTransform(2, 2, 0);
-
-              final float sx3 = GTE.getScreenX(2);
-              final float sy3 = GTE.getScreenY(2);
-              z = GTE.getScreenZ(3) / 4.0f;
+              z = Transformations.toScreenspace(2.0f, 2.0f, 0.0f, snowflake.pos_00, screenspace) / 4.0f;
+              final float sx3 = screenspace.x;
+              final float sy3 = screenspace.y;
 
               if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
                 //LAB_800ed570
@@ -5997,6 +5974,7 @@ public class WMap extends EngineState<WMap> {
     }
 
     //LAB_800edc84
+    final Vector2f screenspace = new Vector2f();
     int smokeIndex = 0;
 
     //LAB_800edca8
@@ -6035,22 +6013,22 @@ public class WMap extends EngineState<WMap> {
 
           //LAB_800edebc
           //LAB_800edf88
-          smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-          smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-          smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
+          smoke.pos_00.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+          smoke.pos_00.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+          smoke.pos_00.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
 
           if(this.mapState_800c6798.continent_00 == Continent.SOUTH_SERDIO_0) {
             if(mode == 4) {
               //LAB_800ee0e4
-              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
+              smoke.pos_00.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.pos_00.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.pos_00.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
               //LAB_800ee1dc
             } else if(mode == 8) {
               //LAB_800ee238
-              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
-              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.pos_00.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.pos_00.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.pos_00.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
             }
 
             //LAB_800ee32c
@@ -6058,36 +6036,29 @@ public class WMap extends EngineState<WMap> {
           } else if(this.mapState_800c6798.continent_00 == Continent.NORTH_SERDIO_1) {
             if(mode == 4) {
               //LAB_800ee3a4
-              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
-              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
+              smoke.pos_00.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.pos_00.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
+              smoke.pos_00.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
               //LAB_800ee4a0
             } else if(mode == 8) {
               //LAB_800ee4fc
-              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
-              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
+              smoke.pos_00.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
+              smoke.pos_00.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.pos_00.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
             }
           }
 
           //LAB_800ee5f0
-          smoke.coord2_00.flg = 0;
-          GsGetLs(smoke.coord2_00, smoke.transforms);
-          smoke.transforms.identity(); // NOTE: does not clear translation
-          GTE.setTransforms(smoke.transforms);
-
-          GTE.perspectiveTransform(-size, -size, 0);
-          final float sx0 = GTE.getScreenX(2);
-          final float sy0 = GTE.getScreenY(2);
-          float z = GTE.getScreenZ(3) / 4.0f;
+          float z = Transformations.toScreenspace(-size, -size, 0.0f, smoke.pos_00, screenspace) / 4.0f;
+          final float sx0 = screenspace.x;
+          final float sy0 = screenspace.y;
 
           //LAB_800ee6cc
           if(z >= 5 || z < orderingTableSize_1f8003c8 - 3) {
             //LAB_800ee6d4
-            GTE.perspectiveTransform(size, -size, 0);
-            final float sx1 = GTE.getScreenX(2);
-            final float sy1 = GTE.getScreenY(2);
-            z = GTE.getScreenZ(3) / 4.0f;
+            z = Transformations.toScreenspace(size, -size, 0.0f, smoke.pos_00, screenspace) / 4.0f;
+            final float sx1 = screenspace.x;
+            final float sy1 = screenspace.y;
 
             final float transformedSize = sx1 - sx0;
 
@@ -6095,19 +6066,17 @@ public class WMap extends EngineState<WMap> {
             if(z >= 5 || z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
               //LAB_800ee758
               //LAB_800ee78c
-              GTE.perspectiveTransform(-size, size, 0);
-              final float sx2 = GTE.getScreenX(2);
-              final float sy2 = GTE.getScreenY(2);
-              z = GTE.getScreenZ(3) / 4.0f;
+              z = Transformations.toScreenspace(-size, size, 0.0f, smoke.pos_00, screenspace) / 4.0f;
+              final float sx2 = screenspace.x;
+              final float sy2 = screenspace.y;
 
               //LAB_800ee808
               if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sy2 - sy0 <= 0x200) {
                 //LAB_800ee810
                 //LAB_800ee844
-                GTE.perspectiveTransform(size, size, 0);
-                final float sx3 = GTE.getScreenX(2);
-                final float sy3 = GTE.getScreenY(2);
-                z = GTE.getScreenZ(3) / 4.0f;
+                z = Transformations.toScreenspace(size, size, 0.0f, smoke.pos_00, screenspace) / 4.0f;
+                final float sx3 = screenspace.x;
+                final float sy3 = screenspace.y;
 
                 //LAB_800ee8c0
                 if(z >= 6 && z < orderingTableSize_1f8003c8 - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {

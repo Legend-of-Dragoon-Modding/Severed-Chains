@@ -1,27 +1,25 @@
 package legend.game.submap;
 
-import legend.core.renderer.QueuedModelStandard;
+import legend.core.Transformations;
 import legend.core.gpu.Bpp;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.renderer.MeshObj;
 import legend.core.renderer.QuadBuilder;
+import legend.core.renderer.QueuedModelStandard;
+import legend.core.renderer.Translucency;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
-import legend.core.renderer.Translucency;
 import org.joml.Math;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Graphics.GsGetLs;
 import static legend.game.Graphics.GsInitCoordinate2;
-import static legend.game.Graphics.PopMatrix;
-import static legend.game.Graphics.PushMatrix;
 import static legend.game.Graphics.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 
@@ -52,8 +50,8 @@ public class SmokeParticleEffect {
 
   public void allocateSmokePlumeEffect(final RunningScript<?> script, final float screenOffsetX, final float screenOffsetY, final int tpage, final int clut) {
     if(!this.effectShouldRender) {
-      final MV transforms = new MV();
       final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+      final Vector2f screenspace = new Vector2f();
 
       //LAB_800f10ac
       GsInitCoordinate2(null, coord2);
@@ -68,16 +66,8 @@ public class SmokeParticleEffect {
         coord2.coord.transfer.x = ints.array(i++).get();
         coord2.coord.transfer.y = ints.array(i++).get();
         coord2.coord.transfer.z = ints.array(i++).get();
-        GsGetLs(coord2, transforms);
 
-        PushMatrix();
-        GTE.setTransforms(transforms);
-        GTE.perspectiveTransform(0, 0, 0);
-        final float sx = GTE.getScreenX(2);
-        final float sy = GTE.getScreenY(2);
-
-        inst.sz3_2c = GTE.getScreenZ(3) / 4.0f;
-        PopMatrix();
+        inst.sz3_2c = Transformations.toScreenspace(0.0f, 0.0f, 0.0f, coord2, screenspace);
 
         inst.tick_02 = 0;
         inst.countTicksParticleInstantiationInterval_04 = 17;
@@ -88,8 +78,8 @@ public class SmokeParticleEffect {
         inst.size_10 = ints.array(i++).get();
         inst.stepSize_14 = ints.array(i++).get();
         inst.offsetRandomX_18 = ints.array(i++).get();
-        inst.offsetBaseX_1c = sx;
-        inst.offsetBaseY_20 = sy;
+        inst.offsetBaseX_1c = screenspace.x;
+        inst.offsetBaseY_20 = screenspace.y;
         inst.screenOffsetX_24 = screenOffsetX;
         inst.screenOffsetY_28 = screenOffsetY;
 
@@ -162,17 +152,9 @@ public class SmokeParticleEffect {
     GsInitCoordinate2(null, coord2);
 
     coord2.coord.transfer.set(script.params_20[3].getFloat(), script.params_20[4].getFloat(), script.params_20[5].getFloat());
-    final MV transforms = new MV();
-    GsGetLs(coord2, transforms);
 
-    PushMatrix();
-    GTE.setTransforms(transforms);
-    GTE.perspectiveTransform(0, 0, 0);
-
-    final float sx = GTE.getScreenX(2);
-    final float sy = GTE.getScreenY(2);
-    final float sz = GTE.getScreenZ(3) / 4.0f;
-    PopMatrix();
+    final Vector2f screenspace = new Vector2f();
+    final float sz = Transformations.toScreenspace(0.0f, 0.0f, 0.0f, coord2, screenspace);
 
     // Add lifecycle ticks to delay ticks if the latter is less than the former.
     if(script.params_20[2].get() < script.params_20[1].get()) {
@@ -189,8 +171,8 @@ public class SmokeParticleEffect {
     inst.size_10 = script.params_20[8].get();
     inst.stepSize_14 = (float)((script.params_20[9].get() << 16) / script.params_20[1].get());
     inst.offsetRandomX_18 = script.params_20[7].get();
-    inst.offsetBaseX_1c = sx;
-    inst.offsetBaseY_20 = sy;
+    inst.offsetBaseX_1c = screenspace.x;
+    inst.offsetBaseY_20 = screenspace.y;
     inst.screenOffsetX_24 = screenOffsetX;
     inst.screenOffsetY_28 = screenOffsetY;
     inst.sz3_2c = sz;
@@ -333,7 +315,7 @@ public class SmokeParticleEffect {
 
         //LAB_800f4084
         this.transforms.scaling(inst.size_28, inst.size_28, 1.0f);
-        this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, inst.z_34 * 4);
+        this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, inst.z_34);
         RENDERER.queueOrthoModel(this.particle, this.transforms, QueuedModelStandard.class)
           .monochrome(brightness);
 

@@ -1,7 +1,6 @@
 package legend.game.wmap;
 
 import legend.core.gpu.Bpp;
-import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.renderer.Obj;
 import legend.core.renderer.QuadBuilder;
@@ -15,7 +14,7 @@ public class WMapAtmosphericEffectInstance60 {
   public final MV transforms = new MV();
   public float queueZ;
 
-  public final GsCOORDINATE2 coord2_00 = new GsCOORDINATE2();
+  public final MV pos_00 = new MV();
   /** Originally vector rotation_50 */
   public float snowTick_50;
   /** Was short x_58, short y_5a, byte z_5e */
@@ -24,7 +23,7 @@ public class WMapAtmosphericEffectInstance60 {
   public float brightness_5c;
 
   public void set(final WMapAtmosphericEffectInstance60 other) {
-    this.coord2_00.set(other.coord2_00);
+    this.pos_00.set(other.pos_00);
     this.snowTick_50 = other.snowTick_50;
     this.translation_58.set(other.translation_58);
     this.brightness_5c = other.brightness_5c;
